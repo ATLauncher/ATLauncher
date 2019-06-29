@@ -27,6 +27,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.workers.InstanceInstaller;
+import com.atlauncher.workers.NewInstanceInstaller;
 
 @Json
 public class Loader {
@@ -72,8 +73,9 @@ public class Loader {
         return instance;
     }
 
-    public com.atlauncher.data.minecraft.loaders.Loader getNewLoader(File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion loaderVersion) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public com.atlauncher.data.minecraft.loaders.Loader getNewLoader(File tempDir,
+            NewInstanceInstaller instanceInstaller, LoaderVersion loaderVersion)
+            throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         com.atlauncher.data.minecraft.loaders.Loader instance = (com.atlauncher.data.minecraft.loaders.Loader) Class
                 .forName(this.className.replace("com.atlauncher.data.loaders", "com.atlauncher.data.minecraft.loaders"))
                 .newInstance();

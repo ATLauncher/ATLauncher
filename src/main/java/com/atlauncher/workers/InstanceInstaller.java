@@ -625,7 +625,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
-    public void installLoader() {
+    private void installLoader() {
         fireTask(Language.INSTANCE.localize("instance.installingloader"));
         fireSubProgressUnknown();
 

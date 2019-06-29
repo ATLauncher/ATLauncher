@@ -44,17 +44,17 @@ import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
+import com.atlauncher.workers.NewInstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
 public class FabricLoader implements Loader {
     protected String minecraft;
     protected FabricMetaVersion version;
     protected File tempDir;
-    protected InstanceInstaller instanceInstaller;
+    protected NewInstanceInstaller instanceInstaller;
 
     @Override
-    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
+    public void set(Map<String, Object> metadata, File tempDir, NewInstanceInstaller instanceInstaller,
             LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
@@ -255,6 +255,11 @@ public class FabricLoader implements Loader {
             LogManager.logStackTrace(e);
         }
 
+        return null;
+    }
+
+    @Override
+    public List<Library> getInstallLibraries() {
         return null;
     }
 }

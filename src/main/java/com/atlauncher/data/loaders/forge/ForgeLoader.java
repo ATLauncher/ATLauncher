@@ -57,7 +57,7 @@ public class ForgeLoader implements Loader {
             this.version = versionOverride.getVersion();
             this.rawVersion = versionOverride.getRawVersion();
 
-            this.installerUrl = Constants.FORGE_MAVEN + this.rawVersion + "/forge-" + this.rawVersion
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
                     + "-installer.jar";
         } else if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
@@ -67,18 +67,18 @@ public class ForgeLoader implements Loader {
                 this.rawVersion = (String) metadata.get("rawVersion");
             }
 
-            this.installerUrl = Constants.FORGE_MAVEN + this.rawVersion + "/forge-" + this.rawVersion
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
                     + "-installer.jar";
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
             this.version = this.getRecommendedVersion();
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         }

@@ -19,9 +19,7 @@ package com.atlauncher.data.minecraft;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 
 @Json

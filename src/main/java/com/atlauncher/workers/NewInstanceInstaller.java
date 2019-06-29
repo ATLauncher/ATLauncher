@@ -19,6 +19,7 @@ package com.atlauncher.workers;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,8 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
+import com.atlauncher.data.json.Delete;
+import com.atlauncher.data.json.Deletes;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
@@ -49,6 +52,7 @@ import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 
@@ -63,9 +67,21 @@ public class NewInstanceInstaller extends InstanceInstaller {
     protected double totalBytes = 0; // Total number of bytes to download
     protected double downloadedBytes = 0; // Total number of bytes downloaded
 
+    public final String instanceName;
+    public final com.atlauncher.data.Pack pack;
+    public final com.atlauncher.data.PackVersion version;
+    public final String shareCode;
+    public final boolean showModsChooser;
+    public final LoaderVersion loaderVersion;
+
+    public boolean isReinstall;
+    public boolean isServer;
+
+    public final Path root;
+    public final Path temp;
+
     public List<Library> libraries = new ArrayList<>();
     public Loader loader;
-    public LoaderVersion loaderVersion;
     public com.atlauncher.data.json.Version packVersion;
     public MinecraftVersion minecraftVersion;
 
@@ -86,6 +102,23 @@ public class NewInstanceInstaller extends InstanceInstaller {
             boolean showModsChooser, com.atlauncher.data.loaders.LoaderVersion loaderVersion) {
         super(instanceName, pack, version, isReinstall, isServer, shareCode, showModsChooser, loaderVersion);
 
+        this.instanceName = instanceName;
+        this.pack = pack;
+        this.version = version;
+        this.isReinstall = isReinstall;
+        this.isServer = isServer;
+        this.shareCode = shareCode;
+        this.showModsChooser = showModsChooser;
+
+        if (isServer) {
+            this.root = new File(App.settings.getServersDir(), pack.getSafeName() + "_" + version.getSafeVersion())
+                    .toPath();
+        } else {
+            this.root = new File(App.settings.getInstancesDir(), getInstanceSafeName()).toPath();
+        }
+
+        this.temp = new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion()).toPath();
+
         this.loaderVersion = Gsons.MINECRAFT.fromJson(Gsons.DEFAULT.toJson(loaderVersion), LoaderVersion.class);
     }
 
@@ -93,6 +126,23 @@ public class NewInstanceInstaller extends InstanceInstaller {
             com.atlauncher.data.PackVersion version, boolean isReinstall, boolean isServer, String shareCode,
             boolean showModsChooser, LoaderVersion loaderVersion) {
         super(instanceName, pack, version, isReinstall, isServer, shareCode, showModsChooser, null);
+
+        this.instanceName = instanceName;
+        this.pack = pack;
+        this.version = version;
+        this.isReinstall = isReinstall;
+        this.isServer = isServer;
+        this.shareCode = shareCode;
+        this.showModsChooser = showModsChooser;
+
+        if (isServer) {
+            this.root = new File(App.settings.getServersDir(), pack.getSafeName() + "_" + version.getSafeVersion())
+                    .toPath();
+        } else {
+            this.root = new File(App.settings.getInstancesDir(), getInstanceSafeName()).toPath();
+        }
+
+        this.temp = new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion()).toPath();
 
         this.loaderVersion = loaderVersion;
     }
@@ -251,7 +301,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         getTempDirectory().mkdirs(); // Make the temp directory
         backupSelectFiles();
-        makeDirectories();
+        prepareFilesystem();
         addPercent(5);
 
         determineMainClass();
@@ -278,6 +328,11 @@ public class NewInstanceInstaller extends InstanceInstaller {
         }
 
         organiseLibraries();
+        if (isCancelled()) {
+            return false;
+        }
+
+        installLoader();
         if (isCancelled()) {
             return false;
         }
@@ -336,6 +391,11 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     this.mainClass = this.packVersion.mainClass.mainClass;
                 }
             }
+        }
+
+        // use the loader provided main class if there is a loader
+        if (this.loader != null) {
+            this.mainClass = this.loader.getMainClass();
         }
 
         // if none set by pack, then use the minecraft one
@@ -528,7 +588,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         }
 
         // lastly the Minecraft libraries
-        if (this.loader == null || this.loader.useMinecraftArguments()) {
+        if (this.loader == null || this.loader.useMinecraftLibraries()) {
             libraries.addAll(this.minecraftVersion.libraries.stream().filter(library -> library.shouldInstall())
                     .collect(Collectors.toList()));
         }
@@ -631,6 +691,18 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     pool.add(download);
                 });
 
+        if (this.loader != null && this.loader.getInstallLibraries() != null) {
+            this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
+                    .forEach(library -> {
+                        pool.add(
+                                new com.atlauncher.network.Download().setUrl(library.downloads.artifact.url)
+                                        .downloadTo(new File(App.settings.getGameLibrariesDir(),
+                                                library.downloads.artifact.path).toPath())
+                                        .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                                        .withInstanceInstaller(this).withHttpClient(httpClient));
+                    });
+        }
+
         this.getLibraries().stream().filter(library -> library.hasNativeForOS()).forEach(library -> {
             Download download = library.getNativeDownloadForOS();
 
@@ -677,6 +749,22 @@ public class NewInstanceInstaller extends InstanceInstaller {
                 });
             }
         });
+
+        hideSubProgressBar();
+    }
+
+    private void installLoader() {
+        addPercent(5);
+
+        if (this.loader == null) {
+            return;
+        }
+
+        fireTask(Language.INSTANCE.localize("instance.installingloader"));
+        fireSubProgressUnknown();
+
+        // run any processors that the loader needs
+        this.loader.runProcessors();
 
         hideSubProgressBar();
     }
@@ -827,6 +915,90 @@ public class NewInstanceInstaller extends InstanceInstaller {
         if (portalGunSounds.exists() && portalGunSounds.isFile()) {
             savedPortalGunSounds = true;
             Utils.copyFile(portalGunSounds, getTempDirectory());
+        }
+    }
+
+    protected void prepareFilesystem() throws Exception {
+        if (isReinstall || isServer) {
+            FileUtils.deleteDirectory(this.root.resolve("bin"));
+            FileUtils.deleteDirectory(this.root.resolve("config"));
+
+            if (instance != null
+                    && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())
+                    && instance.hasCustomMods()) {
+                Utils.deleteWithFilter(this.root.resolve("mods").toFile(),
+                        instance.getCustomMods(com.atlauncher.data.Type.mods));
+                if (this.version.getMinecraftVersion().usesCoreMods()) {
+                    Utils.deleteWithFilter(getCoreModsDirectory(),
+                            instance.getCustomMods(com.atlauncher.data.Type.coremods));
+                }
+                if (isReinstall) {
+                    Utils.deleteWithFilter(getJarModsDirectory(), instance.getCustomMods(com.atlauncher.data.Type.jar));
+                }
+            } else {
+                FileUtils.deleteDirectory(this.root.resolve("mods"));
+                if (this.version.getMinecraftVersion().usesCoreMods()) {
+                    FileUtils.deleteDirectory(this.root.resolve("coremods"));
+                }
+
+                if (isReinstall) {
+                    FileUtils.deleteDirectory(this.root.resolve("jarmods"));
+                }
+            }
+
+            if (isReinstall) {
+                FileUtils.delete(this.root.resolve("texturepacks/TexturePack.zip"));
+                FileUtils.delete(this.root.resolve("resourcepacks/ResourcePack.zip"));
+            } else {
+                FileUtils.deleteDirectory(this.root.resolve("libraries"));
+            }
+
+            if (this.instance != null && this.packVersion.deletes != null) {
+                Deletes deletes = this.packVersion.deletes;
+
+                if (deletes.hasFileDeletes()) {
+                    for (Delete delete : deletes.getFiles()) {
+                        if (delete.isAllowed()) {
+                            File file = delete.getFile(this.instance.getRootDirectory());
+                            if (file.exists()) {
+                                Utils.delete(file);
+                            }
+                        }
+                    }
+                }
+
+                if (deletes.hasFolderDeletes()) {
+                    for (Delete delete : deletes.getFolders()) {
+                        if (delete.isAllowed()) {
+                            File file = delete.getFile(this.instance.getRootDirectory());
+                            if (file.exists()) {
+                                Utils.delete(file);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // make some new directories
+        Path[] directories;
+        if (isServer) {
+            directories = new Path[] { this.root, this.root.resolve("mods"), this.temp,
+                    this.root.resolve("libraries") };
+        } else {
+            directories = new Path[] { this.root, this.root.resolve("mods"), this.root.resolve("disabledmods"),
+                    this.temp, this.root.resolve("jarmods"), this.root.resolve("bin"),
+                    this.root.resolve("bin/natives") };
+        }
+
+        for (Path directory : directories) {
+            if (!Files.exists(directory)) {
+                Files.createDirectory(directory);
+            }
+        }
+
+        if (this.version.getMinecraftVersion().usesCoreMods()) {
+            Files.createDirectory(this.root.resolve("coremods"));
         }
     }
 

@@ -29,6 +29,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -53,8 +54,19 @@ public class Forge113Loader extends ForgeLoader {
         version.libraries.stream().forEach(library -> {
             // copy over any local files from the loader zip file
             if (library.name.equalsIgnoreCase(installProfile.path)) {
-                Utils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path),
-                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path), true);
+                FileUtils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path).toPath(),
+                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path).toPath(), true);
+
+                FileUtils.copyFile(
+                        new File(tempDir,
+                                "maven/" + library.downloads.artifact.path.substring(0,
+                                        library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
+                                                .toPath(),
+                        new File(App.settings.getGameLibrariesDir(),
+                                library.downloads.artifact.path.substring(0,
+                                        library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
+                                                .toPath(),
+                        true);
             }
         });
     }
@@ -85,6 +97,10 @@ public class Forge113Loader extends ForgeLoader {
                 }
             }
         });
+    }
+
+    public List<Library> getInstallLibraries() {
+        return this.getInstallProfile().getLibraries().stream().collect(Collectors.toList());
     }
 
     public List<Library> getLibraries() {

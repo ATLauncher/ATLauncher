@@ -23,15 +23,17 @@ import java.util.Map;
 
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
-import com.atlauncher.workers.InstanceInstaller;
+import com.atlauncher.workers.NewInstanceInstaller;
 
 public interface Loader {
-    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
+    public void set(Map<String, Object> metadata, File tempDir, NewInstanceInstaller instanceInstaller,
             LoaderVersion versionOverride);
 
     public void downloadAndExtractInstaller();
 
     public void runProcessors();
+
+    public List<Library> getInstallLibraries();
 
     public List<Library> getLibraries();
 

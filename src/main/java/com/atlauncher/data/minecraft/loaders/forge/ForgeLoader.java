@@ -38,7 +38,7 @@ import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
+import com.atlauncher.workers.NewInstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
 public class ForgeLoader implements Loader {
@@ -47,10 +47,10 @@ public class ForgeLoader implements Loader {
     protected String rawVersion;
     protected String minecraft;
     protected File tempDir;
-    protected InstanceInstaller instanceInstaller;
+    protected NewInstanceInstaller instanceInstaller;
 
     @Override
-    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
+    public void set(Map<String, Object> metadata, File tempDir, NewInstanceInstaller instanceInstaller,
             LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
@@ -60,7 +60,7 @@ public class ForgeLoader implements Loader {
             this.version = versionOverride.getVersion();
             this.rawVersion = versionOverride.getRawVersion();
 
-            this.installerUrl = Constants.FORGE_MAVEN + this.rawVersion + "/forge-" + this.rawVersion
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
                     + "-installer.jar";
         } else if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
@@ -70,18 +70,18 @@ public class ForgeLoader implements Loader {
                 this.rawVersion = (String) metadata.get("rawVersion");
             }
 
-            this.installerUrl = Constants.FORGE_MAVEN + this.rawVersion + "/forge-" + this.rawVersion
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
                     + "-installer.jar";
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
             this.version = this.getRecommendedVersion();
-            this.installerUrl = Constants.FORGE_MAVEN + this.minecraft + "-" + this.version
+            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         }
@@ -196,7 +196,7 @@ public class ForgeLoader implements Loader {
 
     @Override
     public boolean useMinecraftLibraries() {
-        return !this.instanceInstaller.isServer();
+        return !this.instanceInstaller.isServer;
     }
 
     @Override
@@ -222,6 +222,11 @@ public class ForgeLoader implements Loader {
             LogManager.logStackTrace(e);
         }
 
+        return null;
+    }
+
+    @Override
+    public List<Library> getInstallLibraries() {
         return null;
     }
 }

@@ -99,6 +99,7 @@ public class FileUtils {
     }
 
     public static boolean copyFile(Path from, Path to, boolean withFilename) {
+        LogManager.debug("Copying file from " + from + " to " + to);
         if (!Files.isRegularFile(from)) {
             LogManager.error("File " + from + " cannot be copied to " + to + " as it isn't a file!");
             return false;

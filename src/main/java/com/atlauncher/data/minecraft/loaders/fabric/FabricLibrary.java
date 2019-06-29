@@ -33,7 +33,7 @@ public class FabricLibrary extends Library {
         Downloads downloads = new Downloads();
         Download artifact = new Download();
         artifact.path = Utils.convertMavenIdentifierToPath(name);
-        artifact.url = url + artifact.path;
+        artifact.url = String.format("%s/%s", url, artifact.path);
         downloads.artifact = artifact;
 
         this.downloads = downloads;

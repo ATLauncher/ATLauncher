@@ -45,6 +45,10 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
         // forge 1.13 and newer already has this in the correct format
         if (object.has("downloads")) {
             library.downloads = new Gson().fromJson(object.get("downloads").getAsJsonObject(), Downloads.class);
+
+            if (library.downloads.artifact.url.isEmpty()) {
+                library.downloads.artifact.url = Constants.FORGE_MAVEN + library.downloads.artifact.path;
+            }
         } else {
             Downloads downloads = new Downloads();
             Download artifact = new Download();
@@ -57,7 +61,11 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
             }
 
             if (object.has("url")) {
-                artifact.url = object.get("url").getAsString() + artifact.path;
+                if (object.get("url").getAsString().isEmpty()) {
+                    artifact.url = Constants.FORGE_MAVEN + artifact.path;
+                } else {
+                    artifact.url = object.get("url").getAsString() + artifact.path;
+                }
             } else {
                 artifact.url = Constants.MINECRAFT_LIBRARIES + artifact.path;
             }
