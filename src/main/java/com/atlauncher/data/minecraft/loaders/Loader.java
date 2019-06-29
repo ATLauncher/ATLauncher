@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.workers.InstanceInstaller;

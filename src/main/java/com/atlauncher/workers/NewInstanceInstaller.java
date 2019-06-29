@@ -19,7 +19,7 @@ package com.atlauncher.workers;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +55,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.walker.CaseFileVisitor;
 
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
@@ -726,34 +727,18 @@ public class NewInstanceInstaller extends InstanceInstaller {
         hideSubProgressBar();
     }
 
-    // TODO: replace with walkers
-    private void runCaseConversion() {
+    private void runCaseConversion() throws Exception {
         addPercent(5);
 
         if (this.packVersion.caseAllFiles == null) {
             return;
         }
 
-        File[] files;
-        if (isReinstall && instance.getMinecraftVersion().equalsIgnoreCase(minecraftVersion.id)) {
-            final List<String> customMods = instance.getCustomMods(com.atlauncher.data.Type.mods);
-            FilenameFilter ffFilter = (dir, name) -> !customMods.contains(name);
-            files = getModsDirectory().listFiles(ffFilter);
+        if (this.isReinstall && this.instance.getMinecraftVersion().equalsIgnoreCase(this.minecraftVersion.id)) {
+            Files.walkFileTree(this.getModsDirectory().toPath(), new CaseFileVisitor(this.packVersion.caseAllFiles,
+                    this.instance.getCustomMods(com.atlauncher.data.Type.mods)));
         } else {
-            files = getModsDirectory().listFiles();
-        }
-
-        for (File file : files) {
-            if (file.isFile() && (file.getName().endsWith("jar") || file.getName().endsWith("zip")
-                    || file.getName().endsWith("litemod"))) {
-                if (this.packVersion.caseAllFiles == com.atlauncher.data.json.CaseType.upper) {
-                    file.renameTo(new File(file.getParentFile(),
-                            file.getName().substring(0, file.getName().lastIndexOf(".")).toUpperCase() + file.getName()
-                                    .substring(file.getName().lastIndexOf("" + "."), file.getName().length())));
-                } else if (this.packVersion.caseAllFiles == com.atlauncher.data.json.CaseType.lower) {
-                    file.renameTo(new File(file.getParentFile(), file.getName().toLowerCase()));
-                }
-            }
+            Files.walkFileTree(this.getModsDirectory().toPath(), new CaseFileVisitor(this.packVersion.caseAllFiles));
         }
     }
 

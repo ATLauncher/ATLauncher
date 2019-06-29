@@ -19,7 +19,6 @@ package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.ForgeXzDownloadable;
 import com.atlauncher.data.HashableDownloadable;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;

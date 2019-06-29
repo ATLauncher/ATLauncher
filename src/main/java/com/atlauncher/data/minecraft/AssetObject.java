@@ -17,10 +17,6 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.io.File;
-
-import com.atlauncher.utils.Hashing;
-
 public class AssetObject {
     public String hash;
     public long size;
