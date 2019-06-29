@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.9.4
+## 3.2.9.5
 
--   Fix root Java path for found versions not resolving on some systems
+-   Fix reinstalling packs without folder deletes not working
