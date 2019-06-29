@@ -66,6 +66,19 @@ public final class Hashing {
         }
     }
 
+    private static HashCode md5Internal(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return HashCode.EMPTY;
+        }
+
+        try (Hasher hasher = new MD5Hasher(new ByteArrayInputStream(bytes))) {
+            return hasher.hash();
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error hashing (MD5) byte array", e);
+            return HashCode.EMPTY;
+        }
+    }
+
     private static HashCode md5Internal(Object obj) {
         if (obj == null) {
             return HashCode.EMPTY;
@@ -116,6 +129,21 @@ public final class Hashing {
         }
     }
 
+    public static HashCode md5(byte[] bytes) {
+        try {
+            HashCode code = hashcodes.get().get(bytes);
+            if (code != null) {
+                return code;
+            }
+            code = md5Internal(bytes);
+            hashcodes.get().put(bytes, code);
+            return code;
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error hashing (MD5) byte array", e);
+            return md5Internal(bytes);
+        }
+    }
+
     public static HashCode sha1(Path file) {
         if (!Files.exists(file)) {
             return HashCode.EMPTY;
@@ -138,6 +166,19 @@ public final class Hashing {
             return hasher.hash();
         } catch (Exception e) {
             LogManager.logStackTrace("Error hashing (SHA-1) string " + str, e);
+            return HashCode.EMPTY;
+        }
+    }
+
+    public static HashCode sha1(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return HashCode.EMPTY;
+        }
+
+        try (Hasher hasher = new SHA1Hasher(new ByteArrayInputStream(bytes))) {
+            return hasher.hash();
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error hashing (SHA-1) byte array", e);
             return HashCode.EMPTY;
         }
     }

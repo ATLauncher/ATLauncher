@@ -24,7 +24,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -36,25 +36,27 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.NewInstanceInstaller;
 import com.google.gson.Gson;
 
-import okhttp3.CacheControl;
+import org.zeroturnaround.zip.ZipUtil;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public final class Download {
     public static final int MAX_ATTEMPTS = 3;
-    public static final CacheControl CACHE_CONTROL = new CacheControl.Builder().noStore().noCache()
-            .maxAge(0, TimeUnit.MILLISECONDS).build();
 
     // pre request
     private String url;
     private String friendlyFileName;
     public Path to;
+    public Path extractedTo;
     public Path copyTo;
     private String hash;
-    private long size = -1;
+    private List<String> checksums;
+    public long size = 0;
     private NewInstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
+    private boolean usesPackXz = false;
 
     // generated on/after request
     private Response response;
@@ -150,6 +152,15 @@ public final class Download {
         return this;
     }
 
+    public Download usesPackXz(List<String> checksums) {
+        this.usesPackXz = true;
+        this.extractedTo = this.to;
+        this.checksums = checksums;
+        this.url = this.url + ".pack.xz";
+        this.to = this.to.resolveSibling(this.to.getFileName().toString() + ".pack.xz");
+        return this;
+    }
+
     public Download withFriendlyFileName(String friendlyFileName) {
         this.friendlyFileName = friendlyFileName;
         return this;
@@ -158,8 +169,7 @@ public final class Download {
     private void execute() throws IOException {
         LogManager.debug("Opening connection to " + this.url, 3);
 
-        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", Network.USER_AGENT)
-                .addHeader("Expires", "0").cacheControl(CACHE_CONTROL);
+        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", Network.USER_AGENT);
 
         this.response = httpClient.newCall(builder.build()).execute();
 
@@ -182,71 +192,41 @@ public final class Download {
         return this.hash == null || this.hash.length() != 40;
     }
 
-    private String getHashFromURL() throws IOException {
-        this.execute();
-
-        String etag = this.response.header("ETag");
-        if (etag == null) {
-            return "-";
-        }
-
-        if (etag.startsWith("\"") && etag.endsWith("\"")) {
-            etag = etag.substring(1, etag.length() - 1);
-        }
-
-        return etag.matches("[A-Za-z0-9]{32}") ? etag : "-";
-    }
-
-    public String getHash() {
-        if (this.hash == null || this.hash.isEmpty()) {
-            try {
-                this.hash = this.getHashFromURL();
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
-                this.hash = "-";
-            }
-        }
-
-        return this.hash;
-    }
-
-    public long getFilesize() {
-        try {
-            if (this.size == -1) {
-                this.execute();
-                long size = Long.parseLong(response.header("Content-Length"));
-
-                if (size == -1) {
-                    this.size = 0L;
-                } else {
-                    this.size = size;
-                }
-            }
-        } catch (Exception ignored) {
-            return -1;
-        }
-
-        return this.size;
-    }
-
     public boolean needToDownload() {
         if (this.to == null) {
             return true;
         }
 
+        if (this.usesPackXz && Files.exists(this.extractedTo)) {
+            return this.checksumsMatch();
+        }
+
         if (Files.exists(this.to)) {
-            if (this.to.toFile().length() == this.getFilesize()) {
+            if (this.to.toFile().length() == this.size) {
                 return false;
             }
 
             if (this.md5()) {
-                return !Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+                return !Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.hash));
             } else {
-                return !Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+                return !Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.hash));
             }
         }
 
         return true;
+    }
+
+    private boolean checksumsMatch() {
+        try {
+            if (!ZipUtil.containsEntry(this.extractedTo.toFile(), "checksums.sha1")) {
+                return true;
+            }
+
+            return !this.checksums.contains(
+                    Hashing.sha1(ZipUtil.unpackEntry(this.extractedTo.toFile(), "checksums.sha1")).toString());
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     private void downloadDirect() {
@@ -269,7 +249,7 @@ public final class Download {
                 }
             }
 
-            if (fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
+            if (fileHash.equals(Hashing.HashCode.fromString(this.hash))) {
                 return true;
             }
 
@@ -308,7 +288,7 @@ public final class Download {
                     }
                 }
 
-                if (!fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
+                if (!fileHash.equals(Hashing.HashCode.fromString(this.hash))) {
                     this.copy();
                 }
             }
@@ -335,7 +315,7 @@ public final class Download {
             FileUtils.createDirectory(this.to.getParent());
         }
 
-        Hashing.HashCode expected = Hashing.HashCode.fromString(this.getHash());
+        Hashing.HashCode expected = Hashing.HashCode.fromString(this.hash);
         if (expected.equals(Hashing.HashCode.EMPTY)) {
             this.downloadDirect();
         } else {
@@ -365,6 +345,10 @@ public final class Download {
                     this.copy();
                 }
             }
+        }
+
+        if (this.usesPackXz) {
+            Utils.unXZPackFile(this.to.toFile(), this.extractedTo.toFile());
         }
 
         if (oldPath != null && Files.exists(oldPath)) {

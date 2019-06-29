@@ -66,12 +66,12 @@ public final class DownloadPool extends LinkedList<Download> {
         }
     }
 
-    public int totalSize() {
-        int size = 0;
+    public long totalSize() {
+        long size = 0;
         synchronized (this) {
             for (Download dl : this) {
                 if (dl.needToDownload()) {
-                    size += dl.getFilesize();
+                    size += dl.size;
                 }
             }
         }

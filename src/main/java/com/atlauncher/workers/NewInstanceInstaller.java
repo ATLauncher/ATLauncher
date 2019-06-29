@@ -426,7 +426,6 @@ public class NewInstanceInstaller extends InstanceInstaller {
         fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
         fireSubProgressUnknown();
         this.totalBytes = this.downloadedBytes = 0;
-        OkHttpClient httpClient = Network.createProgressClient(this);
 
         MojangAssetIndex assetIndex = this.minecraftVersion.assetIndex;
         File indexFile = new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json");
@@ -440,6 +439,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         AssetIndex index = this.gson.fromJson(new FileReader(indexFile), AssetIndex.class);
 
+        OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
 
         index.objects.entrySet().stream().forEach(entry -> {
@@ -591,54 +591,34 @@ public class NewInstanceInstaller extends InstanceInstaller {
         downloadedBytes = 0;
 
         ExecutorService executor;
-        List<Downloadable> downloads = getDownloadableLibraries();
-        downloads.addAll(getDownloadableNativeLibraries());
 
-        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+        OkHttpClient httpClient = Network.createProgressClient(this);
+        DownloadPool pool = new DownloadPool();
 
-        for (final Downloadable download : downloads) {
-            executor.execute(() -> {
-                if (download.needToDownload()) {
-                    totalBytes += download.getFilesize();
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
+        this.getLibraries().stream().filter(library -> library.shouldInstall() && library.downloads.artifact != null)
+                .forEach(library -> {
+                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                            .setUrl(library.downloads.artifact.url)
+                            .downloadTo(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
+                                    .toPath())
+                            .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                            .withInstanceInstaller(this).withHttpClient(httpClient);
 
-        fireSubProgress(0); // Show the subprogress bar
-
-        executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-
-        for (final Downloadable download : downloads) {
-            executor.execute(() -> {
-                if (download.needToDownload()) {
-                    fireTask(Language.INSTANCE.localize("common.downloading") + " " + download.getFilename());
-                    download.download(true);
-                }
-            });
-        }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
-
-        hideSubProgressBar();
-    }
-
-    private List<Downloadable> getDownloadableLibraries() {
-        return this.getLibraries().stream()
-                .filter(library -> library.shouldInstall() && library.downloads.artifact != null).map(library -> {
                     if (library instanceof ForgeLibrary && ((ForgeLibrary) library).isUsingPackXz()) {
-                        return new ForgeXzDownloadable(library.downloads.artifact.url,
-                                new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
-                                library.downloads.artifact.sha1, library.downloads.artifact.size, this, null);
+                        download = download.usesPackXz(((ForgeLibrary) library).checksums);
                     }
 
-                    return new Downloadable(library.downloads.artifact.url,
-                            new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path),
-                            library.downloads.artifact.sha1, library.downloads.artifact.size, this, false);
-                }).collect(Collectors.toList());
+                    pool.add(download);
+                });
+
+        pool.downsize();
+
+        this.setTotalBytes(pool.totalSize());
+        this.fireSubProgress(0);
+
+        pool.downloadAll(this);
+
+        hideSubProgressBar();
     }
 
     private List<Downloadable> getDownloadableNativeLibraries() {
@@ -693,25 +673,22 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
         fireSubProgressUnknown();
-        totalBytes = 0;
-        downloadedBytes = 0;
 
-        List<Downloadable> downloads = this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser)
-                .map(mod -> {
-                    return new Downloadable(mod.getDownloadUrl(),
-                            new File(App.settings.getDownloadsDir(), mod.getFile()), mod.md5, mod.filesize, this,
-                            false);
-                }).collect(Collectors.toList());
+        OkHttpClient httpClient = Network.createProgressClient(this);
+        DownloadPool pool = new DownloadPool();
 
-        totalBytes = downloads.stream().map(download -> download.getFilesize()).reduce(0, Integer::sum);
-
-        fireSubProgress(0);
-
-        downloads.parallelStream().forEach(download -> {
-            if (download.needToDownload()) {
-                download.download();
-            }
+        this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser).forEach(mod -> {
+            pool.add(new com.atlauncher.network.Download().setUrl(mod.getDownloadUrl())
+                    .downloadTo(new File(App.settings.getDownloadsDir(), mod.getFile()).toPath()).hash(mod.md5)
+                    .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient));
         });
+
+        pool.downsize();
+
+        this.setTotalBytes(pool.totalSize());
+        this.fireSubProgress(0);
+
+        pool.downloadAll(this);
 
         hideSubProgressBar();
     }

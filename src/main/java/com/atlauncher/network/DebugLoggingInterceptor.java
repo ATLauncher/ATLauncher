@@ -30,14 +30,16 @@ public final class DebugLoggingInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        long t1 = System.nanoTime();
         LogManager.debug(String.format("Sending request %s", request.url()), 3);
+        LogManager.debug(request.toString(), 3);
 
+        long t1 = System.nanoTime();
         Response response = chain.proceed(request);
-
         long t2 = System.nanoTime();
+
         LogManager.debug(
                 String.format("Received response for %s in %.1fms%n", response.request().url(), (t2 - t1) / 1e6d), 3);
+        LogManager.debug(response.toString(), 3);
 
         return response;
     }

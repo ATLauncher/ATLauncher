@@ -1410,9 +1410,16 @@ public class Utils {
         return bytes;
     }
 
-    public static void unXZPackFile(File xzFile, File packFile, File outputFile) {
-        unXZFile(xzFile, packFile);
+    public static void unXZPackFile(File inputFile, File outputFile) {
+        File packFile = new File(inputFile.getAbsolutePath().substring(0, inputFile.getAbsolutePath().length() - 3));
+        LogManager.debug("unXZPackFile " + inputFile.getAbsolutePath() + " : " + packFile.getAbsolutePath() + " : "
+                + outputFile.getAbsolutePath());
+
+        unXZFile(inputFile, packFile);
         unpackFile(packFile, outputFile);
+
+        Utils.delete(inputFile);
+        Utils.delete(packFile);
     }
 
     public static void unXZFile(File input, File output) {
