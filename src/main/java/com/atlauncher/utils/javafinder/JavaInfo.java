@@ -7,8 +7,9 @@
  */
 package com.atlauncher.utils.javafinder;
 
+import java.io.File;
+
 import com.atlauncher.utils.Java;
-import com.atlauncher.utils.OS;
 
 /**
  * Helper struct to hold information about one installed java version
@@ -41,7 +42,7 @@ public class JavaInfo {
 
         this.is64bits = versionInfo.toUpperCase().contains("64-BIT");
         this.path = javaPath;
-        this.rootPath = javaPath.replace(OS.osSlash() + "bin" + OS.osSlash() + "java.exe", "");
+        this.rootPath = new File(javaPath).getParentFile().getParentFile().getAbsolutePath();
     }
 
     // used for testing
