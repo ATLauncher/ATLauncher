@@ -156,6 +156,8 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
             downloadMinecraftVersionJson();
 
+            determineModsToBeInstalled();
+
             if (this.packVersion.loader != null) {
                 this.loader = this.packVersion.getLoader().getNewLoader(new File(this.getTempDirectory(), "loader"),
                         this, this.loaderVersion);
@@ -166,8 +168,6 @@ public class NewInstanceInstaller extends InstanceInstaller {
             if (this.packVersion.messages != null) {
                 showMessages();
             }
-
-            determineModsToBeInstalled();
 
             install();
 
