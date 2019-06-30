@@ -36,13 +36,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.NewInstanceInstaller;
 import com.google.gson.reflect.TypeToken;
@@ -71,17 +70,9 @@ public class FabricLoader implements Loader {
     }
 
     public FabricMetaVersion getLoader(String version) {
-        try {
-            Downloadable loaderVersion = new Downloadable(
-                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s", this.minecraft, version),
-                    false);
-
-            return Gsons.MINECRAFT.fromJson(loaderVersion.getContents(), FabricMetaVersion.class);
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-        }
-
-        return null;
+        return Download.build()
+                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s", this.minecraft, version))
+                .asClass(FabricMetaVersion.class);
     }
 
     public FabricMetaVersion getVersion(String version) {
@@ -89,27 +80,18 @@ public class FabricLoader implements Loader {
     }
 
     public FabricMetaVersion getLatestVersion() {
-        try {
-            Downloadable loaderVersions = new Downloadable(
-                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft), false);
+        java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+        }.getType();
 
-            String contents = loaderVersions.getContents();
+        List<FabricMetaVersion> loaders = Download.build()
+                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft))
+                .asType(type);
 
-            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
-            }.getType();
-
-            List<FabricMetaVersion> loaders = Gsons.MINECRAFT.fromJson(contents, type);
-
-            if (loaders == null || loaders.size() == 0) {
-                return null;
-            }
-
-            return loaders.get(0);
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
+        if (loaders == null || loaders.size() == 0) {
+            return null;
         }
 
-        return null;
+        return loaders.get(0);
     }
 
     @Override
@@ -140,7 +122,7 @@ public class FabricLoader implements Loader {
     }
 
     @Override
-    public void downloadAndExtractInstaller() {
+    public void downloadAndExtractInstaller() throws Exception {
 
     }
 
@@ -238,24 +220,14 @@ public class FabricLoader implements Loader {
     }
 
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
-        try {
-            Downloadable loaderVersions = new Downloadable(
-                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft), false);
+        java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+        }.getType();
 
-            String contents = loaderVersions.getContents();
+        List<FabricMetaVersion> versions = Download.build()
+                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft)).asType(type);
 
-            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
-            }.getType();
-
-            List<FabricMetaVersion> versions = Gsons.MINECRAFT.fromJson(contents, type);
-
-            return versions.stream().map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
-                    .collect(Collectors.toList());
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-        }
-
-        return null;
+        return versions.stream().map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
+                .collect(Collectors.toList());
     }
 
     @Override

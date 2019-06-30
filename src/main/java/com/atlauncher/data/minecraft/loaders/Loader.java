@@ -29,7 +29,7 @@ public interface Loader {
     public void set(Map<String, Object> metadata, File tempDir, NewInstanceInstaller instanceInstaller,
             LoaderVersion versionOverride);
 
-    public void downloadAndExtractInstaller();
+    public void downloadAndExtractInstaller() throws Exception;
 
     public void runProcessors();
 

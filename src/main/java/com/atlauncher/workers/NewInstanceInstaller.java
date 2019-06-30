@@ -158,8 +158,10 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
             determineModsToBeInstalled();
 
+            prepareFilesystem();
+
             if (this.packVersion.loader != null) {
-                this.loader = this.packVersion.getLoader().getNewLoader(new File(this.getTempDirectory(), "loader"),
+                this.loader = this.packVersion.getLoader().getNewLoader(this.temp.resolve("loader").toFile(),
                         this, this.loaderVersion);
 
                 downloadLoader();
@@ -173,8 +175,6 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
             return true;
         } catch (Exception e) {
-            Network.CLIENT.dispatcher().executorService().shutdown();
-            Network.CLIENT.connectionPool().evictAll();
             cancel(true);
             LogManager.logStackTrace(e);
         }
@@ -220,7 +220,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         hideSubProgressBar();
     }
 
-    private void downloadLoader() {
+    private void downloadLoader() throws Exception {
         addPercent(5);
         fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
         fireSubProgressUnknown();
@@ -299,9 +299,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
     private Boolean install() throws Exception {
         this.instanceIsCorrupt = true; // From this point on the instance has become corrupt
 
-        getTempDirectory().mkdirs(); // Make the temp directory
         backupSelectFiles();
-        prepareFilesystem();
         addPercent(5);
 
         determineMainClass();
@@ -1020,18 +1018,18 @@ public class NewInstanceInstaller extends InstanceInstaller {
                     this.root.resolve("libraries") };
         } else {
             directories = new Path[] { this.root, this.root.resolve("mods"), this.root.resolve("disabledmods"),
-                    this.temp, this.root.resolve("jarmods"), this.root.resolve("bin"),
+                    this.temp, this.temp.resolve("loader"), this.root.resolve("jarmods"), this.root.resolve("bin"),
                     this.root.resolve("bin/natives") };
         }
 
         for (Path directory : directories) {
             if (!Files.exists(directory)) {
-                Files.createDirectory(directory);
+                FileUtils.createDirectory(directory);
             }
         }
 
         if (this.version.getMinecraftVersion().usesCoreMods()) {
-            Files.createDirectory(this.root.resolve("coremods"));
+            FileUtils.createDirectory(this.root.resolve("coremods"));
         }
     }
 

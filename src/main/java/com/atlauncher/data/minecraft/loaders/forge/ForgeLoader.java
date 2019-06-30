@@ -29,15 +29,13 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Downloadable;
-import com.atlauncher.data.HashableDownloadable;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.network.Download;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.NewInstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
@@ -88,18 +86,8 @@ public class ForgeLoader implements Loader {
     }
 
     public ForgePromotions getPromotions() {
-        try {
-            Downloadable promotionsSlimJson = new Downloadable(
-                    "https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json", false);
-
-            String contents = promotionsSlimJson.getContents();
-
-            return Gsons.MINECRAFT.fromJson(contents, ForgePromotions.class);
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-        }
-
-        return null;
+        return Download.build().setUrl(String.format("%s/promotions_slim.json", Constants.FORGE_MAVEN))
+                .asClass(ForgePromotions.class);
     }
 
     public String getLatestVersion() {
@@ -123,18 +111,11 @@ public class ForgeLoader implements Loader {
     }
 
     @Override
-    public void downloadAndExtractInstaller() {
-        File saveTo = new File(App.settings.getLoadersDir(),
-                "/forge-" + this.minecraft + "-" + this.version + "-installer.jar");
-        HashableDownloadable download = new HashableDownloadable(this.installerUrl, saveTo, instanceInstaller);
-
-        if (download.needToDownload()) {
-            this.instanceInstaller.addTotalDownloadedBytes(download.getFilesize());
-            download.download(true);
-        }
-
-        this.tempDir.mkdir();
-        Utils.unzip(saveTo, this.tempDir);
+    public void downloadAndExtractInstaller() throws Exception {
+        Download.build().setUrl(this.installerUrl)
+                .downloadTo(new File(App.settings.getLoadersDir(),
+                        "/forge-" + this.minecraft + "-" + this.version + "-installer.jar").toPath())
+                .unzipTo(this.tempDir.toPath()).downloadFile();
 
         this.copyLocalLibraries();
     }
@@ -205,24 +186,14 @@ public class ForgeLoader implements Loader {
     }
 
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
-        try {
-            Downloadable loaderVersions = new Downloadable(
-                    String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft), false);
+        java.lang.reflect.Type type = new TypeToken<APIResponse<List<ATLauncherApiForgeVersions>>>() {
+        }.getType();
 
-            String contents = loaderVersions.getContents();
+        APIResponse<List<ATLauncherApiForgeVersions>> data = Download.build()
+                .setUrl(String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft)).asType(type);
 
-            java.lang.reflect.Type type = new TypeToken<APIResponse<List<ATLauncherApiForgeVersions>>>() {
-            }.getType();
-
-            APIResponse<List<ATLauncherApiForgeVersions>> data = Gsons.MINECRAFT.fromJson(contents, type);
-
-            return data.getData().stream().map(version -> new LoaderVersion(version.getVersion(),
-                    version.getRawVersion(), version.isRecommended(), "Forge")).collect(Collectors.toList());
-        } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-        }
-
-        return null;
+        return data.getData().stream().map(version -> new LoaderVersion(version.getVersion(), version.getRawVersion(),
+                version.isRecommended(), "Forge")).collect(Collectors.toList());
     }
 
     @Override

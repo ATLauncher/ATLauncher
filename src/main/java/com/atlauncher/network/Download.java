@@ -50,6 +50,7 @@ public final class Download {
     private String url;
     private String friendlyFileName;
     public Path to;
+    public Path unzipTo;
     public Path extractedTo;
     public Path copyTo;
     private String hash;
@@ -141,6 +142,12 @@ public final class Download {
 
     public Download downloadTo(Path to) {
         this.to = to;
+
+        return this;
+    }
+
+    public Download unzipTo(Path unzipTo) {
+        this.unzipTo = unzipTo;
 
         return this;
     }
@@ -448,8 +455,14 @@ public final class Download {
             }
         }
 
-        if (this.usesPackXz) {
+        if (Files.exists(this.to) && this.usesPackXz) {
             Utils.unXZPackFile(this.to.toFile(), this.extractedTo.toFile());
+        }
+
+        if (Files.exists(this.to) && this.unzipTo != null) {
+            FileUtils.createDirectory(this.unzipTo);
+
+            ZipUtil.unpack(this.to.toFile(), this.unzipTo.toFile());
         }
 
         if (oldPath != null && Files.exists(oldPath)) {
