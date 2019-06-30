@@ -537,12 +537,12 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         MojangDownload mojangDownload = this.isServer ? downloads.server : downloads.client;
 
+        setTotalBytes(mojangDownload.size);
+
         com.atlauncher.network.Download.build().setUrl(mojangDownload.url).hash(mojangDownload.sha1)
                 .size(mojangDownload.size).downloadTo(getMinecraftJarLibrary().toPath())
                 .copyTo(this.isServer ? getMinecraftJar().toPath() : null).withInstanceInstaller(this)
                 .withHttpClient(Network.createProgressClient(this)).downloadFile();
-
-        setTotalBytes(mojangDownload.size);
 
         hideSubProgressBar();
     }
