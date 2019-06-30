@@ -822,6 +822,12 @@ public class NewInstanceInstaller extends InstanceInstaller {
 
         smallPool.downloadAll(this);
 
+        fireSubProgressUnknown();
+
+        this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser).forEach(mod -> {
+            mod.download(this);
+        });
+
         hideSubProgressBar();
     }
 

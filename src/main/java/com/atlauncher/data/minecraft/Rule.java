@@ -17,9 +17,6 @@
  */
 package com.atlauncher.data.minecraft;
 
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-
 enum Action {
     ALLOW, DISALLOW
 }
