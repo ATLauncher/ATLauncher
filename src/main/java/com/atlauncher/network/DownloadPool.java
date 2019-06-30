@@ -23,8 +23,6 @@ import java.util.concurrent.Executors;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.Language;
-import com.atlauncher.workers.NewInstanceInstaller;
 
 @SuppressWarnings("serial")
 public final class DownloadPool extends LinkedList<Download> {
@@ -43,20 +41,6 @@ public final class DownloadPool extends LinkedList<Download> {
         synchronized (this) {
             for (Download dl : this) {
                 executor.execute(new Downloader(dl));
-            }
-        }
-        executor.shutdown();
-        if (this.wait) {
-            while (!executor.isTerminated()) {
-            }
-        }
-    }
-
-    public void downloadAll(NewInstanceInstaller installer) {
-        ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-        synchronized (this) {
-            for (Download dl : this) {
-                executor.execute(new Installer(dl, installer));
             }
         }
         executor.shutdown();
@@ -87,7 +71,7 @@ public final class DownloadPool extends LinkedList<Download> {
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
-                        if (dl.needToDownload()) {
+                        if (!dl.needToDownload()) {
                             synchronized (pool) {
                                 pool.add(dl);
                             }
@@ -118,31 +102,6 @@ public final class DownloadPool extends LinkedList<Download> {
         return false;
     }
 
-    private final class Installer implements Runnable {
-        private final Download dl;
-        private final NewInstanceInstaller installer;
-
-        private Installer(Download dl, NewInstanceInstaller installer) {
-            this.dl = dl;
-            this.installer = installer;
-        }
-
-        @Override
-        public void run() {
-            try {
-                if (this.dl.needToDownload()) {
-                    installer.fireTask(
-                            Language.INSTANCE.localize("common.downloading") + " " + this.dl.getPrintableFileName());
-                    this.dl.downloadFile();
-                } else {
-                    this.dl.copy();
-                }
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-    }
-
     private final class Downloader implements Runnable {
         private final Download dl;
 
@@ -153,7 +112,11 @@ public final class DownloadPool extends LinkedList<Download> {
         @Override
         public void run() {
             try {
-                this.dl.downloadFile();
+                if (this.dl.needToDownload()) {
+                    this.dl.downloadFile();
+                } else {
+                    this.dl.copy();
+                }
             } catch (Exception e) {
                 LogManager.logStackTrace("Error trying to download " + this.dl.to.getFileName(), e);
             }

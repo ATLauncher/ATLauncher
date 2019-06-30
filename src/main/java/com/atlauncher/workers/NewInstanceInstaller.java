@@ -521,7 +521,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         this.setTotalBytes(smallPool.totalSize());
         this.fireSubProgress(0);
 
-        smallPool.downloadAll(this);
+        smallPool.downloadAll();
 
         hideSubProgressBar();
     }
@@ -716,7 +716,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         this.setTotalBytes(smallPool.totalSize());
         this.fireSubProgress(0);
 
-        smallPool.downloadAll(this);
+        smallPool.downloadAll();
 
         hideSubProgressBar();
     }
@@ -820,7 +820,7 @@ public class NewInstanceInstaller extends InstanceInstaller {
         this.setTotalBytes(smallPool.totalSize());
         this.fireSubProgress(0);
 
-        smallPool.downloadAll(this);
+        smallPool.downloadAll();
 
         fireSubProgressUnknown();
 

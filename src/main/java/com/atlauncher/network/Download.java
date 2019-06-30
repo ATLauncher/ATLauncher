@@ -378,6 +378,10 @@ public final class Download {
     }
 
     public void downloadFile() throws IOException {
+        if (this.instanceInstaller != null && this.instanceInstaller.isCancelled()) {
+            return;
+        }
+
         if (!this.needToDownload()) {
             if (this.copyTo != null) {
                 Hashing.HashCode fileHash = Hashing.HashCode.EMPTY;
@@ -402,10 +406,6 @@ public final class Download {
         if (Files.exists(this.to)) {
             oldPath = this.to.resolveSibling(this.to.getFileName().toString() + ".bak");
             FileUtils.moveFile(this.to, oldPath, true);
-        }
-
-        if (this.instanceInstaller != null && this.instanceInstaller.isCancelled()) {
-            return;
         }
 
         if (Files.exists(this.to) && Files.isRegularFile(this.to)) {
