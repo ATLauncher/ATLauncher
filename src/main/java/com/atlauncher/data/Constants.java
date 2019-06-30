@@ -28,6 +28,8 @@ public class Constants {
     public static final int CURSE_FABRIC_CATEGORY_ID = 4780;
     public static final int CURSE_PAGINATION_SIZE = 40;
     public static final int CURSE_FABRIC_MOD_ID = 306612;
+    public static final int CURSE_MODS_SECTION_ID = 6;
+    public static final int CURSE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net";
     public static final String ATLAUNCHER_DOWNLOAD_SERVER = "https://download.nodecdn.net/containers/atl";

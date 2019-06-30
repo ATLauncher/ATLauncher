@@ -1754,9 +1754,11 @@ public class Instance implements Cloneable {
         this.settings = settings;
     }
 
-    public void addModFromCurse(CurseMod mod, CurseFile file) {
+    public void addFileFromCurse(CurseMod mod, CurseFile file) {
         File downloadLocation = new File(App.settings.getDownloadsDir(), file.fileName);
-        File finalLocation = new File(this.getModsDirectory(), file.fileName);
+        File finalLocation = new File(mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
+                ? this.getResourcePacksDirectory()
+                : this.getModsDirectory(), file.fileName);
         Downloadable download = new Downloadable(file.downloadUrl, downloadLocation, file.fileLength);
 
         if (download.needToDownload()) {
@@ -1781,8 +1783,10 @@ public class Instance implements Cloneable {
                 .collect(Collectors.toList());
 
         // add this mod
-        this.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName, Type.mods, null, mod.summary,
-                false, true, true, mod.id, file.id));
+        this.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
+                mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
+                        : Type.mods,
+                null, mod.summary, false, true, true, mod.id, file.id));
 
         Utils.copyFile(downloadLocation, finalLocation, true);
 

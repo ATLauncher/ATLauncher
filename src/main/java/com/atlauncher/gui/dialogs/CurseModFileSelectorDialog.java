@@ -134,7 +134,7 @@ public class CurseModFileSelectorDialog extends JDialog {
 
             Runnable r = new Runnable() {
                 public void run() {
-                    instance.addModFromCurse(mod, file);
+                    instance.addFileFromCurse(mod, file);
                     dialog.dispose();
                     dispose();
                 }
