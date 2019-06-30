@@ -1357,7 +1357,8 @@ public class Instance implements Cloneable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            Integer maximumMemory = this.settings.getMaximumMemory() == null ? App.settings.getMaximumMemory()
+            Integer maximumMemory = (this.settings == null || this.settings.getMaximumMemory() == null)
+                    ? App.settings.getMaximumMemory()
                     : settings.getMaximumMemory();
             if ((maximumMemory < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
                 int ret = DialogManager.optionDialog()
@@ -1373,7 +1374,8 @@ public class Instance implements Cloneable {
                     return false;
                 }
             }
-            Integer permGen = this.settings.getPermGen() == null ? App.settings.getPermGen() : settings.getPermGen();
+            Integer permGen = (this.settings == null || this.settings.getPermGen() == null) ? App.settings.getPermGen()
+                    : settings.getPermGen();
             if (permGen < this.permgen) {
                 int ret = DialogManager.optionDialog()
                         .setTitle(Language.INSTANCE.localize("instance.insufficientpermgentitle"))

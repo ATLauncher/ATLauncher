@@ -750,6 +750,33 @@ public class NewInstanceInstaller extends InstanceInstaller {
             }
         });
 
+        if (this.loader != null && this.loader.getInstallLibraries() != null) {
+            this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
+                    .forEach(library -> {
+                        if (isServer) {
+                            File libraryFile = new File(App.settings.getGameLibrariesDir(),
+                                    library.downloads.artifact.path);
+
+                            File serverFile = new File(getLibrariesDirectory(), library.downloads.artifact.path);
+
+                            serverFile.getParentFile().mkdirs();
+
+                            Utils.copyFile(libraryFile, serverFile, true);
+                        }
+                    });
+        }
+
+        if (this.loader != null && isServer) {
+            Library forgeLibrary = this.loader.getLibraries().stream()
+                    .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
+
+            if (forgeLibrary != null) {
+                File extractedLibraryFile = new File(App.settings.getGameLibrariesDir(),
+                        forgeLibrary.downloads.artifact.path);
+                Utils.copyFile(extractedLibraryFile, new File(this.root.toFile(), this.loader.getServerJar()), true);
+            }
+        }
+
         hideSubProgressBar();
     }
 
@@ -1045,6 +1072,29 @@ public class NewInstanceInstaller extends InstanceInstaller {
                 getServerJar());
         batFile.setExecutable(true);
         shFile.setExecutable(true);
+    }
+
+    public String getServerJar() {
+        if (this.loader != null) {
+            return this.loader.getServerJar();
+        }
+
+        com.atlauncher.data.json.Mod forge = null;
+        com.atlauncher.data.json.Mod mcpc = null;
+        for (com.atlauncher.data.json.Mod mod : this.selectedMods) {
+            if (mod.getType() == com.atlauncher.data.json.ModType.forge) {
+                forge = mod;
+            } else if (mod.getType() == com.atlauncher.data.json.ModType.mcpc) {
+                mcpc = mod;
+            }
+        }
+        if (mcpc != null) {
+            return mcpc.getFile();
+        } else if (forge != null) {
+            return forge.getFile();
+        } else {
+            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar";
+        }
     }
 
     protected void fireProgress(double percent) {

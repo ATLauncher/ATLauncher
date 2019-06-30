@@ -30,7 +30,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -118,7 +117,7 @@ public class Forge113Loader extends ForgeLoader {
     @Override
     public String getServerJar() {
         Library forgeLibrary = this.getVersion().libraries.stream()
-                .filter(library -> library.downloads.artifact.url.isEmpty()).findFirst().orElse(null);
+                .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
 
         if (forgeLibrary != null) {
             return forgeLibrary.downloads.artifact.path.substring(
