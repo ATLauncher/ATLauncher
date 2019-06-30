@@ -20,6 +20,7 @@ package com.atlauncher.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,6 +33,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -95,8 +97,13 @@ public class CurseModFileSelectorDialog extends JDialog {
         filesDropdown.setEnabled(false);
         filesPanel.add(filesDropdown);
 
+        JScrollPane scrollPane = new JScrollPane(dependenciesPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(550, 250));
+
         middle.add(filesPanel, BorderLayout.NORTH);
-        middle.add(dependenciesPanel, BorderLayout.SOUTH);
+        middle.add(scrollPane, BorderLayout.SOUTH);
 
         this.getFiles();
 
@@ -167,10 +174,16 @@ public class CurseModFileSelectorDialog extends JDialog {
                         dependenciesPanel.add(new CurseFileDependencyCard(selectedFile, dependency, instance));
                     });
 
-                    setSize(550, 350);
+                    dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
+                            (dependencies.size() / 2) + 1));
+
+                    setSize(550, 400);
                     setLocationRelativeTo(App.settings.getParent());
 
                     dependenciesPanel.setVisible(true);
+
+                    scrollPane.repaint();
+                    scrollPane.validate();
                 }
             }
         });

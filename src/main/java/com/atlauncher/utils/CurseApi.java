@@ -22,12 +22,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
 
 /**
@@ -44,12 +43,10 @@ public class CurseApi {
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), Constants.CURSE_PAGINATION_SIZE,
                     page * Constants.CURSE_PAGINATION_SIZE);
 
-            Downloadable downloadable = new Downloadable(url, false);
-
             java.lang.reflect.Type type = new TypeToken<List<CurseMod>>() {
             }.getType();
 
-            return Gsons.DEFAULT.fromJson(downloadable.getContents(), type);
+            return Download.build().setUrl(url).asType(type);
         } catch (UnsupportedEncodingException e) {
             LogManager.logStackTrace(e);
         }
@@ -66,21 +63,14 @@ public class CurseApi {
     }
 
     public static List<CurseFile> getFilesForMod(int modId) {
-        String url = String.format("%s/addon/%d/files", Constants.CURSE_API_URL, modId);
-
-        Downloadable downloadable = new Downloadable(url, false);
-
         java.lang.reflect.Type type = new TypeToken<List<CurseFile>>() {
         }.getType();
 
-        return Gsons.DEFAULT.fromJson(downloadable.getContents(), type);
+        return Download.build().setUrl(String.format("%s/addon/%d/files", Constants.CURSE_API_URL, modId)).asType(type);
     }
 
     public static CurseMod getModById(int modId) {
-        String url = String.format("%s/addon/%d", Constants.CURSE_API_URL, modId);
-
-        Downloadable downloadable = new Downloadable(url, false);
-
-        return Gsons.DEFAULT.fromJson(downloadable.getContents(), CurseMod.class);
+        return Download.build().setUrl(String.format("%s/addon/%d", Constants.CURSE_API_URL, modId))
+                .asClass(CurseMod.class);
     }
 }

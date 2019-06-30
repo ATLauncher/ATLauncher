@@ -404,6 +404,8 @@ public final class Download {
                     this.copy();
                 }
             }
+
+            runPostProcessors();
             return;
         }
 
@@ -455,6 +457,14 @@ public final class Download {
             }
         }
 
+        runPostProcessors();
+
+        if (oldPath != null && Files.exists(oldPath)) {
+            FileUtils.delete(oldPath);
+        }
+    }
+
+    private void runPostProcessors() {
         if (Files.exists(this.to) && this.usesPackXz) {
             Utils.unXZPackFile(this.to.toFile(), this.extractedTo.toFile());
         }
@@ -463,10 +473,6 @@ public final class Download {
             FileUtils.createDirectory(this.unzipTo);
 
             ZipUtil.unpack(this.to.toFile(), this.unzipTo.toFile());
-        }
-
-        if (oldPath != null && Files.exists(oldPath)) {
-            FileUtils.delete(oldPath);
         }
     }
 

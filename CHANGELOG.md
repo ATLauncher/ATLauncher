@@ -7,3 +7,4 @@
 -   Rework the way downloads are handled
 -   Remove the option to download from multiple ATLauncher servers
 -   Add support for adding resource packs from Curse
+-   Fix Curse mod file selector dependencies not showing well
