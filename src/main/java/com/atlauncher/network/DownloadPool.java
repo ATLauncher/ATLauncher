@@ -71,7 +71,7 @@ public final class DownloadPool extends LinkedList<Download> {
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
-                        if (!dl.needToDownload()) {
+                        if (dl.needToDownload()) {
                             synchronized (pool) {
                                 pool.add(dl);
                             }
