@@ -258,9 +258,9 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
-            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean assetsMapToResources, LoggingClient logging, boolean isDev, boolean isPlayable,
-            Java java, boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
+            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass, String assets,
+            boolean assetsMapToResources, LoggingClient logging, boolean isDev, boolean isPlayable, Java java,
+            boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this.name = name;
         this.pack = pack;
         this.realPack = realPack;
@@ -318,12 +318,12 @@ public class Instance implements Cloneable {
      */
     public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
             String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
-            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass,
-            String assets, boolean assetsMapToResources, LoggingClient logging, boolean isDev, Java java,
+            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass, String assets,
+            boolean assetsMapToResources, LoggingClient logging, boolean isDev, Java java,
             boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
         this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
-                libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
-                logging, isDev, true, java, enableCurseIntegration, enableEditingMods, loaderVersion);
+                libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources, logging, isDev,
+                true, java, enableCurseIntegration, enableEditingMods, loaderVersion);
     }
 
     /**
@@ -1357,11 +1357,13 @@ public class Instance implements Cloneable {
             App.settings.setMinecraftLaunched(false);
             return false;
         } else {
-            if ((App.settings.getMaximumMemory() < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
+            Integer maximumMemory = this.settings.getMaximumMemory() == null ? App.settings.getMaximumMemory()
+                    : settings.getMaximumMemory();
+            if ((maximumMemory < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
                 int ret = DialogManager.optionDialog()
                         .setTitle(Language.INSTANCE.localize("instance.insufficientramtitle"))
-                        .setContent(Language.INSTANCE.localizeWithReplace("instance.insufficientram",
-                                "<b>" + this.memory + "</b> " + "MB<br/><br/>"))
+                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace(
+                                "instance.insufficientram", "<b>" + this.memory + "</b> " + "MB<br/><br/>")))
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
 
@@ -1371,11 +1373,12 @@ public class Instance implements Cloneable {
                     return false;
                 }
             }
-            if (App.settings.getPermGen() < this.permgen) {
+            Integer permGen = this.settings.getPermGen() == null ? App.settings.getPermGen() : settings.getPermGen();
+            if (permGen < this.permgen) {
                 int ret = DialogManager.optionDialog()
                         .setTitle(Language.INSTANCE.localize("instance.insufficientpermgentitle"))
-                        .setContent(Language.INSTANCE.localizeWithReplace("instance.insufficientpermgen",
-                                "<b>" + this.permgen + "</b> " + "MB<br/><br/>"))
+                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace(
+                                "instance.insufficientpermgen", "<b>" + this.permgen + "</b> " + "MB<br/><br/>")))
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
@@ -1636,14 +1639,12 @@ public class Instance implements Cloneable {
         Instance clone;
         if (!this.userLock.equals(null)) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
-                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets,
-                    assetsMapToResources, logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods,
-                    loaderVersion);
+                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
+                    logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods, loaderVersion);
         } else {
             clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
-                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets,
-                    assetsMapToResources, logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods,
-                    loaderVersion);
+                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
+                    logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods, loaderVersion);
         }
         return clone;
     }
