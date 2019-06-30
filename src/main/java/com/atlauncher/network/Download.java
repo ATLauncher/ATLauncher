@@ -76,6 +76,11 @@ public final class Download {
 
             return this.response.body().string();
         } catch (IOException e) {
+            if (this.response != null) {
+                this.response.close();
+                this.response = null;
+            }
+
             LogManager.logStackTrace(e);
         }
 
@@ -93,6 +98,11 @@ public final class Download {
 
             return gson.fromJson(this.response.body().charStream(), tClass);
         } catch (IOException e) {
+            if (this.response != null) {
+                this.response.close();
+                this.response = null;
+            }
+
             LogManager.logStackTrace(e);
         }
 
@@ -114,6 +124,11 @@ public final class Download {
 
             return gson.fromJson(this.response.body().charStream(), tClass);
         } catch (IOException e) {
+            if (this.response != null) {
+                this.response.close();
+                this.response = null;
+            }
+
             LogManager.logStackTrace(e);
         }
 
@@ -178,6 +193,11 @@ public final class Download {
     }
 
     private void execute() throws IOException {
+        // connection is already open
+        if (this.response != null) {
+            return;
+        }
+
         Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", Network.USER_AGENT);
 
         this.response = httpClient.newCall(builder.build()).execute();
@@ -192,6 +212,11 @@ public final class Download {
             this.execute();
             return this.response.code();
         } catch (Exception e) {
+            if (this.response != null) {
+                this.response.close();
+                this.response = null;
+            }
+
             LogManager.logStackTrace(e);
             return -1;
         }
@@ -242,6 +267,10 @@ public final class Download {
                 }
             }
         } catch (Exception ignored) {
+            if (this.response != null) {
+                this.response.close();
+                this.response = null;
+            }
             return -1;
         }
 
@@ -321,6 +350,11 @@ public final class Download {
         try {
             this.execute();
         } catch (IOException e) {
+            if (this.response != null) {
+                this.response.close();
+                this.response = null;
+            }
+
             LogManager.logStackTrace(e);
 
             return false;
