@@ -49,13 +49,12 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.json.Version;
-import com.atlauncher.data.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.LoggingClient;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-import com.atlauncher.workers.NewInstanceInstaller;
 
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
@@ -271,7 +270,7 @@ public class InstanceInstallerDialog extends JDialog {
                         ? (LoaderVersion) loaderVersionsDropDown.getSelectedItem()
                         : null;
 
-                final InstanceInstaller instanceInstaller = new NewInstanceInstaller(
+                final InstanceInstaller instanceInstaller = new InstanceInstaller(
                         (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,
                         showModsChooser, loaderVersion) {
 
@@ -292,7 +291,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
                                             : Language.INSTANCE.localize("common.installed"));
                             if (isReinstall) {
-                                if (shouldCoruptInstance()) {
+                                if (instanceIsCorrupt) {
                                     App.settings.setInstanceUnplayable(instance);
                                 }
                             }
@@ -314,7 +313,7 @@ public class InstanceInstallerDialog extends JDialog {
                                         + "<br/><br/>"
                                         + ((isServer)
                                                 ? Language.INSTANCE.localizeWithReplace("instance" + ".finditserver",
-                                                        "<br/><br/>" + this.getRootDirectory().getAbsolutePath())
+                                                        "<br/><br/>" + this.root.toFile().getAbsolutePath())
                                                 : Language.INSTANCE.localize("instance.findit"));
                                 title = pack.getName() + " " + version.getVersion() + " "
                                         + Language.INSTANCE.localize("common.installed");
@@ -392,7 +391,7 @@ public class InstanceInstallerDialog extends JDialog {
                                     text = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "
                                             + Language.INSTANCE.localize("common.reinstalled") + "<br/><br/>"
-                                            + (this.shouldCoruptInstance()
+                                            + (this.instanceIsCorrupt
                                                     ? Language.INSTANCE.localize("instance.nolongerplayable")
                                                     : "")
                                             + "<br/><br/>" + Language.INSTANCE.localize("instance.checkerrorlogs")
@@ -400,12 +399,12 @@ public class InstanceInstallerDialog extends JDialog {
                                     title = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.not") + " "
                                             + Language.INSTANCE.localize("common.reinstalled");
-                                    if (this.shouldCoruptInstance()) {
+                                    if (this.instanceIsCorrupt) {
                                         App.settings.setInstanceUnplayable(instance);
                                     }
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
-                                    Utils.delete(this.getRootDirectory());
+                                    Utils.delete(this.root.toFile());
                                     type = DialogManager.ERROR;
                                     text = pack.getName() + " " + version.getVersion() + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "

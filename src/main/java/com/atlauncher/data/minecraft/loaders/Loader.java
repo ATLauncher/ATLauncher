@@ -23,10 +23,10 @@ import java.util.Map;
 
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
-import com.atlauncher.workers.NewInstanceInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 
 public interface Loader {
-    public void set(Map<String, Object> metadata, File tempDir, NewInstanceInstaller instanceInstaller,
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
             LoaderVersion versionOverride);
 
     public void downloadAndExtractInstaller() throws Exception;

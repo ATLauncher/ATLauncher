@@ -18,6 +18,8 @@
 package com.atlauncher;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.atlauncher.data.Constants;
 import com.atlauncher.listener.ProgressListener;
@@ -25,7 +27,7 @@ import com.atlauncher.network.DebugLoggingInterceptor;
 import com.atlauncher.network.UserAgentInterceptor;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ProgressResponseBody;
-import com.atlauncher.workers.NewInstanceInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -39,7 +41,11 @@ public final class Network {
             + "Gecko) Chrome/28.0.1500.72 Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION + " Java/"
             + Java.getLauncherJavaVersion();
 
-    public static OkHttpClient createProgressClient(final NewInstanceInstaller installer) {
+    static {
+        Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
+    }
+
+    public static OkHttpClient createProgressClient(final InstanceInstaller installer) {
         final ProgressListener progressListener = new ProgressListener() {
             public void update(long bytesRead, long contentLength, boolean done) {
                 if (bytesRead > 0 && installer != null) {

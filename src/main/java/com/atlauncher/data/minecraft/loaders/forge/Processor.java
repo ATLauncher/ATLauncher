@@ -68,7 +68,7 @@ public class Processor {
         // delete any outputs that are invalid. They still need to run
         this.checkOutputs(installProfile, extractedDir, instanceInstaller);
 
-        File librariesDirectory = instanceInstaller.isServer() ? instanceInstaller.getLibrariesDirectory()
+        File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
                 : App.settings.getGameLibrariesDir();
 
         File jarPath = Utils.convertMavenIdentifierToFile(this.jar, librariesDirectory);
@@ -117,7 +117,7 @@ public class Processor {
             if (start == '{' && end == '}') {
                 String key = arg.substring(1, arg.length() - 1);
                 LogManager.debug("Getting data with key of " + key);
-                String value = installProfile.data.get(key).getValue(!instanceInstaller.isServer(), librariesDirectory);
+                String value = installProfile.data.get(key).getValue(!instanceInstaller.isServer, librariesDirectory);
 
                 if (value == null || value.isEmpty()) {
                     LogManager.error("Failed to process processor with jar " + this.jar + " as the argument with name "
@@ -183,7 +183,7 @@ public class Processor {
             return;
         }
 
-        File librariesDirectory = instanceInstaller.isServer() ? instanceInstaller.getLibrariesDirectory()
+        File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
                 : App.settings.getGameLibrariesDir();
 
         for (Entry<String, String> entry : this.outputs.entrySet()) {
@@ -196,7 +196,7 @@ public class Processor {
             if (start == '{' && end == '}') {
                 LogManager.debug("Getting data with key of " + key.substring(1, key.length() - 1));
                 String dataItem = installProfile.data.get(key.substring(1, key.length() - 1))
-                        .getValue(!instanceInstaller.isServer(), librariesDirectory);
+                        .getValue(!instanceInstaller.isServer, librariesDirectory);
                 if (dataItem == null || dataItem.isEmpty()) {
                     LogManager.error("Failed to process processor with jar " + this.jar + " as the output with key "
                             + key + " doesn't have a corresponding data entry");
@@ -217,7 +217,7 @@ public class Processor {
                 if (valueStart == '{' && valueEnd == '}') {
                     LogManager.debug("Getting data with key of " + value.substring(1, value.length() - 1));
                     String valueDataItem = installProfile.data.get(value.substring(1, value.length() - 1))
-                            .getValue(!instanceInstaller.isServer(), librariesDirectory);
+                            .getValue(!instanceInstaller.isServer, librariesDirectory);
                     if (dataItem == null || dataItem.isEmpty()) {
                         LogManager.error("Failed to process processor with jar " + this.jar
                                 + " as the output with value " + value + " doesn't have a corresponding data entry");

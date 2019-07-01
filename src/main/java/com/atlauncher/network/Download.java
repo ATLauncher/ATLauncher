@@ -34,7 +34,7 @@ import com.atlauncher.Network;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.NewInstanceInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.Gson;
 
 import org.zeroturnaround.zip.ZipUtil;
@@ -56,7 +56,7 @@ public final class Download {
     private String hash;
     private List<String> checksums;
     public long size = -1L;
-    private NewInstanceInstaller instanceInstaller;
+    private InstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
     private boolean usesPackXz = false;
 
@@ -175,7 +175,7 @@ public final class Download {
         return this;
     }
 
-    public Download withInstanceInstaller(NewInstanceInstaller instanceInstaller) {
+    public Download withInstanceInstaller(InstanceInstaller instanceInstaller) {
         this.instanceInstaller = instanceInstaller;
         return this;
     }

@@ -36,7 +36,7 @@ import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.workers.NewInstanceInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
 public class ForgeLoader implements Loader {
@@ -45,10 +45,10 @@ public class ForgeLoader implements Loader {
     protected String rawVersion;
     protected String minecraft;
     protected File tempDir;
-    protected NewInstanceInstaller instanceInstaller;
+    protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(Map<String, Object> metadata, File tempDir, NewInstanceInstaller instanceInstaller,
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
             LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
@@ -155,7 +155,7 @@ public class ForgeLoader implements Loader {
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
         return installProfile.getLibraries().stream().filter(
-                library -> !this.instanceInstaller.isServer() || !library.name.equals(installProfile.install.path))
+                library -> !this.instanceInstaller.isServer || !library.name.equals(installProfile.install.path))
                 .collect(Collectors.toList());
     }
 

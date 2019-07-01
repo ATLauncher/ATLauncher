@@ -41,7 +41,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Java;
-import com.atlauncher.data.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;

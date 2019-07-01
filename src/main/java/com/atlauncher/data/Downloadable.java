@@ -44,7 +44,6 @@ public class Downloadable {
     public String hash;
     public int size;
     public HttpURLConnection connection;
-    public InstanceInstaller instanceInstaller;
     public boolean isATLauncherDownload;
     public File copyTo;
     public boolean actuallyCopy;
@@ -72,7 +71,6 @@ public class Downloadable {
         this.file = file;
         this.hash = hash;
         this.size = size;
-        this.instanceInstaller = instanceInstaller;
         this.isATLauncherDownload = isATLauncherDownload;
         this.copyTo = copyTo;
         this.actuallyCopy = actuallyCopy;
@@ -235,11 +233,6 @@ public class Downloadable {
     }
 
     protected HttpURLConnection getConnection() {
-        if (this.instanceInstaller != null) {
-            if (this.instanceInstaller.isCancelled()) {
-                return null;
-            }
-        }
         if (this.connection == null) {
             LogManager.debug("Opening connection to " + this.url, 3);
             try {
@@ -296,9 +289,6 @@ public class Downloadable {
                     } else {
                         LogManager.error("Failed to download " + this.beforeURL + " from all " + Constants.LAUNCHER_NAME
                                 + " servers. " + "Cancelling install!");
-                        if (this.instanceInstaller != null) {
-                            instanceInstaller.cancel(true);
-                        }
                     }
                 }
             }
@@ -307,11 +297,6 @@ public class Downloadable {
     }
 
     private void downloadFile(boolean downloadAsLibrary) {
-        if (instanceInstaller != null) {
-            if (instanceInstaller.isCancelled()) {
-                return;
-            }
-        }
         InputStream in = null;
         FileOutputStream writer = null;
         try {
@@ -326,9 +311,6 @@ public class Downloadable {
             while ((bytesRead = in.read(buffer)) > 0) {
                 writer.write(buffer, 0, bytesRead);
                 buffer = new byte[2048];
-                if (this.instanceInstaller != null && downloadAsLibrary && getFilesize() != 0) {
-                    this.instanceInstaller.addDownloadedBytes(bytesRead);
-                }
             }
         } catch (SocketException e) {
             LogManager.error("Failed to download " + this.url + " due to SocketException!");
@@ -360,11 +342,6 @@ public class Downloadable {
     }
 
     public String getContents() {
-        if (instanceInstaller != null) {
-            if (instanceInstaller.isCancelled()) {
-                return null;
-            }
-        }
         StringBuilder response = null;
         try {
             InputStream in = null;
@@ -412,11 +389,6 @@ public class Downloadable {
             this.oldFile = new File(this.file.getParent(), this.file.getName() + ".bak");
             Utils.moveFile(this.file, this.oldFile, true);
         }
-        if (instanceInstaller != null) {
-            if (instanceInstaller.isCancelled()) {
-                return;
-            }
-        }
         if (!this.file.canWrite()) {
             Utils.delete(this.file);
         }
@@ -453,9 +425,6 @@ public class Downloadable {
                 if (this.file.exists()) {
                     Utils.delete(this.file); // Delete file since it doesn't match MD5
                 }
-                if (attempts != 1 && downloadAsLibrary) {
-                    this.instanceInstaller.addTotalDownloadedBytes(this.size);
-                }
                 downloadFile(downloadAsLibrary); // Keep downloading file until it matches MD5
             }
             if (!done) {
@@ -465,27 +434,18 @@ public class Downloadable {
                                 + "Expected hash of " + getHash() + " but got " + fileHash + " instead. Trying another "
                                 + "server!");
                         this.url = server.getFileURL(this.beforeURL);
-                        if (downloadAsLibrary) {
-                            this.instanceInstaller.addTotalDownloadedBytes(this.size);
-                        }
                         download(downloadAsLibrary); // Redownload the file
                     } else {
                         Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
                         LogManager.error("Failed to download file " + this.file.getName() + " from all "
                                 + Constants.LAUNCHER_NAME
                                 + "servers. Copied to FailedDownloads Folder. Cancelling install!");
-                        if (this.instanceInstaller != null) {
-                            instanceInstaller.cancel(true);
-                        }
                     }
                 } else {
                     Utils.copyFile(this.file, App.settings.getFailedDownloadsDir());
                     LogManager.error("Error downloading " + this.file.getName() + " from " + this.url + ". Expected "
                             + "hash of " + getHash() + " but got " + fileHash + " instead. Copied to FailedDownloads "
                             + "Folder. Cancelling install!");
-                    if (this.instanceInstaller != null) {
-                        instanceInstaller.cancel(true);
-                    }
                 }
             } else if (this.copyTo != null && this.actuallyCopy) {
                 String fileHash2;

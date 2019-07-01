@@ -49,8 +49,6 @@ public final class Gsons {
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .registerTypeAdapter(MojangArguments.class, new MojangArgumentsTypeAdapter())
-            .registerTypeAdapter(com.atlauncher.data.loaders.fabric.FabricMetaLauncherMeta.class,
-                    new com.atlauncher.data.loaders.fabric.FabricMetaLauncherMetaTypeAdapter())
             .registerTypeAdapter(Downloads.class, new DownloadsTypeAdapter())
             .registerTypeAdapter(File.class, new FileTypeAdapter())
             .registerTypeAdapter(MojangStatus.class, new MojangStatusTypeAdapter()).create();

@@ -62,7 +62,8 @@ public class Action {
     public void convertMods(InstanceInstaller instanceInstaller) {
         Mod toAdd = null;
         for (String name : this.mod) {
-            toAdd = instanceInstaller.getModByName(name);
+            toAdd = instanceInstaller.allMods.stream().filter(mod -> mod.name.equalsIgnoreCase(name)).findFirst()
+                    .orElse(null);
             if (toAdd != null) {
                 addMod(toAdd);
             }
@@ -76,39 +77,34 @@ public class Action {
     }
 
     public void execute(InstanceInstaller instanceInstaller) {
-        if ((instanceInstaller.isServer() && !server) || (!instanceInstaller.isServer() && !client)) {
+        if ((instanceInstaller.isServer && !server) || (!instanceInstaller.isServer && !client)) {
             return;
         }
         convertMods(instanceInstaller);
-        Utils.deleteContents(instanceInstaller.getTempActionsDirectory());
+        Utils.deleteContents(instanceInstaller.temp.resolve("actions").toFile());
         instanceInstaller.fireTask("Executing Action");
         instanceInstaller.fireSubProgressUnknown();
         if (this.action == TheAction.createZip) {
             if (mod.size() >= 2) {
                 for (Mod mod : this.mods) {
-                    Utils.unzip(mod.getInstalledFile(instanceInstaller), instanceInstaller.getTempActionsDirectory());
+                    Utils.unzip(mod.getInstalledFile(instanceInstaller),
+                            instanceInstaller.temp.resolve("actions").toFile());
                 }
                 switch (this.type) {
-                    case mods:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                .getModsDirectory(), saveAs));
-                        break;
-                    case coremods:
-                        if (instanceInstaller.getVersion().getMinecraftVersion().usesCoreMods()) {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                    .getCoreModsDirectory(), saveAs));
-                        } else {
-                            Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                    .getModsDirectory(), saveAs));
-                        }
-                        break;
-                    case jar:
-                        Utils.zip(instanceInstaller.getTempActionsDirectory(), new File(instanceInstaller
-                                .getJarModsDirectory(), saveAs));
-                        instanceInstaller.addToJarOrder(this.saveAs);
-                        break;
-                    default:
-                        break;
+                case mods:
+                    Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
+                            new File(instanceInstaller.root.resolve("mods").toFile(), saveAs));
+                    break;
+                case coremods:
+                    Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
+                            new File(instanceInstaller.root.resolve("coremods").toFile(), saveAs));
+                    break;
+                case jar:
+                    Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
+                            new File(instanceInstaller.root.resolve("jarmods").toFile(), saveAs));
+                    break;
+                default:
+                    break;
                 }
             }
         } else if (this.action == TheAction.rename) {

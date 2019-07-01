@@ -43,17 +43,17 @@ import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.NewInstanceInstaller;
+import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
 public class FabricLoader implements Loader {
     protected String minecraft;
     protected FabricMetaVersion version;
     protected File tempDir;
-    protected NewInstanceInstaller instanceInstaller;
+    protected InstanceInstaller instanceInstaller;
 
     @Override
-    public void set(Map<String, Object> metadata, File tempDir, NewInstanceInstaller instanceInstaller,
+    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
             LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
@@ -100,7 +100,7 @@ public class FabricLoader implements Loader {
 
         libraries.add(new FabricLibrary(this.version.loader.maven));
         libraries.add(new FabricLibrary(this.version.intermediary.maven));
-        libraries.addAll(this.version.launcherMeta.getLibraries(this.instanceInstaller.isServer()));
+        libraries.addAll(this.version.launcherMeta.getLibraries(this.instanceInstaller.isServer));
 
         return libraries;
     }
@@ -113,7 +113,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public String getMainClass() {
-        return this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer());
+        return this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public void runProcessors() {
-        if (!this.instanceInstaller.isServer()) {
+        if (!this.instanceInstaller.isServer) {
             return;
         }
 
@@ -136,7 +136,7 @@ public class FabricLoader implements Loader {
     }
 
     private void makeServerLaunchJar() {
-        File file = new File(this.instanceInstaller.getRootDirectory(), "fabric-server-launch.jar");
+        File file = new File(this.instanceInstaller.root.toFile(), "fabric-server-launch.jar");
         if (file.exists()) {
             Utils.delete(file);
         }
@@ -164,7 +164,7 @@ public class FabricLoader implements Loader {
                 addedEntries.add("fabric-server-launch.properties");
                 zipOutputStream.putNextEntry(new ZipEntry("fabric-server-launch.properties"));
                 zipOutputStream.write(
-                        ("launch.mainClass=" + this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer())
+                        ("launch.mainClass=" + this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer)
                                 + "\n").getBytes(StandardCharsets.UTF_8));
                 zipOutputStream.closeEntry();
 
@@ -195,7 +195,7 @@ public class FabricLoader implements Loader {
             outputStream.close();
 
             FileOutputStream propertiesOutputStream = new FileOutputStream(
-                    new File(this.instanceInstaller.getRootDirectory(), "fabric-server-launcher.properties"));
+                    new File(this.instanceInstaller.root.toFile(), "fabric-server-launcher.properties"));
             propertiesOutputStream.write(("serverJar=" + this.instanceInstaller.getMinecraftJar().getName() + "\n")
                     .getBytes(StandardCharsets.UTF_8));
             propertiesOutputStream.close();
