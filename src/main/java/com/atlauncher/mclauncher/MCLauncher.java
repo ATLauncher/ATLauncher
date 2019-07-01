@@ -30,8 +30,9 @@ import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.LoginResponse;
-import com.atlauncher.data.MinecraftVersion;
-import com.atlauncher.data.mojang.MojangVersion;
+import com.atlauncher.data.minecraft.MinecraftVersion;
+import com.atlauncher.data.minecraft.VersionManifest;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.mojang.PropertyMapSerializer;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -200,19 +201,26 @@ public class MCLauncher {
 
         if (instance.hasArguments()) {
             launchArguments.addAll(instance.getArguments());
+        } else if (instance.hasMinecraftArguments()) {
+            launchArguments = Arrays.asList(instance.getMinecraftArguments().split(" "));
         } else {
-            MinecraftVersion minecraftVersion = instance.getActualMinecraftVersion();
+            VersionManifest versionManifest = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT))
+                    .asClass(VersionManifest.class);
+
+            VersionManifestVersion minecraftVersion = versionManifest.versions.stream()
+                    .filter(version -> version.id.equalsIgnoreCase(instance.getMinecraftVersion())).findFirst()
+                    .orElse(null);
 
             if (minecraftVersion != null) {
-                MojangVersion mojangVersion = minecraftVersion.getMojangVersion();
+                MinecraftVersion version = com.atlauncher.network.Download.build().setUrl(minecraftVersion.url)
+                        .asClass(MinecraftVersion.class);
 
-                if (mojangVersion.hasArguments()) {
-                    launchArguments = Arrays.asList(mojangVersion.getArguments().asString().split(" "));
-                } else {
-                    launchArguments = Arrays.asList(mojangVersion.getMinecraftArguments().split(" "));
+                if (version.arguments != null) {
+                    launchArguments = version.arguments.asStringList();
+                } else if (version.minecraftArguments != null) {
+                    launchArguments = Arrays.asList(version.minecraftArguments.split(" "));
                 }
-            } else if (instance.hasMinecraftArguments()) {
-                launchArguments = Arrays.asList(instance.getMinecraftArguments().split(" "));
             }
         }
 

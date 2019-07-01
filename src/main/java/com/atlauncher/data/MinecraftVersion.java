@@ -18,8 +18,6 @@
 package com.atlauncher.data;
 
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.mojang.MojangVersion;
-import com.google.gson.annotations.SerializedName;
 
 @Json
 public class MinecraftVersion {
@@ -27,19 +25,12 @@ public class MinecraftVersion {
     private boolean server;
     private boolean coremods;
 
-    @SerializedName("json")
-    private MojangVersion mojangVersion;
-
     public boolean canCreateServer() {
         return this.server;
     }
 
     public String getVersion() {
         return this.version;
-    }
-
-    public MojangVersion getMojangVersion() {
-        return this.mojangVersion;
     }
 
     public boolean usesCoreMods() {

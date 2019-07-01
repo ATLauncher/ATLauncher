@@ -390,7 +390,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // if none set by pack, then use the minecraft one
         if (this.mainClass == null) {
-            this.mainClass = this.version.getMinecraftVersion().getMojangVersion().getMainClass();
+            this.mainClass = this.minecraftVersion.mainClass;
         }
     }
 
