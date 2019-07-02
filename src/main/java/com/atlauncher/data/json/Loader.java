@@ -75,7 +75,10 @@ public class Loader {
     @SuppressWarnings("unchecked")
     public List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
-            Method method = Class.forName(this.chooseClassName).getDeclaredMethod(this.chooseMethod, String.class);
+            Method method = Class
+                    .forName(this.chooseClassName.replace("com.atlauncher.data.loaders",
+                            "com.atlauncher.data.minecraft.loaders"))
+                    .getDeclaredMethod(this.chooseMethod, String.class);
 
             return (List<LoaderVersion>) method.invoke(null, minecraft);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
