@@ -805,7 +805,7 @@ public class Utils {
             byte[] decordedValue = Base64.decode(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
             decryptedValue = new String(decValue);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return decryptedValue;
     }

@@ -46,21 +46,16 @@ public final class Network {
     }
 
     public static OkHttpClient createProgressClient(final InstanceInstaller installer) {
-        final ProgressListener progressListener = new ProgressListener() {
-            public void update(long bytesRead, long contentLength, boolean done) {
-                if (bytesRead > 0 && installer != null) {
-                    installer.addDownloadedBytes(bytesRead);
-                }
+        final ProgressListener progressListener = (bytesRead, contentLength, done) -> {
+            if (bytesRead > 0 && installer != null) {
+                installer.addDownloadedBytes(bytesRead);
             }
         };
 
-        return Network.CLIENT.newBuilder().addNetworkInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Response originalResponse = chain.proceed(chain.request());
-                return originalResponse.newBuilder()
-                        .body(new ProgressResponseBody(originalResponse.body(), progressListener)).build();
-            }
+        return Network.CLIENT.newBuilder().addNetworkInterceptor(chain -> {
+            Response originalResponse = chain.proceed(chain.request());
+            return originalResponse.newBuilder()
+                    .body(new ProgressResponseBody(originalResponse.body(), progressListener)).build();
         }).build();
     }
 }

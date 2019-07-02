@@ -107,15 +107,11 @@ public final class AddModsDialog extends JDialog {
 
         prevButton = new JButton("<<");
         prevButton.setEnabled(false);
-        prevButton.addActionListener(e -> {
-            goToPreviousPage();
-        });
+        prevButton.addActionListener(e -> goToPreviousPage());
 
         nextButton = new JButton(">>");
         nextButton.setEnabled(false);
-        nextButton.addActionListener(e -> {
-            goToNextPage();
-        });
+        nextButton.addActionListener(e -> goToNextPage());
 
         bottomPanel.add(prevButton);
         bottomPanel.add(nextButton);
@@ -123,11 +119,7 @@ public final class AddModsDialog extends JDialog {
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);
 
-        this.searchField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                searchForMods();
-            }
-        });
+        this.searchField.addActionListener(e -> searchForMods());
 
         this.searchButton.addActionListener(e -> searchForMods());
 
@@ -170,16 +162,14 @@ public final class AddModsDialog extends JDialog {
         prevButton.setEnabled(false);
         nextButton.setEnabled(false);
 
-        Runnable r = new Runnable() {
-            public void run() {
-                if (instance.getLoaderVersion().isFabric()) {
-                    setMods(CurseApi.searchModsForFabric(instance.getMinecraftVersion(), "", page));
-                } else {
-                    setMods(CurseApi.searchMods(instance.getMinecraftVersion(), "", page));
-                }
-
-                setLoading(false);
+        Runnable r = () -> {
+            if (instance.getLoaderVersion().isFabric()) {
+                setMods(CurseApi.searchModsForFabric(instance.getMinecraftVersion(), "", page));
+            } else {
+                setMods(CurseApi.searchMods(instance.getMinecraftVersion(), "", page));
             }
+
+            setLoading(false);
         };
 
         new Thread(r).start();
@@ -193,13 +183,11 @@ public final class AddModsDialog extends JDialog {
         setLoading(true);
         page = 0;
 
-        Runnable r = new Runnable() {
-            public void run() {
-                String query = searchField.getText();
+        Runnable r = () -> {
+            String query = searchField.getText();
 
-                setMods(CurseApi.searchMods(instance.getMinecraftVersion(), query, page));
-                setLoading(false);
-            }
+            setMods(CurseApi.searchMods(instance.getMinecraftVersion(), query, page));
+            setLoading(false);
         };
 
         new Thread(r).start();
@@ -230,11 +218,7 @@ public final class AddModsDialog extends JDialog {
             });
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                jscrollPane.getVerticalScrollBar().setValue(0);
-            }
-        });
+        SwingUtilities.invokeLater(() -> jscrollPane.getVerticalScrollBar().setValue(0));
 
         revalidate();
         repaint();

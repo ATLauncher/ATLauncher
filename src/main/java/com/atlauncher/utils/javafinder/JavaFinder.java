@@ -34,7 +34,7 @@ public class JavaFinder {
                     result.add(val + "\\bin\\java.exe");
                 }
             }
-        } catch (Throwable t) {}
+        } catch (Throwable ignored) {}
         return result;
     }
 
@@ -49,7 +49,7 @@ public class JavaFinder {
      *          view) WINDIR\system32 WINDIR\SysWOW64
      ****************************************************************************/
     public static List<JavaInfo> findJavas() {
-        List<String> javaExecs = new ArrayList<String>();
+        List<String> javaExecs = new ArrayList<>();
 
         javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Runtime Environment",
                 WinRegistry.KEY_WOW64_32KEY, javaExecs);
@@ -62,7 +62,7 @@ public class JavaFinder {
         javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_32KEY, javaExecs);
         javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_64KEY, javaExecs);
 
-        List<JavaInfo> result = new ArrayList<JavaInfo>();
+        List<JavaInfo> result = new ArrayList<>();
         for (String javaPath : javaExecs) {
             if (!(new File(javaPath).exists()))
                 continue;
@@ -81,9 +81,9 @@ public class JavaFinder {
         boolean isOS64 = arch.endsWith("64") || (wow64Arch != null && wow64Arch.endsWith("64"));
 
         List<JavaInfo> javas = JavaFinder.findJavas();
-        for (int i = 0; i < javas.size(); i++) {
-            if (javas.get(i).is64bits == isOS64)
-                return javas.get(i).path;
+        for (JavaInfo java : javas) {
+            if (java.is64bits == isOS64)
+                return java.path;
         }
         return null;
     }

@@ -37,6 +37,7 @@ public class ArgumentRule {
         this.value = value;
     }
 
+    @SuppressWarnings("unchecked")
     public String getValueAsString() {
         if (this.value instanceof String) {
             return (String) this.value;
@@ -56,6 +57,7 @@ public class ArgumentRule {
         return arguments;
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getValueAsList() {
         List<String> values = new ArrayList<>();
 
@@ -73,7 +75,7 @@ public class ArgumentRule {
             return true; // No rules setup so we need it
         }
 
-        return this.rules.stream().filter(rule -> rule.applies()).count() != 0
-                && this.rules.stream().filter(rule -> rule.applies()).allMatch(rule -> rule.action == Action.ALLOW);
+        return this.rules.stream().filter(Rule::applies).count() != 0
+                && this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action == Action.ALLOW);
     }
 }

@@ -240,7 +240,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.allMods = sortMods(
                 (this.isServer ? this.packVersion.getServerInstallMods() : this.packVersion.getClientInstallMods()));
 
-        boolean hasOptional = this.allMods.stream().anyMatch(mod -> mod.isOptional());
+        boolean hasOptional = this.allMods.stream().anyMatch(Mod::isOptional);
 
         if (this.allMods.size() != 0 && hasOptional) {
             com.atlauncher.gui.dialogs.ModsChooser modsChooser = new com.atlauncher.gui.dialogs.ModsChooser(this);
@@ -439,7 +439,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             if (add) {
                 this.arguments.game.addAll(Arrays.asList(this.packVersion.extraArguments.arguments.split(" ")).stream()
-                        .map(argument -> new ArgumentRule(argument)).collect(Collectors.toList()));
+                        .map(ArgumentRule::new).collect(Collectors.toList()));
             }
         }
     }
@@ -587,7 +587,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // lastly the Minecraft libraries
         if (this.loader == null || this.loader.useMinecraftLibraries()) {
-            libraries.addAll(this.minecraftVersion.libraries.stream().filter(library -> library.shouldInstall())
+            libraries.addAll(this.minecraftVersion.libraries.stream().filter(Library::shouldInstall)
                     .collect(Collectors.toList()));
         }
 
@@ -691,17 +691,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (this.loader != null && this.loader.getInstallLibraries() != null) {
             this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
-                    .forEach(library -> {
-                        pool.add(
-                                new com.atlauncher.network.Download().setUrl(library.downloads.artifact.url)
-                                        .downloadTo(new File(App.settings.getGameLibrariesDir(),
-                                                library.downloads.artifact.path).toPath())
-                                        .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
-                                        .withInstanceInstaller(this).withHttpClient(httpClient));
-                    });
+                    .forEach(library -> pool.add(
+                            new com.atlauncher.network.Download().setUrl(library.downloads.artifact.url)
+                                    .downloadTo(new File(App.settings.getGameLibrariesDir(),
+                                            library.downloads.artifact.path).toPath())
+                                    .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                                    .withInstanceInstaller(this).withHttpClient(httpClient)));
         }
 
-        this.getLibraries().stream().filter(library -> library.hasNativeForOS()).forEach(library -> {
+        this.getLibraries().stream().filter(Library::hasNativeForOS).forEach(library -> {
             Download download = library.getNativeDownloadForOS();
 
             pool.add(new com.atlauncher.network.Download().setUrl(download.url)
@@ -724,7 +722,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
 
-        this.getLibraries().stream().filter(library -> library.shouldInstall()).forEach(library -> {
+        this.getLibraries().stream().filter(Library::shouldInstall).forEach(library -> {
             if (isServer && library.downloads.artifact != null) {
                 File libraryFile = new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path);
 
@@ -736,14 +734,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             } else if (library.hasNativeForOS()) {
                 File nativeFile = new File(App.settings.getGameLibrariesDir(), library.getNativeDownloadForOS().path);
 
-                ZipUtil.unpack(nativeFile, this.root.resolve("bin/natives").toFile(), new NameMapper() {
-                    public String map(String name) {
-                        if (library.extract != null && library.extract.shouldExclude(name)) {
-                            return null;
-                        }
-
-                        return name;
+                ZipUtil.unpack(nativeFile, this.root.resolve("bin/natives").toFile(), name -> {
+                    if (library.extract != null && library.extract.shouldExclude(name)) {
+                        return null;
                     }
+
+                    return name;
                 });
             }
         });
@@ -808,11 +804,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
 
-        this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser).forEach(mod -> {
-            pool.add(new com.atlauncher.network.Download().setUrl(mod.getDownloadUrl())
-                    .downloadTo(new File(App.settings.getDownloadsDir(), mod.getFile()).toPath()).hash(mod.md5)
-                    .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient));
-        });
+        this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser).forEach(mod -> pool.add(new com.atlauncher.network.Download().setUrl(mod.getDownloadUrl())
+                .downloadTo(new File(App.settings.getDownloadsDir(), mod.getFile()).toPath()).hash(mod.md5)
+                .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient)));
 
         DownloadPool smallPool = pool.downsize();
 
@@ -823,9 +817,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgressUnknown();
 
-        this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser).forEach(mod -> {
-            mod.download(this);
-        });
+        this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser).forEach(mod -> mod.download(this));
 
         hideSubProgressBar();
     }

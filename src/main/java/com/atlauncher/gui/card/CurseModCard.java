@@ -60,13 +60,9 @@ public final class CurseModCard extends JPanel {
         buttonsPanel.add(addButton);
         buttonsPanel.add(viewButton);
 
-        addButton.addActionListener(e -> {
-            new CurseModFileSelectorDialog(mod, instance);
-        });
+        addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instance));
 
-        viewButton.addActionListener(e -> {
-            OS.openWebBrowser(mod.websiteUrl);
-        });
+        viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);

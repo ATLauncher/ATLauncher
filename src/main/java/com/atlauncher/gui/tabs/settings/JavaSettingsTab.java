@@ -244,17 +244,13 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             List<JavaInfo> systemJavas = Java.getInstalledJavas();
 
             if (systemJavas.size() != 0) {
-                systemJavas.stream().forEach(javaInfo -> {
-                    installedJavas.addItem(javaInfo);
-                });
+                systemJavas.stream().forEach(installedJavas::addItem);
 
                 installedJavas.setSelectedItem(systemJavas.stream()
                         .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
                         .orElse(null));
 
-                installedJavas.addActionListener(e -> {
-                    javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath);
-                });
+                installedJavas.addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
 
                 if (installedJavas.getItemCount() != 0) {
                     javaPathPanelTop.add(installedJavas);

@@ -70,7 +70,7 @@ public class WinRegistry {
             regDeleteValue.setAccessible(true);
             regDeleteKey = userClass.getDeclaredMethod("WindowsRegDeleteKey", new Class[] { int.class, byte[].class });
             regDeleteKey.setAccessible(true);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -167,10 +167,10 @@ public class WinRegistry {
         int[] ret;
         if (hkey == HKEY_LOCAL_MACHINE) {
             ret = createKey(systemRoot, hkey, key);
-            regCloseKey.invoke(systemRoot, new Object[] { new Integer(ret[0]) });
+            regCloseKey.invoke(systemRoot, new Object[] {ret[0]});
         } else if (hkey == HKEY_CURRENT_USER) {
             ret = createKey(userRoot, hkey, key);
-            regCloseKey.invoke(userRoot, new Object[] { new Integer(ret[0]) });
+            regCloseKey.invoke(userRoot, new Object[] {ret[0]});
         } else {
             throw new IllegalArgumentException("hkey=" + hkey);
         }
@@ -258,20 +258,19 @@ public class WinRegistry {
     private static int deleteValue(Preferences root, int hkey, String key, String value, int wow64)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         int[] handles = (int[]) regOpenKey.invoke(root,
-                new Object[] { new Integer(hkey), toCstr(key), new Integer(KEY_ALL_ACCESS | wow64) });
+                new Object[] {hkey, toCstr(key), KEY_ALL_ACCESS | wow64});
         if (handles[1] != REG_SUCCESS) {
             return handles[1]; // can be REG_NOTFOUND, REG_ACCESSDENIED
         }
-        int rc = ((Integer) regDeleteValue.invoke(root, new Object[] { new Integer(handles[0]), toCstr(value) }))
-                .intValue();
-        regCloseKey.invoke(root, new Object[] { new Integer(handles[0]) });
+        int rc = (Integer) regDeleteValue.invoke(root, new Object[]{handles[0], toCstr(value)});
+        regCloseKey.invoke(root, new Object[] {handles[0]});
         return rc;
     }
 
     // ========================================================================
     private static int deleteKey(Preferences root, int hkey, String key)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        int rc = ((Integer) regDeleteKey.invoke(root, new Object[] { new Integer(hkey), toCstr(key) })).intValue();
+        int rc = (Integer) regDeleteKey.invoke(root, new Object[]{hkey, toCstr(key)});
         return rc; // can REG_NOTFOUND, REG_ACCESSDENIED, REG_SUCCESS
     }
 
@@ -279,74 +278,74 @@ public class WinRegistry {
     private static String readString(Preferences root, int hkey, String key, String value, int wow64)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         int[] handles = (int[]) regOpenKey.invoke(root,
-                new Object[] { new Integer(hkey), toCstr(key), new Integer(KEY_READ | wow64) });
+                new Object[] {hkey, toCstr(key), KEY_READ | wow64});
         if (handles[1] != REG_SUCCESS) {
             return null;
         }
-        byte[] valb = (byte[]) regQueryValueEx.invoke(root, new Object[] { new Integer(handles[0]), toCstr(value) });
-        regCloseKey.invoke(root, new Object[] { new Integer(handles[0]) });
+        byte[] valb = (byte[]) regQueryValueEx.invoke(root, new Object[] {handles[0], toCstr(value) });
+        regCloseKey.invoke(root, new Object[] {handles[0]});
         return (valb != null ? new String(valb).trim() : null);
     }
 
     // ========================================================================
     private static Map<String, String> readStringValues(Preferences root, int hkey, String key, int wow64)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        HashMap<String, String> results = new HashMap<String, String>();
+        HashMap<String, String> results = new HashMap<>();
         int[] handles = (int[]) regOpenKey.invoke(root,
-                new Object[] { new Integer(hkey), toCstr(key), new Integer(KEY_READ | wow64) });
+                new Object[] {hkey, toCstr(key), KEY_READ | wow64});
         if (handles[1] != REG_SUCCESS) {
             return null;
         }
-        int[] info = (int[]) regQueryInfoKey.invoke(root, new Object[] { new Integer(handles[0]) });
+        int[] info = (int[]) regQueryInfoKey.invoke(root, new Object[] {handles[0]});
 
         int count = info[2]; // count
         int maxlen = info[3]; // value length max
         for (int index = 0; index < count; index++) {
             byte[] name = (byte[]) regEnumValue.invoke(root,
-                    new Object[] { new Integer(handles[0]), new Integer(index), new Integer(maxlen + 1) });
+                    new Object[] {handles[0], index, maxlen + 1});
             String value = readString(hkey, key, new String(name), wow64);
             results.put(new String(name).trim(), value);
         }
-        regCloseKey.invoke(root, new Object[] { new Integer(handles[0]) });
+        regCloseKey.invoke(root, new Object[] {handles[0]});
         return results;
     }
 
     // ========================================================================
     private static List<String> readStringSubKeys(Preferences root, int hkey, String key, int wow64)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         int[] handles = (int[]) regOpenKey.invoke(root,
-                new Object[] { new Integer(hkey), toCstr(key), new Integer(KEY_READ | wow64) });
+                new Object[] {hkey, toCstr(key), KEY_READ | wow64});
         if (handles[1] != REG_SUCCESS) {
             return null;
         }
-        int[] info = (int[]) regQueryInfoKey.invoke(root, new Object[] { new Integer(handles[0]) });
+        int[] info = (int[]) regQueryInfoKey.invoke(root, new Object[] {handles[0]});
 
         int count = info[0]; // Fix: info[2] was being used here with wrong results. Suggested by davenpcj,
                              // confirmed by Petrucio
         int maxlen = info[3]; // value length max
         for (int index = 0; index < count; index++) {
             byte[] name = (byte[]) regEnumKeyEx.invoke(root,
-                    new Object[] { new Integer(handles[0]), new Integer(index), new Integer(maxlen + 1) });
+                    new Object[] {handles[0], index, maxlen + 1});
             results.add(new String(name).trim());
         }
-        regCloseKey.invoke(root, new Object[] { new Integer(handles[0]) });
+        regCloseKey.invoke(root, new Object[] {handles[0]});
         return results;
     }
 
     // ========================================================================
     private static int[] createKey(Preferences root, int hkey, String key)
             throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        return (int[]) regCreateKeyEx.invoke(root, new Object[] { new Integer(hkey), toCstr(key) });
+        return (int[]) regCreateKeyEx.invoke(root, new Object[] {hkey, toCstr(key) });
     }
 
     // ========================================================================
     private static void writeStringValue(Preferences root, int hkey, String key, String valueName, String value,
             int wow64) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         int[] handles = (int[]) regOpenKey.invoke(root,
-                new Object[] { new Integer(hkey), toCstr(key), new Integer(KEY_ALL_ACCESS | wow64) });
-        regSetValueEx.invoke(root, new Object[] { new Integer(handles[0]), toCstr(valueName), toCstr(value) });
-        regCloseKey.invoke(root, new Object[] { new Integer(handles[0]) });
+                new Object[] {hkey, toCstr(key), KEY_ALL_ACCESS | wow64});
+        regSetValueEx.invoke(root, new Object[] {handles[0], toCstr(valueName), toCstr(value) });
+        regCloseKey.invoke(root, new Object[] {handles[0]});
     }
 
     // ========================================================================

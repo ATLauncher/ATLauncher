@@ -580,12 +580,9 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(versionLength, 25));
         middle.add(versionsDropDown, gbc);
 
-        versionsDropDown.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    updateLoaderVersions((PackVersion) e.getItem());
-                }
+        versionsDropDown.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                updateLoaderVersions((PackVersion) e.getItem());
             }
         });
 
@@ -616,43 +613,41 @@ public class InstanceInstallerDialog extends JDialog {
         install.setEnabled(false);
         versionsDropDown.setEnabled(false);
 
-        Runnable r = new Runnable() {
-            public void run() {
-                Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.getVersion()), Version.class);
+        Runnable r = () -> {
+            Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.getVersion()), Version.class);
 
-                loaderVersions.clear();
-                loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
+            loaderVersions.clear();
+            loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
 
-                // ensures that font width is taken into account
-                for (LoaderVersion version : loaderVersions) {
-                    loaderVersionLength = Math.max(loaderVersionLength,
-                            getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
-                }
-
-                loaderVersionsDropDown.removeAllItems();
-
-                loaderVersions.stream().forEach(version -> {
-                    loaderVersionsDropDown.addItem(version);
-                });
-
-                if (isReinstall && instance.installedWithLoaderVersion()) {
-                    loaderVersionsDropDown.setSelectedItem(instance.getLoaderVersion());
-                }
-
-                // ensures that the dropdown is at least 200 px wide
-                loaderVersionLength = Math.max(200, loaderVersionLength);
-
-                // ensures that there is a maximum width of 250 px to prevent overflow
-                loaderVersionLength = Math.min(250, loaderVersionLength);
-
-                loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 25));
-
-                loaderVersionsDropDown.setEnabled(true);
-                loaderVersionLabel.setVisible(true);
-                loaderVersionsDropDown.setVisible(true);
-                install.setEnabled(true);
-                versionsDropDown.setEnabled(true);
+            // ensures that font width is taken into account
+            for (LoaderVersion version : loaderVersions) {
+                loaderVersionLength = Math.max(loaderVersionLength,
+                        getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
             }
+
+            loaderVersionsDropDown.removeAllItems();
+
+            loaderVersions.stream().forEach(version -> {
+                loaderVersionsDropDown.addItem(version);
+            });
+
+            if (isReinstall && instance.installedWithLoaderVersion()) {
+                loaderVersionsDropDown.setSelectedItem(instance.getLoaderVersion());
+            }
+
+            // ensures that the dropdown is at least 200 px wide
+            loaderVersionLength = Math.max(200, loaderVersionLength);
+
+            // ensures that there is a maximum width of 250 px to prevent overflow
+            loaderVersionLength = Math.min(250, loaderVersionLength);
+
+            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 25));
+
+            loaderVersionsDropDown.setEnabled(true);
+            loaderVersionLabel.setVisible(true);
+            loaderVersionsDropDown.setVisible(true);
+            install.setEnabled(true);
+            versionsDropDown.setEnabled(true);
         };
 
         new Thread(r).start();

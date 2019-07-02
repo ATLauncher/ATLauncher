@@ -72,6 +72,7 @@ public class Loader {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     public List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             Method method = Class.forName(this.chooseClassName).getDeclaredMethod(this.chooseMethod, String.class);

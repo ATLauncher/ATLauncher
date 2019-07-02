@@ -23,6 +23,6 @@ public class ExtractRule {
     public List<String> exclude;
 
     public boolean shouldExclude(String filename) {
-        return this.exclude != null && this.exclude.stream().anyMatch(file -> filename.startsWith(file));
+        return this.exclude != null && this.exclude.stream().anyMatch(filename::startsWith);
     }
 }

@@ -68,16 +68,13 @@ public final class DownloadPool extends LinkedList<Download> {
         ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
         synchronized (this) {
             for (final Download dl : this) {
-                executor.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dl.needToDownload()) {
-                            synchronized (pool) {
-                                pool.add(dl);
-                            }
-                        } else {
-                            dl.copy();
+                executor.submit(() -> {
+                    if (dl.needToDownload()) {
+                        synchronized (pool) {
+                            pool.add(dl);
                         }
+                    } else {
+                        dl.copy();
                     }
                 });
             }

@@ -139,12 +139,10 @@ public class CurseModFileSelectorDialog extends JDialog {
             dialog.add(topPanel, BorderLayout.CENTER);
             dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-            Runnable r = new Runnable() {
-                public void run() {
-                    instance.addFileFromCurse(mod, file);
-                    dialog.dispose();
-                    dispose();
-                }
+            Runnable r = () -> {
+                instance.addFileFromCurse(mod, file);
+                dialog.dispose();
+                dispose();
             };
 
             new Thread(r).start();
@@ -170,9 +168,7 @@ public class CurseModFileSelectorDialog extends JDialog {
                 if (dependencies.size() != 0) {
                     dependenciesPanel.removeAll();
 
-                    dependencies.forEach(dependency -> {
-                        dependenciesPanel.add(new CurseFileDependencyCard(selectedFile, dependency, instance));
-                    });
+                    dependencies.forEach(dependency -> dependenciesPanel.add(new CurseFileDependencyCard(selectedFile, dependency, instance)));
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                             (dependencies.size() / 2) + 1));
@@ -203,59 +199,57 @@ public class CurseModFileSelectorDialog extends JDialog {
         versionsLabel.setVisible(true);
         filesDropdown.setVisible(true);
 
-        Runnable r = new Runnable() {
-            public void run() {
-                files.addAll(CurseApi.getFilesForMod(mod.id).stream()
-                        .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
-                        .filter(file -> file.gameVersion.contains(instance.getMinecraftVersion()))
-                        .collect(Collectors.toList()));
+        Runnable r = () -> {
+            files.addAll(CurseApi.getFilesForMod(mod.id).stream()
+                    .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
+                    .filter(file -> file.gameVersion.contains(instance.getMinecraftVersion()))
+                    .collect(Collectors.toList()));
 
-                // ensures that font width is taken into account
-                for (CurseFile file : files) {
-                    filesLength = Math.max(filesLength,
-                            getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 100);
-                }
-
-                // try to filter out non compatable mods
-                files.stream().filter(version -> {
-                    String fileName = version.fileName.toLowerCase();
-                    String displayName = version.displayName.toLowerCase();
-
-                    if (instance.getLoaderVersion().isFabric()) {
-                        return !displayName.contains("-forge-") && !displayName.contains("(forge)")
-                                && !displayName.contains("[forge") && !fileName.contains("forgemod");
-                    }
-
-                    if (!instance.getLoaderVersion().isFabric()) {
-                        return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
-                                && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
-                    }
-
-                    return true;
-                }).forEach(version -> {
-                    filesDropdown.addItem(version);
-                });
-
-                if (filesDropdown.getItemCount() == 0) {
-                    DialogManager.okDialog().setParent(CurseModFileSelectorDialog.this).setTitle("No files found")
-                            .setContent("No files found for this mod").setType(DialogManager.ERROR).show();
-                    dispose();
-                }
-
-                // ensures that the dropdown is at least 200 px wide
-                filesLength = Math.max(200, filesLength);
-
-                // ensures that there is a maximum width of 350 px to prevent overflow
-                filesLength = Math.min(350, filesLength);
-
-                filesDropdown.setPreferredSize(new Dimension(filesLength, 25));
-
-                filesDropdown.setEnabled(true);
-                versionsLabel.setVisible(true);
-                filesDropdown.setVisible(true);
-                addButton.setEnabled(true);
-                filesDropdown.setEnabled(true);
+            // ensures that font width is taken into account
+            for (CurseFile file : files) {
+                filesLength = Math.max(filesLength,
+                        getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 100);
             }
+
+            // try to filter out non compatable mods
+            files.stream().filter(version -> {
+                String fileName = version.fileName.toLowerCase();
+                String displayName = version.displayName.toLowerCase();
+
+                if (instance.getLoaderVersion().isFabric()) {
+                    return !displayName.contains("-forge-") && !displayName.contains("(forge)")
+                            && !displayName.contains("[forge") && !fileName.contains("forgemod");
+                }
+
+                if (!instance.getLoaderVersion().isFabric()) {
+                    return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
+                            && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
+                }
+
+                return true;
+            }).forEach(version -> {
+                filesDropdown.addItem(version);
+            });
+
+            if (filesDropdown.getItemCount() == 0) {
+                DialogManager.okDialog().setParent(CurseModFileSelectorDialog.this).setTitle("No files found")
+                        .setContent("No files found for this mod").setType(DialogManager.ERROR).show();
+                dispose();
+            }
+
+            // ensures that the dropdown is at least 200 px wide
+            filesLength = Math.max(200, filesLength);
+
+            // ensures that there is a maximum width of 350 px to prevent overflow
+            filesLength = Math.min(350, filesLength);
+
+            filesDropdown.setPreferredSize(new Dimension(filesLength, 25));
+
+            filesDropdown.setEnabled(true);
+            versionsLabel.setVisible(true);
+            filesDropdown.setVisible(true);
+            addButton.setEnabled(true);
+            filesDropdown.setEnabled(true);
         };
 
         new Thread(r).start();

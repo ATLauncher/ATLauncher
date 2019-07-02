@@ -35,6 +35,7 @@ public class ArgumentRule {
         return this.rules;
     }
 
+    @SuppressWarnings("unchecked")
     public String getValue() {
         if (this.value instanceof String) {
             return (String) this.value;

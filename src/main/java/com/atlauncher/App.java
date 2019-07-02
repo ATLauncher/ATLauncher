@@ -267,9 +267,7 @@ public class App {
 
         LogManager.info("Java Version: " + Java.getActualJavaVersion());
 
-        Java.getInstalledJavas().stream().forEach(version -> {
-            LogManager.debug(Gsons.DEFAULT.toJson(version));
-        });
+        Java.getInstalledJavas().stream().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version)));
 
         LogManager.info("Java Path: " + settings.getJavaPath());
 
@@ -331,9 +329,7 @@ public class App {
             DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
             DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                DiscordRPC.discordShutdown();
-            }));
+            Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
         }
 
         if (!skipIntegration) {

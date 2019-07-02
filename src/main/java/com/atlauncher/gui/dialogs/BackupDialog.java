@@ -291,7 +291,7 @@ public class BackupDialog extends JDialog implements ActionListener {
                 }
             }
         } else if (e.getSource() instanceof JComboBox) {
-            String selection = (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
+            @SuppressWarnings("unchecked") String selection = (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
             selectedSync = SyncAbstract.syncList.get(selection);
             App.settings.setLastSelectedSync(selection);
             List<String> list = selectedSync.getBackupsForInstance(instance);
