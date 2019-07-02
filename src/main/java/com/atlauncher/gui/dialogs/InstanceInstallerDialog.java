@@ -24,8 +24,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -153,6 +156,21 @@ public class InstanceInstallerDialog extends JDialog {
             if (isReinstall) {
                 instanceNameField.setEnabled(false);
             }
+            instanceNameField.addComponentListener(new ComponentAdapter() {
+                public void componentShown(ComponentEvent ce) {
+                    instanceNameField.requestFocusInWindow();
+                }
+            });
+            instanceNameField.addFocusListener(new FocusListener() {
+                @Override
+                public void focusLost(final FocusEvent pE) {
+                }
+
+                @Override
+                public void focusGained(final FocusEvent pE) {
+                    instanceNameField.selectAll();
+                }
+            });
             middle.add(instanceNameField, gbc);
 
             gbc.gridx = 0;

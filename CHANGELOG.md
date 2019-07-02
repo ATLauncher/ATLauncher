@@ -8,3 +8,4 @@
 -   Remove the option to download from multiple ATLauncher servers
 -   Add support for adding resource packs from Curse
 -   Fix Curse mod file selector dependencies not showing well
+-   When installing an instance, give focus to name field and select all when clicked
