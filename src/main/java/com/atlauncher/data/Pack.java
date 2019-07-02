@@ -288,11 +288,9 @@ public class Pack {
 
     public String getJSON(String version, boolean redownload) {
         if (this.json == null || !this.jsonVersion.equalsIgnoreCase(version) || (isTester() && redownload)) {
-            String path = "packs/" + getSafeName() + "/versions/" + version + "/Configs.json";
-            Downloadable download = new Downloadable(path, true);
             int tries = 1;
             do {
-                this.json = download.getContents();
+                this.json = com.atlauncher.network.Download.build().setUrl(this.getJsonDownloadUrl(version)).asString();
                 tries++;
             } while (json == null && tries < 5);
             this.jsonVersion = version;

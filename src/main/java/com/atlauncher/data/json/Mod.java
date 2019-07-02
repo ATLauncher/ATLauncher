@@ -27,7 +27,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
@@ -618,17 +617,6 @@ public class Mod {
                         }
                     }
                 }
-            }
-        } else if (this.serverDownload == DownloadType.direct) {
-            Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5, installer, false);
-            download.checkForNewness();
-            if (download.needToDownload()) {
-                download.download(false);
-            }
-        } else if (this.serverDownload == DownloadType.server) {
-            Downloadable download = new Downloadable(this.serverUrl, fileLocation, this.serverMD5, installer, true);
-            if (download.needToDownload()) {
-                download.download(false);
             }
         }
         if (hasServerMD5()) {

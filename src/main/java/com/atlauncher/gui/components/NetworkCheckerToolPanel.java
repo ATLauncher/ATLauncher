@@ -28,13 +28,13 @@ import javax.swing.border.BevelBorder;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Downloadable;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Download;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -97,17 +97,22 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                 // Response Code Test
                 for (Server server : App.settings.getServers()) {
-                    Downloadable download = new Downloadable(server.getFileURL("launcher/json/hashes.json"), false);
-                    results.append(String.format("Response code to %s was %d\n\n----------------\n\n", server.getHost(),
-                            download.getResponseCode()));
+                    try {
+                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n",
+                                server.getHost(), Download.build()
+                                        .setUrl(server.getFileURL("launcher/json/hashes.json")).getResponseCode()));
+                    } catch (Exception e1) {
+                        results.append(String.format("Exception thrown when connecting to %s\n\n----------------\n\n",
+                                server.getHost()));
+                        results.append(e1.toString());
+                    }
                     dialog.doneTask();
                 }
 
                 // Ping Pong Test
                 for (Server server : App.settings.getServers()) {
-                    Downloadable download = new Downloadable(server.getFileURL("ping"), false);
                     results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n",
-                            server.getHost(), download.getContents()));
+                            server.getHost(), Download.build().setUrl(server.getFileURL("ping")).asString()));
                     dialog.doneTask();
                 }
 
@@ -118,9 +123,15 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         Utils.delete(file);
                     }
                     long started = System.currentTimeMillis();
-
-                    Downloadable download = new Downloadable(server.getFileURL("20MB.test"), file);
-                    download.download(false);
+                    try {
+                        Download.build().setUrl(server.getFileURL("20MB.test")).downloadTo(file.toPath())
+                                .downloadFile();
+                    } catch (Exception e2) {
+                        results.append(String.format(
+                                "Exception thrown when downloading 20MB.test from %s\n\n----------------\n\n",
+                                server.getHost()));
+                        results.append(e2.toString());
+                    }
 
                     long timeTaken = System.currentTimeMillis() - started;
                     float bps = file.length() / (timeTaken / 1000);

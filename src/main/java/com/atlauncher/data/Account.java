@@ -49,6 +49,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Download;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
@@ -502,8 +503,7 @@ public class Account implements Serializable {
                             if (file.exists()) {
                                 Utils.delete(file);
                             }
-                            Downloadable skin = new Downloadable(skinURL, file, null, null, false);
-                            skin.download(false);
+                            Download.build().setUrl(skinURL).downloadTo(file.toPath()).downloadFile();
                             dialog.setReturnValue(true);
                         } else {
                             if (!file.exists()) {

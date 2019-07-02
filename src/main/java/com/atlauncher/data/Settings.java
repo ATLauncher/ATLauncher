@@ -64,7 +64,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
-import com.atlauncher.data.mojang.MojangStatus;
+import com.atlauncher.data.minecraft.MojangStatus;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
@@ -610,14 +610,8 @@ public class Settings {
 
     public void checkMojangStatus() {
         try {
-            Downloadable download = new Downloadable("https://status.mojang.com/check", false);
-            String response = download.getContents();
-            if (response == null) {
-                minecraftSessionServerUp = false;
-                minecraftLoginServerUp = false;
-                return;
-            }
-            MojangStatus status = Gsons.DEFAULT_ALT.fromJson(response, MojangStatus.class);
+            MojangStatus status = com.atlauncher.network.Download.build().setUrl("https://status.mojang.com/check")
+                    .asClass(MojangStatus.class);
             minecraftLoginServerUp = status.isAuthServerUp();
             minecraftSessionServerUp = status.isSessionServerUp();
         } catch (Exception e) {
@@ -662,8 +656,11 @@ public class Settings {
             }
             File newFile = new File(getTempDir(), saveAs);
             LogManager.info("Downloading Launcher Update");
-            Downloadable update = new Downloadable(Constants.LAUNCHER_NAME + "." + toget, newFile, null, null, true);
-            update.download(false);
+
+            com.atlauncher.network.Download.build().setUrl(
+                    String.format("%s/%s.%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
+                    .downloadTo(newFile.toPath()).downloadFile();
+
             runUpdate(path, newFile.getAbsolutePath());
         } catch (IOException e) {
             LogManager.logStackTrace(e);
@@ -700,17 +697,16 @@ public class Settings {
 
     private void getFileHashes() {
         this.launcherFiles = null;
-        Downloadable download = new Downloadable("launcher/json/hashes.json", true);
+
         java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
         }.getType();
 
-        String contents = download.getContents();
-
         try {
-            this.launcherFiles = Gsons.DEFAULT.fromJson(contents, type);
+            this.launcherFiles = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/launcher/json/hashes.json", Constants.ATLAUNCHER_DOWNLOAD_SERVER))
+                    .asType(type);
         } catch (Exception e) {
-            String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Error", contents);
-            LogManager.logStackTrace("Error loading in file hashes! See error details at " + result, e);
+            LogManager.logStackTrace("Error loading in file hashes!", e);
         }
     }
 
@@ -718,31 +714,35 @@ public class Settings {
      * This checks the servers hashes.json file and gets the files that the Launcher
      * needs to have
      */
-    private ArrayList<Downloadable> getLauncherFiles() {
+    private List<com.atlauncher.network.Download> getLauncherFiles() {
         getFileHashes(); // Get File Hashes
         if (this.launcherFiles == null) {
             this.offlineMode = true;
             return null;
         }
-        ArrayList<Downloadable> downloads = new ArrayList<>();
+        ArrayList<com.atlauncher.network.Download> downloads = new ArrayList<>();
         for (DownloadableFile file : this.launcherFiles) {
             if (file.isLauncher()) {
                 continue;
             }
-            downloads.add(file.getDownloadable());
+            downloads.add(file.getDownload());
         }
         return downloads;
     }
 
     public void downloadUpdatedFiles() {
-        ArrayList<Downloadable> downloads = getLauncherFiles();
+        List<com.atlauncher.network.Download> downloads = getLauncherFiles();
         if (downloads != null) {
             ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
-            for (final Downloadable download : downloads) {
+            for (final com.atlauncher.network.Download download : downloads) {
                 executor.execute(() -> {
                     if (download.needToDownload()) {
-                        LogManager.info("Downloading Launcher File " + download.getFile().getName());
-                        download.download(false);
+                        LogManager.info("Downloading Launcher File " + download.to.getFileName());
+                        try {
+                            download.downloadFile();
+                        } catch (IOException e) {
+                            LogManager.logStackTrace(e);
+                        }
                     }
                 });
             }
@@ -771,12 +771,12 @@ public class Settings {
             return false;
         }
         LogManager.info("Checking for updated files!");
-        ArrayList<Downloadable> downloads = getLauncherFiles();
+        List<com.atlauncher.network.Download> downloads = getLauncherFiles();
         if (downloads == null) {
             this.offlineMode = true;
             return false;
         }
-        for (Downloadable download : downloads) {
+        for (com.atlauncher.network.Download download : downloads) {
             if (download.needToDownload()) {
                 LogManager.info("Updates found!");
                 return true; // 1 file needs to be updated so there is updated files
@@ -1672,12 +1672,13 @@ public class Settings {
      */
     private void loadUsers() {
         LogManager.debug("Loading users");
-        Downloadable download = new Downloadable("launcher/json/users.json", true);
         List<PackUsers> packUsers = null;
         try {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
-            packUsers = Gsons.DEFAULT.fromJson(download.getContents(), type);
+            packUsers = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/launcher/json/users.json", Constants.ATLAUNCHER_DOWNLOAD_SERVER))
+                    .asType(type);
         } catch (JsonSyntaxException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
@@ -2255,8 +2256,8 @@ public class Settings {
             server.enableServer();
         }
         this.offlineMode = false;
-        Downloadable download = new Downloadable("ping", true);
-        String test = download.getContents();
+        String test = com.atlauncher.network.Download.build()
+                .setUrl(String.format("%s/ping", Constants.ATLAUNCHER_DOWNLOAD_SERVER)).asString();
         if (test != null && test.equalsIgnoreCase("pong")) {
             reloadVanillaPacksPanel();
             reloadFeaturedPacksPanel();

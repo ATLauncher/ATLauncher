@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import java.io.File;
 
 import com.atlauncher.App;
+import com.atlauncher.network.Download;
 
 public class DownloadableFile {
     private String name;
@@ -40,12 +41,16 @@ public class DownloadableFile {
         return this.sha1;
     }
 
-    public Downloadable getDownloadable() {
+    public Download getDownload() {
         File file = new File(new File(App.settings.getConfigsDir(), this.folder), this.name);
+
         if (this.folder.equalsIgnoreCase("Skins")) {
             file = new File(App.settings.getSkinsDir(), this.name);
         }
-        return new Downloadable(String.format("launcher/%s/%s", this.folder.toLowerCase(), this.name), file, this.sha1,
-                this.size, null, true);
+
+        return Download.build()
+                .setUrl(String.format("%s/launcher/%s/%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER,
+                        this.folder.toLowerCase(), this.name))
+                .downloadTo(file.toPath()).size(this.size).hash(this.sha1);
     }
 }

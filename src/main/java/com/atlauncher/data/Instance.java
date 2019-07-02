@@ -1759,14 +1759,22 @@ public class Instance implements Cloneable {
         File finalLocation = new File(mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
                 ? this.getResourcePacksDirectory()
                 : this.getModsDirectory(), file.fileName);
-        Downloadable download = new Downloadable(file.downloadUrl, downloadLocation, file.fileLength);
-
-        if (download.needToDownload()) {
-            download.download();
-        }
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
+                .downloadTo(downloadLocation.toPath()).size(file.fileLength).copyTo(finalLocation.toPath());
 
         if (finalLocation.exists()) {
             Utils.delete(finalLocation);
+        }
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
+                        .setContent("Failed to download " + file.fileName + ". Please try again later.").show();
+                return;
+            }
         }
 
         // find mods with the same curse mod id
@@ -1787,8 +1795,6 @@ public class Instance implements Cloneable {
                 mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
                         : Type.mods,
                 null, mod.summary, false, true, true, mod.id, file.id));
-
-        Utils.copyFile(downloadLocation, finalLocation, true);
 
         this.save(false);
 

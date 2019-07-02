@@ -233,6 +233,12 @@ public final class Download {
         return this.hash == null || this.hash.length() != 40;
     }
 
+    public int getResponseCode() throws IOException {
+        this.execute();
+
+        return this.response.code();
+    }
+
     private String getHashFromURL() throws IOException {
         this.execute();
 
