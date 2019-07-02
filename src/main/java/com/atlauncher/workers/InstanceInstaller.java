@@ -652,7 +652,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     : (library.server != null ? library.server : library.file);
             download.sha1 = library.md5;
             download.size = library.filesize;
-            download.url = String.format("%s/%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, library.url);
+            download.url = String.format("%s/%s", Constants.DOWNLOAD_SERVER, library.url);
 
             Downloads downloads = new Downloads();
             downloads.artifact = download;
@@ -891,7 +891,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
 
         com.atlauncher.network.Download configsDownload = com.atlauncher.network.Download.build()
-                .setUrl(String.format("%s/%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, path)).downloadTo(configs.toPath())
+                .setUrl(String.format("%s/%s", Constants.DOWNLOAD_SERVER, path)).downloadTo(configs.toPath())
                 .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
         this.setTotalBytes(configsDownload.getFilesize());

@@ -299,8 +299,8 @@ public class Pack {
     }
 
     public String getJsonDownloadUrl(String version) {
-        return String.format("%s/packs/%s/versions/%s/Configs.json", Constants.ATLAUNCHER_DOWNLOAD_SERVER,
-                this.getSafeName(), version);
+        return String.format("%s/packs/%s/versions/%s/Configs.json", Constants.DOWNLOAD_SERVER, this.getSafeName(),
+                version);
     }
 
     public String addInstall(String version) {

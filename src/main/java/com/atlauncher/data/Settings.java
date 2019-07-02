@@ -97,7 +97,6 @@ import net.arikia.dev.drpc.DiscordRPC;
  */
 public class Settings {
     // Users Settings
-    private Server server; // Server to use for the Launcher
     private String forgeLoggingLevel; // Logging level to use when running Minecraft with Forge
     private int initialMemory; // Initial RAM to use when launching Minecraft
     private int maximumMemory; // Maximum RAM to use when launching Minecraft
@@ -161,8 +160,6 @@ public class Settings {
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
     private LauncherConsole console; // The Launcher's Console
-    private List<Server> servers = new ArrayList<>(); // Servers for the Launcher
-    private List<Server> triedServers = new ArrayList<>(); // Servers tried to connect to
     private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab vanillaPacksPanel; // The vanilla packs panel
@@ -173,7 +170,6 @@ public class Settings {
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
-    private Server originalServer = null; // Original Server user has saved
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " + ""
             + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
@@ -231,8 +227,6 @@ public class Settings {
             this.offlineMode = true;
         }
 
-        setupServers(); // Setup the servers available to use in the Launcher
-        loadServerProperty(false); // Get users Server preference
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -272,22 +266,6 @@ public class Settings {
         changeInstanceUserLocks(); // Changes any instances user locks to UUIDs if available
 
         checkAccountsForNameChanges(); // Check account for username changes
-
-        LogManager.debug("Checking for access to master server");
-        OUTER: for (Pack pack : this.packs) {
-            if (pack.isTester()) {
-                for (Server server : this.servers) {
-                    if (server.getName().equals("Master Server (Testing Only)")) {
-                        server.setUserSelectable(true);
-                        LogManager.debug("Access to master server granted");
-                        break OUTER; // Don't need to check anymore so break the outer loop
-                    }
-                }
-            }
-        }
-        LogManager.debug("Finished checking for access to master server");
-
-        loadServerProperty(true); // Get users Server preference
 
         if (OS.isWindows() && !OS.is64Bit() && OS.isWindows64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
@@ -657,8 +635,8 @@ public class Settings {
             File newFile = new File(getTempDir(), saveAs);
             LogManager.info("Downloading Launcher Update");
 
-            com.atlauncher.network.Download.build().setUrl(
-                    String.format("%s/%s.%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
+            com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
                     .downloadTo(newFile.toPath()).downloadFile();
 
             runUpdate(path, newFile.getAbsolutePath());
@@ -703,8 +681,7 @@ public class Settings {
 
         try {
             this.launcherFiles = com.atlauncher.network.Download.build()
-                    .setUrl(String.format("%s/launcher/json/hashes.json", Constants.ATLAUNCHER_DOWNLOAD_SERVER))
-                    .asType(type);
+                    .setUrl(String.format("%s/launcher/json/hashes.json", Constants.DOWNLOAD_SERVER)).asType(type);
         } catch (Exception e) {
             LogManager.logStackTrace("Error loading in file hashes!", e);
         }
@@ -1136,31 +1113,6 @@ public class Settings {
     }
 
     /**
-     * Load the users Server preference from file
-     */
-    public void loadServerProperty(boolean userSelectableOnly) {
-        LogManager.debug("Loading server to use");
-        try {
-            this.properties.load(new FileInputStream(propertiesFile));
-            String serv = properties.getProperty("server", "Auto");
-            if (isServerByName(serv)) {
-                if (!userSelectableOnly || (userSelectableOnly && server.isUserSelectable())) {
-                    this.server = getServerByName(serv);
-                    this.originalServer = this.server;
-                }
-            }
-            if (this.server == null) {
-                LogManager.warn("Server " + serv + " is invalid");
-                this.server = getServerByName("Auto"); // Server not found, use default of Auto
-                this.originalServer = this.server;
-            }
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        LogManager.debug("Finished loading server to use");
-    }
-
-    /**
      * Load the users Console preference from file
      */
     public void loadStartingProperties() {
@@ -1475,7 +1427,6 @@ public class Settings {
             properties.setProperty("hidejavaletsencryptwarning", this.hideJavaLetsEncryptWarning + "");
             properties.setProperty("hideJava9Warning", this.hideJava9Warning + "");
             properties.setProperty("language", Language.INSTANCE.getCurrent());
-            properties.setProperty("server", this.server.getName());
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
             properties.setProperty("initialmemory", this.initialMemory + "");
             properties.setProperty("ram", this.maximumMemory + "");
@@ -1565,47 +1516,6 @@ public class Settings {
     }
 
     /**
-     * The servers available to use in the Launcher
-     * <p/>
-     * These MUST be hardcoded in order for the Launcher to make the initial
-     * connections to download files
-     */
-    private void setupServers() {
-        this.servers = new ArrayList<>(Arrays.asList(Constants.SERVERS));
-    }
-
-    public boolean disableServerGetNext() {
-        this.server.disableServer(); // Disable the server
-        for (Server server : this.servers) {
-            if (!server.isDisabled() && server.isUserSelectable()) {
-                LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To " + server.getName());
-                this.server = server; // Setup next available server
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void clearTriedServers() {
-        if (this.triedServers.size() != 0) {
-            this.triedServers = new ArrayList<>(); // Clear the list
-            this.server = this.originalServer;
-        }
-    }
-
-    public boolean getNextServer() {
-        this.triedServers.add(this.server);
-        for (Server server : this.servers) {
-            if (!this.triedServers.contains(server) && !server.isDisabled()) {
-                LogManager.warn("Server " + this.server.getName() + " Not Available! Switching To " + server.getName());
-                this.server = server; // Setup next available server
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Loads the languages for use in the Launcher
      */
     private void loadNews() {
@@ -1677,8 +1587,7 @@ public class Settings {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
             packUsers = com.atlauncher.network.Download.build()
-                    .setUrl(String.format("%s/launcher/json/users.json", Constants.ATLAUNCHER_DOWNLOAD_SERVER))
-                    .asType(type);
+                    .setUrl(String.format("%s/launcher/json/users.json", Constants.DOWNLOAD_SERVER)).asType(type);
         } catch (JsonSyntaxException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
@@ -2234,15 +2143,6 @@ public class Settings {
     }
 
     /**
-     * Get the Servers available in the Launcher
-     *
-     * @return The Servers available in the Launcher
-     */
-    public List<Server> getServers() {
-        return this.servers;
-    }
-
-    /**
      * Determines if offline mode is enabled or not
      *
      * @return true if offline mode is enabled, false otherwise
@@ -2252,12 +2152,9 @@ public class Settings {
     }
 
     public void checkOnlineStatus() {
-        for (Server server : servers) {
-            server.enableServer();
-        }
         this.offlineMode = false;
         String test = com.atlauncher.network.Download.build()
-                .setUrl(String.format("%s/ping", Constants.ATLAUNCHER_DOWNLOAD_SERVER)).asString();
+                .setUrl(String.format("%s/ping", Constants.DOWNLOAD_SERVER)).asString();
         if (test != null && test.equalsIgnoreCase("pong")) {
             reloadVanillaPacksPanel();
             reloadFeaturedPacksPanel();
@@ -2550,21 +2447,6 @@ public class Settings {
     }
 
     /**
-     * Finds a Server from the given name
-     *
-     * @param name Name of the Server to find
-     * @return Server if the server is found from the name
-     */
-    private Server getServerByName(String name) {
-        for (Server server : servers) {
-            if (server.getName().equalsIgnoreCase(name)) {
-                return server;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Finds an Account from the given username
      *
      * @param username Username of the Account to find
@@ -2590,21 +2472,6 @@ public class Settings {
     }
 
     /**
-     * Finds if a server is available
-     *
-     * @param name The name of the Server
-     * @return true if found, false if not
-     */
-    public boolean isServerByName(String name) {
-        for (Server server : servers) {
-            if (server.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Finds if an Account is available
      *
      * @param username The username of the Account
@@ -2617,31 +2484,6 @@ public class Settings {
             }
         }
         return false;
-    }
-
-    /**
-     * Gets the URL for a file on the user selected server
-     *
-     * @param filename Filename including directories on the server
-     * @return URL of the file
-     */
-    public String getFileURL(String filename) {
-        return this.server.getFileURL(filename);
-    }
-
-    /**
-     * Gets the URL for a file on the master server
-     *
-     * @param filename Filename including directories on the server
-     * @return URL of the file or null if no master server defined
-     */
-    public String getMasterFileURL(String filename) {
-        for (Server server : this.servers) {
-            if (server.isMaster()) {
-                return server.getFileURL(filename);
-            }
-        }
-        return null;
     }
 
     /**
@@ -2709,34 +2551,6 @@ public class Settings {
         } catch (IOException ex) {
             LogManager.logStackTrace("Failed to load language", ex);
         }
-    }
-
-    /**
-     * Gets the users current active Server
-     *
-     * @return The users set server
-     */
-    public Server getServer() {
-        return this.server;
-    }
-
-    /**
-     * Sets the users current active Server
-     *
-     * @param server The server to set to
-     */
-    public void setServer(Server server) {
-        this.server = server;
-        this.originalServer = server;
-    }
-
-    /**
-     * Gets the users saved Server
-     *
-     * @return The users saved server
-     */
-    public Server getOriginalServer() {
-        return this.originalServer;
     }
 
     /**

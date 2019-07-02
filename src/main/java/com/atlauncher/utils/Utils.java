@@ -1183,7 +1183,7 @@ public class Utils {
     public static boolean testProxy(Proxy proxy) {
         try {
             HttpURLConnection connection;
-            URL url = new URL(App.settings.getFileURL("ping"));
+            URL url = new URL(String.format("%s/ping", Constants.DOWNLOAD_SERVER));
             connection = (HttpURLConnection) url.openConnection(proxy);
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);

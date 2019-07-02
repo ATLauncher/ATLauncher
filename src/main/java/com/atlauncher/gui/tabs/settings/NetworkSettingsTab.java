@@ -28,7 +28,6 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -38,9 +37,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
-    private JLabelWithHover downloadServerLabel;
-    private JComboBox<Server> server;
-
     private JLabelWithHover concurrentConnectionsLabel;
     private JTextField concurrentConnections;
 
@@ -58,27 +54,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     public NetworkSettingsTab() {
         RelocalizationManager.addListener(this);
-        // Download Server
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        downloadServerLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.downloadserver") + ":",
-                HELP_ICON, Language.INSTANCE.localize("settings.downloadserverhelp"));
-        add(downloadServerLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        server = new JComboBox<>();
-        for (Server serverr : App.settings.getServers()) {
-            if (serverr.isUserSelectable()) {
-                server.addItem(serverr);
-            }
-        }
-        server.setSelectedItem(App.settings.getOriginalServer());
-        add(server, gbc);
-
         // Concurrent Connection Settings
         gbc.gridx = 0;
         gbc.gridy++;
@@ -256,7 +231,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     public void save() {
-        App.settings.setServer((Server) server.getSelectedItem());
         App.settings
                 .setConcurrentConnections(Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")));
         App.settings.setEnableProxy(enableProxy.isSelected());
@@ -274,9 +248,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     @Override
     public void onRelocalization() {
-        this.downloadServerLabel.setText(Language.INSTANCE.localize("settings.downloadserver") + ":");
-        this.downloadServerLabel.setToolTipText(Language.INSTANCE.localize("settings.downloadserverhelp"));
-
         this.concurrentConnectionsLabel.setText(Language.INSTANCE.localize("settings.concurrentconnections") + ":");
         this.concurrentConnectionsLabel.setToolTipText(
                 "<html>" + Language.INSTANCE.localizeWithReplace("settings.concurrentconnectionshelp", "<br/><br/>")

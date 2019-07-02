@@ -67,85 +67,75 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     @Override
     public void actionPerformed(ActionEvent e) {
         int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("tools.networkchecker"))
-                .setContent(HTMLUtils.centerParagraph(
-                        Utils.splitMultilinedString(Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup",
-                                App.settings.getServers().size() * 20 + " MB.<br/><br/>"), 75, "<br>")))
+                .setContent(HTMLUtils.centerParagraph(Utils.splitMultilinedString(
+                        Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup", "20 MB.<br/><br/>"), 75,
+                        "<br>")))
                 .setType(DialogManager.INFO).show();
 
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"),
-                    App.settings.getServers().size(), Language.INSTANCE.localize("tools.networkchecker.running"),
-                    "Network Checker Tool Cancelled!");
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), 1,
+                    Language.INSTANCE.localize("tools.networkchecker.running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
-                dialog.setTotalTasksToDo(App.settings.getServers().size() * 5);
+                dialog.setTotalTasksToDo(5);
                 StringBuilder results = new StringBuilder();
 
                 // Ping Test
-                for (Server server : App.settings.getServers()) {
-                    if (server.getHost().contains(":")) {
-                        dialog.doneTask();
-                        continue;
-                    }
+                results.append("Ping results to " + Constants.DOWNLOAD_HOST + " was "
+                        + Utils.pingAddress(Constants.DOWNLOAD_HOST) + "\n\n----------------\n\n");
+                dialog.doneTask();
 
-                    results.append("Ping results to " + server.getHost() + " was " + Utils.pingAddress(server.getHost())
-                            + "\n\n----------------\n\n");
-                    dialog.doneTask();
-
-                    results.append("Tracert to " + server.getHost() + " was " + Utils.traceRoute(server.getHost()));
-                    dialog.doneTask();
-                }
+                results.append(
+                        "Tracert to " + Constants.DOWNLOAD_HOST + " was " + Utils.traceRoute(Constants.DOWNLOAD_HOST));
+                dialog.doneTask();
 
                 // Response Code Test
-                for (Server server : App.settings.getServers()) {
-                    try {
-                        results.append(String.format("Response code to %s was %d\n\n----------------\n\n",
-                                server.getHost(), Download.build()
-                                        .setUrl(server.getFileURL("launcher/json/hashes.json")).getResponseCode()));
-                    } catch (Exception e1) {
-                        results.append(String.format("Exception thrown when connecting to %s\n\n----------------\n\n",
-                                server.getHost()));
-                        results.append(e1.toString());
-                    }
-                    dialog.doneTask();
+                try {
+                    results.append(String.format("Response code to %s was %d\n\n----------------\n\n",
+                            Constants.DOWNLOAD_SERVER,
+                            Download.build()
+                                    .setUrl(String.format("%s/launcher/json/hashes.json", Constants.DOWNLOAD_SERVER))
+                                    .getResponseCode()));
+                } catch (Exception e1) {
+                    results.append(String.format("Exception thrown when connecting to %s\n\n----------------\n\n",
+                            Constants.DOWNLOAD_SERVER));
+                    results.append(e1.toString());
                 }
+                dialog.doneTask();
 
                 // Ping Pong Test
-                for (Server server : App.settings.getServers()) {
-                    results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n",
-                            server.getHost(), Download.build().setUrl(server.getFileURL("ping")).asString()));
-                    dialog.doneTask();
-                }
+                results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n",
+                        Constants.DOWNLOAD_SERVER,
+                        Download.build().setUrl(String.format("%s/ping", Constants.DOWNLOAD_SERVER)).asString()));
+                dialog.doneTask();
 
                 // Speed Test
-                for (Server server : App.settings.getServers()) {
-                    File file = new File(App.settings.getTempDir(), "20MB.test");
-                    if (file.exists()) {
-                        Utils.delete(file);
-                    }
-                    long started = System.currentTimeMillis();
-                    try {
-                        Download.build().setUrl(server.getFileURL("20MB.test")).downloadTo(file.toPath())
-                                .downloadFile();
-                    } catch (Exception e2) {
-                        results.append(String.format(
-                                "Exception thrown when downloading 20MB.test from %s\n\n----------------\n\n",
-                                server.getHost()));
-                        results.append(e2.toString());
-                    }
-
-                    long timeTaken = System.currentTimeMillis() - started;
-                    float bps = file.length() / (timeTaken / 1000);
-                    float kbps = bps / 1024;
-                    float mbps = kbps / 1024;
-                    String speed = (mbps < 1
-                            ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f " + "KB/s", kbps))
-                            : String.format("%.2f MB/s", mbps));
-                    results.append(String.format(
-                            "Download speed to %s was %s, " + ""
-                                    + "taking %.2f seconds to download 20MB\n\n----------------\n\n",
-                            server.getHost(), speed, (timeTaken / 1000.0)));
-                    dialog.doneTask();
+                File file = new File(App.settings.getTempDir(), "20MB.test");
+                if (file.exists()) {
+                    Utils.delete(file);
                 }
+                long started = System.currentTimeMillis();
+                try {
+                    Download.build().setUrl(String.format("%s/20MB.test", Constants.DOWNLOAD_SERVER))
+                            .downloadTo(file.toPath()).downloadFile();
+                } catch (Exception e2) {
+                    results.append(
+                            String.format("Exception thrown when downloading 20MB.test from %s\n\n----------------\n\n",
+                                    Constants.DOWNLOAD_SERVER));
+                    results.append(e2.toString());
+                }
+
+                long timeTaken = System.currentTimeMillis() - started;
+                float bps = file.length() / (timeTaken / 1000);
+                float kbps = bps / 1024;
+                float mbps = kbps / 1024;
+                String speed = (mbps < 1
+                        ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f " + "KB/s", kbps))
+                        : String.format("%.2f MB/s", mbps));
+                results.append(String.format(
+                        "Download speed to %s was %s, " + ""
+                                + "taking %.2f seconds to download 20MB\n\n----------------\n\n",
+                        Constants.DOWNLOAD_SERVER, speed, (timeTaken / 1000.0)));
+                dialog.doneTask();
 
                 String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString());
                 if (result.contains(Constants.PASTE_CHECK_URL)) {

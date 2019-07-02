@@ -105,7 +105,7 @@ public class Mod {
 
     public String getDownloadUrl() {
         if (this.download == DownloadType.server) {
-            return String.format("%s/%s", Constants.ATLAUNCHER_DOWNLOAD_SERVER, this.getUrl());
+            return String.format("%s/%s", Constants.DOWNLOAD_SERVER, this.getUrl());
         }
 
         return this.getUrl();
