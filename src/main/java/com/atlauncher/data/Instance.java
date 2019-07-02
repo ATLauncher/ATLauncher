@@ -1639,7 +1639,7 @@ public class Instance implements Cloneable {
      */
     public Instance clone() {
         Instance clone;
-        if (!this.userLock.equals(null)) {
+        if (this.userLock != null) {
             clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
                     mods, libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
                     logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods, loaderVersion);
