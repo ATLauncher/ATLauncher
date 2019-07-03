@@ -630,39 +630,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // run any processors that the loader needs
         this.loader.runProcessors();
-
-        // add the libraries for the loader
-        this.libraries.addAll(this.loader.getLibraries());
-        for (String library : this.libraries) {
-            LogManager.debug(library);
-        }
-
-        // add the arguments for the loader
-        this.arguments.addAll(this.loader.getArguments());
-
-        // add the arguments for Minecraft
-        MojangVersion mojangVersion = this.version.getMinecraftVersion().getMojangVersion();
-
-        if (this.loader.useMinecraftArguments()) {
-            if (mojangVersion.hasArguments()) {
-                for (ArgumentRule argument : mojangVersion.getArguments().getGame()) {
-                    if (argument.applies()) {
-                        this.arguments.add(argument.getValue());
-                    }
-                }
-            } else {
-                for (String argument : mojangVersion.getMinecraftArguments().split(" ")) {
-                    // make sure not to duplicate any since Forge copies what Minecraft include
-                    if (!this.arguments.contains(argument)) {
-                        this.arguments.add(argument);
-                    }
-                }
-            }
-        }
-
-        // add the mainclass for the loader
-        this.mainClass = this.loader.getMainClass();
-
         fireSubProgress(-1); // Hide the subprogress bar
     }
 
@@ -1400,15 +1367,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             downloadLoggingClient(); // Download logging client
         }
 
-        downloadLibraries(); // Download Libraries
-        if (isCancelled()) {
-            return false;
-        }
-        organiseLibraries(); // Organise the libraries
-        if (isCancelled()) {
-            return false;
-        }
-
         if (this.jsonVersion.hasLoader()) {
             try {
                 this.loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this,
@@ -1420,10 +1378,55 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
 
             downloadLoader(); // Download Loader
+
             if (isCancelled()) {
                 return false;
             }
 
+            // add the libraries for the loader
+            this.libraries.addAll(this.loader.getLibraries());
+            for (String library : this.libraries) {
+                LogManager.debug(library);
+            }
+
+            // add the arguments for the loader
+            this.arguments.addAll(this.loader.getArguments());
+
+            // add the arguments for Minecraft
+            MojangVersion mojangVersion = this.version.getMinecraftVersion().getMojangVersion();
+
+            if (this.loader.useMinecraftArguments()) {
+                if (mojangVersion.hasArguments()) {
+                    for (ArgumentRule argument : mojangVersion.getArguments().getGame()) {
+                        if (argument.applies()) {
+                            this.arguments.add(argument.getValue());
+                        }
+                    }
+                } else {
+                    for (String argument : mojangVersion.getMinecraftArguments().split(" ")) {
+                        // make sure not to duplicate any since Forge copies what Minecraft include
+                        if (!this.arguments.contains(argument)) {
+                            this.arguments.add(argument);
+                        }
+                    }
+                }
+            }
+
+            // add the mainclass for the loader
+            this.mainClass = this.loader.getMainClass();
+        }
+
+        downloadLibraries(); // Download Libraries
+        if (isCancelled()) {
+            return false;
+        }
+
+        organiseLibraries(); // Organise the libraries
+        if (isCancelled()) {
+            return false;
+        }
+
+        if (this.loader != null) {
             installLoader(); // Install Loader
             if (isCancelled()) {
                 return false;
