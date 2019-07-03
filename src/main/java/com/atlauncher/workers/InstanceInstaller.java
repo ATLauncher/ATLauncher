@@ -143,6 +143,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
 
+        if (this.loaderVersion != null) {
+            LogManager.info("Using loader version " + this.loaderVersion.getVersion());
+        }
+
         try {
             downloadPackVersionJson();
 
@@ -691,12 +695,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (this.loader != null && this.loader.getInstallLibraries() != null) {
             this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
-                    .forEach(library -> pool.add(
-                            new com.atlauncher.network.Download().setUrl(library.downloads.artifact.url)
-                                    .downloadTo(new File(App.settings.getGameLibrariesDir(),
-                                            library.downloads.artifact.path).toPath())
-                                    .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
-                                    .withInstanceInstaller(this).withHttpClient(httpClient)));
+                    .forEach(library -> pool.add(new com.atlauncher.network.Download()
+                            .setUrl(library.downloads.artifact.url)
+                            .downloadTo(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
+                                    .toPath())
+                            .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                            .withInstanceInstaller(this).withHttpClient(httpClient)));
         }
 
         this.getLibraries().stream().filter(Library::hasNativeForOS).forEach(library -> {
@@ -804,9 +808,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
 
-        this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser).forEach(mod -> pool.add(new com.atlauncher.network.Download().setUrl(mod.getDownloadUrl())
-                .downloadTo(new File(App.settings.getDownloadsDir(), mod.getFile()).toPath()).hash(mod.md5)
-                .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient)));
+        this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser)
+                .forEach(mod -> pool.add(new com.atlauncher.network.Download().setUrl(mod.getDownloadUrl())
+                        .downloadTo(new File(App.settings.getDownloadsDir(), mod.getFile()).toPath()).hash(mod.md5)
+                        .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient)));
 
         DownloadPool smallPool = pool.downsize();
 
@@ -817,7 +822,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         fireSubProgressUnknown();
 
-        this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser).forEach(mod -> mod.download(this));
+        this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser)
+                .forEach(mod -> mod.download(this));
 
         hideSubProgressBar();
     }

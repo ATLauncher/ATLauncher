@@ -126,18 +126,23 @@ public class Processor {
                     return;
                 }
 
+                LogManager.debug("Got value of " + value);
                 if (value.charAt(0) == '/') {
-                    File localFile = new File(extractedDir, value);
-                    LogManager.debug("Got argument with local file of " + localFile.getAbsolutePath());
+                    if (value.toLowerCase().contains(App.settings.getGameLibrariesDir().toString().toLowerCase())) {
+                        args.add(value);
+                    } else {
+                        File localFile = new File(extractedDir, value);
+                        LogManager.debug("Got argument with local file of " + localFile.getAbsolutePath());
 
-                    if (!localFile.exists() || !localFile.isFile()) {
-                        LogManager.error("Failed to process argument with value of " + value + " as the local file "
-                                + localFile.getAbsolutePath() + " doesn't exist");
-                        instanceInstaller.cancel(true);
-                        return;
+                        if (!localFile.exists() || !localFile.isFile()) {
+                            LogManager.error("Failed to process argument with value of " + value + " as the local file "
+                                    + localFile.getAbsolutePath() + " doesn't exist");
+                            instanceInstaller.cancel(true);
+                            return;
+                        }
+
+                        args.add(localFile.getAbsolutePath());
                     }
-
-                    args.add(localFile.getAbsolutePath());
                 } else {
                     args.add(value);
                 }
