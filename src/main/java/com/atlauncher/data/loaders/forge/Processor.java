@@ -127,8 +127,9 @@ public class Processor {
                     return;
                 }
 
-                if (value.charAt(0) == File.separatorChar) {
-                    if(value.toLowerCase().contains(App.settings.getGameLibrariesDir().toString().toLowerCase())){
+                LogManager.debug("Got value of " + value);
+                if (value.charAt(0) == '/') {
+                    if (value.toLowerCase().contains(App.settings.getGameLibrariesDir().toString().toLowerCase())) {
                         args.add(value);
                     } else {
                         File localFile = new File(extractedDir, value);

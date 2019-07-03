@@ -1530,6 +1530,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
 
+        if (this.loaderVersion != null) {
+            LogManager.info("Using loader version " + this.loaderVersion.getVersion());
+        }
+
         try {
             this.jsonVersion = Gsons.DEFAULT.fromJson(this.pack.getJSON(version.getVersion()), Version.class);
             return installUsingJSON();
