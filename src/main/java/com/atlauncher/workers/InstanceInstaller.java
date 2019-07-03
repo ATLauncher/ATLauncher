@@ -211,7 +211,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         }
 
         this.minecraftVersion = com.atlauncher.network.Download.build().setUrl(minecraftVersion.url)
-                .asClass(MinecraftVersion.class);
+                .downloadTo(this.temp.resolve("minecraft.json")).asClass(MinecraftVersion.class);
 
         hideSubProgressBar();
     }
