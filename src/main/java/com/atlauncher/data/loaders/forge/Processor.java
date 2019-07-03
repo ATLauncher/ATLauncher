@@ -165,6 +165,14 @@ public class Processor {
             }
         }
 
+        // we pass in some extra params for the forge installer tools DEOBF_REALMS task
+        if (this.args.contains("DEOBF_REALMS")) {
+            args.add("--json");
+            args.add(new File(extractedDir, "minecraft.json").getAbsolutePath());
+            args.add("--libs");
+            args.add(App.settings.getGameLibrariesDir().getAbsolutePath());
+        }
+
         ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[classpath.size()]),
                 Processor.class.getClassLoader());
         try {

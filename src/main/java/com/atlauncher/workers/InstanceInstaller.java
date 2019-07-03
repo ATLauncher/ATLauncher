@@ -1400,6 +1400,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             downloadLoggingClient(); // Download logging client
         }
 
+        downloadLibraries(); // Download Libraries
+        if (isCancelled()) {
+            return false;
+        }
+        organiseLibraries(); // Organise the libraries
+        if (isCancelled()) {
+            return false;
+        }
+
         if (this.jsonVersion.hasLoader()) {
             try {
                 this.loader = this.jsonVersion.getLoader().getLoader(new File(this.getTempDirectory(), "loader"), this,
@@ -1421,14 +1430,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
         }
 
-        downloadLibraries(); // Download Libraries
-        if (isCancelled()) {
-            return false;
-        }
-        organiseLibraries(); // Organise the libraries
-        if (isCancelled()) {
-            return false;
-        }
         addPercent(5);
         if (this.isServer && this.hasJarMods()) {
             fireTask(Language.INSTANCE.localize("server.extractingjar"));

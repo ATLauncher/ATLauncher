@@ -28,6 +28,8 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Downloadable;
+import com.atlauncher.data.mojang.VersionManifest;
+import com.atlauncher.data.mojang.VersionManifestVersion;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -44,6 +46,31 @@ public class Forge113Loader extends ForgeLoader {
                         instanceInstaller.getMinecraftJarLibrary("server").getAbsolutePath()));
 
         return installProfile;
+    }
+
+    @Override
+    public void downloadAndExtractInstaller() {
+        super.downloadAndExtractInstaller();
+
+        Downloadable downloadable = new Downloadable("https://launchermeta.mojang.com/mc/game/version_manifest.json",
+                false);
+
+        VersionManifest versionManifest = Gsons.DEFAULT.fromJson(downloadable.getContents(), VersionManifest.class);
+
+        VersionManifestVersion version = versionManifest.versions.stream()
+                .filter(v -> v.id.equalsIgnoreCase(this.minecraft)).findFirst().orElse(null);
+
+        if (version == null) {
+            LogManager.error("Failed to find mMnecraft version from Mojang");
+            instanceInstaller.cancel(true);
+            return;
+        }
+
+        downloadable = new Downloadable(version.url, new File(this.tempDir, "minecraft.json"));
+
+        if (downloadable.needToDownload()) {
+            downloadable.download();
+        }
     }
 
     public Version getVersion() {
