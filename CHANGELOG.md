@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.9.5
+## 3.2.9.6
 
--   Fix reinstalling packs without folder deletes not working
+-   Fix installing Forge 1.13 and above (Thanks to DallasEpperson)
