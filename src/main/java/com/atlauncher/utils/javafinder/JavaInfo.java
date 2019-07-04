@@ -8,7 +8,9 @@
 package com.atlauncher.utils.javafinder;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 
+import com.atlauncher.collection.Caching;
 import com.atlauncher.utils.Java;
 
 /**
@@ -22,6 +24,8 @@ public class JavaInfo {
     public Integer majorVersion; // The major version
     public Integer minorVersion; // The minor version
     public boolean is64bits; // ! true for 64-bit javas, false for 32
+    private static final SoftReference<Caching.Cache<String, String>> versionInfos = new SoftReference<>(
+            Caching.<String, String>newLRU());
 
     /**
      * Calls 'javaPath -version' and parses the results
@@ -29,7 +33,13 @@ public class JavaInfo {
      * @param javaPath: path to a java.exe executable
      ****************************************************************************/
     public JavaInfo(String javaPath) {
-        String versionInfo = RuntimeStreamer.execute(new String[] { javaPath, "-version" });
+        String versionInfo = JavaInfo.versionInfos.get().get(javaPath);
+
+        if (versionInfo == null) {
+            versionInfo = RuntimeStreamer.execute(new String[] { javaPath, "-version" });
+            JavaInfo.versionInfos.get().put(javaPath, versionInfo);
+        }
+
         String[] tokens = versionInfo.split("\"");
 
         if (tokens.length < 2) {
