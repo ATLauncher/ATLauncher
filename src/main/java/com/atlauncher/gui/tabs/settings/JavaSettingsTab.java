@@ -37,7 +37,9 @@ import javax.swing.SpinnerNumberModel;
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Java;
@@ -46,7 +48,7 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
 @SuppressWarnings("serial")
-public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener, SettingsListener {
     private JLabelWithHover initialMemoryLabel;
     private JSpinner initialMemory;
     private JLabelWithHover initialMemoryLabelWarning;
@@ -68,6 +70,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JPanel javaPathPanel;
     private JLabelWithHover javaPathLabel;
     private JTextField javaPath;
+    private JComboBox<JavaInfo> installedJavas;
     private JButton javaPathResetButton;
     private JButton javaBrowseButton;
     private JPanel javaParametersPanel;
@@ -85,6 +88,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         int systemRam = OS.getSystemRam();
 
         RelocalizationManager.addListener(this);
+        SettingsManager.addListener(this);
+
         // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
@@ -239,23 +244,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         JPanel javaPathPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         JPanel javaPathPanelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-        if (OS.isWindows()) {
-            JComboBox<JavaInfo> installedJavas = new JComboBox<>();
-            List<JavaInfo> systemJavas = Java.getInstalledJavas();
-
-            if (systemJavas.size() != 0) {
-                systemJavas.stream().forEach(installedJavas::addItem);
-
-                installedJavas.setSelectedItem(systemJavas.stream()
-                        .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
-                        .orElse(null));
-
-                installedJavas.addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
-
-                if (installedJavas.getItemCount() != 0) {
-                    javaPathPanelTop.add(installedJavas);
-                }
-            }
+        installedJavas = new JComboBox<>();
+        addInstalledJavas();
+        if (installedJavas.getItemCount() != 0) {
+            javaPathPanelTop.add(installedJavas);
         }
 
         javaPath = new JTextField(32);
@@ -459,5 +451,27 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 .setText(Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch") + "?");
         this.ignoreJavaOnInstanceLaunchLabel
                 .setToolTipText(Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch"));
+    }
+
+    public void addInstalledJavas() {
+        installedJavas.removeAll();
+
+        List<JavaInfo> systemJavas = Java.getInstalledJavas();
+
+        if (systemJavas.size() != 0) {
+            systemJavas.stream().forEach(installedJavas::addItem);
+
+            installedJavas.setSelectedItem(systemJavas.stream()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
+                    .orElse(null));
+
+            installedJavas
+                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+        }
+    }
+
+    @Override
+    public void onSettingsSaved() {
+        javaPath.setText(App.settings.getJavaPath());
     }
 }

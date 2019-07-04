@@ -86,6 +86,7 @@ import com.atlauncher.data.mojang.OperatingSystem;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 
+import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 
 import net.iharder.Base64;
@@ -1420,6 +1421,49 @@ public class Utils {
 
         Utils.delete(inputFile);
         Utils.delete(packFile);
+    }
+
+    public static void unLzmaFile(File input, File output) {
+        if (output.exists()) {
+            Utils.delete(output);
+        }
+
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        LZMAInputStream lis = null;
+
+        try {
+            fis = new FileInputStream(input);
+            lis = new LZMAInputStream(fis);
+            fos = new FileOutputStream(output);
+
+            final byte[] buffer = new byte[8192];
+            int n = 0;
+            while (-1 != (n = lis.read(buffer))) {
+                fos.write(buffer, 0, n);
+            }
+
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (bis != null) {
+                    bis.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+                if (lis != null) {
+                    lis.close();
+                }
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+        }
     }
 
     public static void unXZFile(File input, File output) {

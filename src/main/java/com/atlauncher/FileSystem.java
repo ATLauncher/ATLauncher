@@ -31,6 +31,7 @@ public final class FileSystem {
     public static final Path BACKUPS = BASE_DIR.resolve("Backups");
     public static final Path CONFIGS = BASE_DIR.resolve("Configs");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
+    public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
     public static final Path THEMES = CONFIGS.resolve("Themes");
     public static final Path JSON = CONFIGS.resolve("JSON");
     public static final Path VERSIONS = CONFIGS.resolve("Versions");

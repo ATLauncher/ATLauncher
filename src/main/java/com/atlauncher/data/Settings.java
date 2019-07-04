@@ -151,8 +151,8 @@ public class Settings {
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
-    private File baseDir, backupsDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir,
-            jarsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
+    private File baseDir, backupsDir, runtimesDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir,
+            toolsDir, jarsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
             languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
@@ -195,6 +195,7 @@ public class Settings {
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         logsDir = new File(baseDir, "Logs");
         backupsDir = new File(baseDir, "Backups");
+        runtimesDir = new File(baseDir, "runtimes");
         configsDir = new File(baseDir, "Configs");
         themesDir = new File(configsDir, "Themes");
         jsonDir = new File(configsDir, "JSON");
@@ -829,10 +830,10 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir,
-                jarsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(), this.getIndexesAssetsDir(),
-                librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir, instancesDir, serversDir,
-                tempDir, failedDownloadsDir, logsDir };
+        File[] files = { backupsDir, runtimesDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
+                toolsDir, jarsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(),
+                this.getIndexesAssetsDir(), librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir,
+                instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -862,6 +863,10 @@ public class Settings {
      */
     public File getBackupsDir() {
         return this.backupsDir;
+    }
+
+    public File getRuntimesDir() {
+        return this.runtimesDir;
     }
 
     /**

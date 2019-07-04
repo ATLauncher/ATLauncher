@@ -21,12 +21,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.javafinder.JavaFinder;
 import com.atlauncher.utils.javafinder.JavaInfo;
@@ -225,9 +230,35 @@ public class Java {
         return path;
     }
 
+    public static String getPathToJavaExecutable(Path root) {
+        return root.resolve("bin/java" + (OS.isWindows() ? "w" : "")).toAbsolutePath().toString();
+    }
+
     public static List<JavaInfo> getInstalledJavas() {
-        return JavaFinder.findJavas().stream()
-                .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
-                .collect(Collectors.toList());
+        List<JavaInfo> javas = new ArrayList<>();
+
+        if (OS.isWindows()) {
+            javas.addAll(JavaFinder.findJavas().stream()
+                    .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
+                    .collect(Collectors.toList()));
+        }
+
+        JavaInfo systemJava = new JavaInfo(Java.getPathToSystemJavaExecutable());
+        if (javas.size() == 0
+                || !javas.stream().anyMatch(java -> java.rootPath.equalsIgnoreCase(systemJava.rootPath))) {
+            javas.add(systemJava);
+        }
+
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(FileSystem.RUNTIMES)) {
+            for (Path path : directoryStream) {
+                if (Files.exists(path.resolve("release"))) {
+                    javas.add(new JavaInfo(Java.getPathToJavaExecutable(path)));
+                }
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return javas;
     }
 }

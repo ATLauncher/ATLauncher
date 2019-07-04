@@ -27,6 +27,7 @@ import com.atlauncher.gui.components.BlankToolPanel;
 import com.atlauncher.gui.components.LogClearerToolPanel;
 import com.atlauncher.gui.components.NetworkCheckerToolPanel;
 import com.atlauncher.gui.components.RelaunchInDebugModePanel;
+import com.atlauncher.gui.components.RuntimeDownloaderToolPanel;
 import com.atlauncher.gui.components.ServerCheckerToolPanel;
 
 @SuppressWarnings("serial")
@@ -44,7 +45,7 @@ public class ToolsTab extends JPanel implements Tab {
         mainPanel.add(new ServerCheckerToolPanel());
         mainPanel.add(new LogClearerToolPanel());
         mainPanel.add(new RelaunchInDebugModePanel());
-        mainPanel.add(new BlankToolPanel());
+        mainPanel.add(new RuntimeDownloaderToolPanel());
         mainPanel.add(new BlankToolPanel());
 
         add(mainPanel, BorderLayout.CENTER);
