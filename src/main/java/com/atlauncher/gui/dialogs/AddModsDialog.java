@@ -22,8 +22,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -37,6 +35,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseModCard;
@@ -46,16 +45,18 @@ import com.atlauncher.utils.CurseApi;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
-    private final Instance instance;
-    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
-    private final JPanel topPanel = new JPanel(new BorderLayout());
-    private final JTextField searchField = new JTextField(16);
-    private final JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
-    private final JButton installFabricApiButton = new JButton("Install Fabric API");
-    private final JScrollPane jscrollPane;
-    private final JButton nextButton;
-    private final JButton prevButton;
-    private final JPanel mainPanel = new JPanel(new BorderLayout());
+    private Instance instance;
+    private InstanceV2 instanceV2;
+
+    private JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
+    private JPanel topPanel = new JPanel(new BorderLayout());
+    private JTextField searchField = new JTextField(16);
+    private JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
+    private JButton installFabricApiButton = new JButton("Install Fabric API");
+    private JScrollPane jscrollPane;
+    private JButton nextButton;
+    private JButton prevButton;
+    private JPanel mainPanel = new JPanel(new BorderLayout());
     private int page = 0;
 
     public AddModsDialog(Instance instance) {
@@ -68,6 +69,35 @@ public final class AddModsDialog extends JDialog {
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
+        setupComponents();
+
+        this.loadDefaultMods();
+
+        this.pack();
+        this.setLocationRelativeTo(App.settings.getParent());
+        this.setVisible(true);
+    }
+
+    public AddModsDialog(InstanceV2 instanceV2) {
+        super(App.settings.getParent(),
+                Language.INSTANCE.localizeWithReplace("instance.addingmods", instanceV2.launcher.name),
+                ModalityType.APPLICATION_MODAL);
+        this.instanceV2 = instanceV2;
+
+        this.setPreferredSize(new Dimension(550, 450));
+        this.setResizable(false);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        setupComponents();
+
+        this.loadDefaultMods();
+
+        this.pack();
+        this.setLocationRelativeTo(App.settings.getParent());
+        this.setVisible(true);
+    }
+
+    private void setupComponents() {
         JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         searchButtonsPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
@@ -77,12 +107,18 @@ public final class AddModsDialog extends JDialog {
         this.installFabricApiButton.addActionListener(e -> {
             CurseMod mod = CurseApi.getModById(Constants.CURSE_FABRIC_MOD_ID);
 
-            new CurseModFileSelectorDialog(mod, instance);
+            if (this.instanceV2 != null) {
+                new CurseModFileSelectorDialog(mod, instanceV2);
+            } else {
+                new CurseModFileSelectorDialog(mod, instance);
+            }
         });
 
-        if (instance.getLoaderVersion().isFabric() && instance.getInstalledMods().stream()
-                .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
-                .count() == 0) {
+        if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion : this.instance.getLoaderVersion())
+                .isFabric()
+                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
+                        .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
+                        .count() == 0) {
             searchButtonsPanel.add(this.installFabricApiButton);
 
             JLabel fabricApiWarningLabel = new JLabel(
@@ -122,12 +158,6 @@ public final class AddModsDialog extends JDialog {
         this.searchField.addActionListener(e -> searchForMods());
 
         this.searchButton.addActionListener(e -> searchForMods());
-
-        this.loadDefaultMods();
-
-        this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
-        this.setVisible(true);
     }
 
     private void setLoading(boolean loading) {
@@ -163,10 +193,13 @@ public final class AddModsDialog extends JDialog {
         nextButton.setEnabled(false);
 
         Runnable r = () -> {
-            if (instance.getLoaderVersion().isFabric()) {
-                setMods(CurseApi.searchModsForFabric(instance.getMinecraftVersion(), "", page));
+            if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion : this.instance.getLoaderVersion())
+                    .isFabric()) {
+                setMods(CurseApi.searchModsForFabric(
+                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "", page));
             } else {
-                setMods(CurseApi.searchMods(instance.getMinecraftVersion(), "", page));
+                setMods(CurseApi.searchMods(
+                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "", page));
             }
 
             setLoading(false);
@@ -186,7 +219,8 @@ public final class AddModsDialog extends JDialog {
         Runnable r = () -> {
             String query = searchField.getText();
 
-            setMods(CurseApi.searchMods(instance.getMinecraftVersion(), query, page));
+            setMods(CurseApi.searchMods(
+                    this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query, page));
             setLoading(false);
         };
 
@@ -213,7 +247,11 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new GridLayout(mods.size() / 2, 2));
 
             mods.stream().forEach(curseMod -> {
-                contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
+                if (this.instanceV2 != null) {
+                    contentPanel.add(new CurseModCard(curseMod, this.instanceV2), gbc);
+                } else {
+                    contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
+                }
                 gbc.gridy++;
             });
         }

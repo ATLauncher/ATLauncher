@@ -36,6 +36,8 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
+import com.atlauncher.data.InstanceV2Launcher;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.Deletes;
@@ -64,7 +66,6 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
 
-import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
@@ -76,6 +77,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     protected double downloadedBytes = 0; // Total number of bytes downloaded
 
     public Instance instance = null;
+    public InstanceV2 instanceV2 = null;
     public final String instanceName;
     public final com.atlauncher.data.Pack pack;
     public final com.atlauncher.data.PackVersion version;
@@ -90,7 +92,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     public final Path root;
     public final Path temp;
 
-    public List<Library> libraries = new ArrayList<>();
     public Loader loader;
     public com.atlauncher.data.json.Version packVersion;
     public MinecraftVersion minecraftVersion;
@@ -139,6 +140,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         this.instance = instance;
     }
 
+    public void setInstance(InstanceV2 instanceV2) {
+        this.instanceV2 = instanceV2;
+    }
+
     @Override
     protected Boolean doInBackground() throws Exception {
         LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
@@ -168,6 +173,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             }
 
             install();
+
+            if (!this.isServer) {
+                saveInstanceJson();
+            }
 
             return true;
         } catch (Exception e) {
@@ -284,9 +293,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                             mod.getCurseModId(), mod.getCurseFileId()));
         }
 
-        if (this.isReinstall && instance.hasCustomMods()
-                && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())) {
-            for (com.atlauncher.data.DisableableMod mod : instance.getCustomDisableableMods()) {
+        if (this.isReinstall && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())
+                && (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
+                        .equalsIgnoreCase(version.getMinecraftVersion().getVersion())) {
+            for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null ? instanceV2.getCustomDisableableMods()
+                    : instance.getCustomDisableableMods())) {
                 modsInstalled.add(mod);
             }
         }
@@ -366,6 +377,54 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         installServerBootScripts();
 
         return true;
+    }
+
+    private void saveInstanceJson() {
+        InstanceV2 instance;
+        InstanceV2Launcher instanceLauncher;
+
+        if (!this.isReinstall || this.instance != null) {
+            instance = new InstanceV2(this.minecraftVersion);
+            instanceLauncher = new InstanceV2Launcher();
+        } else {
+            instance = this.instanceV2;
+            instanceLauncher = this.instanceV2.launcher;
+        }
+
+        instance.libraries = this.getLibraries();
+        instance.mainClass = this.mainClass;
+        instance.arguments = this.arguments;
+
+        instanceLauncher.name = this.instanceName;
+        instanceLauncher.pack = this.pack.name;
+        instanceLauncher.packId = this.pack.id;
+        instanceLauncher.version = this.packVersion.version;
+        instanceLauncher.java = this.packVersion.java;
+        instanceLauncher.enableCurseIntegration = this.packVersion.enableCurseIntegration;
+        instanceLauncher.enableEditingMods = this.packVersion.enableEditingMods;
+        instanceLauncher.loaderVersion = this.loaderVersion;
+        instanceLauncher.isDev = this.version.isDev;
+        instanceLauncher.isPlayable = true;
+        instanceLauncher.mods = this.modsInstalled;
+        instanceLauncher.requiredMemory = this.packVersion.memory;
+        instanceLauncher.requiredPermGen = this.packVersion.permGen;
+        instanceLauncher.assetsMapToResources = this.assetsMapToResources;
+
+        if (this.version.isDev) {
+            instanceLauncher.hash = this.version.hash;
+        }
+
+        instance.launcher = instanceLauncher;
+
+        instance.save();
+
+        if (!this.isReinstall || this.instance != null) {
+            App.settings.instancesV2.add(instance);
+        }
+
+        if (this.instance != null) {
+            App.settings.instances.remove(this.instance);
+        }
     }
 
     private void determineMainClass() {
@@ -591,8 +650,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         // lastly the Minecraft libraries
         if (this.loader == null || this.loader.useMinecraftLibraries()) {
-            libraries.addAll(this.minecraftVersion.libraries.stream().filter(Library::shouldInstall)
-                    .collect(Collectors.toList()));
+            libraries.addAll(this.minecraftVersion.libraries);
         }
 
         return libraries;
@@ -855,13 +913,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             return;
         }
 
-        if (this.isReinstall && this.instance.getMinecraftVersion().equalsIgnoreCase(this.minecraftVersion.id)) {
-            Files.walkFileTree(this.root.resolve("mods").toFile().toPath(), new CaseFileVisitor(
-                    this.packVersion.caseAllFiles, this.instance.getCustomMods(com.atlauncher.data.Type.mods)));
-        } else {
-            Files.walkFileTree(this.root.resolve("mods").toFile().toPath(),
-                    new CaseFileVisitor(this.packVersion.caseAllFiles));
-        }
+        Files.walkFileTree(this.root.resolve("mods").toFile().toPath(),
+                new CaseFileVisitor(this.packVersion.caseAllFiles));
     }
 
     private void runActions() {
@@ -991,14 +1044,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             if (instance != null
                     && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())
-                    && instance.hasCustomMods()) {
+                    && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())) {
                 Utils.deleteWithFilter(this.root.resolve("mods").toFile(),
-                        instance.getCustomMods(com.atlauncher.data.Type.mods));
+                        (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.mods)
+                                : instance.getCustomMods(com.atlauncher.data.Type.mods)));
                 Utils.deleteWithFilter(this.root.resolve("coremods").toFile(),
-                        instance.getCustomMods(com.atlauncher.data.Type.coremods));
+                        (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.coremods)
+                                : instance.getCustomMods(com.atlauncher.data.Type.coremods)));
                 if (isReinstall) {
                     Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
-                            instance.getCustomMods(com.atlauncher.data.Type.jar));
+                            (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.jar)
+                                    : instance.getCustomMods(com.atlauncher.data.Type.jar)));
                 }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));
@@ -1018,7 +1074,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 FileUtils.deleteDirectory(this.root.resolve("libraries"));
             }
 
-            if (this.instance != null && this.packVersion.deletes != null) {
+            if (isReinstall && this.packVersion.deletes != null) {
                 Deletes deletes = this.packVersion.deletes;
 
                 if (deletes.hasFileDeletes()) {
@@ -1236,11 +1292,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
     }
 
     public boolean wasModInstalled(String mod) {
-        return instance != null && instance.wasModInstalled(mod);
+        return instance != null
+                && (instanceV2 != null ? instanceV2.wasModInstalled(mod) : instance.wasModInstalled(mod));
     }
 
     public boolean wasModSelected(String mod) {
-        return instance != null && instance.wasModSelected(mod);
+        return instance != null && (instanceV2 != null ? instanceV2.wasModSelected(mod) : instance.wasModSelected(mod));
     }
 
     public String getShareCodeData(String code) {

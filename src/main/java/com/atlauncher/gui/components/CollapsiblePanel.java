@@ -45,6 +45,7 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -66,6 +67,7 @@ public class CollapsiblePanel extends JPanel {
     JPanel panel;
     Pack pack = null;
     Instance instance = null;
+    InstanceV2 instanceV2 = null;
     boolean collapsed; // stores current state of the collapsible panel
 
     /**
@@ -124,6 +126,27 @@ public class CollapsiblePanel extends JPanel {
         commonConstructor();
         if (App.settings.getAccount() != null) {
             if (App.settings.getAccount().getCollapsedInstances().contains(instance.getName())) {
+                setCollapsed(true);
+            }
+        }
+    }
+
+    public CollapsiblePanel(InstanceV2 instanceV2) {
+        this.instanceV2 = instanceV2;
+        if (instanceV2.launcher.isPlayable) {
+            arrow.setText(instanceV2.launcher.name + " (" + instanceV2.launcher.pack + " " + instanceV2.launcher.version
+                    + ")");
+            arrow.setForeground(App.THEME.getNormalInstanceColor());
+        } else {
+            arrow.setText(instanceV2.launcher.name + " (" + instanceV2.launcher.pack + " " + instanceV2.launcher.version
+                    + " - " + "Corrupted)");
+            arrow.setForeground(App.THEME.getCorruptedInstanceColor());
+        }
+        titleComponent = arrow;
+        collapsed = false;
+        commonConstructor();
+        if (App.settings.getAccount() != null) {
+            if (App.settings.getAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
                 setCollapsed(true);
             }
         }

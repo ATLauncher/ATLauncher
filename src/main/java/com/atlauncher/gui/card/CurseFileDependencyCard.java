@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
@@ -39,10 +40,32 @@ import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public final class CurseFileDependencyCard extends JPanel {
-    public CurseFileDependencyCard(final CurseFile file, final CurseFileDependency dependency,
-            final Instance instance) {
+    private CurseFile file;
+    private CurseFileDependency dependency;
+    private Instance instance;
+    private InstanceV2 instanceV2;
+
+    public CurseFileDependencyCard(CurseFile file, CurseFileDependency dependency, Instance instance) {
         setLayout(new BorderLayout());
 
+        this.file = file;
+        this.dependency = dependency;
+        this.instance = instance;
+
+        setupComponents();
+    }
+
+    public CurseFileDependencyCard(CurseFile file, CurseFileDependency dependency, InstanceV2 instanceV2) {
+        setLayout(new BorderLayout());
+
+        this.file = file;
+        this.dependency = dependency;
+        this.instanceV2 = instanceV2;
+
+        setupComponents();
+    }
+
+    private void setupComponents() {
         CurseMod mod = CurseApi.getModById(dependency.addonId);
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
@@ -63,7 +86,11 @@ public final class CurseFileDependencyCard extends JPanel {
         buttonsPanel.add(addButton);
         buttonsPanel.add(viewButton);
 
-        addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instance));
+        if (this.instanceV2 != null) {
+            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instanceV2));
+        } else {
+            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instance));
+        }
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
 

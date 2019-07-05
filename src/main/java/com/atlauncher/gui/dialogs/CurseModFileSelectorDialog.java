@@ -37,6 +37,7 @@ import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
@@ -51,6 +52,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     private int filesLength = 0;
     private CurseMod mod;
     private Instance instance;
+    private InstanceV2 instanceV2;
 
     private JPanel filesPanel;
     private JPanel dependenciesPanel = new JPanel(new FlowLayout());
@@ -65,6 +67,19 @@ public class CurseModFileSelectorDialog extends JDialog {
         this.mod = mod;
         this.instance = instance;
 
+        setupComponents();
+    }
+
+    public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2) {
+        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+
+        this.mod = mod;
+        this.instanceV2 = instanceV2;
+
+        setupComponents();
+    }
+
+    private void setupComponents() {
         setTitle(Language.INSTANCE.localize("common.installing") + " " + mod.name);
 
         setSize(500, 200);
@@ -140,7 +155,11 @@ public class CurseModFileSelectorDialog extends JDialog {
             dialog.add(bottomPanel, BorderLayout.SOUTH);
 
             Runnable r = () -> {
-                instance.addFileFromCurse(mod, file);
+                if (this.instanceV2 != null) {
+                    instanceV2.addFileFromCurse(mod, file);
+                } else {
+                    instance.addFileFromCurse(mod, file);
+                }
                 dialog.dispose();
                 dispose();
             };
@@ -168,7 +187,13 @@ public class CurseModFileSelectorDialog extends JDialog {
                 if (dependencies.size() != 0) {
                     dependenciesPanel.removeAll();
 
-                    dependencies.forEach(dependency -> dependenciesPanel.add(new CurseFileDependencyCard(selectedFile, dependency, instance)));
+                    if (this.instanceV2 != null) {
+                        dependencies.forEach(dependency -> dependenciesPanel
+                                .add(new CurseFileDependencyCard(selectedFile, dependency, instanceV2)));
+                    } else {
+                        dependencies.forEach(dependency -> dependenciesPanel
+                                .add(new CurseFileDependencyCard(selectedFile, dependency, instance)));
+                    }
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                             (dependencies.size() / 2) + 1));
@@ -202,7 +227,8 @@ public class CurseModFileSelectorDialog extends JDialog {
         Runnable r = () -> {
             files.addAll(CurseApi.getFilesForMod(mod.id).stream()
                     .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
-                    .filter(file -> file.gameVersion.contains(instance.getMinecraftVersion()))
+                    .filter(file -> file.gameVersion.contains(
+                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()))
                     .collect(Collectors.toList()));
 
             // ensures that font width is taken into account
@@ -216,12 +242,14 @@ public class CurseModFileSelectorDialog extends JDialog {
                 String fileName = version.fileName.toLowerCase();
                 String displayName = version.displayName.toLowerCase();
 
-                if (instance.getLoaderVersion().isFabric()) {
+                if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
+                        : this.instance.getLoaderVersion()).isFabric()) {
                     return !displayName.contains("-forge-") && !displayName.contains("(forge)")
                             && !displayName.contains("[forge") && !fileName.contains("forgemod");
                 }
 
-                if (!instance.getLoaderVersion().isFabric()) {
+                if (!(this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
+                        : this.instance.getLoaderVersion()).isFabric()) {
                     return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
                             && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
                 }

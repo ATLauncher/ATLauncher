@@ -37,6 +37,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
+import java.nio.file.Files;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,6 +76,7 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
@@ -146,8 +148,9 @@ public class Settings {
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news; // News
     private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
-    private List<Pack> packs; // Packs in the Launcher
-    private List<Instance> instances = new ArrayList<>(); // Users Installed Instances
+    public List<Pack> packs; // Packs in the Launcher
+    public List<Instance> instances = new ArrayList<>(); // Users Installed Instances
+    public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
@@ -1611,67 +1614,37 @@ public class Settings {
     private void loadInstances() {
         LogManager.debug("Loading instances");
         this.instances = new ArrayList<>(); // Reset the instances list
-        if (instancesDataFile.exists()) {
+        this.instancesV2 = new ArrayList<>(); // Reset the instancesv2 list
+
+        for (String folder : this.getInstancesDir().list(Utils.getInstanceFileFilter())) {
+            File instanceDir = new File(this.getInstancesDir(), folder);
+
+            Instance instance = null;
+            InstanceV2 instanceV2 = null;
+
             try {
-                FileInputStream in = new FileInputStream(instancesDataFile);
-                ObjectInputStream objIn = new ObjectInputStream(in);
-                try {
-                    Object obj;
-                    while ((obj = objIn.readObject()) != null) {
-                        if (obj instanceof Instance) {
-                            File dir = new File(getInstancesDir(), ((Instance) obj).getSafeName());
-                            if (!dir.exists()) {
-                                continue; // Skip the instance since the folder doesn't exist
-                            }
-                            Instance instance = (Instance) obj;
-                            if (!instance.hasBeenConverted()) {
-                                LogManager.warn("Instance " + instance.getName() + " is being converted! This is "
-                                        + "normal and should only appear once!");
-                                instance.convert();
-                            }
-                            if (!instance.getDisabledModsDirectory().exists()) {
-                                instance.getDisabledModsDirectory().mkdir();
-                            }
-                            instances.add(instance);
-                            if (isPackByName(instance.getPackName())) {
-                                instance.setRealPack(getPackByName(instance.getPackName()));
-                            }
-                        }
+                try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
+                    instanceV2 = Gsons.MINECRAFT.fromJson(fileReader, InstanceV2.class);
+                    LogManager.debug("Loaded V2 instance from " + instanceDir);
+                } catch (JsonIOException | JsonSyntaxException ignored) {
+                    try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
+                        instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
+                    } catch (JsonIOException | JsonSyntaxException e) {
+                        LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
+                        continue;
                     }
-                } catch (EOFException e) {
-                    // Don't log this, it always happens when it gets to the end of the file
-                } finally {
-                    objIn.close();
-                    in.close();
                 }
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
+            } catch (Exception e2) {
+                LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
+                continue;
             }
-            saveInstances(); // Save the instances to new json format
-            Utils.delete(instancesDataFile); // Remove old instances data file
-        } else {
-            for (String folder : this.getInstancesDir().list(Utils.getInstanceFileFilter())) {
-                File instanceDir = new File(this.getInstancesDir(), folder);
-                FileReader fileReader;
 
-                Instance instance = null;
+            if (instance == null && instanceV2 == null) {
+                LogManager.error("Failed to load instance in the folder " + instanceDir);
+                continue;
+            }
 
-                try {
-                    fileReader = new FileReader(new File(instanceDir, "instance.json"));
-                    instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
-                } catch (Exception e) {
-                    LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
-                    continue; // Instance.json not found for some reason, continue before loading
-                }
-
-                if (instance == null) {
-                    LogManager.error("Failed to load instance in the folder " + instanceDir);
-                    continue;
-                }
-
-                // convert instance to latest data version
-                instance.convert();
-
+            if (instance != null) {
                 if (!instance.getDisabledModsDirectory().exists()) {
                     instance.getDisabledModsDirectory().mkdir();
                 }
@@ -1682,10 +1655,12 @@ public class Settings {
 
                 this.instances.add(instance);
             }
-            if (instancesDataFile.exists()) {
-                Utils.delete(instancesDataFile); // Remove old instances data file
+
+            if (instanceV2 != null) {
+                this.instancesV2.add(instanceV2);
             }
         }
+
         LogManager.debug("Finished loading instances");
     }
 
@@ -2028,6 +2003,13 @@ public class Settings {
         }
     }
 
+    public void removeInstance(InstanceV2 instance) {
+        if (this.instancesV2.remove(instance)) {
+            FileUtils.deleteDirectory(instance.getRoot());
+            reloadInstancesPanel();
+        }
+    }
+
     public boolean canViewSemiPublicPackByCode(String packCode) {
         for (String code : this.addedPacks.split(",")) {
             if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
@@ -2326,7 +2308,8 @@ public class Settings {
                 return true;
             }
         }
-        return false;
+        return this.instancesV2.stream()
+                .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     /**
@@ -2984,6 +2967,21 @@ public class Settings {
             Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
             this.instances.add(clonedInstance);
             this.saveInstances();
+            this.reloadInstancesPanel();
+        }
+    }
+
+    public void cloneInstance(InstanceV2 instance, String clonedName) {
+        InstanceV2 clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), InstanceV2.class);
+
+        if (clonedInstance == null) {
+            LogManager.error("Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!");
+        } else {
+            clonedInstance.launcher.name = clonedName;
+            FileUtils.createDirectory(clonedInstance.getRoot());
+            Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());
+            clonedInstance.save();
+            this.instancesV2.add(clonedInstance);
             this.reloadInstancesPanel();
         }
     }

@@ -33,26 +33,26 @@ import com.atlauncher.data.json.Version;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
-    private int id;
-    private int position;
-    private String name;
-    private PackType type;
-    private String code;
-    private List<PackVersion> versions;
-    private List<PackVersion> devVersions;
-    private boolean createServer;
-    private boolean leaderboards;
-    private boolean logging;
-    private boolean featured;
-    private boolean hasDiscordImage;
-    private String description;
-    private String discordInviteURL;
-    private String supportURL;
-    private String websiteURL;
-    private List<String> testers = new ArrayList<>();
-    private List<String> allowedPlayers = new ArrayList<>();
-    private String json; // The JSON for a version of the pack
-    private String jsonVersion; // The version the JSON above is for
+    public int id;
+    public int position;
+    public String name;
+    public PackType type;
+    public String code;
+    public List<PackVersion> versions;
+    public List<PackVersion> devVersions;
+    public boolean createServer;
+    public boolean leaderboards;
+    public boolean logging;
+    public boolean featured;
+    public boolean hasDiscordImage;
+    public String description;
+    public String discordInviteURL;
+    public String supportURL;
+    public String websiteURL;
+    public List<String> testers = new ArrayList<>();
+    public List<String> allowedPlayers = new ArrayList<>();
+    public String json; // The JSON for a version of the pack
+    public String jsonVersion; // The version the JSON above is for
 
     public int getID() {
         return this.id;

@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
@@ -49,8 +50,14 @@ public class RenameInstanceDialog extends JDialog {
 
     private JButton saveButton;
 
-    public RenameInstanceDialog(final Instance instance) {
+    private Instance instance;
+    private InstanceV2 instanceV2;
+
+    public RenameInstanceDialog(Instance instance) {
         super(null, Language.INSTANCE.localize("instance.renaminginstance"), ModalityType.APPLICATION_MODAL);
+
+        this.instance = instance;
+
         setSize(300, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -58,6 +65,41 @@ public class RenameInstanceDialog extends JDialog {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
 
+        setupComponents();
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent arg0) {
+                close();
+            }
+        });
+
+        setVisible(true);
+    }
+
+    public RenameInstanceDialog(InstanceV2 instanceV2) {
+        super(null, Language.INSTANCE.localize("instance.renaminginstance"), ModalityType.APPLICATION_MODAL);
+
+        this.instanceV2 = instanceV2;
+
+        setSize(300, 150);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setResizable(false);
+
+        setupComponents();
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent arg0) {
+                close();
+            }
+        });
+
+        setVisible(true);
+    }
+
+    private void setupComponents() {
         // Top Panel Stuff
         top = new JPanel();
         top.add(new JLabel(Language.INSTANCE.localize("instance.renaminginstance")));
@@ -76,7 +118,7 @@ public class RenameInstanceDialog extends JDialog {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         instanceName = new JTextField(16);
-        instanceName.setText(instance.getName());
+        instanceName.setText(this.instanceV2 != null ? this.instanceV2.launcher.name : this.instance.getName());
         middle.add(instanceName, gbc);
 
         // Bottom Panel Stuff
@@ -99,15 +141,19 @@ public class RenameInstanceDialog extends JDialog {
                                                                 instanceName.getText())))
                         .setType(DialogManager.ERROR).show();
             } else {
-                if (instance.rename(instanceName.getText())) {
+                if (this.instanceV2 != null && instanceV2.rename(instanceName.getText())) {
+                    App.settings.reloadInstancesPanel();
+                } else if (this.instance != null && instance.rename(instanceName.getText())) {
                     App.settings.saveInstances();
                     App.settings.reloadInstancesPanel();
                 } else {
                     LogManager.error("Unknown Error Occured While Renaming Instance!");
                     DialogManager.okDialog().setParent(RenameInstanceDialog.this)
                             .setTitle(Language.INSTANCE.localize("common" + ".error"))
-                            .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
-                                    .localizeWithReplace("instance.errorrenaming", instance.getName() + "<br/><br/>")))
+                            .setContent(HTMLUtils
+                                    .centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorrenaming",
+                                            this.instanceV2 != null ? this.instanceV2.launcher.name
+                                                    : this.instance.getName() + "<br/><br/>")))
                             .setType(DialogManager.ERROR).show();
                 }
                 close();
@@ -118,14 +164,6 @@ public class RenameInstanceDialog extends JDialog {
         add(top, BorderLayout.NORTH);
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                close();
-            }
-        });
-
-        setVisible(true);
     }
 
     private void close() {

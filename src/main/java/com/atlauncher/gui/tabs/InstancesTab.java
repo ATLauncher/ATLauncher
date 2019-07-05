@@ -34,11 +34,11 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
+import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
 
 public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
@@ -116,38 +116,61 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        int count = 0;
-        for (Instance instance : App.settings.getInstancesSorted()) {
-            if (instance.canPlay()) {
-                if (keepFilters) {
-                    boolean showInstance = true;
+        App.settings.getInstancesSorted().stream().filter(instance -> instance.canPlay()).forEach(instance -> {
+            if (keepFilters) {
+                boolean showInstance = true;
 
-                    if (searchText != null) {
-                        if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                                .matcher(instance.getName()).find()) {
-                            showInstance = false;
-                        }
+                if (searchText != null) {
+                    if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
+                            .matcher(instance.getName()).find()) {
+                        showInstance = false;
                     }
+                }
 
-                    if (isUpdate) {
-                        if (!instance.hasUpdate()) {
-                            showInstance = false;
-                        }
+                if (isUpdate) {
+                    if (!instance.hasUpdate()) {
+                        showInstance = false;
                     }
+                }
 
-                    if (showInstance) {
-                        panel.add(new InstanceCard(instance), gbc);
-                        gbc.gridy++;
-                        count++;
-                    }
-                } else {
+                if (showInstance) {
                     panel.add(new InstanceCard(instance), gbc);
                     gbc.gridy++;
-                    count++;
                 }
+            } else {
+                panel.add(new InstanceCard(instance), gbc);
+                gbc.gridy++;
             }
-        }
-        if (count == 0) {
+        });
+
+        App.settings.instancesV2.stream().forEach(instance -> {
+            if (keepFilters) {
+                boolean showInstance = true;
+
+                if (searchText != null) {
+                    if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
+                            .matcher(instance.launcher.name).find()) {
+                        showInstance = false;
+                    }
+                }
+
+                if (isUpdate) {
+                    if (!instance.hasUpdate()) {
+                        showInstance = false;
+                    }
+                }
+
+                if (showInstance) {
+                    panel.add(new InstanceV2Card(instance), gbc);
+                    gbc.gridy++;
+                }
+            } else {
+                panel.add(new InstanceV2Card(instance), gbc);
+                gbc.gridy++;
+            }
+        });
+
+        if (panel.getComponentCount() == 0) {
             nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));
             panel.add(nilCard, gbc);
         }

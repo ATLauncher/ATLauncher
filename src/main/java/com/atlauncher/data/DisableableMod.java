@@ -177,6 +177,18 @@ public class DisableableMod implements Serializable {
         return false;
     }
 
+    public boolean enable(InstanceV2 instance) {
+        if (this.disabled) {
+            if (!getFile(instance).getParentFile().exists()) {
+                getFile(instance).getParentFile().mkdir();
+            }
+            if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
+                this.disabled = false;
+            }
+        }
+        return false;
+    }
+
     public boolean disable(Instance instance) {
         if (!this.disabled) {
             if (Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), false)) {
@@ -187,8 +199,22 @@ public class DisableableMod implements Serializable {
         return false;
     }
 
+    public boolean disable(InstanceV2 instance) {
+        if (!this.disabled) {
+            if (Utils.moveFile(getFile(instance), getDisabledFile(instance), true)) {
+                this.disabled = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public File getDisabledFile(Instance instance) {
         return new File(instance.getDisabledModsDirectory(), this.file);
+    }
+
+    public File getDisabledFile(InstanceV2 instance) {
+        return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
     }
 
     public File getFile(Instance instance) {
@@ -219,6 +245,45 @@ public class DisableableMod implements Serializable {
             break;
         case shaderpack:
             dir = instance.getShaderPacksDirectory();
+            break;
+        default:
+            LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
+            break;
+        }
+        if (dir == null) {
+            return null;
+        }
+        return new File(dir, file);
+    }
+
+    public File getFile(InstanceV2 instance) {
+        File dir = null;
+        switch (type) {
+        case jar:
+        case forge:
+        case mcpc:
+            dir = instance.getRoot().resolve("jarmods").toFile();
+            break;
+        case texturepack:
+            dir = instance.getRoot().resolve("texturepacks").toFile();
+            break;
+        case resourcepack:
+            dir = instance.getRoot().resolve("resourcepacks").toFile();
+            break;
+        case mods:
+            dir = instance.getRoot().resolve("mods").toFile();
+            break;
+        case ic2lib:
+            dir = instance.getRoot().resolve("mods/ic2").toFile();
+            break;
+        case denlib:
+            dir = instance.getRoot().resolve("mods/denlib").toFile();
+            break;
+        case coremods:
+            dir = instance.getRoot().resolve("coremods").toFile();
+            break;
+        case shaderpack:
+            dir = instance.getRoot().resolve("shaderpacks").toFile();
             break;
         default:
             LogManager.warn("Unsupported mod for enabling/disabling " + this.name);

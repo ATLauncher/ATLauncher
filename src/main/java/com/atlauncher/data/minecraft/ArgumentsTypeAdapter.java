@@ -28,8 +28,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments> {
+public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSerializer<Arguments> {
     @Override
     public Arguments deserialize(JsonElement json, Type type, JsonDeserializationContext context)
             throws JsonParseException {
@@ -65,5 +67,60 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments> {
         }
 
         return new Arguments(game, jvm);
+    }
+
+    @Override
+    public JsonElement serialize(Arguments arguments, Type type, JsonSerializationContext context) {
+        JsonObject root = new JsonObject();
+
+        if (arguments.game != null) {
+            JsonArray gameArguments = new JsonArray();
+
+            arguments.game.stream().forEach(arg -> {
+                if (arg.rules != null) {
+                    JsonObject object = new JsonObject();
+
+                    object.add("rules", Gsons.MINECRAFT.toJsonTree(arg.rules));
+
+                    if (arg.value instanceof String) {
+                        object.add("value", Gsons.MINECRAFT.toJsonTree((String) arg.value));
+                    } else if (arg.value instanceof List) {
+                        object.add("value", Gsons.MINECRAFT.toJsonTree((List<String>) arg.value));
+                    }
+
+                    gameArguments.add(object);
+                } else {
+                    gameArguments.add((String) arg.value);
+                }
+            });
+
+            root.add("game", gameArguments);
+        }
+
+        if (arguments.jvm != null) {
+            JsonArray jvmArguments = new JsonArray();
+
+            arguments.jvm.stream().forEach(arg -> {
+                if (arg.rules != null) {
+                    JsonObject object = new JsonObject();
+
+                    object.add("rules", Gsons.MINECRAFT.toJsonTree(arg.rules));
+
+                    if (arg.value instanceof String) {
+                        object.add("value", Gsons.MINECRAFT.toJsonTree((String) arg.value));
+                    } else if (arg.value instanceof List) {
+                        object.add("value", Gsons.MINECRAFT.toJsonTree((List<String>) arg.value));
+                    }
+
+                    jvmArguments.add(object);
+                } else {
+                    jvmArguments.add((String) arg.value);
+                }
+            });
+
+            root.add("jvm", jvmArguments);
+        }
+
+        return root;
     }
 }

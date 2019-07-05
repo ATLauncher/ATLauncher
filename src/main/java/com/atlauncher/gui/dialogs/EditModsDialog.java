@@ -24,6 +24,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -37,6 +38,7 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
@@ -45,7 +47,8 @@ import com.atlauncher.utils.Utils;
 public class EditModsDialog extends JDialog {
     private static final long serialVersionUID = 7004414192679481818L;
 
-    private Instance instance; // The instance this is for
+    private Instance instance;
+    private InstanceV2 instanceV2;
 
     private JPanel bottomPanel, disabledModsPanel, enabledModsPanel;
     private JSplitPane split, labelsTop, labels, modsInPack;
@@ -54,7 +57,7 @@ public class EditModsDialog extends JDialog {
     private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
-    public EditModsDialog(final Instance instance) {
+    public EditModsDialog(Instance instance) {
         super(App.settings.getParent(),
                 Language.INSTANCE.localizeWithReplace("instance.editingmods", instance.getName()),
                 ModalityType.APPLICATION_MODAL);
@@ -71,6 +74,38 @@ public class EditModsDialog extends JDialog {
             }
         });
 
+        setupComponents();
+
+        loadMods();
+
+        setVisible(true);
+    }
+
+    public EditModsDialog(InstanceV2 instanceV2) {
+        super(App.settings.getParent(),
+                Language.INSTANCE.localizeWithReplace("instance.editingmods", instanceV2.launcher.name),
+                ModalityType.APPLICATION_MODAL);
+        this.instanceV2 = instanceV2;
+        setSize(550, 450);
+        setLocationRelativeTo(App.settings.getParent());
+        setLayout(new BorderLayout());
+        setResizable(false);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent arg0) {
+                dispose();
+            }
+        });
+
+        setupComponents();
+
+        loadMods();
+
+        setVisible(true);
+    }
+
+    private void setupComponents() {
         split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setDividerSize(0);
         split.setBorder(null);
@@ -130,8 +165,13 @@ public class EditModsDialog extends JDialog {
 
         addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
         addButton.addActionListener(e -> {
-            if (instance.hasEnabledCurseIntegration()) {
-                new AddModsDialog(instance);
+            if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
+                    : this.instance.hasEnabledCurseIntegration()) {
+                if (instanceV2 != null) {
+                    new AddModsDialog(instanceV2);
+                } else {
+                    new AddModsDialog(instance);
+                }
 
                 loadMods();
 
@@ -142,7 +182,9 @@ public class EditModsDialog extends JDialog {
 
             boolean usesCoreMods = false;
             try {
-                usesCoreMods = App.settings.getMinecraftVersion(instance.getMinecraftVersion()).usesCoreMods();
+                usesCoreMods = App.settings
+                        .getMinecraftVersion(instanceV2 != null ? instanceV2.id : this.instance.getMinecraftVersion())
+                        .usesCoreMods();
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);
             }
@@ -180,9 +222,16 @@ public class EditModsDialog extends JDialog {
                     if (type != null) {
                         DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(), type,
                                 null, null, true, true);
-                        if (Utils.copyFile(file, instance.getDisabledModsDirectory())) {
-                            instance.getInstalledMods().add(mod);
-                            disabledMods.add(new ModsJCheckBox(mod));
+                        if (Utils.copyFile(file,
+                                instanceV2 != null ? instanceV2.getRoot().resolve("disabledmods").toFile()
+                                        : instance.getDisabledModsDirectory())) {
+
+                            if (this.instanceV2 != null) {
+                                instanceV2.launcher.mods.add(mod);
+                            } else {
+                                instance.getInstalledMods().add(mod);
+                                disabledMods.add(new ModsJCheckBox(mod));
+                            }
                             reload = true;
                         }
                     }
@@ -209,14 +258,12 @@ public class EditModsDialog extends JDialog {
         closeButton = new JButton(Language.INSTANCE.localize("common.close"));
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
-
-        loadMods();
-
-        setVisible(true);
     }
 
     private void loadMods() {
-        List<DisableableMod> mods = instance.getInstalledSelectedMods();
+        List<DisableableMod> mods = instanceV2 != null
+                ? instanceV2.launcher.mods.stream().filter(m -> m.wasSelected()).collect(Collectors.toList())
+                : instance.getInstalledSelectedMods();
         enabledMods = new ArrayList<>();
         disabledMods = new ArrayList<>();
         int dCount = 0;
@@ -250,7 +297,11 @@ public class EditModsDialog extends JDialog {
         ArrayList<ModsJCheckBox> mods = new ArrayList<>(disabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                mod.getDisableableMod().enable(instance);
+                if (this.instanceV2 != null) {
+                    mod.getDisableableMod().enable(instanceV2);
+                } else {
+                    mod.getDisableableMod().enable(instance);
+                }
             }
         }
         reloadPanels();
@@ -260,7 +311,11 @@ public class EditModsDialog extends JDialog {
         ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                mod.getDisableableMod().disable(instance);
+                if (this.instanceV2 != null) {
+                    mod.getDisableableMod().disable(instanceV2);
+                } else {
+                    mod.getDisableableMod().disable(instance);
+                }
             }
         }
         reloadPanels();
@@ -270,14 +325,28 @@ public class EditModsDialog extends JDialog {
         ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                instance.removeInstalledMod(mod.getDisableableMod());
+                if (this.instanceV2 != null) {
+                    this.instanceV2.launcher.mods.remove(mod.getDisableableMod());
+                    Utils.delete((mod.getDisableableMod().isDisabled()
+                            ? mod.getDisableableMod().getDisabledFile(this.instanceV2)
+                            : mod.getDisableableMod().getFile(this.instanceV2)));
+                } else {
+                    instance.removeInstalledMod(mod.getDisableableMod());
+                }
                 enabledMods.remove(mod);
             }
         }
         mods = new ArrayList<>(disabledMods);
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
-                instance.removeInstalledMod(mod.getDisableableMod());
+                if (this.instanceV2 != null) {
+                    this.instanceV2.launcher.mods.remove(mod.getDisableableMod());
+                    Utils.delete((mod.getDisableableMod().isDisabled()
+                            ? mod.getDisableableMod().getDisabledFile(this.instanceV2)
+                            : mod.getDisableableMod().getFile(this.instanceV2)));
+                } else {
+                    instance.removeInstalledMod(mod.getDisableableMod());
+                }
                 disabledMods.remove(mod);
             }
         }
@@ -285,7 +354,12 @@ public class EditModsDialog extends JDialog {
     }
 
     private void reloadPanels() {
-        App.settings.saveInstances();
+        if (this.instanceV2 != null) {
+            this.instanceV2.save();
+        } else {
+            App.settings.saveInstances();
+        }
+
         enabledModsPanel.removeAll();
         disabledModsPanel.removeAll();
         loadMods();

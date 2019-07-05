@@ -52,7 +52,8 @@ public final class Gsons {
             .registerTypeAdapter(Downloads.class, new DownloadsTypeAdapter())
             .registerTypeAdapter(File.class, new FileTypeAdapter()).create();
 
-    public static final Gson MINECRAFT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
+    public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping()
+            .registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
             .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())

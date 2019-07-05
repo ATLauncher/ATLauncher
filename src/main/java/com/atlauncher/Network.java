@@ -17,7 +17,6 @@
  */
 package com.atlauncher;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +28,6 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ProgressResponseBody;
 import com.atlauncher.workers.InstanceInstaller;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 

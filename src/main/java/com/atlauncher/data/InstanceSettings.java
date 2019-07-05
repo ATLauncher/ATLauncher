@@ -18,15 +18,15 @@
 package com.atlauncher.data;
 
 public class InstanceSettings {
-    private Integer initialMemory = null;
+    public Integer initialMemory = null;
 
-    private Integer maximumMemory = null;
+    public Integer maximumMemory = null;
 
-    private Integer permGen = null;
+    public Integer permGen = null;
 
-    private String javaPath = null;
+    public String javaPath = null;
 
-    private String javaArguments = null;
+    public String javaArguments = null;
 
     /**
      * @return the initialMemory

@@ -29,6 +29,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.VersionManifest;
@@ -304,6 +305,192 @@ public class MCLauncher {
                 + " " + argsString);
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
+        processBuilder.redirectErrorStream(true);
+        processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
+        return processBuilder.start();
+    }
+
+    public static Process launch(Account account, InstanceV2 instance, LoginResponse response) throws IOException {
+        StringBuilder cpb = new StringBuilder();
+        boolean hasCustomJarMods = false;
+
+        Integer initialMemory = instance.launcher.initialMemory == null ? App.settings.getInitialMemory()
+                : instance.launcher.initialMemory;
+        Integer maximumMemory = instance.launcher.maximumMemory == null ? App.settings.getMaximumMemory()
+                : instance.launcher.maximumMemory;
+        Integer permGen = instance.launcher.permGen == null ? App.settings.getPermGen() : instance.launcher.permGen;
+        String javaPath = instance.launcher.javaPath == null ? App.settings.getJavaPath() : instance.launcher.javaPath;
+        String javaArguments = instance.launcher.javaArguments == null ? App.settings.getJavaParameters()
+                : instance.launcher.javaArguments;
+
+        File jarMods = instance.getRoot().resolve("jarmods").toFile();
+        File[] jarModFiles = jarMods.listFiles();
+        if (jarMods.exists() && jarModFiles != null && jarModFiles.length != 0) {
+            for (File file : jarModFiles) {
+                hasCustomJarMods = true;
+                cpb.append(File.pathSeparator);
+                cpb.append(file.getAbsolutePath());
+            }
+        }
+
+        instance.libraries.stream()
+                .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
+                .forEach(library -> {
+                    cpb.append(File.pathSeparator);
+                    cpb.append(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
+                            .getAbsolutePath());
+                });
+
+        File binFolder = instance.getRoot().resolve("bin").toFile();
+        File[] libraryFiles = binFolder.listFiles();
+        if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
+            for (File file : libraryFiles) {
+                LogManager.info("Added in custom library " + file.getName());
+
+                cpb.append(File.pathSeparator);
+                cpb.append(file);
+            }
+        }
+
+        List<String> arguments = new ArrayList<>();
+
+        String path = javaPath + File.separator + "bin" + File.separator + "java";
+        if (OS.isWindows()) {
+            path += "w";
+        }
+        arguments.add(path);
+
+        arguments.add("-XX:-OmitStackTraceInFastThrow");
+
+        if (javaArguments.isEmpty() && !Java.isMinecraftJavaNewerThanJava8()) {
+            // Some defaults if on Java 8 or less
+            javaArguments = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
+        }
+
+        arguments.add("-Xms" + initialMemory + "M");
+
+        if (OS.getMaximumRam() != 0 && maximumMemory < instance.launcher.requiredMemory) {
+            if ((OS.getMaximumRam() / 2) < instance.launcher.requiredMemory) {
+                arguments.add("-Xmx" + maximumMemory + "M");
+            } else {
+                arguments.add("-Xmx" + instance.launcher.requiredMemory + "M");
+            }
+        } else {
+            arguments.add("-Xmx" + maximumMemory + "M");
+        }
+        if (OS.getMaximumRam() != 0 && permGen < instance.launcher.requiredPermGen
+                && (OS.getMaximumRam() / 8) < instance.launcher.requiredPermGen) {
+            if (Java.useMetaspace()) {
+                arguments.add("-XX:MetaspaceSize=" + instance.launcher.requiredPermGen + "M");
+            } else {
+                arguments.add("-XX:PermSize=" + instance.launcher.requiredPermGen + "M");
+            }
+        } else {
+            if (Java.useMetaspace()) {
+                arguments.add("-XX:MetaspaceSize=" + permGen + "M");
+            } else {
+                arguments.add("-XX:PermSize=" + permGen + "M");
+            }
+        }
+
+        arguments.add("-Duser.language=en");
+        arguments.add("-Duser.country=US");
+
+        if (hasCustomJarMods) {
+            System.out.println("OH NOES! Avert your eyes!");
+            arguments.add("-Dfml.ignorePatchDiscrepancies=true");
+            arguments.add("-Dfml.ignoreInvalidMinecraftCertificates=true");
+            System.out.println("Okay you can look again, you saw NOTHING!");
+        }
+
+        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
+
+        if (OS.isMac()) {
+            arguments.add("-Dapple.laf.useScreenMenuBar=true");
+            // arguments.add("-Xdock:icon=" + new File(instance.getAssetsDir(),
+            // "icons/minecraft.icns").getAbsolutePath());
+            arguments.add("-Xdock:name=\"" + instance.launcher.name + "\"");
+        }
+
+        ArrayList<String> negatedArgs = new ArrayList<>();
+
+        if (!javaArguments.isEmpty()) {
+            for (String arg : javaArguments.split(" ")) {
+                if (!arg.isEmpty()) {
+                    if (arguments.toString().contains(arg)) {
+                        LogManager.error("Duplicate argument " + arg + " found and not added!");
+                        continue;
+                    }
+
+                    arguments.add(arg);
+                }
+            }
+        }
+
+        arguments.add("-Djava.library.path=" + instance.getRoot().resolve("bin/natives").toAbsolutePath().toString());
+        arguments.add("-cp");
+        arguments.add(cpb.toString());
+        arguments.add(instance.mainClass);
+
+        String props = "[]";
+
+        if (!response.isOffline()) {
+            Gson gson = new GsonBuilder().registerTypeAdapter(PropertyMap.class, new PropertyMapSerializer()).create();
+            props = gson.toJson(response.getAuth().getUserProperties());
+        }
+
+        for (String argument : instance.arguments.asStringList()) {
+            argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
+            argument = argument.replace("${profile_name}", instance.launcher.name);
+            argument = argument.replace("${user_properties}", props);
+            argument = argument.replace("${version_name}", instance.id);
+            argument = argument.replace("${game_directory}", instance.getRoot().toAbsolutePath().toString());
+            argument = argument.replace("${game_assets}", instance.getAssetsDir().toAbsolutePath().toString());
+            argument = argument.replace("${assets_root}", App.settings.getAssetsDir().getAbsolutePath());
+            argument = argument.replace("${assets_index_name}", instance.assets);
+            argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
+            argument = argument.replace("${auth_access_token}", account.getAccessToken());
+            argument = argument.replace("${auth_session}", account.getSession(response));
+            argument = argument.replace("${version_type}", instance.type);
+            argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
+            argument = argument.replace("${launcher_version}", Constants.VERSION.toString());
+            argument = argument.replace("${natives_directory}",
+                    instance.getRoot().resolve("bin/natives").toAbsolutePath().toString());
+            argument = argument.replace("${user_type}",
+                    response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
+                            : response.getAuth().getUserType().getName());
+
+            if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
+                arguments.add(argument);
+            }
+        }
+
+        if (App.settings.startMinecraftMaximised()) {
+            arguments.add("--width=" + OS.getMaximumWindowWidth());
+            arguments.add("--height=" + OS.getMaximumWindowHeight());
+        } else {
+            arguments.add("--width=" + App.settings.getWindowWidth());
+            arguments.add("--height=" + App.settings.getWindowHeight());
+        }
+
+        String argsString = arguments.toString();
+
+        if (!LogManager.showDebug) {
+            if (App.settings != null) {
+                argsString = argsString.replace(App.settings.getBaseDir().getAbsolutePath(), "USERSDIR");
+            }
+
+            argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
+            argsString = argsString.replace(account.getUUID(), "REDACTED");
+            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
+            argsString = argsString.replace(account.getSession(response), "REDACTED");
+            argsString = argsString.replace(props, "REDACTED");
+        }
+
+        LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):"
+                + " " + argsString);
+        ProcessBuilder processBuilder = new ProcessBuilder(arguments);
+        processBuilder.directory(instance.getRoot().toAbsolutePath().toFile());
         processBuilder.redirectErrorStream(true);
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();

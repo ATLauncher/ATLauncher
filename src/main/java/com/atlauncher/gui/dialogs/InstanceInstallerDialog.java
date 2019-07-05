@@ -48,11 +48,11 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.json.Version;
-import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
@@ -67,6 +67,7 @@ public class InstanceInstallerDialog extends JDialog {
     private boolean isServer = false;
     private Pack pack = null;
     private Instance instance = null;
+    private InstanceV2 instanceV2 = null;
 
     private JPanel top;
     private JPanel middle;
@@ -115,11 +116,16 @@ public class InstanceInstallerDialog extends JDialog {
                         + Language.INSTANCE.localize("common.server"));
                 this.isServer = true;
             }
-        } else {
+        } else if (object instanceof Instance) {
             instance = (Instance) object;
             pack = instance.getRealPack();
             isReinstall = true; // We're reinstalling
             setTitle(Language.INSTANCE.localize("common.reinstalling") + " " + instance.getName());
+        } else {
+            instanceV2 = (InstanceV2) object;
+            pack = instanceV2.getPack();
+            isReinstall = true; // We're reinstalling
+            setTitle(Language.INSTANCE.localize("common.reinstalling") + " " + instanceV2.launcher.name);
         }
         setSize(400, 225);
         setLocationRelativeTo(App.settings.getParent());
@@ -152,7 +158,9 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.gridx++;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             instanceNameField = new JTextField(17);
-            instanceNameField.setText(((isReinstall) ? instance.getName() : pack.getName()));
+            instanceNameField
+                    .setText(((isReinstall) ? (instanceV2 != null ? instanceV2.launcher.name : instance.getName())
+                            : pack.getName()));
             if (isReinstall) {
                 instanceNameField.setEnabled(false);
             }
@@ -216,30 +224,13 @@ public class InstanceInstallerDialog extends JDialog {
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
-                    instance = App.settings.getInstanceByName(instanceNameField.getText());
-                    if (instance.getPackName().equalsIgnoreCase(pack.getName())) {
-                        int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                                .setContent(HTMLUtils
-                                        .centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                                + Language.INSTANCE.localizeWithReplace("instance.alreadyinstance1",
-                                                        instanceNameField.getText() + "<br/><br/>")))
-                                .setType(DialogManager.ERROR).show();
-                        if (ret != DialogManager.YES_OPTION) {
-                            return;
-                        }
-                        isReinstall = true;
-                        if (instance == null) {
-                            return;
-                        }
-                    } else {
-                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                                .setContent(HTMLUtils
-                                        .centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                                + Language.INSTANCE.localizeWithReplace("instance.alreadyinstance",
-                                                        instanceNameField.getText() + "<br/><br/>")))
-                                .setType(DialogManager.ERROR).show();
-                        return;
-                    }
+                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
+                            .setContent(
+                                    HTMLUtils.centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
+                                            + Language.INSTANCE.localizeWithReplace("instance.alreadyinstance",
+                                                    instanceNameField.getText() + "<br/><br/>")))
+                            .setType(DialogManager.ERROR).show();
+                    return;
                 } else if (!isReinstall && !isServer
                         && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
@@ -310,7 +301,12 @@ public class InstanceInstallerDialog extends JDialog {
                                             : Language.INSTANCE.localize("common.installed"));
                             if (isReinstall) {
                                 if (instanceIsCorrupt) {
-                                    App.settings.setInstanceUnplayable(instance);
+                                    if (instanceV2 != null) {
+                                        instanceV2.launcher.isPlayable = false;
+                                        instanceV2.save();
+                                    } else {
+                                        App.settings.setInstanceUnplayable(instance);
+                                    }
                                 }
                             }
                         } else {
@@ -336,63 +332,6 @@ public class InstanceInstallerDialog extends JDialog {
                                 title = pack.getName() + " " + version.getVersion() + " "
                                         + Language.INSTANCE.localize("common.installed");
 
-                                LoggingClient loggingClient = this.minecraftVersion.logging != null
-                                        ? this.minecraftVersion.logging.client
-                                        : null;
-
-                                if (isReinstall) {
-                                    instance.setVersion(version.getVersion());
-                                    instance.setMinecraftVersion(this.minecraftVersion.id);
-                                    instance.setVersionType(this.minecraftVersion.type);
-                                    instance.setModsInstalled(this.modsInstalled);
-                                    instance.setMemory(this.packVersion.memory);
-                                    instance.setPermgen(this.packVersion.permGen);
-                                    instance.setUsesNewLibraries(true);
-                                    instance.setLibraries(this.getLibrariesForLaunch());
-                                    instance.setArguments(this.arguments.asStringList());
-                                    instance.setExtraArguments("");
-                                    instance.setMainClass(this.mainClass);
-                                    instance.setAssets(this.minecraftVersion.assets);
-                                    instance.setAssetsMapToResources(this.doAssetsMapToResources());
-                                    instance.setLogging(loggingClient);
-                                    instance.setJava(this.packVersion.java);
-                                    instance.setEnableCurseIntegration(this.packVersion.enableCurseIntegration);
-                                    instance.setEnableEditingMods(this.packVersion.enableEditingMods);
-                                    instance.setLoaderVersion((LoaderVersion) loaderVersionsDropDown.getSelectedItem());
-                                    if (version.isDev()) {
-                                        instance.setDevVersion();
-                                        if (version.getHash() != null) {
-                                            instance.setHash(version.getHash());
-                                        }
-                                    } else {
-                                        instance.setNotDevVersion();
-                                    }
-                                    if (!instance.isPlayable()) {
-                                        instance.setPlayable();
-                                    }
-                                } else if (isServer) {
-
-                                } else {
-                                    Instance newInstance = new Instance(instanceNameField.getText(), pack.getName(),
-                                            pack, enableUserLock.isSelected(), version.getVersion(),
-                                            this.minecraftVersion.id, this.minecraftVersion.type,
-                                            this.packVersion.memory, this.packVersion.permGen, this.modsInstalled,
-                                            this.getLibrariesForLaunch(), "", this.arguments.asString(), this.mainClass,
-                                            this.minecraftVersion.assets, this.doAssetsMapToResources(), loggingClient,
-                                            version.isDev(), this.packVersion.java,
-                                            this.packVersion.enableCurseIntegration, this.packVersion.enableEditingMods,
-                                            (LoaderVersion) loaderVersionsDropDown.getSelectedItem());
-
-                                    newInstance.setArguments(this.arguments.asStringList());
-
-                                    if (version.isDev() && (version.getHash() != null)) {
-                                        newInstance.setHash(version.getHash());
-                                    }
-
-                                    App.settings.getInstances().add(newInstance);
-
-                                }
-                                App.settings.saveInstances();
                                 App.settings.reloadInstancesPanel();
                                 if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev()) {
                                     if (isServer) {
@@ -418,7 +357,12 @@ public class InstanceInstallerDialog extends JDialog {
                                             + Language.INSTANCE.localize("common.not") + " "
                                             + Language.INSTANCE.localize("common.reinstalled");
                                     if (this.instanceIsCorrupt) {
-                                        App.settings.setInstanceUnplayable(instance);
+                                        if (instanceV2 != null) {
+                                            instanceV2.launcher.isPlayable = false;
+                                            instanceV2.save();
+                                        } else {
+                                            App.settings.setInstanceUnplayable(instance);
+                                        }
                                     }
                                 } else {
                                     // Install failed so delete the folder and clear Temp Dir
@@ -519,7 +463,11 @@ public class InstanceInstallerDialog extends JDialog {
                     }
                 });
                 if (isReinstall) {
-                    instanceInstaller.setInstance(instance);
+                    if (instanceV2 != null) {
+                        instanceInstaller.setInstance(instanceV2);
+                    } else {
+                        instanceInstaller.setInstance(instance);
+                    }
                 }
                 instanceInstaller.execute();
                 dispose();
@@ -569,7 +517,8 @@ public class InstanceInstallerDialog extends JDialog {
             versionsDropDown.setSelectedItem(forUpdate);
         } else if (isReinstall) {
             for (PackVersion version : versions) {
-                if (version.versionMatches(instance.getVersion())) {
+                if (version
+                        .versionMatches((instanceV2 != null ? instanceV2.launcher.version : instance.getVersion()))) {
                     versionsDropDown.setSelectedItem(version);
                 }
             }
@@ -649,8 +598,10 @@ public class InstanceInstallerDialog extends JDialog {
                 loaderVersionsDropDown.addItem(version);
             });
 
-            if (isReinstall && instance.installedWithLoaderVersion()) {
-                loaderVersionsDropDown.setSelectedItem(instance.getLoaderVersion());
+            if (isReinstall && (instanceV2 != null ? instanceV2.launcher.loaderVersion != null
+                    : instance.installedWithLoaderVersion())) {
+                loaderVersionsDropDown.setSelectedItem(
+                        (instanceV2 != null ? instanceV2.launcher.loaderVersion : instance.getLoaderVersion()));
             }
 
             // ensures that the dropdown is at least 200 px wide

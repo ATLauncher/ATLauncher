@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
@@ -36,10 +37,25 @@ import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public final class CurseModCard extends JPanel {
+    private Instance instance;
+    private InstanceV2 instanceV2;
     public final CurseMod mod;
 
-    public CurseModCard(final CurseMod mod, final Instance instance) {
+    public CurseModCard(final CurseMod mod, Instance instance) {
         this.mod = mod;
+        this.instance = instance;
+
+        setupComponents();
+    }
+
+    public CurseModCard(final CurseMod mod, InstanceV2 instanceV2) {
+        this.mod = mod;
+        this.instanceV2 = instanceV2;
+
+        setupComponents();
+    }
+
+    private void setupComponents() {
         setLayout(new BorderLayout());
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
@@ -60,7 +76,11 @@ public final class CurseModCard extends JPanel {
         buttonsPanel.add(addButton);
         buttonsPanel.add(viewButton);
 
-        addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instance));
+        if (this.instanceV2 != null) {
+            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instanceV2));
+        } else {
+            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instance));
+        }
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
 

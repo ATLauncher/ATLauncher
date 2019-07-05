@@ -22,15 +22,15 @@ import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 
 public class PackVersion {
-    private String version;
-    private String minecraft;
-    private String hash;
-    private MinecraftVersion minecraftVersion;
-    private boolean canUpdate = true;
-    private boolean isRecommended = true;
-    private boolean isDev;
-    private boolean hasLoader = false;
-    private boolean hasChoosableLoader = false;
+    public String version;
+    public String minecraft;
+    public String hash;
+    public MinecraftVersion minecraftVersion;
+    public boolean canUpdate = true;
+    public boolean isRecommended = true;
+    public boolean isDev;
+    public boolean hasLoader = false;
+    public boolean hasChoosableLoader = false;
 
     public String getVersion() {
         return this.version;
