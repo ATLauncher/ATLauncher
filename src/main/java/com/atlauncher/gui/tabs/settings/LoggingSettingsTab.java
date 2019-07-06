@@ -47,6 +47,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JLabelWithHover enableLoggingLabel;
     private JCheckBox enableLogs;
 
+    private JLabelWithHover enableAnalyticsLabel;
+    private JCheckBox enableAnalytics;
+
     private JLabelWithHover enableOpenEyeReportingLabel;
     private JCheckBox enableOpenEyeReporting;
 
@@ -150,6 +153,25 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         }
         add(enableLogs, gbc);
 
+        // Enable Analytics
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enableAnalyticsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.analytics") + "?", HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.analyticshelp", "<br/>") + "</html>");
+        add(enableAnalyticsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enableAnalytics = new JCheckBox();
+        if (App.settings.enableAnalytics()) {
+            enableAnalytics.setSelected(true);
+        }
+        add(enableAnalytics, gbc);
+
         // Enable OpenEye Reporting
 
         gbc.gridx = 0;
@@ -180,6 +202,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.setDaysOfLogsToKeep((Integer) daysOfLogsToKeep.getValue());
         App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
         App.settings.setEnableLogs(enableLogs.isSelected());
+        App.settings.setEnableAnalytics(enableAnalytics.isSelected());
         App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
     }
 
@@ -203,6 +226,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.enableLoggingLabel.setText(Language.INSTANCE.localize("settings.logging") + "?");
         this.enableLoggingLabel.setToolTipText(
                 "<html>" + Language.INSTANCE.localizeWithReplace("settings.logginghelp", "<br/>" + "</html>"));
+
+        this.enableAnalyticsLabel.setText(Language.INSTANCE.localize("settings.analytics") + "?");
+        this.enableAnalyticsLabel.setToolTipText(
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.analyticshelp", "<br/>" + "</html>"));
 
         this.enableOpenEyeReportingLabel.setText(Language.INSTANCE.localize("settings.openeye") + "?");
         this.enableOpenEyeReportingLabel.setToolTipText(

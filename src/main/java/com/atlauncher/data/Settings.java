@@ -121,6 +121,7 @@ public class Settings {
     private boolean enableDiscordIntegration; // If to enable Discord integration
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
+    private boolean enableAnalytics; // If to enable analytics
     private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
     private boolean enableProxy = false; // If proxy is in use
     private boolean enablePackTags = false;
@@ -1330,6 +1331,8 @@ public class Settings {
 
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
 
+            this.enableAnalytics = Boolean.parseBoolean(properties.getProperty("enableanalytics", "true"));
+
             this.enableServerChecker = Boolean.parseBoolean(properties.getProperty("enableserverchecker", "false"));
 
             this.enableOpenEyeReporting = Boolean
@@ -1454,6 +1457,7 @@ public class Settings {
             properties.setProperty("enablediscordintegration", (this.enableDiscordIntegration) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true" : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
+            properties.setProperty("enableanalytics", (this.enableAnalytics) ? "true" : "false");
             properties.setProperty("enablepacktags", (this.enablePackTags) ? "true" : "false");
             properties.setProperty("enableserverchecker", (this.enableServerChecker) ? "true" : "false");
             properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
@@ -2799,6 +2803,14 @@ public class Settings {
 
     public void setEnableLogs(boolean enableLogs) {
         this.enableLogs = enableLogs;
+    }
+
+    public boolean enableAnalytics() {
+        return this.enableAnalytics;
+    }
+
+    public void setEnableAnalytics(boolean enableAnalytics) {
+        this.enableAnalytics = enableAnalytics;
     }
 
     public boolean enableServerChecker() {

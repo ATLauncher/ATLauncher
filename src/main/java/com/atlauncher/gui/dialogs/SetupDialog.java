@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
+import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 public class SetupDialog extends JDialog {
@@ -52,8 +53,8 @@ public class SetupDialog extends JDialog {
     private JLabel enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
 
-    private JLabel enableLogsLabel;
-    private JCheckBox enableLogs;
+    private JLabel enableAnalyticsLabel;
+    private JCheckBox enableAnalytics;
 
     private JButton saveButton;
 
@@ -103,14 +104,16 @@ public class SetupDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLogsLabel = new JLabel("Enable Logs? ");
-        middle.add(enableLogsLabel, gbc);
+        enableAnalyticsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.analytics") + "? ",
+                Utils.getIconImage("/assets/image/Help.png"),
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.analyticshelp", "<br/>") + "</html>");
+        middle.add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLogs = new JCheckBox();
-        enableLogs.setSelected(true);
-        middle.add(enableLogs, gbc);
+        enableAnalytics = new JCheckBox();
+        enableAnalytics.setSelected(true);
+        middle.add(enableAnalytics, gbc);
 
         // Bottom Panel Stuff
         bottom = new JPanel();
@@ -119,7 +122,7 @@ public class SetupDialog extends JDialog {
         saveButton.addActionListener(e -> {
             App.settings.setLanguage((String) language.getSelectedItem());
             App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
-            App.settings.setEnableLogs(enableLogs.isSelected());
+            App.settings.setEnableAnalytics(enableAnalytics.isSelected());
             App.settings.saveProperties();
             setVisible(false);
             dispose();

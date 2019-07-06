@@ -18,19 +18,19 @@
 package com.atlauncher.network;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
 
-public final class Analytics {
+public final class Analytics implements SettingsListener {
     private static GoogleAnalytics ga = GoogleAnalytics.builder()
             .withConfig(new GoogleAnalyticsConfig().setDiscoverRequestParameters(true)
                     .setProxyHost(App.settings.getProxyHost()).setProxyPort(App.settings.getProxyPort())
-                    .setEnabled(App.settings.enableLogs()))
+                    .setEnabled(App.settings.enableAnalytics()))
             .withDefaultRequest(
                     new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.getAnalyticsClientId()))
             .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
@@ -78,5 +78,10 @@ public final class Analytics {
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
+    }
+
+    @Override
+    public void onSettingsSaved() {
+        ga.getConfig().setEnabled(App.settings.enableAnalytics());
     }
 }
