@@ -323,6 +323,9 @@ public class MCLauncher {
         String javaArguments = instance.launcher.javaArguments == null ? App.settings.getJavaParameters()
                 : instance.launcher.javaArguments;
 
+        // add minecraft client jar
+        cpb.append(instance.getMinecraftJarLibraryPath().toAbsolutePath().toString());
+
         File jarMods = instance.getRoot().resolve("jarmods").toFile();
         File[] jarModFiles = jarMods.listFiles();
         if (jarMods.exists() && jarModFiles != null && jarModFiles.length != 0) {

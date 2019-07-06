@@ -294,6 +294,8 @@ public class CollapsiblePanel extends JPanel {
                 App.settings.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
                 App.settings.setInstanceVisbility(instance, isCollapsed());
+            } else if (instanceV2 != null) {
+                App.settings.setInstanceVisbility(instanceV2, isCollapsed());
             }
         }
 
@@ -303,6 +305,8 @@ public class CollapsiblePanel extends JPanel {
                 App.settings.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
                 App.settings.setInstanceVisbility(instance, isCollapsed());
+            } else if (instanceV2 != null) {
+                App.settings.setInstanceVisbility(instanceV2, isCollapsed());
             }
         }
     }

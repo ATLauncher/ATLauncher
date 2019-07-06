@@ -188,6 +188,32 @@ public class InstanceV2 extends MinecraftVersion {
         return this.launcher.ignoredUpdates.stream().anyMatch(v -> v.equalsIgnoreCase(version));
     }
 
+    public Path getMinecraftJarLibraryPath() {
+        return FileSystem.GAME_LIBRARIES.resolve(String.format("net/minecraft/client/%1$s/client-%1$s.jar", this.id));
+    }
+
+    /**
+     * This will prepare the instance for launch. It will download the assets,
+     * Minecraft jar and libraries, as well as organise the libraries, ready to be
+     * played.
+     */
+    public boolean prepareToLaunch() {
+        try {
+            com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
+                    .setUrl(this.downloads.client.url).hash(this.downloads.client.sha1).size(this.downloads.client.size)
+                    .downloadTo(this.getMinecraftJarLibraryPath());
+
+            if (clientDownload.needToDownload()) {
+                clientDownload.downloadFile();
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+            return false;
+        }
+
+        return true;
+    }
+
     public boolean launch() {
         final Account account = App.settings.getAccount();
 
@@ -247,6 +273,9 @@ public class InstanceV2 extends MinecraftVersion {
             if (session == null) {
                 return false;
             }
+
+            LogManager.info("Preparing to launch!");
+            this.prepareToLaunch();
 
             Thread launcher = new Thread(() -> {
                 try {

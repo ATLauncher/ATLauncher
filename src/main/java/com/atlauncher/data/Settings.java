@@ -1964,6 +1964,24 @@ public class Settings {
         }
     }
 
+    public void setInstanceVisbility(InstanceV2 instanceV2, boolean collapsed) {
+        if (instanceV2 != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedInstances().contains(instanceV2.launcher.name)) {
+                    account.getCollapsedInstances().add(instanceV2.launcher.name);
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedInstances().contains(instanceV2.launcher.name)) {
+                    account.getCollapsedInstances().remove(instanceV2.launcher.name);
+                }
+            }
+            saveAccounts();
+            reloadInstancesPanel();
+        }
+    }
+
     /**
      * Get the Instances available in the Launcher
      *
