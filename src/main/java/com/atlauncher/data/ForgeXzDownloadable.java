@@ -18,7 +18,9 @@
 package com.atlauncher.data;
 
 import java.io.File;
+import java.io.IOException;
 
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -48,7 +50,15 @@ public class ForgeXzDownloadable extends HashableDownloadable {
 
     @Override
     protected void afterDownload() {
-        Utils.unXZPackFile(this.packXzFile, this.packFile, this.finalFile);
+        try {
+            Utils.unXZPackFile(this.packXzFile, this.packFile, this.finalFile);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
+            if (this.instanceInstaller != null) {
+                this.instanceInstaller.cancel(true);
+            }
+        }
 
         super.saveFileHash(this.finalFile);
 

@@ -44,7 +44,7 @@ public class Downloadable {
     private String hash;
     private int size;
     protected HttpURLConnection connection;
-    private InstanceInstaller instanceInstaller;
+    protected InstanceInstaller instanceInstaller;
     private boolean isATLauncherDownload;
     private File copyTo;
     private boolean actuallyCopy;
