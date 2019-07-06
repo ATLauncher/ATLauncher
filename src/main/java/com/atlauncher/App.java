@@ -267,7 +267,8 @@ public class App {
 
         LogManager.info("Java Version: " + Java.getActualJavaVersion());
 
-        Java.getInstalledJavas().stream().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version)));
+        SwingUtilities.invokeLater(() -> Java.getInstalledJavas().stream()
+                .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
         LogManager.info("Java Path: " + settings.getJavaPath());
 
