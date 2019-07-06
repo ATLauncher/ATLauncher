@@ -18,10 +18,12 @@
 package com.atlauncher;
 
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.atlauncher.data.Constants;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 
 public final class FileSystem {
@@ -38,7 +40,6 @@ public final class FileSystem {
     public static final Path IMAGES = CONFIGS.resolve("Images");
     public static final Path SKINS = IMAGES.resolve("Skins");
     public static final Path TOOLS = IMAGES.resolve("Tools");
-    public static final Path JARS = CONFIGS.resolve("Jars");
     public static final Path COMMON = CONFIGS.resolve("Common");
 
     public static final Path ASSETS = BASE_DIR.resolve("assets");
@@ -60,6 +61,15 @@ public final class FileSystem {
     public static final Path CHECKING_SERVERS_JSON = CONFIGS.resolve("checkingservers.json");
     public static final Path USER_DATE = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
+
+    /**
+     * This will cleanup old folders no longer used
+     */
+    public static void cleanUp() {
+        if (Files.exists(CONFIGS.resolve("Jars"))) {
+            FileUtils.delete(CONFIGS.resolve("Jars"));
+        }
+    }
 
     public static Path getDownloads() {
         return OS.isUsingMacApp() ? USER_DOWNLOADS : DOWNLOADS;

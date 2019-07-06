@@ -155,7 +155,7 @@ public class Settings {
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
     private File baseDir, backupsDir, runtimesDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir,
-            toolsDir, jarsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
+            toolsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
             languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
@@ -206,7 +206,6 @@ public class Settings {
         imagesDir = new File(configsDir, "Images");
         skinsDir = new File(imagesDir, "Skins");
         toolsDir = new File(configsDir, "Tools");
-        jarsDir = new File(configsDir, "Jars");
         commonConfigsDir = new File(configsDir, "Common");
         resourcesDir = new File(configsDir, "Resources");
         assetsDir = new File(baseDir, "assets");
@@ -834,7 +833,7 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { backupsDir, runtimesDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
-                toolsDir, jarsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(),
+                toolsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(),
                 this.getIndexesAssetsDir(), librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir,
                 instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
@@ -942,15 +941,6 @@ public class Settings {
      */
     public File getToolsDir() {
         return this.toolsDir;
-    }
-
-    /**
-     * Returns the jars directory
-     *
-     * @return File object for the jars directory
-     */
-    public File getJarsDir() {
-        return this.jarsDir;
     }
 
     /**
