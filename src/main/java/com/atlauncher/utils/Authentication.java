@@ -22,19 +22,16 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
 import com.mojang.authlib.Agent;
+import com.mojang.authlib.UserAuthentication;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 public class Authentication {
-    public static LoginResponse checkAccount(String username, String password) {
-        return checkAccount(username, password, "1");
-    }
-
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
-        YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App
-                .settings.getProxyForAuth(), clientToken).createUserAuthentication(Agent.MINECRAFT);
+        YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
+                App.settings.getProxyForAuth(), clientToken).createUserAuthentication(Agent.MINECRAFT);
 
         LoginResponse response = new LoginResponse(username);
 
@@ -54,23 +51,18 @@ public class Authentication {
         return response;
     }
 
-    public static LoginResponse login(Account account) {
-        return login(account, false);
-    }
-
-    public static LoginResponse login(Account account, boolean logout) {
-        YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App
-                .settings.getProxyForAuth(), "1").createUserAuthentication(Agent.MINECRAFT);
+    public static LoginResponse login(Account account, boolean usePassword) {
+        UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.getProxyForAuth(),
+                account.getClientToken()).createUserAuthentication(Agent.MINECRAFT);
         LoginResponse response = new LoginResponse(account.getUsername());
 
-        if (account.hasStore()) {
+        if (!usePassword && account.hasStore()) {
             auth.loadFromStorage(account.getStore());
         }
 
-        if (logout) {
-            auth.logOut();
+        auth.setUsername(account.getUsername());
 
-            auth.setUsername(account.getUsername());
+        if (usePassword) {
             auth.setPassword(account.getPassword());
         }
 

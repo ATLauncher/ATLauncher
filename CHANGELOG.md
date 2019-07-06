@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.2.9.7
+## 3.2.9.8
 
--   Fix installing newest versions of Forge
+-   Fix authentication using static clientToken causing issues with logins
