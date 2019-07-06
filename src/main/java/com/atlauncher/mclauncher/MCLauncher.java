@@ -31,6 +31,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -336,7 +337,7 @@ public class MCLauncher {
             }
         }
 
-        instance.libraries.stream()
+        instance.libraries.stream().filter(Library::shouldInstall)
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
                 .forEach(library -> {
                     cpb.append(File.pathSeparator);
