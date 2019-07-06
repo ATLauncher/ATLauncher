@@ -111,6 +111,14 @@ public class App {
     public static boolean skipTrayIntegration = false;
 
     /**
+     * This allows skipping the in built error reporting. This is mainly useful for
+     * development when you don't want to report errors to an external third party.
+     * <p/>
+     * --disable-error-reporting
+     */
+    public static boolean disableErrorReporting = false;
+
+    /**
      * This removes writing the launchers location to AppData/Application Support.
      * It can be enabled with the below command line argument.
      * <p/>
@@ -197,9 +205,6 @@ public class App {
 
         // Sets up where all uncaught exceptions go to.
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
-
-        // Initialize the error reporting
-        ErrorReporting.init();
     }
 
     /**
@@ -210,6 +215,9 @@ public class App {
     public static void main(String[] args) {
         // Parse all the command line arguments
         parseCommandLineArguments(args);
+
+        // Initialize the error reporting
+        ErrorReporting.init(disableErrorReporting);
 
         if (Files.notExists(FileSystem.CONFIGS) && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
             String content = HTMLUtils.centerParagraph("I've detected that you may "
@@ -542,6 +550,7 @@ public class App {
         OptionParser parser = new OptionParser();
         parser.accepts("updated").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("disable-error-reporting").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-hash-checking").withOptionalArg().ofType(Boolean.class);
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
@@ -572,6 +581,11 @@ public class App {
         skipTrayIntegration = options.has("skip-tray-integration");
         if (skipTrayIntegration) {
             LogManager.debug("Skipping tray integration!", true);
+        }
+
+        disableErrorReporting = options.has("disable-error-reporting");
+        if (disableErrorReporting) {
+            LogManager.debug("Disabling error reporting!", true);
         }
 
         forceOfflineMode = options.has("force-offline-mode");

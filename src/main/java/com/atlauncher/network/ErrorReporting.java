@@ -30,28 +30,40 @@ import io.sentry.event.Breadcrumb;
 import io.sentry.event.BreadcrumbBuilder;
 
 public final class ErrorReporting {
-    public static void init() {
-        SentryClient client = Sentry.init(Constants.SENTRY_DSN);
-        client.setRelease(Constants.VERSION.toString());
-        client.addTag("java.version", Java.getLauncherJavaVersion());
+    public static SentryClient client;
+
+    public static void init(boolean enable) {
+        if (enable) {
+            client = Sentry.init(Constants.SENTRY_DSN);
+            client.setRelease(Constants.VERSION.toString());
+            client.addTag("java.version", Java.getLauncherJavaVersion());
+        }
     }
 
     public static void addExtra(String name, String value) {
-        Sentry.getContext().addExtra(name, value);
+        if (client != null) {
+            client.getContext().addExtra(name, value);
+        }
     }
 
     public static void addTag(String name, String value) {
-        Sentry.getContext().addTag(name, value);
+        if (client != null) {
+            client.getContext().addTag(name, value);
+        }
     }
 
     public static void recordBreadcrumb(String message, Breadcrumb.Type type, Breadcrumb.Level level) {
-        Sentry.getContext()
-                .recordBreadcrumb(new BreadcrumbBuilder().setMessage(message).setType(type).setLevel(level).build());
+        if (client != null) {
+            client.getContext().recordBreadcrumb(
+                    new BreadcrumbBuilder().setMessage(message).setType(type).setLevel(level).build());
+        }
     }
 
     public static void recordBreadcrumb(Map<String, String> data, Breadcrumb.Type type, Breadcrumb.Level level) {
-        Sentry.getContext()
-                .recordBreadcrumb(new BreadcrumbBuilder().setData(data).setType(type).setLevel(level).build());
+        if (client != null) {
+            client.getContext()
+                    .recordBreadcrumb(new BreadcrumbBuilder().setData(data).setType(type).setLevel(level).build());
+        }
     }
 
     public static void recordBreadcrumb(String message, Breadcrumb.Level level) {
@@ -63,31 +75,38 @@ public final class ErrorReporting {
     }
 
     public static void recordNetworkRequest(String url, String timeTaken) {
-        Map<String, String> data = new HashMap<>();
+        if (client != null) {
+            Map<String, String> data = new HashMap<>();
 
-        data.put("timeTaken", timeTaken);
+            data.put("timeTaken", timeTaken);
 
-        Sentry.getContext().recordBreadcrumb(new BreadcrumbBuilder().setMessage(url).setType(Breadcrumb.Type.DEFAULT)
-                .setLevel(Breadcrumb.Level.INFO).setCategory("http.request").setData(data).build());
+            client.getContext()
+                    .recordBreadcrumb(new BreadcrumbBuilder().setMessage(url).setType(Breadcrumb.Type.DEFAULT)
+                            .setLevel(Breadcrumb.Level.INFO).setCategory("http.request").setData(data).build());
+        }
     }
 
     public static void recordPackInstall(String packName, String packVersion, LoaderVersion loader) {
-        Map<String, String> data = new HashMap<>();
+        if (client != null) {
+            Map<String, String> data = new HashMap<>();
 
-        data.put("pack.name", packName);
-        data.put("pack.version", packVersion);
+            data.put("pack.name", packName);
+            data.put("pack.version", packVersion);
 
-        if (loader != null) {
-            data.put("loader.version", loader.version);
-            data.put("loader.type", loader.type);
+            if (loader != null) {
+                data.put("loader.version", loader.version);
+                data.put("loader.type", loader.type);
+            }
+
+            client.getContext().recordBreadcrumb(
+                    new BreadcrumbBuilder().setMessage("Started pack install").setType(Breadcrumb.Type.USER)
+                            .setLevel(Breadcrumb.Level.INFO).setCategory("pack.install").setData(data).build());
         }
-
-        Sentry.getContext().recordBreadcrumb(
-                new BreadcrumbBuilder().setMessage("Started pack install").setType(Breadcrumb.Type.USER)
-                        .setLevel(Breadcrumb.Level.INFO).setCategory("pack.install").setData(data).build());
     }
 
     public static void reportError(Throwable t) {
-        Sentry.capture(t);
+        if (client != null) {
+            client.sendException(t);
+        }
     }
 }

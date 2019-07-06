@@ -8,7 +8,7 @@
             "mainClass": "com.atlauncher.App",
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher",
-            "args": "--debug --debug-level 3"
+            "args": "--debug --debug-level 3 --disable-error-reporting"
         }
     ]
 }
