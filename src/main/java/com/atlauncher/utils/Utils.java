@@ -30,6 +30,7 @@ import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -1411,7 +1412,7 @@ public class Utils {
         return bytes;
     }
 
-    public static void unXZPackFile(File inputFile, File outputFile) {
+    public static void unXZPackFile(File inputFile, File outputFile) throws IOException {
         File packFile = new File(inputFile.getAbsolutePath().substring(0, inputFile.getAbsolutePath().length() - 3));
         LogManager.debug("unXZPackFile " + inputFile.getAbsolutePath() + " : " + packFile.getAbsolutePath() + " : "
                 + outputFile.getAbsolutePath());
@@ -1466,48 +1467,39 @@ public class Utils {
         }
     }
 
-    public static void unXZFile(File input, File output) {
+    public static void unXZFile(File input, File output) throws IOException {
         FileInputStream fis = null;
         FileOutputStream fos = null;
         BufferedInputStream bis = null;
         XZInputStream xzis = null;
-        try {
-            fis = new FileInputStream(input);
-            xzis = new XZInputStream(fis);
-            fos = new FileOutputStream(output);
+        fis = new FileInputStream(input);
+        xzis = new XZInputStream(fis);
+        fos = new FileOutputStream(output);
 
-            final byte[] buffer = new byte[8192];
-            int n = 0;
-            while (-1 != (n = xzis.read(buffer))) {
-                fos.write(buffer, 0, n);
-            }
+        final byte[] buffer = new byte[8192];
+        int n = 0;
+        while (-1 != (n = xzis.read(buffer))) {
+            fos.write(buffer, 0, n);
+        }
 
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        } finally {
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-                if (bis != null) {
-                    bis.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-                if (xzis != null) {
-                    xzis.close();
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
+        if (fis != null) {
+            fis.close();
+        }
+        if (bis != null) {
+            bis.close();
+        }
+        if (fos != null) {
+            fos.close();
+        }
+        if (xzis != null) {
+            xzis.close();
         }
     }
 
     /*
      * From: http://atl.pw/1
      */
-    public static void unpackFile(File input, File output) {
+    public static void unpackFile(File input, File output) throws IOException {
         if (output.exists()) {
             Utils.delete(output);
         }
@@ -1529,21 +1521,17 @@ public class Utils {
         int len = ((decompressed[x - 8] & 0xFF)) | ((decompressed[x - 7] & 0xFF) << 8)
                 | ((decompressed[x - 6] & 0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
         byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
-        try {
-            FileOutputStream jarBytes = new FileOutputStream(output);
-            JarOutputStream jos = new JarOutputStream(jarBytes);
+        FileOutputStream jarBytes = new FileOutputStream(output);
+        JarOutputStream jos = new JarOutputStream(jarBytes);
 
-            Pack200.newUnpacker().unpack(new ByteArrayInputStream(decompressed), jos);
+        Pack200.newUnpacker().unpack(new ByteArrayInputStream(decompressed), jos);
 
-            jos.putNextEntry(new JarEntry("checksums.sha1"));
-            jos.write(checksums);
-            jos.closeEntry();
+        jos.putNextEntry(new JarEntry("checksums.sha1"));
+        jos.write(checksums);
+        jos.closeEntry();
 
-            jos.close();
-            jarBytes.close();
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
+        jos.close();
+        jarBytes.close();
     }
 
     private static String getMACAdressHash() {
