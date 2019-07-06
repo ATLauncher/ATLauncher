@@ -58,24 +58,30 @@ public class FabricMetaLauncherMetaTypeAdapter implements JsonDeserializer<Fabri
         List<FabricLibrary> clientLibraries = new ArrayList<>();
         final JsonArray clientLibrariesArray = librariesObject.getAsJsonArray("client");
         for (JsonElement libraryElement : clientLibrariesArray) {
-            clientLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                    libraryElement.getAsJsonObject().get("url").getAsString()));
+            if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
+                clientLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
+                        libraryElement.getAsJsonObject().get("url").getAsString()));
+            }
         }
         libraries.put("client", clientLibraries);
 
         List<FabricLibrary> commonLibraries = new ArrayList<>();
         final JsonArray commonLibrariesArray = librariesObject.getAsJsonArray("common");
         for (JsonElement libraryElement : commonLibrariesArray) {
-            commonLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                    libraryElement.getAsJsonObject().get("url").getAsString()));
+            if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
+                commonLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
+                        libraryElement.getAsJsonObject().get("url").getAsString()));
+            }
         }
         libraries.put("common", commonLibraries);
 
         List<FabricLibrary> serverLibraries = new ArrayList<>();
         final JsonArray serverLibrariesArray = librariesObject.getAsJsonArray("server");
         for (JsonElement libraryElement : serverLibrariesArray) {
-            serverLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                    libraryElement.getAsJsonObject().get("url").getAsString()));
+            if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
+                serverLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
+                        libraryElement.getAsJsonObject().get("url").getAsString()));
+            }
         }
         libraries.put("server", serverLibraries);
 
