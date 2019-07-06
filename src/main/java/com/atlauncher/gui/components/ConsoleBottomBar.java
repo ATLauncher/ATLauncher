@@ -34,6 +34,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.HTMLUtils;
 
@@ -71,6 +72,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             LogManager.info("Console Cleared");
         });
         copyLogButton.addActionListener(e -> {
+            Analytics.sendEvent("CopyLog", "Launcher");
             App.TOASTER.pop("Copied Log to clipboard");
             LogManager.info("Copied Log to clipboard");
             StringSelection text = new StringSelection(App.settings.getLog());
@@ -89,6 +91,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                 return;
             }
             if (result.contains(Constants.PASTE_CHECK_URL)) {
+                Analytics.sendEvent("UploadLog", "Launcher");
                 App.TOASTER.pop("Log uploaded and link copied to clipboard");
                 LogManager.info("Log uploaded and link copied to clipboard: " + result);
                 StringSelection text = new StringSelection(result);
@@ -105,6 +108,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                             .centerParagraph(Language.INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")))
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
+                Analytics.sendEvent("KillMinecraft", "Launcher");
                 App.settings.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }

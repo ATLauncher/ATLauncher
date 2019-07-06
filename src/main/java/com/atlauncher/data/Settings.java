@@ -52,6 +52,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -74,6 +75,7 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
@@ -143,6 +145,7 @@ public class Settings {
     private boolean notifyBackup; // Whether to notify the user on successful backup or restore
     // Dropbox settings
     private String dropboxFolderLocation; // Location of dropbox if defined by user
+    private String analyticsClientId;
     // Packs, Instances and Accounts
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
@@ -356,6 +359,7 @@ public class Settings {
         }
 
         if (this.enableLogs) {
+            Analytics.startSession();
             App.TASKPOOL.execute(ATLauncherAPIUtils::postSystemInfo);
         }
     }
@@ -833,9 +837,9 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { backupsDir, runtimesDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
-                toolsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(),
-                this.getIndexesAssetsDir(), librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir,
-                instancesDir, serversDir, tempDir, failedDownloadsDir, logsDir };
+                toolsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(), this.getIndexesAssetsDir(),
+                librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir, instancesDir, serversDir,
+                tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -1407,8 +1411,14 @@ public class Settings {
             this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
             this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
             this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
+            this.analyticsClientId = properties.getProperty("analyticsclientid", null);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
+        }
+
+        if (this.analyticsClientId == null) {
+            this.analyticsClientId = UUID.randomUUID().toString();
+            this.saveProperties();
         }
         LogManager.debug("Finished loading properties");
     }
@@ -1465,6 +1475,7 @@ public class Settings {
             properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
+            properties.setProperty("analyticsclientid", this.analyticsClientId);
             this.properties.store(new FileOutputStream(propertiesFile), Constants.LAUNCHER_NAME + " Settings");
         } catch (IOException e) {
             LogManager.logStackTrace(e);
@@ -2751,6 +2762,10 @@ public class Settings {
     public void setDropboxLocation(String dropboxLoc) {
         this.dropboxFolderLocation = dropboxLoc;
         saveProperties();
+    }
+
+    public String getAnalyticsClientId() {
+        return this.analyticsClientId;
     }
 
     public boolean getAutoBackup() {

@@ -40,6 +40,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.network.Analytics;
 
 public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = -969812552965390610L;
@@ -84,6 +85,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         searchBox.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    Analytics.sendEvent(searchBox.getText(), "Search", "Instance");
                     reload();
                 }
             }
@@ -91,7 +93,10 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         topPanel.add(searchBox);
 
         searchButton = new JButton(Language.INSTANCE.localize("common.search"));
-        searchButton.addActionListener(e -> reload());
+        searchButton.addActionListener(e -> {
+            Analytics.sendEvent(searchBox.getText(), "Search", "Instance");
+            reload();
+        });
         topPanel.add(searchButton);
 
         hasUpdate = new JCheckBox();

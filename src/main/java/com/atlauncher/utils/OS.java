@@ -50,6 +50,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
 public enum OS {
@@ -114,6 +115,7 @@ public enum OS {
      */
     public static void openWebBrowser(String url) {
         try {
+            Analytics.sendOutboundLink(url);
             OS.openWebBrowser(new URI(url));
         } catch (Exception e) {
             LogManager.logStackTrace("Error opening web browser!", e);

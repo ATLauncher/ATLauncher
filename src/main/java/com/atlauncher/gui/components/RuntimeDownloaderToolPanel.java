@@ -31,6 +31,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
@@ -60,6 +61,8 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
+
         final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.runtimedownloader"), 1,
                 Language.INSTANCE.localize("tools.runtimedownloader.running"), "Runtime Downloader Tool Cancelled!");
 
@@ -91,8 +94,8 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
             App.settings.saveProperties();
 
             DialogManager.okDialog().setTitle(Language.INSTANCE.localize("tools.runtimedownloader"))
-                    .setContent(HTMLUtils.centerParagraph(
-                            Language.INSTANCE.localize("tools.runtimedownloader.complete")))
+                    .setContent(
+                            HTMLUtils.centerParagraph(Language.INSTANCE.localize("tools.runtimedownloader.complete")))
                     .setType(DialogManager.INFO).show();
         }
     }

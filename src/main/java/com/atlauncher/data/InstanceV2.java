@@ -46,6 +46,7 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.mclauncher.MCLauncher;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -276,6 +277,8 @@ public class InstanceV2 extends MinecraftVersion {
 
             LogManager.info("Preparing to launch!");
             this.prepareToLaunch();
+
+            Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play", "InstanceV2");
 
             Thread launcher = new Thread(() -> {
                 try {

@@ -68,6 +68,7 @@ import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -211,6 +212,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 .setContent(Language.INSTANCE.localize("instance.cantupdate"))
                                 .setType(DialogManager.ERROR).show();
                     } else {
+                        Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "UpdateFromPlay",
+                                "Instance");
                         new InstanceInstallerDialog(instance, true, false, null, null, true);
                     }
                 } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
@@ -238,6 +241,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .setContent(Language.INSTANCE.localize("instance.cantreinstall")).setType(DialogManager.ERROR)
                         .show();
             } else {
+                Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Reinstall", "Instance");
                 new InstanceInstallerDialog(instance);
             }
         });
@@ -247,6 +251,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .setContent(Language.INSTANCE.localize("instance.cantupdate")).setType(DialogManager.ERROR)
                         .show();
             } else {
+                Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Update", "Instance");
                 new InstanceInstallerDialog(instance, true, false, null, null, true);
             }
         });
@@ -287,6 +292,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         dialog.add(topPanel, BorderLayout.CENTER);
                         dialog.add(bottomPanel, BorderLayout.SOUTH);
 
+                        Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Backup",
+                                "Instance");
+
                         final Thread backupThread = new Thread(() -> {
                             Timestamp timestamp = new Timestamp(new Date().getTime());
                             String time = timestamp.toString().replaceAll("[^0-9]", "_");
@@ -313,10 +321,19 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 }
             }
         });
-        this.addButton.addActionListener(e -> new AddModsDialog(instance));
-        this.editButton.addActionListener(e -> new EditModsDialog(instance));
+        this.addButton.addActionListener(e -> {
+            Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "AddMods", "Instance");
+            new AddModsDialog(instance);
+        });
+        this.editButton.addActionListener(e -> {
+            Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "EditMods", "Instance");
+            new EditModsDialog(instance);
+        });
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRootDirectory().toPath()));
-        this.settingsButton.addActionListener(e -> new InstanceSettingsDialog(instance));
+        this.settingsButton.addActionListener(e -> {
+            Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Settings", "Instance");
+            new InstanceSettingsDialog(instance);
+        });
         this.cloneButton.addActionListener(e -> {
             String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
                     Language.INSTANCE.localize("instance.cloneenter"),
@@ -324,6 +341,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) == null
                     && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
                     && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
+
+                Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Clone", "Instance");
 
                 final String newName = clonedName;
                 final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.clonetitle"), 0,
@@ -360,6 +379,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     .setContent(Language.INSTANCE.localize("instance.deletesure")).setType(DialogManager.ERROR).show();
 
             if (ret == DialogManager.YES_OPTION) {
+                Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Delete", "Instance");
                 final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.deletetitle"), 0,
                         Language.INSTANCE.localize("instance.deletinginstance"), null);
                 dialog.addThread(new Thread(() -> {
@@ -394,6 +414,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                         .setContent(Language.INSTANCE.localize("instance.cantupdate"))
                                         .setType(DialogManager.ERROR).show();
                             } else {
+                                Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(),
+                                        "UpdateFromPlay", "Instance");
                                 new InstanceInstallerDialog(instance, true, false, null, null, true);
                             }
                         } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
@@ -444,6 +466,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         if (ret == JFileChooser.APPROVE_OPTION) {
                             File img = chooser.getSelectedFile();
                             if (img.getAbsolutePath().endsWith(".png")) {
+                                Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(),
+                                        "ChangeImage", "Instance");
                                 try {
                                     Utils.safeCopy(img, new File(instance.getRootDirectory(), "instance.png"));
                                     image.setImage(instance.getImage().getImage());
@@ -471,6 +495,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                             .setContent(Language.INSTANCE.localize("instance.cantupdate"))
                                             .setType(DialogManager.ERROR).show();
                                 } else {
+                                    Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(),
+                                            "Update", "Instance");
                                     new InstanceInstallerDialog(instance, true, false, null, null, true);
                                 }
                             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
@@ -492,6 +518,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
                     shareCodeItem.addActionListener(e1 -> {
                         if (!instance.getInstalledOptionalModNames().isEmpty()) {
+                            Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "MakeShareCode",
+                                    "Instance");
                             try {
                                 java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
                                 }.getType();

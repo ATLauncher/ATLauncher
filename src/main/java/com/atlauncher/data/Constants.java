@@ -21,6 +21,7 @@ public class Constants {
     public static final LauncherVersion VERSION = new LauncherVersion(3, 2, 10, 0);
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
+    public static final String GA_TRACKING_ID = "UA-88820616-7";
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
     public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";

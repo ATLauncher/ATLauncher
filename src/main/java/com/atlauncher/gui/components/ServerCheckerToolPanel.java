@@ -29,6 +29,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -40,8 +41,8 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
 
     private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.serverchecker"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.serverchecker.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
+            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.serverchecker.info"), 60, "<br>")));
 
     public ServerCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -61,6 +62,7 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
+            Analytics.sendEvent("ServerChecker", "Run", "Tool");
             new ServerListForCheckerDialog();
         }
     }

@@ -51,6 +51,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
@@ -237,6 +238,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                                 Language.INSTANCE.localizeWithReplace("account.deletesure", usernameField.getText()))
                         .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
+                    Analytics.sendEvent("Delete", "Account");
                     App.settings.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(fillerAccount);
@@ -259,6 +261,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         updateSkin = new JMenuItem(Language.INSTANCE.localize("account.reloadskin"));
         updateSkin.addActionListener(e -> {
             final Account account = ((Account) accountsComboBox.getSelectedItem());
+            Analytics.sendEvent("UpdateSkin", "Account");
             account.updateSkin();
             userSkin.setIcon(account.getMinecraftSkin());
         });
@@ -313,6 +316,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                             response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken);
                     account.setStore(response.getAuth().saveForStorage());
                     App.settings.addAccount(account);
+                    Analytics.sendEvent("Add", "Account");
                     LogManager.info("Added Account " + account);
 
                     int ret = DialogManager.optionDialog().setTitle(Language.INSTANCE.localize("account.added"))
@@ -334,6 +338,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     account.setRemember(remember);
                     account.setClientToken(clientToken);
                     account.setStore(response.getAuth().saveForStorage());
+                    Analytics.sendEvent("Edit", "Account");
                     LogManager.info("Edited Account " + account);
                     DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.edited"))
                             .setContent(Language.INSTANCE.localize("account.editeddone")).setType(DialogManager.INFO)

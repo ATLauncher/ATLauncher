@@ -47,6 +47,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -291,10 +292,15 @@ public class CollapsiblePanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
+                Analytics.sendEvent(isCollapsed() ? 1 : 0, pack.getName(), "Collapse", "Pack");
                 App.settings.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
+                Analytics.sendEvent(isCollapsed() ? 1 : 0, instance.getPackName() + " - " + instance.getVersion(),
+                        "Collapse", "Instance");
                 App.settings.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
+                Analytics.sendEvent(isCollapsed() ? 1 : 0,
+                        instanceV2.launcher.pack + " - " + instanceV2.launcher.version, "Collapse", "InstanceV2");
                 App.settings.setInstanceVisbility(instanceV2, isCollapsed());
             }
         }

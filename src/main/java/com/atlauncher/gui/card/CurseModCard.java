@@ -33,6 +33,7 @@ import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -77,9 +78,15 @@ public final class CurseModCard extends JPanel {
         buttonsPanel.add(viewButton);
 
         if (this.instanceV2 != null) {
-            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instanceV2));
+            addButton.addActionListener(e -> {
+                Analytics.sendEvent(mod.name, "Add", "CurseMod");
+                new CurseModFileSelectorDialog(mod, instanceV2);
+            });
         } else {
-            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instance));
+            addButton.addActionListener(e -> {
+                Analytics.sendEvent(mod.name, "Add", "CurseMod");
+                new CurseModFileSelectorDialog(mod, instance);
+            });
         }
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));

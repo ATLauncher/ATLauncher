@@ -26,6 +26,7 @@ import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -37,8 +38,8 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
 
     private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.logclearer"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(Language
-            .INSTANCE.localize("tools.logclearer.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
+            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.logclearer.info"), 60, "<br>")));
 
     public LogClearerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -52,6 +53,7 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
+            Analytics.sendEvent("LogClearer", "Run", "Tool");
             App.settings.clearAllLogs();
         }
     }

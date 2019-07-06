@@ -26,6 +26,7 @@ import javax.swing.border.BevelBorder;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -50,6 +51,7 @@ public class RelaunchInDebugModePanel extends AbstractToolPanel implements Actio
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
+            Analytics.sendEvent("RelaunchInDebugMode", "Run", "Tool");
             OS.relaunchInDebugMode();
         }
     }

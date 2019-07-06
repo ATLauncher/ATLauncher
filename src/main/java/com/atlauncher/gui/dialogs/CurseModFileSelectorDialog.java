@@ -44,6 +44,7 @@ import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.Utils;
 
@@ -155,6 +156,7 @@ public class CurseModFileSelectorDialog extends JDialog {
             dialog.add(bottomPanel, BorderLayout.SOUTH);
 
             Runnable r = () -> {
+                Analytics.sendEvent(mod.name + " - " + file.displayName, "AddFile", "CurseMod");
                 if (this.instanceV2 != null) {
                     instanceV2.addFileFromCurse(mod, file);
                 } else {

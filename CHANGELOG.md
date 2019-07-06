@@ -10,3 +10,4 @@
 - Fix Curse mod file selector dependencies not showing well
 - When installing an instance, give focus to name field and select all when clicked
 - [#255] Add tool to download and use recommended version of Java to use
+- [#350] Add in anonymous analytics to track usage for future decision making

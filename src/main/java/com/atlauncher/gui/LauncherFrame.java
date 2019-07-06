@@ -26,6 +26,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -43,6 +45,7 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -151,6 +154,13 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
     private void setupTabs() {
         tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT : JTabbedPane.LEFT));
         tabbedPane.setBackground(App.THEME.getBaseColor());
+
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
+                Analytics.sendScreenView(title, "/" + title.replace(' ', '-').toLowerCase());
+            }
+        });
 
         newsTab = new NewsTab();
         App.settings.setNewsPanel(newsTab);

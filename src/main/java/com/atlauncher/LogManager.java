@@ -24,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.Utils;
 
@@ -93,6 +94,7 @@ public final class LogManager {
 
         CharArrayWriter writer = new CharArrayWriter();
         try {
+            Analytics.sendException(t.getMessage());
             t.printStackTrace(new PrintWriter(writer));
             error(writer.toString());
         } finally {

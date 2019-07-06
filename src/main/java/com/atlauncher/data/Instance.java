@@ -41,13 +41,14 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Java;
-import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.LoggingClient;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.mclauncher.MCLauncher;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -1404,6 +1405,8 @@ public class Instance implements Cloneable {
             if (session == null) {
                 return false;
             }
+
+            Analytics.sendEvent(this.getPackName() + " - " + this.getVersion(), "Play", "Instance");
 
             Thread launcher = new Thread(() -> {
                 try {

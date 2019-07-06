@@ -37,6 +37,7 @@ import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
 /**
@@ -133,6 +134,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                             .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
                             .setType(DialogManager.ERROR).show();
                 } else {
+                    Analytics.sendEvent(pack.getName(), "Install", "Pack");
                     new InstanceInstallerDialog(pack);
                 }
             }
@@ -149,6 +151,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                             .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
                             .setType(DialogManager.ERROR).show();
                 } else {
+                    Analytics.sendEvent(pack.getName(), "ServerInstall", "Pack");
                     new InstanceInstallerDialog(pack, true);
                 }
             }
@@ -160,9 +163,15 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         this.websiteButton.addActionListener(e -> OS.openWebBrowser(pack.getWebsiteURL()));
 
-        this.modsButton.addActionListener(e -> new ViewModsDialog(pack).setVisible(true));
+        this.modsButton.addActionListener(e -> {
+            Analytics.sendEvent(pack.getName(), "ViewMods", "Pack");
+            new ViewModsDialog(pack).setVisible(true);
+        });
 
-        this.removePackButton.addActionListener(e -> App.settings.removePack(pack.getCode()));
+        this.removePackButton.addActionListener(e -> {
+            Analytics.sendEvent(pack.getName(), "Remove", "Pack");
+            App.settings.removePack(pack.getCode());
+        });
     }
 
     @Override

@@ -33,6 +33,7 @@ import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
@@ -65,6 +66,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Analytics.sendEvent("NetworkChecker", "Run", "Tool");
+
         int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("tools.networkchecker"))
                 .setContent(HTMLUtils.centerParagraph(Utils.splitMultilinedString(
                         Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup", "20 MB.<br/><br/>"), 75,

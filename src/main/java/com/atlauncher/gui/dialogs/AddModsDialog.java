@@ -41,6 +41,7 @@ import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseModCard;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
 
 @SuppressWarnings("serial")
@@ -107,6 +108,7 @@ public final class AddModsDialog extends JDialog {
         this.installFabricApiButton.addActionListener(e -> {
             CurseMod mod = CurseApi.getModById(Constants.CURSE_FABRIC_MOD_ID);
 
+            Analytics.sendEvent("AddFabricApi", "CurseMod");
             if (this.instanceV2 != null) {
                 new CurseModFileSelectorDialog(mod, instanceV2);
             } else {
@@ -176,6 +178,8 @@ public final class AddModsDialog extends JDialog {
             page -= 1;
         }
 
+        Analytics.sendEvent(page, "Previous", "Navigation", "CurseMod");
+
         getMods();
     }
 
@@ -183,6 +187,8 @@ public final class AddModsDialog extends JDialog {
         if (contentPanel.getComponentCount() != 0) {
             page += 1;
         }
+
+        Analytics.sendEvent(page, "Next", "Navigation", "CurseMod");
 
         getMods();
     }
@@ -219,8 +225,13 @@ public final class AddModsDialog extends JDialog {
         Runnable r = () -> {
             String query = searchField.getText();
 
-            setMods(CurseApi.searchMods(
-                    this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query, page));
+            List<CurseMod> mods = CurseApi.searchMods(
+                    this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query, page);
+
+            setMods(mods);
+
+            Analytics.sendEvent(mods.size(), query, "Search", "CurseMod");
+
             setLoading(false);
         };
 

@@ -24,6 +24,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
@@ -35,6 +37,7 @@ import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -45,8 +48,8 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
     private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
     private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
-    private final List<Tab> tabs = Arrays.asList(new Tab[]{this.generalSettingsTab, this.javaSettingsTab, this
-            .networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab});
+    private final List<Tab> tabs = Arrays.asList(new Tab[] { this.generalSettingsTab, this.javaSettingsTab,
+            this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab });
     private JTabbedPane tabbedPane;
     private JPanel bottomPanel;
     private JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
@@ -57,6 +60,12 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBackground(App.THEME.getBaseColor());
+        tabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
+                Analytics.sendScreenView(title, "/settings/" + title.replace(' ', '-').toLowerCase());
+            }
+        });
 
         tabbedPane.setFont(App.THEME.getDefaultFont().deriveFont(17.0F));
         for (Tab tab : this.tabs) {
@@ -72,9 +81,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
 
         add(bottomPanel, BorderLayout.SOUTH);
         saveButton.addActionListener(arg0 -> {
-            if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters() &&
-                    networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort() &&
-                    networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
+            if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
+                    && networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort()
+                    && networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable();
                 boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();

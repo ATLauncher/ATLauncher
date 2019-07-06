@@ -44,6 +44,7 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
+import com.atlauncher.network.Analytics;
 
 @SuppressWarnings("serial")
 public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
@@ -55,6 +56,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JButton expandAllButton = new JButton(Language.INSTANCE.localize("pack.expandall"));
     private final JButton collapseAllButton = new JButton(Language.INSTANCE.localize("pack.collapseall"));
     private final JTextField searchField = new JTextField(16);
+    private final JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
     private final JCheckBox serversBox = new JCheckBox(Language.INSTANCE.localize("pack.cancreateserver"));
     private final JCheckBox privateBox = new JCheckBox(Language.INSTANCE.localize("pack.privatepacksonly"));
     private final JCheckBox searchDescBox = new JCheckBox(Language.INSTANCE.localize("pack.searchdescription"));
@@ -118,9 +120,18 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         this.searchField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                reload();
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    Analytics.sendEvent(searchField.getText(), "Search", "Pack");
+                    reload();
+                }
             }
         });
+
+        this.searchButton.addActionListener(e -> {
+            Analytics.sendEvent(searchField.getText(), "Search", "Pack");
+            reload();
+        });
+
         this.privateBox.addItemListener(e -> reload());
         this.serversBox.addItemListener(e -> reload());
         this.searchDescBox.addItemListener(e -> reload());
@@ -130,6 +141,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.topPanel.add(this.addButton);
         this.topPanel.add(this.clearButton);
         this.topPanel.add(this.searchField);
+        this.topPanel.add(this.searchButton);
         this.topPanel.add(this.serversBox);
         this.topPanel.add(this.privateBox);
         this.topPanel.add(this.searchDescBox);

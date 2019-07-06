@@ -35,6 +35,7 @@ import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.OS;
 
@@ -87,9 +88,15 @@ public final class CurseFileDependencyCard extends JPanel {
         buttonsPanel.add(viewButton);
 
         if (this.instanceV2 != null) {
-            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instanceV2));
+            addButton.addActionListener(e -> {
+                Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
+                new CurseModFileSelectorDialog(mod, instanceV2);
+            });
         } else {
-            addButton.addActionListener(e -> new CurseModFileSelectorDialog(mod, instance));
+            addButton.addActionListener(e -> {
+                Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
+                new CurseModFileSelectorDialog(mod, instance);
+            });
         }
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));

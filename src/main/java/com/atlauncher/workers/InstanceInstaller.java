@@ -60,6 +60,7 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
@@ -177,6 +178,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
             if (!this.isServer) {
                 saveInstanceJson();
             }
+
+            Analytics.sendEvent(pack.name + " - " + version.version,
+                    (this.isServer ? "Server" : "") + (this.isReinstall ? "Reinstalled" : "Installed"), "Pack");
 
             return true;
         } catch (Exception e) {
