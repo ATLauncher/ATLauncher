@@ -22,6 +22,7 @@ public class Constants {
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";
+    public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
     public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";

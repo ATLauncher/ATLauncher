@@ -55,8 +55,8 @@ public class ForgeLoader implements Loader {
         this.instanceInstaller = instanceInstaller;
 
         if (versionOverride != null) {
-            this.version = versionOverride.getVersion();
-            this.rawVersion = versionOverride.getRawVersion();
+            this.version = versionOverride.version;
+            this.rawVersion = versionOverride.rawVersion;
 
             this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
                     + "-installer.jar";

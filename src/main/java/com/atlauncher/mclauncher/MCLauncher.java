@@ -415,8 +415,6 @@ public class MCLauncher {
             arguments.add("-Xdock:name=\"" + instance.launcher.name + "\"");
         }
 
-        ArrayList<String> negatedArgs = new ArrayList<>();
-
         if (!javaArguments.isEmpty()) {
             for (String arg : javaArguments.split(" ")) {
                 if (!arg.isEmpty()) {

@@ -18,10 +18,10 @@
 package com.atlauncher.data.minecraft.loaders;
 
 public class LoaderVersion {
-    private String version;
-    private String rawVersion;
-    private boolean recommended;
-    private String type;
+    public String version;
+    public String rawVersion;
+    public boolean recommended;
+    public String type;
 
     public LoaderVersion(String version, String rawVersion, boolean recommended, String type) {
         this.version = version;
@@ -38,24 +38,8 @@ public class LoaderVersion {
         this(version, version, false, "Dummy");
     }
 
-    public String getVersion() {
-        return this.version;
-    }
-
-    public String getRawVersion() {
-        return this.rawVersion;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
     public boolean isFabric() {
         return this.type.equalsIgnoreCase("Fabric");
-    }
-
-    public boolean isRecommended() {
-        return this.recommended;
     }
 
     public String toString() {

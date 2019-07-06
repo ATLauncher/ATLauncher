@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import com.atlauncher.data.Constants;
 import com.atlauncher.listener.ProgressListener;
 import com.atlauncher.network.DebugLoggingInterceptor;
+import com.atlauncher.network.ErrorReportingInterceptor;
 import com.atlauncher.network.UserAgentInterceptor;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ProgressResponseBody;
@@ -34,7 +35,8 @@ import okhttp3.Response;
 public final class Network {
     public static final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .addNetworkInterceptor(new UserAgentInterceptor()).addNetworkInterceptor(new DebugLoggingInterceptor())
-            .build();
+            .addNetworkInterceptor(new ErrorReportingInterceptor()).build();
+
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like "
             + "Gecko) Chrome/28.0.1500.72 Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION + " Java/"
             + Java.getLauncherJavaVersion();

@@ -62,6 +62,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
@@ -147,10 +148,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
     @Override
     protected Boolean doInBackground() throws Exception {
-        LogManager.info("Started install of " + this.pack.getName() + " - " + this.version);
+        ErrorReporting.recordPackInstall(this.pack.name, this.version.version, this.loaderVersion);
+        LogManager.info("Started install of " + this.pack.name + " version " + this.version.version);
 
         if (this.loaderVersion != null) {
-            LogManager.info("Using loader version " + this.loaderVersion.getVersion());
+            LogManager.info("Using loader version " + this.loaderVersion.version);
         }
 
         try {

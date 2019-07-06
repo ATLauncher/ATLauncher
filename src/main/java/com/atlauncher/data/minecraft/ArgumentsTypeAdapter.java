@@ -70,6 +70,7 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public JsonElement serialize(Arguments arguments, Type type, JsonSerializationContext context) {
         JsonObject root = new JsonObject();
 

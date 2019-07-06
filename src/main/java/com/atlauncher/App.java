@@ -61,6 +61,7 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -196,6 +197,9 @@ public class App {
 
         // Sets up where all uncaught exceptions go to.
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
+
+        // Initialize the error reporting
+        ErrorReporting.init();
     }
 
     /**

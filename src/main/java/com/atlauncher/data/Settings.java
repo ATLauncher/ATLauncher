@@ -37,7 +37,6 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
-import java.nio.file.Files;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,6 +75,7 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
@@ -360,8 +360,11 @@ public class Settings {
         }
 
         if (this.enableLogs) {
-            Analytics.startSession();
             App.TASKPOOL.execute(ATLauncherAPIUtils::postSystemInfo);
+        }
+
+        if (this.enableAnalytics) {
+            Analytics.startSession();
         }
     }
 

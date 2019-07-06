@@ -30,7 +30,6 @@ import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -1470,7 +1469,6 @@ public class Utils {
     public static void unXZFile(File input, File output) throws IOException {
         FileInputStream fis = null;
         FileOutputStream fos = null;
-        BufferedInputStream bis = null;
         XZInputStream xzis = null;
         fis = new FileInputStream(input);
         xzis = new XZInputStream(fis);
@@ -1484,9 +1482,6 @@ public class Utils {
 
         if (fis != null) {
             fis.close();
-        }
-        if (bis != null) {
-            bis.close();
         }
         if (fos != null) {
             fos.close();

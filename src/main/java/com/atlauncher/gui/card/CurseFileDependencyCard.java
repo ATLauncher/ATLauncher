@@ -31,7 +31,6 @@ import javax.swing.border.TitledBorder;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
-import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
@@ -41,25 +40,22 @@ import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public final class CurseFileDependencyCard extends JPanel {
-    private CurseFile file;
     private CurseFileDependency dependency;
     private Instance instance;
     private InstanceV2 instanceV2;
 
-    public CurseFileDependencyCard(CurseFile file, CurseFileDependency dependency, Instance instance) {
+    public CurseFileDependencyCard(CurseFileDependency dependency, Instance instance) {
         setLayout(new BorderLayout());
 
-        this.file = file;
         this.dependency = dependency;
         this.instance = instance;
 
         setupComponents();
     }
 
-    public CurseFileDependencyCard(CurseFile file, CurseFileDependency dependency, InstanceV2 instanceV2) {
+    public CurseFileDependencyCard(CurseFileDependency dependency, InstanceV2 instanceV2) {
         setLayout(new BorderLayout());
 
-        this.file = file;
         this.dependency = dependency;
         this.instanceV2 = instanceV2;
 

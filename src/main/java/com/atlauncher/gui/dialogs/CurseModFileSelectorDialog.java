@@ -191,10 +191,10 @@ public class CurseModFileSelectorDialog extends JDialog {
 
                     if (this.instanceV2 != null) {
                         dependencies.forEach(dependency -> dependenciesPanel
-                                .add(new CurseFileDependencyCard(selectedFile, dependency, instanceV2)));
+                                .add(new CurseFileDependencyCard(dependency, instanceV2)));
                     } else {
                         dependencies.forEach(dependency -> dependenciesPanel
-                                .add(new CurseFileDependencyCard(selectedFile, dependency, instance)));
+                                .add(new CurseFileDependencyCard(dependency, instance)));
                     }
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,

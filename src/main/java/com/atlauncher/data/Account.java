@@ -87,11 +87,6 @@ public class Account implements Serializable {
     private String clientToken;
 
     /**
-     * The access token.
-     */
-    private String accessToken;
-
-    /**
      * The account's Minecraft username.
      */
     private String minecraftUsername;

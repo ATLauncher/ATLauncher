@@ -60,7 +60,7 @@ public class FabricLoader implements Loader {
         this.instanceInstaller = instanceInstaller;
 
         if (versionOverride != null) {
-            this.version = this.getVersion(versionOverride.getVersion());
+            this.version = this.getVersion(versionOverride.version);
         } else if (metadata.containsKey("loader")) {
             this.version = this.getVersion((String) metadata.get("loader"));
         } else if ((boolean) metadata.get("latest")) {
