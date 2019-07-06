@@ -32,8 +32,8 @@ import io.sentry.event.BreadcrumbBuilder;
 public final class ErrorReporting {
     public static SentryClient client;
 
-    public static void init(boolean enable) {
-        if (enable) {
+    public static void init(boolean disable) {
+        if (!disable) {
             client = Sentry.init(Constants.SENTRY_DSN);
             client.setRelease(Constants.VERSION.toString());
             client.addTag("java.version", Java.getLauncherJavaVersion());
