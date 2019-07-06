@@ -80,7 +80,14 @@ public class Runtimes {
             }
 
             LogManager.info("Extracting runtime version " + runtime.version);
-            Utils.unXZFile(downloadFile, unpackedFile);
+
+            try {
+                Utils.unXZFile(downloadFile, unpackedFile);
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                return null;
+            }
+
             ZipUtil.unpack(unpackedFile, runtimeFolder);
             Utils.delete(unpackedFile);
 

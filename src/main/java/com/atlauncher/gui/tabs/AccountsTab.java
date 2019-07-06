@@ -27,6 +27,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -285,6 +286,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     .setContent(Language.INSTANCE.localize("account.offlinemode")).setType(DialogManager.ERROR).show();
         } else {
             Account account;
+            String clientToken = UUID.randomUUID().toString().replace("-", "");
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             boolean remember = rememberField.isSelected();
@@ -299,7 +301,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + usernameField.getText());
             dialog.addThread(new Thread(() -> {
                 LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
-                        new String(passwordField.getPassword()));
+                        new String(passwordField.getPassword()), clientToken);
                 dialog.setReturnValue(resp);
                 dialog.close();
             }));
@@ -308,7 +310,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             if (response != null && response.hasAuth() && response.isValidAuth()) {
                 if (accountsComboBox.getSelectedIndex() == 0) {
                     account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
-                            response.getAuth().getSelectedProfile().getId().toString(), remember);
+                            response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken);
+                    account.setStore(response.getAuth().saveForStorage());
                     App.settings.addAccount(account);
                     LogManager.info("Added Account " + account);
 
@@ -329,12 +332,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                         account.setPassword(password);
                     }
                     account.setRemember(remember);
+                    account.setClientToken(clientToken);
+                    account.setStore(response.getAuth().saveForStorage());
                     LogManager.info("Edited Account " + account);
                     DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.edited"))
                             .setContent(Language.INSTANCE.localize("account.editeddone")).setType(DialogManager.INFO)
                             .show();
                 }
-                response.save();
+                App.settings.saveAccounts();
                 App.settings.reloadAccounts();
                 accountsComboBox.removeAllItems();
                 accountsComboBox.addItem(fillerAccount);

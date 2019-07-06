@@ -142,7 +142,8 @@ public class Account implements Serializable {
      * @param remember          If this Account's password should be remembered or
      *                          not
      */
-    public Account(String username, String password, String minecraftUsername, String uuid, boolean remember) {
+    public Account(String username, String password, String minecraftUsername, String uuid, boolean remember,
+            String clientToken) {
         this.username = username;
         if (remember) {
             this.password = password;
@@ -154,6 +155,7 @@ public class Account implements Serializable {
         this.isReal = true;
         this.collapsedPacks = new ArrayList<>();
         this.collapsedInstances = new ArrayList<>();
+        this.clientToken = clientToken;
     }
 
     /**
@@ -592,27 +594,27 @@ public class Account implements Serializable {
     }
 
     public String getAccessToken() {
-        return (this.accessToken == null ? "0" : this.accessToken);
-    }
+        if (this.store == null) {
+            return null;
+        }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+        return (String) this.store.get("accessToken");
     }
 
     public boolean hasAccessToken() {
-        return this.accessToken != null;
+        return this.store != null && this.store.containsKey("accessToken");
     }
 
     public String getClientToken() {
-        return (this.clientToken == null ? "0" : this.clientToken);
+        if (this.clientToken == null) {
+            this.clientToken = UUID.randomUUID().toString().replace("-", "");
+        }
+
+        return this.clientToken;
     }
 
     public void setClientToken(String clientToken) {
         this.clientToken = clientToken;
-    }
-
-    public boolean hasClientToken() {
-        return this.clientToken != null;
     }
 
     @Override
@@ -641,25 +643,20 @@ public class Account implements Serializable {
         return this.store;
     }
 
-    public void saveStore(Map<String, Object> store) {
+    public void setStore(Map<String, Object> store) {
         this.store = store;
-        App.settings.saveAccounts();
     }
 
     public LoginResponse login() {
         LoginResponse response = null;
 
-        if (this.hasAccessToken() && this.hasStore()) {
+        if (this.hasAccessToken()) {
             LogManager.info("Trying to login with access token!");
-            response = Authentication.login(this);
+            response = Authentication.login(this, false);
         }
 
         if (response == null || response.hasError()) {
-            if (this.hasAccessToken()) {
-                LogManager.error("Access token is NOT valid! Will attempt to get another one!");
-                this.setAccessToken(null);
-                App.settings.saveAccounts();
-            }
+            LogManager.error("Access token is NOT valid! Will attempt to get another one!");
 
             if (!this.isRemembered()) {
                 JPanel panel = new JPanel();
@@ -709,9 +706,8 @@ public class Account implements Serializable {
         }
 
         if (!response.isOffline()) {
-            this.setAccessToken(response.getAuth().getAuthenticatedToken());
             this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
-            response.save();
+            this.setStore(response.getAuth().saveForStorage());
             App.settings.saveAccounts();
         }
 

@@ -472,7 +472,14 @@ public final class Download {
 
     private void runPostProcessors() {
         if (Files.exists(this.to) && this.usesPackXz) {
-            Utils.unXZPackFile(this.to.toFile(), this.extractedTo.toFile());
+            try {
+                Utils.unXZPackFile(this.to.toFile(), this.extractedTo.toFile());
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                if (this.instanceInstaller != null) {
+                    this.instanceInstaller.cancel(true);
+                }
+            }
         }
 
         if (Files.exists(this.to) && this.unzipTo != null) {
