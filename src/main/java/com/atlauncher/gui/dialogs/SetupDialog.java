@@ -52,12 +52,15 @@ public class SetupDialog extends JDialog {
     private JLabel enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
 
+    private JLabel enableLogsLabel;
+    private JCheckBox enableLogs;
+
     private JButton saveButton;
 
     public SetupDialog() {
         super(null, Constants.LAUNCHER_NAME + " Setup", ModalityType.APPLICATION_MODAL);
         this.requestFocus();
-        this.setSize(400, 200);
+        this.setSize(400, 250);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -97,6 +100,18 @@ public class SetupDialog extends JDialog {
         enableLeaderboards.setSelected(true);
         middle.add(enableLeaderboards, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enableLogsLabel = new JLabel("Enable Logs? ");
+        middle.add(enableLogsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enableLogs = new JCheckBox();
+        enableLogs.setSelected(true);
+        middle.add(enableLogs, gbc);
+
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
@@ -104,6 +119,7 @@ public class SetupDialog extends JDialog {
         saveButton.addActionListener(e -> {
             App.settings.setLanguage((String) language.getSelectedItem());
             App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
+            App.settings.setEnableLogs(enableLogs.isSelected());
             App.settings.saveProperties();
             setVisible(false);
             dispose();
