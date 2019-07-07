@@ -69,6 +69,8 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
 
+import org.zeroturnaround.zip.ZipUtil;
+
 import okhttp3.OkHttpClient;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> implements NetworkProgressable {
@@ -946,10 +948,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             throw new Exception("Failed to download configs for pack!");
         }
 
+        // file is empty, so don't try to extract
+        if (configs.length() == 0L) {
+            return;
+        }
+
         fireSubProgressUnknown();
         fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
 
-        Utils.unzip(configs, this.root.toFile());
+        ZipUtil.unpack(configs, this.root.toFile());
         Utils.delete(configs);
     }
 

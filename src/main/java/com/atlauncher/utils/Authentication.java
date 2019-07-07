@@ -44,7 +44,7 @@ public class Authentication {
                 response.setAuth(auth);
             } catch (AuthenticationException e) {
                 response.setErrorMessage(e.getMessage());
-                LogManager.logStackTrace("Authentication failed", e);
+                LogManager.error("Authentication failed");
             }
         }
 
@@ -74,10 +74,10 @@ public class Authentication {
             } catch (AuthenticationUnavailableException e) {
                 response.setErrorMessage(e.getMessage());
                 response.setOffline();
-                LogManager.logStackTrace("Authentication servers unavailable", e);
+                LogManager.error("Authentication servers unavailable");
             } catch (AuthenticationException e) {
                 response.setErrorMessage(e.getMessage());
-                LogManager.logStackTrace("Authentication failed", e);
+                LogManager.error("Authentication failed");
             }
         }
 
