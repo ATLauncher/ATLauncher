@@ -22,6 +22,7 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.utils.Java;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
@@ -31,8 +32,8 @@ public final class Analytics implements SettingsListener {
             .withConfig(new GoogleAnalyticsConfig().setDiscoverRequestParameters(true)
                     .setProxyHost(App.settings.getProxyHost()).setProxyPort(App.settings.getProxyPort())
                     .setEnabled(App.settings.enableAnalytics()))
-            .withDefaultRequest(
-                    new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.getAnalyticsClientId()))
+            .withDefaultRequest(new DefaultRequest().userAgent(Network.USER_AGENT)
+                    .clientId(App.settings.getAnalyticsClientId()).customDimension(1, Java.getLauncherJavaVersion()))
             .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
             .withAppVersion(Constants.VERSION.toString()).build();
 
