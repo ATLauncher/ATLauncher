@@ -429,7 +429,7 @@ public class MCLauncher {
             }
         }
 
-        arguments.add("-Djava.library.path=" + instance.getRoot().resolve("bin/natives").toAbsolutePath().toString());
+        arguments.add("-Djava.library.path=" + instance.getNativesTemp().toAbsolutePath().toString());
         arguments.add("-cp");
         arguments.add(cpb.toString());
         arguments.add(instance.mainClass);
@@ -456,8 +456,7 @@ public class MCLauncher {
             argument = argument.replace("${version_type}", instance.type);
             argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
             argument = argument.replace("${launcher_version}", Constants.VERSION.toString());
-            argument = argument.replace("${natives_directory}",
-                    instance.getRoot().resolve("bin/natives").toAbsolutePath().toString());
+            argument = argument.replace("${natives_directory}", instance.getNativesTemp().toAbsolutePath().toString());
             argument = argument.replace("${user_type}",
                     response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
                             : response.getAuth().getUserType().getName());

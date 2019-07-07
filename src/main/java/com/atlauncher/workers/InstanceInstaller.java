@@ -798,16 +798,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                 serverFile.getParentFile().mkdirs();
 
                 Utils.copyFile(libraryFile, serverFile, true);
-            } else if (library.hasNativeForOS()) {
-                File nativeFile = new File(App.settings.getGameLibrariesDir(), library.getNativeDownloadForOS().path);
-
-                ZipUtil.unpack(nativeFile, this.root.resolve("bin/natives").toFile(), name -> {
-                    if (library.extract != null && library.extract.shouldExclude(name)) {
-                        return null;
-                    }
-
-                    return name;
-                });
             }
         });
 
@@ -1113,8 +1103,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
                     this.root.resolve("libraries") };
         } else {
             directories = new Path[] { this.root, this.root.resolve("mods"), this.root.resolve("disabledmods"),
-                    this.temp, this.temp.resolve("loader"), this.root.resolve("jarmods"), this.root.resolve("bin"),
-                    this.root.resolve("bin/natives") };
+                    this.temp, this.temp.resolve("loader"), this.root.resolve("jarmods") };
         }
 
         for (Path directory : directories) {

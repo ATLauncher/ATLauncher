@@ -60,7 +60,7 @@ public class FileUtils {
         try {
             Files.walkFileTree(dir, new DeleteDirVisitor());
         } catch (IOException e) {
-            LogManager.logStackTrace("Error trying to delete the directory " + dir, e);
+            LogManager.error("Error trying to delete the directory " + dir);
             return false;
         }
 

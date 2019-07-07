@@ -25,7 +25,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,16 +43,20 @@ import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
+
+import org.zeroturnaround.zip.ZipUtil;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -87,6 +93,10 @@ public class InstanceV2 extends MinecraftVersion {
 
     public Path getRoot() {
         return FileSystem.INSTANCES.resolve(this.getSafeName());
+    }
+
+    public Path getNativesTemp() {
+        return Paths.get(System.getProperty("java.io.tmpdir")).resolve("natives-" + this.getSafeName());
     }
 
     public Pack getPack() {
@@ -198,7 +208,7 @@ public class InstanceV2 extends MinecraftVersion {
      * Minecraft jar and libraries, as well as organise the libraries, ready to be
      * played.
      */
-    public boolean prepareToLaunch() {
+    public boolean prepareForLaunch() {
         try {
             com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
                     .setUrl(this.downloads.client.url).hash(this.downloads.client.sha1).size(this.downloads.client.size)
@@ -210,6 +220,41 @@ public class InstanceV2 extends MinecraftVersion {
         } catch (IOException e) {
             LogManager.logStackTrace(e);
             return false;
+        }
+
+        try {
+            if (Files.exists(this.getNativesTemp())) {
+                FileUtils.deleteDirectory(this.getNativesTemp());
+            }
+
+            Files.createDirectory(this.getNativesTemp());
+
+            // extract natives to a temp dir
+            this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
+                if (library.hasNativeForOS()) {
+                    File nativeFile = new File(App.settings.getGameLibrariesDir(),
+                            library.getNativeDownloadForOS().path);
+
+                    ZipUtil.unpack(nativeFile, this.getNativesTemp().toFile(), name -> {
+                        if (library.extract != null && library.extract.shouldExclude(name)) {
+                            return null;
+                        }
+
+                        return name;
+                    });
+                }
+            });
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean cleanAfterLaunch() {
+        if (Files.exists(this.getNativesTemp())) {
+            return FileUtils.deleteDirectory(this.getNativesTemp());
         }
 
         return true;
@@ -261,22 +306,34 @@ public class InstanceV2 extends MinecraftVersion {
             }
 
             LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
+            ProgressDialog loginDialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
                     Language.INSTANCE.localize("account.loggingin"), "Aborted login to Minecraft!");
-            dialog.addThread(new Thread(() -> {
-                dialog.setReturnValue(account.login());
-                dialog.close();
+            loginDialog.addThread(new Thread(() -> {
+                loginDialog.setReturnValue(account.login());
+                loginDialog.close();
             }));
-            dialog.start();
+            loginDialog.start();
 
-            final LoginResponse session = (LoginResponse) dialog.getReturnValue();
+            final LoginResponse session = (LoginResponse) loginDialog.getReturnValue();
 
             if (session == null) {
                 return false;
             }
 
-            LogManager.info("Preparing to launch!");
-            this.prepareToLaunch();
+            ProgressDialog prepareDialog = new ProgressDialog(Language.INSTANCE.localize("instance.preparingforlaunch"),
+                    0, Language.INSTANCE.localize("instance.preparingforlaunch"));
+            prepareDialog.addThread(new Thread(() -> {
+                LogManager.info("Preparing for launch!");
+                prepareDialog.setReturnValue(this.prepareForLaunch());
+                prepareDialog.close();
+            }));
+            prepareDialog.start();
+
+            if (prepareDialog.getReturnValue() == null || !(boolean) prepareDialog.getReturnValue()) {
+                LogManager.error("Failed to prepare instance " + this.launcher.name
+                        + " for launch. Check the logs and try again.");
+                return false;
+            }
 
             Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play", "InstanceV2");
 
@@ -343,6 +400,7 @@ public class InstanceV2 extends MinecraftVersion {
                         }
                         LogManager.minecraft(line);
                     }
+                    this.cleanAfterLaunch();
                     App.settings.hideKillMinecraft();
                     if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
                         App.settings.getParent().setVisible(true);

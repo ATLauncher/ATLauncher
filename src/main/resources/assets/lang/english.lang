@@ -199,6 +199,7 @@ instance.openeyereport2=You can turn this off by unchecking the OpenEye Reportin
 instance.optionalmods=Optional Mods
 instance.organisinglibraries=Organising Libraries
 instance.pleasesave=Please save this file to the following location
+instance.preparingforlaunch=Preparing For Launch
 instance.removemod=Remove Mod
 instance.rename=Rename
 instance.renaminginstance=Renaming Instance

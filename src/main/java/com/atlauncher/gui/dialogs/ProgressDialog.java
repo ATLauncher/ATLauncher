@@ -61,20 +61,24 @@ public class ProgressDialog extends JDialog {
         JLabel label = new JLabel(this.labelText, SwingConstants.CENTER);
         add(label, BorderLayout.CENTER);
         add(progressBar, BorderLayout.SOUTH);
-        if (this.closedLogMessage != null) {
-            addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (closedLogMessage != null) {
                     LogManager.error(closedLogMessage);
-                    if (thread != null) {
-                        if (thread.isAlive()) {
-                            thread.interrupt();
-                        }
-                    }
-                    close(); // Close the dialog
                 }
-            });
-        }
+                if (thread != null) {
+                    if (thread.isAlive()) {
+                        thread.interrupt();
+                    }
+                }
+                close(); // Close the dialog
+            }
+        });
+    }
+
+    public ProgressDialog(String title, int initMax, String initLabelText) {
+        this(title, initMax, initLabelText, null);
     }
 
     public void addThread(Thread thread) {
@@ -97,8 +101,8 @@ public class ProgressDialog extends JDialog {
     }
 
     public void doneTask() {
-        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + Language.INSTANCE.localize("common" + "" +
-                ".tasksdone"));
+        this.progressBar.setString(
+                ++this.tasksDone + "/" + tasksToDo + " " + Language.INSTANCE.localize("common" + "" + ".tasksdone"));
         this.progressBar.setValue(this.tasksDone);
     }
 
