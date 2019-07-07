@@ -226,7 +226,21 @@ public class App {
                     + "that's what you've done?");
 
             int returnOption = DialogManager.optionDialog().setTitle("Warning").setContent(content)
-                    .addOption("Yes It's Fine", true).addOption("Whoops. I'll Change That Now")
+                    .addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
+                    .setType(DialogManager.ERROR).show();
+
+            if (returnOption != 0) {
+                System.exit(0);
+            }
+
+            content = HTMLUtils.centerParagraph(
+                    "Are you absolutely sure you've put ATLauncher in it's own folder?<br/><br/>If you "
+                            + "haven't and you click 'Yes, delete my files', this may delete "
+                            + FileSystem.CONFIGS.getParent().toFile().listFiles().length
+                            + " files and folders.<br/><br/>Are you 100% sure?");
+
+            returnOption = DialogManager.optionDialog().setTitle("Warning").setContent(content)
+                    .addOption("Yes, delete my files", true).addOption("No, exit and I'll put it in a folder")
                     .setType(DialogManager.ERROR).show();
 
             if (returnOption != 0) {
