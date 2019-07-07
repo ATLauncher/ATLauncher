@@ -767,13 +767,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .withInstanceInstaller(this).withHttpClient(httpClient)));
         }
 
-        this.getLibraries().stream().filter(Library::hasNativeForOS).forEach(library -> {
-            Download download = library.getNativeDownloadForOS();
+        if (!this.isServer) {
+            this.getLibraries().stream().filter(Library::hasNativeForOS).forEach(library -> {
+                Download download = library.getNativeDownloadForOS();
 
-            pool.add(new com.atlauncher.network.Download().setUrl(download.url)
-                    .downloadTo(new File(App.settings.getGameLibrariesDir(), download.path).toPath())
-                    .hash(download.sha1).size(download.size).withInstanceInstaller(this).withHttpClient(httpClient));
-        });
+                pool.add(new com.atlauncher.network.Download().setUrl(download.url)
+                        .downloadTo(new File(App.settings.getGameLibrariesDir(), download.path).toPath())
+                        .hash(download.sha1).size(download.size).withInstanceInstaller(this)
+                        .withHttpClient(httpClient));
+            });
+        }
 
         DownloadPool smallPool = pool.downsize();
 
