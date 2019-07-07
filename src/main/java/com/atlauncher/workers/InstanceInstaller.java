@@ -160,6 +160,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
             downloadMinecraftVersionJson();
 
+            if (this.packVersion.messages != null) {
+                showMessages();
+            }
+
             determineModsToBeInstalled();
 
             prepareFilesystem();
@@ -170,11 +174,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
                 downloadLoader();
             }
-
-            if (this.packVersion.messages != null) {
-                showMessages();
-            }
-
             install();
 
             if (!this.isServer) {
@@ -246,7 +245,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
 
         if (this.isReinstall && this.packVersion.messages.update != null) {
             ret = this.packVersion.messages.showUpdateMessage(this.pack);
-        } else if (this.packVersion.messages.install != null) {
+        } else if (!this.isReinstall && this.packVersion.messages.install != null) {
             ret = this.packVersion.messages.showInstallMessage(this.pack);
         }
 
