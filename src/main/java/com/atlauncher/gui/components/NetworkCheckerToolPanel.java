@@ -75,10 +75,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 .setType(DialogManager.INFO).show();
 
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), 1,
+            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), 5,
                     Language.INSTANCE.localize("tools.networkchecker.running"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
-                dialog.setTotalTasksToDo(5);
                 StringBuilder results = new StringBuilder();
 
                 // Ping Test

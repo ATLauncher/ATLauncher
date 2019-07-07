@@ -60,6 +60,7 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
+import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
@@ -68,11 +69,9 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
 
-import org.zeroturnaround.zip.ZipUtil;
-
 import okhttp3.OkHttpClient;
 
-public class InstanceInstaller extends SwingWorker<Boolean, Void> {
+public class InstanceInstaller extends SwingWorker<Boolean, Void> implements NetworkProgressable {
     protected double percent = 0.0; // Percent done installing
     protected double subPercent = 0.0; // Percent done sub installing
     protected double totalBytes = 0; // Total number of bytes to download
@@ -1375,12 +1374,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> {
         fireSubProgress(this.subPercent);
     }
 
+    @Override
     public void setTotalBytes(long bytes) {
         this.downloadedBytes = 0L;
         this.totalBytes = bytes;
         this.updateProgressBar();
     }
 
+    @Override
     public void addDownloadedBytes(long bytes) {
         this.downloadedBytes += bytes;
         this.updateProgressBar();

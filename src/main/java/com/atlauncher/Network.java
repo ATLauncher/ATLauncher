@@ -21,13 +21,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.atlauncher.data.Constants;
+import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.listener.ProgressListener;
 import com.atlauncher.network.DebugLoggingInterceptor;
 import com.atlauncher.network.ErrorReportingInterceptor;
 import com.atlauncher.network.UserAgentInterceptor;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ProgressResponseBody;
-import com.atlauncher.workers.InstanceInstaller;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -45,10 +45,10 @@ public final class Network {
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
     }
 
-    public static OkHttpClient createProgressClient(final InstanceInstaller installer) {
+    public static OkHttpClient createProgressClient(final NetworkProgressable progressable) {
         final ProgressListener progressListener = (bytesRead, contentLength, done) -> {
-            if (bytesRead > 0 && installer != null) {
-                installer.addDownloadedBytes(bytesRead);
+            if (bytesRead > 0 && progressable != null) {
+                progressable.addDownloadedBytes(bytesRead);
             }
         };
 

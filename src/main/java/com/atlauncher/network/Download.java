@@ -91,7 +91,10 @@ public final class Download {
     public <T> T asClass(Class<T> tClass, Gson gson) {
         try {
             if (this.to != null) {
-                this.downloadFile();
+                if (this.needToDownload()) {
+                    this.downloadFile();
+                }
+
                 return gson.fromJson(new InputStreamReader(Files.newInputStream(this.to)), tClass);
             }
 
@@ -117,7 +120,10 @@ public final class Download {
     public <T> T asType(Type tClass, Gson gson) {
         try {
             if (this.to != null) {
-                this.downloadFile();
+                if (this.needToDownload()) {
+                    this.downloadFile();
+                }
+
                 return gson.fromJson(new InputStreamReader(Files.newInputStream(this.to)), tClass);
             }
 

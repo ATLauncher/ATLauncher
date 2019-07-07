@@ -40,16 +40,21 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.minecraft.AssetIndex;
+import com.atlauncher.data.minecraft.AssetObject;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
+import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
@@ -60,6 +65,7 @@ import org.zeroturnaround.zip.ZipUtil;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
+import okhttp3.OkHttpClient;
 
 @Json
 public class InstanceV2 extends MinecraftVersion {
@@ -208,21 +214,64 @@ public class InstanceV2 extends MinecraftVersion {
      * Minecraft jar and libraries, as well as organise the libraries, ready to be
      * played.
      */
-    public boolean prepareForLaunch() {
+    public boolean prepareForLaunch(ProgressDialog progressDialog) {
+        progressDialog.setTotalTasksToDo(3);
+
+        OkHttpClient httpClient = Network.createProgressClient(progressDialog);
+
         try {
+            progressDialog.setLabel(Language.INSTANCE.localize("instance.downloadingminecraft"));
             com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
                     .setUrl(this.downloads.client.url).hash(this.downloads.client.sha1).size(this.downloads.client.size)
-                    .downloadTo(this.getMinecraftJarLibraryPath());
+                    .withHttpClient(httpClient).downloadTo(this.getMinecraftJarLibraryPath());
 
             if (clientDownload.needToDownload()) {
                 clientDownload.downloadFile();
             }
+
+            progressDialog.doneTask();
         } catch (IOException e) {
             LogManager.logStackTrace(e);
             return false;
         }
 
+        // organise assets
+        progressDialog.setLabel(Language.INSTANCE.localize("instance.downloadingresources"));
+        MojangAssetIndex assetIndex = this.assetIndex;
+
+        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
+                .size(assetIndex.size)
+                .downloadTo(new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json").toPath())
+                .withHttpClient(httpClient).asClass(AssetIndex.class);
+
+        DownloadPool pool = new DownloadPool();
+
+        index.objects.entrySet().stream().forEach(entry -> {
+            AssetObject object = entry.getValue();
+            String filename = object.hash.substring(0, 2) + "/" + object.hash;
+            String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
+            File file = new File(App.settings.getObjectsAssetsDir(), filename);
+
+            com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
+                    .downloadTo(file.toPath()).hash(object.hash).size(object.size).withHttpClient(httpClient);
+
+            if (index.mapToResources) {
+                download = download.copyTo(this.getRoot().resolve("resources/" + entry.getKey()));
+            }
+
+            pool.add(download);
+        });
+
+        DownloadPool smallPool = pool.downsize();
+
+        progressDialog.setTotalBytes(smallPool.totalSize());
+
+        smallPool.downloadAll();
+
+        progressDialog.doneTask();
+
         try {
+            progressDialog.setLabel(Language.INSTANCE.localize("instance.organisinglibraries"));
             if (Files.exists(this.getNativesTemp())) {
                 FileUtils.deleteDirectory(this.getNativesTemp());
             }
@@ -244,6 +293,8 @@ public class InstanceV2 extends MinecraftVersion {
                     });
                 }
             });
+
+            progressDialog.doneTask();
         } catch (IOException e) {
             LogManager.logStackTrace(e);
             return false;
@@ -321,10 +372,10 @@ public class InstanceV2 extends MinecraftVersion {
             }
 
             ProgressDialog prepareDialog = new ProgressDialog(Language.INSTANCE.localize("instance.preparingforlaunch"),
-                    0, Language.INSTANCE.localize("instance.preparingforlaunch"));
+                    4, Language.INSTANCE.localize("instance.preparingforlaunch"));
             prepareDialog.addThread(new Thread(() -> {
                 LogManager.info("Preparing for launch!");
-                prepareDialog.setReturnValue(this.prepareForLaunch());
+                prepareDialog.setReturnValue(prepareForLaunch(prepareDialog));
                 prepareDialog.close();
             }));
             prepareDialog.start();

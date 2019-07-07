@@ -63,12 +63,10 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
     public void actionPerformed(ActionEvent e) {
         Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
 
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.runtimedownloader"), 1,
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.runtimedownloader"), 2,
                 Language.INSTANCE.localize("tools.runtimedownloader.running"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
-            dialog.setTotalTasksToDo(2);
-
             Runtimes runtimes = Download.build()
                     .setUrl(String.format("%s/launcher/json/runtimes.json", Constants.DOWNLOAD_SERVER))
                     .asClass(Runtimes.class);
