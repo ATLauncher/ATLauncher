@@ -49,6 +49,7 @@ import com.atlauncher.data.minecraft.AssetObject;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -215,8 +216,6 @@ public class InstanceV2 extends MinecraftVersion {
      * played.
      */
     public boolean prepareForLaunch(ProgressDialog progressDialog) {
-        progressDialog.setTotalTasksToDo(3);
-
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
         try {
@@ -234,6 +233,34 @@ public class InstanceV2 extends MinecraftVersion {
             LogManager.logStackTrace(e);
             return false;
         }
+
+        // download libraries
+        progressDialog.setLabel(Language.INSTANCE.localize("instance.downloadinglibraries"));
+        DownloadPool librariesPool = new DownloadPool();
+
+        this.libraries.stream().filter(library -> library.shouldInstall() && library.downloads.artifact != null)
+                .forEach(library -> {
+                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                            .setUrl(library.downloads.artifact.url)
+                            .downloadTo(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
+                                    .toPath())
+                            .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                            .withHttpClient(httpClient);
+
+                    if (library instanceof ForgeLibrary && ((ForgeLibrary) library).isUsingPackXz()) {
+                        download = download.usesPackXz(((ForgeLibrary) library).checksums);
+                    }
+
+                    librariesPool.add(download);
+                });
+
+        DownloadPool smallLibrariesPool = librariesPool.downsize();
+
+        progressDialog.setTotalBytes(smallLibrariesPool.totalSize());
+
+        smallLibrariesPool.downloadAll();
+
+        progressDialog.doneTask();
 
         // organise assets
         progressDialog.setLabel(Language.INSTANCE.localize("instance.downloadingresources"));
