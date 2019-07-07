@@ -154,9 +154,7 @@ public class ForgeLoader implements Loader {
     public List<Library> getLibraries() {
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
-        return installProfile.getLibraries().stream().filter(
-                library -> !this.instanceInstaller.isServer || !library.name.equals(installProfile.install.path))
-                .collect(Collectors.toList());
+        return installProfile.getLibraries().stream().collect(Collectors.toList());
     }
 
     @Override

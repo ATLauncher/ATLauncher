@@ -793,43 +793,48 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
         fireSubProgressUnknown();
 
-        this.getLibraries().stream().filter(Library::shouldInstall).forEach(library -> {
-            if (isServer && library.downloads.artifact != null) {
-                File libraryFile = new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path);
+        if (isServer) {
+            this.getLibraries().stream().filter(Library::shouldInstall)
+                    .filter(library -> library.downloads.artifact != null).forEach(library -> {
+                        File libraryFile = new File(App.settings.getGameLibrariesDir(),
+                                library.downloads.artifact.path);
 
-                File serverFile = new File(this.root.resolve("libraries").toFile(), library.downloads.artifact.path);
+                        File serverFile = new File(this.root.resolve("libraries").toFile(),
+                                library.downloads.artifact.path);
 
-                serverFile.getParentFile().mkdirs();
+                        serverFile.getParentFile().mkdirs();
 
-                Utils.copyFile(libraryFile, serverFile, true);
-            }
-        });
-
-        if (this.loader != null && this.loader.getInstallLibraries() != null) {
-            this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
-                    .forEach(library -> {
-                        if (isServer) {
-                            File libraryFile = new File(App.settings.getGameLibrariesDir(),
-                                    library.downloads.artifact.path);
-
-                            File serverFile = new File(this.root.resolve("libraries").toFile(),
-                                    library.downloads.artifact.path);
-
-                            serverFile.getParentFile().mkdirs();
-
-                            Utils.copyFile(libraryFile, serverFile, true);
-                        }
+                        Utils.copyFile(libraryFile, serverFile, true);
                     });
-        }
 
-        if (this.loader != null && isServer) {
-            Library forgeLibrary = this.loader.getLibraries().stream()
-                    .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
+            if (this.loader != null && this.loader.getInstallLibraries() != null) {
+                this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
+                        .forEach(library -> {
+                            if (isServer) {
+                                File libraryFile = new File(App.settings.getGameLibrariesDir(),
+                                        library.downloads.artifact.path);
 
-            if (forgeLibrary != null) {
-                File extractedLibraryFile = new File(App.settings.getGameLibrariesDir(),
-                        forgeLibrary.downloads.artifact.path);
-                Utils.copyFile(extractedLibraryFile, new File(this.root.toFile(), this.loader.getServerJar()), true);
+                                File serverFile = new File(this.root.resolve("libraries").toFile(),
+                                        library.downloads.artifact.path);
+
+                                serverFile.getParentFile().mkdirs();
+
+                                Utils.copyFile(libraryFile, serverFile, true);
+                            }
+                        });
+            }
+
+            if (this.loader != null) {
+                Library forgeLibrary = this.loader.getLibraries().stream()
+                        .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst()
+                        .orElse(null);
+
+                if (forgeLibrary != null) {
+                    File extractedLibraryFile = new File(App.settings.getGameLibrariesDir(),
+                            forgeLibrary.downloads.artifact.path);
+                    Utils.copyFile(extractedLibraryFile, new File(this.root.toFile(), this.loader.getServerJar()),
+                            true);
+                }
             }
         }
 
