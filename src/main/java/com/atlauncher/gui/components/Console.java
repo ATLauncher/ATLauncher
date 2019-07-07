@@ -20,19 +20,27 @@ package com.atlauncher.gui.components;
 import java.awt.Color;
 
 import javax.swing.JTextPane;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
+import javax.swing.text.ComponentView;
+import javax.swing.text.Element;
+import javax.swing.text.IconView;
+import javax.swing.text.LabelView;
+import javax.swing.text.ParagraphView;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 
+@SuppressWarnings("serial")
 public final class Console extends JTextPane {
-    /**
-     * Auto generate serial.
-     */
-    private static final long serialVersionUID = 5325985090210097809L;
     private final SimpleAttributeSet attrs = new SimpleAttributeSet();
 
     public Console() {
         this.setEditable(false);
+        this.setEditorKit(new WrapEditorKit());
     }
 
     public Console setColor(Color c) {
@@ -47,7 +55,7 @@ public final class Console extends JTextPane {
 
     @Override
     public boolean getScrollableTracksViewportWidth() {
-        return true; // Word Wrapping
+        return true;
     }
 
     public void write(String str) {
@@ -58,4 +66,55 @@ public final class Console extends JTextPane {
             ex.printStackTrace(System.err);
         }
     }
+}
+
+// https://stackoverflow.com/a/13375811
+@SuppressWarnings("serial")
+class WrapEditorKit extends StyledEditorKit {
+    ViewFactory defaultFactory = new WrapColumnFactory();
+
+    public ViewFactory getViewFactory() {
+        return defaultFactory;
+    }
+
+}
+
+class WrapColumnFactory implements ViewFactory {
+    public View create(Element elem) {
+        String kind = elem.getName();
+        if (kind != null) {
+            if (kind.equals(AbstractDocument.ContentElementName)) {
+                return new WrapLabelView(elem);
+            } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
+                return new ParagraphView(elem);
+            } else if (kind.equals(AbstractDocument.SectionElementName)) {
+                return new BoxView(elem, View.Y_AXIS);
+            } else if (kind.equals(StyleConstants.ComponentElementName)) {
+                return new ComponentView(elem);
+            } else if (kind.equals(StyleConstants.IconElementName)) {
+                return new IconView(elem);
+            }
+        }
+
+        // default to text display
+        return new LabelView(elem);
+    }
+}
+
+class WrapLabelView extends LabelView {
+    public WrapLabelView(Element elem) {
+        super(elem);
+    }
+
+    public float getMinimumSpan(int axis) {
+        switch (axis) {
+        case View.X_AXIS:
+            return 0;
+        case View.Y_AXIS:
+            return super.getMinimumSpan(axis);
+        default:
+            throw new IllegalArgumentException("Invalid axis: " + axis);
+        }
+    }
+
 }
