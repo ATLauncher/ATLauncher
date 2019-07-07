@@ -199,7 +199,9 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
 
         subProgressBar.setVisible(bytes > 0L);
 
-        this.updateProgressBar();
+        if (bytes > 0L) {
+            this.updateProgressBar();
+        }
     }
 
     @Override
@@ -211,6 +213,5 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     public void clearDownloadedBytes() {
         this.downloadedBytes = 0L;
         subProgressBar.setVisible(false);
-        this.updateProgressBar();
     }
 }
