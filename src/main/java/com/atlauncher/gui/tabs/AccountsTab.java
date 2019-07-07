@@ -354,8 +354,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 accountsComboBox.setSelectedItem(account);
             } else {
                 LogManager.error(response.getErrorMessage());
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.notadded")).setContent(
-                        Language.INSTANCE.localize("account.incorrect") + "<br/><br/>" + response.getErrorMessage())
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.notadded"))
+                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localize("account.incorrect")
+                                + "<br/><br/>" + response.getErrorMessage()))
                         .setType(DialogManager.INFO).show();
             }
         }

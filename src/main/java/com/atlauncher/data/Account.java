@@ -688,8 +688,9 @@ public class Account implements Serializable {
             LogManager.error(response.getErrorMessage());
 
             DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.errorloggingintitle"))
-                    .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
-                            .localizeWithReplace("instance.errorloggingin", "<br/><br/>" + response.getErrorMessage())))
+                    .setContent(HTMLUtils.centerParagraph(HTMLUtils.centerParagraph(
+                            HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorloggingin",
+                                    "<br/><br/>" + response.getErrorMessage())))))
                     .setType(DialogManager.ERROR).show();
 
             App.settings.setMinecraftLaunched(false);
