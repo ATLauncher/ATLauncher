@@ -644,6 +644,7 @@ public class Settings {
             }
             File newFile = new File(getTempDir(), saveAs);
             LogManager.info("Downloading Launcher Update");
+            Analytics.sendEvent("Update", "Launcher");
 
             com.atlauncher.network.Download.build()
                     .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
