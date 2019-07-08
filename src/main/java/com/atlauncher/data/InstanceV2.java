@@ -225,6 +225,7 @@ public class InstanceV2 extends MinecraftVersion {
                     .withHttpClient(httpClient).downloadTo(this.getMinecraftJarLibraryPath());
 
             if (clientDownload.needToDownload()) {
+                progressDialog.setTotalBytes(this.downloads.client.size);
                 clientDownload.downloadFile();
             }
 
