@@ -253,6 +253,14 @@ public class InstanceV2 extends MinecraftVersion {
                     librariesPool.add(download);
                 });
 
+        this.libraries.stream().filter(Library::hasNativeForOS).forEach(library -> {
+            com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
+
+            librariesPool.add(new com.atlauncher.network.Download().setUrl(download.url)
+                    .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1).size(download.size)
+                    .withHttpClient(httpClient));
+        });
+
         DownloadPool smallLibrariesPool = librariesPool.downsize();
 
         progressDialog.setTotalBytes(smallLibrariesPool.totalSize());
