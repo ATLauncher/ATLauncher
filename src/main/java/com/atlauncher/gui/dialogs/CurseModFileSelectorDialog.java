@@ -180,10 +180,15 @@ public class CurseModFileSelectorDialog extends JDialog {
             if (selectedFile.dependencies.size() != 0) {
                 // check to see which required ones we don't already have
                 List<CurseFileDependency> dependencies = selectedFile.dependencies.stream()
-                        .filter(dependency -> dependency.isRequired() && instance.getInstalledMods().stream()
-                                .filter(installedMod -> installedMod.isFromCurse()
-                                        && installedMod.getCurseModId() == dependency.addonId)
-                                .count() == 0)
+                        .filter(dependency -> dependency.isRequired() && (instanceV2 != null
+                                ? instanceV2.launcher.mods.stream()
+                                        .filter(installedMod -> installedMod.isFromCurse()
+                                                && installedMod.getCurseModId() == dependency.addonId)
+                                        .count() == 0
+                                : instance.getInstalledMods().stream()
+                                        .filter(installedMod -> installedMod.isFromCurse()
+                                                && installedMod.getCurseModId() == dependency.addonId)
+                                        .count() == 0))
                         .collect(Collectors.toList());
 
                 if (dependencies.size() != 0) {
@@ -193,8 +198,8 @@ public class CurseModFileSelectorDialog extends JDialog {
                         dependencies.forEach(dependency -> dependenciesPanel
                                 .add(new CurseFileDependencyCard(dependency, instanceV2)));
                     } else {
-                        dependencies.forEach(dependency -> dependenciesPanel
-                                .add(new CurseFileDependencyCard(dependency, instance)));
+                        dependencies.forEach(
+                                dependency -> dependenciesPanel.add(new CurseFileDependencyCard(dependency, instance)));
                     }
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
