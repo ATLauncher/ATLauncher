@@ -19,6 +19,8 @@ package com.atlauncher.gui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -26,8 +28,10 @@ import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
+import com.atlauncher.data.Runtime;
 import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -36,6 +40,10 @@ import com.atlauncher.network.Download;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+
+import org.zeroturnaround.zip.ZipUtil;
+
+import okhttp3.OkHttpClient;
 
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
     private static final long serialVersionUID = -2690200209156149465L;
@@ -63,7 +71,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
     public void actionPerformed(ActionEvent e) {
         Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
 
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.runtimedownloader"), 2,
+        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.runtimedownloader"), 3,
                 Language.INSTANCE.localize("tools.runtimedownloader.running"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
@@ -72,10 +80,63 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                     .asClass(Runtimes.class);
             dialog.doneTask();
 
-            String path = runtimes.download();
-            dialog.doneTask();
+            Runtime runtime = runtimes.getRuntimeForOS();
 
-            dialog.setReturnValue(path);
+            if (runtime != null) {
+                File runtimeFolder = new File(App.settings.getRuntimesDir(), runtime.version);
+                File releaseFile = new File(runtimeFolder, "release");
+
+                // no need to download/extract
+                if (releaseFile.exists()) {
+                    dialog.setReturnValue(runtimeFolder.getAbsolutePath());
+                }
+
+                if (!runtimeFolder.exists()) {
+                    runtimeFolder.mkdirs();
+                }
+
+                String url = String.format("%s/%s", Constants.DOWNLOAD_SERVER, runtime.url);
+                String fileName = url.substring(url.lastIndexOf("/") + 1);
+                File downloadFile = new File(runtimeFolder, fileName);
+                File unpackedFile = new File(runtimeFolder, fileName.replace(".xz", ""));
+
+                OkHttpClient httpClient = Network.createProgressClient(dialog);
+
+                com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(url)
+                        .hash(runtime.sha1).size(runtime.size).withHttpClient(httpClient)
+                        .downloadTo(downloadFile.toPath());
+
+                if (download.needToDownload()) {
+                    dialog.setLabel(Language.INSTANCE.localize("common.downloading"));
+                    dialog.setTotalBytes(runtime.size);
+
+                    try {
+                        download.downloadFile();
+                    } catch (IOException e1) {
+                        LogManager.logStackTrace(e1);
+                        dialog.setReturnValue(null);
+                    }
+
+                    dialog.clearDownloadedBytes();
+                }
+
+                dialog.doneTask();
+
+                dialog.setLabel(Language.INSTANCE.localize("common.extracting"));
+
+                try {
+                    Utils.unXZFile(downloadFile, unpackedFile);
+                } catch (IOException e2) {
+                    LogManager.logStackTrace(e2);
+                    dialog.setReturnValue(null);
+                }
+
+                ZipUtil.unpack(unpackedFile, runtimeFolder);
+                Utils.delete(unpackedFile);
+
+                dialog.setReturnValue(runtimeFolder.getAbsolutePath());
+            }
+
             dialog.close();
         }));
 
@@ -83,6 +144,9 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
         if (dialog.getReturnValue() == null) {
             LogManager.error("Runtime downloaded failed to run!");
+            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("tools.runtimedownloader"))
+                    .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localize("tools.runtimedownloader.error")))
+                    .setType(DialogManager.ERROR).show();
         } else {
             LogManager.info("Runtime downloaded!");
 

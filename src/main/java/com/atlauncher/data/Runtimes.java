@@ -17,23 +17,15 @@
  */
 package com.atlauncher.data;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-
-import org.zeroturnaround.zip.ZipUtil;
 
 @Json
 public class Runtimes {
     public RuntimesOS osx;
     public RuntimesOS windows;
 
-    public String download() {
+    public Runtime getRuntimeForOS() {
         if (OS.isLinux()) {
             return null;
         }
@@ -47,53 +39,6 @@ public class Runtimes {
             runtime = metaForOS.x86;
         }
 
-        if (runtime != null) {
-            File runtimeFolder = new File(App.settings.getRuntimesDir(), runtime.version);
-            File releaseFile = new File(runtimeFolder, "release");
-
-            // no need to download/extract
-            if (releaseFile.exists()) {
-                return runtimeFolder.getAbsolutePath();
-            }
-
-            if (!runtimeFolder.exists()) {
-                runtimeFolder.mkdirs();
-            }
-
-            String url = String.format("%s/%s", Constants.DOWNLOAD_SERVER, runtime.url);
-            String fileName = url.substring(url.lastIndexOf("/") + 1);
-            File downloadFile = new File(runtimeFolder, fileName);
-            File unpackedFile = new File(runtimeFolder, fileName.replace(".xz", ""));
-
-            com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(url)
-                    .hash(runtime.sha1).size(runtime.size).downloadTo(downloadFile.toPath());
-
-            if (download.needToDownload()) {
-                LogManager.info("Downloading runtime version " + runtime.version);
-
-                try {
-                    download.downloadFile();
-                } catch (IOException e) {
-                    LogManager.logStackTrace(e);
-                    return null;
-                }
-            }
-
-            LogManager.info("Extracting runtime version " + runtime.version);
-
-            try {
-                Utils.unXZFile(downloadFile, unpackedFile);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-                return null;
-            }
-
-            ZipUtil.unpack(unpackedFile, runtimeFolder);
-            Utils.delete(unpackedFile);
-
-            return runtimeFolder.getAbsolutePath();
-        }
-
-        return null;
+        return runtime;
     }
 }
