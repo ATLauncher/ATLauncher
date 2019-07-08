@@ -91,7 +91,7 @@ public class Java {
 
             return version;
         } else {
-            return getLauncherJavaVersion();
+            return OS.getPreferredJava(Java.getInstalledJavas()).version;
         }
     }
 
@@ -235,13 +235,9 @@ public class Java {
     }
 
     public static List<JavaInfo> getInstalledJavas() {
-        List<JavaInfo> javas = new ArrayList<>();
-
-        if (OS.isWindows()) {
-            javas.addAll(JavaFinder.findJavas().stream()
-                    .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
-                    .collect(Collectors.toList()));
-        }
+        List<JavaInfo> javas = JavaFinder.findJavas().stream()
+                .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
+                .collect(Collectors.toList());
 
         JavaInfo systemJava = new JavaInfo(Java.getPathToSystemJavaExecutable());
         if (javas.size() == 0

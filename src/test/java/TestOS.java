@@ -36,11 +36,11 @@ public class TestOS {
     }
 
     @Test
-    public void testThatJava864BitIsPrefferedOverJava832Bit() {
+    public void testThatJava864BitIsPreferredOverJava832Bit() {
         // Test preferencing Java 8 64 bit over Java 8 32 bit
         installedJavas.add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", "8.111", 8, 111, true));
         installedJavas.add(new JavaInfo("C:/Java/8.111/32bit/bin/java.exe", "C:/Java/8/32bit", "8.111", 8, 111, false));
-        assertEquals("C:/Java/8/64bit", OS.getPrefferedJavaPath(installedJavas));
+        assertEquals("C:/Java/8/64bit", OS.getPreferredJavaPath(installedJavas));
     }
 
     @Test
@@ -56,52 +56,63 @@ public class TestOS {
                 .add(new JavaInfo("C:/Java/8.102/64bit/bin/java.exe", "C:/Java/8.102/64bit", "8.102", 8, 102, true));
         installedJavas
                 .add(new JavaInfo("C:/Java/8.100/64bit/bin/java.exe", "C:/Java/8.100/64bit", "8.100", 8, 100, true));
-        assertEquals("C:/Java/8.111/64bit", OS.getPrefferedJavaPath(installedJavas));
+        assertEquals("C:/Java/8.111/64bit", OS.getPreferredJavaPath(installedJavas));
     }
 
     @Test
-    public void testThatJava764BitIsPrefferedOverJava832Bit() {
+    public void testThatDownloadedRuntimeJavaIsPreferredOverAllOthers() {
+        // Test preferencing the downloaded runtime Java is preferred over all others
+        installedJavas.add(
+                new JavaInfo("C:/Java/8.111/32bit/bin/java.exe", "C:/Java/8.111/64bit", "8.111", 8, 111, true, false));
+        installedJavas.add(new JavaInfo("C:/ATLauncher/runtimes/8.15/64bit/bin/java.exe",
+                "C:/ATLauncher/runtimes/8.15/64bit", "8.15", 8, 15, true, true));
+        assertEquals("C:/ATLauncher/runtimes/8.15/64bit", OS.getPreferredJavaPath(installedJavas));
+    }
+
+    @Test
+    public void testThatJava764BitIsPreferredOverJava832Bit() {
         // Test preferencing Java 7 64 bit over Java 8 32 bit
         installedJavas.add(new JavaInfo("C:/Java/7.111/64bit/bin/java.exe", "C:/Java/7/64bit", "7.111", 7, 111, true));
         installedJavas.add(new JavaInfo("C:/Java/8.111/32bit/bin/java.exe", "C:/Java/8/32bit", "8.111", 8, 111, false));
-        assertEquals("C:/Java/7/64bit", OS.getPrefferedJavaPath(installedJavas));
+        assertEquals("C:/Java/7/64bit", OS.getPreferredJavaPath(installedJavas));
     }
 
     @Test
-    public void testThatJava964BitIsPrefferedOverJava732Bit() {
+    public void testThatJava964BitIsPreferredOverJava732Bit() {
         // Test preferencing Java 9 64 bit over Java 7 64 bit
         installedJavas.add(new JavaInfo("C:/Java/9.111/64bit/bin/java.exe", "C:/Java/9/64bit", "9.111", 9, 111, true));
         installedJavas.add(new JavaInfo("C:/Java/7.111/64bit/bin/java.exe", "C:/Java/7/64bit", "7.111", 7, 111, true));
-        assertEquals("C:/Java/9/64bit", OS.getPrefferedJavaPath(installedJavas));
+        assertEquals("C:/Java/9/64bit", OS.getPreferredJavaPath(installedJavas));
     }
 
     @Test
-    public void testThatJava864BitIsPrefferedOverJava964Bit() {
+    public void testThatJava864BitIsPreferredOverJava964Bit() {
         // Test preferencing Java 8 64 bit over Java 9 64 bit
         installedJavas.add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", "8.111", 8, 111, true));
         installedJavas.add(new JavaInfo("C:/Java/9.111/64bit/bin/java.exe", "C:/Java/9/64bit", "9.111", 9, 111, true));
-        assertEquals("C:/Java/8/64bit", OS.getPrefferedJavaPath(installedJavas));
+        assertEquals("C:/Java/8/64bit", OS.getPreferredJavaPath(installedJavas));
     }
 
     @Test
     public void testThatWhenOnlyASingleJavaIsInstalledItIsReturned() {
         // Test preferencing Java 7 32 bit when it's the only option
         installedJavas.add(new JavaInfo("C:/Java/7.111/64bit/bin/java.exe", "C:/Java/7/64bit", "7.111", 7, 111, true));
-        assertEquals("C:/Java/7/64bit", OS.getPrefferedJavaPath(installedJavas));
+        assertEquals("C:/Java/7/64bit", OS.getPreferredJavaPath(installedJavas));
     }
 
     @Test
     public void testThatWhenNoJavaIsDetectedOnTheSystemItReturnsNull() {
         // Test null being returned when no installed java paths detected
-        assertEquals(null, OS.getPrefferedJavaPath(installedJavas));
+        assertEquals(null, OS.getPreferredJavaPath(installedJavas));
     }
 
     @Test
     public void testThatWhenAnInvalidJavaVersionIsFoundItReturnsNull() {
         // Test an invalid version found returning null
-        installedJavas.add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", "Unknown", null, null, false));
+        installedJavas
+                .add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", "Unknown", null, null, false));
         installedJavas.add(new JavaInfo("C:/Java/8.111/64bit/bin/java.exe", "C:/Java/8/64bit", "Unknown", false));
-        assertEquals(null, OS.getPrefferedJavaPath(installedJavas));
+        assertEquals(null, OS.getPreferredJavaPath(installedJavas));
     }
 
 }

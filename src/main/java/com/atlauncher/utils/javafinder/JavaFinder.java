@@ -7,11 +7,28 @@
  */
 package com.atlauncher.utils.javafinder;
 
-import java.io.File;
+import java.io.IOException;
+import java.lang.ref.SoftReference;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 
 public class JavaFinder {
+    private static SoftReference<List<String>> javaPaths = new SoftReference<>(null);
+
     /**
      * @return: A list of javaExec paths found under this registry key (rooted at
      *          HKEY_LOCAL_MACHINE)
@@ -34,41 +51,67 @@ public class JavaFinder {
                     result.add(val + "\\bin\\java.exe");
                 }
             }
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
         return result;
     }
 
-    /**
-     * @return: A list of JavaInfo with informations about all javas installed on
-     *          this machine Searches and returns results in this order:
-     *          HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment
-     *          (32-bits view) HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime
-     *          Environment (64-bits view) HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java
-     *          Development Kit (32-bits view)
-     *          HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit (64-bits
-     *          view) WINDIR\system32 WINDIR\SysWOW64
-     ****************************************************************************/
+    // this could probably be written better
     public static List<JavaInfo> findJavas() {
-        List<String> javaExecs = new ArrayList<>();
+        List<String> javaExecs = javaPaths.get();
 
-        javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Runtime Environment",
-                WinRegistry.KEY_WOW64_32KEY, javaExecs);
-        javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Runtime Environment",
-                WinRegistry.KEY_WOW64_64KEY, javaExecs);
-        javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Development Kit", WinRegistry.KEY_WOW64_32KEY,
-                javaExecs);
-        javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Development Kit", WinRegistry.KEY_WOW64_64KEY,
-                javaExecs);
-        javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_32KEY, javaExecs);
-        javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_64KEY, javaExecs);
+        if (javaExecs == null) {
+            javaExecs = new ArrayList<>();
 
-        List<JavaInfo> result = new ArrayList<>();
-        for (String javaPath : javaExecs) {
-            if (!(new File(javaPath).exists()))
-                continue;
-            result.add(new JavaInfo(javaPath));
+            if (OS.isWindows()) {
+                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Runtime Environment",
+                        WinRegistry.KEY_WOW64_32KEY, javaExecs);
+                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Runtime Environment",
+                        WinRegistry.KEY_WOW64_64KEY, javaExecs);
+                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Development Kit",
+                        WinRegistry.KEY_WOW64_32KEY, javaExecs);
+                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Development Kit",
+                        WinRegistry.KEY_WOW64_64KEY, javaExecs);
+                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_32KEY,
+                        javaExecs);
+                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_64KEY,
+                        javaExecs);
+
+                PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java.exe");
+
+                String[] pathsToSearch = { "Java", "Amazon Corretto", "AdoptOpenJDK" };
+
+                for (String searchPath : pathsToSearch) {
+                    List<String> foundPaths = new ArrayList<>();
+
+                    try {
+                        Files.walkFileTree(Paths.get(System.getenv("programfiles"), searchPath),
+                                EnumSet.noneOf(FileVisitOption.class), 10, new SimpleFileVisitor<Path>() {
+                                    @Override
+                                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                                            throws IOException {
+                                        if (pathMatcher.matches(path)) {
+                                            foundPaths.add(path.toString());
+                                        }
+
+                                        return FileVisitResult.CONTINUE;
+                                    }
+                                });
+                    } catch (Exception ignored) {
+                    }
+
+                    if (foundPaths.size() != 0) {
+                        javaExecs.addAll(foundPaths);
+                    }
+                }
+            }
+
+            javaPaths = new SoftReference<>(javaExecs);
         }
-        return result;
+
+        return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(java -> {
+            return new JavaInfo(java);
+        }).collect(Collectors.toList());
     }
 
     /**

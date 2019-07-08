@@ -203,17 +203,26 @@ public enum OS {
             return OS.getJavaHome();
         }
 
-        String prefferedPath = OS.getPrefferedJavaPath(Java.getInstalledJavas());
+        String preferredPath = OS.getPreferredJavaPath(Java.getInstalledJavas());
 
-        if (prefferedPath == null) {
+        if (preferredPath == null) {
 
             return OS.getJavaHome();
         }
 
-        return prefferedPath;
+        return preferredPath;
     }
 
-    public static String getPrefferedJavaPath(List<JavaInfo> installedJavas) {
+    public static String getPreferredJavaPath(List<JavaInfo> installedJavas) {
+        JavaInfo preferredJava = getPreferredJava(installedJavas);
+        if (preferredJava == null) {
+            return null;
+        }
+
+        return preferredJava.rootPath;
+    }
+
+    public static JavaInfo getPreferredJava(List<JavaInfo> installedJavas) {
         if (installedJavas.size() == 0) {
             return null;
         }
@@ -226,23 +235,28 @@ public enum OS {
             return null;
         }
 
+        // prefer the downloaded runtime if it's installed
+        Optional<JavaInfo> runtimeJava = validVersions.stream().filter(javaInfo -> javaInfo.isRuntime).findFirst();
+        if (runtimeJava.isPresent()) {
+            return runtimeJava.get();
+        }
+
         // get newest Java 8 64 bit if installed
         Optional<JavaInfo> java864bit = validVersions.stream()
-                .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
                 .sorted(Comparator.comparingInt((JavaInfo javaInfo) -> javaInfo.minorVersion).reversed())
                 .filter(javaInfo -> javaInfo.majorVersion == 8 && javaInfo.is64bits).findFirst();
         if (java864bit.isPresent()) {
-            return java864bit.get().rootPath;
+            return java864bit.get();
         }
 
         // get newest 64 bit if installed
         Optional<JavaInfo> java64bit = validVersions.stream().filter(javaInfo -> javaInfo.is64bits).findFirst();
         if (java64bit.isPresent()) {
-            return java64bit.get().rootPath;
+            return java64bit.get();
         }
 
         // default to the first java installed
-        return validVersions.get(0).rootPath;
+        return validVersions.get(0);
     }
 
     /**

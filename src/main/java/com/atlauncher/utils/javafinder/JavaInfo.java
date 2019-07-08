@@ -10,6 +10,7 @@ package com.atlauncher.utils.javafinder;
 import java.io.File;
 import java.lang.ref.SoftReference;
 
+import com.atlauncher.FileSystem;
 import com.atlauncher.collection.Caching;
 import com.atlauncher.utils.Java;
 
@@ -24,6 +25,7 @@ public class JavaInfo {
     public Integer majorVersion; // The major version
     public Integer minorVersion; // The minor version
     public boolean is64bits; // ! true for 64-bit javas, false for 32
+    public boolean isRuntime; // if this is a runtime provided by ATLauncher
     private static final SoftReference<Caching.Cache<String, String>> versionInfos = new SoftReference<>(
             Caching.<String, String>newLRU());
 
@@ -53,6 +55,19 @@ public class JavaInfo {
         this.is64bits = versionInfo.toUpperCase().contains("64-BIT");
         this.path = javaPath;
         this.rootPath = new File(javaPath).getParentFile().getParentFile().getAbsolutePath();
+        this.isRuntime = FileSystem.RUNTIMES.toString().contains(this.rootPath);
+    }
+
+    // used for testing
+    public JavaInfo(String path, String rootPath, String version, Integer majorVersion, Integer minorVersion,
+            boolean is64bits, boolean isRuntime) {
+        this.path = path;
+        this.rootPath = rootPath;
+        this.version = version;
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
+        this.is64bits = is64bits;
+        this.isRuntime = isRuntime;
     }
 
     // used for testing
