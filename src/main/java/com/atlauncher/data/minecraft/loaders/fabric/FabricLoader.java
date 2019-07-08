@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
@@ -107,7 +107,7 @@ public class FabricLoader implements Loader {
 
     private List<File> getLibraryFiles() {
         return this.getLibraries().stream()
-                .map(library -> new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path))
+                .map(library -> FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile())
                 .collect(Collectors.toList());
     }
 

@@ -157,8 +157,8 @@ public class Settings {
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
-    private File baseDir, runtimesDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir,
-            toolsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
+    private File baseDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir,
+            toolsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, loadersDir,
             languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
@@ -200,7 +200,6 @@ public class Settings {
         baseDir = FileSystem.getCoreGracefully().toFile();
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         logsDir = new File(baseDir, "Logs");
-        runtimesDir = new File(baseDir, "runtimes");
         configsDir = new File(baseDir, "Configs");
         themesDir = new File(configsDir, "Themes");
         jsonDir = new File(configsDir, "JSON");
@@ -212,7 +211,6 @@ public class Settings {
         resourcesDir = new File(configsDir, "Resources");
         assetsDir = new File(baseDir, "assets");
         librariesDir = new File(configsDir, "Libraries");
-        gameLibrariesDir = new File(baseDir, "libraries");
         loadersDir = new File(baseDir, "loaders");
         languagesDir = new File(configsDir, "Languages");
         downloadsDir = new File(baseDir, "Downloads");
@@ -839,9 +837,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { runtimesDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
+        File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
                 toolsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(), this.getIndexesAssetsDir(),
-                librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir, instancesDir, serversDir,
+                librariesDir, loadersDir, languagesDir, downloadsDir, instancesDir, serversDir,
                 tempDir, failedDownloadsDir, logsDir };
         for (File file : files) {
             if (!file.exists()) {
@@ -863,10 +861,6 @@ public class Settings {
      */
     public File getBaseDir() {
         return this.baseDir;
-    }
-
-    public File getRuntimesDir() {
-        return this.runtimesDir;
     }
 
     /**
@@ -986,15 +980,6 @@ public class Settings {
      */
     public File getLibrariesDir() {
         return this.librariesDir;
-    }
-
-    /**
-     * Returns the libraries directory for Minecraft
-     *
-     * @return File object for the libraries directory for Minecraft
-     */
-    public File getGameLibrariesDir() {
-        return this.gameLibrariesDir;
     }
 
     /**

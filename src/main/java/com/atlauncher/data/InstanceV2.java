@@ -207,7 +207,7 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public Path getMinecraftJarLibraryPath() {
-        return FileSystem.GAME_LIBRARIES.resolve(String.format("net/minecraft/client/%1$s/client-%1$s.jar", this.id));
+        return FileSystem.LIBRARIES.resolve(String.format("net/minecraft/client/%1$s/client-%1$s.jar", this.id));
     }
 
     /**
@@ -242,8 +242,7 @@ public class InstanceV2 extends MinecraftVersion {
                 .forEach(library -> {
                     com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                             .setUrl(library.downloads.artifact.url)
-                            .downloadTo(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
-                                    .toPath())
+                            .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
                             .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
                             .withHttpClient(httpClient);
 
@@ -308,8 +307,7 @@ public class InstanceV2 extends MinecraftVersion {
             // extract natives to a temp dir
             this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
                 if (library.hasNativeForOS()) {
-                    File nativeFile = new File(App.settings.getGameLibrariesDir(),
-                            library.getNativeDownloadForOS().path);
+                    File nativeFile = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path).toFile();
 
                     ZipUtil.unpack(nativeFile, this.getNativesTemp().toFile(), name -> {
                         if (library.extract != null && library.extract.shouldExclude(name)) {

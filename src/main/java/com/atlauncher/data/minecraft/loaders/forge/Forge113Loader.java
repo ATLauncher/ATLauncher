@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.minecraft.Arguments;
@@ -54,17 +54,15 @@ public class Forge113Loader extends ForgeLoader {
             // copy over any local files from the loader zip file
             if (library.name.equalsIgnoreCase(installProfile.path)) {
                 FileUtils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path).toPath(),
-                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path).toPath(), true);
+                        FileSystem.LIBRARIES.resolve(library.downloads.artifact.path), true);
 
                 FileUtils.copyFile(
                         new File(tempDir,
                                 "maven/" + library.downloads.artifact.path.substring(0,
                                         library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
                                                 .toPath(),
-                        new File(App.settings.getGameLibrariesDir(),
-                                library.downloads.artifact.path.substring(0,
-                                        library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
-                                                .toPath(),
+                        FileSystem.LIBRARIES.resolve(library.downloads.artifact.path.substring(0,
+                                library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar"),
                         true);
             }
         });

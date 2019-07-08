@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.swing.SwingWorker;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
@@ -619,7 +620,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     public File getMinecraftJarLibrary(String type) {
-        return new File(App.settings.getGameLibrariesDir(), getMinecraftJarLibraryPath(type));
+        return FileSystem.LIBRARIES.resolve(getMinecraftJarLibraryPath(type)).toFile();
     }
 
     private void downloadLoggingClient() throws Exception {
@@ -745,8 +746,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 .forEach(library -> {
                     com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                             .setUrl(library.downloads.artifact.url)
-                            .downloadTo(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
-                                    .toPath())
+                            .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
                             .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
                             .withInstanceInstaller(this).withHttpClient(httpClient);
 
@@ -758,11 +758,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 });
 
         if (this.loader != null && this.loader.getInstallLibraries() != null) {
-            this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
-                    .forEach(library -> pool.add(new com.atlauncher.network.Download()
-                            .setUrl(library.downloads.artifact.url)
-                            .downloadTo(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
-                                    .toPath())
+            this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null).forEach(
+                    library -> pool.add(new com.atlauncher.network.Download().setUrl(library.downloads.artifact.url)
+                            .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
                             .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
                             .withInstanceInstaller(this).withHttpClient(httpClient)));
         }
@@ -772,9 +770,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 Download download = library.getNativeDownloadForOS();
 
                 pool.add(new com.atlauncher.network.Download().setUrl(download.url)
-                        .downloadTo(new File(App.settings.getGameLibrariesDir(), download.path).toPath())
-                        .hash(download.sha1).size(download.size).withInstanceInstaller(this)
-                        .withHttpClient(httpClient));
+                        .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1).size(download.size)
+                        .withInstanceInstaller(this).withHttpClient(httpClient));
             });
         }
 
@@ -796,8 +793,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (isServer) {
             this.getLibraries().stream().filter(Library::shouldInstall)
                     .filter(library -> library.downloads.artifact != null).forEach(library -> {
-                        File libraryFile = new File(App.settings.getGameLibrariesDir(),
-                                library.downloads.artifact.path);
+                        File libraryFile = FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile();
 
                         File serverFile = new File(this.root.resolve("libraries").toFile(),
                                 library.downloads.artifact.path);
@@ -811,8 +807,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null)
                         .forEach(library -> {
                             if (isServer) {
-                                File libraryFile = new File(App.settings.getGameLibrariesDir(),
-                                        library.downloads.artifact.path);
+                                File libraryFile = FileSystem.LIBRARIES.resolve(library.downloads.artifact.path)
+                                        .toFile();
 
                                 File serverFile = new File(this.root.resolve("libraries").toFile(),
                                         library.downloads.artifact.path);
@@ -830,8 +826,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         .orElse(null);
 
                 if (forgeLibrary != null) {
-                    File extractedLibraryFile = new File(App.settings.getGameLibrariesDir(),
-                            forgeLibrary.downloads.artifact.path);
+                    File extractedLibraryFile = FileSystem.LIBRARIES.resolve(forgeLibrary.downloads.artifact.path)
+                            .toFile();
                     Utils.copyFile(extractedLibraryFile, new File(this.root.toFile(), this.loader.getServerJar()),
                             true);
                 }

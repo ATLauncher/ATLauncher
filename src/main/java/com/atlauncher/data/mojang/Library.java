@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.utils.OS;
 
 public class Library {
@@ -88,7 +89,7 @@ public class Library {
 
     public File getFile() {
         if (this.hasArtifact()) {
-            return new File(App.settings.getGameLibrariesDir(), this.downloads.getArtifact().getPath());
+            return FileSystem.LIBRARIES.resolve(this.downloads.getArtifact().getPath()).toFile();
         }
 
         String[] parts = this.name.split(":", 3);
@@ -109,7 +110,7 @@ public class Library {
     }
 
     public File getNativeFile() {
-        return new File(App.settings.getGameLibrariesDir(), this.getNativeClassifier().getPath());
+        return FileSystem.LIBRARIES.resolve(this.getNativeClassifier().getPath()).toFile();
     }
 
     public String getNativePathFromRoot() {

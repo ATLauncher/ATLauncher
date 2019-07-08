@@ -48,8 +48,7 @@ public final class FileSystem {
     public static final Path RESOURCES_OBJECTS = ASSETS.resolve("objects");
     public static final Path RESOURCES_INDEXES = ASSETS.resolve("indexes");
 
-    public static final Path LIBRARIES = CONFIGS.resolve("Libraries");
-    public static final Path GAME_LIBRARIES = BASE_DIR.resolve("libraries");
+    public static final Path LIBRARIES = BASE_DIR.resolve("libraries");
 
     public static final Path LANGUAGES = CONFIGS.resolve("Languages");
     public static final Path DOWNLOADS = BASE_DIR.resolve("Downloads");
@@ -90,6 +89,8 @@ public final class FileSystem {
 
     private static void createDirectories() {
         FileUtils.createDirectory(BACKUPS);
+        FileUtils.createDirectory(LIBRARIES);
+        FileUtils.createDirectory(RUNTIMES);
     }
 
     public static Path getDownloads() {

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
@@ -127,7 +128,7 @@ public class ForgeLoader implements Loader {
             if (installProfile.install != null && installProfile.install.filePath != null
                     && library.name.equalsIgnoreCase(installProfile.install.path)) {
                 FileUtils.copyFile(new File(tempDir, installProfile.install.filePath).toPath(),
-                        new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path).toPath(), true);
+                        FileSystem.LIBRARIES.resolve(library.downloads.artifact.path), true);
             }
         });
     }

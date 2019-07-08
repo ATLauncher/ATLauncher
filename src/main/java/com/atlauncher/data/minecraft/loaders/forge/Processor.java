@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Hashing;
@@ -69,7 +69,7 @@ public class Processor {
         this.checkOutputs(installProfile, extractedDir, instanceInstaller);
 
         File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
-                : App.settings.getGameLibrariesDir();
+                : FileSystem.LIBRARIES.toFile();
 
         File jarPath = Utils.convertMavenIdentifierToFile(this.jar, librariesDirectory);
         LogManager.debug("Jar path is " + jarPath);
@@ -95,7 +95,7 @@ public class Processor {
 
         for (String classpathItem : this.getClasspath()) {
             LogManager.debug("Adding classpath " + classpathItem);
-            File classpathFile = Utils.convertMavenIdentifierToFile(classpathItem, App.settings.getGameLibrariesDir());
+            File classpathFile = Utils.convertMavenIdentifierToFile(classpathItem, FileSystem.LIBRARIES.toFile());
 
             if (!classpathFile.exists() || !classpathFile.isFile()) {
                 LogManager.error("Failed to process processor with jar " + this.jar
@@ -128,7 +128,7 @@ public class Processor {
 
                 LogManager.debug("Got value of " + value);
                 if (value.charAt(0) == '/') {
-                    if (value.toLowerCase().contains(App.settings.getGameLibrariesDir().toString().toLowerCase())) {
+                    if (value.toLowerCase().contains(FileSystem.LIBRARIES.toString().toLowerCase())) {
                         args.add(value);
                     } else {
                         File localFile = new File(extractedDir, value);
@@ -148,7 +148,7 @@ public class Processor {
                 }
             } else if (start == '[' && end == ']') {
                 String artifact = arg.substring(1, arg.length() - 1);
-                File artifactFile = Utils.convertMavenIdentifierToFile(artifact, App.settings.getGameLibrariesDir());
+                File artifactFile = Utils.convertMavenIdentifierToFile(artifact, FileSystem.LIBRARIES.toFile());
                 LogManager.debug("Got argument with file of " + artifactFile.getAbsolutePath());
 
                 if (!artifactFile.exists() || !artifactFile.isFile()) {
@@ -169,7 +169,7 @@ public class Processor {
             args.add("--json");
             args.add(instanceInstaller.temp.resolve("minecraft.json").toAbsolutePath().toString());
             args.add("--libs");
-            args.add(App.settings.getGameLibrariesDir().getAbsolutePath());
+            args.add(FileSystem.LIBRARIES.toFile().getAbsolutePath());
         }
 
         ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[classpath.size()]),
@@ -197,7 +197,7 @@ public class Processor {
         }
 
         File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
-                : App.settings.getGameLibrariesDir();
+                : FileSystem.LIBRARIES.toFile();
 
         for (Entry<String, String> entry : this.outputs.entrySet()) {
             String key = entry.getKey();

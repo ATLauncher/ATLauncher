@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Constants;
@@ -69,7 +70,7 @@ public class MCLauncher {
             }
         }
 
-        File librariesBaseDir = instance.usesNewLibraries() ? App.settings.getGameLibrariesDir()
+        File librariesBaseDir = instance.usesNewLibraries() ? FileSystem.LIBRARIES.toFile()
                 : instance.getBinDirectory();
 
         for (String jarFile : instance.getLibraries()) {
@@ -341,8 +342,8 @@ public class MCLauncher {
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
                 .forEach(library -> {
                     cpb.append(File.pathSeparator);
-                    cpb.append(new File(App.settings.getGameLibrariesDir(), library.downloads.artifact.path)
-                            .getAbsolutePath());
+                    cpb.append(
+                            FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile().getAbsolutePath());
                 });
 
         File binFolder = instance.getRoot().resolve("bin").toFile();

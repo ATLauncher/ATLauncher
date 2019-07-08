@@ -19,7 +19,7 @@ package com.atlauncher.data.json;
 
 import java.io.File;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 
 @Json
@@ -53,10 +53,10 @@ public class Library {
 
     public File getDownloadPath() {
         if (this.path == null) {
-            return new File(App.settings.getGameLibrariesDir(), this.file);
+            return FileSystem.LIBRARIES.resolve(this.file).toFile();
         }
 
-        return new File(App.settings.getGameLibrariesDir(), this.path);
+        return FileSystem.LIBRARIES.resolve(this.path).toFile();
     }
 
     public String getServer() {

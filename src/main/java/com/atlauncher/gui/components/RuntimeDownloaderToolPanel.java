@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
@@ -83,7 +84,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
             Runtime runtime = runtimes.getRuntimeForOS();
 
             if (runtime != null) {
-                File runtimeFolder = new File(App.settings.getRuntimesDir(), runtime.version);
+                File runtimeFolder = FileSystem.RUNTIMES.resolve(runtime.version).toFile();
                 File releaseFile = new File(runtimeFolder, "release");
 
                 // no need to download/extract
