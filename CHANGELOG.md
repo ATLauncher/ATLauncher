@@ -13,3 +13,4 @@
 - [#350] Add in anonymous analytics to track usage for future decision making
 - Add in Sentry error reporting to get information about unexpected client errors
 - Fix console not wrapping long lines
+- Backups will now backup your saves as well as some other files such as your game options
