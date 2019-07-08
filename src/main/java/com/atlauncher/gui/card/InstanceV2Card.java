@@ -49,6 +49,7 @@ import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
@@ -68,6 +69,9 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.ZipNameMapper;
+
+import org.zeroturnaround.zip.ZipUtil;
 
 /**
  * <p/>
@@ -294,8 +298,8 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         String time = timestamp.toString().replaceAll("[^0-9]", "_");
                         String filename = instance.getSafeName() + "-" + time.substring(0, time.lastIndexOf("_"))
                                 + ".zip";
-                        Utils.zip(instance.getRoot().resolve("saves").toFile(),
-                                new File(App.settings.getBackupsDir(), filename));
+                        ZipUtil.pack(instance.getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile(),
+                                ZipNameMapper.INSTANCE_BACKUP);
                         dialog.dispose();
                         App.TOASTER.pop(
                                 Language.INSTANCE.localizeWithReplace("backup.backupcomplete", " " + "" + filename));

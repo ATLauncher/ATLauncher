@@ -157,7 +157,7 @@ public class Settings {
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
-    private File baseDir, backupsDir, runtimesDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir,
+    private File baseDir, runtimesDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir,
             toolsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, gameLibrariesDir, loadersDir,
             languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
             instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
@@ -200,7 +200,6 @@ public class Settings {
         baseDir = FileSystem.getCoreGracefully().toFile();
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
         logsDir = new File(baseDir, "Logs");
-        backupsDir = new File(baseDir, "Backups");
         runtimesDir = new File(baseDir, "runtimes");
         configsDir = new File(baseDir, "Configs");
         themesDir = new File(configsDir, "Themes");
@@ -840,7 +839,7 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { backupsDir, runtimesDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
+        File[] files = { runtimesDir, configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
                 toolsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(), this.getIndexesAssetsDir(),
                 librariesDir, gameLibrariesDir, loadersDir, languagesDir, downloadsDir, instancesDir, serversDir,
                 tempDir, failedDownloadsDir, logsDir };
@@ -864,15 +863,6 @@ public class Settings {
      */
     public File getBaseDir() {
         return this.baseDir;
-    }
-
-    /**
-     * Returns the backups directory
-     *
-     * @return File object for the backups directory
-     */
-    public File getBackupsDir() {
-        return this.backupsDir;
     }
 
     public File getRuntimesDir() {

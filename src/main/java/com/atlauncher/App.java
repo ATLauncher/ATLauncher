@@ -248,6 +248,13 @@ public class App {
             }
         }
 
+        try {
+            LogManager.info("Organising filesystem");
+            FileSystem.organise();
+        } catch (IOException e) {
+            LogManager.error("Error organising filesystem");
+        }
+
         // Setup the Settings and wait for it to finish.
         settings = new Settings();
 
@@ -305,9 +312,6 @@ public class App {
 
         LogManager.info("Launcher Directory: " + settings.getBaseDir());
         LogManager.info("Using Theme: " + THEME);
-
-        LogManager.info("Cleaning up old filesystem items no longer needed");
-        FileSystem.cleanUp();
 
         // Now for some Mac specific stuff, mainly just setting the name of the
         // application and icon.

@@ -17,6 +17,7 @@
  */
 package com.atlauncher;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +31,7 @@ public final class FileSystem {
     public static final Path USER_DOWNLOADS = Paths.get(System.getProperty("user.home"), "Downloads");
     public static final Path BASE_DIR = FileSystem.getCoreGracefully();
     public static final Path LOGS = BASE_DIR.resolve("Logs");
-    public static final Path BACKUPS = BASE_DIR.resolve("Backups");
+    public static final Path BACKUPS = BASE_DIR.resolve("backups");
     public static final Path CONFIGS = BASE_DIR.resolve("Configs");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
@@ -63,12 +64,32 @@ public final class FileSystem {
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
 
     /**
-     * This will cleanup old folders no longer used
+     * This will organise the file system. This will remove old folders, create
+     * directories needed as well as remove old directories no longer needed.
+     *
+     * @throws IOException
      */
-    public static void cleanUp() {
+    public static void organise() throws IOException {
         if (Files.exists(CONFIGS.resolve("Jars"))) {
             FileUtils.delete(CONFIGS.resolve("Jars"));
         }
+
+        renameDirectories();
+
+        createDirectories();
+    }
+
+    private static void renameDirectories() throws IOException {
+        Path oldBackupsDir = BASE_DIR.resolve("Backups");
+        if (!Files.isSameFile(oldBackupsDir, BACKUPS) || (Files.isSameFile(oldBackupsDir, BACKUPS)
+                && BACKUPS.toRealPath().getFileName().toString().equals("Backups"))) {
+            Files.move(oldBackupsDir, oldBackupsDir.resolveSibling("backupstemp"));
+            Files.move(oldBackupsDir.resolveSibling("backupstemp"), BACKUPS);
+        }
+    }
+
+    private static void createDirectories() {
+        FileUtils.createDirectory(BACKUPS);
     }
 
     public static Path getDownloads() {
