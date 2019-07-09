@@ -235,7 +235,7 @@ public class MCLauncher {
                 argument = argument.replace("${version_name}", instance.getMinecraftVersion());
                 argument = argument.replace("${game_directory}", instance.getRootDirectory().getAbsolutePath());
                 argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
-                argument = argument.replace("${assets_root}", App.settings.getAssetsDir().getAbsolutePath());
+                argument = argument.replace("${assets_root}", FileSystem.ASSETS.toAbsolutePath().toString());
                 argument = argument.replace("${assets_index_name}", instance.getAssets());
                 argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
                 argument = argument.replace("${auth_access_token}", account.getAccessToken());
@@ -263,7 +263,7 @@ public class MCLauncher {
 
             arguments.add("--version=" + instance.getMinecraftVersion());
             arguments.add("--gameDir=" + instance.getRootDirectory().getAbsolutePath());
-            arguments.add("--assetsDir=" + App.settings.getAssetsDir().getAbsolutePath());
+            arguments.add("--assetsDir=" + FileSystem.ASSETS.toAbsolutePath().toString());
         }
 
         if (App.settings.startMinecraftMaximised()) {
@@ -449,7 +449,7 @@ public class MCLauncher {
             argument = argument.replace("${version_name}", instance.id);
             argument = argument.replace("${game_directory}", instance.getRoot().toAbsolutePath().toString());
             argument = argument.replace("${game_assets}", instance.getAssetsDir().toAbsolutePath().toString());
-            argument = argument.replace("${assets_root}", App.settings.getAssetsDir().getAbsolutePath());
+            argument = argument.replace("${assets_root}", FileSystem.ASSETS.toAbsolutePath().toString());
             argument = argument.replace("${assets_index_name}", instance.assets);
             argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
             argument = argument.replace("${auth_access_token}", account.getAccessToken());

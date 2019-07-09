@@ -36,6 +36,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.curse.CurseFile;
@@ -793,7 +794,7 @@ public class Instance implements Cloneable {
             return new File(getRootDirectory(), "resources");
         }
 
-        return new File(App.settings.getVirtualAssetsDir(), getAssets());
+        return FileSystem.RESOURCES_VIRTUAL.resolve(this.assets).toFile();
     }
 
     /**

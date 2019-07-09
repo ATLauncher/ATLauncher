@@ -44,7 +44,9 @@ public final class FileSystem {
     public static final Path COMMON = CONFIGS.resolve("Common");
 
     public static final Path ASSETS = BASE_DIR.resolve("assets");
+    public static final Path RESOURCES_LOG_CONFIGS = ASSETS.resolve("log_configs");
     public static final Path RESOURCES_VIRTUAL = ASSETS.resolve("virtual");
+    public static final Path RESOURCES_VIRTUAL_LEGACY = RESOURCES_VIRTUAL.resolve("legacy");
     public static final Path RESOURCES_OBJECTS = ASSETS.resolve("objects");
     public static final Path RESOURCES_INDEXES = ASSETS.resolve("indexes");
 
@@ -91,6 +93,13 @@ public final class FileSystem {
         FileUtils.createDirectory(BACKUPS);
         FileUtils.createDirectory(LIBRARIES);
         FileUtils.createDirectory(RUNTIMES);
+
+        FileUtils.createDirectory(ASSETS);
+        FileUtils.createDirectory(RESOURCES_INDEXES);
+        FileUtils.createDirectory(RESOURCES_LOG_CONFIGS);
+        FileUtils.createDirectory(RESOURCES_OBJECTS);
+        FileUtils.createDirectory(RESOURCES_VIRTUAL);
+        FileUtils.createDirectory(RESOURCES_VIRTUAL_LEGACY);
     }
 
     public static Path getDownloads() {

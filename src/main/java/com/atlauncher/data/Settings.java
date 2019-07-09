@@ -69,7 +69,6 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.components.LauncherBottomBar;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
@@ -157,10 +156,9 @@ public class Settings {
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
-    private File baseDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir,
-            toolsDir, commonConfigsDir, assetsDir, resourcesDir, librariesDir, loadersDir,
-            languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir, tempDir, failedDownloadsDir,
-            instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
+    private File baseDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir, commonConfigsDir,
+            librariesDir, loadersDir, languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir,
+            tempDir, failedDownloadsDir, instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -208,8 +206,6 @@ public class Settings {
         skinsDir = new File(imagesDir, "Skins");
         toolsDir = new File(configsDir, "Tools");
         commonConfigsDir = new File(configsDir, "Common");
-        resourcesDir = new File(configsDir, "Resources");
-        assetsDir = new File(baseDir, "assets");
         librariesDir = new File(configsDir, "Libraries");
         loadersDir = new File(baseDir, "loaders");
         languagesDir = new File(configsDir, "Languages");
@@ -260,8 +256,6 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
 
         clearOldLogs(); // Clear all the old logs out
-
-        checkResources(); // Check for new format of resources
 
         checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
 
@@ -512,28 +506,6 @@ public class Settings {
 
             Utils.delete(file);
         }
-    }
-
-    public void checkResources() {
-        LogManager.debug("Checking if using old format of resources");
-        // moving from Resources to more vanilla 'assets' folder
-        if (this.resourcesDir.exists() && this.resourcesDir.isDirectory()) {
-            final ProgressDialog dialog = new ProgressDialog(
-                    Language.INSTANCE.localize("settings.rearrangingresources"), 0,
-                    Language.INSTANCE.localize("settings.rearrangingresources"), null);
-            Thread thread = new Thread(() -> {
-                Utils.moveDirectory(new File(getResourcesDir(), "indexes"), new File(assetsDir, "indexes"));
-                Utils.moveDirectory(new File(getResourcesDir(), "objects"), new File(assetsDir, "objects"));
-                Utils.moveDirectory(new File(getResourcesDir(), "virtual"), new File(assetsDir, "virtual"));
-
-                Utils.delete(getResourcesDir());
-
-                dialog.close();
-            });
-            dialog.addThread(thread);
-            dialog.start();
-        }
-        LogManager.debug("Finished checking if using old format of resources");
     }
 
     public void checkAccountUUIDs() {
@@ -837,10 +809,9 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir,
-                toolsDir, assetsDir, this.getObjectsAssetsDir(), this.getVirtualAssetsDir(), this.getIndexesAssetsDir(),
-                librariesDir, loadersDir, languagesDir, downloadsDir, instancesDir, serversDir,
-                tempDir, failedDownloadsDir, logsDir };
+        File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir, librariesDir,
+                loadersDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir, failedDownloadsDir,
+                logsDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -933,44 +904,6 @@ public class Settings {
      */
     public File getToolsDir() {
         return this.toolsDir;
-    }
-
-    /**
-     * Returns the resources directory
-     *
-     * @return File object for the resources directory
-     */
-    public File getResourcesDir() {
-        return this.resourcesDir;
-    }
-
-    /**
-     * Returns the assets directory
-     *
-     * @return File object for the resources directory
-     */
-    public File getAssetsDir() {
-        return this.assetsDir;
-    }
-
-    public File getVirtualAssetsDir() {
-        return new File(this.assetsDir, "virtual");
-    }
-
-    public File getObjectsAssetsDir() {
-        return new File(this.assetsDir, "objects");
-    }
-
-    public File getIndexesAssetsDir() {
-        return new File(this.assetsDir, "indexes");
-    }
-
-    public File getLegacyVirtualAssetsDir() {
-        return new File(getVirtualAssetsDir(), "legacy");
-    }
-
-    public File getLogConfigsDir() {
-        return new File(this.assetsDir, "log_configs");
     }
 
     /**

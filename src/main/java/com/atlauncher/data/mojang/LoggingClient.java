@@ -19,15 +19,14 @@ package com.atlauncher.data.mojang;
 
 import java.io.File;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 
 @Json
 public class LoggingClient {
-
-    private String argument;
-    private LoggingFile file;
-    private String type;
+    public String argument;
+    public LoggingFile file;
+    public String type;
 
     public String getArgument() {
         return this.argument;
@@ -42,7 +41,7 @@ public class LoggingClient {
     }
 
     public File getLogFile() {
-        return new File(App.settings.getLogConfigsDir(), this.getFile().getId());
+        return FileSystem.RESOURCES_LOG_CONFIGS.resolve(this.file.id).toFile();
     }
 
     public String getCompiledArgument() {

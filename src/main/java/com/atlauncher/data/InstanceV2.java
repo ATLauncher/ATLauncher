@@ -275,8 +275,7 @@ public class InstanceV2 extends MinecraftVersion {
         MojangAssetIndex assetIndex = this.assetIndex;
 
         AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
-                .size(assetIndex.size)
-                .downloadTo(new File(App.settings.getIndexesAssetsDir(), assetIndex.id + ".json").toPath())
+                .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
                 .withHttpClient(httpClient).asClass(AssetIndex.class);
 
         DownloadPool pool = new DownloadPool();
@@ -285,10 +284,10 @@ public class InstanceV2 extends MinecraftVersion {
             AssetObject object = entry.getValue();
             String filename = object.hash.substring(0, 2) + "/" + object.hash;
             String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
-            File file = new File(App.settings.getObjectsAssetsDir(), filename);
 
             com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
-                    .downloadTo(file.toPath()).hash(object.hash).size(object.size).withHttpClient(httpClient);
+                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
+                    .withHttpClient(httpClient);
 
             if (index.mapToResources) {
                 download = download.copyTo(this.getRoot().resolve("resources/" + entry.getKey()));

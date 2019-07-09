@@ -19,7 +19,7 @@ package com.atlauncher.data.minecraft;
 
 import java.io.File;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 
 @Json
@@ -29,7 +29,7 @@ public class LoggingClient {
     public String type;
 
     public File getLogFile() {
-        return new File(App.settings.getLogConfigsDir(), this.file.id);
+        return FileSystem.RESOURCES_LOG_CONFIGS.resolve(this.file.id).toFile();
     }
 
     public String getCompiledArgument() {
