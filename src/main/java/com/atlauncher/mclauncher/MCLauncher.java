@@ -207,7 +207,7 @@ public class MCLauncher {
         } else if (instance.hasMinecraftArguments()) {
             launchArguments = Arrays.asList(instance.getMinecraftArguments().split(" "));
         } else {
-            VersionManifest versionManifest = com.atlauncher.network.Download.build()
+            VersionManifest versionManifest = com.atlauncher.network.Download.build().cached()
                     .setUrl(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT))
                     .asClass(VersionManifest.class);
 
@@ -216,7 +216,7 @@ public class MCLauncher {
                     .orElse(null);
 
             if (minecraftVersion != null) {
-                MinecraftVersion version = com.atlauncher.network.Download.build().setUrl(minecraftVersion.url)
+                MinecraftVersion version = com.atlauncher.network.Download.build().cached().setUrl(minecraftVersion.url)
                         .asClass(MinecraftVersion.class);
 
                 if (version.arguments != null) {

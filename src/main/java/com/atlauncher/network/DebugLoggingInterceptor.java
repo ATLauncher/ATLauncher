@@ -37,8 +37,15 @@ public final class DebugLoggingInterceptor implements Interceptor {
         Response response = chain.proceed(request);
         long t2 = System.nanoTime();
 
-        LogManager.debug(
-                String.format("Received response for %s in %.1fms%n", response.request().url(), (t2 - t1) / 1e6d), 3);
+        if (response.cacheResponse() != null && response.networkResponse() != null) {
+            LogManager.debug(String.format("Received cached response for %s in %.1fms%n", response.request().url(),
+                    (t2 - t1) / 1e6d), 3);
+        } else {
+            LogManager.debug(
+                    String.format("Received response for %s in %.1fms%n", response.request().url(), (t2 - t1) / 1e6d),
+                    3);
+        }
+
         LogManager.debug(response.toString(), 5);
 
         return response;

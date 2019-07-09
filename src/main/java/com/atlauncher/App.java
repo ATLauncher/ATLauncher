@@ -252,7 +252,7 @@ public class App {
             LogManager.info("Organising filesystem");
             FileSystem.organise();
         } catch (IOException e) {
-            LogManager.error("Error organising filesystem");
+            LogManager.logStackTrace("Error organising filesystem", e);
         }
 
         // Setup the Settings and wait for it to finish.

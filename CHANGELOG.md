@@ -17,3 +17,4 @@
 - Scan certain Program Files folders when looking for Java versions on Windows
 - Fix Java warning prompts from showing when they shouldn't
 - Speed up launcher load time by hot loading the pack tabs
+- Cache some HTTP requests

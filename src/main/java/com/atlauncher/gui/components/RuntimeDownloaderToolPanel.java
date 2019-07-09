@@ -76,7 +76,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                 Language.INSTANCE.localize("tools.runtimedownloader.running"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
-            Runtimes runtimes = Download.build()
+            Runtimes runtimes = Download.build().cached()
                     .setUrl(String.format("%s/launcher/json/runtimes.json", Constants.DOWNLOAD_SERVER))
                     .asClass(Runtimes.class);
             dialog.doneTask();

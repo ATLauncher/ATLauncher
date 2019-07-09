@@ -19,30 +19,33 @@ package com.atlauncher.gui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
+import com.atlauncher.LogManager;
 import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
-public class LogClearerToolPanel extends AbstractToolPanel implements ActionListener {
-    /**
-     * Auto generated serial.
-     */
-    private static final long serialVersionUID = 1964636496849129267L;
+public class CacheClearerToolPanel extends AbstractToolPanel implements ActionListener {
+    private static final long serialVersionUID = -1603022084532724719L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.logclearer"));
+    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.cacheclearer"));
 
     private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
-            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.logclearer.info"), 60, "<br>")));
+            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.cacheclearer.info"), 60, "<br>")));
 
-    public LogClearerToolPanel() {
+    public CacheClearerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
         TOP_PANEL.add(TITLE_LABEL);
         MIDDLE_PANEL.add(INFO_LABEL);
@@ -54,11 +57,20 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
-            Analytics.sendEvent("LogClearer", "Run", "Tool");
-            App.settings.clearAllLogs();
+            Analytics.sendEvent("CacheClearer", "Run", "Tool");
+            try {
+                Files.walk(FileSystem.CACHE).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 
-            DialogManager.okDialog().setType(DialogManager.INFO).setTitle(Language.INSTANCE.localize("common.success"))
-                    .setContent(Language.INSTANCE.localize("tools.logclearer.success")).show();
+                DialogManager.okDialog().setType(DialogManager.INFO)
+                        .setTitle(Language.INSTANCE.localize("common.success"))
+                        .setContent(Language.INSTANCE.localize("tools.cacheclearer.success")).show();
+            } catch (IOException e1) {
+                LogManager.error("Error clearing cache: " + e1.getMessage());
+
+                DialogManager.okDialog().setType(DialogManager.ERROR)
+                        .setTitle(Language.INSTANCE.localize("common.error"))
+                        .setContent(Language.INSTANCE.localize("tools.cacheclearer.error")).show();
+            }
         }
     }
 }

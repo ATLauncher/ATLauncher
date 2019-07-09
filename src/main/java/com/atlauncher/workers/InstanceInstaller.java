@@ -198,7 +198,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(Language.INSTANCE.localize("instance.downloadingpackverisondefinition"));
         fireSubProgressUnknown();
 
-        this.packVersion = com.atlauncher.network.Download.build()
+        this.packVersion = com.atlauncher.network.Download.build().cached()
                 .setUrl(this.pack.getJsonDownloadUrl(version.getVersion()))
                 .asClass(com.atlauncher.data.json.Version.class);
 
@@ -212,7 +212,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(Language.INSTANCE.localize("instance.downloadingminecraftdefinition"));
         fireSubProgressUnknown();
 
-        VersionManifest versionManifest = com.atlauncher.network.Download.build()
+        VersionManifest versionManifest = com.atlauncher.network.Download.build().cached()
                 .setUrl(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT))
                 .asClass(VersionManifest.class);
 
@@ -225,7 +225,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     String.format("Failed to find Minecraft version of %s", this.packVersion.getMinecraft()));
         }
 
-        this.minecraftVersion = com.atlauncher.network.Download.build().setUrl(minecraftVersion.url)
+        this.minecraftVersion = com.atlauncher.network.Download.build().cached().setUrl(minecraftVersion.url)
                 .downloadTo(this.temp.resolve("minecraft.json")).asClass(MinecraftVersion.class);
 
         hideSubProgressBar();
@@ -545,7 +545,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         MojangAssetIndex assetIndex = this.minecraftVersion.assetIndex;
 
-        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
+        AssetIndex index = com.atlauncher.network.Download.build().cached().setUrl(assetIndex.url).hash(assetIndex.sha1)
                 .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
                 .asClass(AssetIndex.class);
 
@@ -632,8 +632,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         LoggingFile loggingFile = this.minecraftVersion.logging.client.file;
 
-        com.atlauncher.network.Download.build().setUrl(loggingFile.url).hash(loggingFile.sha1).size(loggingFile.size)
-                .downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id)).downloadFile();
+        com.atlauncher.network.Download.build().cached().setUrl(loggingFile.url).hash(loggingFile.sha1)
+                .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
+                .downloadFile();
 
         hideSubProgressBar();
     }

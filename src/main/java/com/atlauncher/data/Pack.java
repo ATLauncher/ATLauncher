@@ -290,7 +290,8 @@ public class Pack {
         if (this.json == null || !this.jsonVersion.equalsIgnoreCase(version) || (isTester() && redownload)) {
             int tries = 1;
             do {
-                this.json = com.atlauncher.network.Download.build().setUrl(this.getJsonDownloadUrl(version)).asString();
+                this.json = com.atlauncher.network.Download.build().cached().setUrl(this.getJsonDownloadUrl(version))
+                        .asString();
                 tries++;
             } while (json == null && tries < 5);
             this.jsonVersion = version;

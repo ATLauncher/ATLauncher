@@ -648,7 +648,7 @@ public class Settings {
         }.getType();
 
         try {
-            this.launcherFiles = com.atlauncher.network.Download.build()
+            this.launcherFiles = com.atlauncher.network.Download.build().cached()
                     .setUrl(String.format("%s/launcher/json/hashes.json", Constants.DOWNLOAD_SERVER)).asType(type);
         } catch (Exception e) {
             LogManager.logStackTrace("Error loading in file hashes!", e);
@@ -660,7 +660,10 @@ public class Settings {
      * needs to have
      */
     private List<com.atlauncher.network.Download> getLauncherFiles() {
-        getFileHashes(); // Get File Hashes
+        if (this.launcherFiles == null) {
+            getFileHashes(); // Get File Hashes
+        }
+
         if (this.launcherFiles == null) {
             this.offlineMode = true;
             return null;
@@ -1424,7 +1427,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
-            packUsers = com.atlauncher.network.Download.build()
+            packUsers = com.atlauncher.network.Download.build().cached()
                     .setUrl(String.format("%s/launcher/json/users.json", Constants.DOWNLOAD_SERVER)).asType(type);
         } catch (JsonSyntaxException | JsonIOException e) {
             LogManager.logStackTrace(e);

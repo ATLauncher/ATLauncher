@@ -33,6 +33,7 @@ public final class FileSystem {
     public static final Path BASE_DIR = FileSystem.getCoreGracefully();
     public static final Path LOGS = BASE_DIR.resolve("logs");
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
+    public static final Path CACHE = BASE_DIR.resolve("cache");
     public static final Path CONFIGS = BASE_DIR.resolve("Configs");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
@@ -84,10 +85,6 @@ public final class FileSystem {
             FileUtils.delete(CONFIGS.resolve("Jars"));
         }
 
-        if (Files.exists(CONFIGS.resolve("Libraries"))) {
-            FileUtils.delete(CONFIGS.resolve("Libraries"));
-        }
-
         if (Files.exists(CONFIGS.resolve("instancesdata"))) {
             FileUtils.delete(CONFIGS.resolve("instancesdata"));
         }
@@ -99,51 +96,55 @@ public final class FileSystem {
 
     private static void renameDirectories() throws IOException {
         Path oldBackupsDir = BASE_DIR.resolve("Backups");
-        if (!Files.isSameFile(oldBackupsDir, BACKUPS) || (Files.isSameFile(oldBackupsDir, BACKUPS)
-                && BACKUPS.toRealPath().getFileName().toString().equals("Backups"))) {
+        if (Files.exists(oldBackupsDir)
+                && (!Files.isSameFile(oldBackupsDir, BACKUPS) || (Files.isSameFile(oldBackupsDir, BACKUPS)
+                        && BACKUPS.toRealPath().getFileName().toString().equals("Backups")))) {
             Files.move(oldBackupsDir, oldBackupsDir.resolveSibling("backupstemp"));
             Files.move(oldBackupsDir.resolveSibling("backupstemp"), BACKUPS);
         }
 
         Path oldLogsDir = BASE_DIR.resolve("Logs");
-        if (!Files.isSameFile(oldLogsDir, LOGS)
-                || (Files.isSameFile(oldLogsDir, LOGS) && LOGS.toRealPath().getFileName().toString().equals("Logs"))) {
+        if (Files.exists(oldLogsDir) && (!Files.isSameFile(oldLogsDir, LOGS)
+                || (Files.isSameFile(oldLogsDir, LOGS) && LOGS.toRealPath().getFileName().toString().equals("Logs")))) {
             Files.move(oldLogsDir, oldLogsDir.resolveSibling("logstemp"));
             Files.move(oldLogsDir.resolveSibling("logstemp"), LOGS);
         }
 
         Path oldInstancesDir = BASE_DIR.resolve("Instances");
-        if (!Files.isSameFile(oldInstancesDir, INSTANCES) || (Files.isSameFile(oldInstancesDir, INSTANCES)
-                && INSTANCES.toRealPath().getFileName().toString().equals("Instances"))) {
+        if (Files.exists(oldInstancesDir)
+                && (!Files.isSameFile(oldInstancesDir, INSTANCES) || (Files.isSameFile(oldInstancesDir, INSTANCES)
+                        && INSTANCES.toRealPath().getFileName().toString().equals("Instances")))) {
             Files.move(oldInstancesDir, oldInstancesDir.resolveSibling("instancestemp"));
             Files.move(oldInstancesDir.resolveSibling("instancestemp"), INSTANCES);
         }
 
         Path oldServersDir = BASE_DIR.resolve("Servers");
-        if (!Files.isSameFile(oldServersDir, SERVERS) || (Files.isSameFile(oldServersDir, SERVERS)
-                && SERVERS.toRealPath().getFileName().toString().equals("Servers"))) {
+        if (Files.exists(oldServersDir)
+                && (!Files.isSameFile(oldServersDir, SERVERS) || (Files.isSameFile(oldServersDir, SERVERS)
+                        && SERVERS.toRealPath().getFileName().toString().equals("Servers")))) {
             Files.move(oldServersDir, oldServersDir.resolveSibling("serverstemp"));
             Files.move(oldServersDir.resolveSibling("serverstemp"), SERVERS);
         }
 
         Path oldTempDir = BASE_DIR.resolve("Temp");
-        if (!Files.isSameFile(oldTempDir, TEMP)
-                || (Files.isSameFile(oldTempDir, TEMP) && TEMP.toRealPath().getFileName().toString().equals("Temp"))) {
+        if (Files.exists(oldTempDir) && (!Files.isSameFile(oldTempDir, TEMP)
+                || (Files.isSameFile(oldTempDir, TEMP) && TEMP.toRealPath().getFileName().toString().equals("Temp")))) {
             Files.move(oldTempDir, oldTempDir.resolveSibling("temptemp"));
             Files.move(oldTempDir.resolveSibling("temptemp"), TEMP);
         }
 
         Path oldDownloadsDir = BASE_DIR.resolve("Downloads");
-        if (!Files.isSameFile(oldDownloadsDir, DOWNLOADS) || (Files.isSameFile(oldDownloadsDir, DOWNLOADS)
-                && DOWNLOADS.toRealPath().getFileName().toString().equals("Downloads"))) {
+        if (Files.exists(oldDownloadsDir)
+                && (!Files.isSameFile(oldDownloadsDir, DOWNLOADS) || (Files.isSameFile(oldDownloadsDir, DOWNLOADS)
+                        && DOWNLOADS.toRealPath().getFileName().toString().equals("Downloads")))) {
             Files.move(oldDownloadsDir, oldDownloadsDir.resolveSibling("downloadstemp"));
             Files.move(oldDownloadsDir.resolveSibling("downloadstemp"), DOWNLOADS);
         }
 
         Path oldFailedDownloadsDir = BASE_DIR.resolve("FailedDownloads");
-        if (!Files.isSameFile(oldFailedDownloadsDir, FAILED_DOWNLOADS)
+        if (Files.exists(oldFailedDownloadsDir) && (!Files.isSameFile(oldFailedDownloadsDir, FAILED_DOWNLOADS)
                 || (Files.isSameFile(oldFailedDownloadsDir, FAILED_DOWNLOADS)
-                        && FAILED_DOWNLOADS.toRealPath().getFileName().toString().equals("FailedDownloads"))) {
+                        && FAILED_DOWNLOADS.toRealPath().getFileName().toString().equals("FailedDownloads")))) {
             Files.move(oldFailedDownloadsDir, oldFailedDownloadsDir.resolveSibling("faileddownloadstemp"));
             Files.move(oldFailedDownloadsDir.resolveSibling("faileddownloadstemp"), FAILED_DOWNLOADS);
         }
@@ -151,6 +152,7 @@ public final class FileSystem {
 
     private static void createDirectories() {
         FileUtils.createDirectory(BACKUPS);
+        FileUtils.createDirectory(CACHE);
         FileUtils.createDirectory(INSTANCES);
         FileUtils.createDirectory(LIBRARIES);
         FileUtils.createDirectory(LOGS);

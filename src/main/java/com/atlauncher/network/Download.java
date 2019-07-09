@@ -181,6 +181,11 @@ public final class Download {
         return this;
     }
 
+    public Download cached() {
+        this.httpClient = Network.CACHED_CLIENT;
+        return this;
+    }
+
     public Download withInstanceInstaller(InstanceInstaller instanceInstaller) {
         this.instanceInstaller = instanceInstaller;
         return this;
@@ -211,7 +216,7 @@ public final class Download {
             return;
         }
 
-        Request.Builder builder = new Request.Builder().url(this.url).addHeader("User-Agent", Network.USER_AGENT);
+        Request.Builder builder = new Request.Builder().url(this.url);
 
         this.response = httpClient.newCall(builder.build()).execute();
 

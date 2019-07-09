@@ -23,7 +23,7 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 
 import com.atlauncher.data.Language;
-import com.atlauncher.gui.components.BlankToolPanel;
+import com.atlauncher.gui.components.CacheClearerToolPanel;
 import com.atlauncher.gui.components.LogClearerToolPanel;
 import com.atlauncher.gui.components.NetworkCheckerToolPanel;
 import com.atlauncher.gui.components.RelaunchInDebugModePanel;
@@ -44,9 +44,9 @@ public class ToolsTab extends JPanel implements Tab {
         mainPanel.add(new NetworkCheckerToolPanel());
         mainPanel.add(new ServerCheckerToolPanel());
         mainPanel.add(new LogClearerToolPanel());
+        mainPanel.add(new CacheClearerToolPanel());
         mainPanel.add(new RelaunchInDebugModePanel());
         mainPanel.add(new RuntimeDownloaderToolPanel());
-        mainPanel.add(new BlankToolPanel());
 
         add(mainPanel, BorderLayout.CENTER);
     }
