@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -780,7 +781,7 @@ public class Instance implements Cloneable {
      * @return File object for the root directory of this Instance
      */
     public File getRootDirectory() {
-        return new File(App.settings.getInstancesDir(), getSafeName());
+        return FileSystem.INSTANCES.resolve(getSafeName()).toFile();
     }
 
     /**
@@ -1691,8 +1692,7 @@ public class Instance implements Cloneable {
     public void save(boolean showToast) {
         Writer writer;
         try {
-            writer = new FileWriter(
-                    new File(new File(App.settings.getInstancesDir(), this.getSafeName()), "instance.json"));
+            writer = new FileWriter(FileSystem.INSTANCES.resolve(this.getSafeName() + "/instance.json").toFile());
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to open instance.json for writing", e);
             return;
@@ -1759,12 +1759,12 @@ public class Instance implements Cloneable {
     }
 
     public void addFileFromCurse(CurseMod mod, CurseFile file) {
-        File downloadLocation = new File(App.settings.getDownloadsDir(), file.fileName);
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         File finalLocation = new File(mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
                 ? this.getResourcePacksDirectory()
                 : this.getModsDirectory(), file.fileName);
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
-                .downloadTo(downloadLocation.toPath()).size(file.fileLength).copyTo(finalLocation.toPath());
+                .downloadTo(downloadLocation).size(file.fileLength).copyTo(finalLocation.toPath());
 
         if (finalLocation.exists()) {
             Utils.delete(finalLocation);

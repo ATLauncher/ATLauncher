@@ -78,6 +78,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
@@ -571,7 +572,7 @@ public class Utils {
      * Clean temp directory.
      */
     public static void cleanTempDirectory() {
-        File file = App.settings.getTempDir();
+        File file = FileSystem.TEMP.toFile();
         String[] myFiles;
         if (file.isDirectory()) {
             myFiles = file.list();

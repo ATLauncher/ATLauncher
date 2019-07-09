@@ -112,15 +112,16 @@ public class DropboxSync extends SyncAbstract {
             backupDir.mkdirs();
         }
         if (backup.exists()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("backup" +
-                    ".message" + ".backupexists", backupName), Language.INSTANCE.localize("backup.message" + "" +
-                    ".backupexists.title"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    Language.INSTANCE.localizeWithReplace("backup" + ".message" + ".backupexists", backupName),
+                    Language.INSTANCE.localize("backup.message" + "" + ".backupexists.title"),
+                    JOptionPane.ERROR_MESSAGE);
         } else {
             Utils.zip(worldData, backup);
             if (App.settings.getNotifyBackup()) {
-                JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup" + "" +
-                                ".complete"), Language.INSTANCE.localize("backup.complete"), JOptionPane
-                        .INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(App.settings.getParent(),
+                        Language.INSTANCE.localize("backup" + "" + ".complete"),
+                        Language.INSTANCE.localize("backup.complete"), JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -151,30 +152,33 @@ public class DropboxSync extends SyncAbstract {
         File target = new File(instance.getSavesDirectory(), backupName.replace(".zip", ""));
 
         if (target.exists()) {
-            if (JOptionPane.showConfirmDialog(App.settings.getParent(), Language.INSTANCE.localizeWithReplace
-                    ("backup" + ".message.backupoverwrite", backupName.replace(".zip", "")), Language.INSTANCE
-                    .localize("backup.message.backupoverwrite.title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane
-                    .WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-                Utils.unzip(new File(dropboxLocation, backupFolder + File.separator + instance.getName() + File
-                        .separator + backupName), target);
+            if (JOptionPane.showConfirmDialog(App.settings.getParent(),
+                    Language.INSTANCE.localizeWithReplace("backup" + ".message.backupoverwrite",
+                            backupName.replace(".zip", "")),
+                    Language.INSTANCE.localize("backup.message.backupoverwrite.title"), JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+                Utils.unzip(
+                        new File(dropboxLocation,
+                                backupFolder + File.separator + instance.getName() + File.separator + backupName),
+                        target);
             }
         } else {
-            Utils.unzip(new File(dropboxLocation, backupFolder + File.separator + instance.getName() + File.separator
-                    + backupName), target);
+            Utils.unzip(new File(dropboxLocation,
+                    backupFolder + File.separator + instance.getName() + File.separator + backupName), target);
         }
 
         if (App.settings.getNotifyBackup()) {
-            JOptionPane.showMessageDialog(App.settings.getParent(), Language.INSTANCE.localize("backup.message" + "" +
-                            ".restoresuccess"), Language.INSTANCE.localize("backup.message.restoresuccess.title"),
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(App.settings.getParent(),
+                    Language.INSTANCE.localize("backup.message" + "" + ".restoresuccess"),
+                    Language.INSTANCE.localize("backup.message.restoresuccess.title"), JOptionPane.INFORMATION_MESSAGE);
         }
-        App.settings.clearTempDir();
+        Utils.cleanTempDirectory();
     }
 
     @Override
     public void deleteBackup(String backupName, Instance instance) {
-        File backupData = new File(dropboxLocation, backupFolder + File.separator + instance.getName() + File
-                .separator + backupName);
+        File backupData = new File(dropboxLocation,
+                backupFolder + File.separator + instance.getName() + File.separator + backupName);
         if (backupData.exists()) {
             backupData.delete();
         }

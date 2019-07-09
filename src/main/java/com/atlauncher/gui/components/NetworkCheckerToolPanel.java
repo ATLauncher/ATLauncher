@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
@@ -110,7 +111,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 dialog.doneTask();
 
                 // Speed Test
-                File file = new File(App.settings.getTempDir(), "20MB.test");
+                File file = FileSystem.TEMP.resolve("20MB.test").toFile();
                 if (file.exists()) {
                     Utils.delete(file);
                 }

@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.utils.Timestamper;
@@ -39,7 +39,7 @@ public final class LoggingThread extends Thread {
     public LoggingThread(BlockingQueue<LogEvent> queue) {
         this.queue = queue;
         this.setName("ATL-Logging-Thread");
-        File log = new File(App.settings.getLogsDir(), filename);
+        File log = FileSystem.LOGS.resolve(filename).toFile();
         try {
             log.createNewFile();
         } catch (IOException e) {

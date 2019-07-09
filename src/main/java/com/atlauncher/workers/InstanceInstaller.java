@@ -129,13 +129,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.showModsChooser = showModsChooser;
 
         if (isServer) {
-            this.root = new File(App.settings.getServersDir(), pack.getSafeName() + "_" + version.getSafeVersion())
-                    .toPath();
+            this.root = FileSystem.SERVERS.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
         } else {
-            this.root = new File(App.settings.getInstancesDir(), instanceName.replaceAll("[^A-Za-z0-9]", "")).toPath();
+            this.root = FileSystem.INSTANCES.resolve(instanceName.replaceAll("[^A-Za-z0-9]", ""));
         }
 
-        this.temp = new File(App.settings.getTempDir(), pack.getSafeName() + "_" + version.getSafeVersion()).toPath();
+        this.temp = FileSystem.TEMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
 
         this.loaderVersion = loaderVersion;
     }
@@ -866,8 +865,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser)
                 .forEach(mod -> pool.add(new com.atlauncher.network.Download().setUrl(mod.getDownloadUrl())
-                        .downloadTo(new File(App.settings.getDownloadsDir(), mod.getFile()).toPath()).hash(mod.md5)
-                        .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient)));
+                        .downloadTo(FileSystem.DOWNLOADS.resolve(mod.getFile())).hash(mod.md5).size(mod.filesize)
+                        .withInstanceInstaller(this).withHttpClient(httpClient)));
 
         DownloadPool smallPool = pool.downsize();
 
@@ -936,7 +935,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
 
-        File configs = new File(App.settings.getTempDir(), "Configs.zip");
+        File configs = this.temp.resolve("Configs.zip").toFile();
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
 
         com.atlauncher.network.Download configsDownload = com.atlauncher.network.Download.build()

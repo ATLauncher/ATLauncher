@@ -611,15 +611,15 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public void addFileFromCurse(CurseMod mod, CurseFile file) {
-        File downloadLocation = new File(App.settings.getDownloadsDir(), file.fileName);
-        File finalLocation = new File(mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
-                ? this.getRoot().resolve("resourcepacks").toFile()
-                : this.getRoot().resolve("mods").toFile(), file.fileName);
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
+        Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
+                ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
+                : this.getRoot().resolve("mods").resolve(file.fileName);
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
-                .downloadTo(downloadLocation.toPath()).size(file.fileLength).copyTo(finalLocation.toPath());
+                .downloadTo(downloadLocation).size(file.fileLength).copyTo(finalLocation);
 
-        if (finalLocation.exists()) {
-            Utils.delete(finalLocation);
+        if (Files.exists(finalLocation)) {
+            FileUtils.delete(finalLocation);
         }
 
         if (download.needToDownload()) {

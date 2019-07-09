@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
@@ -28,11 +28,11 @@ public class LoggingClient {
     public LoggingFile file;
     public String type;
 
-    public File getLogFile() {
-        return FileSystem.RESOURCES_LOG_CONFIGS.resolve(this.file.id).toFile();
+    public Path getLogFile() {
+        return FileSystem.RESOURCES_LOG_CONFIGS.resolve(this.file.id);
     }
 
     public String getCompiledArgument() {
-        return this.argument.replace("${path}", this.getLogFile().getAbsolutePath());
+        return this.argument.replace("${path}", this.getLogFile().toAbsolutePath().toString());
     }
 }

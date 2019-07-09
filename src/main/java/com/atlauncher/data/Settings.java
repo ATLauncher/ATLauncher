@@ -38,6 +38,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -157,8 +158,7 @@ public class Settings {
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
     private File baseDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir, commonConfigsDir,
-            librariesDir, loadersDir, languagesDir, downloadsDir, usersDownloadsFolder, instancesDir, serversDir,
-            tempDir, failedDownloadsDir, instancesDataFile, checkingServersFile, userDataFile, propertiesFile, logsDir;
+            librariesDir, loadersDir, languagesDir, usersDownloadsFolder;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -185,7 +185,6 @@ public class Settings {
     public Settings() {
         setupFiles(); // Setup all the file and directory variables
         checkFolders(); // Checks the setup of the folders and makes sure they're there
-        clearTempDir(); // Cleans all files in the Temp Dir
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
@@ -197,7 +196,6 @@ public class Settings {
     public void setupFiles() {
         baseDir = FileSystem.getCoreGracefully().toFile();
         usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
-        logsDir = new File(baseDir, "Logs");
         configsDir = new File(baseDir, "Configs");
         themesDir = new File(configsDir, "Themes");
         jsonDir = new File(configsDir, "JSON");
@@ -209,15 +207,6 @@ public class Settings {
         librariesDir = new File(configsDir, "Libraries");
         loadersDir = new File(baseDir, "loaders");
         languagesDir = new File(configsDir, "Languages");
-        downloadsDir = new File(baseDir, "Downloads");
-        instancesDir = new File(baseDir, "Instances");
-        serversDir = new File(baseDir, "Servers");
-        tempDir = new File(baseDir, "Temp");
-        failedDownloadsDir = new File(baseDir, "FailedDownloads");
-        instancesDataFile = new File(configsDir, "instancesdata");
-        checkingServersFile = new File(configsDir, "checkingservers.json");
-        userDataFile = new File(configsDir, "userdata");
-        propertiesFile = new File(configsDir, Constants.LAUNCHER_NAME + ".conf");
     }
 
     public void loadEverything() {
@@ -465,7 +454,7 @@ public class Settings {
         calendar.add(Calendar.DATE, -(getDaysOfLogsToKeep()));
         toDeleteAfter = calendar.getTime();
 
-        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
+        for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
             try {
                 Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
                         .parse(file.getName().replace(Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
@@ -499,7 +488,7 @@ public class Settings {
             Utils.delete(logFile1);
         }
 
-        for (File file : this.logsDir.listFiles(Utils.getLogsFileFilter())) {
+        for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
             if (file.getName().equals(LoggingThread.filename)) {
                 continue; // Skip current log
             }
@@ -610,7 +599,7 @@ public class Settings {
             } else {
                 toget = "jar";
             }
-            File newFile = new File(getTempDir(), saveAs);
+            File newFile = FileSystem.TEMP.resolve(saveAs).toFile();
             LogManager.info("Downloading Launcher Update");
             Analytics.sendEvent("Update", "Launcher");
 
@@ -810,8 +799,7 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir, librariesDir,
-                loadersDir, languagesDir, downloadsDir, instancesDir, serversDir, tempDir, failedDownloadsDir,
-                logsDir };
+                loadersDir, languagesDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -934,86 +922,12 @@ public class Settings {
     }
 
     /**
-     * Returns the downloads directory
-     *
-     * @return File object for the downloads directory
-     */
-    public File getDownloadsDir() {
-        return this.downloadsDir;
-    }
-
-    /**
      * Returns the downloads directory for the user
      *
      * @return File object for the downloads directory for the users account
      */
     public File getUsersDownloadsDir() {
         return this.usersDownloadsFolder;
-    }
-
-    /**
-     * Returns the instances directory
-     *
-     * @return File object for the instances directory
-     */
-    public File getInstancesDir() {
-        return this.instancesDir;
-    }
-
-    /**
-     * Returns the servers directory
-     *
-     * @return File object for the servers directory
-     */
-    public File getServersDir() {
-        return this.serversDir;
-    }
-
-    /**
-     * Returns the temp directory
-     *
-     * @return File object for the temp directory
-     */
-    public File getTempDir() {
-        return this.tempDir;
-    }
-
-    public File getFailedDownloadsDir() {
-        return this.failedDownloadsDir;
-    }
-
-    /**
-     * Returns the logs directory
-     *
-     * @return File object for the logs directory
-     */
-    public File getLogsDir() {
-        return this.logsDir;
-    }
-
-    /**
-     * Deletes all files in the Temp directory
-     */
-    public void clearTempDir() {
-        Utils.deleteContents(getTempDir());
-    }
-
-    /**
-     * Returns the instancesdata file
-     *
-     * @return File object for the instancesdata file
-     */
-    public File getInstancesDataFile() {
-        return instancesDataFile;
-    }
-
-    /**
-     * Returns the checkingservers file
-     *
-     * @return File object for the checkingservers file
-     */
-    public File getCheckingServersFile() {
-        return checkingServersFile;
     }
 
     /**
@@ -1030,8 +944,8 @@ public class Settings {
      */
     public void loadStartingProperties() {
         try {
-            if (!propertiesFile.exists()) {
-                propertiesFile.createNewFile();
+            if (!Files.exists(FileSystem.LAUNCHER_CONFIG)) {
+                Files.createFile(FileSystem.LAUNCHER_CONFIG);
             }
         } catch (IOException e) {
             DialogManager.okDialog().setTitle("Error!")
@@ -1042,7 +956,7 @@ public class Settings {
             System.exit(0);
         }
         try {
-            this.properties.load(new FileInputStream(propertiesFile));
+            this.properties.load(new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()));
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
@@ -1115,7 +1029,7 @@ public class Settings {
     public void loadProperties() {
         LogManager.debug("Loading properties");
         try {
-            this.properties.load(new FileInputStream(propertiesFile));
+            this.properties.load(new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()));
             this.firstTimeRun = Boolean.parseBoolean(properties.getProperty("firsttimerun", "true"));
 
             this.hadPasswordDialog = Boolean.parseBoolean(properties.getProperty("hadpassworddialog", "false"));
@@ -1391,7 +1305,8 @@ public class Settings {
             properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
             properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
             properties.setProperty("analyticsclientid", this.analyticsClientId);
-            this.properties.store(new FileOutputStream(propertiesFile), Constants.LAUNCHER_NAME + " Settings");
+            this.properties.store(new FileOutputStream(FileSystem.LAUNCHER_CONFIG.toFile()),
+                    Constants.LAUNCHER_NAME + " Settings");
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -1532,8 +1447,8 @@ public class Settings {
         this.instances = new ArrayList<>(); // Reset the instances list
         this.instancesV2 = new ArrayList<>(); // Reset the instancesv2 list
 
-        for (String folder : this.getInstancesDir().list(Utils.getInstanceFileFilter())) {
-            File instanceDir = new File(this.getInstancesDir(), folder);
+        for (String folder : FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter())) {
+            File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
             InstanceV2 instanceV2 = null;
@@ -1618,11 +1533,11 @@ public class Settings {
      */
     private void loadAccounts() {
         LogManager.debug("Loading accounts");
-        if (userDataFile.exists()) {
+        if (Files.exists(FileSystem.USER_DATA)) {
             FileInputStream in = null;
             ObjectInputStream objIn = null;
             try {
-                in = new FileInputStream(userDataFile);
+                in = new FileInputStream(FileSystem.USER_DATA.toFile());
                 objIn = new ObjectInputStream(in);
                 Object obj;
                 while ((obj = objIn.readObject()) != null) {
@@ -1657,7 +1572,7 @@ public class Settings {
         FileOutputStream out = null;
         ObjectOutputStream objOut = null;
         try {
-            out = new FileOutputStream(userDataFile);
+            out = new FileOutputStream(FileSystem.USER_DATA.toFile());
             objOut = new ObjectOutputStream(out);
             for (Account account : accounts) {
                 objOut.writeObject(account);
@@ -1696,10 +1611,10 @@ public class Settings {
     private void loadCheckingServers() {
         LogManager.debug("Loading servers to check");
         this.checkingServers = new ArrayList<>(); // Reset the list
-        if (checkingServersFile.exists()) {
+        if (Files.exists(FileSystem.CHECKING_SERVERS_JSON)) {
             FileReader fileReader = null;
             try {
-                fileReader = new FileReader(checkingServersFile);
+                fileReader = new FileReader(FileSystem.CHECKING_SERVERS_JSON.toFile());
             } catch (FileNotFoundException e) {
                 LogManager.logStackTrace(e);
                 return;
@@ -1724,11 +1639,11 @@ public class Settings {
         FileWriter fw = null;
         BufferedWriter bw = null;
         try {
-            if (!checkingServersFile.exists()) {
-                checkingServersFile.createNewFile();
+            if (!Files.exists(FileSystem.CHECKING_SERVERS_JSON)) {
+                Files.createFile(FileSystem.CHECKING_SERVERS_JSON);
             }
 
-            fw = new FileWriter(checkingServersFile);
+            fw = new FileWriter(FileSystem.CHECKING_SERVERS_JSON.toFile());
             bw = new BufferedWriter(fw);
             bw.write(Gsons.DEFAULT.toJson(this.checkingServers));
         } catch (IOException e) {
