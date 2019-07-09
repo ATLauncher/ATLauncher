@@ -18,3 +18,4 @@
 - Fix Java warning prompts from showing when they shouldn't
 - Speed up launcher load time by hot loading the pack tabs
 - Cache some HTTP requests
+- Remove advanced backup. We're looking into how to update and make this better for the future

@@ -199,14 +199,9 @@ public enum OS {
     }
 
     public static String getDefaultJavaPath() {
-        if (!OS.isWindows()) {
-            return OS.getJavaHome();
-        }
-
         String preferredPath = OS.getPreferredJavaPath(Java.getInstalledJavas());
 
         if (preferredPath == null) {
-
             return OS.getJavaHome();
         }
 

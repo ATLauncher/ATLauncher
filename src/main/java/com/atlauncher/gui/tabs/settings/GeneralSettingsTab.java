@@ -41,8 +41,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JPanel themeLabelPanel;
     private JLabelWithHover dateFormatLabel;
     private JComboBox<String> dateFormat;
-    private JLabelWithHover advancedBackupLabel;
-    private JCheckBox advancedBackup;
     private JLabelWithHover sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
     private JLabelWithHover keepLauncherOpenLabel;
@@ -83,11 +81,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        themeLabelRestart = new JLabelWithHover(ERROR_ICON, Language.INSTANCE.localize("settings" + "" +
-                ".requiresrestart"), RESTART_BORDER);
+        themeLabelRestart = new JLabelWithHover(ERROR_ICON,
+                Language.INSTANCE.localize("settings" + "" + ".requiresrestart"), RESTART_BORDER);
 
-        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON, Language
-                .INSTANCE.localize("settings.themehelp"));
+        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON,
+                Language.INSTANCE.localize("settings.themehelp"));
 
         themeLabelPanel = new JPanel();
         themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -130,35 +128,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         add(dateFormat, gbc);
 
-        // Advanced Backup
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        advancedBackupLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.advancedbackup") + "?",
-                HELP_ICON, "<html>" + Language.INSTANCE.localizeWithReplace("settings.advancedbackuphelp", "<br/>") +
-                "</html>");
-        add(advancedBackupLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        advancedBackup = new JCheckBox();
-        if (App.settings.isAdvancedBackupsEnabled()) {
-            advancedBackup.setSelected(true);
-        }
-        add(advancedBackup, gbc);
-
         // Sort Packs Alphabetically
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        sortPacksAlphabeticallyLabel = new JLabelWithHover(Language.INSTANCE.localize("settings" + "" +
-                ".sortpacksalphabetically") + "?", HELP_ICON, Language.INSTANCE.localize("settings" + "" +
-                ".sortpacksalphabeticallyhelp"));
+        sortPacksAlphabeticallyLabel = new JLabelWithHover(
+                Language.INSTANCE.localize("settings" + "" + ".sortpacksalphabetically") + "?", HELP_ICON,
+                Language.INSTANCE.localize("settings" + "" + ".sortpacksalphabeticallyhelp"));
         add(sortPacksAlphabeticallyLabel, gbc);
 
         gbc.gridx++;
@@ -233,8 +211,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableDiscordIntegrationLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.discordintegration") + "?", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.discordintegrationhelp", "<br/>") + "</html>");
+        enableDiscordIntegrationLabel = new JLabelWithHover(
+                Language.INSTANCE.localize("settings.discordintegration") + "?", HELP_ICON,
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings.discordintegrationhelp", "<br/>")
+                        + "</html>");
         add(enableDiscordIntegrationLabel, gbc);
 
         gbc.gridx++;
@@ -278,7 +258,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.setLanguage((String) language.getSelectedItem());
         App.settings.setTheme((String) theme.getSelectedItem());
         App.settings.setDateFormat((String) dateFormat.getSelectedItem());
-        App.settings.setAdvancedBackups(advancedBackup.isSelected());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
         App.settings.setEnableConsole(enableConsole.isSelected());
@@ -305,13 +284,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.dateFormatLabel.setText(Language.INSTANCE.localize("settings.dateformat") + ":");
         this.dateFormatLabel.setToolTipText(Language.INSTANCE.localize("settings.dateformathelp"));
 
-        this.advancedBackupLabel.setText(Language.INSTANCE.localize("settings.advancedbackup") + "?");
-        this.advancedBackupLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
-                ".advancedbackuphelp", "<br/>") + "</html>");
-
         this.sortPacksAlphabeticallyLabel.setText(Language.INSTANCE.localize("settings.sortpacksalphabetically") + "?");
-        this.sortPacksAlphabeticallyLabel.setToolTipText(Language.INSTANCE.localize("settings" + "" +
-                ".sortpacksalphabeticallyhelp"));
+        this.sortPacksAlphabeticallyLabel
+                .setToolTipText(Language.INSTANCE.localize("settings" + "" + ".sortpacksalphabeticallyhelp"));
 
         this.keepLauncherOpenLabel.setText(Language.INSTANCE.localize("settings.keeplauncheropen") + "?");
         this.keepLauncherOpenLabel.setToolTipText(Language.INSTANCE.localize("settings.keeplauncheropenhelp"));
@@ -320,11 +295,12 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.enableConsoleLabel.setToolTipText(Language.INSTANCE.localize("settings.consolehelp"));
 
         this.enableTrayIconLabel.setText(Language.INSTANCE.localize("settings.traymenu") + "?");
-        this.enableTrayIconLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
-                ".traymenuhelp", "<br/>") + "</html>");
+        this.enableTrayIconLabel.setToolTipText("<html>"
+                + Language.INSTANCE.localizeWithReplace("settings" + "" + ".traymenuhelp", "<br/>") + "</html>");
 
-    this.enableDiscordIntegrationLabel.setText(Language.INSTANCE.localize("settings.discordintegration") + "?");
-        this.enableDiscordIntegrationLabel.setToolTipText("<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" +
-            ".discordintegrationhelp", "<br/>") + "</html>");
+        this.enableDiscordIntegrationLabel.setText(Language.INSTANCE.localize("settings.discordintegration") + "?");
+        this.enableDiscordIntegrationLabel.setToolTipText(
+                "<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" + ".discordintegrationhelp", "<br/>")
+                        + "</html>");
     }
 }

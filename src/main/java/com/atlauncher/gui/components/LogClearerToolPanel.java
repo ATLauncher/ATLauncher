@@ -19,15 +19,17 @@ package com.atlauncher.gui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
@@ -55,7 +57,14 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == LAUNCH_BUTTON) {
             Analytics.sendEvent("LogClearer", "Run", "Tool");
-            App.settings.clearAllLogs();
+
+            for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
+                if (file.getName().equals(LoggingThread.filename)) {
+                    continue; // Skip current log
+                }
+
+                Utils.delete(file);
+            }
 
             DialogManager.okDialog().setType(DialogManager.INFO).setTitle(Language.INSTANCE.localize("common.success"))
                     .setContent(Language.INSTANCE.localize("tools.logclearer.success")).show();

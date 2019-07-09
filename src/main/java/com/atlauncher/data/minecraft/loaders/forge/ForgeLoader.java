@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
@@ -114,8 +113,8 @@ public class ForgeLoader implements Loader {
     @Override
     public void downloadAndExtractInstaller() throws Exception {
         Download.build().setUrl(this.installerUrl)
-                .downloadTo(new File(App.settings.getLoadersDir(),
-                        "/forge-" + this.minecraft + "-" + this.version + "-installer.jar").toPath())
+                .downloadTo(
+                        FileSystem.LOADERS.resolve("/forge-" + this.minecraft + "-" + this.version + "-installer.jar"))
                 .unzipTo(this.tempDir.toPath()).downloadFile();
 
         this.copyLocalLibraries();

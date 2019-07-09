@@ -75,13 +75,11 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
-import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
@@ -112,7 +110,6 @@ public class Settings {
     private boolean usingCustomJavaPath; // If the user is using a custom java path
     private String javaPath; // Users path to Java
     private String javaParamaters; // Extra Java paramaters when launching Minecraft
-    private boolean advancedBackup; // If advanced backup is enabled
     private boolean sortPacksAlphabetically; // If to sort packs default alphabetically
     private boolean keepLauncherOpen; // If we should close the Launcher after Minecraft has closed
     private boolean enableConsole; // If to show the console by default
@@ -139,12 +136,6 @@ public class Settings {
     private boolean hideJava9Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
-    // General backup settings
-    private boolean autoBackup; // Whether backups are created on instance close
-    private String lastSelectedSync; // The last service selected for syncing
-    private boolean notifyBackup; // Whether to notify the user on successful backup or restore
-    // Dropbox settings
-    private String dropboxFolderLocation; // Location of dropbox if defined by user
     private String analyticsClientId;
     // Packs, Instances and Accounts
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
@@ -158,7 +149,7 @@ public class Settings {
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
     private File baseDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir, commonConfigsDir,
-            librariesDir, loadersDir, languagesDir, usersDownloadsFolder;
+            librariesDir, languagesDir, usersDownloadsFolder;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -169,7 +160,6 @@ public class Settings {
     private PacksTab featuredPacksPanel; // The featured packs panel
     private PacksTab packsPanel; // The packs panel
     private LauncherBottomBar bottomBar; // The bottom bar
-    private boolean hadPasswordDialog = false; // If the user has seen the password dialog
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
     private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
@@ -178,8 +168,6 @@ public class Settings {
             + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
     private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
     private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
-    @SuppressWarnings("unused")
-    private DropboxSync dropbox;
     private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public Settings() {
@@ -205,7 +193,6 @@ public class Settings {
         toolsDir = new File(configsDir, "Tools");
         commonConfigsDir = new File(configsDir, "Common");
         librariesDir = new File(configsDir, "Libraries");
-        loadersDir = new File(baseDir, "loaders");
         languagesDir = new File(configsDir, "Languages");
     }
 
@@ -245,10 +232,6 @@ public class Settings {
         console.setupLanguage(); // Setup language on the console
 
         clearOldLogs(); // Clear all the old logs out
-
-        checkAccountUUIDs(); // Check for accounts UUID's and add them if necessary
-
-        changeInstanceUserLocks(); // Changes any instances user locks to UUIDs if available
 
         checkAccountsForNameChanges(); // Check account for username changes
 
@@ -326,14 +309,6 @@ public class Settings {
             }
         }
 
-        if (this.advancedBackup) {
-            dropbox = new DropboxSync();
-        }
-
-        if (!this.hadPasswordDialog) {
-            checkAccounts(); // Check accounts with stored passwords
-        }
-
         if (this.enableServerChecker) {
             this.startCheckingServers();
         }
@@ -399,53 +374,8 @@ public class Settings {
         }
     }
 
-    public void checkAccounts() {
-        boolean matches = false;
-        if (this.accounts != null || this.accounts.size() >= 1) {
-            for (Account account : this.accounts) {
-                if (account.isRemembered()) {
-                    matches = true;
-                }
-            }
-        }
-        if (matches) {
-            int ret = DialogManager.optionDialog().setTitle(Language.INSTANCE.localize("account.securitywarningtitle"))
-                    .setContent(HTMLUtils
-                            .centerParagraph(Language.INSTANCE.localizeWithReplace("account.securitywarning", "<br/>")))
-                    .addOption(Language.INSTANCE.localize("common.ok"), true)
-                    .addOption(Language.INSTANCE.localize("account.removepasswords")).setType(DialogManager.WARNING)
-                    .show();
-
-            if (ret == 1) {
-                for (Account account : this.accounts) {
-                    if (account.isRemembered()) {
-                        account.setRemember(false);
-                    }
-                }
-                this.saveAccounts();
-            }
-        }
-        this.saveProperties();
-    }
-
     public void clearOldLogs() {
         LogManager.debug("Clearing out old logs");
-
-        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
-
-        if (logFile3.exists()) {
-            Utils.delete(logFile3);
-        }
-
-        if (logFile2.exists()) {
-            Utils.delete(logFile2);
-        }
-
-        if (logFile1.exists()) {
-            Utils.delete(logFile1);
-        }
 
         Date toDeleteAfter = new Date();
 
@@ -469,88 +399,6 @@ public class Settings {
         }
 
         LogManager.debug("Finished clearing out old logs");
-    }
-
-    public void clearAllLogs() {
-        File logFile1 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-1.txt");
-        File logFile2 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-2.txt");
-        File logFile3 = new File(getBaseDir(), Constants.LAUNCHER_NAME + "-Log-3.txt");
-
-        if (logFile3.exists()) {
-            Utils.delete(logFile3);
-        }
-
-        if (logFile2.exists()) {
-            Utils.delete(logFile2);
-        }
-
-        if (logFile1.exists()) {
-            Utils.delete(logFile1);
-        }
-
-        for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
-            if (file.getName().equals(LoggingThread.filename)) {
-                continue; // Skip current log
-            }
-
-            Utils.delete(file);
-        }
-    }
-
-    public void checkAccountUUIDs() {
-        LogManager.debug("Checking account UUID's");
-        LogManager.info("Checking account UUID's!");
-        for (Account account : this.accounts) {
-            if (account.isUUIDNull()) {
-                account.setUUID(MojangAPIUtils.getUUID(account.getMinecraftUsername()));
-                this.saveAccounts();
-            }
-        }
-        LogManager.debug("Finished checking account UUID's");
-    }
-
-    public void changeInstanceUserLocks() {
-        LogManager.debug("Changing instances user locks to UUID's");
-
-        boolean wereChanges = false;
-
-        for (Instance instance : this.instances) {
-            if (instance.getInstalledBy() != null) {
-                boolean found = false;
-
-                for (Account account : this.accounts) {
-                    // This is the user who installed this so switch to their UUID
-                    if (account.getMinecraftUsername().equalsIgnoreCase(instance.getInstalledBy())) {
-                        found = true;
-                        wereChanges = true;
-
-                        instance.removeInstalledBy();
-
-                        // If the accounts UUID is null for whatever reason, don't set the lock
-                        if (!account.isUUIDNull()) {
-                            instance.setUserLock(account.getUUIDNoDashes());
-                        }
-                        break;
-                    }
-                }
-
-                // If there were no accounts with that username, we remove the lock and old
-                // installed by
-                if (!found) {
-                    wereChanges = true;
-
-                    instance.removeInstalledBy();
-                    instance.removeUserLock();
-                }
-            }
-        }
-
-        if (wereChanges) {
-            this.saveAccounts();
-            this.saveInstances();
-        }
-
-        LogManager.debug("Finished changing instances user locks to UUID's");
     }
 
     public void checkMojangStatus() {
@@ -808,7 +656,7 @@ public class Settings {
      */
     private void checkFolders() {
         File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir, librariesDir,
-                loadersDir, languagesDir };
+                languagesDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -910,15 +758,6 @@ public class Settings {
      */
     public File getLibrariesDir() {
         return this.librariesDir;
-    }
-
-    /**
-     * Returns the loaders directory
-     *
-     * @return File object for the loaders directory
-     */
-    public File getLoadersDir() {
-        return this.loadersDir;
     }
 
     /**
@@ -1041,8 +880,6 @@ public class Settings {
             this.properties.load(new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()));
             this.firstTimeRun = Boolean.parseBoolean(properties.getProperty("firsttimerun", "true"));
 
-            this.hadPasswordDialog = Boolean.parseBoolean(properties.getProperty("hadpassworddialog", "false"));
-
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
 
             this.hideJavaLetsEncryptWarning = Boolean
@@ -1147,8 +984,6 @@ public class Settings {
             this.ignoreJavaOnInstanceLaunch = Boolean
                     .parseBoolean(properties.getProperty("ignorejavaoninstancelaunch", "false"));
 
-            this.advancedBackup = Boolean.parseBoolean(properties.getProperty("advancedbackup", "false"));
-
             this.sortPacksAlphabetically = Boolean
                     .parseBoolean(properties.getProperty("sortpacksalphabetically", "false"));
 
@@ -1245,9 +1080,6 @@ public class Settings {
             }
 
             this.addedPacks = properties.getProperty("addedpacks", "");
-            this.autoBackup = Boolean.parseBoolean(properties.getProperty("autobackup", "false"));
-            this.notifyBackup = Boolean.parseBoolean(properties.getProperty("notifybackup", "true"));
-            this.dropboxFolderLocation = properties.getProperty("dropboxlocation", "");
             this.analyticsClientId = properties.getProperty("analyticsclientid", null);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
@@ -1266,7 +1098,6 @@ public class Settings {
     public void saveProperties() {
         try {
             properties.setProperty("firsttimerun", "false");
-            properties.setProperty("hadpassworddialog", "true");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties.setProperty("hidejavaletsencryptwarning", this.hideJavaLetsEncryptWarning + "");
             properties.setProperty("hideJava9Warning", this.hideJava9Warning + "");
@@ -1283,7 +1114,6 @@ public class Settings {
             properties.setProperty("maximiseminecraft", (this.maximiseMinecraft) ? "true" : "false");
             properties.setProperty("savecustommods", (this.saveCustomMods) ? "true" : "false");
             properties.setProperty("ignorejavaoninstancelaunch", (this.ignoreJavaOnInstanceLaunch) ? "true" : "false");
-            properties.setProperty("advancedbackup", (this.advancedBackup) ? "true" : "false");
             properties.setProperty("sortpacksalphabetically", (this.sortPacksAlphabetically) ? "true" : "false");
             properties.setProperty("keeplauncheropen", (this.keepLauncherOpen) ? "true" : "false");
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
@@ -1310,9 +1140,6 @@ public class Settings {
                 properties.setProperty("lastaccount", "");
             }
             properties.setProperty("addedpacks", this.addedPacks);
-            properties.setProperty("autobackup", this.autoBackup ? "true" : "false");
-            properties.setProperty("notifybackup", this.notifyBackup ? "true" : "false");
-            properties.setProperty("dropboxlocation", this.dropboxFolderLocation);
             properties.setProperty("analyticsclientid", this.analyticsClientId);
             this.properties.store(new FileOutputStream(FileSystem.LAUNCHER_CONFIG.toFile()),
                     Constants.LAUNCHER_NAME + " Settings");
@@ -2509,19 +2336,6 @@ public class Settings {
     }
 
     /**
-     * If the user has selected to enable advanced backups
-     *
-     * @return true if yes, false if not
-     */
-    public boolean isAdvancedBackupsEnabled() {
-        return this.advancedBackup;
-    }
-
-    public void setAdvancedBackups(boolean advancedBackup) {
-        this.advancedBackup = advancedBackup;
-    }
-
-    /**
      * If the user has selected to display packs alphabetically or not
      *
      * @return true if yes, false if not
@@ -2573,47 +2387,8 @@ public class Settings {
         this.keepLauncherOpen = keepLauncherOpen;
     }
 
-    public String getLastSelectedSync() {
-        if (this.lastSelectedSync == null) {
-            setLastSelectedSync("Dropbox");
-        }
-        return this.lastSelectedSync;
-    }
-
-    public void setLastSelectedSync(String lastSelected) {
-        this.lastSelectedSync = lastSelected;
-        saveProperties();
-    }
-
-    public boolean getNotifyBackup() {
-        return this.notifyBackup;
-    }
-
-    public void setNotifyBackup(boolean notify) {
-        this.notifyBackup = notify;
-        saveProperties();
-    }
-
-    public String getDropboxLocation() {
-        return this.dropboxFolderLocation;
-    }
-
-    public void setDropboxLocation(String dropboxLoc) {
-        this.dropboxFolderLocation = dropboxLoc;
-        saveProperties();
-    }
-
     public String getAnalyticsClientId() {
         return this.analyticsClientId;
-    }
-
-    public boolean getAutoBackup() {
-        return this.autoBackup;
-    }
-
-    public void setAutoBackup(boolean enableBackup) {
-        this.autoBackup = enableBackup;
-        saveProperties();
     }
 
     public void setEnableTrayIcon(boolean enableTrayIcon) {

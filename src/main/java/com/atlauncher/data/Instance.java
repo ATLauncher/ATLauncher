@@ -1416,20 +1416,6 @@ public class Instance implements Cloneable {
                     if (App.settings.getParent() != null) {
                         App.settings.getParent().setVisible(false);
                     }
-                    // Create a note of worlds for auto backup if enabled
-                    HashMap<String, Long> preWorldList = new HashMap<>();
-                    if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
-                        if (getSavesDirectory().exists()) {
-                            File[] files = getSavesDirectory().listFiles();
-                            if (files != null) {
-                                for (File file : files) {
-                                    if (file.isDirectory()) {
-                                        preWorldList.put(file.getName(), file.lastModified());
-                                    }
-                                }
-                            }
-                        }
-                    }
 
                     LogManager.info("Launching pack " + getPackName() + " " + getVersion() + " for " + "Minecraft "
                             + getMinecraftVersion());
@@ -1513,35 +1499,6 @@ public class Instance implements Cloneable {
                         // exited abnormally
                         if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
                             App.TASKPOOL.submit(this::sendOpenEyePendingReports);
-                        }
-                    } else if (App.settings.isAdvancedBackupsEnabled() && App.settings.getAutoBackup()) {
-                        // Begin backup
-                        if (getSavesDirectory().exists()) {
-                            File[] files = getSavesDirectory().listFiles();
-                            if (files != null) {
-                                for (File file : files) {
-                                    if ((file.isDirectory()) && (!file.getName().equals("NEI"))) {
-                                        if (preWorldList.containsKey(file.getName())) {
-                                            // Only backup if file changed
-                                            if (!(preWorldList.get(file.getName()) == file.lastModified())) {
-                                                SyncAbstract sync = SyncAbstract.syncList
-                                                        .get(App.settings.getLastSelectedSync());
-                                                sync.backupWorld(file.getName() + String.valueOf(file.lastModified()),
-                                                        file, Instance.this);
-                                            }
-                                        }
-                                        // Or backup if a new file is found
-                                        else {
-                                            SyncAbstract sync = SyncAbstract.syncList
-                                                    .get(App.settings.getLastSelectedSync());
-                                            sync.backupWorld(
-                                                    file.getName()
-                                                            + String.valueOf(file.lastModified()).replace(":", ""),
-                                                    file, Instance.this);
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
 

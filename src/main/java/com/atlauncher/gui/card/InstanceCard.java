@@ -62,7 +62,6 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.AddModsDialog;
-import com.atlauncher.gui.dialogs.BackupDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
@@ -261,69 +260,63 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
         this.renameButton.addActionListener(e -> new RenameInstanceDialog(instance));
         this.backupButton.addActionListener(e -> {
-            if (App.settings.isAdvancedBackupsEnabled()) {
-                new BackupDialog(instance).setVisible(true);
-            } else {
-                if (instance.getSavesDirectory().exists()) {
-                    int ret = DialogManager.yesNoDialog()
-                            .setTitle(Language.INSTANCE.localize("backup.backingup", instance.getName()))
-                            .setContent(HTMLUtils.centerParagraph(
-                                    Language.INSTANCE.localizeWithReplace("backup.sure", "<br/><br/>")))
-                            .setType(DialogManager.INFO).show();
+            if (instance.getSavesDirectory().exists()) {
+                int ret = DialogManager.yesNoDialog()
+                        .setTitle(Language.INSTANCE.localize("backup.backingup", instance.getName()))
+                        .setContent(HTMLUtils
+                                .centerParagraph(Language.INSTANCE.localizeWithReplace("backup.sure", "<br/><br/>")))
+                        .setType(DialogManager.INFO).show();
 
-                    if (ret == DialogManager.YES_OPTION) {
-                        final JDialog dialog = new JDialog(App.settings.getParent(),
-                                Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()),
-                                ModalityType.APPLICATION_MODAL);
-                        dialog.setSize(300, 100);
-                        dialog.setLocationRelativeTo(App.settings.getParent());
-                        dialog.setResizable(false);
+                if (ret == DialogManager.YES_OPTION) {
+                    final JDialog dialog = new JDialog(App.settings.getParent(),
+                            Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()),
+                            ModalityType.APPLICATION_MODAL);
+                    dialog.setSize(300, 100);
+                    dialog.setLocationRelativeTo(App.settings.getParent());
+                    dialog.setResizable(false);
 
-                        JPanel topPanel = new JPanel();
-                        topPanel.setLayout(new BorderLayout());
-                        JLabel doing = new JLabel(
-                                Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()));
-                        doing.setHorizontalAlignment(JLabel.CENTER);
-                        doing.setVerticalAlignment(JLabel.TOP);
-                        topPanel.add(doing);
+                    JPanel topPanel = new JPanel();
+                    topPanel.setLayout(new BorderLayout());
+                    JLabel doing = new JLabel(
+                            Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()));
+                    doing.setHorizontalAlignment(JLabel.CENTER);
+                    doing.setVerticalAlignment(JLabel.TOP);
+                    topPanel.add(doing);
 
-                        JPanel bottomPanel = new JPanel();
-                        bottomPanel.setLayout(new BorderLayout());
-                        JProgressBar progressBar = new JProgressBar();
-                        bottomPanel.add(progressBar, BorderLayout.NORTH);
-                        progressBar.setIndeterminate(true);
+                    JPanel bottomPanel = new JPanel();
+                    bottomPanel.setLayout(new BorderLayout());
+                    JProgressBar progressBar = new JProgressBar();
+                    bottomPanel.add(progressBar, BorderLayout.NORTH);
+                    progressBar.setIndeterminate(true);
 
-                        dialog.add(topPanel, BorderLayout.CENTER);
-                        dialog.add(bottomPanel, BorderLayout.SOUTH);
+                    dialog.add(topPanel, BorderLayout.CENTER);
+                    dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-                        Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Backup",
-                                "Instance");
+                    Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Backup", "Instance");
 
-                        final Thread backupThread = new Thread(() -> {
-                            Timestamp timestamp = new Timestamp(new Date().getTime());
-                            String time = timestamp.toString().replaceAll("[^0-9]", "_");
-                            String filename = instance.getSafeName() + "-" + time.substring(0, time.lastIndexOf("_"))
-                                    + ".zip";
-                            ZipUtil.pack(instance.getRootDirectory(), FileSystem.BACKUPS.resolve(filename).toFile(),
-                                    ZipNameMapper.INSTANCE_BACKUP);
+                    final Thread backupThread = new Thread(() -> {
+                        Timestamp timestamp = new Timestamp(new Date().getTime());
+                        String time = timestamp.toString().replaceAll("[^0-9]", "_");
+                        String filename = instance.getSafeName() + "-" + time.substring(0, time.lastIndexOf("_"))
+                                + ".zip";
+                        ZipUtil.pack(instance.getRootDirectory(), FileSystem.BACKUPS.resolve(filename).toFile(),
+                                ZipNameMapper.INSTANCE_BACKUP);
+                        dialog.dispose();
+                        App.TOASTER.pop(
+                                Language.INSTANCE.localizeWithReplace("backup.backupcomplete", " " + "" + filename));
+                    });
+                    backupThread.start();
+                    dialog.addWindowListener(new WindowAdapter() {
+                        public void windowClosing(WindowEvent e) {
+                            backupThread.interrupt();
                             dialog.dispose();
-                            App.TOASTER.pop(Language.INSTANCE.localizeWithReplace("backup.backupcomplete",
-                                    " " + "" + filename));
-                        });
-                        backupThread.start();
-                        dialog.addWindowListener(new WindowAdapter() {
-                            public void windowClosing(WindowEvent e) {
-                                backupThread.interrupt();
-                                dialog.dispose();
-                            }
-                        });
-                        dialog.setVisible(true);
-                    }
-                } else {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("backup.nosavestitle"))
-                            .setContent(Language.INSTANCE.localize("backup.nosaves")).setType(DialogManager.ERROR)
-                            .show();
+                        }
+                    });
+                    dialog.setVisible(true);
                 }
+            } else {
+                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("backup.nosavestitle"))
+                        .setContent(Language.INSTANCE.localize("backup.nosaves")).setType(DialogManager.ERROR).show();
             }
         });
         this.addButton.addActionListener(e -> {

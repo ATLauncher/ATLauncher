@@ -155,6 +155,7 @@ public final class FileSystem {
         FileUtils.createDirectory(CACHE);
         FileUtils.createDirectory(INSTANCES);
         FileUtils.createDirectory(LIBRARIES);
+        FileUtils.createDirectory(LOADERS);
         FileUtils.createDirectory(LOGS);
         FileUtils.createDirectory(RUNTIMES);
         FileUtils.createDirectory(SERVERS);
