@@ -1559,7 +1559,7 @@ public class Instance implements Cloneable {
                                 });
                             }
                         }
-                        if (App.settings.keepLauncherOpen() && App.settings.hasUpdatedFiles())
+                        if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles())
 
                         {
                             App.settings.reloadLauncherData();

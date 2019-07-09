@@ -710,6 +710,12 @@ public class Settings {
         }
     }
 
+    public boolean checkForUpdatedFiles() {
+        this.launcherFiles = null;
+
+        return hasUpdatedFiles();
+    }
+
     /**
      * This checks the servers hashes.json file and looks for new/updated files that
      * differ from what the user has

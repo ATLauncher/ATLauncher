@@ -34,13 +34,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public final class Network {
-    private static Cache cache = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
+    public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
     public static final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
             .addNetworkInterceptor(new ErrorReportingInterceptor()).build();
 
-    public static final OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(cache).build();
+    public static final OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
 
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like "
             + "Gecko) Chrome/28.0.1500.72 Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION + " Java/"

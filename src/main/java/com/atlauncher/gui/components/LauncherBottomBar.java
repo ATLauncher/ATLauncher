@@ -102,7 +102,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                     Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" + " Update Check!");
             dialog.addThread(new Thread(() -> {
                 Analytics.sendEvent("UpdateData", "Launcher");
-                if (App.settings.hasUpdatedFiles()) {
+                if (App.settings.checkForUpdatedFiles()) {
                     App.settings.reloadLauncherData();
                 }
                 dialog.close();
