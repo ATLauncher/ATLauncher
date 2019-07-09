@@ -22,6 +22,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
@@ -44,6 +46,7 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
+import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.network.Analytics;
 
 @SuppressWarnings("serial")
@@ -63,6 +66,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private NilCard nilCard;
     private boolean isVanilla;
     private boolean isFeatured;
+    private boolean loaded = false;
 
     private List<PackCard> cards = new LinkedList<>();
 
@@ -83,7 +87,14 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         RelocalizationManager.addListener(this);
 
         this.setupTopPanel();
-        this.preload();
+
+        addLoadingCard();
+
+        addComponentListener(new ComponentAdapter() {
+            public void componentShown(ComponentEvent ce) {
+                loadPacks();
+            }
+        });
 
         TabChangeManager.addListener(() -> {
             searchField.setText("");
@@ -137,6 +148,15 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.searchDescBox.addItemListener(e -> reload());
     }
 
+    private void addLoadingCard() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        this.contentPanel.add(new LoadingPanel(), gbc);
+    }
+
     private void setupTopPanel() {
         this.topPanel.add(this.addButton);
         this.topPanel.add(this.clearButton);
@@ -150,12 +170,18 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.bottomPanel.add(this.collapseAllButton);
     }
 
-    private void preload() {
+    private void loadPacks(boolean force) {
+        if (!force && loaded) {
+            return;
+        }
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
+
+        this.contentPanel.removeAll();
 
         List<Pack> packs = App.settings.sortPacksAlphabetically()
                 ? App.settings.getPacksSortedAlphabetically(this.isFeatured, this.isVanilla)
@@ -173,9 +199,14 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         }
 
         if (count == 0) {
-            nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n"));
-            this.contentPanel.add(nilCard, gbc);
+            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
         }
+
+        loaded = true;
+    }
+
+    private void loadPacks() {
+        loadPacks(false);
     }
 
     private void load(boolean keep) {
@@ -243,7 +274,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     public void refresh() {
         this.cards.clear();
-        preload();
+        loadPacks(true);
         this.contentPanel.removeAll();
         load(true);
         revalidate();
