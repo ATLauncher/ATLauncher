@@ -92,7 +92,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         addComponentListener(new ComponentAdapter() {
             public void componentShown(ComponentEvent ce) {
-                loadPacks();
+                new Thread(() -> {
+                    loadPacks();
+                }).start();
             }
         });
 
@@ -175,14 +177,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             return;
         }
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-
-        this.contentPanel.removeAll();
-
         List<Pack> packs = App.settings.sortPacksAlphabetically()
                 ? App.settings.getPacksSortedAlphabetically(this.isFeatured, this.isVanilla)
                 : App.settings.getPacksSortedPositionally(this.isFeatured, this.isVanilla);
@@ -192,14 +186,25 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             if (pack.canInstall()) {
                 PackCard card = new PackCard(pack);
                 this.cards.add(card);
-                this.contentPanel.add(card, gbc);
-                gbc.gridy++;
                 count++;
             }
         }
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        this.contentPanel.removeAll();
+
         if (count == 0) {
             this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
+        } else {
+            this.cards.stream().forEach(card -> {
+                this.contentPanel.add(card, gbc);
+                gbc.gridy++;
+            });
         }
 
         loaded = true;
