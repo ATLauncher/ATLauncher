@@ -184,7 +184,7 @@ public class EditModsDialog extends JDialog {
             try {
                 usesCoreMods = App.settings
                         .getMinecraftVersion(instanceV2 != null ? instanceV2.id : this.instance.getMinecraftVersion())
-                        .usesCoreMods();
+                        .coremods;
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);
             }

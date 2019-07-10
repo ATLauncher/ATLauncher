@@ -155,15 +155,6 @@ public class Pack {
         return this.devVersions;
     }
 
-    public void processVersions() {
-        for (PackVersion pv : this.versions) {
-            pv.setMinecraftVesion();
-        }
-        for (PackVersion dpv : this.devVersions) {
-            dpv.setMinecraftVesion();
-        }
-    }
-
     public boolean isTester() {
         Account account = App.settings.getAccount();
         if (account == null) {
@@ -272,10 +263,10 @@ public class Pack {
         if (this.versions.size() == 0) {
             return false;
         }
-        if (!getLatestVersion().canUpdate()) {
+        if (!getLatestVersion().canUpdate) {
             return true;
         }
-        return !getLatestVersion().isRecommended();
+        return !getLatestVersion().isRecommended;
     }
 
     public Version getJsonVersion(String version) {

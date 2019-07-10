@@ -53,8 +53,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -70,11 +69,13 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.components.LauncherBottomBar;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.HTMLUtils;
@@ -489,63 +490,50 @@ public class Settings {
         System.exit(0);
     }
 
-    private void getFileHashes() {
-        this.launcherFiles = null;
-
-        java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
-        }.getType();
-
-        try {
-            this.launcherFiles = com.atlauncher.network.Download.build().cached()
-                    .setUrl(String.format("%s/launcher/json/hashes.json", Constants.DOWNLOAD_SERVER)).asType(type);
-        } catch (Exception e) {
-            LogManager.logStackTrace("Error loading in file hashes!", e);
-        }
-    }
-
     /**
-     * This checks the servers hashes.json file and gets the files that the Launcher
+     * This checks the servers files.json file and gets the files that the Launcher
      * needs to have
      */
     private List<com.atlauncher.network.Download> getLauncherFiles() {
         if (this.launcherFiles == null) {
-            getFileHashes(); // Get File Hashes
+            java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
+            }.getType();
+
+            try {
+                this.launcherFiles = com.atlauncher.network.Download.build().cached()
+                        .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER)).asType(type);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Error loading in file hashes!", e);
+                this.offlineMode = true;
+                return null;
+            }
         }
 
         if (this.launcherFiles == null) {
             this.offlineMode = true;
             return null;
         }
-        ArrayList<com.atlauncher.network.Download> downloads = new ArrayList<>();
-        for (DownloadableFile file : this.launcherFiles) {
-            if (file.isLauncher()) {
-                continue;
-            }
-            downloads.add(file.getDownload());
-        }
-        return downloads;
+
+        return this.launcherFiles.stream().filter(file -> !file.isLauncher() && !file.isFiles()).map(DownloadableFile::getDownload)
+                .collect(Collectors.toList());
     }
 
     public void downloadUpdatedFiles() {
-        List<com.atlauncher.network.Download> downloads = getLauncherFiles();
-        if (downloads != null) {
-            ExecutorService executor = Executors.newFixedThreadPool(this.concurrentConnections);
-            for (final com.atlauncher.network.Download download : downloads) {
-                executor.execute(() -> {
-                    if (download.needToDownload()) {
-                        LogManager.info("Downloading Launcher File " + download.to.getFileName());
-                        try {
-                            download.downloadFile();
-                        } catch (IOException e) {
-                            LogManager.logStackTrace(e);
-                        }
-                    }
-                });
-            }
-            executor.shutdown();
-            while (!executor.isTerminated()) {
-            }
-        }
+        ProgressDialog prepareDialog = new ProgressDialog(Language.INSTANCE.localize("common.downloadingupdates"), 1,
+                Language.INSTANCE.localize("common.downloadingupdates"));
+        prepareDialog.addThread(new Thread(() -> {
+            LogManager.info("Preparing for launch!");
+            DownloadPool pool = new DownloadPool();
+            pool.addAll(getLauncherFiles());
+            DownloadPool smallPool = pool.downsize();
+
+            prepareDialog.setTotalBytes(smallPool.totalSize());
+
+            pool.downloadAll();
+            prepareDialog.doneTask();
+            prepareDialog.close();
+        }));
+        prepareDialog.start();
 
         LogManager.info("Finished downloading updated files!");
 
@@ -572,20 +560,16 @@ public class Settings {
         if (isInOfflineMode()) {
             return false;
         }
+
         LogManager.info("Checking for updated files!");
         List<com.atlauncher.network.Download> downloads = getLauncherFiles();
+
         if (downloads == null) {
             this.offlineMode = true;
             return false;
         }
-        for (com.atlauncher.network.Download download : downloads) {
-            if (download.needToDownload()) {
-                LogManager.info("Updates found!");
-                return true; // 1 file needs to be updated so there is updated files
-            }
-        }
-        LogManager.info("No updates found!");
-        return false; // No updates
+
+        return downloads.stream().anyMatch(com.atlauncher.network.Download::needToDownload);
     }
 
     public void reloadLauncherData() {
@@ -1220,7 +1204,7 @@ public class Settings {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
             List<MinecraftVersion> list = Gsons.DEFAULT_ALT
-                    .fromJson(new FileReader(new File(getJSONDir(), "minecraftversions.json")), type);
+                    .fromJson(new FileReader(new File(getJSONDir(), "minecraft.json")), type);
 
             if (list == null) {
                 LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
@@ -1228,7 +1212,7 @@ public class Settings {
             }
 
             for (MinecraftVersion mv : list) {
-                this.minecraftVersions.put(mv.getVersion(), mv);
+                this.minecraftVersions.put(mv.version, mv);
             }
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
@@ -1244,7 +1228,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            this.packs = Gsons.DEFAULT.fromJson(new FileReader(new File(getJSONDir(), "packs.json")), type);
+            this.packs = Gsons.DEFAULT_ALT.fromJson(new FileReader(new File(getJSONDir(), "packsnew.json")), type);
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }

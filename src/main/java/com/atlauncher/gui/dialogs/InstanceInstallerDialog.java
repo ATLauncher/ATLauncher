@@ -246,7 +246,7 @@ public class InstanceInstallerDialog extends JDialog {
                 final JDialog dialog = new JDialog(App.settings.getParent(),
                         ((isReinstall) ? Language.INSTANCE.localize("common.reinstalling")
                                 : Language.INSTANCE.localize("common.installing")) + " " + pack.getName() + " "
-                                + version.getVersion()
+                                + version.version
                                 + ((isServer) ? " " + Language.INSTANCE.localize("common.server") : ""),
                         ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.settings.getParent());
@@ -290,12 +290,12 @@ public class InstanceInstallerDialog extends JDialog {
                         String title;
                         if (isCancelled()) {
                             type = DialogManager.ERROR;
-                            text = pack.getName() + " " + version.getVersion() + " "
+                            text = pack.getName() + " " + version.version + " "
                                     + Language.INSTANCE.localize("common.wasnt") + " "
                                     + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
                                             : Language.INSTANCE.localize("common.installed"))
                                     + "<br/><br/>" + Language.INSTANCE.localize("instance" + ".checkerrorlogs");
-                            title = pack.getName() + " " + version.getVersion() + " "
+                            title = pack.getName() + " " + version.version + " "
                                     + Language.INSTANCE.localize("common.not") + " "
                                     + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
                                             : Language.INSTANCE.localize("common.installed"));
@@ -320,7 +320,7 @@ public class InstanceInstallerDialog extends JDialog {
                             }
                             if (success) {
                                 type = DialogManager.INFO;
-                                text = pack.getName() + " " + version.getVersion() + " "
+                                text = pack.getName() + " " + version.version + " "
                                         + Language.INSTANCE.localize("common.hasbeen") + " "
                                         + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
                                                 : Language.INSTANCE.localize("common.installed"))
@@ -329,23 +329,23 @@ public class InstanceInstallerDialog extends JDialog {
                                                 ? Language.INSTANCE.localizeWithReplace("instance" + ".finditserver",
                                                         "<br/><br/>" + this.root.toFile().getAbsolutePath())
                                                 : Language.INSTANCE.localize("instance.findit"));
-                                title = pack.getName() + " " + version.getVersion() + " "
+                                title = pack.getName() + " " + version.version + " "
                                         + Language.INSTANCE.localize("common.installed");
 
                                 App.settings.reloadInstancesPanel();
-                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev()) {
+                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev) {
                                     if (isServer) {
-                                        pack.addServerInstall(version.getVersion());
+                                        pack.addServerInstall(version.version);
                                     } else if (isUpdate) {
-                                        pack.addUpdate(version.getVersion());
+                                        pack.addUpdate(version.version);
                                     } else {
-                                        pack.addInstall(version.getVersion());
+                                        pack.addInstall(version.version);
                                     }
                                 }
                             } else {
                                 if (isReinstall) {
                                     type = DialogManager.ERROR;
-                                    text = pack.getName() + " " + version.getVersion() + " "
+                                    text = pack.getName() + " " + version.version + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "
                                             + Language.INSTANCE.localize("common.reinstalled") + "<br/><br/>"
                                             + (this.instanceIsCorrupt
@@ -353,7 +353,7 @@ public class InstanceInstallerDialog extends JDialog {
                                                     : "")
                                             + "<br/><br/>" + Language.INSTANCE.localize("instance.checkerrorlogs")
                                             + "!";
-                                    title = pack.getName() + " " + version.getVersion() + " "
+                                    title = pack.getName() + " " + version.version + " "
                                             + Language.INSTANCE.localize("common.not") + " "
                                             + Language.INSTANCE.localize("common.reinstalled");
                                     if (this.instanceIsCorrupt) {
@@ -368,11 +368,11 @@ public class InstanceInstallerDialog extends JDialog {
                                     // Install failed so delete the folder and clear Temp Dir
                                     Utils.delete(this.root.toFile());
                                     type = DialogManager.ERROR;
-                                    text = pack.getName() + " " + version.getVersion() + " "
+                                    text = pack.getName() + " " + version.version + " "
                                             + Language.INSTANCE.localize("common.wasnt") + " "
                                             + Language.INSTANCE.localize("common.installed") + "<br/><br/>"
                                             + Language.INSTANCE.localize("instance.checkerrorlogs") + "!";
-                                    title = pack.getName() + " " + version.getVersion() + " "
+                                    title = pack.getName() + " " + version.version + " "
                                             + Language.INSTANCE.localize("common.not") + " "
                                             + Language.INSTANCE.localize("common.installed");
                                 }
@@ -496,19 +496,19 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown = new JComboBox<>();
         if (pack.isTester()) {
             for (PackVersion pv : pack.getDevVersions()) {
-                if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
+                if (!isServer || (isServer && pv.minecraftVersion.server)) {
                     versions.add(pv);
                 }
             }
         }
         for (PackVersion pv : pack.getVersions()) {
-            if (!isServer || (isServer && pv.getMinecraftVersion().canCreateServer())) {
+            if (!isServer || (isServer && pv.minecraftVersion.server)) {
                 versions.add(pv);
             }
         }
         PackVersion forUpdate = null;
         for (PackVersion version : versions) {
-            if ((!version.isDev()) && (forUpdate == null)) {
+            if ((!version.isDev) && (forUpdate == null)) {
                 forUpdate = version;
             }
             versionsDropDown.addItem(version);
@@ -524,7 +524,7 @@ public class InstanceInstallerDialog extends JDialog {
             }
         } else {
             for (PackVersion version : versions) {
-                if (!version.isRecommended() || version.isDev()) {
+                if (!version.isRecommended || version.isDev) {
                     continue;
                 }
                 versionsDropDown.setSelectedItem(version);
@@ -581,7 +581,7 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setEnabled(false);
 
         Runnable r = () -> {
-            Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.getVersion()), Version.class);
+            Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.version), Version.class);
 
             loaderVersions.clear();
             loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));

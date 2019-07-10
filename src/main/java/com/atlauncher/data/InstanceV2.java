@@ -118,7 +118,7 @@ public class InstanceV2 extends MinecraftVersion {
                 // Lastly check if the current version we installed is different than the latest
                 // version of the Pack and that the latest version of the Pack is not restricted
                 // to disallow updates.
-                if (!pack.getLatestVersion().getVersion().equalsIgnoreCase(this.launcher.version)
+                if (!pack.getLatestVersion().version.equalsIgnoreCase(this.launcher.version)
                         && !pack.isLatestVersionNoUpdate()) {
                     return true;
                 }

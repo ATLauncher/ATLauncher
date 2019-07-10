@@ -21,24 +21,8 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class MinecraftVersion {
-    private String version;
-    private boolean server;
-    private boolean coremods;
-
-    public boolean canCreateServer() {
-        return this.server;
-    }
-
-    public String getVersion() {
-        return this.version;
-    }
-
-    public boolean usesCoreMods() {
-        return this.coremods;
-    }
-
-    public String toString() {
-        return this.version;
-    }
-
+    public String version;
+    public boolean server;
+    public boolean coremods;
+    public boolean snapshot;
 }

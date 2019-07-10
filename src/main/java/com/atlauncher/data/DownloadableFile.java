@@ -30,7 +30,11 @@ public class DownloadableFile {
     private String sha1;
 
     public boolean isLauncher() {
-        return this.name.equals("Launcher");
+        return this.name.equals("launcher");
+    }
+
+    public boolean isFiles() {
+        return this.name.equals("files.json");
     }
 
     public String getMD5() {

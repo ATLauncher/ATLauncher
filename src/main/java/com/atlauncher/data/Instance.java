@@ -1264,7 +1264,7 @@ public class Instance implements Cloneable {
                 // version of the Pack and that the latest version of the Pack is not restricted
                 // to
                 // disallow updates.
-                if (!this.realPack.getLatestVersion().getVersion().equalsIgnoreCase(this.version)
+                if (!this.realPack.getLatestVersion().version.equalsIgnoreCase(this.version)
                         && !this.realPack.isLatestVersionNoUpdate()) {
                     return true;
                 }
@@ -1291,13 +1291,13 @@ public class Instance implements Cloneable {
      */
     public String getLatestVersion() {
         return (this.realPack != null
-                ? (this.realPack.getLatestVersion() == null ? null : this.realPack.getLatestVersion().getVersion())
+                ? (this.realPack.getLatestVersion() == null ? null : this.realPack.getLatestVersion().version)
                 : null);
     }
 
     public String getLatestDevHash() {
         return (this.realPack != null
-                ? (this.realPack.getLatestDevVersion() == null ? null : this.realPack.getLatestDevVersion().getHash())
+                ? (this.realPack.getLatestDevVersion() == null ? null : this.realPack.getLatestDevVersion().hash)
                 : null);
     }
 

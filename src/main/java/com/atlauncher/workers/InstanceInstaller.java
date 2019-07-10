@@ -199,8 +199,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireSubProgressUnknown();
 
         this.packVersion = com.atlauncher.network.Download.build().cached()
-                .setUrl(this.pack.getJsonDownloadUrl(version.getVersion()))
-                .asClass(com.atlauncher.data.json.Version.class);
+                .setUrl(this.pack.getJsonDownloadUrl(version.version)).asClass(com.atlauncher.data.json.Version.class);
 
         this.packVersion.compileColours();
 
@@ -301,7 +300,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (this.isReinstall && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())
                 && (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
-                        .equalsIgnoreCase(version.getMinecraftVersion().getVersion())) {
+                        .equalsIgnoreCase(version.minecraftVersion.version)) {
             for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null ? instanceV2.getCustomDisableableMods()
                     : instance.getCustomDisableableMods())) {
                 modsInstalled.add(mod);
@@ -937,7 +936,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
 
         File configs = this.temp.resolve("Configs.zip").toFile();
-        String path = "packs/" + pack.getSafeName() + "/versions/" + version.getVersion() + "/Configs.zip";
+        String path = "packs/" + pack.getSafeName() + "/versions/" + version.version + "/Configs.zip";
 
         com.atlauncher.network.Download configsDownload = com.atlauncher.network.Download.build()
                 .setUrl(String.format("%s/%s", Constants.DOWNLOAD_SERVER, path)).downloadTo(configs.toPath())
@@ -1045,8 +1044,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             FileUtils.deleteDirectory(this.root.resolve("bin"));
             FileUtils.deleteDirectory(this.root.resolve("config"));
 
-            if (instance != null
-                    && instance.getMinecraftVersion().equalsIgnoreCase(version.getMinecraftVersion().getVersion())
+            if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.minecraftVersion.version)
                     && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())) {
                 Utils.deleteWithFilter(this.root.resolve("mods").toFile(),
                         (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.mods)
@@ -1061,7 +1059,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));
-                if (this.version.getMinecraftVersion().usesCoreMods()) {
+                if (this.version.minecraftVersion.coremods) {
                     FileUtils.deleteDirectory(this.root.resolve("coremods"));
                 }
 
@@ -1120,7 +1118,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
         }
 
-        if (this.version.getMinecraftVersion().usesCoreMods()) {
+        if (this.version.minecraftVersion.coremods) {
             FileUtils.createDirectory(this.root.resolve("coremods"));
         }
     }
@@ -1191,7 +1189,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         } else if (forge != null) {
             return forge.getFile();
         } else {
-            return "minecraft_server." + this.version.getMinecraftVersion().getVersion() + ".jar";
+            return "minecraft_server." + this.version.minecraftVersion.version + ".jar";
         }
     }
 
@@ -1308,10 +1306,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         try {
             java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
             }.getType();
-            APIResponse<String> response = Gsons.DEFAULT.fromJson(
-                    Utils.sendGetAPICall(
-                            "pack/" + this.pack.getSafeName() + "/" + version.getVersion() + "/share-code/" + code),
-                    type);
+            APIResponse<String> response = Gsons.DEFAULT.fromJson(Utils.sendGetAPICall(
+                    "pack/" + this.pack.getSafeName() + "/" + version.version + "/share-code/" + code), type);
 
             if (!response.wasError()) {
                 shareCodeData = response.getData();

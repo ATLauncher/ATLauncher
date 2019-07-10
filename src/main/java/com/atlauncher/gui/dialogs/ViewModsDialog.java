@@ -81,7 +81,7 @@ public final class ViewModsDialog extends JDialog {
             }
         });
 
-        List<Mod> mods = this.pack.getJsonVersion(this.pack.getLatestVersion().getVersion()).getMods();
+        List<Mod> mods = this.pack.getJsonVersion(this.pack.getLatestVersion().version).getMods();
         mods.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
         for (Mod mod : mods) {
