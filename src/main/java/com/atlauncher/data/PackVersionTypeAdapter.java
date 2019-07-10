@@ -42,6 +42,7 @@ public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
 
         if (rootJsonObject.has("hash")) {
             packVersion.hash = rootJsonObject.get("hash").getAsString();
+            packVersion.isDev = true;
         }
 
         if (rootJsonObject.has("minecraft")) {
@@ -59,10 +60,6 @@ public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
 
         if (rootJsonObject.has("isRecommended")) {
             packVersion.isRecommended = rootJsonObject.get("isRecommended").getAsBoolean();
-        }
-
-        if (rootJsonObject.has("isDev")) {
-            packVersion.isDev = rootJsonObject.get("isDev").getAsBoolean();
         }
 
         if (rootJsonObject.has("hasLoader")) {

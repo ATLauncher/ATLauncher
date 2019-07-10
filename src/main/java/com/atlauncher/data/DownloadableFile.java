@@ -23,11 +23,10 @@ import com.atlauncher.App;
 import com.atlauncher.network.Download;
 
 public class DownloadableFile {
-    private String name;
-    private String folder;
-    private int size;
-    private String md5;
-    private String sha1;
+    public String name;
+    public String folder;
+    public int size;
+    public String sha1;
 
     public boolean isLauncher() {
         return this.name.equals("launcher");
@@ -37,24 +36,15 @@ public class DownloadableFile {
         return this.name.equals("files.json");
     }
 
-    public String getMD5() {
-        return this.md5;
-    }
-
-    public String getSHA1() {
-        return this.sha1;
-    }
-
     public Download getDownload() {
         File file = new File(new File(App.settings.getConfigsDir(), this.folder), this.name);
 
-        if (this.folder.equalsIgnoreCase("Skins")) {
+        if (this.folder.equalsIgnoreCase("skins")) {
             file = new File(App.settings.getSkinsDir(), this.name);
         }
 
-        return Download.build()
-                .setUrl(String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(),
-                        this.name))
+        return Download.build().setUrl(
+                String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(), this.name))
                 .downloadTo(file.toPath()).size(this.size).hash(this.sha1);
     }
 }
