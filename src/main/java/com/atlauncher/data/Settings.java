@@ -63,6 +63,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.data.minecraft.MojangStatus;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -89,6 +90,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import net.arikia.dev.drpc.DiscordRPC;
+import okhttp3.OkHttpClient;
 
 /**
  * Settings class for storing all data for the Launcher and the settings of the
@@ -514,26 +516,28 @@ public class Settings {
             return null;
         }
 
-        return this.launcherFiles.stream().filter(file -> !file.isLauncher() && !file.isFiles()).map(DownloadableFile::getDownload)
-                .collect(Collectors.toList());
+        return this.launcherFiles.stream().filter(file -> !file.isLauncher() && !file.isFiles())
+                .map(DownloadableFile::getDownload).collect(Collectors.toList());
     }
 
     public void downloadUpdatedFiles() {
-        ProgressDialog prepareDialog = new ProgressDialog(Language.INSTANCE.localize("common.downloadingupdates"), 1,
+        ProgressDialog progressDialog = new ProgressDialog(Language.INSTANCE.localize("common.downloadingupdates"), 1,
                 Language.INSTANCE.localize("common.downloadingupdates"));
-        prepareDialog.addThread(new Thread(() -> {
+        progressDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
             DownloadPool pool = new DownloadPool();
-            pool.addAll(getLauncherFiles());
+            OkHttpClient httpClient = Network.createProgressClient(progressDialog);
+            pool.addAll(
+                    getLauncherFiles().stream().map(dl -> dl.withHttpClient(httpClient)).collect(Collectors.toList()));
             DownloadPool smallPool = pool.downsize();
 
-            prepareDialog.setTotalBytes(smallPool.totalSize());
+            progressDialog.setTotalBytes(smallPool.totalSize());
 
             pool.downloadAll();
-            prepareDialog.doneTask();
-            prepareDialog.close();
+            progressDialog.doneTask();
+            progressDialog.close();
         }));
-        prepareDialog.start();
+        progressDialog.start();
 
         LogManager.info("Finished downloading updated files!");
 

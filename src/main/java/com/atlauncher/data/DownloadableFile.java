@@ -52,8 +52,9 @@ public class DownloadableFile {
             file = new File(App.settings.getSkinsDir(), this.name);
         }
 
-        return Download.build().setUrl(
-                String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(), this.name))
+        return Download.build()
+                .setUrl(String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(),
+                        this.name))
                 .downloadTo(file.toPath()).size(this.size).hash(this.sha1);
     }
 }
