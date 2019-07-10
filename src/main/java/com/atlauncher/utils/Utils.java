@@ -82,8 +82,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.mojang.ExtractRule;
-import com.atlauncher.data.mojang.OperatingSystem;
+import com.atlauncher.data.minecraft.ExtractRule;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.evnt.LogEvent.LogType;
 
@@ -174,7 +173,7 @@ public class Utils {
     }
 
     public static File getOSStorageDir() {
-        switch (OperatingSystem.getOS()) {
+        switch (OS.getOS()) {
         case WINDOWS:
             return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         case OSX:

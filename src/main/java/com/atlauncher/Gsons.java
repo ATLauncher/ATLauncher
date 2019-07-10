@@ -18,8 +18,6 @@
 package com.atlauncher;
 
 import java.awt.Color;
-import java.io.File;
-import java.util.Date;
 
 import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.PackVersion;
@@ -32,13 +30,6 @@ import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMeta;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibraryTypeAdapter;
-import com.atlauncher.data.mojang.DateTypeAdapter;
-import com.atlauncher.data.mojang.Downloads;
-import com.atlauncher.data.mojang.DownloadsTypeAdapter;
-import com.atlauncher.data.mojang.EnumTypeAdapterFactory;
-import com.atlauncher.data.mojang.FileTypeAdapter;
-import com.atlauncher.data.mojang.MojangArguments;
-import com.atlauncher.data.mojang.MojangArgumentsTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -48,15 +39,10 @@ public final class Gsons {
     public static final Gson THEMES = new GsonBuilder().setPrettyPrinting()
             .registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
 
-    public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapterFactory(new EnumTypeAdapterFactory())
-            .registerTypeAdapter(Date.class, new DateTypeAdapter())
-            .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter())
-            .registerTypeAdapter(MojangArguments.class, new MojangArgumentsTypeAdapter())
-            .registerTypeAdapter(Downloads.class, new DownloadsTypeAdapter())
-            .registerTypeAdapter(File.class, new FileTypeAdapter()).create();
+    public static final Gson DEFAULT_ALT = new GsonBuilder()
+            .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).create();
 
     public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping()
-            .registerTypeAdapterFactory(new EnumTypeAdapterFactory())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
             .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())

@@ -23,7 +23,6 @@ import java.util.Map;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.mojang.OperatingSystem;
 
 /**
  * Various utility methods for interacting with the ATLauncher API.
@@ -33,8 +32,8 @@ public class ATLauncherAPIUtils {
         Map<String, Object> request = new HashMap<>();
 
         request.put("launcher_version", Constants.VERSION.toString());
-        request.put("os_name", OperatingSystem.getOS().getName());
-        request.put("os_version", OperatingSystem.getVersion());
+        request.put("os_name", OS.getOS().toString().toLowerCase());
+        request.put("os_version", System.getProperty("os.version"));
         request.put("java_version", System.getProperty("java.version"));
         request.put("ram", OS.getSystemRam());
         request.put("64_bit", OS.is64Bit());
