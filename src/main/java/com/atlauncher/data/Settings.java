@@ -2681,7 +2681,7 @@ public class Settings {
         if (this.minecraftProcess != null) {
             LogManager.error("Killing Minecraft");
 
-            if (App.settings.enableDiscordIntegration()) {
+            if (App.settings.enableDiscordIntegration() && App.discordInitialized) {
                 DiscordRPC.discordClearPresence();
             }
 

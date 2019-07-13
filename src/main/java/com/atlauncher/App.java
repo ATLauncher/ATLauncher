@@ -100,6 +100,8 @@ public class App {
      */
     public static boolean wasUpdated = false;
 
+    public static boolean discordInitialized = false;
+
     /**
      * This allows skipping the system tray integration so that the launcher doesn't
      * even try to show the icon and menu etc, in the users system tray. It can be
@@ -327,13 +329,19 @@ public class App {
         TRAY_MENU.localize();
 
         if (settings.enableDiscordIntegration()) {
-            DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
-            DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
-            DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
+            try {
+                DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
+                DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
+                DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                DiscordRPC.discordShutdown();
-            }));
+                discordInitialized = true;
+
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    DiscordRPC.discordShutdown();
+                }));
+            } catch (Exception e) {
+                LogManager.logStackTrace("Failed to initialize Discord integration", e);
+            }
         }
 
         if (!skipIntegration) {

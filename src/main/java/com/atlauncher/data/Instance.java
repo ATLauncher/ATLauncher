@@ -1472,7 +1472,8 @@ public class Instance implements Cloneable {
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration() && this.getRealPack() != null) {
+                    if (App.settings.enableDiscordIntegration() && App.discordInitialized
+                            && this.getRealPack() != null) {
                         String playing = this.getRealPack().getName() + " (" + this.getVersion() + ")";
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
