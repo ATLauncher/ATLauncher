@@ -312,7 +312,7 @@ public class App {
         int maxRam = OS.getMaximumRam();
         LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
 
-        LogManager.info("Launcher Directory: " + settings.getBaseDir());
+        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
         LogManager.info("Using Theme: " + THEME);
 
         // Now for some Mac specific stuff, mainly just setting the name of the
@@ -532,7 +532,7 @@ public class App {
         }
 
         props.setProperty("java_version", Java.getLauncherJavaVersion());
-        props.setProperty("location", App.settings.getBaseDir().toString());
+        props.setProperty("location", FileSystem.BASE_DIR.toString());
         props.setProperty("executable",
                 new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath());
 

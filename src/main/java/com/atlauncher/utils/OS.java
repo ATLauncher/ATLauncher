@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
@@ -320,8 +319,9 @@ public enum OS {
             binaryFile = (OS.isWindows() ? "getMemory.exe" : (OS.isLinux() ? "getMemory-linux" : "getMemory-osx"));
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(App.settings.getToolsDir() + File.separator + binaryFile);
-        processBuilder.directory(App.settings.getToolsDir().getAbsoluteFile());
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
+        processBuilder.directory(FileSystem.TOOLS.toFile());
         processBuilder.redirectErrorStream(true);
 
         try {

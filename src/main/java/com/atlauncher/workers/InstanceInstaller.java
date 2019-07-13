@@ -373,8 +373,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         // Copy over common configs if any
-        if (App.settings.getCommonConfigsDir().listFiles().length != 0) {
-            Utils.copyDirectory(App.settings.getCommonConfigsDir(), this.root.toFile());
+        if (FileSystem.COMMON.toFile().listFiles().length != 0) {
+            Utils.copyDirectory(FileSystem.COMMON.toFile(), this.root.toFile());
         }
 
         restoreSelectFiles();
@@ -1162,9 +1162,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         File batFile = new File(this.root.toFile(), "LaunchServer.bat");
         File shFile = new File(this.root.toFile(), "LaunchServer.sh");
-        Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.bat"), batFile, "%%SERVERJAR%%",
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), batFile, "%%SERVERJAR%%",
                 getServerJar());
-        Utils.replaceText(new File(App.settings.getLibrariesDir(), "LaunchServer.sh"), shFile, "%%SERVERJAR%%",
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), shFile, "%%SERVERJAR%%",
                 getServerJar());
         batFile.setExecutable(true);
         shFile.setExecutable(true);

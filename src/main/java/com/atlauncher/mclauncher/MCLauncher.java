@@ -293,7 +293,7 @@ public class MCLauncher {
 
         if (!LogManager.showDebug) {
             if (App.settings != null) {
-                argsString = argsString.replace(App.settings.getBaseDir().getAbsolutePath(), "USERSDIR");
+                argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
             }
 
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
@@ -479,7 +479,7 @@ public class MCLauncher {
 
         if (!LogManager.showDebug) {
             if (App.settings != null) {
-                argsString = argsString.replace(App.settings.getBaseDir().getAbsolutePath(), "USERSDIR");
+                argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
             }
 
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");

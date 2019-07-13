@@ -479,7 +479,7 @@ public class Instance implements Cloneable {
      */
     public ImageIcon getImage() {
         File customImage = new File(this.getRootDirectory(), "instance.png");
-        File instancesImage = new File(App.settings.getImagesDir(), getSafePackName().toLowerCase() + ".png");
+        File instancesImage = FileSystem.IMAGES.resolve(getSafePackName().toLowerCase() + ".png").toFile();
 
         if (customImage.exists()) {
             try {
@@ -496,7 +496,7 @@ public class Instance implements Cloneable {
             return Utils.getIconImage(instancesImage);
 
         } else {
-            return Utils.getIconImage(new File(App.settings.getImagesDir(), "defaultimage.png"));
+            return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
         }
     }
 

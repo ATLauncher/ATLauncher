@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.mini2Dx:gettext-gradle-plugin:1.0.1'
+        classpath 'org.mini2Dx:gettext-gradle-plugin:1.1.0-SNAPSHOT'
     }
 }
 
@@ -51,7 +51,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.0.0'
     implementation 'net.mikehardy:google-analytics-java:2.0.8'
     implementation 'io.sentry:sentry:1.7.16'
-    implementation 'org.mini2Dx:gettext-lib:1.0.1'
+    implementation 'org.mini2Dx:gettext-lib:1.1.0-SNAPSHOT'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
@@ -81,6 +81,17 @@ gettext {
     translations {
         srcDir = 'src'
         include = 'main/java/com/atlauncher/**/*.java'
+        excludes = [
+            'main/java/com/atlauncher/adapter/**/*.java',
+            'main/java/com/atlauncher/annot/**/*.java',
+            'main/java/com/atlauncher/collection/**/*.java',
+            'main/java/com/atlauncher/evnt/**/*.java',
+            'main/java/com/atlauncher/exceptions/**/*.java',
+            'main/java/com/atlauncher/interfaces/**/*.java',
+            'main/java/com/atlauncher/listener/**/*.java',
+            'main/java/com/atlauncher/utils/**/*.java'
+        ]
+        commentFormat = ' #. '
         outputFilename = 'translations.pot'
     }
 }

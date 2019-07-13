@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.io.IOException;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.utils.Timestamper;
@@ -40,7 +41,7 @@ public final class LogEvent {
     public LogEvent(LogType type, String body, int meta) {
         this.type = type;
         if (App.settings != null && !LogManager.showDebug) {
-            body = body.replace(App.settings.getBaseDir().getAbsolutePath(), "**USERSDIR**");
+            body = body.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "**USERSDIR**");
         }
         this.body = (!body.endsWith("\n") ? body + "\n" : body);
         this.meta = meta;

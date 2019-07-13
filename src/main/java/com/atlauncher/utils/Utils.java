@@ -830,10 +830,9 @@ public class Utils {
      * @param withThis        the with this
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static void replaceText(File originalFile, File destinationFile, String replaceThis, String withThis)
+    public static void replaceText(InputStream fs, File destinationFile, String replaceThis, String withThis)
             throws IOException {
 
-        FileInputStream fs = new FileInputStream(originalFile);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
 
         FileWriter writer1 = new FileWriter(destinationFile);
@@ -850,7 +849,6 @@ public class Utils {
         writer1.flush();
         writer1.close();
         br.close();
-        fs.close();
     }
 
     /**

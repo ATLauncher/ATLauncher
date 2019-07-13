@@ -152,9 +152,6 @@ public class Settings {
     public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
-    // Directories and Files for the Launcher
-    private File baseDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir, commonConfigsDir,
-            librariesDir, usersDownloadsFolder;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -176,28 +173,12 @@ public class Settings {
     private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public Settings() {
-        setupFiles(); // Setup all the file and directory variables
-        checkFolders(); // Checks the setup of the folders and makes sure they're there
         loadStartingProperties(); // Get users Console preference and Java Path
     }
 
     public void loadConsole() {
         console = new LauncherConsole();
         LogManager.start();
-    }
-
-    public void setupFiles() {
-        baseDir = FileSystem.getCoreGracefully().toFile();
-        usersDownloadsFolder = new File(System.getProperty("user.home"), "Downloads");
-        configsDir = new File(baseDir, "Configs");
-        themesDir = new File(configsDir, "Themes");
-        jsonDir = new File(configsDir, "JSON");
-        versionsDir = new File(configsDir, "Versions");
-        imagesDir = new File(configsDir, "Images");
-        skinsDir = new File(imagesDir, "Skins");
-        toolsDir = new File(configsDir, "Tools");
-        commonConfigsDir = new File(configsDir, "Common");
-        librariesDir = new File(configsDir, "Libraries");
     }
 
     public void loadEverything() {
@@ -423,8 +404,8 @@ public class Settings {
 
     public boolean launcherHasUpdate() {
         try {
-            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(new FileReader(new File(this.jsonDir, "version.json")),
-                    LauncherVersion.class);
+            this.latestLauncherVersion = Gsons.DEFAULT
+                    .fromJson(new FileReader(FileSystem.JSON.resolve("version.json").toFile()), LauncherVersion.class);
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         }
@@ -614,7 +595,7 @@ public class Settings {
     }
 
     private void addExecutableBitToTools() {
-        File[] files = toolsDir.listFiles();
+        File[] files = FileSystem.TOOLS.toFile().listFiles();
         if (files != null) {
             for (File file : files) {
                 if (!file.canExecute()) {
@@ -623,124 +604,6 @@ public class Settings {
                 }
             }
         }
-    }
-
-    /**
-     * Checks the directory to make sure all the necessary folders are there
-     */
-    private void checkFolders() {
-        File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir,
-                librariesDir };
-        for (File file : files) {
-            if (!file.exists()) {
-                file.mkdir();
-            }
-            if (!file.isDirectory()) {
-                if (file.delete()) {
-                    file.mkdir();
-                }
-
-            }
-        }
-    }
-
-    /**
-     * Returns the base directory
-     *
-     * @return File object for the base directory
-     */
-    public File getBaseDir() {
-        return this.baseDir;
-    }
-
-    /**
-     * Returns the configs directory
-     *
-     * @return File object for the configs directory
-     */
-    public File getConfigsDir() {
-        return this.configsDir;
-    }
-
-    /**
-     * Returns the themes directory
-     *
-     * @return File object for the themes directory
-     */
-    public File getThemesDir() {
-        return this.themesDir;
-    }
-
-    /**
-     * Returns the JSON directory
-     *
-     * @return File object for the JSON directory
-     */
-    public File getJSONDir() {
-        return this.jsonDir;
-    }
-
-    /**
-     * Returns the Versions directory
-     *
-     * @return File object for the Versions directory
-     */
-    public File getVersionsDir() {
-        return this.versionsDir;
-    }
-
-    /**
-     * Returns the common configs directory
-     *
-     * @return File object for the common configs directory
-     */
-    public File getCommonConfigsDir() {
-        return this.commonConfigsDir;
-    }
-
-    /**
-     * Returns the images directory
-     *
-     * @return File object for the images directory
-     */
-    public File getImagesDir() {
-        return this.imagesDir;
-    }
-
-    /**
-     * Returns the skins directory
-     *
-     * @return File object for the skins directory
-     */
-    public File getSkinsDir() {
-        return this.skinsDir;
-    }
-
-    /**
-     * Returns the tools directory
-     *
-     * @return File object for the tools directory
-     */
-    public File getToolsDir() {
-        return this.toolsDir;
-    }
-
-    /**
-     * Returns the libraries directory
-     *
-     * @return File object for the libraries directory
-     */
-    public File getLibrariesDir() {
-        return this.librariesDir;
-    }
-
-    /**
-     * Returns the downloads directory for the user
-     *
-     * @return File object for the downloads directory for the users account
-     */
-    public File getUsersDownloadsDir() {
-        return this.usersDownloadsFolder;
     }
 
     /**
@@ -1157,7 +1020,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
-            File fileDir = new File(getJSONDir(), "news.json");
+            File fileDir = FileSystem.JSON.resolve("news.json").toFile();
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
 
             this.news = Gsons.DEFAULT.fromJson(in, type);
@@ -1180,7 +1043,7 @@ public class Settings {
             java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
             }.getType();
             List<MinecraftVersion> list = Gsons.DEFAULT_ALT
-                    .fromJson(new FileReader(new File(getJSONDir(), "minecraft.json")), type);
+                    .fromJson(new FileReader(FileSystem.JSON.resolve("minecraft.json").toFile()), type);
 
             if (list == null) {
                 LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
@@ -1204,7 +1067,8 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            this.packs = Gsons.DEFAULT_ALT.fromJson(new FileReader(new File(getJSONDir(), "packsnew.json")), type);
+            this.packs = Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()),
+                    type);
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
@@ -2432,9 +2296,9 @@ public class Settings {
     }
 
     public File getThemeFile() {
-        File theme = new File(this.themesDir, this.theme + ".zip");
-        if (theme.exists()) {
-            return theme;
+        File themeFile = FileSystem.THEMES.resolve(this.theme + ".zip").toFile();
+        if (themeFile.exists()) {
+            return themeFile;
         } else {
             return null;
         }

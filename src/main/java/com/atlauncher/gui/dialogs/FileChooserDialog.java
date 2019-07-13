@@ -37,6 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -95,7 +96,7 @@ public class FileChooserDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selectButton = new JButton(GetText.tr("Select"));
         selectButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser(App.settings.getBaseDir());
+            JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
             fileChooser.setMultiSelectionEnabled(true);
             fileChooser.setFileFilter(new FileFilter() {
                 @Override

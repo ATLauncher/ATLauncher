@@ -17,9 +17,7 @@
  */
 package com.atlauncher.data;
 
-import java.io.File;
-
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.network.Download;
 
 public class DownloadableFile {
@@ -37,14 +35,9 @@ public class DownloadableFile {
     }
 
     public Download getDownload() {
-        File file = new File(new File(App.settings.getConfigsDir(), this.folder), this.name);
-
-        if (this.folder.equalsIgnoreCase("skins")) {
-            file = new File(App.settings.getSkinsDir(), this.name);
-        }
-
-        return Download.build().setUrl(
-                String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(), this.name))
-                .downloadTo(file.toPath()).size(this.size).hash(this.sha1);
+        return Download.build()
+                .setUrl(String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(),
+                        this.name))
+                .downloadTo(FileSystem.CONFIGS.resolve(this.folder + "/" + this.name)).size(this.size).hash(this.sha1);
     }
 }

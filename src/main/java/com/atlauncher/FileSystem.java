@@ -34,17 +34,16 @@ public final class FileSystem {
     public static final Path LOGS = BASE_DIR.resolve("logs");
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
     public static final Path CACHE = BASE_DIR.resolve("cache");
-    public static final Path CONFIGS = BASE_DIR.resolve("Configs");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
-    public static final Path THEMES = CONFIGS.resolve("Themes");
-    public static final Path JSON = CONFIGS.resolve("JSON");
-    public static final Path VERSIONS = CONFIGS.resolve("Versions");
-    public static final Path IMAGES = CONFIGS.resolve("Images");
-    public static final Path SKINS = IMAGES.resolve("Skins");
-    public static final Path TOOLS = IMAGES.resolve("Tools");
-    public static final Path COMMON = CONFIGS.resolve("Common");
-    public static final Path LANGUAGES = CONFIGS.resolve("Languages");
+
+    public static final Path CONFIGS = BASE_DIR.resolve("configs");
+    public static final Path COMMON = CONFIGS.resolve("common");
+    public static final Path IMAGES = CONFIGS.resolve("images");
+    public static final Path SKINS = IMAGES.resolve("skins");
+    public static final Path JSON = CONFIGS.resolve("json");
+    public static final Path THEMES = CONFIGS.resolve("themes");
+    public static final Path TOOLS = CONFIGS.resolve("tools");
 
     public static final Path ASSETS = BASE_DIR.resolve("assets");
     public static final Path RESOURCES_LOG_CONFIGS = ASSETS.resolve("log_configs");
@@ -83,6 +82,14 @@ public final class FileSystem {
     private static void deleteDirectories() throws IOException {
         if (Files.exists(CONFIGS.resolve("Jars"))) {
             FileUtils.delete(CONFIGS.resolve("Jars"));
+        }
+
+        if (Files.exists(CONFIGS.resolve("Languages"))) {
+            FileUtils.delete(CONFIGS.resolve("Languages"));
+        }
+
+        if (Files.exists(CONFIGS.resolve("Libraries"))) {
+            FileUtils.delete(CONFIGS.resolve("Libraries"));
         }
 
         if (Files.exists(CONFIGS.resolve("instancesdata"))) {
@@ -148,6 +155,59 @@ public final class FileSystem {
             Files.move(oldFailedDownloadsDir, oldFailedDownloadsDir.resolveSibling("faileddownloadstemp"));
             Files.move(oldFailedDownloadsDir.resolveSibling("faileddownloadstemp"), FAILED_DOWNLOADS);
         }
+
+        Path oldConfigsDir = BASE_DIR.resolve("Configs");
+        if (Files.exists(oldConfigsDir)
+                && (!Files.isSameFile(oldConfigsDir, CONFIGS) || (Files.isSameFile(oldConfigsDir, CONFIGS)
+                        && CONFIGS.toRealPath().getFileName().toString().equals("Configs")))) {
+            Files.move(oldConfigsDir, oldConfigsDir.resolveSibling("configstemp"));
+            Files.move(oldConfigsDir.resolveSibling("configstemp"), CONFIGS);
+        }
+
+        Path oldCommonDir = CONFIGS.resolve("Common");
+        if (Files.exists(oldCommonDir)
+                && (!Files.isSameFile(oldCommonDir, COMMON) || (Files.isSameFile(oldCommonDir, COMMON)
+                        && COMMON.toRealPath().getFileName().toString().equals("Common")))) {
+            Files.move(oldCommonDir, oldCommonDir.resolveSibling("commontemp"));
+            Files.move(oldCommonDir.resolveSibling("commontemp"), COMMON);
+        }
+
+        Path oldImagesDir = CONFIGS.resolve("Images");
+        if (Files.exists(oldImagesDir)
+                && (!Files.isSameFile(oldImagesDir, IMAGES) || (Files.isSameFile(oldImagesDir, IMAGES)
+                        && IMAGES.toRealPath().getFileName().toString().equals("Images")))) {
+            Files.move(oldImagesDir, oldImagesDir.resolveSibling("imagestemp"));
+            Files.move(oldImagesDir.resolveSibling("imagestemp"), IMAGES);
+        }
+
+        Path oldSkinsDir = IMAGES.resolve("Skins");
+        if (Files.exists(oldSkinsDir) && (!Files.isSameFile(oldSkinsDir, SKINS) || (Files.isSameFile(oldSkinsDir, SKINS)
+                && SKINS.toRealPath().getFileName().toString().equals("Skins")))) {
+            Files.move(oldSkinsDir, oldSkinsDir.resolveSibling("skinstemp"));
+            Files.move(oldSkinsDir.resolveSibling("skinstemp"), SKINS);
+        }
+
+        Path oldJSONDir = CONFIGS.resolve("JSON");
+        if (Files.exists(oldJSONDir) && (!Files.isSameFile(oldJSONDir, JSON)
+                || (Files.isSameFile(oldJSONDir, JSON) && JSON.toRealPath().getFileName().toString().equals("JSON")))) {
+            Files.move(oldJSONDir, oldJSONDir.resolveSibling("jsontemp"));
+            Files.move(oldJSONDir.resolveSibling("jsontemp"), JSON);
+        }
+
+        Path oldThemesDir = CONFIGS.resolve("Themes");
+        if (Files.exists(oldThemesDir)
+                && (!Files.isSameFile(oldThemesDir, THEMES) || (Files.isSameFile(oldThemesDir, THEMES)
+                        && THEMES.toRealPath().getFileName().toString().equals("Themes")))) {
+            Files.move(oldThemesDir, oldThemesDir.resolveSibling("themestemp"));
+            Files.move(oldThemesDir.resolveSibling("themestemp"), THEMES);
+        }
+
+        Path oldToolsDir = CONFIGS.resolve("Tools");
+        if (Files.exists(oldToolsDir) && (!Files.isSameFile(oldToolsDir, TOOLS) || (Files.isSameFile(oldToolsDir, TOOLS)
+                && TOOLS.toRealPath().getFileName().toString().equals("Tools")))) {
+            Files.move(oldToolsDir, oldToolsDir.resolveSibling("toolstemp"));
+            Files.move(oldToolsDir.resolveSibling("toolstemp"), TOOLS);
+        }
     }
 
     private static void createDirectories() {
@@ -160,6 +220,14 @@ public final class FileSystem {
         FileUtils.createDirectory(RUNTIMES);
         FileUtils.createDirectory(SERVERS);
         FileUtils.createDirectory(TEMP);
+
+        FileUtils.createDirectory(CONFIGS);
+        FileUtils.createDirectory(COMMON);
+        FileUtils.createDirectory(IMAGES);
+        FileUtils.createDirectory(SKINS);
+        FileUtils.createDirectory(JSON);
+        FileUtils.createDirectory(THEMES);
+        FileUtils.createDirectory(TOOLS);
 
         FileUtils.createDirectory(ASSETS);
         FileUtils.createDirectory(RESOURCES_INDEXES);

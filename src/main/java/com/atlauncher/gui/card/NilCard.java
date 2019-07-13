@@ -20,7 +20,6 @@ package com.atlauncher.gui.card;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -28,7 +27,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
-import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
@@ -42,8 +41,8 @@ import org.mini2Dx.gettext.GetText;
  */
 @SuppressWarnings("serial")
 public class NilCard extends JPanel implements RelocalizationListener {
-    private static final Image defaultImage = Utils
-            .getIconImage(new File(App.settings.getImagesDir(), "defaultimage" + ".png")).getImage();
+    private static final Image defaultImage = Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile())
+            .getImage();
 
     private final JTextArea error = new JTextArea();
     private final JSplitPane splitter = new JSplitPane();
@@ -53,13 +52,11 @@ public class NilCard extends JPanel implements RelocalizationListener {
         RelocalizationManager.addListener(this);
 
         if (OS.isMac()) {
-            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"),
-                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
-                    new Font("SansSerif", Font.BOLD, 14)));
+            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
         } else {
-            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"),
-                    TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
-                    new Font("SansSerif", Font.BOLD, 15)));
+            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
         }
 
         this.error.setBorder(BorderFactory.createEmptyBorder());

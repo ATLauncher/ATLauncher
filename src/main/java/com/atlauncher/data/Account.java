@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
@@ -180,8 +181,7 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftHead() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(),
-                    (this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) + ".png");
+            file = FileSystem.SKINS.resolve((this.isUUIDNull() ? "default" : this.getUUIDNoDashes()) + ".png").toFile();
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -189,7 +189,7 @@ public class Account implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         BufferedImage image = null;
@@ -200,7 +200,7 @@ public class Account implements Serializable {
         }
 
         if (image == null) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         try {
@@ -230,7 +230,7 @@ public class Account implements Serializable {
     public ImageIcon getMinecraftSkin() {
         File file = null;
         if (this.isReal()) {
-            file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
+            file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
             if (!file.exists()) {
                 this.updateSkin(); // Download/update the users skin
             }
@@ -238,7 +238,7 @@ public class Account implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         BufferedImage image = null;
@@ -249,7 +249,7 @@ public class Account implements Serializable {
         }
 
         if (image == null) {
-            file = new File(App.settings.getSkinsDir(), "default.png");
+            file = FileSystem.SKINS.resolve("default.png").toFile();
         }
 
         try {
@@ -472,7 +472,7 @@ public class Account implements Serializable {
     public void updateSkin() {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
-            final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
+            final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
             LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Downloading Skin"), 0,
                     GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
@@ -492,7 +492,7 @@ public class Account implements Serializable {
                         }
 
                         // Only copy over the default skin if there is no skin for the user
-                        Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
+                        Utils.copyFile(FileSystem.SKINS.resolve(skinFilename).toFile(), file, true);
                         dialog.setReturnValue(true);
                     }
                 } else {
@@ -514,7 +514,7 @@ public class Account implements Serializable {
                                 }
 
                                 // Only copy over the default skin if there is no skin for the user
-                                Utils.copyFile(new File(App.settings.getSkinsDir(), skinFilename), file, true);
+                                Utils.copyFile(FileSystem.SKINS.resolve(skinFilename).toFile(), file, true);
                                 dialog.setReturnValue(true);
                             }
                         }
@@ -688,8 +688,9 @@ public class Account implements Serializable {
             LogManager.error(response.getErrorMessage());
 
             DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
-                    .setContent(HTMLUtils.centerParagraph(HTMLUtils.centerParagraph(HTMLUtils.centerParagraph(
-                            GetText.tr("Couldn't login to Minecraft servers") + "<br/><br/>" + response.getErrorMessage()))))
+                    .setContent(HTMLUtils.centerParagraph(HTMLUtils
+                            .centerParagraph(HTMLUtils.centerParagraph(GetText.tr("Couldn't login to Minecraft servers")
+                                    + "<br/><br/>" + response.getErrorMessage()))))
                     .setType(DialogManager.ERROR).show();
 
             App.settings.setMinecraftLaunched(false);

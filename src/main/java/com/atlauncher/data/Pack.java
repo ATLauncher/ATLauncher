@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Version;
@@ -77,9 +78,9 @@ public class Pack {
     }
 
     public ImageIcon getImage() {
-        File imageFile = new File(App.settings.getImagesDir(), getSafeName().toLowerCase() + ".png");
+        File imageFile = FileSystem.IMAGES.resolve(getSafeName().toLowerCase() + ".png").toFile();
         if (!imageFile.exists()) {
-            imageFile = new File(App.settings.getImagesDir(), "defaultimage.png");
+            imageFile = FileSystem.IMAGES.resolve("defaultimage.png").toFile();
         }
         return Utils.getIconImage(imageFile);
     }
