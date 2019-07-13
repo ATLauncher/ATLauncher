@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-07-13 09:30\n"
+"PO-Revision-Date: 2019-07-13 10:10\n"
 "Last-Translator: RyanTheAllmighty\n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -683,11 +683,11 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:134
 msgid "Copy Log"
-msgstr "Copier le journal"
+msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:135
 msgid "Upload Log"
-msgstr "Télécharger maintenant"
+msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
 msgid "Checking For Updated"
@@ -1478,15 +1478,15 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:293
 msgid "Featured Packs"
-msgstr "Packs recommandés"
+msgstr ""
 
 #: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:294
 msgid "Vanilla Packs"
-msgstr "Paquets Vanilla"
+msgstr ""
 
 #: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:294
 msgid "Packs"
-msgstr "Paquets"
+msgstr ""
 
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:67
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:94
