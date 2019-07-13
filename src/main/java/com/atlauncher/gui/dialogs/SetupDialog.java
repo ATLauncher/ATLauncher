@@ -127,7 +127,7 @@ public class SetupDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
-            App.settings.setLanguage((String) language.getSelectedItem());
+            Language.setLanguage((String) language.getSelectedItem());
             App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
             App.settings.setEnableAnalytics(enableAnalytics.isSelected());
             App.settings.saveProperties();

@@ -118,8 +118,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 }
             }
         });
-        ConsoleCloseManager.addListener(() -> toggleConsole.setText(GetText.tr("Show")));
-        ConsoleOpenManager.addListener(() -> toggleConsole.setText(GetText.tr("Hide")));
+        ConsoleCloseManager.addListener(() -> toggleConsole.setText(GetText.tr("Show Console")));
+        ConsoleOpenManager.addListener(() -> toggleConsole.setText(GetText.tr("Hide Console")));
     }
 
     /**
@@ -127,9 +127,9 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      */
     private void createButtons() {
         if (App.settings.isConsoleVisible()) {
-            toggleConsole = new JButton(GetText.tr("Hide"));
+            toggleConsole = new JButton(GetText.tr("Hide Console"));
         } else {
-            toggleConsole = new JButton(GetText.tr("Show"));
+            toggleConsole = new JButton(GetText.tr("Show Console"));
         }
 
         openFolder = new JButton(GetText.tr("Open Folder"));
@@ -207,9 +207,9 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     @Override
     public void onRelocalization() {
         if (App.settings.getConsole().isVisible()) {
-            toggleConsole.setText(GetText.tr("Hide"));
+            toggleConsole.setText(GetText.tr("Hide Console"));
         } else {
-            toggleConsole.setText(GetText.tr("Show"));
+            toggleConsole.setText(GetText.tr("Show Console"));
         }
         this.updateData.setText(GetText.tr("Update Data"));
         this.openFolder.setText(GetText.tr("Open Folder"));

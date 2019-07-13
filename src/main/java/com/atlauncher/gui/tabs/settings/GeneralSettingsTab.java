@@ -79,7 +79,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<>(Language.languages.keySet().toArray(new String[Language.languages.size()]));
+        language = new JComboBox<>(Language.locales.stream().map(l -> l.getDisplayName()).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
         add(language, gbc);
 
@@ -262,7 +262,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.setLanguage((String) language.getSelectedItem());
+        Language.setLanguage((String) language.getSelectedItem());
         App.settings.setTheme((String) theme.getSelectedItem());
         App.settings.setDateFormat((String) dateFormat.getSelectedItem());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());

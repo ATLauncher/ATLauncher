@@ -137,8 +137,8 @@ public class InstanceInstallerDialog extends JDialog {
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        install = new JButton(((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("common.reinstall"))
-                : GetText.tr("common.install")));
+        install = new JButton(((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("Reinstall"))
+                : GetText.tr("Install")));
 
         // Top Panel Stuff
         top = new JPanel();

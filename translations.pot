@@ -148,9 +148,9 @@ msgstr ""
 #: src\main\java\com\atlauncher\data\InstanceV2.java:573
 #: src\main\java\com\atlauncher\data\json\Messages.java:52
 #: src\main\java\com\atlauncher\data\json\Messages.java:73
-#: src\main\java\com\atlauncher\data\Settings.java:264
-#: src\main\java\com\atlauncher\data\Settings.java:282
-#: src\main\java\com\atlauncher\data\Settings.java:300
+#: src\main\java\com\atlauncher\data\Settings.java:261
+#: src\main\java\com\atlauncher\data\Settings.java:279
+#: src\main\java\com\atlauncher\data\Settings.java:297
 #: src\main\java\com\atlauncher\managers\DialogManager.java:77
 #: src\main\java\com\atlauncher\managers\DialogManager.java:85
 msgid "Ok"
@@ -281,37 +281,37 @@ msgstr ""
 msgid "There is no note attached to this crash."
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:246
+#: src\main\java\com\atlauncher\data\Settings.java:243
 msgid "Running 32 Bit Java on 64 Bit Windows"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:244
 msgid ""
 "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/"
 "><br/>This will cause severe issues playing all packs if not fixed.<br/><br/"
 ">Do you want to close the launcher and learn how to fix this issue now?"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:261
+#: src\main\java\com\atlauncher\data\Settings.java:258
 msgid "Warning! You may not be able to play Minecraft"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:262
+#: src\main\java\com\atlauncher\data\Settings.java:259
 msgid ""
 "You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you "
 "have issues playing some packs, you may need to install Java 8 and set it to "
 "be used in the launchers java settings"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:264
-#: src\main\java\com\atlauncher\data\Settings.java:282
-#: src\main\java\com\atlauncher\data\Settings.java:300
+#: src\main\java\com\atlauncher\data\Settings.java:261
+#: src\main\java\com\atlauncher\data\Settings.java:279
+#: src\main\java\com\atlauncher\data\Settings.java:297
 msgid "Download"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:265
-#: src\main\java\com\atlauncher\data\Settings.java:283
-#: src\main\java\com\atlauncher\data\Settings.java:301
+#: src\main\java\com\atlauncher\data\Settings.java:262
+#: src\main\java\com\atlauncher\data\Settings.java:280
+#: src\main\java\com\atlauncher\data\Settings.java:298
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:209
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:398
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:476
@@ -321,12 +321,12 @@ msgstr ""
 msgid "Don't Remind Me Again"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:279
-#: src\main\java\com\atlauncher\data\Settings.java:297
+#: src\main\java\com\atlauncher\data\Settings.java:276
+#: src\main\java\com\atlauncher\data\Settings.java:294
 msgid "Unsupported Java Version"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:280
+#: src\main\java\com\atlauncher\data\Settings.java:277
 msgid ""
 "You're using an unsupported version of Java. You should upgrade your Java to "
 "at minimum Java 8 version 101.<br/><br/>Without doing this, some packs may "
@@ -334,7 +334,7 @@ msgid ""
 "install the latest Java"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:298
+#: src\main\java\com\atlauncher\data\Settings.java:295
 msgid ""
 "You're using an unsupported version of Java. You should upgrade your Java to "
 "at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load "
@@ -342,8 +342,8 @@ msgid ""
 "page"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:521
-#: src\main\java\com\atlauncher\data\Settings.java:522
+#: src\main\java\com\atlauncher\data\Settings.java:518
+#: src\main\java\com\atlauncher\data\Settings.java:519
 msgid "Downloading Updates"
 msgstr ""
 
@@ -441,7 +441,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:564
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:97
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:531
-#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:115
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:114
 msgid "Settings"
 msgstr ""
 
@@ -750,13 +750,15 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:121
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:132
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:212
-msgid "Show"
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:87
+msgid "Show Console"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:122
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:130
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:210
-msgid "Hide"
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:92
+msgid "Hide Console"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:136
@@ -994,8 +996,8 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:128
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:142
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:379
-#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:56
-#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:123
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:55
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:122
 msgid "Save"
 msgstr ""
 
@@ -1942,14 +1944,6 @@ msgstr ""
 msgid ""
 "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause "
 "corruption of your saves"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\TrayMenu.java:87
-msgid "Show console"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\TrayMenu.java:92
-msgid "Hide console"
 msgstr ""
 
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:198

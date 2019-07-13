@@ -84,11 +84,11 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
 
     @Override
     public void onConsoleClose() {
-        this.tcButton.setText(GetText.tr("Show console"));
+        this.tcButton.setText(GetText.tr("Show Console"));
     }
 
     @Override
     public void onConsoleOpen() {
-        this.tcButton.setText(GetText.tr("Hide console"));
+        this.tcButton.setText(GetText.tr("Hide Console"));
     }
 }

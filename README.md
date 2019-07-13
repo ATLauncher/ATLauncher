@@ -10,10 +10,10 @@ ModPacks easily and quickly.
 
 ## Links
 
--   [ATLauncher Website](https://www.atlauncher.com)
--   [ATLauncher Facebook](http://www.facebook.com/ATLauncher)
--   [ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
--   [ATLauncher Twitter](http://twitter.com/ATLauncher)
+- [ATLauncher Website](https://www.atlauncher.com)
+- [ATLauncher Facebook](http://www.facebook.com/ATLauncher)
+- [ATLauncher Reddit](http://www.reddit.com/r/ATLauncher)
+- [ATLauncher Twitter](http://twitter.com/ATLauncher)
 
 ## Coding Standards & Styling Guidelines
 

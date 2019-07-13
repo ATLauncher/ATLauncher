@@ -154,7 +154,7 @@ public class Settings {
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Directories and Files for the Launcher
     private File baseDir, configsDir, themesDir, jsonDir, versionsDir, imagesDir, skinsDir, toolsDir, commonConfigsDir,
-            librariesDir, languagesDir, usersDownloadsFolder;
+            librariesDir, usersDownloadsFolder;
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
@@ -198,7 +198,6 @@ public class Settings {
         toolsDir = new File(configsDir, "Tools");
         commonConfigsDir = new File(configsDir, "Common");
         librariesDir = new File(configsDir, "Libraries");
-        languagesDir = new File(configsDir, "Languages");
     }
 
     public void loadEverything() {
@@ -233,8 +232,6 @@ public class Settings {
         if (this.isUsingCustomJavaPath()) {
             checkForValidJavaPath(true); // Checks for a valid Java path
         }
-
-        console.setupLanguage(); // Setup language on the console
 
         clearOldLogs(); // Clear all the old logs out
 
@@ -632,8 +629,8 @@ public class Settings {
      * Checks the directory to make sure all the necessary folders are there
      */
     private void checkFolders() {
-        File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir, librariesDir,
-                languagesDir };
+        File[] files = { configsDir, themesDir, jsonDir, commonConfigsDir, imagesDir, skinsDir, toolsDir,
+                librariesDir };
         for (File file : files) {
             if (!file.exists()) {
                 file.mkdir();
@@ -738,15 +735,6 @@ public class Settings {
     }
 
     /**
-     * Returns the languages directory
-     *
-     * @return File object for the languages directory
-     */
-    public File getLanguagesDir() {
-        return this.languagesDir;
-    }
-
-    /**
      * Returns the downloads directory for the user
      *
      * @return File object for the downloads directory for the users account
@@ -806,11 +794,6 @@ public class Settings {
             }
 
             String lang = properties.getProperty("language", "English");
-            if (!isLanguageByName(lang)) {
-                LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
-                lang = "English";
-            }
-
             Language.setLanguage(lang);
 
             this.enableProxy = Boolean.parseBoolean(properties.getProperty("enableproxy", "false"));
@@ -871,14 +854,6 @@ public class Settings {
                     .parseBoolean(properties.getProperty("hidejavaletsencryptwarning", "false"));
 
             this.hideJava9Warning = Boolean.parseBoolean(properties.getProperty("hideJava9Warning", "false"));
-
-            String lang = properties.getProperty("language", "English");
-            if (!isLanguageByName(lang)) {
-                LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
-                lang = "English";
-            }
-
-            Language.setLanguage(lang);
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
             if (!this.forgeLoggingLevel.equalsIgnoreCase("SEVERE")
@@ -1786,19 +1761,6 @@ public class Settings {
     }
 
     /**
-     * Get the Languages available in the Launcher
-     *
-     * @return The Languages available in the Launcher
-     */
-    public List<String> getLanguages() {
-        List<String> langs = new LinkedList<>();
-        for (File file : this.getLanguagesDir().listFiles((dir, name) -> name.endsWith(".lang"))) {
-            langs.add(file.getName().substring(0, file.getName().lastIndexOf(".")));
-        }
-        return langs;
-    }
-
-    /**
      * Determines if offline mode is enabled or not
      *
      * @return true if offline mode is enabled, false otherwise
@@ -2119,16 +2081,6 @@ public class Settings {
     }
 
     /**
-     * Finds if a language is available
-     *
-     * @param name The name of the Language
-     * @return true if found, false if not
-     */
-    public boolean isLanguageByName(String name) {
-        return this.getLanguages().contains(name.toLowerCase());
-    }
-
-    /**
      * Finds if an Account is available
      *
      * @param username The username of the Account
@@ -2194,19 +2146,6 @@ public class Settings {
             this.minecraftProcess = null;
         } else {
             LogManager.error("Cannot kill Minecraft as there is no instance open!");
-        }
-    }
-
-    /**
-     * Sets the users current active Language
-     *
-     * @param language The language to set to
-     */
-    public void setLanguage(String language) {
-        try {
-            Language.setLanguage(language);
-        } catch (IOException ex) {
-            LogManager.logStackTrace("Failed to load language", ex);
         }
     }
 

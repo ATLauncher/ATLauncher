@@ -18,23 +18,40 @@
 package com.atlauncher.data;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.atlauncher.App;
 import com.atlauncher.LogManager;
 
 import org.mini2Dx.gettext.GetText;
+import org.mini2Dx.gettext.PoFile;
 
 public class Language {
+    public final static List<Locale> locales = new ArrayList<>();
     public final static Map<String, Locale> languages = new HashMap<>();
-    public static String selected = "English";
+    public static String selected = Locale.ENGLISH.getDisplayName();
 
-    public static void init() throws IOException {
-        languages.put("English", Locale.ENGLISH);
+    // add in the languages we have support for
+    static {
+        locales.add(Locale.ENGLISH);
     }
 
-    public static void setLanguage(String language) throws IOException {
+    public static void init() throws IOException {
+        for (Locale locale : locales) {
+            if (App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po") != null) {
+                languages.put(locale.getDisplayName(), locale);
+                GetText.add(
+                        new PoFile(locale, App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po")));
+                LogManager.debug("Loaded language " + locale.getDisplayName() + " with key of " + locale);
+            }
+        }
+    }
+
+    public static void setLanguage(String language) {
         Locale locale;
 
         if (isLanguageByName(language)) {
@@ -42,9 +59,9 @@ public class Language {
             locale = languages.get(language);
             selected = language;
         } else {
-            LogManager.info("Unknown language " + language + ". Defaulting to English");
+            LogManager.info("Unknown language " + language + ". Defaulting to " + Locale.ENGLISH.getDisplayName());
             locale = Locale.ENGLISH;
-            selected = "English";
+            selected = Locale.ENGLISH.getDisplayName();
         }
 
         GetText.setLocale(locale);

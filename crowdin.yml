@@ -1,3 +1,0 @@
-files:
-  - source: /translations.pot
-    translation: /src/main/resources/assets/lang/%locale_with_underscore%.po

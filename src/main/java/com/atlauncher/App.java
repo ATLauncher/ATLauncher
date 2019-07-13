@@ -37,7 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -197,10 +196,6 @@ public class App {
     public static Theme THEME = Theme.DEFAULT_THEME;
 
     static {
-        // Set English as the default locale. CodeChickenLib(?) has some issues when not
-        // using this on some systems.
-        Locale.setDefault(Locale.ENGLISH);
-
         // Prefer to use IPv4
         System.setProperty("java.net.preferIPv4Stack", "true");
 
