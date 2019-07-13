@@ -38,6 +38,8 @@ import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
+
 public class SetupDialog extends JDialog {
     /**
      * Auto generated serial.
@@ -59,7 +61,8 @@ public class SetupDialog extends JDialog {
     private JButton saveButton;
 
     public SetupDialog() {
-        super(null, Constants.LAUNCHER_NAME + " Setup", ModalityType.APPLICATION_MODAL);
+        // #. {0} is the name of the launcher (ATLauncher)
+        super(null, GetText.tr("{0} Setup", Constants.LAUNCHER_NAME), ModalityType.APPLICATION_MODAL);
         this.requestFocus();
         this.setSize(400, 250);
         setLocationRelativeTo(null);
@@ -70,7 +73,9 @@ public class SetupDialog extends JDialog {
 
         // Top Panel Stuff
         top = new JPanel();
-        top.add(new JLabel("Setting up " + Constants.LAUNCHER_NAME));
+
+        // #. {0} is the name of the launcher (ATLauncher)
+        top.add(new JLabel(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME)));
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -80,19 +85,19 @@ public class SetupDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        languageLabel = new JLabel("Language: ");
+        languageLabel = new JLabel(GetText.tr("Language") + ": ");
         middle.add(languageLabel, gbc);
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<>(Language.available());
-        language.setSelectedItem(Language.current());
+        language = new JComboBox<>(Language.languages.keySet().toArray(new String[Language.languages.size()]));
+        language.setSelectedItem(Language.selected);
         middle.add(language, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabel("Enable Leaderboards? ");
+        enableLeaderboardsLabel = new JLabel(GetText.tr("Enable Leaderboards") + "? ");
         middle.add(enableLeaderboardsLabel, gbc);
 
         gbc.gridx++;
@@ -104,9 +109,11 @@ public class SetupDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableAnalyticsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.analytics") + "? ",
+        enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "? ",
                 Utils.getIconImage("/assets/image/Help.png"),
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.analyticshelp", "<br/>") + "</html>");
+                "<html>" + GetText.tr(
+                        "The Launcher sends back anonymous analytics to Google Analytics%sin order to track what people do and don't use in the launcher.<br/>This helps determine what new features we implement in the future.<br/>All analytics are anonymous and contain no user/instance information in it at all.<br/>If you don't want to send anonymous analytics, you can disable this option.")
+                        + "</html>");
         middle.add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
@@ -118,7 +125,7 @@ public class SetupDialog extends JDialog {
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        saveButton = new JButton("Save");
+        saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
             App.settings.setLanguage((String) language.getSelectedItem());
             App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());

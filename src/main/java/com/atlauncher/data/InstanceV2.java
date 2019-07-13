@@ -62,6 +62,7 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 
+import org.mini2Dx.gettext.GetText;
 import org.zeroturnaround.zip.ZipUtil;
 
 import net.arikia.dev.drpc.DiscordRPC;
@@ -157,7 +158,7 @@ public class InstanceV2 extends MinecraftVersion {
         if (pack != null) {
             return pack.description;
         } else {
-            return Language.INSTANCE.localize("pack.nodescription");
+            return GetText.tr("No Description");
         }
     }
 
@@ -219,7 +220,7 @@ public class InstanceV2 extends MinecraftVersion {
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
         try {
-            progressDialog.setLabel(Language.INSTANCE.localize("instance.downloadingminecraft"));
+            progressDialog.setLabel(GetText.tr("Downloading Minecraft"));
             com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
                     .setUrl(this.downloads.client.url).hash(this.downloads.client.sha1).size(this.downloads.client.size)
                     .withHttpClient(httpClient).downloadTo(this.getMinecraftJarLibraryPath());
@@ -236,7 +237,7 @@ public class InstanceV2 extends MinecraftVersion {
         }
 
         // download libraries
-        progressDialog.setLabel(Language.INSTANCE.localize("instance.downloadinglibraries"));
+        progressDialog.setLabel(GetText.tr("Downloading Libraries"));
         DownloadPool librariesPool = new DownloadPool();
 
         this.libraries.stream().filter(library -> library.shouldInstall() && library.downloads.artifact != null)
@@ -271,7 +272,7 @@ public class InstanceV2 extends MinecraftVersion {
         progressDialog.doneTask();
 
         // organise assets
-        progressDialog.setLabel(Language.INSTANCE.localize("instance.downloadingresources"));
+        progressDialog.setLabel(GetText.tr("Downloading Resources"));
         MojangAssetIndex assetIndex = this.assetIndex;
 
         AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
@@ -305,7 +306,7 @@ public class InstanceV2 extends MinecraftVersion {
         progressDialog.doneTask();
 
         try {
-            progressDialog.setLabel(Language.INSTANCE.localize("instance.organisinglibraries"));
+            progressDialog.setLabel(GetText.tr("Organising Libraries"));
             if (Files.exists(this.getNativesTemp())) {
                 FileUtils.deleteDirectory(this.getNativesTemp());
             }
@@ -348,8 +349,9 @@ public class InstanceV2 extends MinecraftVersion {
         final Account account = App.settings.getAccount();
 
         if (account == null) {
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                    .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localize("instance.noaccount")))
+            DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                    .setContent(HTMLUtils
+                            .centerParagraph(GetText.tr("Cannot play instance as you have no account selected.")))
                     .setType(DialogManager.ERROR).show();
 
             App.settings.setMinecraftLaunched(false);
@@ -359,11 +361,10 @@ public class InstanceV2 extends MinecraftVersion {
                     : this.launcher.maximumMemory;
             if ((maximumMemory < this.launcher.requiredMemory)
                     && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
-                int ret = DialogManager.optionDialog()
-                        .setTitle(Language.INSTANCE.localize("instance.insufficientramtitle"))
-                        .setContent(HTMLUtils
-                                .centerParagraph(Language.INSTANCE.localizeWithReplace("instance.insufficientram",
-                                        "<b>" + this.launcher.requiredMemory + "</b> " + "MB<br/><br/>")))
+                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficient Ram"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                "This pack has set a minimum amount of ram needed to {0}.<br/><br/>Do you want to continue loading the instance anyway?",
+                                "<b>" + this.launcher.requiredMemory + "</b> MB")))
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
 
@@ -375,11 +376,10 @@ public class InstanceV2 extends MinecraftVersion {
             }
             Integer permGen = (this.launcher.permGen == null) ? App.settings.getPermGen() : this.launcher.permGen;
             if (permGen < this.launcher.requiredPermGen) {
-                int ret = DialogManager.optionDialog()
-                        .setTitle(Language.INSTANCE.localize("instance.insufficientpermgentitle"))
-                        .setContent(HTMLUtils
-                                .centerParagraph(Language.INSTANCE.localizeWithReplace("instance.insufficientpermgen",
-                                        "<b>" + this.launcher.requiredPermGen + "</b> " + "MB<br/><br/>")))
+                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                "This pack has set a minimum amount of permgen to {0}.<br/><br/>Do you want to continue loading the instance anyway?",
+                                "<b>" + this.launcher.requiredPermGen + "</b> MB")))
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
@@ -390,8 +390,8 @@ public class InstanceV2 extends MinecraftVersion {
             }
 
             LogManager.info("Logging into Minecraft!");
-            ProgressDialog loginDialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
-                    Language.INSTANCE.localize("account.loggingin"), "Aborted login to Minecraft!");
+            ProgressDialog loginDialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+                    GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
             loginDialog.addThread(new Thread(() -> {
                 loginDialog.setReturnValue(account.login());
                 loginDialog.close();
@@ -404,8 +404,8 @@ public class InstanceV2 extends MinecraftVersion {
                 return false;
             }
 
-            ProgressDialog prepareDialog = new ProgressDialog(Language.INSTANCE.localize("instance.preparingforlaunch"),
-                    4, Language.INSTANCE.localize("instance.preparingforlaunch"));
+            ProgressDialog prepareDialog = new ProgressDialog(GetText.tr("Preparing For Launch"), 4,
+                    GetText.tr("Preparing For Launch"));
             prepareDialog.addThread(new Thread(() -> {
                 LogManager.info("Preparing for launch!");
                 prepareDialog.setReturnValue(prepareForLaunch(prepareDialog));
@@ -563,15 +563,14 @@ public class InstanceV2 extends MinecraftVersion {
                     // OpenEye returned a response to the report, display that to user if needed.
                     LogManager.info("OpenEye: Pending crash report sent! URL: " + response.getURL());
                     if (response.hasNote()) {
-                        int ret = DialogManager.optionDialog()
-                                .setTitle(Language.INSTANCE.localize("instance.aboutyourcrash"))
-                                .setContent(HTMLUtils.centerParagraph(
-                                        Language.INSTANCE.localizeWithReplace("instance.openeyereport1", "<br/><br/>")
-                                                + response.getNoteDisplay()
-                                                + Language.INSTANCE.localize("instance" + ".openeyereport2")))
-                                .setType(DialogManager.INFO)
-                                .addOption(Language.INSTANCE.localize("common.opencrashreport"))
-                                .addOption(Language.INSTANCE.localize("common.ok"), true).show();
+                        int ret = DialogManager.optionDialog().setTitle(GetText.tr("instance.aboutyourcrash"))
+                                .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                        "We detected a previous unreported crash generated by the OpenEye mod.<br/><br/>This has now been sent off to OpenEye and you can open the crash report below or continue without viewing it.")
+                                        + "<br/><br/>" + response.getNoteDisplay()
+                                        + GetText.tr(
+                                                "You can turn this off by unchecking the OpenEye Reporting setting in the Settings tab. Click Ok to continue.")))
+                                .setType(DialogManager.INFO).addOption(GetText.tr("Open Crash Report"))
+                                .addOption(GetText.tr("Ok"), true).show();
 
                         if (ret == 0) {
                             OS.openWebBrowser(response.getURL());
@@ -654,7 +653,8 @@ public class InstanceV2 extends MinecraftVersion {
 
         this.save();
 
-        App.TOASTER.pop(mod.name + " " + Language.INSTANCE.localize("common.installed"));
+        // #. {0} is the name of a mod that was installed
+        App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
     }
 
     public boolean hasCustomMods() {

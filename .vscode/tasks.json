@@ -7,11 +7,19 @@
             "label": "build",
             "type": "shell",
             "command": "./gradlew build",
-            "dependsOn": ["clean"],
+            "dependsOn": [
+                "clean"
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "generateTemplatePot",
+            "type": "shell",
+            "command": "./gradlew generatePots",
+            "problemMatcher": []
         },
         {
             "label": "clean",

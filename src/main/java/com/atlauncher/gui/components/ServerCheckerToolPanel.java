@@ -25,7 +25,6 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ServerListForCheckerDialog;
@@ -33,16 +32,16 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
+
 public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
-    /**
-     * Auto generated serial.
-     */
     private static final long serialVersionUID = 1964636496849129267L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.serverchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Server Checker"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
-            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.serverchecker.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(GetText.tr(
+            "This tool checks specified Minecraft servers to see if they are up or not and how many players are logged in. Settings can be configured in the Settings tab under the Tools sub tab."),
+            60, "<br>")));
 
     public ServerCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);

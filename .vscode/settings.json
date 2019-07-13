@@ -1,3 +1,16 @@
 {
-    "java.import.gradle.wrapper.enabled": true
+    "java.import.gradle.wrapper.enabled": true,
+    "[po]": {
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": false,
+        "files.trimFinalNewlines": true,
+    },
+    "better-comments.tags": [
+        {
+            "tag": "#.",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        }
+    ],
 }

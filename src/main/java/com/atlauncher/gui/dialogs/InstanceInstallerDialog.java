@@ -49,7 +49,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.json.Version;
@@ -58,6 +57,8 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+
+import org.mini2Dx.gettext.GetText;
 
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
@@ -110,22 +111,25 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (object instanceof Pack) {
             pack = (Pack) object;
-            setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName());
+            // #. {0} is the name of the pack the user is installing
+            setTitle(GetText.tr("Installing {0}", pack.getName()));
             if (isServer) {
-                setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName() + " "
-                        + Language.INSTANCE.localize("common.server"));
+                // #. {0} is the name of the pack the user is installing
+                setTitle(GetText.tr("Installing {0} Server", pack.getName()));
                 this.isServer = true;
             }
         } else if (object instanceof Instance) {
             instance = (Instance) object;
             pack = instance.getRealPack();
             isReinstall = true; // We're reinstalling
-            setTitle(Language.INSTANCE.localize("common.reinstalling") + " " + instance.getName());
+            // #. {0} is the name of the pack the user is reinstalling
+            setTitle(GetText.tr("Reinstalling {0}", instance.getName()));
         } else {
             instanceV2 = (InstanceV2) object;
             pack = instanceV2.getPack();
             isReinstall = true; // We're reinstalling
-            setTitle(Language.INSTANCE.localize("common.reinstalling") + " " + instanceV2.launcher.name);
+            // #. {0} is the name of the pack the user is installing
+            setTitle(GetText.tr("Reinstalling {0}", instanceV2.launcher.name));
         }
         setSize(400, 225);
         setLocationRelativeTo(App.settings.getParent());
@@ -133,15 +137,13 @@ public class InstanceInstallerDialog extends JDialog {
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        install = new JButton(((isReinstall)
-                ? (isUpdate ? Language.INSTANCE.localize("common.update")
-                        : Language.INSTANCE.localize("common.reinstall"))
-                : Language.INSTANCE.localize("common.install")));
+        install = new JButton(((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("common.reinstall"))
+                : GetText.tr("common.install")));
 
         // Top Panel Stuff
         top = new JPanel();
-        top.add(new JLabel(((isReinstall) ? Language.INSTANCE.localize("common.reinstalling")
-                : Language.INSTANCE.localize("common.installing")) + " " + pack.getName()));
+        top.add(new JLabel(
+                ((isReinstall) ? GetText.tr("Reinstalling") : GetText.tr("Installing")) + " " + pack.getName()));
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -152,7 +154,7 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.gridy = 0;
         if (!this.isServer) {
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            instanceNameLabel = new JLabel(Language.INSTANCE.localize("instance.name") + ": ");
+            instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
             middle.add(instanceNameLabel, gbc);
 
             gbc.gridx++;
@@ -193,7 +195,7 @@ public class InstanceInstallerDialog extends JDialog {
                 gbc.gridx = 0;
                 gbc.gridy++;
                 gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-                enableUserLockLabel = new JLabel(Language.INSTANCE.localize("instance.enableuserlock") + "? ");
+                enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
                 middle.add(enableUserLockLabel, gbc);
 
                 gbc.gridx++;
@@ -201,13 +203,10 @@ public class InstanceInstallerDialog extends JDialog {
                 enableUserLock = new JCheckBox();
                 enableUserLock.addActionListener(e -> {
                     if (enableUserLock.isSelected()) {
-                        int ret = DialogManager.optionDialog()
-                                .setTitle(Language.INSTANCE.localize("instance.userlocktitle"))
-                                .setContent(HTMLUtils.centerParagraph(
-                                        Language.INSTANCE.localizeWithReplace("instance.userlockhelp", "<br/>")))
-                                .setType(DialogManager.WARNING)
-                                .addOption(Language.INSTANCE.localize("common.yes"), true)
-                                .addOption(Language.INSTANCE.localize("common.no")).show();
+                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Enable User Lock") + "? ")
+                                .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                        "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else.<br/><br/>Are you sure you want to do this?")))
+                                .setType(DialogManager.WARNING).show();
 
                         if (ret != 0) {
                             enableUserLock.setSelected(false);
@@ -224,40 +223,37 @@ public class InstanceInstallerDialog extends JDialog {
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                            .setContent(
-                                    HTMLUtils.centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                            + Language.INSTANCE.localizeWithReplace("instance.alreadyinstance",
-                                                    instanceNameField.getText() + "<br/><br/>")))
+                    DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                            .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                    "An instance already exists with that name.<br/><br/>Rename it and try again.")))
                             .setType(DialogManager.ERROR).show();
                     return;
                 } else if (!isReinstall && !isServer
                         && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                            .setContent(
-                                    HTMLUtils
-                                            .centerParagraph(Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                                    + Language.INSTANCE.localizeWithReplace("instance.invalidname",
-                                                            instanceNameField.getText())))
+                    DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                            .setContent(HTMLUtils.centerParagraph(GetText
+                                    .tr("Instance name is invalid. It must contain at least 1 letter or number.")))
                             .setType(DialogManager.ERROR).show();
                     return;
                 }
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
-                final JDialog dialog = new JDialog(App.settings.getParent(),
-                        ((isReinstall) ? Language.INSTANCE.localize("common.reinstalling")
-                                : Language.INSTANCE.localize("common.installing")) + " " + pack.getName() + " "
-                                + version.version
-                                + ((isServer) ? " " + Language.INSTANCE.localize("common.server") : ""),
-                        ModalityType.DOCUMENT_MODAL);
+                final JDialog dialog = new JDialog(App.settings.getParent(), isReinstall ? (
+                // #. {0} is the name of the pack the user is installing
+                isServer ? GetText.tr("Reinstalling {0} Server", pack.getName())
+                        // #. {0} is the name of the pack the user is installing
+                        : GetText.tr("Reinstalling {0}", pack.getName())) : (
+                // #. {0} is the name of the pack the user is installing
+                isServer ? GetText.tr("Installing {0} Server", pack.getName())
+                        // #. {0} is the name of the pack the user is installing
+                        : GetText.tr("Installing {0}", pack.getName())), ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.settings.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
 
                 JPanel topPanel = new JPanel();
                 topPanel.setLayout(new BorderLayout());
-                final JLabel doing = new JLabel(Language.INSTANCE.localizeWithReplace("instance.startingprocess",
-                        ((isReinstall) ? Language.INSTANCE.localize("common.reinstall")
-                                : Language.INSTANCE.localize("common.install"))));
+                final JLabel doing = new JLabel((isReinstall) ? GetText.tr("Starting Reinstall Process")
+                        : GetText.tr("Starting Install Process"));
                 doing.setHorizontalAlignment(JLabel.CENTER);
                 doing.setVerticalAlignment(JLabel.TOP);
                 topPanel.add(doing);
@@ -290,16 +286,16 @@ public class InstanceInstallerDialog extends JDialog {
                         String title;
                         if (isCancelled()) {
                             type = DialogManager.ERROR;
-                            text = pack.getName() + " " + version.version + " "
-                                    + Language.INSTANCE.localize("common.wasnt") + " "
-                                    + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
-                                            : Language.INSTANCE.localize("common.installed"))
-                                    + "<br/><br/>" + Language.INSTANCE.localize("instance" + ".checkerrorlogs");
-                            title = pack.getName() + " " + version.version + " "
-                                    + Language.INSTANCE.localize("common.not") + " "
-                                    + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
-                                            : Language.INSTANCE.localize("common.installed"));
+
                             if (isReinstall) {
+                                // #. {0} is the pack name and {1} is the pack version
+                                title = GetText.tr("{0} {1} Not Reinstalled", pack.getName(), version.version);
+
+                                // #. {0} is the pack name and {1} is the pack version
+                                text = GetText.tr(
+                                        "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
+                                        pack.getName(), version.version);
+
                                 if (instanceIsCorrupt) {
                                     if (instanceV2 != null) {
                                         instanceV2.launcher.isPlayable = false;
@@ -308,8 +304,18 @@ public class InstanceInstallerDialog extends JDialog {
                                         App.settings.setInstanceUnplayable(instance);
                                     }
                                 }
+                            } else {
+                                // #. {0} is the pack name and {1} is the pack version
+                                title = GetText.tr("{0} {1} Not Installed", pack.getName(), version.version);
+
+                                // #. {0} is the pack name and {1} is the pack version
+                                text = GetText.tr(
+                                        "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
+                                        pack.getName(), version.version);
                             }
                         } else {
+                            type = DialogManager.INFO;
+
                             try {
                                 success = get();
                             } catch (InterruptedException ignored) {
@@ -318,19 +324,27 @@ public class InstanceInstallerDialog extends JDialog {
                             } catch (ExecutionException e) {
                                 LogManager.logStackTrace(e);
                             }
+
                             if (success) {
                                 type = DialogManager.INFO;
-                                text = pack.getName() + " " + version.version + " "
-                                        + Language.INSTANCE.localize("common.hasbeen") + " "
-                                        + ((isReinstall) ? Language.INSTANCE.localize("common.reinstalled")
-                                                : Language.INSTANCE.localize("common.installed"))
-                                        + "<br/><br/>"
-                                        + ((isServer)
-                                                ? Language.INSTANCE.localizeWithReplace("instance" + ".finditserver",
-                                                        "<br/><br/>" + this.root.toFile().getAbsolutePath())
-                                                : Language.INSTANCE.localize("instance.findit"));
-                                title = pack.getName() + " " + version.version + " "
-                                        + Language.INSTANCE.localize("common.installed");
+
+                                // #. {0} is the pack name and {1} is the pack version
+                                title = GetText.tr("{0} {1} Installed", pack.getName(), version.version);
+
+                                if (isReinstall) {
+                                    // #. {0} is the pack name and {1} is the pack version
+                                    text = GetText.tr("{0} {1} has been reinstalled.", pack.getName(), version.version);
+                                } else if (isServer) {
+                                    // #. {0} is the pack name, {1} is the pack version and {2} is the folder
+                                    text = GetText.tr(
+                                            "{0} {1} server has been installed.<br/><br/>Find it in the below folder:<br/><br/>{2}",
+                                            pack.getName(), version.version, this.root.toFile().getAbsolutePath());
+                                } else {
+                                    // #. {0} is the pack name and {1} is the pack version
+                                    text = GetText.tr(
+                                            "{0} {1} has been installed.<br/><br/>Find it in the instances tab.",
+                                            pack.getName(), version.version);
+                                }
 
                                 App.settings.reloadInstancesPanel();
                                 if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev) {
@@ -343,20 +357,17 @@ public class InstanceInstallerDialog extends JDialog {
                                     }
                                 }
                             } else {
+
                                 if (isReinstall) {
-                                    type = DialogManager.ERROR;
-                                    text = pack.getName() + " " + version.version + " "
-                                            + Language.INSTANCE.localize("common.wasnt") + " "
-                                            + Language.INSTANCE.localize("common.reinstalled") + "<br/><br/>"
-                                            + (this.instanceIsCorrupt
-                                                    ? Language.INSTANCE.localize("instance.nolongerplayable")
-                                                    : "")
-                                            + "<br/><br/>" + Language.INSTANCE.localize("instance.checkerrorlogs")
-                                            + "!";
-                                    title = pack.getName() + " " + version.version + " "
-                                            + Language.INSTANCE.localize("common.not") + " "
-                                            + Language.INSTANCE.localize("common.reinstalled");
-                                    if (this.instanceIsCorrupt) {
+                                    // #. {0} is the pack name and {1} is the pack version
+                                    title = GetText.tr("{0} {1} Not Reinstalled", pack.getName(), version.version);
+
+                                    // #. {0} is the pack name and {1} is the pack version
+                                    text = GetText.tr(
+                                            "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
+                                            pack.getName(), version.version);
+
+                                    if (instanceIsCorrupt) {
                                         if (instanceV2 != null) {
                                             instanceV2.launcher.isPlayable = false;
                                             instanceV2.save();
@@ -365,16 +376,13 @@ public class InstanceInstallerDialog extends JDialog {
                                         }
                                     }
                                 } else {
-                                    // Install failed so delete the folder and clear Temp Dir
-                                    Utils.delete(this.root.toFile());
-                                    type = DialogManager.ERROR;
-                                    text = pack.getName() + " " + version.version + " "
-                                            + Language.INSTANCE.localize("common.wasnt") + " "
-                                            + Language.INSTANCE.localize("common.installed") + "<br/><br/>"
-                                            + Language.INSTANCE.localize("instance.checkerrorlogs") + "!";
-                                    title = pack.getName() + " " + version.version + " "
-                                            + Language.INSTANCE.localize("common.not") + " "
-                                            + Language.INSTANCE.localize("common.installed");
+                                    // #. {0} is the pack name and {1} is the pack version
+                                    title = GetText.tr("{0} {1} Not Installed", pack.getName(), version.version);
+
+                                    // #. {0} is the pack name and {1} is the pack version
+                                    text = GetText.tr(
+                                            "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
+                                            pack.getName(), version.version);
                                 }
                             }
                         }
@@ -475,7 +483,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             }
         });
-        cancel = new JButton(Language.INSTANCE.localize("common.cancel"));
+        cancel = new JButton(GetText.tr("Cancel"));
         cancel.addActionListener(e -> dispose());
         bottom.add(install);
         bottom.add(cancel);
@@ -488,7 +496,7 @@ public class InstanceInstallerDialog extends JDialog {
 
     private GridBagConstraints setupVersionsDropdown(GridBagConstraints gbc) {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        versionLabel = new JLabel(Language.INSTANCE.localize("instance.versiontoinstall") + ": ");
+        versionLabel = new JLabel(GetText.tr("Version To Install") + ": ");
         middle.add(versionLabel, gbc);
 
         gbc.gridx++;
@@ -572,7 +580,7 @@ public class InstanceInstallerDialog extends JDialog {
         loaderVersions.clear();
 
         loaderVersionsDropDown.removeAllItems();
-        loaderVersionsDropDown.addItem(new LoaderVersion(Language.INSTANCE.localize("instance.gettingloaderversions")));
+        loaderVersionsDropDown.addItem(new LoaderVersion(GetText.tr("Getting Loader Versions")));
 
         loaderVersionLabel.setVisible(true);
         loaderVersionsDropDown.setVisible(true);
@@ -626,7 +634,7 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        loaderVersionLabel = new JLabel(Language.INSTANCE.localize("instance.loaderversion") + ": ");
+        loaderVersionLabel = new JLabel(GetText.tr("Loader Version") + ": ");
         middle.add(loaderVersionLabel, gbc);
 
         gbc.gridx++;

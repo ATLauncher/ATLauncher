@@ -20,6 +20,8 @@ package com.atlauncher.data;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 
+import org.mini2Dx.gettext.GetText;
+
 public class MinecraftError {
     static final int OUT_OF_MEMORY = 1;
     static final int CONCURRENT_MODIFICATION_ERROR_1_6 = 2;
@@ -34,16 +36,15 @@ public class MinecraftError {
     }
 
     static void showOutOfMemoryPopup() {
-        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.aboutyourcrash"))
+        DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
                 .setContent(HTMLUtils.centerParagraph(
-                        Language.INSTANCE.localizeWithReplace("instancecrash.outofmemory", "<br/><br/>")))
+                        GetText.tr("Minecraft has crashed due to insufficent memory being allocated.<br/><br/>Please go to the settings tab and increase the maximum memory option and then try launching the instance again.")))
                 .setType(DialogManager.INFO).show();
     }
 
     static void showConcurrentModificationError16() {
-        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.aboutyourcrash"))
-                .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
-                        .localizeWithReplace("instancecrash.concurrentmodificationerror16", "<br/><br/>")))
+        DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
+                .setContent(HTMLUtils.centerParagraph(GetText.tr("Minecraft has crashed due to an incompatability with Forge and your version of Java.<br/><br/>Please reinstall the instance to automatically fix the problem, and then try launching the instance again.")))
                 .setType(DialogManager.INFO).show();
     }
 }

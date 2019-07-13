@@ -32,11 +32,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.MCQuery;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 import de.zh32.pingtest.QueryVersion;
 
@@ -63,7 +64,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
     private MinecraftServer serverEditing = null;
 
     public AddEditServerForCheckerDialog(MinecraftServer minecraftServer) {
-        super(null, Language.INSTANCE.localize((minecraftServer == null ? "tools.addserver" : "tools.editserver")),
+        super(null, (minecraftServer == null ? GetText.tr("Add Server") : GetText.tr("Edit Server")),
                 ModalityType.APPLICATION_MODAL);
         setSize(300, 200);
         setLocationRelativeTo(null);
@@ -76,7 +77,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
 
         if (minecraftServer != null) {
             this.serverEditing = minecraftServer;
-            addEditButton.setText(Language.INSTANCE.localize("common.edit"));
+            addEditButton.setText(GetText.tr("Edit"));
             serverName.setText(minecraftServer.getName());
             serverHost.setText(minecraftServer.getHost());
             serverPort.setText(minecraftServer.getPort() + "");
@@ -96,7 +97,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverNameLabel = new JLabel(Language.INSTANCE.localize("tools.serverchecker.name") + ": ");
+        serverNameLabel = new JLabel(GetText.tr("Name") + ": ");
         middle.add(serverNameLabel, gbc);
 
         gbc.gridx++;
@@ -109,7 +110,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverHostLabel = new JLabel(Language.INSTANCE.localize("tools.serverchecker.ip") + ": ");
+        serverHostLabel = new JLabel(GetText.tr("Host/IP") + ": ");
         middle.add(serverHostLabel, gbc);
 
         gbc.gridx++;
@@ -122,7 +123,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverPortLabel = new JLabel(Language.INSTANCE.localize("tools.serverchecker.port") + ": ");
+        serverPortLabel = new JLabel(GetText.tr("Port") + ": ");
         middle.add(serverPortLabel, gbc);
 
         gbc.gridx++;
@@ -135,11 +136,11 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
 
-        addEditButton = new JButton(Language.INSTANCE.localize("common.add"));
+        addEditButton = new JButton(GetText.tr("Add"));
         addEditButton.addActionListener(this);
         bottom.add(addEditButton);
 
-        closeButton = new JButton(Language.INSTANCE.localize("common.close"));
+        closeButton = new JButton(GetText.tr("Close"));
         closeButton.addActionListener(this);
         bottom.add(closeButton);
 
@@ -156,12 +157,12 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addEditButton) {
             if (serverName.getText().isEmpty() || serverHost.getText().isEmpty() || serverPort.getText().isEmpty()) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(Language.INSTANCE.localize("tools.serverchecker.notallfields"))
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(GetText.tr("Not all fields were filled in. Please go back and fill them in!"))
                         .setType(DialogManager.ERROR).show();
             } else if (!isValidPort()) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(Language.INSTANCE.localize("settings.proxyportinvalid"))
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(GetText.tr("The port you specified is invalid. Please check it and try again."))
                         .setType(DialogManager.ERROR).show();
             } else {
                 String name = serverName.getText();
@@ -169,9 +170,8 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 final int port = Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", ""));
                 QueryVersion qv = null;
 
-                final ProgressDialog dialog = new ProgressDialog(
-                        Language.INSTANCE.localize("tools.serverchecker.checkingserver"), 0,
-                        Language.INSTANCE.localize("tools.serverchecker.checkingserver"), "Cancelled Server Check!");
+                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking Server"), 0,
+                        GetText.tr("Checking Server"), "Cancelled Server Check!");
                 dialog.addThread(new Thread(() -> {
                     dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
                     dialog.close();
@@ -183,13 +183,12 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 }
 
                 if (qv == null) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                            .setContent(Language.INSTANCE.localize("tools.serverchecker.couldntconnect"))
+                    DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(GetText.tr(
+                            "Couldn't connect to server. All servers must be online and successfully checked once before adding."))
                             .setType(DialogManager.ERROR).show();
                 } else {
                     App.TOASTER.pop(
-                            Language.INSTANCE.localize((this.serverEditing == null ? "tools.serverchecker.serveradded"
-                                    : "tools.serverchecker.serveredited")));
+                            (this.serverEditing == null ? GetText.tr("Server Added") : GetText.tr("Server Edited")));
                     if (this.serverEditing == null) {
                         App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
                     } else {

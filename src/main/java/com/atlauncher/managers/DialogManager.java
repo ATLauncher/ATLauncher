@@ -25,7 +25,8 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
+
+import org.mini2Dx.gettext.GetText;
 
 public final class DialogManager {
     public static final int OPTION_TYPE = 0;
@@ -73,7 +74,7 @@ public final class DialogManager {
     public static DialogManager okDialog() {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(Language.INSTANCE.localize("common.ok"), true);
+        dialog.addOption(GetText.tr("Ok"), true);
 
         return dialog;
     }
@@ -81,8 +82,8 @@ public final class DialogManager {
     public static DialogManager okCancelDialog() {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(Language.INSTANCE.localize("common.ok"), true);
-        dialog.addOption(Language.INSTANCE.localize("common.cancel"));
+        dialog.addOption(GetText.tr("Ok"), true);
+        dialog.addOption(GetText.tr("Cancel"));
 
         return dialog;
     }
@@ -90,8 +91,8 @@ public final class DialogManager {
     public static DialogManager yesNoDialog() {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(Language.INSTANCE.localize("common.yes"), true);
-        dialog.addOption(Language.INSTANCE.localize("common.no"));
+        dialog.addOption(GetText.tr("Yes"), true);
+        dialog.addOption(GetText.tr("No"));
 
         return dialog;
     }

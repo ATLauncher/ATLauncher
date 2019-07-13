@@ -34,13 +34,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.network.Analytics;
+
+import org.mini2Dx.gettext.GetText;
 
 public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = -969812552965390610L;
@@ -70,7 +71,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
+        clearButton = new JButton(GetText.tr("Clear"));
         clearButton.addActionListener(e -> {
             searchBox.setText("");
             hasUpdate.setSelected(false);
@@ -92,7 +93,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         });
         topPanel.add(searchBox);
 
-        searchButton = new JButton(Language.INSTANCE.localize("common.search"));
+        searchButton = new JButton(GetText.tr("Search"));
         searchButton.addActionListener(e -> {
             Analytics.sendEvent(searchBox.getText(), "Search", "Instance");
             reload();
@@ -104,7 +105,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         hasUpdate.addActionListener(e -> reload());
         topPanel.add(hasUpdate);
 
-        hasUpdateLabel = new JLabel(Language.INSTANCE.localize("instance.hasupdate"));
+        hasUpdateLabel = new JLabel(GetText.tr("Has Update"));
         topPanel.add(hasUpdateLabel);
 
         add(topPanel, BorderLayout.NORTH);
@@ -176,7 +177,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         });
 
         if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));
+            nilCard = new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
             panel.add(nilCard, gbc);
         }
 
@@ -199,17 +200,17 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.instances");
+        return GetText.tr("Instances");
     }
 
     @Override
     public void onRelocalization() {
-        clearButton.setText(Language.INSTANCE.localize("common.clear"));
-        searchButton.setText(Language.INSTANCE.localize("common.search"));
-        hasUpdateLabel.setText(Language.INSTANCE.localize("instance.hasupdate"));
+        clearButton.setText(GetText.tr("Clear"));
+        searchButton.setText(GetText.tr("Search"));
+        hasUpdateLabel.setText(GetText.tr("Has Update"));
 
         if (nilCard != null) {
-            nilCard.setMessage(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));
+            nilCard.setMessage(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
         }
     }
 }

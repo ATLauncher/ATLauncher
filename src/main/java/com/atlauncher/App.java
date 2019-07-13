@@ -53,6 +53,7 @@ import javax.swing.text.DefaultEditorKit;
 
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.LauncherFrame;
@@ -255,6 +256,12 @@ public class App {
             LogManager.logStackTrace("Error organising filesystem", e);
         }
 
+        try {
+            Language.init();
+        } catch (IOException e1) {
+            LogManager.logStackTrace("Error loading language", e1);
+        }
+
         // Setup the Settings and wait for it to finish.
         settings = new Settings();
 
@@ -355,8 +362,6 @@ public class App {
                 LogManager.error("Error Opening Instance " + instance.getName());
             }
         }
-
-        TRAY_MENU.localize();
 
         if (settings.enableDiscordIntegration()) {
             DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();

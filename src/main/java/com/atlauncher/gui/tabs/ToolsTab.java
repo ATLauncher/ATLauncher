@@ -22,13 +22,14 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
-import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.BlankToolPanel;
 import com.atlauncher.gui.components.LogClearerToolPanel;
 import com.atlauncher.gui.components.NetworkCheckerToolPanel;
 import com.atlauncher.gui.components.RelaunchInDebugModePanel;
 import com.atlauncher.gui.components.RuntimeDownloaderToolPanel;
 import com.atlauncher.gui.components.ServerCheckerToolPanel;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ToolsTab extends JPanel implements Tab {
@@ -53,6 +54,6 @@ public class ToolsTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.tools");
+        return GetText.tr("Tools");
     }
 }

@@ -57,6 +57,8 @@ import com.atlauncher.utils.Utils;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 import com.mojang.util.UUIDTypeAdapter;
 
+import org.mini2Dx.gettext.GetText;
+
 /**
  * This class deals with the Accounts in the launcher.
  */
@@ -472,8 +474,8 @@ public class Account implements Serializable {
             this.skinUpdating = true;
             final File file = new File(App.settings.getSkinsDir(), this.getUUIDNoDashes() + ".png");
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.downloadingskin"), 0,
-                    Language.INSTANCE.localizeWithReplace("account.downloadingminecraftskin", this.minecraftUsername),
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Downloading Skin"), 0,
+                    GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
                     "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             final UUID uid = this.getRealUUID();
             dialog.addThread(new Thread(() -> {
@@ -525,9 +527,9 @@ public class Account implements Serializable {
             }));
             dialog.start();
             if (!(Boolean) dialog.getReturnValue()) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(Language.INSTANCE.localize("account.skinerror")).setType(DialogManager.ERROR)
-                        .show();
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(GetText.tr("Error downloading skin. Please try again later!"))
+                        .setType(DialogManager.ERROR).show();
             }
             this.skinUpdating = false;
         }
@@ -656,15 +658,13 @@ public class Account implements Serializable {
             if (!this.isRemembered()) {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BorderLayout());
-                JLabel passwordLabel = new JLabel(
-                        Language.INSTANCE.localizeWithReplace("instance.enterpassword", this.getMinecraftUsername()));
+                JLabel passwordLabel = new JLabel(GetText.tr("Enter password for {0}", this.getMinecraftUsername()));
 
                 JPasswordField passwordField = new JPasswordField();
                 panel.add(passwordLabel, BorderLayout.NORTH);
                 panel.add(passwordField, BorderLayout.CENTER);
 
-                int ret = DialogManager.confirmDialog()
-                        .setTitle(Language.INSTANCE.localize("instance.enterpasswordtitle")).setContent(panel).show();
+                int ret = DialogManager.confirmDialog().setTitle(GetText.tr("Enter Password")).setContent(panel).show();
 
                 if (ret == DialogManager.OK_OPTION) {
                     if (passwordField.getPassword().length == 0) {
@@ -687,10 +687,9 @@ public class Account implements Serializable {
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
 
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.errorloggingintitle"))
-                    .setContent(HTMLUtils.centerParagraph(HTMLUtils.centerParagraph(
-                            HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorloggingin",
-                                    "<br/><br/>" + response.getErrorMessage())))))
+            DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
+                    .setContent(HTMLUtils.centerParagraph(HTMLUtils.centerParagraph(HTMLUtils.centerParagraph(
+                            GetText.tr("Couldn't login to Minecraft servers") + "<br/><br/>" + response.getErrorMessage()))))
                     .setType(DialogManager.ERROR).show();
 
             App.settings.setMinecraftLaunched(false);

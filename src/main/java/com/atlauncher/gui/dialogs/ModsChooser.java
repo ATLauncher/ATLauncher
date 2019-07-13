@@ -37,13 +37,14 @@ import javax.swing.SwingConstants;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
+
+import org.mini2Dx.gettext.GetText;
 
 import io.github.asyncronous.toast.Toaster;
 
@@ -60,8 +61,7 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.settings.getParent(), Language.INSTANCE.localize("instance.selectmods"),
-                ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(), GetText.tr("Select Mods To Install"), ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLocationRelativeTo(App.settings.getParent());
@@ -94,11 +94,11 @@ public class ModsChooser extends JDialog {
         labels.setEnabled(false);
         split.setRightComponent(labels);
 
-        JLabel topLabelLeft = new JLabel(Language.INSTANCE.localize("instance.requiredmods"));
+        JLabel topLabelLeft = new JLabel(GetText.tr("Required Mods"));
         topLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setLeftComponent(topLabelLeft);
 
-        JLabel topLabelRight = new JLabel(Language.INSTANCE.localize("instance.optionalmods"));
+        JLabel topLabelRight = new JLabel(GetText.tr("Optional Mods"));
         topLabelRight.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setRightComponent(topLabelRight);
 
@@ -131,10 +131,10 @@ public class ModsChooser extends JDialog {
         add(bottomPanel, BorderLayout.SOUTH);
 
         useShareCode = new JButton();
-        useShareCode.setText(Language.INSTANCE.localize("instance.usesharecode"));
+        useShareCode.setText(GetText.tr("Use Share Code"));
         useShareCode.addActionListener(e -> {
-            String ret = JOptionPane.showInputDialog(null, Language.INSTANCE.localize("instance.entersharecode"),
-                    Language.INSTANCE.localize("instance.sharecode"), JOptionPane.QUESTION_MESSAGE);
+            String ret = JOptionPane.showInputDialog(null, GetText.tr("Enter Share Code"), GetText.tr("Share Code"),
+                    JOptionPane.QUESTION_MESSAGE);
 
             if (ret != null) {
                 applyShareCode(ret);
@@ -145,9 +145,9 @@ public class ModsChooser extends JDialog {
         selectAllButton = new JButton();
 
         if (installer.hasRecommendedMods()) {
-            selectAllButton.setText(Language.INSTANCE.localize("instance.selectrecommended"));
+            selectAllButton.setText(GetText.tr("Select Recommended"));
         } else {
-            selectAllButton.setText(Language.INSTANCE.localize("instance.selectall"));
+            selectAllButton.setText(GetText.tr("Select All"));
         }
 
         selectAllButton.addActionListener(e -> {
@@ -175,7 +175,7 @@ public class ModsChooser extends JDialog {
         });
         bottomPanel.add(selectAllButton);
 
-        clearAllButton = new JButton(Language.INSTANCE.localize("instance.clearall"));
+        clearAllButton = new JButton(GetText.tr("Clear All"));
         clearAllButton.addActionListener(e -> {
             for (ModsJCheckBox check : modCheckboxes) {
                 if ((installer.isServer ? check.getMod().isServerOptional() : check.getMod().isOptional())) {
@@ -193,7 +193,7 @@ public class ModsChooser extends JDialog {
         });
         bottomPanel.add(clearAllButton);
 
-        installButton = new JButton(Language.INSTANCE.localize("common.install"));
+        installButton = new JButton(GetText.tr("Install"));
         installButton.addActionListener(e -> dispose());
         bottomPanel.add(installButton);
 
@@ -268,13 +268,14 @@ public class ModsChooser extends JDialog {
                             String message = installer.packVersion.getWarningMessage(mod.getWarning());
 
                             if (message != null) {
-                                int ret = DialogManager.optionDialog()
-                                        .setTitle(Language.INSTANCE.localize("instance.warning"))
-                                        .setContent("<html>" + message + "<br/>"
-                                                + Language.INSTANCE.localize("instance.warningsure") + "</html>")
-                                        .setType(DialogManager.WARNING)
-                                        .addOption(Language.INSTANCE.localize("common.yes"))
-                                        .addOption(Language.INSTANCE.localize("common.no"), true).show();
+                                int ret = DialogManager
+                                        .optionDialog().setTitle(GetText.tr("Warning")).setContent("<html>"
+                                                // #. {0} is a warning for a given mod
+                                                + GetText.tr(
+                                                        "{0}<br/><br/>Are you sure that you want to enable this mod?")
+                                                + "</html>")
+                                        .setType(DialogManager.WARNING).addOption(GetText.tr("Yes"))
+                                        .addOption(GetText.tr("No"), true).show();
 
                                 if (ret != 0) {
                                     finalCheckBox.setSelected(false);
@@ -365,7 +366,7 @@ public class ModsChooser extends JDialog {
             String data = installer.getShareCodeData(code);
 
             if (data == null) {
-                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
+                Toaster.instance().popError(GetText.tr("Invalid Share Code"));
                 return;
             }
 
@@ -375,14 +376,14 @@ public class ModsChooser extends JDialog {
             Map<String, List<Map<String, String>>> mods = Gsons.DEFAULT.fromJson(data, type);
 
             if (mods == null) {
-                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
+                Toaster.instance().popError(GetText.tr("Invalid Share Code"));
                 return;
             }
 
             List<Map<String, String>> optionalMods = mods.get("optional");
 
             if (optionalMods == null || optionalMods.size() == 0) {
-                Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
+                Toaster.instance().popError(GetText.tr("Invalid Share Code"));
                 return;
             }
 
@@ -406,7 +407,7 @@ public class ModsChooser extends JDialog {
             }
         } catch (Exception e) {
             LogManager.error("Invalid share code!");
-            Toaster.instance().popError(Language.INSTANCE.localize("instance.invalidsharecode"));
+            Toaster.instance().popError(GetText.tr("Invalid Share Code"));
         }
     }
 

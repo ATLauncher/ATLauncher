@@ -55,6 +55,8 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
+
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
 
@@ -509,7 +511,7 @@ public class Instance implements Cloneable {
         if (this.realPack != null) {
             return this.realPack.getDescription();
         } else {
-            return Language.INSTANCE.localize("pack.nodescription");
+            return GetText.tr("No Description");
         }
     }
 
@@ -1353,8 +1355,8 @@ public class Instance implements Cloneable {
     public boolean launch() {
         final Account account = App.settings.getAccount();
         if (account == null) {
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                    .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localize("instance.noaccount")))
+            DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                    .setContent(GetText.tr("Cannot play instance as you have no account selected"))
                     .setType(DialogManager.ERROR).show();
 
             App.settings.setMinecraftLaunched(false);
@@ -1364,10 +1366,10 @@ public class Instance implements Cloneable {
                     ? App.settings.getMaximumMemory()
                     : settings.getMaximumMemory();
             if ((maximumMemory < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
-                int ret = DialogManager.optionDialog()
-                        .setTitle(Language.INSTANCE.localize("instance.insufficientramtitle"))
-                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace(
-                                "instance.insufficientram", "<b>" + this.memory + "</b> " + "MB<br/><br/>")))
+                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficient Ram"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                "This pack has set a minimum amount of ram needed to {0}.<br/><br/>Do you want to continue loading the instance anyway?",
+                                "<b>" + this.memory + "</b> MB")))
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
 
@@ -1380,10 +1382,10 @@ public class Instance implements Cloneable {
             Integer permGen = (this.settings == null || this.settings.getPermGen() == null) ? App.settings.getPermGen()
                     : settings.getPermGen();
             if (permGen < this.permgen) {
-                int ret = DialogManager.optionDialog()
-                        .setTitle(Language.INSTANCE.localize("instance.insufficientpermgentitle"))
-                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace(
-                                "instance.insufficientpermgen", "<b>" + this.permgen + "</b> " + "MB<br/><br/>")))
+                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                "This pack has set a minimum amount of permgen to {0}.<br/><br/>Do you want to continue loading the instance anyway?",
+                                "<b>" + this.permgen + "</b> MB")))
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
@@ -1394,8 +1396,8 @@ public class Instance implements Cloneable {
             }
 
             LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
-                    Language.INSTANCE.localize("account.loggingin"), "Aborted login to Minecraft!");
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+                    GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(account.login());
                 dialog.close();
@@ -1554,15 +1556,14 @@ public class Instance implements Cloneable {
                     // OpenEye returned a response to the report, display that to user if needed.
                     LogManager.info("OpenEye: Pending crash report sent! URL: " + response.getURL());
                     if (response.hasNote()) {
-                        int ret = DialogManager.optionDialog()
-                                .setTitle(Language.INSTANCE.localize("instance.aboutyourcrash"))
-                                .setContent(HTMLUtils.centerParagraph(
-                                        Language.INSTANCE.localizeWithReplace("instance.openeyereport1", "<br/><br/>")
-                                                + response.getNoteDisplay()
-                                                + Language.INSTANCE.localize("instance" + ".openeyereport2")))
-                                .setType(DialogManager.INFO)
-                                .addOption(Language.INSTANCE.localize("common.opencrashreport"))
-                                .addOption(Language.INSTANCE.localize("common.ok"), true).show();
+                        int ret = DialogManager.optionDialog().setTitle(GetText.tr("About Your Crash"))
+                                .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                        "We detected a previous unreported crash generated by the OpenEye mod.<br/><br/>This has now been sent off to OpenEye and you can open the crash report below or continue without viewing it.")
+                                        + "<br/><br/>" + response.getNoteDisplay()
+                                        + GetText.tr(
+                                                "You can turn this off by unchecking the OpenEye Reporting setting in the Settings tab. Click Ok to continue.")))
+                                .setType(DialogManager.INFO).addOption(GetText.tr("Open Crash Report"))
+                                .addOption(GetText.tr("Ok"), true).show();
 
                         if (ret == 0) {
                             OS.openWebBrowser(response.getURL());
@@ -1660,7 +1661,8 @@ public class Instance implements Cloneable {
             writer.flush();
 
             if (showToast) {
-                App.TOASTER.pop("Instance " + this.getName());
+                // #. {0} is the name of the instance
+                App.TOASTER.pop(GetText.tr("Instance {0} Saved!", this.getName()));
             }
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to write instance.json", e);
@@ -1759,6 +1761,6 @@ public class Instance implements Cloneable {
 
         this.save(false);
 
-        App.TOASTER.pop(mod.name + " " + Language.INSTANCE.localize("common.installed"));
+        App.TOASTER.pop(mod.name + " " + GetText.tr("Installed"));
     }
 }

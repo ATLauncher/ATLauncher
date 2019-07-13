@@ -31,7 +31,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Runtime;
 import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -42,6 +41,7 @@ import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
 import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
@@ -49,10 +49,12 @@ import okhttp3.OkHttpClient;
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
     private static final long serialVersionUID = -2690200209156149465L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.runtimedownloader"));
+    private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Runtime Downloader"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
-            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.runtimedownloader.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(
+            GetText.tr(
+                    "Use this to automatically install and use a recommended version of Java to use with ATLauncher."),
+            60, "<br>")));
 
     public RuntimeDownloaderToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -72,8 +74,8 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
     public void actionPerformed(ActionEvent e) {
         Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
 
-        final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.runtimedownloader"), 3,
-                Language.INSTANCE.localize("tools.runtimedownloader.running"), "Runtime Downloader Tool Cancelled!");
+        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Runtime Downloader"), 3,
+                GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
             Runtimes runtimes = Download.build().cached()
@@ -108,7 +110,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                         .downloadTo(downloadFile.toPath());
 
                 if (download.needToDownload()) {
-                    dialog.setLabel(Language.INSTANCE.localize("common.downloading"));
+                    dialog.setLabel(GetText.tr("Downloading"));
                     dialog.setTotalBytes(runtime.size);
 
                     try {
@@ -123,7 +125,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
                 dialog.doneTask();
 
-                dialog.setLabel(Language.INSTANCE.localize("common.extracting"));
+                dialog.setLabel(GetText.tr("Extracting"));
 
                 try {
                     Utils.unXZFile(downloadFile, unpackedFile);
@@ -145,8 +147,9 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
         if (dialog.getReturnValue() == null) {
             LogManager.error("Runtime downloaded failed to run!");
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("tools.runtimedownloader"))
-                    .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localize("tools.runtimedownloader.error")))
+            DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
+                    .setContent(HTMLUtils.centerParagraph(
+                            GetText.tr("An error occurred downloading the runtime. Please check the logs.")))
                     .setType(DialogManager.ERROR).show();
         } else {
             LogManager.info("Runtime downloaded!");
@@ -156,9 +159,9 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
             App.settings.setJavaPath(path);
             App.settings.saveProperties();
 
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("tools.runtimedownloader"))
-                    .setContent(
-                            HTMLUtils.centerParagraph(Language.INSTANCE.localize("tools.runtimedownloader.complete")))
+            DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
+                    .setContent(HTMLUtils.centerParagraph(
+                            GetText.tr("The recommended version of Java has been installed and set to be used.")))
                     .setType(DialogManager.INFO).show();
         }
     }

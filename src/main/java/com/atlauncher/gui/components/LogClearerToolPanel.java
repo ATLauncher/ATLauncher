@@ -26,12 +26,13 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 public class LogClearerToolPanel extends AbstractToolPanel implements ActionListener {
     /**
@@ -39,10 +40,10 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
      */
     private static final long serialVersionUID = 1964636496849129267L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.logclearer"));
+    private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Log Clearer"));
 
     private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
-            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.logclearer.info"), 60, "<br>")));
+            Utils.splitMultilinedString(GetText.tr("This tool clears out all logs created by the launcher (not included those made by instances) to free up space and old junk."), 60, "<br>")));
 
     public LogClearerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -66,8 +67,8 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
                 Utils.delete(file);
             }
 
-            DialogManager.okDialog().setType(DialogManager.INFO).setTitle(Language.INSTANCE.localize("common.success"))
-                    .setContent(Language.INSTANCE.localize("tools.logclearer.success")).show();
+            DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
+                    .setContent(GetText.tr("Successfully cleared the logs.")).show();
         }
     }
 }

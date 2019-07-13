@@ -29,7 +29,6 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -39,16 +38,16 @@ import com.atlauncher.network.Download;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
+
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
-    /**
-     * Auto generated serial.
-     */
     private static final long serialVersionUID = 4811953376698111667L;
 
-    private final JLabel TITLE_LABEL = new JLabel(Language.INSTANCE.localize("tools.networkchecker"));
+    private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Network Checker"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
-            Utils.splitMultilinedString(Language.INSTANCE.localize("tools.networkchecker.info"), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(GetText.tr(
+            "This tool does various tests on your network and determines any issues that may pop up with connecting to our file servers and to other servers."),
+            60, "<br>")));
 
     public NetworkCheckerToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -69,15 +68,15 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     public void actionPerformed(ActionEvent e) {
         Analytics.sendEvent("NetworkChecker", "Run", "Tool");
 
-        int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("tools.networkchecker"))
-                .setContent(HTMLUtils.centerParagraph(Utils.splitMultilinedString(
-                        Language.INSTANCE.localizeWithReplace("tools.networkcheckerpopup", "20 MB.<br/><br/>"), 75,
-                        "<br>")))
+        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Network Checker"))
+                .setContent(HTMLUtils.centerParagraph(Utils.splitMultilinedString(GetText.tr(
+                        "Please note that the data from this tool is sent to ATLauncher so we can diagnose possible issues in your setup. This test may take up to 10 minutes or longer to complete and you will be unable to do anything while it's running. Please also keep in mind that this test will use some of your bandwidth, it will use approximately 20MB.<br/><br/>Do you wish to continue?"),
+                        75, "<br>")))
                 .setType(DialogManager.INFO).show();
 
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("tools.networkchecker"), 5,
-                    Language.INSTANCE.localize("tools.networkchecker.running"), "Network Checker Tool Cancelled!");
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Network Checker"), 5,
+                    GetText.tr("Network Checker Running. Please Wait!"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
                 StringBuilder results = new StringBuilder();
 
@@ -157,9 +156,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             } else {
                 LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");
 
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("tools.networkchecker"))
-                        .setContent(HTMLUtils.centerParagraph(
-                                Language.INSTANCE.localizeWithReplace("tools.networkheckercomplete", "<br/><br/>")))
+                DialogManager.okDialog().setTitle(GetText.tr("Network Checker"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr("tools.networkheckercomplete", "<br/><br/>")))
                         .setType(DialogManager.INFO).show();
             }
         }

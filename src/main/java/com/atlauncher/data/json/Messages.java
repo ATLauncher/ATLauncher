@@ -21,10 +21,11 @@ import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
+
+import org.mini2Dx.gettext.GetText;
 
 @Json
 public class Messages {
@@ -47,10 +48,9 @@ public class Messages {
                 OS.openWebBrowser(e.getURL());
             }
         });
-        return DialogManager.optionDialog()
-                .setTitle(Language.INSTANCE.localize("common.installing") + " " + pack.getName()).setContent(ep)
-                .setType(DialogManager.WARNING).addOption(Language.INSTANCE.localize("common.ok"), true)
-                .addOption(Language.INSTANCE.localize("common.cancel")).show();
+        return DialogManager.optionDialog().setTitle(GetText.tr("Installing")).setContent(ep)
+                .setType(DialogManager.WARNING).addOption(GetText.tr("Ok"), true).addOption(GetText.tr("Cancel"))
+                .show();
     }
 
     public String getUpdateMessage() {
@@ -69,9 +69,8 @@ public class Messages {
                 OS.openWebBrowser(e.getURL());
             }
         });
-        return DialogManager.optionDialog()
-                .setTitle(Language.INSTANCE.localize("common.reinstalling") + " " + pack.getName()).setContent(ep)
-                .setType(DialogManager.WARNING).addOption(Language.INSTANCE.localize("common.ok"), true)
-                .addOption(Language.INSTANCE.localize("common.cancel")).show();
+        return DialogManager.optionDialog().setTitle(GetText.tr("Reinstalling") + " " + pack.getName()).setContent(ep)
+                .setType(DialogManager.WARNING).addOption(GetText.tr("Ok"), true).addOption(GetText.tr("Cancel"))
+                .show();
     }
 }

@@ -30,13 +30,14 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.OS;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class CurseFileDependencyCard extends JPanel {
@@ -78,8 +79,8 @@ public final class CurseFileDependencyCard extends JPanel {
         summaryPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout());
-        JButton addButton = new JButton(Language.INSTANCE.localize("common.add"));
-        JButton viewButton = new JButton(Language.INSTANCE.localize("common.view"));
+        JButton addButton = new JButton(GetText.tr("Add"));
+        JButton viewButton = new JButton(GetText.tr("View"));
         buttonsPanel.add(addButton);
         buttonsPanel.add(viewButton);
 

@@ -26,8 +26,9 @@ import java.awt.Image;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class PackImagePanel extends JPanel {
@@ -51,17 +52,17 @@ public final class PackImagePanel extends JPanel {
             Color colour;
 
             if (this.pack.getVersionCount() == 0) {
-                text = Language.INSTANCE.localize("pack.dev");
+                text = GetText.tr("Dev");
                 colour = Color.lightGray;
             } else {
                 if (this.pack.isPrivate()) {
-                    text = Language.INSTANCE.localize("pack.private");
+                    text = GetText.tr("Private");
                     colour = Color.red;
                 } else if (this.pack.isPublic()) {
-                    text = Language.INSTANCE.localize("pack.public");
+                    text = GetText.tr("Public");
                     colour = Color.green;
                 } else {
-                    text = Language.INSTANCE.localize("pack.semipublic");
+                    text = GetText.tr("Semi Public");
                     colour = Color.cyan;
                 }
             }

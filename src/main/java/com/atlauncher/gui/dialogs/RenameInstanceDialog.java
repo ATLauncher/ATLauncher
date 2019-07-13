@@ -34,10 +34,11 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class RenameInstanceDialog extends JDialog {
@@ -54,7 +55,7 @@ public class RenameInstanceDialog extends JDialog {
     private InstanceV2 instanceV2;
 
     public RenameInstanceDialog(Instance instance) {
-        super(null, Language.INSTANCE.localize("instance.renaminginstance"), ModalityType.APPLICATION_MODAL);
+        super(null, GetText.tr("Renaming Instance"), ModalityType.APPLICATION_MODAL);
 
         this.instance = instance;
 
@@ -77,7 +78,7 @@ public class RenameInstanceDialog extends JDialog {
     }
 
     public RenameInstanceDialog(InstanceV2 instanceV2) {
-        super(null, Language.INSTANCE.localize("instance.renaminginstance"), ModalityType.APPLICATION_MODAL);
+        super(null, GetText.tr("Renaming Instance"), ModalityType.APPLICATION_MODAL);
 
         this.instanceV2 = instanceV2;
 
@@ -102,7 +103,7 @@ public class RenameInstanceDialog extends JDialog {
     private void setupComponents() {
         // Top Panel Stuff
         top = new JPanel();
-        top.add(new JLabel(Language.INSTANCE.localize("instance.renaminginstance")));
+        top.add(new JLabel(GetText.tr("Renaming Instance")));
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -112,7 +113,7 @@ public class RenameInstanceDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        instanceNameLabel = new JLabel(Language.INSTANCE.localize("instance.name") + ": ");
+        instanceNameLabel = new JLabel(GetText.tr("Instance Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
@@ -124,21 +125,19 @@ public class RenameInstanceDialog extends JDialog {
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        saveButton = new JButton(Language.INSTANCE.localize("common.save"));
+        saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
             if (App.settings.isInstance(instanceName.getText())) {
-                DialogManager.okDialog().setParent(RenameInstanceDialog.this)
-                        .setTitle(Language.INSTANCE.localize("common" + ".error")).setContent(Language.INSTANCE
-                                .localizeWithReplace("instance.alreadyinstance", instanceName.getText()))
+                DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
+                        .setContent(
+                                GetText.tr("There is already an instance called {0}.<br/><br/>Rename it and try again.",
+                                        instanceName.getText()))
                         .setType(DialogManager.ERROR).show();
             } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(
-                                HTMLUtils
-                                        .centerParagraph(
-                                                Language.INSTANCE.localize("common.error") + "<br/><br/>"
-                                                        + Language.INSTANCE.localizeWithReplace("instance.invalidname",
-                                                                instanceName.getText())))
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr("Error") + "<br/><br/>"
+                                + GetText.tr("The name {0} is invalid. It must contain at least 1 letter or number.",
+                                        instanceName.getText())))
                         .setType(DialogManager.ERROR).show();
             } else {
                 if (this.instanceV2 != null && instanceV2.rename(instanceName.getText())) {
@@ -148,12 +147,9 @@ public class RenameInstanceDialog extends JDialog {
                     App.settings.reloadInstancesPanel();
                 } else {
                     LogManager.error("Unknown Error Occured While Renaming Instance!");
-                    DialogManager.okDialog().setParent(RenameInstanceDialog.this)
-                            .setTitle(Language.INSTANCE.localize("common" + ".error"))
-                            .setContent(HTMLUtils
-                                    .centerParagraph(Language.INSTANCE.localizeWithReplace("instance.errorrenaming",
-                                            this.instanceV2 != null ? this.instanceV2.launcher.name
-                                                    : this.instance.getName() + "<br/><br/>")))
+                    DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
+                            .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                    "An error occurred renaming the instance.<br/><br/>Please check the console and try again.")))
                             .setType(DialogManager.ERROR).show();
                 }
                 close();

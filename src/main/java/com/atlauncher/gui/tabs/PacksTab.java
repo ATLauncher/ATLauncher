@@ -37,7 +37,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -49,20 +48,22 @@ import com.atlauncher.gui.dialogs.AddPackDialog;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.network.Analytics;
 
+import org.mini2Dx.gettext.GetText;
+
 @SuppressWarnings("serial")
 public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    private final JButton addButton = new JButton(Language.INSTANCE.localize("pack.addpack"));
-    private final JButton clearButton = new JButton(Language.INSTANCE.localize("common.clear"));
-    private final JButton expandAllButton = new JButton(Language.INSTANCE.localize("pack.expandall"));
-    private final JButton collapseAllButton = new JButton(Language.INSTANCE.localize("pack.collapseall"));
+    private final JButton addButton = new JButton(GetText.tr("Add Pack"));
+    private final JButton clearButton = new JButton(GetText.tr("Clear"));
+    private final JButton expandAllButton = new JButton(GetText.tr("Expand All"));
+    private final JButton collapseAllButton = new JButton(GetText.tr("Collapse All"));
     private final JTextField searchField = new JTextField(16);
-    private final JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
-    private final JCheckBox serversBox = new JCheckBox(Language.INSTANCE.localize("pack.cancreateserver"));
-    private final JCheckBox privateBox = new JCheckBox(Language.INSTANCE.localize("pack.privatepacksonly"));
-    private final JCheckBox searchDescBox = new JCheckBox(Language.INSTANCE.localize("pack.searchdescription"));
+    private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JCheckBox serversBox = new JCheckBox(GetText.tr("Can Create Server"));
+    private final JCheckBox privateBox = new JCheckBox(GetText.tr("Private Packs Only"));
+    private final JCheckBox searchDescBox = new JCheckBox(GetText.tr("Search Description"));
     private NilCard nilCard;
     private boolean isVanilla;
     private boolean isFeatured;
@@ -199,7 +200,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.contentPanel.removeAll();
 
         if (count == 0) {
-            this.contentPanel.add(new NilCard(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n")), gbc);
+            this.contentPanel.add(
+                    new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time.")), gbc);
         } else {
             this.cards.stream().forEach(card -> {
                 this.contentPanel.add(card, gbc);
@@ -262,10 +264,10 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             }
         }
 
-        ((LauncherFrame) App.settings.getParent()).updateTitle("Packs - " + count);
+        ((LauncherFrame) App.settings.getParent()).updateTitle(this.getTitle() + " - " + count);
 
         if (count == 0) {
-            nilCard = new NilCard(Language.INSTANCE.localizeWithReplace("instance.nodisplay", "\n\n"));
+            nilCard = new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
             this.contentPanel.add(nilCard, gbc);
         }
     }
@@ -288,22 +290,22 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     @Override
     public String getTitle() {
-        return (this.isFeatured ? "Featured " : "") + (this.isVanilla ? "Vanilla " : "")
-                + Language.INSTANCE.localize("tabs.packs");
+        return (this.isFeatured ? GetText.tr("Featured Packs")
+                : (this.isVanilla ? GetText.tr("Vanilla Packs") : GetText.tr("Packs")));
     }
 
     @Override
     public void onRelocalization() {
-        addButton.setText(Language.INSTANCE.localize("pack.addpack"));
-        clearButton.setText(Language.INSTANCE.localize("common.clear"));
-        expandAllButton.setText(Language.INSTANCE.localize("pack.expandall"));
-        collapseAllButton.setText(Language.INSTANCE.localize("pack.collapseall"));
-        serversBox.setText(Language.INSTANCE.localize("pack.cancreateserver"));
-        privateBox.setText(Language.INSTANCE.localize("pack.privatepacksonly"));
-        searchDescBox.setText(Language.INSTANCE.localize("pack.searchdescription"));
+        addButton.setText(GetText.tr("Add Pack"));
+        clearButton.setText(GetText.tr("Clear"));
+        expandAllButton.setText(GetText.tr("Expand All"));
+        collapseAllButton.setText(GetText.tr("Collapse All"));
+        serversBox.setText(GetText.tr("Can Create Server"));
+        privateBox.setText(GetText.tr("Private Packs Only"));
+        searchDescBox.setText(GetText.tr("Search Description"));
 
         if (nilCard != null) {
-            nilCard.setMessage(Language.INSTANCE.localizeWithReplace("pack.nodisplay", "\n\n"));
+            nilCard.setMessage(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
         }
     }
 }

@@ -89,6 +89,8 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.mini2Dx.gettext.GetText;
+
 import net.arikia.dev.drpc.DiscordRPC;
 import okhttp3.OkHttpClient;
 
@@ -241,9 +243,9 @@ public class Settings {
         if (OS.isWindows() && !OS.is64Bit() && OS.isWindows64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
-            int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("settings.running32bittitle"))
-                    .setContent(HTMLUtils.centerParagraph(
-                            Language.INSTANCE.localizeWithReplace("settings.running32bit", "<br/><br/>")))
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Running 32 Bit Java on 64 Bit Windows"))
+                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                            "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?")))
                     .setType(DialogManager.ERROR).show();
 
             if (ret == 0) {
@@ -255,13 +257,12 @@ public class Settings {
         if (Java.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
             LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch!");
 
-            int ret = DialogManager.optionDialog().setTitle(Language.INSTANCE.localize("settings.java9warningtitle"))
-                    .setContent(HTMLUtils.centerParagraph(
-                            Language.INSTANCE.localizeWithReplace("settings.java9warning", "<br/><br/>")))
-                    .addOption(Language.INSTANCE.localize("common.download"), true)
-                    .addOption(Language.INSTANCE.localize("common.ok"))
-                    .addOption(Language.INSTANCE.localize("instance.dontremindmeagain")).setType(DialogManager.WARNING)
-                    .show();
+            int ret = DialogManager.optionDialog()
+                    .setTitle(GetText.tr("Warning! You may not be able to play Minecraft"))
+                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                            "You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you have issues playing some packs, you may need to install Java 8 and set it to be used in the launchers java settings")))
+                    .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
+                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
                 OS.openWebBrowser("http://atl.pw/java8download");
@@ -275,13 +276,11 @@ public class Settings {
         if (!Java.isUsingJavaSupportingLetsEncrypt() && !this.hideJavaLetsEncryptWarning) {
             LogManager.warn("You're using an old version of Java that may not work!");
 
-            int ret = DialogManager.optionDialog().setTitle(Language.INSTANCE.localize("settings.unsupportedjavatitle"))
-                    .setContent(HTMLUtils.centerParagraph(
-                            Language.INSTANCE.localizeWithReplace("settings.unsupportedjavaletsencrypt", "<br/><br/>")))
-                    .addOption(Language.INSTANCE.localize("common.download"), true)
-                    .addOption(Language.INSTANCE.localize("common.ok"))
-                    .addOption(Language.INSTANCE.localize("instance.dontremindmeagain")).setType(DialogManager.ERROR)
-                    .show();
+            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
+                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 8 version 101.<br/><br/>Without doing this, some packs may not install.<br/><br/>Click Download to go to the Java downloads page and install the latest Java")))
+                    .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
+                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.ERROR).show();
 
             if (ret == 0) {
                 OS.openWebBrowser("http://atl.pw/java8download");
@@ -295,13 +294,11 @@ public class Settings {
         if (!Java.isJava7OrAbove(true) && !this.hideOldJavaWarning) {
             LogManager.warn("You're using an old unsupported version of Java (Java 7 or older)!");
 
-            int ret = DialogManager.optionDialog().setTitle(Language.INSTANCE.localize("settings.unsupportedjavatitle"))
-                    .setContent(HTMLUtils.centerParagraph(
-                            Language.INSTANCE.localizeWithReplace("settings.unsupportedjava", "<br/><br/>")))
-                    .addOption(Language.INSTANCE.localize("common.download"), true)
-                    .addOption(Language.INSTANCE.localize("common.ok"))
-                    .addOption(Language.INSTANCE.localize("instance.dontremindmeagain")).setType(DialogManager.WARNING)
-                    .show();
+            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
+                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load meaning you cannot play.<br/><br/>Click Download to go to the Java downloads page")))
+                    .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
+                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
                 OS.openWebBrowser("http://atl.pw/java8download");
@@ -521,8 +518,8 @@ public class Settings {
     }
 
     public void downloadUpdatedFiles() {
-        ProgressDialog progressDialog = new ProgressDialog(Language.INSTANCE.localize("common.downloadingupdates"), 1,
-                Language.INSTANCE.localize("common.downloadingupdates"));
+        ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Updates"), 1,
+                GetText.tr("Downloading Updates"));
         progressDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
             DownloadPool pool = new DownloadPool();
@@ -540,14 +537,6 @@ public class Settings {
         progressDialog.start();
 
         LogManager.info("Finished downloading updated files!");
-
-        if (Language.INSTANCE.getCurrent() != null) {
-            try {
-                Language.INSTANCE.reload(Language.INSTANCE.getCurrent());
-            } catch (IOException e) {
-                LogManager.logStackTrace("Couldn't reload langauge " + Language.INSTANCE.getCurrent(), e);
-            }
-        }
     }
 
     public boolean checkForUpdatedFiles() {
@@ -816,6 +805,14 @@ public class Settings {
                 }
             }
 
+            String lang = properties.getProperty("language", "English");
+            if (!isLanguageByName(lang)) {
+                LogManager.warn("Invalid language " + lang + ". Defaulting to English!");
+                lang = "English";
+            }
+
+            Language.setLanguage(lang);
+
             this.enableProxy = Boolean.parseBoolean(properties.getProperty("enableproxy", "false"));
 
             if (this.enableProxy) {
@@ -881,7 +878,7 @@ public class Settings {
                 lang = "English";
             }
 
-            Language.INSTANCE.load(lang);
+            Language.setLanguage(lang);
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
             if (!this.forgeLoggingLevel.equalsIgnoreCase("SEVERE")
@@ -1089,7 +1086,7 @@ public class Settings {
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
             properties.setProperty("hidejavaletsencryptwarning", this.hideJavaLetsEncryptWarning + "");
             properties.setProperty("hideJava9Warning", this.hideJava9Warning + "");
-            properties.setProperty("language", Language.INSTANCE.getCurrent());
+            properties.setProperty("language", Language.selected);
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
             properties.setProperty("initialmemory", this.initialMemory + "");
             properties.setProperty("ram", this.maximumMemory + "");
@@ -2207,7 +2204,7 @@ public class Settings {
      */
     public void setLanguage(String language) {
         try {
-            Language.INSTANCE.load(language);
+            Language.setLanguage(language);
         } catch (IOException ex) {
             LogManager.logStackTrace("Failed to load language", ex);
         }
@@ -2572,22 +2569,6 @@ public class Settings {
     public String getUserAgent() {
         return this.userAgent + Constants.LAUNCHER_NAME + "/" + Constants.VERSION + " Java/"
                 + Java.getLauncherJavaVersion();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public String getLocalizedString(String string) {
-        return Language.INSTANCE.localize(string);
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public String getLocalizedString(String string, String replace) {
-        return Language.INSTANCE.localize(string).replace("%s", replace);
     }
 
     public void cloneInstance(Instance instance, String clonedName) {

@@ -23,12 +23,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ToolsSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
@@ -45,9 +46,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableServerCheckerLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.serverchecker") + "?",
-                HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp", "<br/>" + "</html>"));
+        enableServerCheckerLabel = new JLabelWithHover(GetText.tr("Enable Server Checker") + "?", HELP_ICON, GetText
+                .tr("This setting enables or disables the checking of added servers in the Server Checker Tool."));
         add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;
@@ -71,10 +71,10 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverCheckerWaitLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.servercheckerwait") + ":",
-                HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.servercheckerwaithelp"), 75,
-                        "<br/>") + "</html>");
+        serverCheckerWaitLabel = new JLabelWithHover(GetText.tr("Time Between Checks") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(GetText.tr(
+                        "This option controls how long the launcher should wait between checking servers in the server checker. This value is in minutes and should be between 1 and 30, with the default being 5."),
+                        75, "<br/>") + "</html>");
         add(serverCheckerWaitLabel, gbc);
 
         gbc.gridx++;
@@ -91,8 +91,9 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     public boolean isValidServerCheckerWait() {
         if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1
                 || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("settings.help"))
-                    .setContent(Language.INSTANCE.localize("settings.servercheckerwaitinvalid"))
+            DialogManager.okDialog().setTitle(GetText.tr("Help"))
+                    .setContent(GetText.tr(
+                            "The server checker wait time you specified is invalid. Please check it and try again."))
                     .setType(DialogManager.ERROR).show();
             return false;
         }
@@ -111,18 +112,18 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.tools");
+        return GetText.tr("Tools");
     }
 
     @Override
     public void onRelocalization() {
-        this.enableServerCheckerLabel.setText(Language.INSTANCE.localize("settings.serverchecker") + "?");
-        this.enableServerCheckerLabel.setToolTipText(
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.servercheckerhelp", "<br/>" + "</html>"));
+        this.enableServerCheckerLabel.setText(GetText.tr("Enable Server Checker") + "?");
+        this.enableServerCheckerLabel.setToolTipText(GetText
+                .tr("This setting enables or disables the checking of added servers in the Server Checker Tool."));
 
-        this.serverCheckerWaitLabel.setText(Language.INSTANCE.localize("settings.servercheckerwait") + ":");
-        this.serverCheckerWaitLabel.setToolTipText("<html>"
-                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.servercheckerwaithelp"), 75, "<br/>")
-                + "</html>");
+        this.serverCheckerWaitLabel.setText(GetText.tr("Time Between Checks") + ":");
+        this.serverCheckerWaitLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
+                "This option controls how long the launcher should wait between checking servers in the server checker. This value is in minutes and should be between 1 and 30, with the default being 5."),
+                75, "<br/>") + "</html>");
     }
 }

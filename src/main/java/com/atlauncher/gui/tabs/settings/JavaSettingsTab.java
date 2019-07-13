@@ -35,7 +35,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -46,6 +45,8 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener, SettingsListener {
@@ -96,13 +97,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>"
-                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>")
-                + "</html>", RESTART_BORDER);
+        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(GetText.tr(
+                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
+                80, "<br/>") + "</html>", RESTART_BORDER);
 
-        initialMemoryLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.initialmemory") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.initialmemoryhelp"), 80,
-                        "<br/>") + "</html>");
+        initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(GetText.tr(
+                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
+                        80, "<br/>") + "</html>");
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -130,19 +132,18 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        maximumMemoryLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.maximummemory") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.maximummemoryhelp"), 80,
+        maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(
+                        GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."), 80,
                         "<br/>") + "</html>");
         add(maximumMemoryLabel, gbc);
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         if (!OS.is64Bit()) {
-            maximumMemoryPanel
-                    .add(new JLabelWithHover(WARNING_ICON,
-                            "<html>" + Utils.splitMultilinedString(
-                                    Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>") + "</html>",
-                            RESTART_BORDER));
+            maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(GetText.tr(
+                    "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
+                    80, "<br/>") + "</html>", RESTART_BORDER));
         }
         maximumMemoryPanel.add(maximumMemoryLabel);
 
@@ -164,8 +165,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        permGenLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.permgen") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.permgenhelp"));
+        permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
+                GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
         add(permGenLabel, gbc);
 
         gbc.gridx++;
@@ -184,8 +185,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        windowSizeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.windowsize") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.windowsizehelp"));
+        windowSizeLabel = new JLabelWithHover(GetText.tr("Window Size") + ":", HELP_ICON,
+                GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
         add(windowSizeLabel, gbc);
 
         gbc.gridx++;
@@ -232,8 +233,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaPathLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.javapath") + ":", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathhelp", "<br/>") + "</html>");
+        javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText.tr(
+                "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/><br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
+                + "</html>");
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
@@ -252,13 +254,13 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         javaPath = new JTextField(32);
         javaPath.setText(App.settings.getJavaPath());
-        javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
+        javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
-        javaBrowseButton = new JButton(Language.INSTANCE.localize("common.browse"));
+        javaBrowseButton = new JButton(GetText.tr("Browse"));
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File(javaPath.getText()));
-            chooser.setDialogTitle(Language.INSTANCE.localize("settings.selectjavapath"));
+            chooser.setDialogTitle(GetText.tr("Select"));
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setAcceptAllFileFilterUsed(false);
 
@@ -280,8 +282,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaParametersLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.javaparameters") + ":",
-                HELP_ICON, Language.INSTANCE.localize("settings.javaparametershelp"));
+        javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
+                GetText.tr("Extra Java command line paramaters can be added here."));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
@@ -291,7 +293,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         javaParameters = new JTextField(40);
         javaParameters.setText(App.settings.getJavaParameters());
-        javaParametersResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
+        javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> javaParameters.setText(
                 "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
         javaParametersPanel.add(javaParameters);
@@ -304,9 +306,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        startMinecraftMaximisedLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.startminecraftmaximised") + "?", HELP_ICON,
-                Language.INSTANCE.localize("settings.startminecraftmaximisedhelp"));
+        startMinecraftMaximisedLabel = new JLabelWithHover(GetText.tr("Start Minecraft Maximised") + "?", HELP_ICON,
+                GetText.tr(
+                        "Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
         add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;
@@ -324,8 +326,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        saveCustomModsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.savecustommods") + "?",
-                HELP_ICON, Language.INSTANCE.localize("settings.savecustommodshelp"));
+        saveCustomModsLabel = new JLabelWithHover(GetText.tr("Save Custom Mods") + "?", HELP_ICON, GetText
+                .tr("This enables the saving of custom mods added to an instance when it's updated or reinstalled."));
         add(saveCustomModsLabel, gbc);
 
         gbc.gridx++;
@@ -343,9 +345,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch") + "?", HELP_ICON,
-                Language.INSTANCE.localize("settings.ignorejavaoninstancelaunchhelp"));
+        ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(GetText.tr("Ignore Java checks On Launch") + "?",
+                HELP_ICON, GetText.tr(
+                        "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
         add(ignoreJavaOnInstanceLaunchLabel, gbc);
 
         gbc.gridx++;
@@ -361,10 +363,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     public boolean isValidJavaPath() {
         File jPath = new File(javaPath.getText(), "bin");
         if (!jPath.exists()) {
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("settings.help")).setContent("<html>"
-                    + Language.INSTANCE.localizeWithReplace("settings.javapathincorrect", "<br/><br/>") + "</html>")
-                    .setType(DialogManager.ERROR).addOption(Language.INSTANCE.localize("instance.ivedownloaded"), true)
-                    .show();
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent("<html>" + GetText.tr(
+                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again.")
+                    + "</html>").setType(DialogManager.ERROR).show();
             return false;
         }
         return true;
@@ -374,11 +375,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("settings.help"))
-                    .setContent("<html>"
-                            + Language.INSTANCE.localizeWithReplace("settings.javaparametersincorrect", "<br/><br/>")
-                            + "</html>")
-                    .setType(DialogManager.ERROR).show();
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent("<html>" + GetText.tr(
+                    "The entered Java Parameters were incorrect.<br/>Please remove any references to Xmx, Xms or XX:PermSize.")
+                    + "</html>").setType(DialogManager.ERROR).show();
             return false;
         }
         return true;
@@ -399,58 +398,62 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("settings.javatab");
+        return GetText.tr("Java/Minecraft");
     }
 
     @Override
     public void onRelocalization() {
-        this.initialMemoryLabelWarning.setToolTipText("<html>"
-                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>")
+        this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
+                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
+                80, "<br/>") + "</html>");
+
+        this.initialMemoryLabel.setText(GetText.tr("Initial Memory/Ram") + ":");
+        this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
+                "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
+                80, "<br/>") + "</html>");
+
+        this.maximumMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
+                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
+                80, "<br/>") + "</html>");
+
+        this.maximumMemoryLabel.setText(GetText.tr("Maximum Memory/Ram") + ":");
+        this.maximumMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(
+                GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."), 80, "<br/>")
                 + "</html>");
 
-        this.initialMemoryLabel.setText(Language.INSTANCE.localize("settings.initialmemory") + ":");
-        this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(
-                Language.INSTANCE.localize("settings" + ".initialmemoryhelp"), 80, "<br/>") + "</html>");
+        this.permGenLabel.setText(GetText.tr("PermGen Size") + ":");
+        this.permGenLabel
+                .setToolTipText(GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
 
-        this.maximumMemoryLabelWarning.setToolTipText("<html>"
-                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>")
+        this.windowSizeLabel.setText(GetText.tr("Window Size") + ":");
+        this.windowSizeLabel.setToolTipText(
+                GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
+
+        this.javaPathLabel.setText(GetText.tr("Java Path") + ":");
+        this.javaPathLabel.setToolTipText("<html>" + GetText.tr(
+                "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/><br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
                 + "</html>");
 
-        this.maximumMemoryLabel.setText(Language.INSTANCE.localize("settings.maximummemory") + ":");
-        this.maximumMemoryLabel.setToolTipText("<html>"
-                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.maximummemoryhelp"), 80, "<br/>")
-                + "</html>");
+        this.javaPathResetButton.setText(GetText.tr("Reset"));
 
-        this.permGenLabel.setText(Language.INSTANCE.localize("settings.permgen") + ":");
-        this.permGenLabel.setToolTipText(Language.INSTANCE.localize("settings.permgenhelp"));
+        this.javaBrowseButton.setText(GetText.tr("Browse"));
 
-        this.windowSizeLabel.setText(Language.INSTANCE.localize("settings.windowsize") + ":");
-        this.windowSizeLabel.setToolTipText(Language.INSTANCE.localize("settings.windowsizehelp"));
+        this.javaParametersLabel.setText(GetText.tr("Java Parameters") + ":");
+        this.javaParametersLabel.setToolTipText(GetText.tr("Extra Java command line paramaters can be added here."));
 
-        this.javaPathLabel.setText(Language.INSTANCE.localize("settings.javapath") + ":");
-        this.javaPathLabel.setToolTipText(
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathhelp", "<br/>") + "</html>");
+        this.javaParametersResetButton.setText(GetText.tr("Reset"));
 
-        this.javaPathResetButton.setText(Language.INSTANCE.localize("settings.javapathreset"));
+        this.startMinecraftMaximisedLabel.setText(GetText.tr("Start Minecraft Maximised") + "?");
+        this.startMinecraftMaximisedLabel.setToolTipText(GetText
+                .tr("Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
 
-        this.javaBrowseButton.setText(Language.INSTANCE.localize("common.browse"));
+        this.saveCustomModsLabel.setText(GetText.tr("Save Custom Mods") + "?");
+        this.saveCustomModsLabel.setToolTipText(GetText
+                .tr("This enables the saving of custom mods added to an instance when it's updated or reinstalled."));
 
-        this.javaParametersLabel.setText(Language.INSTANCE.localize("settings.javaparameters") + ":");
-        this.javaParametersLabel.setToolTipText(Language.INSTANCE.localize("settings.javaparametershelp"));
-
-        this.javaParametersResetButton.setText(Language.INSTANCE.localize("settings.javapathreset"));
-
-        this.startMinecraftMaximisedLabel.setText(Language.INSTANCE.localize("settings.startminecraftmaximised") + "?");
-        this.startMinecraftMaximisedLabel
-                .setToolTipText(Language.INSTANCE.localize("settings.startminecraftmaximisedhelp"));
-
-        this.saveCustomModsLabel.setText(Language.INSTANCE.localize("settings.savecustommods") + "?");
-        this.saveCustomModsLabel.setToolTipText(Language.INSTANCE.localize("settings.savecustommodshelp"));
-
-        this.ignoreJavaOnInstanceLaunchLabel
-                .setText(Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch") + "?");
-        this.ignoreJavaOnInstanceLaunchLabel
-                .setToolTipText(Language.INSTANCE.localize("settings.ignorejavaoninstancelaunch"));
+        this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java checks On Launch") + "?");
+        this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(
+                "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
     }
 
     public void addInstalledJavas() {

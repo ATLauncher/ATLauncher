@@ -29,12 +29,13 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 /**
  * Class for displaying packs in the Pack Tab.
@@ -52,11 +53,11 @@ public class NilCard extends JPanel implements RelocalizationListener {
         RelocalizationManager.addListener(this);
 
         if (OS.isMac()) {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"),
+            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"),
                     TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
                     new Font("SansSerif", Font.BOLD, 14)));
         } else {
-            this.setBorder(new TitledBorder(null, Language.INSTANCE.localize("common.nothingtoshow"),
+            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"),
                     TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION,
                     new Font("SansSerif", Font.BOLD, 15)));
         }
@@ -82,6 +83,6 @@ public class NilCard extends JPanel implements RelocalizationListener {
     @Override
     public void onRelocalization() {
         TitledBorder border = (TitledBorder) this.getBorder();
-        border.setTitle(Language.INSTANCE.localize("common.nothingtoshow"));
+        border.setTitle(GetText.tr("Nothing To Show"));
     }
 }

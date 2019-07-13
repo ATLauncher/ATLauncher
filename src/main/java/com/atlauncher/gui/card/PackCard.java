@@ -28,7 +28,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -40,6 +39,8 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
+import org.mini2Dx.gettext.GetText;
+
 /**
  * Class for displaying packs in the Pack Tab
  *
@@ -48,13 +49,13 @@ import com.atlauncher.utils.OS;
 public class PackCard extends CollapsiblePanel implements RelocalizationListener {
     private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
-    private final JButton newInstanceButton = new JButton(Language.INSTANCE.localize("common.newinstance"));
-    private final JButton createServerButton = new JButton(Language.INSTANCE.localize("common.createserver"));
+    private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
+    private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton discordInviteButton = new JButton("Discord");
-    private final JButton supportButton = new JButton(Language.INSTANCE.localize("common.support"));
-    private final JButton websiteButton = new JButton(Language.INSTANCE.localize("common.website"));
-    private final JButton modsButton = new JButton(Language.INSTANCE.localize("pack.viewmods"));
-    private final JButton removePackButton = new JButton(Language.INSTANCE.localize("pack.removepack"));
+    private final JButton supportButton = new JButton(GetText.tr("Support"));
+    private final JButton websiteButton = new JButton(GetText.tr("Website"));
+    private final JButton modsButton = new JButton(GetText.tr("View Mods"));
+    private final JButton removePackButton = new JButton(GetText.tr("Remove"));
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
     private final JSplitPane splitter = new JSplitPane();
     private final Pack pack;
@@ -125,13 +126,13 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private void addActionListeners() {
         this.newInstanceButton.addActionListener(e -> {
             if (App.settings.isInOfflineMode()) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
-                        .setContent(Language.INSTANCE.localize("pack.offlinenewinstance")).setType(DialogManager.ERROR)
-                        .show();
+                DialogManager.okDialog().setTitle(GetText.tr("You're In Offline Mode")).setContent(GetText.tr(
+                        "Cannot create new instance as you're in offline mode. Please connect to the internet and try again."))
+                        .setType(DialogManager.ERROR).show();
             } else {
                 if (App.settings.getAccount() == null) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                            .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
+                    DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                            .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                             .setType(DialogManager.ERROR).show();
                 } else {
                     Analytics.sendEvent(pack.getName(), "Install", "Pack");
@@ -142,13 +143,13 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         this.createServerButton.addActionListener(e -> {
             if (App.settings.isInOfflineMode()) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
-                        .setContent(Language.INSTANCE.localize("pack.offlinecreateserver")).setType(DialogManager.ERROR)
-                        .show();
+                DialogManager.okDialog().setTitle(GetText.tr("You're In Offline Mode")).setContent(GetText.tr(
+                        "Cannot create server as you're in offline mode. Please connect to the internet and try again."))
+                        .setType(DialogManager.ERROR).show();
             } else {
                 if (App.settings.getAccount() == null) {
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                            .setContent(Language.INSTANCE.localize("instance.cannotcreate"))
+                    DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                            .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                             .setType(DialogManager.ERROR).show();
                 } else {
                     Analytics.sendEvent(pack.getName(), "ServerInstall", "Pack");
@@ -176,11 +177,11 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     @Override
     public void onRelocalization() {
-        this.newInstanceButton.setText(Language.INSTANCE.localize("common.newinstance"));
-        this.createServerButton.setText(Language.INSTANCE.localize("common.createserver"));
-        this.supportButton.setText(Language.INSTANCE.localize("common.support"));
-        this.websiteButton.setText(Language.INSTANCE.localize("common.website"));
-        this.modsButton.setText(Language.INSTANCE.localize("pack.viewmods"));
-        this.removePackButton.setText(Language.INSTANCE.localize("pack.removepack"));
+        this.newInstanceButton.setText(GetText.tr("New Instance"));
+        this.createServerButton.setText(GetText.tr("Create Server"));
+        this.supportButton.setText(GetText.tr("Support"));
+        this.websiteButton.setText(GetText.tr("Website"));
+        this.modsButton.setText(GetText.tr("View Mods"));
+        this.removePackButton.setText(GetText.tr("Remove"));
     }
 }

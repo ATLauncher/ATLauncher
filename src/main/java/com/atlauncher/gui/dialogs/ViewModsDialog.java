@@ -35,10 +35,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.card.ModCard;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {
@@ -49,15 +50,15 @@ public final class ViewModsDialog extends JDialog {
     private final List<ModCard> cards = new LinkedList<>();
 
     public ViewModsDialog(Pack pack) {
-        super(App.settings.getParent(), Language.INSTANCE.localizeWithReplace("pack.mods", pack.getName()),
-                ModalityType.APPLICATION_MODAL);
+        // #. {0} is the name of the pack
+        super(App.settings.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.APPLICATION_MODAL);
         this.pack = pack;
 
         this.setPreferredSize(new Dimension(550, 450));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        this.topPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
+        this.topPanel.add(new JLabel(GetText.tr("Search") + ": "));
         this.topPanel.add(this.searchField);
 
         this.add(this.topPanel, BorderLayout.NORTH);

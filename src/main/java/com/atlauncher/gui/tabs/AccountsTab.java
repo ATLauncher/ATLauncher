@@ -45,7 +45,6 @@ import javax.swing.event.HyperlinkEvent;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -55,6 +54,8 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
+
+import org.mini2Dx.gettext.GetText;
 
 public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;
@@ -90,8 +91,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         infoPanel.setLayout(new BorderLayout());
         infoPanel.setBorder(BorderFactory.createEmptyBorder(60, 250, 0, 250));
 
-        JEditorPane infoTextPane = new JEditorPane("text/html",
-                "<html>" + Language.INSTANCE.localize("account.infotext") + "</html>");
+        JEditorPane infoTextPane = new JEditorPane("text/html", "<html>" + GetText.tr(
+                "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://my.minecraft.net/en-us/store/minecraft/#register\">by buying Minecraft here</a>. The launcher doesn't work with cracked accounts.")
+                + "</html>");
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -116,7 +118,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.insets = TOP_INSETS;
         gbc.anchor = GridBagConstraints.CENTER;
 
-        fillerAccount = new Account(Language.INSTANCE.localize("account.add"));
+        fillerAccount = new Account(GetText.tr("Add An Account"));
 
         accountsComboBox = new JComboBox<>();
         accountsComboBox.addItem(fillerAccount);
@@ -131,14 +133,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     usernameField.setText("");
                     passwordField.setText("");
                     rememberField.setSelected(false);
-                    leftButton.setText(Language.INSTANCE.localize("common.add"));
-                    rightButton.setText(Language.INSTANCE.localize("common.clear"));
+                    leftButton.setText(GetText.tr("Add"));
+                    rightButton.setText(GetText.tr("Clear"));
                 } else {
                     usernameField.setText(account.getUsername());
                     passwordField.setText(account.getPassword());
                     rememberField.setSelected(account.isRemembered());
-                    leftButton.setText(Language.INSTANCE.localize("common.save"));
-                    rightButton.setText(Language.INSTANCE.localize("common.delete"));
+                    leftButton.setText(GetText.tr("Save"));
+                    rightButton.setText(GetText.tr("Delete"));
                 }
                 userSkin.setIcon(account.getMinecraftSkin());
             }
@@ -151,7 +153,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        usernameLabel = new JLabel(Language.INSTANCE.localize("account.usernameemail") + ":");
+        usernameLabel = new JLabel(GetText.tr("Username/Email") + ":");
         bottomPanel.add(usernameLabel, gbc);
 
         gbc.gridx++;
@@ -172,7 +174,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        passwordLabel = new JLabel(Language.INSTANCE.localize("account.password") + ":");
+        passwordLabel = new JLabel(GetText.tr("Password") + ":");
         bottomPanel.add(passwordLabel, gbc);
 
         gbc.gridx++;
@@ -193,7 +195,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        rememberLabel = new JLabel(Language.INSTANCE.localize("account.remember") + ":");
+        rememberLabel = new JLabel(GetText.tr("Remember Password") + ":");
         bottomPanel.add(rememberLabel, gbc);
 
         gbc.gridx++;
@@ -203,12 +205,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         bottomPanel.add(rememberField, gbc);
         rememberField.addActionListener(e -> {
             if (rememberField.isSelected()) {
-                int ret = DialogManager.optionDialog()
-                        .setTitle(Language.INSTANCE.localize("account.securitywarningtitle"))
-                        .setContent(HTMLUtils.centerParagraph(
-                                Language.INSTANCE.localizeWithReplace("account.rememberpasswordwarning", "<br/><br/>")))
-                        .setType(DialogManager.ERROR).addOption(Language.INSTANCE.localize("common.yes"), true)
-                        .addOption(Language.INSTANCE.localize("common.no")).show();
+                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Security Warning"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                "WARNING: By clicking Remember Password you potentially expose your password to bad people.<br/>This saves your encrypted password to disk and can be decrypted by bad people.<br/>Are you sure you want to do this?")))
+                        .setType(DialogManager.ERROR).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
+                        .show();
 
                 if (ret != 0) {
                     rememberField.setSelected(false);
@@ -223,9 +224,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.anchor = GridBagConstraints.CENTER;
         buttons = new JPanel();
         buttons.setLayout(new FlowLayout());
-        leftButton = new JButton(Language.INSTANCE.localize("common.add"));
+        leftButton = new JButton(GetText.tr("Add"));
         leftButton.addActionListener(e -> leftButtonActions());
-        rightButton = new JButton(Language.INSTANCE.localize("common.clear"));
+        rightButton = new JButton(GetText.tr("Clear"));
         rightButton.addActionListener(e -> {
             if (accountsComboBox.getSelectedIndex() == 0) {
                 usernameField.setText("");
@@ -233,9 +234,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 rememberField.setSelected(false);
             } else {
                 Account account = (Account) accountsComboBox.getSelectedItem();
-                int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("account.delete"))
-                        .setContent(
-                                Language.INSTANCE.localizeWithReplace("account.deletesure", usernameField.getText()))
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete"))
+                        .setContent(GetText.tr("Are you sure you want to delete this account?"))
                         .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
                     Analytics.sendEvent("Delete", "Account");
@@ -258,7 +258,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         contextMenu = new JPopupMenu();
 
-        updateSkin = new JMenuItem(Language.INSTANCE.localize("account.reloadskin"));
+        updateSkin = new JMenuItem(GetText.tr("Reload Skin"));
         updateSkin.addActionListener(e -> {
             final Account account = ((Account) accountsComboBox.getSelectedItem());
             Analytics.sendEvent("UpdateSkin", "Account");
@@ -285,8 +285,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
     private void leftButtonActions() {
         if (App.settings.isInOfflineMode()) {
-            DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.offline"))
-                    .setContent(Language.INSTANCE.localize("account.offlinemode")).setType(DialogManager.ERROR).show();
+            DialogManager.okDialog().setTitle(GetText.tr("You're In Offline Mode")).setContent(GetText.tr(
+                    "Cannot change/add account as you're in offline mode. Please connect to the internet and try again."))
+                    .setType(DialogManager.ERROR).show();
         } else {
             Account account;
             String clientToken = UUID.randomUUID().toString().replace("-", "");
@@ -294,14 +295,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             String password = new String(passwordField.getPassword());
             boolean remember = rememberField.isSelected();
             if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.notadded"))
-                        .setContent(Language.INSTANCE.localize("account.exists")).setType(DialogManager.ERROR).show();
+                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
+                        .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
                 return;
             }
 
             LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("account.loggingin"), 0,
-                    Language.INSTANCE.localize("account.loggingin"), "Aborting login for " + usernameField.getText());
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+                    GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
             dialog.addThread(new Thread(() -> {
                 LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
                         new String(passwordField.getPassword()), clientToken);
@@ -319,10 +320,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     Analytics.sendEvent("Add", "Account");
                     LogManager.info("Added Account " + account);
 
-                    int ret = DialogManager.optionDialog().setTitle(Language.INSTANCE.localize("account.added"))
-                            .setContent(Language.INSTANCE.localize("account.addedswitch")).setType(DialogManager.INFO)
-                            .addOption(Language.INSTANCE.localize("common.yes"), true)
-                            .addOption(Language.INSTANCE.localize("common.no")).show();
+                    int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
+                            .setContent(GetText.tr("Account added successfully. Switch to it now?"))
+                            .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
+                            .show();
 
                     if (ret == 0) {
                         App.settings.switchAccount(account);
@@ -340,9 +341,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     account.setStore(response.getAuth().saveForStorage());
                     Analytics.sendEvent("Edit", "Account");
                     LogManager.info("Edited Account " + account);
-                    DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.edited"))
-                            .setContent(Language.INSTANCE.localize("account.editeddone")).setType(DialogManager.INFO)
-                            .show();
+                    DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
+                            .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
                 }
                 App.settings.saveAccounts();
                 App.settings.reloadAccounts();
@@ -354,9 +354,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 accountsComboBox.setSelectedItem(account);
             } else {
                 LogManager.error(response.getErrorMessage());
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("account.notadded"))
-                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localize("account.incorrect")
-                                + "<br/><br/>" + response.getErrorMessage()))
+                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(HTMLUtils.centerParagraph(
+                        // #. {0} is the error message from Mojang as to why we couldn't login
+                        GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
+                                response.getErrorMessage())))
                         .setType(DialogManager.INFO).show();
             }
         }
@@ -364,24 +365,24 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.accounts");
+        return GetText.tr("Accounts");
     }
 
     @Override
     public void onRelocalization() {
-        fillerAccount.setMinecraftUsername(Language.INSTANCE.localize("account.add"));
+        fillerAccount.setMinecraftUsername(GetText.tr("Add An Account"));
 
         if (accountsComboBox.getSelectedIndex() == 0) {
-            leftButton.setText(Language.INSTANCE.localize("common.add"));
-            rightButton.setText(Language.INSTANCE.localize("common.clear"));
+            leftButton.setText(GetText.tr("Add"));
+            rightButton.setText(GetText.tr("Clear"));
         } else {
-            leftButton.setText(Language.INSTANCE.localize("common.save"));
-            rightButton.setText(Language.INSTANCE.localize("common.delete"));
+            leftButton.setText(GetText.tr("Save"));
+            rightButton.setText(GetText.tr("Delete"));
         }
 
-        usernameLabel.setText(Language.INSTANCE.localize("account.usernameemail") + ":");
-        passwordLabel.setText(Language.INSTANCE.localize("account.password") + ":");
-        rememberLabel.setText(Language.INSTANCE.localize("account.remember") + ":");
-        updateSkin.setText(Language.INSTANCE.localize("account.reloadskin"));
+        usernameLabel.setText(GetText.tr("Username/Email") + ":");
+        passwordLabel.setText(GetText.tr("Password") + ":");
+        rememberLabel.setText(GetText.tr("Remember Password") + ":");
+        updateSkin.setText(GetText.tr("Reload Skin"));
     }
 }

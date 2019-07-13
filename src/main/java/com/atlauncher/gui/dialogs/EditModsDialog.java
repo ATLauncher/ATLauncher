@@ -39,10 +39,11 @@ import com.atlauncher.LogManager;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.Language;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 public class EditModsDialog extends JDialog {
     private static final long serialVersionUID = 7004414192679481818L;
@@ -59,8 +60,8 @@ public class EditModsDialog extends JDialog {
 
     public EditModsDialog(Instance instance) {
         super(App.settings.getParent(),
-                Language.INSTANCE.localizeWithReplace("instance.editingmods", instance.getName()),
-                ModalityType.APPLICATION_MODAL);
+                // #. {0} is the name of the instance
+                GetText.tr("Editing Mods For {0}", instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         setSize(550, 450);
         setLocationRelativeTo(App.settings.getParent());
@@ -83,8 +84,8 @@ public class EditModsDialog extends JDialog {
 
     public EditModsDialog(InstanceV2 instanceV2) {
         super(App.settings.getParent(),
-                Language.INSTANCE.localizeWithReplace("instance.editingmods", instanceV2.launcher.name),
-                ModalityType.APPLICATION_MODAL);
+                // #. {0} is the name of the instance
+                GetText.tr("Editing Mods For {0}", instanceV2.launcher.name), ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
         setSize(550, 450);
         setLocationRelativeTo(App.settings.getParent());
@@ -125,11 +126,11 @@ public class EditModsDialog extends JDialog {
         labels.setEnabled(false);
         split.setRightComponent(labels);
 
-        topLabelLeft = new JLabel(Language.INSTANCE.localize("instance.enabledmods"));
+        topLabelLeft = new JLabel(GetText.tr("Enabled Mods"));
         topLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setLeftComponent(topLabelLeft);
 
-        topLabelRight = new JLabel(Language.INSTANCE.localize("instance.disabledmods"));
+        topLabelRight = new JLabel(GetText.tr("Disabled Mods"));
         topLabelRight.setHorizontalAlignment(SwingConstants.CENTER);
         labels.setRightComponent(topLabelRight);
 
@@ -163,7 +164,7 @@ public class EditModsDialog extends JDialog {
         bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
-        addButton = new JButton(Language.INSTANCE.localize("instance.addmod"));
+        addButton = new JButton(GetText.tr("Add Mods"));
         addButton.addActionListener(e -> {
             if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
                     : this.instance.hasEnabledCurseIntegration()) {
@@ -182,9 +183,8 @@ public class EditModsDialog extends JDialog {
 
             boolean usesCoreMods = false;
             try {
-                usesCoreMods = App.settings
-                        .getMinecraftVersion(instanceV2 != null ? instanceV2.id : this.instance.getMinecraftVersion())
-                        .coremods;
+                usesCoreMods = App.settings.getMinecraftVersion(
+                        instanceV2 != null ? instanceV2.id : this.instance.getMinecraftVersion()).coremods;
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);
             }
@@ -196,10 +196,8 @@ public class EditModsDialog extends JDialog {
                 modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
             }
 
-            FileChooserDialog fcd = new FileChooserDialog(Language.INSTANCE.localize("instance.addmod"),
-                    Language.INSTANCE.localize("common.mod"), Language.INSTANCE.localize("common.add"),
-                    Language.INSTANCE.localize("instance.typeofmod"), modTypes,
-                    new String[] { "jar", "zip", "litemod" });
+            FileChooserDialog fcd = new FileChooserDialog(GetText.tr("Add Mods"), GetText.tr("Mod"), GetText.tr("Add"),
+                    GetText.tr("Type Of Mod"), modTypes, new String[] { "jar", "zip", "litemod" });
             ArrayList<File> files = fcd.getChosenFiles();
             if (files != null && !files.isEmpty()) {
                 boolean reload = false;
@@ -243,19 +241,19 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(addButton);
 
-        enableButton = new JButton(Language.INSTANCE.localize("instance.enablemod"));
+        enableButton = new JButton(GetText.tr("Enable Mod"));
         enableButton.addActionListener(e -> enableMods());
         bottomPanel.add(enableButton);
 
-        disableButton = new JButton(Language.INSTANCE.localize("instance.disablemod"));
+        disableButton = new JButton(GetText.tr("Disable Mod"));
         disableButton.addActionListener(e -> disableMods());
         bottomPanel.add(disableButton);
 
-        removeButton = new JButton(Language.INSTANCE.localize("instance.removemod"));
+        removeButton = new JButton(GetText.tr("Remove Mod"));
         removeButton.addActionListener(e -> removeMods());
         bottomPanel.add(removeButton);
 
-        closeButton = new JButton(Language.INSTANCE.localize("common.close"));
+        closeButton = new JButton(GetText.tr("Close"));
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
     }

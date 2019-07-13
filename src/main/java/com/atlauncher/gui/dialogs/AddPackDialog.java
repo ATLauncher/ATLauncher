@@ -32,9 +32,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class AddPackDialog extends JDialog {
@@ -48,7 +49,7 @@ public class AddPackDialog extends JDialog {
     private JButton saveButton;
 
     public AddPackDialog() {
-        super(null, Language.INSTANCE.localize("pack.addpack"), ModalityType.APPLICATION_MODAL);
+        super(null, GetText.tr("Add Pack"), ModalityType.APPLICATION_MODAL);
         setSize(350, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -58,7 +59,7 @@ public class AddPackDialog extends JDialog {
 
         // Top Panel Stuff
         top = new JPanel();
-        top.add(new JLabel(Language.INSTANCE.localize("pack.addpack")));
+        top.add(new JLabel(GetText.tr("Add Pack")));
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -68,7 +69,7 @@ public class AddPackDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        packCodeLabel = new JLabel(Language.INSTANCE.localize("pack.packcode") + ": ");
+        packCodeLabel = new JLabel(GetText.tr("Pack Code") + ": ");
         middle.add(packCodeLabel, gbc);
 
         gbc.gridx++;
@@ -79,26 +80,21 @@ public class AddPackDialog extends JDialog {
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        saveButton = new JButton(Language.INSTANCE.localize("common.save"));
+        saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
             if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
                 if (App.settings.addPack(packCode.getText())) {
-                    DialogManager.okDialog().setParent(AddPackDialog.this)
-                            .setTitle(Language.INSTANCE.localize("pack.packadded"))
-                            .setContent(Language.INSTANCE.localize("pack.packaddedmessage"))
-                            .setType(DialogManager.ERROR).show();
+                    DialogManager.okDialog().setParent(AddPackDialog.this).setTitle(GetText.tr("Pack Added"))
+                            .setContent(GetText.tr("The pack has been added!")).setType(DialogManager.ERROR).show();
                 } else {
-                    DialogManager.okDialog().setParent(AddPackDialog.this)
-                            .setTitle(Language.INSTANCE.localize("pack.packalreadyadded"))
-                            .setContent(Language.INSTANCE.localize("pack.packalreadyaddedmessage"))
-                            .setType(DialogManager.ERROR).show();
+                    DialogManager.okDialog().setParent(AddPackDialog.this).setTitle(GetText.tr("Pack Already Added"))
+                            .setContent(GetText.tr("The pack was already added!")).setType(DialogManager.ERROR).show();
                 }
                 setVisible(false);
                 dispose();
             } else {
-                DialogManager.okDialog().setParent(AddPackDialog.this)
-                        .setTitle(Language.INSTANCE.localize("pack.packaddederror"))
-                        .setContent(Language.INSTANCE.localize("pack.packdoesntexist")).setType(DialogManager.ERROR)
+                DialogManager.okDialog().setParent(AddPackDialog.this).setTitle(GetText.tr("Error Adding Pack"))
+                        .setContent(GetText.tr("A pack with that code doesn't exist!")).setType(DialogManager.ERROR)
                         .show();
             }
         });

@@ -27,7 +27,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Hashing;
@@ -35,6 +34,8 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.annotations.SerializedName;
+
+import org.mini2Dx.gettext.GetText;
 
 @Json
 public class Mod {
@@ -418,20 +419,20 @@ public class Mod {
                     }
 
                     retValue = DialogManager.optionDialog()
-                            .setTitle(Language.INSTANCE.localize("common.downloading") + " "
+                            .setTitle(GetText.tr("Downloading") + " "
                                     + (serverFile == null ? (isFilePattern() ? getName() : getFile())
                                             : (isFilePattern() ? getName() : getServerFile())))
-                            .setContent(HTMLUtils.centerParagraph(Language.INSTANCE.localizeWithReplace(
-                                    "instance.browseropened",
+                            .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                    "Browser opened to download file {0}",
                                     (serverFile == null ? (isFilePattern() ? getName() : getFile())
                                             : (isFilePattern() ? getName() : getServerFile())))
-                                    + "<br/><br/>" + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>"
+                                    + "<br/><br/>" + GetText.tr("Please save this file to the following location") + "<br/><br/>"
                                     + (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
                                             : (isFilePattern() ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
                                                     : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
                                                             + App.settings.getUsersDownloadsDir()))))
-                            .addOption(Language.INSTANCE.localize("common.openfolder"), true)
-                            .addOption(Language.INSTANCE.localize("instance.ivedownloaded")).setType(DialogManager.INFO)
+                            .addOption(GetText.tr("Open Folder"), true)
+                            .addOption(GetText.tr("I've Downloading This File")).setType(DialogManager.INFO)
                             .show();
 
                     if (retValue == DialogManager.CLOSED_OPTION) {
@@ -559,17 +560,17 @@ public class Mod {
                 OS.openWebBrowser(this.serverUrl);
 
                 int ret = DialogManager.optionDialog()
-                        .setTitle(Language.INSTANCE.localize("common.downloading") + " "
+                        .setTitle(GetText.tr("Downloading") + " "
                                 + (serverFile == null ? getFile() : getServerFile()))
                         .setContent(HTMLUtils
-                                .centerParagraph(Language.INSTANCE.localizeWithReplace("instance.browseropened",
+                                .centerParagraph(GetText.tr("Browser opened to download file {0}",
                                         (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
-                                        + Language.INSTANCE.localize("instance.pleasesave") + "<br/><br/>"
+                                        + GetText.tr("Please save this file to the following location") + "<br/><br/>"
                                         + (OS.isUsingMacApp() ? App.settings.getUsersDownloadsDir().getAbsolutePath()
                                                 : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
                                                         + App.settings.getUsersDownloadsDir())))
                         .setType(DialogManager.INFO)
-                        .addOption(Language.INSTANCE.localize("instance.ivedownloaded"), true).show();
+                        .addOption(GetText.tr("I've Downloading This"), true).show();
 
                 if (ret == DialogManager.CLOSED_OPTION) {
                     installer.cancel(true);

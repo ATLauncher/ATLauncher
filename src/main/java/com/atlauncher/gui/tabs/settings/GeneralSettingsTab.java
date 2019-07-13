@@ -26,15 +26,17 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
+
 @SuppressWarnings("serial")
-public class GeneralSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
+    private JLabelWithHover languageLabelRestart;
+    private JPanel languagePanel;
     private JLabelWithHover themeLabel;
     private JComboBox<String> theme;
     private JLabelWithHover themeLabelRestart;
@@ -55,23 +57,30 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JCheckBox enablePackTags;
 
     public GeneralSettingsTab() {
-        RelocalizationManager.addListener(this);
         // Language
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        languageLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.language") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.languagehelp"));
+        languageLabelRestart = new JLabelWithHover(ERROR_ICON,
+                GetText.tr("Changing this setting will automatically restart the launcher."), RESTART_BORDER);
 
-        add(languageLabel, gbc);
+        languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
+                GetText.tr("This specifies the Language used by the Launcher."));
+
+        languagePanel = new JPanel();
+        languagePanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        languagePanel.add(languageLabelRestart);
+        languagePanel.add(languageLabel);
+        languagePanel.add(languageLabel);
+        add(languagePanel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<>(Language.available());
-        language.setSelectedItem(Language.current());
+        language = new JComboBox<>(Language.languages.keySet().toArray(new String[Language.languages.size()]));
+        language.setSelectedItem(Language.selected);
         add(language, gbc);
 
         // Theme
@@ -82,10 +91,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         themeLabelRestart = new JLabelWithHover(ERROR_ICON,
-                Language.INSTANCE.localize("settings" + "" + ".requiresrestart"), RESTART_BORDER);
+                GetText.tr("Changing this setting will automatically restart the launcher."), RESTART_BORDER);
 
-        themeLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.theme") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.themehelp"));
+        themeLabel = new JLabelWithHover(GetText.tr("Theme") + ":", HELP_ICON,
+                GetText.tr("This sets the theme that the launcher will use."));
 
         themeLabelPanel = new JPanel();
         themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -112,8 +121,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        dateFormatLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.dateformat") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.dateformathelp"));
+        dateFormatLabel = new JLabelWithHover(GetText.tr("Date Format") + ":", HELP_ICON, GetText.tr(
+                "This controls the format that dates are displayed in the launcher with the value dd meaning the day, M being the month and yyy being the year."));
 
         add(dateFormatLabel, gbc);
 
@@ -134,9 +143,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        sortPacksAlphabeticallyLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings" + "" + ".sortpacksalphabetically") + "?", HELP_ICON,
-                Language.INSTANCE.localize("settings" + "" + ".sortpacksalphabeticallyhelp"));
+        sortPacksAlphabeticallyLabel = new JLabelWithHover(GetText.tr("Sort Packs Alphabetically") + "?", HELP_ICON,
+                GetText.tr("If you want to sort the packs in the packs panel alphabetically by default or not."));
         add(sortPacksAlphabeticallyLabel, gbc);
 
         gbc.gridx++;
@@ -154,8 +162,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        keepLauncherOpenLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.keeplauncheropen") + "?",
-                HELP_ICON, Language.INSTANCE.localize("settings.keeplauncheropenhelp"));
+        keepLauncherOpenLabel = new JLabelWithHover(GetText.tr("Keep Launcher Open") + "?", HELP_ICON,
+                GetText.tr("This determines if ATLauncher should stay open or exit after Minecraft has exited"));
         add(keepLauncherOpenLabel, gbc);
 
         gbc.gridx++;
@@ -173,8 +181,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableConsoleLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.console") + "?", HELP_ICON,
-                Language.INSTANCE.localize("settings.consolehelp"));
+        enableConsoleLabel = new JLabelWithHover(GetText.tr("Enable Console") + "?", HELP_ICON,
+                GetText.tr("If you want the console to be visible when opening the Launcher."));
         add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -192,8 +200,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableTrayIconLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.traymenu") + "?", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.traymenuhelp", "<br/>") + "</html>");
+        enableTrayIconLabel = new JLabelWithHover(GetText.tr("Enable Tray Menu") + "?", HELP_ICON, "<html>" + GetText
+                .tr("The Tray Menu is a little icon that shows in your system taskbar which<br/>allows you to perform different functions to do various things with the launcher<br/>such as hiding or showing the console, killing Minecraft or closing ATLauncher.")
+                + "</html>");
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
@@ -211,10 +220,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableDiscordIntegrationLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.discordintegration") + "?", HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.discordintegrationhelp", "<br/>")
-                        + "</html>");
+        enableDiscordIntegrationLabel = new JLabelWithHover(GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
+                GetText.tr("This will enable showing which pack you're playing in Discord."));
         add(enableDiscordIntegrationLabel, gbc);
 
         gbc.gridx++;
@@ -230,8 +237,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enablePackTagsLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.packtags"), HELP_ICON,
-                Language.INSTANCE.localize("settings.packtagshelp"));
+        enablePackTagsLabel = new JLabelWithHover(GetText.tr("Enable Pack Tags"), HELP_ICON,
+                GetText.tr("Pack tags shows you if a pack is public, semi public or private"));
         add(enablePackTagsLabel, gbc);
 
         gbc.gridx++;
@@ -250,8 +257,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
         return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically();
     }
 
-    public boolean reloadLocalizationTable() {
-        return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.current());
+    public boolean needToReloadLanguage() {
+        return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.selected);
     }
 
     public void save() {
@@ -268,39 +275,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("settings.generaltab");
-    }
-
-    @Override
-    public void onRelocalization() {
-        this.languageLabel.setText(Language.INSTANCE.localize("settings.language") + ":");
-        this.languageLabel.setToolTipText(Language.INSTANCE.localize("settings.languagehelp"));
-
-        this.themeLabelRestart.setToolTipText(Language.INSTANCE.localize("settings.requiresrestart"));
-
-        this.themeLabel.setText(Language.INSTANCE.localize("settings.theme") + ":");
-        this.themeLabel.setToolTipText(Language.INSTANCE.localize("settings.themehelp"));
-
-        this.dateFormatLabel.setText(Language.INSTANCE.localize("settings.dateformat") + ":");
-        this.dateFormatLabel.setToolTipText(Language.INSTANCE.localize("settings.dateformathelp"));
-
-        this.sortPacksAlphabeticallyLabel.setText(Language.INSTANCE.localize("settings.sortpacksalphabetically") + "?");
-        this.sortPacksAlphabeticallyLabel
-                .setToolTipText(Language.INSTANCE.localize("settings" + "" + ".sortpacksalphabeticallyhelp"));
-
-        this.keepLauncherOpenLabel.setText(Language.INSTANCE.localize("settings.keeplauncheropen") + "?");
-        this.keepLauncherOpenLabel.setToolTipText(Language.INSTANCE.localize("settings.keeplauncheropenhelp"));
-
-        this.enableConsoleLabel.setText(Language.INSTANCE.localize("settings.console") + "?");
-        this.enableConsoleLabel.setToolTipText(Language.INSTANCE.localize("settings.consolehelp"));
-
-        this.enableTrayIconLabel.setText(Language.INSTANCE.localize("settings.traymenu") + "?");
-        this.enableTrayIconLabel.setToolTipText("<html>"
-                + Language.INSTANCE.localizeWithReplace("settings" + "" + ".traymenuhelp", "<br/>") + "</html>");
-
-        this.enableDiscordIntegrationLabel.setText(Language.INSTANCE.localize("settings.discordintegration") + "?");
-        this.enableDiscordIntegrationLabel.setToolTipText(
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings" + "" + ".discordintegrationhelp", "<br/>")
-                        + "</html>");
+        return GetText.tr("General");
     }
 }

@@ -56,7 +56,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
@@ -76,6 +75,7 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.reflect.TypeToken;
 
+import org.mini2Dx.gettext.GetText;
 import org.zeroturnaround.zip.ZipUtil;
 
 /**
@@ -89,17 +89,17 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JPanel rightPanel = new JPanel();
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
-    private final JButton playButton = new JButton(Language.INSTANCE.localize("common.play"));
-    private final JButton reinstallButton = new JButton(Language.INSTANCE.localize("common.reinstall"));
-    private final JButton updateButton = new JButton(Language.INSTANCE.localize("common.update"));
-    private final JButton renameButton = new JButton(Language.INSTANCE.localize("common.rename"));
-    private final JButton backupButton = new JButton(Language.INSTANCE.localize("common.backup"));
-    private final JButton cloneButton = new JButton(Language.INSTANCE.localize("instance.clone"));
-    private final JButton deleteButton = new JButton(Language.INSTANCE.localize("common.delete"));
-    private final JButton addButton = new JButton(Language.INSTANCE.localize("common.addmods"));
-    private final JButton editButton = new JButton(Language.INSTANCE.localize("common.editmods"));
-    private final JButton openButton = new JButton(Language.INSTANCE.localize("common.openfolder"));
-    private final JButton settingsButton = new JButton(Language.INSTANCE.localize("tabs.settings"));
+    private final JButton playButton = new JButton(GetText.tr("Play"));
+    private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
+    private final JButton updateButton = new JButton(GetText.tr("Update"));
+    private final JButton renameButton = new JButton(GetText.tr("Rename"));
+    private final JButton backupButton = new JButton(GetText.tr("Backup"));
+    private final JButton cloneButton = new JButton(GetText.tr("Clone"));
+    private final JButton deleteButton = new JButton(GetText.tr("Delete"));
+    private final JButton addButton = new JButton(GetText.tr("Add Mods"));
+    private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
+    private final JButton openButton = new JButton(GetText.tr("Open Folder"));
+    private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
     public InstanceCard(Instance instance) {
         super(instance);
@@ -167,24 +167,24 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             for (ActionListener al : playButton.getActionListeners()) {
                 playButton.removeActionListener(al);
             }
-            playButton.addActionListener(
-                    e -> DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
-                            .setContent(Language.INSTANCE.localize("instance.corruptplay")).setType(DialogManager.ERROR)
-                            .show());
+            playButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
+                    .setContent(GetText
+                            .tr("Cannot play instance as it's corrupted. Please reinstall, update or delete it."))
+                    .setType(DialogManager.ERROR).show());
             for (ActionListener al : backupButton.getActionListeners()) {
                 backupButton.removeActionListener(al);
             }
-            backupButton.addActionListener(
-                    e -> DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
-                            .setContent(Language.INSTANCE.localize("instance.corruptbackup"))
-                            .setType(DialogManager.ERROR).show());
+            backupButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
+                    .setContent(GetText
+                            .tr("Cannot backup instance as it's corrupted. Please reinstall, update or delete it."))
+                    .setType(DialogManager.ERROR).show());
             for (ActionListener al : cloneButton.getActionListeners()) {
                 cloneButton.removeActionListener(al);
             }
-            cloneButton.addActionListener(
-                    e -> DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.corrupt"))
-                            .setContent(Language.INSTANCE.localize("instance.corruptclone"))
-                            .setType(DialogManager.ERROR).show());
+            cloneButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
+                    .setContent(GetText
+                            .tr("Cannot clone instance as it's corrupted. Please reinstall, update or delete it."))
+                    .setType(DialogManager.ERROR).show());
         }
     }
 
@@ -192,10 +192,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.playButton.addActionListener(e -> {
             if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.getJava() != null
                     && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown") && !instance.getJava().conforms()) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.incorrectjavatitle"))
-                        .setContent(HTMLUtils.centerParagraph(
-                                Language.INSTANCE.localizeWithReplace("instance.incorrectjava", "<br/><br/>")
-                                        + instance.getJava().getVersionString()))
+                DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}",
+                                "<br/><br/>", instance.getJava().getVersionString())))
                         .setType(DialogManager.ERROR).show();
                 return;
             }
@@ -203,16 +203,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(
                     (instance.isDev() ? instance.getLatestDevHash() : instance.getLatestVersion()))) {
 
-                int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("instance.updateavailable"))
-                        .setContent(HTMLUtils.centerParagraph(
-                                Language.INSTANCE.localizeWithReplace("instance.updatenow", "<br/><br/>")))
-                        .addOption(Language.INSTANCE.localize("instance.dontremindmeagain")).setType(DialogManager.INFO)
-                        .show();
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
+                        .setContent(HTMLUtils.centerParagraph(GetText
+                                .tr("An update is available for this instance.<br/><br/>Do you want to update now?")))
+                        .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                 if (ret == 0) {
                     if (App.settings.getAccount() == null) {
-                        DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                                .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                        DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                                .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                 .setType(DialogManager.ERROR).show();
                     } else {
                         Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "UpdateFromPlay",
@@ -240,9 +239,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
         this.reinstallButton.addActionListener(e -> {
             if (App.settings.getAccount() == null) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                        .setContent(Language.INSTANCE.localize("instance.cantreinstall")).setType(DialogManager.ERROR)
-                        .show();
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot reinstall pack as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Reinstall", "Instance");
                 new InstanceInstallerDialog(instance);
@@ -250,9 +249,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
         this.updateButton.addActionListener(e -> {
             if (App.settings.getAccount() == null) {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                        .setContent(Language.INSTANCE.localize("instance.cantupdate")).setType(DialogManager.ERROR)
-                        .show();
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot update pack as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Update", "Instance");
                 new InstanceInstallerDialog(instance, true, false, null, null, true);
@@ -261,24 +260,21 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.renameButton.addActionListener(e -> new RenameInstanceDialog(instance));
         this.backupButton.addActionListener(e -> {
             if (instance.getSavesDirectory().exists()) {
-                int ret = DialogManager.yesNoDialog()
-                        .setTitle(Language.INSTANCE.localize("backup.backingup", instance.getName()))
-                        .setContent(HTMLUtils
-                                .centerParagraph(Language.INSTANCE.localizeWithReplace("backup.sure", "<br/><br/>")))
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Backing Up {0}", instance.getName()))
+                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                "Backups saves all your worlds as well as some other files<br/>such as your configs, so you can restore them later.<br/>Once backed up you can find the zip file in the Backups/ folder.<br/>Do you want to backup this instance?")))
                         .setType(DialogManager.INFO).show();
 
                 if (ret == DialogManager.YES_OPTION) {
                     final JDialog dialog = new JDialog(App.settings.getParent(),
-                            Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()),
-                            ModalityType.APPLICATION_MODAL);
+                            GetText.tr("Backing Up {0}", instance.getName()), ModalityType.APPLICATION_MODAL);
                     dialog.setSize(300, 100);
                     dialog.setLocationRelativeTo(App.settings.getParent());
                     dialog.setResizable(false);
 
                     JPanel topPanel = new JPanel();
                     topPanel.setLayout(new BorderLayout());
-                    JLabel doing = new JLabel(
-                            Language.INSTANCE.localizeWithReplace("backup.backingup", instance.getName()));
+                    JLabel doing = new JLabel(GetText.tr("Backing Up {0}", instance.getName()));
                     doing.setHorizontalAlignment(JLabel.CENTER);
                     doing.setVerticalAlignment(JLabel.TOP);
                     topPanel.add(doing);
@@ -302,8 +298,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         ZipUtil.pack(instance.getRootDirectory(), FileSystem.BACKUPS.resolve(filename).toFile(),
                                 ZipNameMapper.INSTANCE_BACKUP);
                         dialog.dispose();
-                        App.TOASTER.pop(
-                                Language.INSTANCE.localizeWithReplace("backup.backupcomplete", " " + "" + filename));
+                        App.TOASTER.pop(GetText.tr(
+                                "Backup is complete. Your backup was saved to the following location:<br/><br/>{0}",
+                                filename));
                     });
                     backupThread.start();
                     dialog.addWindowListener(new WindowAdapter() {
@@ -315,8 +312,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     dialog.setVisible(true);
                 }
             } else {
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("backup.nosavestitle"))
-                        .setContent(Language.INSTANCE.localize("backup.nosaves")).setType(DialogManager.ERROR).show();
+                DialogManager.okDialog().setTitle(GetText.tr("No Saves Found"))
+                        .setContent(GetText.tr("Can't backup instance as no saves were found."))
+                        .setType(DialogManager.ERROR).show();
             }
         });
         this.addButton.addActionListener(e -> {
@@ -334,8 +332,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
         this.cloneButton.addActionListener(e -> {
             String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
-                    Language.INSTANCE.localize("instance.cloneenter"),
-                    Language.INSTANCE.localize("instance.clonetitle"), JOptionPane.INFORMATION_MESSAGE);
+                    GetText.tr("Enter a new name for this cloned instance."), GetText.tr("Cloning Instance"),
+                    JOptionPane.INFORMATION_MESSAGE);
             if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) == null
                     && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
                     && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
@@ -343,48 +341,44 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Clone", "Instance");
 
                 final String newName = clonedName;
-                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.clonetitle"), 0,
-                        Language.INSTANCE.localize("instance.cloninginstance"), null);
+                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
+                        GetText.tr("Cloning Instance. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
                     App.settings.cloneInstance(instance, newName);
                     dialog.close();
-                    App.TOASTER.pop(
-                            Language.INSTANCE.localizeWithReplace("instance.clonedsuccessfully", instance.getName()));
+                    App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
                 }));
                 dialog.start();
             } else if (clonedName == null || clonedName.equals("")) {
                 LogManager.error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
-                                .localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>")))
+                DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(HTMLUtils.centerParagraph(GetText.tr(
+                        "An error occurred while cloning the instance.<br/><br/>Please check the console and try again.")))
                         .setType(DialogManager.ERROR).show();
             } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                 LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
-                                .localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>")))
+                DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(HTMLUtils.centerParagraph(GetText.tr(
+                        "An error occurred while cloning the instance.<br/><br/>Please check the console and try again")))
                         .setType(DialogManager.ERROR).show();
             } else {
                 LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
-                DialogManager.okDialog().setTitle(Language.INSTANCE.localize("common.error"))
-                        .setContent(HTMLUtils.centerParagraph(Language.INSTANCE
-                                .localizeWithReplace("instance.errorclone", instance.getName() + "<br/><br/>")))
+                DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(HTMLUtils.centerParagraph(GetText.tr(
+                        "An error occurred while cloning the instance.<br/><br/>Please check the console and try again")))
                         .setType(DialogManager.ERROR).show();
             }
         });
         this.deleteButton.addActionListener(e -> {
-            int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("instance.deleteinstance"))
-                    .setContent(Language.INSTANCE.localize("instance.deletesure")).setType(DialogManager.ERROR).show();
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete Instance"))
+                    .setContent(GetText.tr("Are you sure you want to delete this instance?"))
+                    .setType(DialogManager.ERROR).show();
 
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Delete", "Instance");
-                final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("instance.deletetitle"), 0,
-                        Language.INSTANCE.localize("instance.deletinginstance"), null);
+                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
+                        GetText.tr("Deleting Instance. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
                     App.settings.removeInstance(instance);
                     dialog.close();
-                    App.TOASTER.pop(
-                            Language.INSTANCE.localizeWithReplace("instance.deletedsuccessfully", instance.getName()));
+                    App.TOASTER.pop(GetText.tr("Deleted Instance Successfully"));
                 }));
                 dialog.start();
             }
@@ -398,18 +392,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2) {
                     if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
 
-                        int ret = DialogManager.yesNoDialog()
-                                .setTitle(Language.INSTANCE.localize("instance.updateavailable"))
-                                .setContent(HTMLUtils.centerParagraph(
-                                        Language.INSTANCE.localizeWithReplace("instance.updatenow", "<br/><br/>")))
-                                .addOption(Language.INSTANCE.localize("instance.dontremindmeagain"))
-                                .setType(DialogManager.INFO).show();
+                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
+                                .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                        "An update is available for this instance.<br/><br/>Do you want to update now?")))
+                                .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                         if (ret == 0) {
                             if (App.settings.getAccount() == null) {
-                                DialogManager.okDialog()
-                                        .setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                                        .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                                        .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                         .setType(DialogManager.ERROR).show();
                             } else {
                                 Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(),
@@ -440,13 +431,13 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
-                    JMenuItem changeImageItem = new JMenuItem(Language.INSTANCE.localize("instance.changeimage"));
+                    JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
 
-                    JMenuItem shareCodeItem = new JMenuItem(Language.INSTANCE.localize("instance.sharecode"));
+                    JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
                     rightClickMenu.add(shareCodeItem);
 
-                    JMenuItem updateItem = new JMenuItem(Language.INSTANCE.localize("common.update"));
+                    JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     rightClickMenu.add(updateItem);
 
                     if (!instance.hasUpdate()) {
@@ -479,18 +470,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
                     updateItem.addActionListener(e12 -> {
                         if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
-                            int ret = DialogManager.yesNoDialog()
-                                    .setTitle(Language.INSTANCE.localize("instance.updateavailable"))
-                                    .setContent(HTMLUtils.centerParagraph(
-                                            Language.INSTANCE.localizeWithReplace("instance.updatenow", "<br/><br/>")))
-                                    .addOption(Language.INSTANCE.localize("instance.dontremindmeagain"))
-                                    .setType(DialogManager.INFO).show();
+                            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
+                                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                                            "An update is available for this instance.<br/><br/>Do you want to update now?")))
+                                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                             if (ret == 0) {
                                 if (App.settings.getAccount() == null) {
-                                    DialogManager.okDialog()
-                                            .setTitle(Language.INSTANCE.localize("instance.noaccountselected"))
-                                            .setContent(Language.INSTANCE.localize("instance.cantupdate"))
+                                    DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                                            .setContent(
+                                                    GetText.tr("Cannot update pack as you have no account selected."))
                                             .setType(DialogManager.ERROR).show();
                                 } else {
                                     Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(),
@@ -529,20 +518,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                                 instance.getShareCodeData()), type);
 
                                 if (response.wasError()) {
-                                    App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));
+                                    App.TOASTER.pop(GetText.tr("Error getting share code."));
                                 } else {
                                     StringSelection text = new StringSelection(response.getData());
                                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                                     clipboard.setContents(text, null);
 
-                                    App.TOASTER.pop(Language.INSTANCE.localize("instance.sharecodecopied"));
+                                    App.TOASTER.pop(GetText.tr("Share code copied to clipboard"));
                                     LogManager.info("Share code copied to clipboard");
                                 }
                             } catch (IOException ex) {
                                 LogManager.logStackTrace("API call failed", ex);
                             }
-                        } else {
-                            App.TOASTER.pop(Language.INSTANCE.localize("instance.nooptionalmods"));
                         }
                     });
                 }
@@ -564,16 +551,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
     @Override
     public void onRelocalization() {
-        this.playButton.setText(Language.INSTANCE.localize("common.play"));
-        this.reinstallButton.setText(Language.INSTANCE.localize("common.reinstall"));
-        this.updateButton.setText(Language.INSTANCE.localize("common.update"));
-        this.renameButton.setText(Language.INSTANCE.localize("instance.rename"));
-        this.backupButton.setText(Language.INSTANCE.localize("common.backup"));
-        this.cloneButton.setText(Language.INSTANCE.localize("instance.clone"));
-        this.deleteButton.setText(Language.INSTANCE.localize("common.delete"));
-        this.addButton.setText(Language.INSTANCE.localize("common.addmods"));
-        this.editButton.setText(Language.INSTANCE.localize("common.editmods"));
-        this.openButton.setText(Language.INSTANCE.localize("common.openfolder"));
-        this.settingsButton.setText(Language.INSTANCE.localize("tabs.settings"));
+        this.playButton.setText(GetText.tr("Play"));
+        this.reinstallButton.setText(GetText.tr("Reinstall"));
+        this.updateButton.setText(GetText.tr("Update"));
+        this.renameButton.setText(GetText.tr("Rename"));
+        this.backupButton.setText(GetText.tr("Backup"));
+        this.cloneButton.setText(GetText.tr("Clone"));
+        this.deleteButton.setText(GetText.tr("Delete"));
+        this.addButton.setText(GetText.tr("Add Mods"));
+        this.editButton.setText(GetText.tr("Edit Mods"));
+        this.openButton.setText(GetText.tr("Open Folder"));
+        this.settingsButton.setText(GetText.tr("Settings"));
     }
 }

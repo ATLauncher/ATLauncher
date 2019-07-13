@@ -13,3 +13,6 @@ testLauncher/
 
 # OS X things
 .DS_Store
+
+# Other things
+java_pid*.hprof

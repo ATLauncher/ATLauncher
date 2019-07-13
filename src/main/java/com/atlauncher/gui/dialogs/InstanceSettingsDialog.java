@@ -41,12 +41,13 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.Language;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class InstanceSettingsDialog extends JDialog {
@@ -70,8 +71,8 @@ public class InstanceSettingsDialog extends JDialog {
     final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
     public InstanceSettingsDialog(Instance instance) {
-        super(App.settings.getParent(), instance.getName() + " " + Language.INSTANCE.localize("tabs.settings"),
-                ModalityType.APPLICATION_MODAL);
+        // #. {0} is the name of the instance
+        super(App.settings.getParent(), GetText.tr("{0} Settings", instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
         setupComponents();
@@ -86,7 +87,7 @@ public class InstanceSettingsDialog extends JDialog {
     }
 
     public InstanceSettingsDialog(InstanceV2 instanceV2) {
-        super(App.settings.getParent(), instanceV2.launcher.name + " " + Language.INSTANCE.localize("tabs.settings"),
+        super(App.settings.getParent(), GetText.tr("{0} Settings", instanceV2.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
 
@@ -116,14 +117,16 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        JLabelWithHover initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>"
-                + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.32bitmemorywarning"), 80, "<br/>")
-                + "</html>", RESTART_BORDER);
+        JLabelWithHover initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
+                "<html>" + Utils.splitMultilinedString(GetText.tr(
+                        "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
+                        80, "<br/>") + "</html>",
+                RESTART_BORDER);
 
-        JLabelWithHover initialMemoryLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.initialmemory") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.initialmemoryhelp"), 80,
-                        "<br/>") + "</html>");
+        JLabelWithHover initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(GetText.tr(
+                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
+                        80, "<br/>") + "</html>");
 
         JPanel initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -153,9 +156,9 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover maximumMemoryLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.maximummemory") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(Language.INSTANCE.localize("settings.maximummemoryhelp"), 80,
+        JLabelWithHover maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
+                "<html>" + Utils.splitMultilinedString(
+                        GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."), 80,
                         "<br/>") + "</html>");
         topPanel.add(maximumMemoryLabel, gbc);
 
@@ -183,8 +186,8 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover permGenLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.permgen") + ":",
-                HELP_ICON, Language.INSTANCE.localize("settings.permgenhelp"));
+        JLabelWithHover permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
+                GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
         topPanel.add(permGenLabel, gbc);
 
         gbc.gridx++;
@@ -206,9 +209,9 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover javaPathLabel = new JLabelWithHover(Language.INSTANCE.localize("settings.javapath") + ":",
-                HELP_ICON,
-                "<html>" + Language.INSTANCE.localizeWithReplace("settings.javapathhelp", "<br/>") + "</html>");
+        JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText
+                .tr("This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
+                + "</html>");
         topPanel.add(javaPathLabel, gbc);
 
         gbc.gridx++;
@@ -220,13 +223,13 @@ public class InstanceSettingsDialog extends JDialog {
         javaPath.setText(getIfNotNull(
                 this.instanceV2 != null ? this.instanceV2.launcher.javaPath : instance.getSettings().getJavaPath(),
                 App.settings.getJavaPath()));
-        JButton javaPathResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
+        JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> javaPath.setText(Java.getPathToMinecraftJavaExecutable()));
-        JButton javaBrowseButton = new JButton(Language.INSTANCE.localize("common.browse"));
+        JButton javaBrowseButton = new JButton(GetText.tr("Browse"));
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File(javaPath.getText()));
-            chooser.setDialogTitle(Language.INSTANCE.localize("settings.selectjavapath"));
+            chooser.setDialogTitle(GetText.tr("Select path to Java install"));
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setAcceptAllFileFilterUsed(false);
 
@@ -246,9 +249,8 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS_SMALL;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover javaParametersLabel = new JLabelWithHover(
-                Language.INSTANCE.localize("settings.javaparameters") + ":", HELP_ICON,
-                Language.INSTANCE.localize("settings.javaparametershelp"));
+        JLabelWithHover javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
+                GetText.tr("Extra Java command line paramaters can be added here."));
         topPanel.add(javaParametersLabel, gbc);
 
         gbc.gridx++;
@@ -259,7 +261,7 @@ public class InstanceSettingsDialog extends JDialog {
         final JTextField javaParameters = new JTextField(40);
         javaParameters.setText(getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.javaArguments
                 : instance.getSettings().getJavaArguments(), App.settings.getJavaParameters()));
-        JButton javaParametersResetButton = new JButton(Language.INSTANCE.localize("settings.javapathreset"));
+        JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> javaParameters.setText(
                 "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
         javaParametersPanel.add(javaParameters);
@@ -267,7 +269,7 @@ public class InstanceSettingsDialog extends JDialog {
         topPanel.add(javaParametersPanel, gbc);
 
         bottomPanel.setLayout(new FlowLayout());
-        JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
+        JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
             saveSettings((Integer) initialMemory.getValue(), (Integer) maximumMemory.getValue(),
                     (Integer) permGen.getValue(), javaPath.getText(), javaParameters.getText());

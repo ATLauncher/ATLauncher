@@ -24,6 +24,8 @@ import com.atlauncher.App;
 import com.atlauncher.utils.MCQuery;
 import com.google.gson.reflect.TypeToken;
 
+import org.mini2Dx.gettext.GetText;
+
 import de.zh32.pingtest.QueryVersion;
 
 public class MinecraftServer {
@@ -147,9 +149,9 @@ public class MinecraftServer {
 
     private String getStatusLocalization() {
         if (this.playersOnline == -1) {
-            return Language.INSTANCE.localize("tools.serverchecker.offline");
+            return GetText.tr("Offline");
         } else {
-            return Language.INSTANCE.localize("tools.serverchecker.online") + " - " + this.getPrintablePlayersOnline()
+            return GetText.tr("Online") + " - " + this.getPrintablePlayersOnline()
                     + " Players";
         }
     }

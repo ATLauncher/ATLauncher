@@ -33,7 +33,6 @@ import javax.swing.JScrollPane;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
@@ -41,6 +40,8 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 public class LauncherConsole extends JFrame implements RelocalizationListener {
 
@@ -126,7 +127,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     public void setupLanguage() {
         LogManager.debug("Setting up language for console");
-        copy.setText(Language.INSTANCE.localize("common.copy"));
+        copy.setText(GetText.tr("Copy"));
         bottomBar.setupLanguage();
         LogManager.debug("Finished setting up language for console");
     }
@@ -137,7 +138,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     @Override
     public void onRelocalization() {
-        copy.setText(Language.INSTANCE.localize("common.copy"));
+        copy.setText(GetText.tr("Copy"));
         bottomBar.setupLanguage();
     }
 }

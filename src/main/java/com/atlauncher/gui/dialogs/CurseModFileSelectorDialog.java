@@ -38,7 +38,6 @@ import javax.swing.JScrollPane;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
@@ -47,6 +46,8 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 public class CurseModFileSelectorDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
@@ -81,7 +82,8 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        setTitle(Language.INSTANCE.localize("common.installing") + " " + mod.name);
+        // #. {0} is the name of the mod we're installing
+        setTitle(GetText.tr("Installing {0}", mod.name));
 
         setSize(500, 200);
         setLocationRelativeTo(App.settings.getParent());
@@ -89,15 +91,17 @@ public class CurseModFileSelectorDialog extends JDialog {
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        addButton = new JButton(Language.INSTANCE.localize("common.add"));
+        addButton = new JButton(GetText.tr("Add"));
         addButton.setEnabled(false);
 
         dependenciesPanel.setVisible(false);
-        dependenciesPanel.setBorder(BorderFactory.createTitledBorder("The below mods need to be installed"));
+        dependenciesPanel
+                .setBorder(BorderFactory.createTitledBorder(GetText.tr("The below mods need to be installed")));
 
         // Top Panel Stuff
         JPanel top = new JPanel();
-        top.add(new JLabel(Language.INSTANCE.localize("common.installing") + " " + mod.name));
+        // #. {0} is the name of the mod we're installing
+        top.add(new JLabel(GetText.tr("Installing {0}", mod.name)));
 
         // Middle Panel Stuff
         JPanel middle = new JPanel(new BorderLayout());
@@ -106,7 +110,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         filesPanel = new JPanel(new FlowLayout());
         filesPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
-        versionsLabel = new JLabel(Language.INSTANCE.localize("instance.versiontoinstall") + ": ");
+        versionsLabel = new JLabel(GetText.tr("Version To Install") + ": ");
         filesPanel.add(versionsLabel);
 
         filesDropdown = new JComboBox<>();
@@ -130,8 +134,8 @@ public class CurseModFileSelectorDialog extends JDialog {
         addButton.addActionListener(e -> {
             CurseFile file = (CurseFile) filesDropdown.getSelectedItem();
 
-            final JDialog dialog = new JDialog(this,
-                    Language.INSTANCE.localize("common.installing") + " " + file.displayName,
+            // #. {0} is the name of the mod we're installing
+            final JDialog dialog = new JDialog(this, GetText.tr("Installing {0}", file.displayName),
                     ModalityType.DOCUMENT_MODAL);
 
             dialog.setLocationRelativeTo(this);
@@ -140,7 +144,8 @@ public class CurseModFileSelectorDialog extends JDialog {
 
             JPanel topPanel = new JPanel();
             topPanel.setLayout(new BorderLayout());
-            final JLabel doing = new JLabel(Language.INSTANCE.localize("common.installing") + " " + file.displayName);
+            // #. {0} is the name of the mod we're installing
+            final JLabel doing = new JLabel(GetText.tr("Installing {0}", file.displayName));
             doing.setHorizontalAlignment(JLabel.CENTER);
             doing.setVerticalAlignment(JLabel.TOP);
             topPanel.add(doing);
@@ -216,7 +221,7 @@ public class CurseModFileSelectorDialog extends JDialog {
             }
         });
 
-        JButton cancel = new JButton(Language.INSTANCE.localize("common.cancel"));
+        JButton cancel = new JButton(GetText.tr("Cancel"));
         cancel.addActionListener(e -> dispose());
         bottom.add(addButton);
         bottom.add(cancel);

@@ -30,13 +30,14 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
 import com.atlauncher.utils.HTMLUtils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
@@ -103,9 +104,9 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             }
         });
         killMinecraftButton.addActionListener(arg0 -> {
-            int ret = DialogManager.yesNoDialog().setTitle(Language.INSTANCE.localize("console.kill"))
-                    .setContent(HTMLUtils
-                            .centerParagraph(Language.INSTANCE.localizeWithReplace("console.killsure", "<br/><br/>")))
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft") + "?")
+                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                            "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves.")))
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent("KillMinecraft", "Launcher");
@@ -129,9 +130,9 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
 
     @Override
     public void onRelocalization() {
-        clearButton.setText(Language.INSTANCE.localize("console.clear"));
-        copyLogButton.setText(Language.INSTANCE.localize("console.copy"));
-        uploadLogButton.setText(Language.INSTANCE.localize("console.upload"));
-        killMinecraftButton.setText(Language.INSTANCE.localize("console.kill"));
+        clearButton.setText(GetText.tr("Clear"));
+        copyLogButton.setText(GetText.tr("Copy Log"));
+        uploadLogButton.setText(GetText.tr("Upload Log"));
+        killMinecraftButton.setText(GetText.tr("Kill Minecraft"));
     }
 }

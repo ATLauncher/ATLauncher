@@ -28,7 +28,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
@@ -39,6 +38,8 @@ import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
@@ -52,7 +53,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab });
     private JTabbedPane tabbedPane;
     private JPanel bottomPanel;
-    private JButton saveButton = new JButton(Language.INSTANCE.localize("common.save"));
+    private JButton saveButton = new JButton(GetText.tr("Save"));
 
     public SettingsTab() {
         RelocalizationManager.addListener(this);
@@ -85,7 +86,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     && networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort()
                     && networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
-                boolean reloadLocalizationTable = generalSettingsTab.reloadLocalizationTable();
+                boolean reloadLanguage = generalSettingsTab.needToReloadLanguage();
                 boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                 generalSettingsTab.save();
@@ -95,16 +96,13 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 toolsSettingsTab.save();
                 App.settings.saveProperties();
                 SettingsManager.post();
-                if (reloadLocalizationTable) {
-                    RelocalizationManager.post();
-                }
                 if (reloadPacksPanel) {
                     App.settings.reloadPacksPanel();
                 }
                 if (restartServerChecker) {
                     App.settings.startCheckingServers();
                 }
-                if (reloadTheme) {
+                if (reloadTheme || reloadLanguage) {
                     OS.restartLauncher();
                 }
                 App.TOASTER.pop("Settings Saved");
@@ -114,7 +112,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.settings");
+        return GetText.tr("Settings");
     }
 
     @Override
@@ -122,7 +120,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
-        this.saveButton.setText(Language.INSTANCE.localize("common.save"));
+        this.saveButton.setText(GetText.tr("Save"));
     }
 
 }

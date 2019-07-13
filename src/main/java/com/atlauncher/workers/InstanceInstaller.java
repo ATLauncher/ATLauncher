@@ -39,7 +39,6 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.InstanceV2Launcher;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.Deletes;
 import com.atlauncher.data.json.DownloadType;
@@ -70,6 +69,7 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
 
+import org.mini2Dx.gettext.GetText;
 import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
@@ -195,7 +195,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadPackVersionJson() {
         addPercent(5);
-        fireTask(Language.INSTANCE.localize("instance.downloadingpackverisondefinition"));
+        fireTask(GetText.tr("Downloading Pack Version Definition"));
         fireSubProgressUnknown();
 
         this.packVersion = com.atlauncher.network.Download.build().cached()
@@ -208,7 +208,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadMinecraftVersionJson() throws Exception {
         addPercent(5);
-        fireTask(Language.INSTANCE.localize("instance.downloadingminecraftdefinition"));
+        fireTask(GetText.tr("Downloading Minecraft Definition"));
         fireSubProgressUnknown();
 
         VersionManifest versionManifest = com.atlauncher.network.Download.build().cached()
@@ -232,7 +232,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadLoader() throws Exception {
         addPercent(5);
-        fireTask(Language.INSTANCE.localize("instance.downloadingloader"));
+        fireTask(GetText.tr("Downloading Loader"));
         fireSubProgressUnknown();
 
         this.loader.downloadAndExtractInstaller();
@@ -538,7 +538,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(Language.INSTANCE.localize("instance.downloadingresources"));
+        fireTask(GetText.tr("Downloading Resources"));
         fireSubProgressUnknown();
         this.totalBytes = this.downloadedBytes = 0;
 
@@ -584,7 +584,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadMinecraft() throws Exception {
         addPercent(5);
-        fireTask(Language.INSTANCE.localize("instance.downloadingminecraft"));
+        fireTask(GetText.tr("Downloading Minecraft"));
         fireSubProgressUnknown();
         totalBytes = 0;
         downloadedBytes = 0;
@@ -626,7 +626,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(Language.INSTANCE.localize("instance.downloadingloggingconfig"));
+        fireTask(GetText.tr("Downloading Logging Client"));
         fireSubProgressUnknown();
 
         LoggingFile loggingFile = this.minecraftVersion.logging.client.file;
@@ -733,7 +733,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadLibraries() {
         addPercent(5);
-        fireTask(Language.INSTANCE.localize("instance.downloadinglibraries"));
+        fireTask(GetText.tr("Downloading Libraries"));
         fireSubProgressUnknown();
 
         OkHttpClient httpClient = Network.createProgressClient(this);
@@ -784,7 +784,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void organiseLibraries() {
         addPercent(5);
-        fireTask(Language.INSTANCE.localize("instance.organisinglibraries"));
+        fireTask(GetText.tr("Organising Libraries"));
         fireSubProgressUnknown();
 
         if (isServer) {
@@ -841,7 +841,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(Language.INSTANCE.localize("instance.installingloader"));
+        fireTask(GetText.tr("Installing Loader"));
         fireSubProgressUnknown();
 
         // run any processors that the loader needs
@@ -857,7 +857,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(Language.INSTANCE.localize("instance.downloadingmods"));
+        fireTask(GetText.tr("Downloading Mods"));
         fireSubProgressUnknown();
 
         OkHttpClient httpClient = Network.createProgressClient(this);
@@ -890,7 +890,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(Language.INSTANCE.localize("instance.installingmods"));
+        fireTask(GetText.tr("Installing Mods"));
         fireSubProgressUnknown();
 
         double subPercentPerMod = 100.0 / this.selectedMods.size();
@@ -933,7 +933,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(Language.INSTANCE.localize("instance.downloadingconfigs"));
+        fireTask(GetText.tr("Downloading Configs"));
 
         File configs = this.temp.resolve("Configs.zip").toFile();
         String path = "packs/" + pack.getSafeName() + "/versions/" + version.version + "/Configs.zip";
@@ -955,7 +955,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         fireSubProgressUnknown();
-        fireTask(Language.INSTANCE.localize("instance.extractingconfigs"));
+        fireTask(GetText.tr("Extracting Configs"));
 
         ZipUtil.unpack(configs, this.root.toFile());
         Utils.delete(configs);

@@ -34,7 +34,6 @@ import javax.swing.border.Border;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.Status;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
@@ -46,6 +45,8 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
@@ -98,8 +99,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         toggleConsole.addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.isConsoleVisible()));
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
         updateData.addActionListener(e -> {
-            final ProgressDialog dialog = new ProgressDialog(Language.INSTANCE.localize("common.checkingforupdates"), 0,
-                    Language.INSTANCE.localize("common.checkingforupdates"), "Aborting" + " Update Check!");
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updated"), 0,
+                    GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
                 Analytics.sendEvent("UpdateData", "Launcher");
                 if (App.settings.checkForUpdatedFiles()) {
@@ -117,8 +118,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 }
             }
         });
-        ConsoleCloseManager.addListener(() -> toggleConsole.setText(Language.INSTANCE.localize("console.show")));
-        ConsoleOpenManager.addListener(() -> toggleConsole.setText(Language.INSTANCE.localize("console.hide")));
+        ConsoleCloseManager.addListener(() -> toggleConsole.setText(GetText.tr("Show")));
+        ConsoleOpenManager.addListener(() -> toggleConsole.setText(GetText.tr("Hide")));
     }
 
     /**
@@ -126,17 +127,17 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      */
     private void createButtons() {
         if (App.settings.isConsoleVisible()) {
-            toggleConsole = new JButton(Language.INSTANCE.localize("console.hide"));
+            toggleConsole = new JButton(GetText.tr("Hide"));
         } else {
-            toggleConsole = new JButton(Language.INSTANCE.localize("console.show"));
+            toggleConsole = new JButton(GetText.tr("Show"));
         }
 
-        openFolder = new JButton(Language.INSTANCE.localize("common.openfolder"));
-        updateData = new JButton(Language.INSTANCE.localize("common.updatedata"));
+        openFolder = new JButton(GetText.tr("Open Folder"));
+        updateData = new JButton(GetText.tr("Update Data"));
 
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
-        fillerAccount = new Account(Language.INSTANCE.localize("account.select"));
+        fillerAccount = new Account(GetText.tr("Select An Account"));
         username.addItem(fillerAccount);
         for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
@@ -157,7 +158,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             }
         };
         statusIcon.setBorder(BorderFactory.createEmptyBorder());
-        statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
+        statusIcon.setToolTipText(GetText.tr("Checking Minecraft server status..."));
     }
 
     /**
@@ -168,19 +169,19 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     public void updateStatus(Status status) {
         switch (status) {
         case UNKNOWN:
-            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.checking"));
+            statusIcon.setToolTipText(GetText.tr("Checking Minecraft server status..."));
             statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
             break;
         case ONLINE:
-            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.online"));
+            statusIcon.setToolTipText(GetText.tr("All Minecraft servers are up!"));
             statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
             break;
         case OFFLINE:
-            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.offline"));
+            statusIcon.setToolTipText(GetText.tr("Minecraft servers are down!"));
             statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
             break;
         case PARTIAL:
-            statusIcon.setToolTipText(Language.INSTANCE.localize("status.minecraft.partial"));
+            statusIcon.setToolTipText(GetText.tr("Some Minecraft servers are down!"));
             statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
             break;
         default:
@@ -206,12 +207,12 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     @Override
     public void onRelocalization() {
         if (App.settings.getConsole().isVisible()) {
-            toggleConsole.setText(Language.INSTANCE.localize("console.hide"));
+            toggleConsole.setText(GetText.tr("Hide"));
         } else {
-            toggleConsole.setText(Language.INSTANCE.localize("console.show"));
+            toggleConsole.setText(GetText.tr("Show"));
         }
-        this.updateData.setText(Language.INSTANCE.localize("common.updatedata"));
-        this.openFolder.setText(Language.INSTANCE.localize("common.openfolder"));
-        this.fillerAccount.setMinecraftUsername(Language.INSTANCE.localize("account.select"));
+        this.updateData.setText(GetText.tr("Update Data"));
+        this.openFolder.setText(GetText.tr("Open Folder"));
+        this.fillerAccount.setMinecraftUsername(GetText.tr("Select An Account"));
     }
 }

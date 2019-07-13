@@ -32,9 +32,10 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Language;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Resources;
+
+import org.mini2Dx.gettext.GetText;
 
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the
@@ -103,12 +104,12 @@ public class NewsTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return Language.INSTANCE.localize("tabs.news");
+        return GetText.tr("News");
     }
 
     @SuppressWarnings("serial")
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem COPY_ITEM = new JMenuItem(Language.INSTANCE.localize("common.copy"));
+        private final JMenuItem COPY_ITEM = new JMenuItem(GetText.tr("Copy"));
 
         public ContextMenu() {
             super();

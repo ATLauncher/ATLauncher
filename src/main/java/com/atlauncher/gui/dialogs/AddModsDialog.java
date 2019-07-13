@@ -36,13 +36,14 @@ import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.Language;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseModCard;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
@@ -52,7 +53,7 @@ public final class AddModsDialog extends JDialog {
     private JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
     private JPanel topPanel = new JPanel(new BorderLayout());
     private JTextField searchField = new JTextField(16);
-    private JButton searchButton = new JButton(Language.INSTANCE.localize("common.search"));
+    private JButton searchButton = new JButton(GetText.tr("Search"));
     private JButton installFabricApiButton = new JButton("Install Fabric API");
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -61,8 +62,8 @@ public final class AddModsDialog extends JDialog {
     private int page = 0;
 
     public AddModsDialog(Instance instance) {
-        super(App.settings.getParent(),
-                Language.INSTANCE.localizeWithReplace("instance.addingmods", instance.getName()),
+        // #. {0} is the name of the mod we're installing
+        super(App.settings.getParent(), GetText.tr("Adding Mods For {0}", instance.getName()),
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
@@ -80,8 +81,8 @@ public final class AddModsDialog extends JDialog {
     }
 
     public AddModsDialog(InstanceV2 instanceV2) {
-        super(App.settings.getParent(),
-                Language.INSTANCE.localizeWithReplace("instance.addingmods", instanceV2.launcher.name),
+        // #. {0} is the name of the mod we're installing
+        super(App.settings.getParent(), GetText.tr("Adding Mods For {0}", instanceV2.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
 
@@ -101,7 +102,7 @@ public final class AddModsDialog extends JDialog {
     private void setupComponents() {
         JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        searchButtonsPanel.add(new JLabel(Language.INSTANCE.localize("common.search") + ": "));
+        searchButtonsPanel.add(new JLabel(GetText.tr("Search") + ": "));
         searchButtonsPanel.add(this.searchField);
         searchButtonsPanel.add(this.searchButton);
 

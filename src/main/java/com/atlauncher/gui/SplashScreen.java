@@ -26,8 +26,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
 
-import com.atlauncher.data.Language;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 /**
  * The splash screen which shows when the launcher is started up and is loading
@@ -71,7 +72,7 @@ public class SplashScreen extends JWindow {
      * giving a force quit option.
      */
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem FORCE_QUIT = new JMenuItem(Language.INSTANCE.localize("common.forcequit"));
+        private final JMenuItem FORCE_QUIT = new JMenuItem(GetText.tr("Force quit"));
 
         public ContextMenu() {
             super();
