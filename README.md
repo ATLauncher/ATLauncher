@@ -131,29 +131,22 @@ release comes.
 ## Translating
 
 ATLauncher is written for English speakers. All our translations are community run by those who
-submit pull requests to update the text to a different language.
+take their time and submit updates to the text in a different language.
 
-Languages are contained within the `src\main\resources\assets\lang` directory and are based off the
-master template file at `src\main\resources\assets\lang\template.pot`.
-
-To create a new language you can copy this file and then name it with the locale name and `.po` as
-the extension.
-
-For instance for French, it is `src\main\resources\assets\lang\fr.po`.
-
-While you can make changes to the files manually, using a tool like [POEdit](https://poedit.net/) is
-recommended.
+If you wish to help translate ATLauncher, please visit our page on
+[Crowdin](https://crowdin.com/project/atlauncher) and start translating.
 
 ### Updating the template file
 
 If new strings are added to the launcher, the template file will need to be updated in order to
 take into account the new strings.
 
-In order to do this, run `./gradlew generatePots` which will scan the source files and update the
-`src\main\resources\assets\lang\template.pot` file.
+In order to do this, run `./gradlew generatePots` which will scan the source files and create a
+`build/gettext/translations.pot` file.
 
-Note that our of the box, this will not generate in the correct format. The file should be opened
-with [POEdit](https://poedit.net/), which will automatically fix the file, which then you can save.
+Note that out of the box, this will not generate in the correct format. The file should be opened
+with [POEdit](https://poedit.net/), which will automatically fix the file, which then you can save
+to `translations.pot` in the root directory, which will then get picked up by Crowdin.
 
 ## Need Help/Have Questions?
 

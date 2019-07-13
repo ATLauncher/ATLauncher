@@ -78,10 +78,10 @@ jar {
 }
 
 gettext {
-    template {
+    translations {
         srcDir = 'src'
         include = 'main/java/com/atlauncher/**/*.java'
-        outputFilename = 'template.pot'
+        outputFilename = 'translations.pot'
     }
 }
 
@@ -157,14 +157,8 @@ task createMacApp(type: Zip) {
     archiveName = "${project.name}-${project.version}.zip"
 }
 
-task copyTemplatePot(type: Copy) {
-    dependsOn generatePots
-    from "${projectDir}/build/gettext/template.pot"
-    into "${projectDir}/src/main/resources/assets/lang"
-}
-
 copyArtifacts.finalizedBy {
-    println 'ATLauncher has been built. Distribution files are located in the dist directory'
+    println 'ATLauncher has been built. Distribution files are located in the dist directory.'
 }
 
 clean.doFirst {
@@ -174,4 +168,3 @@ clean.doFirst {
 build.finalizedBy copyArtifacts
 shadowJar.dependsOn jar
 build.dependsOn createExe, createMacApp
-generatePots.finalizedBy copyTemplatePot
