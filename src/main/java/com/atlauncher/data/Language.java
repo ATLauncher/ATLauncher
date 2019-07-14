@@ -26,6 +26,7 @@ import java.util.Map;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 
 import org.mini2Dx.gettext.GetText;
 import org.mini2Dx.gettext.PoFile;
@@ -38,6 +39,7 @@ public class Language {
     // add in the languages we have support for
     static {
         locales.add(Locale.ENGLISH);
+        locales.add(Locale.ITALIAN);
     }
 
     public static void init() throws IOException {
@@ -52,6 +54,10 @@ public class Language {
     }
 
     public static void setLanguage(String language) {
+        if (selected.equals(language)) {
+            return;
+        }
+
         Locale locale;
 
         if (isLanguageByName(language)) {
@@ -65,6 +71,7 @@ public class Language {
         }
 
         GetText.setLocale(locale);
+        RelocalizationManager.post();
     }
 
     public static boolean isLanguageByName(String language) {

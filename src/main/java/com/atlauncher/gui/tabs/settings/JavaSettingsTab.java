@@ -57,7 +57,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JPanel initialMemoryPanel;
     private JLabelWithHover maximumMemoryLabel;
     private JSpinner maximumMemory;
-    private JLabelWithHover maximumMemoryLabelWarning;
     private JPanel maximumMemoryPanel;
 
     private JLabelWithHover permGenLabel;
@@ -410,10 +409,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.initialMemoryLabel.setText(GetText.tr("Initial Memory/Ram") + ":");
         this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
                 "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
-                80, "<br/>") + "</html>");
-
-        this.maximumMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
-                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
                 80, "<br/>") + "</html>");
 
         this.maximumMemoryLabel.setText(GetText.tr("Maximum Memory/Ram") + ":");

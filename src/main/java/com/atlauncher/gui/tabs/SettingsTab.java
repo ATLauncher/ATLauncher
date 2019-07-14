@@ -85,7 +85,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     && networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort()
                     && networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
-                boolean reloadLanguage = generalSettingsTab.needToReloadLanguage();
                 boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                 generalSettingsTab.save();
@@ -101,7 +100,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 if (restartServerChecker) {
                     App.settings.startCheckingServers();
                 }
-                if (reloadTheme || reloadLanguage) {
+                if (reloadTheme) {
                     OS.restartLauncher();
                 }
                 App.TOASTER.pop("Settings Saved");

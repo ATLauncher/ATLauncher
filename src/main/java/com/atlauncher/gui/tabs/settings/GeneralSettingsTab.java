@@ -64,18 +64,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        languageLabelRestart = new JLabelWithHover(ERROR_ICON,
-                GetText.tr("Changing this setting will automatically restart the launcher."), RESTART_BORDER);
-
         languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
                 GetText.tr("This specifies the Language used by the Launcher."));
-
-        languagePanel = new JPanel();
-        languagePanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        languagePanel.add(languageLabelRestart);
-        languagePanel.add(languageLabel);
-        languagePanel.add(languageLabel);
-        add(languagePanel, gbc);
+        add(languageLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
