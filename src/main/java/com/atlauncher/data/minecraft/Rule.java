@@ -17,12 +17,8 @@
  */
 package com.atlauncher.data.minecraft;
 
-enum Action {
-    ALLOW, DISALLOW
-}
-
 public class Rule {
-    public Action action;
+    public String action;
     public OperatingSystemRule os;
     public MojangFeatureRule features;
 

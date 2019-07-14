@@ -76,6 +76,6 @@ public class ArgumentRule {
         }
 
         return this.rules.stream().filter(Rule::applies).count() != 0
-                && this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action == Action.ALLOW);
+                && this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action.equalsIgnoreCase("allow"));
     }
 }

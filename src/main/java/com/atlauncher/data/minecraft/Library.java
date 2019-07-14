@@ -34,8 +34,11 @@ public class Library {
             return true; // No rules setup so we need it
         }
 
-        return this.rules.stream().filter(Rule::applies).count() != 0
-                && this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action == Action.ALLOW);
+        if (this.rules.stream().filter(Rule::applies).count() == 0) {
+            return true;
+        }
+
+        return this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action.equalsIgnoreCase("allow"));
     }
 
     public boolean hasNativeForOS() {

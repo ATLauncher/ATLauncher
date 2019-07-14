@@ -23,12 +23,24 @@ import java.util.regex.Pattern;
 import com.atlauncher.utils.OS;
 
 public class OperatingSystemRule {
-    public OperatingSystem name;
+    public String name;
     public String version;
     public String arch;
 
     public boolean applies() {
-        if (name != null && name != OperatingSystem.getOS()) {
+        if (name == null) {
+            return true;
+        }
+
+        if (name.equalsIgnoreCase("osx") && !OS.isMac()) {
+            return false;
+        }
+
+        if (name.equalsIgnoreCase("windows") && !OS.isWindows()) {
+            return false;
+        }
+
+        if (name.equalsIgnoreCase("linux") && !OS.isLinux()) {
             return false;
         }
 
