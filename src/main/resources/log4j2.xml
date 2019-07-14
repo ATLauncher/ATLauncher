@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="com.atlauncher.evnt">
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
+        </Console>
+        <RollingFile name="LogToRollingFile" fileName="logs/atlauncher.log" filePattern="logs/$${date:yyyy-MM}/atlauncher-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] 5%-5level - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <OnStartupTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+        <ConsoleLogAppender name="LogToConsoleGui">
+            <PatternLayout pattern="%msg%n"/>
+        </ConsoleLogAppender>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.atlauncher" level="debug" additivity="false">
+            <AppenderRef ref="LogToRollingFile"/>
+            <AppenderRef ref="LogToConsoleGui"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="LogToConsole"/>
+        </Root>
+    </Loggers>
+</Configuration>

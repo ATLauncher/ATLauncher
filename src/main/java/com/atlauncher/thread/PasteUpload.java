@@ -35,7 +35,7 @@ import com.atlauncher.data.Constants;
 public final class PasteUpload implements Callable<String> {
     @Override
     public String call() {
-        String log = App.settings.getLog().replace(System.getProperty("line.separator"), "\n");
+        String log = App.console.getLog().replace(System.getProperty("line.separator"), "\n");
         String urlParameters = "";
         try {
             urlParameters += "title=" + URLEncoder.encode(Constants.LAUNCHER_NAME + " - Log", "UTF-8") + "&";
@@ -66,7 +66,7 @@ public final class PasteUpload implements Callable<String> {
             LogManager.logStackTrace("Failed to send data to paste API", e);
             return "Failed to send data to paste API";
         }
-    
+
         StringBuilder builder = new StringBuilder();
         InputStream stream;
         try {

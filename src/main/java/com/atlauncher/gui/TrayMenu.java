@@ -73,8 +73,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
                 }
             }
         }));
-        this.tcButton
-                .addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.getConsole().isVisible()));
+        this.tcButton.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
         this.quitButton.addActionListener(e -> System.exit(0));
     }
 

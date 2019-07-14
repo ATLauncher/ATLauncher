@@ -69,14 +69,14 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
      */
     private void addActionListeners() {
         clearButton.addActionListener(e -> {
-            App.settings.clearConsole();
+            App.console.clearConsole();
             LogManager.info("Console Cleared");
         });
         copyLogButton.addActionListener(e -> {
             Analytics.sendEvent("CopyLog", "Launcher");
             App.TOASTER.pop("Copied Log to clipboard");
             LogManager.info("Copied Log to clipboard");
-            StringSelection text = new StringSelection(App.settings.getLog());
+            StringSelection text = new StringSelection(App.console.getLog());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(text, null);
         });

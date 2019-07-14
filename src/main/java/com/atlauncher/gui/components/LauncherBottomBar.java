@@ -96,7 +96,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      * Sets up the listeners on the buttons
      */
     private void setupListeners() {
-        toggleConsole.addActionListener(e -> App.settings.getConsole().setVisible(!App.settings.isConsoleVisible()));
+        toggleConsole.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
         updateData.addActionListener(e -> {
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updated"), 0,
@@ -126,7 +126,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        if (App.settings.isConsoleVisible()) {
+        if (App.console.isVisible()) {
             toggleConsole = new JButton(GetText.tr("Hide Console"));
         } else {
             toggleConsole = new JButton(GetText.tr("Show Console"));
@@ -206,7 +206,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
     @Override
     public void onRelocalization() {
-        if (App.settings.getConsole().isVisible()) {
+        if (App.console.isVisible()) {
             toggleConsole.setText(GetText.tr("Hide Console"));
         } else {
             toggleConsole.setText(GetText.tr("Show Console"));

@@ -39,6 +39,7 @@ import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
+import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -61,9 +62,9 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         this.setLayout(new BorderLayout());
 
         console = new Console();
-        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(App.THEME.getConsoleTextColor());
-        console.setSelectionColor(App.THEME.getSelectionColor());
+        console.setFont(Theme.DEFAULT_THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
+        console.setForeground(Theme.DEFAULT_THEME.getConsoleTextColor());
+        console.setSelectionColor(Theme.DEFAULT_THEME.getSelectionColor());
 
         setupContextMenu(); // Setup the right click menu
 
@@ -89,7 +90,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     private void setupContextMenu() {
         contextMenu = new JPopupMenu();
 
-        copy = new JMenuItem("Copy");
+        copy = new JMenuItem(GetText.tr("Copy"));
         copy.addActionListener(e -> {
             StringSelection text = new StringSelection(console.getSelectedText());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -106,6 +107,12 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                 }
             }
         });
+    }
+
+    public void setupTheme() {
+        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
+        console.setForeground(App.THEME.getConsoleTextColor());
+        console.setSelectionColor(App.THEME.getSelectionColor());
     }
 
     /**

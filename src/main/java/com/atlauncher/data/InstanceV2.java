@@ -503,8 +503,7 @@ public class InstanceV2 extends MinecraftVersion {
                         process.destroy(); // Kill the process
                     }
                     if (!App.settings.keepLauncherOpen()) {
-                        App.settings.getConsole().setVisible(false); // Hide the console to pretend
-                                                                     // we've closed
+                        App.console.setVisible(false); // Hide the console to pretend we've closed
                     }
                     if (exitValue != 0) {
                         // Submit any pending crash reports from Open Eye if need to since we

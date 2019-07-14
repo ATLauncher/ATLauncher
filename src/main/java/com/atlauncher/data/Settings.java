@@ -20,7 +20,6 @@ package com.atlauncher.data;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;
@@ -68,7 +67,6 @@ import com.atlauncher.Update;
 import com.atlauncher.data.minecraft.MojangStatus;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -155,7 +153,6 @@ public class Settings {
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
-    private LauncherConsole console; // The Launcher's Console
     private InstancesTab instancesPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab vanillaPacksPanel; // The vanilla packs panel
@@ -174,11 +171,6 @@ public class Settings {
 
     public Settings() {
         loadStartingProperties(); // Get users Console preference and Java Path
-    }
-
-    public void loadConsole() {
-        console = new LauncherConsole();
-        LogManager.start();
     }
 
     public void loadEverything() {
@@ -1959,43 +1951,13 @@ public class Settings {
         return false;
     }
 
-    /**
-     * Finds out if the Launcher Console is visible or not
-     *
-     * @return true if the console is visible, false if it's been hidden
-     */
-    public boolean isConsoleVisible() {
-        return this.console.isVisible();
-    }
-
-    /**
-     * Gets the Launcher's current Console instance
-     *
-     * @return The Launcher's Console instance
-     */
-    public LauncherConsole getConsole() {
-        return this.console;
-    }
-
-    public void clearConsole() {
-        this.console.clearConsole();
-    }
-
-    public void addConsoleListener(WindowAdapter wa) {
-        this.console.addWindowListener(wa);
-    }
-
-    public String getLog() {
-        return this.console.getLog();
-    }
-
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
-        this.console.showKillMinecraft();
+        App.console.showKillMinecraft();
     }
 
     public void hideKillMinecraft() {
-        this.console.hideKillMinecraft();
+        App.console.hideKillMinecraft();
     }
 
     public void killMinecraft() {

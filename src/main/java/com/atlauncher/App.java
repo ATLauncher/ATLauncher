@@ -55,6 +55,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
+import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
@@ -93,6 +94,8 @@ public class App {
      * Windows OS.
      */
     public static TrayMenu TRAY_MENU = new TrayMenu();
+
+    public static LauncherConsole console;
 
     /**
      * If the launcher was just updated and this is it's first time loading after
@@ -246,6 +249,24 @@ public class App {
             }
         }
 
+        // Setup the Settings and wait for it to finish.
+        settings = new Settings();
+
+        final SplashScreen ss = new SplashScreen();
+
+        // Load and show the splash screen while we load other things.
+        SwingUtilities.invokeLater(() -> ss.setVisible(true));
+
+        // Load the theme and style everything.
+        loadTheme();
+
+        console = new LauncherConsole();
+
+        if (settings.enableConsole()) {
+            // Show the console if enabled.
+            console.setVisible(true);
+        }
+
         try {
             LogManager.info("Organising filesystem");
             FileSystem.organise();
@@ -259,20 +280,13 @@ public class App {
             LogManager.logStackTrace("Error loading language", e1);
         }
 
-        // Setup the Settings and wait for it to finish.
-        settings = new Settings();
+        // Setup the theme of the console
+        // console.setupTheme();
 
-        final SplashScreen ss = new SplashScreen();
-
-        // Load and show the splash screen while we load other things.
-        SwingUtilities.invokeLater(() -> ss.setVisible(true));
-
-        // Load the theme and style everything.
-        loadTheme();
-
-        // Load the console, making sure it's after the theme and L&F has been loaded
-        // otherwise bad results may occur.
-        settings.loadConsole();
+        if (settings.enableConsole()) {
+            // Show the console if enabled.
+            console.setVisible(true);
+        }
 
         if (settings.enableTrayIcon() && !skipTrayIntegration) {
             try {
@@ -332,11 +346,6 @@ public class App {
             } catch (Exception ex) {
                 LogManager.logStackTrace("Failed to set dock icon", ex);
             }
-        }
-
-        if (settings.enableConsole()) {
-            // Show the console if enabled.
-            settings.getConsole().setVisible(true);
         }
 
         LogManager.info("Showing splash screen and loading everything");

@@ -19,18 +19,14 @@ package com.atlauncher;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
-import com.atlauncher.evnt.LogEvent;
-import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.ErrorReporting;
-import com.atlauncher.thread.LoggingThread;
-import com.atlauncher.utils.Utils;
+
+import org.apache.logging.log4j.Logger;
 
 public final class LogManager {
-    private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<>(128);
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(LogManager.class);
     public static boolean showDebug = false;
 
     /**
@@ -39,16 +35,8 @@ public final class LogManager {
      */
     public static int debugLevel = 0;
 
-    public static void start() {
-        new LoggingThread(queue).start();
-    }
-
-    public static void log(LogEvent event) {
-        queue.offer(event);
-    }
-
     public static void info(String message) {
-        queue.offer(new LogEvent(LogType.INFO, message));
+        logger.info(message);
     }
 
     public static void debug(String message) {
@@ -60,28 +48,23 @@ public final class LogManager {
     }
 
     public static void debug(String message, boolean force) {
-        if (showDebug || force) {
-            queue.offer(new LogEvent(LogType.DEBUG, message));
-        }
+        logger.debug(message);
     }
 
     public static void debug(String message, int level) {
-        if (showDebug && debugLevel >= level) {
-            queue.offer(new LogEvent(LogType.DEBUG, message));
-        }
+        logger.debug(message);
     }
 
     public static void warn(String message) {
-        queue.offer(new LogEvent(LogEvent.LogType.WARN, message));
+        logger.warn(message);
     }
 
     public static void error(String message) {
-        queue.offer(new LogEvent(LogType.ERROR, message));
+        logger.error(message);
     }
 
     public static void minecraft(String message) {
-        Object[] value = Utils.prepareMessageForMinecraftLog(message);
-        queue.offer(new LogEvent((LogType) value[0], (String) value[1], 10));
+        logger.info(message);
     }
 
     /**
