@@ -36,8 +36,6 @@ import org.mini2Dx.gettext.GetText;
 public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
-    private JLabelWithHover languageLabelRestart;
-    private JPanel languagePanel;
     private JLabelWithHover themeLabel;
     private JComboBox<String> theme;
     private JLabelWithHover themeLabelRestart;

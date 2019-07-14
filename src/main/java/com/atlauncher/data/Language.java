@@ -39,7 +39,6 @@ public class Language {
     // add in the languages we have support for
     static {
         locales.add(Locale.ENGLISH);
-        locales.add(Locale.ITALIAN);
     }
 
     public static void init() throws IOException {

@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -31,23 +32,25 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
-public class SetupDialog extends JDialog {
-    /**
-     * Auto generated serial.
-     */
+public class SetupDialog extends JDialog implements RelocalizationListener {
     private static final long serialVersionUID = -2931970914611329658L;
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;
+
+    private JLabel setupLabel;
 
     private JLabel languageLabel;
     private JComboBox<String> language;
@@ -75,7 +78,8 @@ public class SetupDialog extends JDialog {
         top = new JPanel();
 
         // #. {0} is the name of the launcher (ATLauncher)
-        top.add(new JLabel(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME)));
+        setupLabel = new JLabel(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
+        top.add(setupLabel);
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -90,8 +94,13 @@ public class SetupDialog extends JDialog {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<>(Language.languages.keySet().toArray(new String[Language.languages.size()]));
+        language = new JComboBox<>(Language.locales.stream().map(l -> l.getDisplayName()).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
+        language.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                Language.setLanguage((String) language.getSelectedItem());
+            }
+        });
         middle.add(language, gbc);
 
         gbc.gridx = 0;
@@ -111,9 +120,9 @@ public class SetupDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "? ",
                 Utils.getIconImage("/assets/image/Help.png"),
-                "<html>" + GetText.tr(
-                        "The Launcher sends back anonymous analytics to Google Analytics%sin order to track what people do and don't use in the launcher.<br/>This helps determine what new features we implement in the future.<br/>All analytics are anonymous and contain no user/instance information in it at all.<br/>If you don't want to send anonymous analytics, you can disable this option.")
-                        + "</html>");
+                "<html>" + Utils.splitMultilinedString(GetText.tr(
+                        "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),
+                        80, "<br/>") + "</html>");
         middle.add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
@@ -146,7 +155,20 @@ public class SetupDialog extends JDialog {
             }
         });
 
+        RelocalizationManager.addListener(this);
+
         setVisible(true);
     }
 
+    @Override
+    public void onRelocalization() {
+        setupLabel.setText(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
+        languageLabel.setText(GetText.tr("Language") + ": ");
+        enableLeaderboardsLabel.setText(GetText.tr("Enable Leaderboards") + "? ");
+        enableAnalyticsLabel.setText(GetText.tr("Enable Anonymous Analytics") + "? ");
+        enableAnalyticsLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
+                "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),
+                80, "<br/>") + "</html>");
+        saveButton.setText(GetText.tr("Save"));
+    }
 }
