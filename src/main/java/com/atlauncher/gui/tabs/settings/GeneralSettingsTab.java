@@ -63,7 +63,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
-                GetText.tr("This specifies the Language used by the Launcher."));
+                GetText.tr("This specifies the language used by the Launcher."));
         add(languageLabel, gbc);
 
         gbc.gridx++;
