@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.mini2Dx:gettext-gradle-plugin:1.1.0-SNAPSHOT'
+        classpath 'org.mini2Dx:gettext-gradle-plugin:1.1.0'
     }
 }
 
@@ -51,7 +51,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.0.0'
     implementation 'net.mikehardy:google-analytics-java:2.0.8'
     implementation 'io.sentry:sentry:1.7.16'
-    implementation 'org.mini2Dx:gettext-lib:1.1.0-SNAPSHOT'
+    implementation 'org.mini2Dx:gettext-lib:1.1.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
