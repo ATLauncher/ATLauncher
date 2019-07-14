@@ -114,7 +114,7 @@ public class ForgeLoader implements Loader {
     public void downloadAndExtractInstaller() throws Exception {
         Download.build().setUrl(this.installerUrl)
                 .downloadTo(
-                        FileSystem.LOADERS.resolve("/forge-" + this.minecraft + "-" + this.version + "-installer.jar"))
+                        FileSystem.LOADERS.resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar"))
                 .unzipTo(this.tempDir.toPath()).downloadFile();
 
         this.copyLocalLibraries();
