@@ -44,10 +44,10 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
 
     private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
 
-    private final JButton clearButton = new JButton("Clear");
-    private final JButton copyLogButton = new JButton("Copy Log");
-    private final JButton uploadLogButton = new JButton("Upload Log");
-    private final JButton killMinecraftButton = new JButton("Kill Minecraft");
+    private final JButton clearButton = new JButton(GetText.tr("Clear"));
+    private final JButton copyLogButton = new JButton(GetText.tr("Copy Log"));
+    private final JButton uploadLogButton = new JButton(GetText.tr("Upload Log"));
+    private final JButton killMinecraftButton = new JButton(GetText.tr("Kill Minecraft"));
 
     public ConsoleBottomBar() {
         this.addActionListeners(); // Setup Action Listeners
