@@ -40,19 +40,19 @@ public final class LogManager {
     }
 
     public static void debug(String message) {
-        debug(message, false);
+        if (showDebug) {
+            logger.debug(message);
+        }
     }
 
     public static void debugObject(Object object) {
-        debug(Gsons.DEFAULT.toJson(object), false);
-    }
-
-    public static void debug(String message, boolean force) {
-        logger.debug(message);
+        debug(Gsons.DEFAULT.toJson(object));
     }
 
     public static void debug(String message, int level) {
-        logger.debug(message);
+        if (debugLevel >= level) {
+            debug(message);
+        }
     }
 
     public static void warn(String message) {

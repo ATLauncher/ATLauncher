@@ -617,23 +617,23 @@ public class App {
 
         skipTrayIntegration = options.has("skip-tray-integration");
         if (skipTrayIntegration) {
-            LogManager.debug("Skipping tray integration!", true);
+            LogManager.debug("Skipping tray integration!");
         }
 
         disableErrorReporting = options.has("disable-error-reporting");
         if (disableErrorReporting) {
-            LogManager.debug("Disabling error reporting!", true);
+            LogManager.debug("Disabling error reporting!");
         }
 
         forceOfflineMode = options.has("force-offline-mode");
         if (forceOfflineMode) {
-            LogManager.debug("Forcing offline mode!", true);
+            LogManager.debug("Forcing offline mode!");
         }
 
         if (options.has("working-dir")) {
             Path workingDirTemp = Paths.get(String.valueOf(options.valueOf("working-dir")));
             if (Files.exists(workingDirTemp) && Files.isDirectory(workingDirTemp)) {
-                LogManager.debug("Working directory set to " + workingDirTemp + "!", true);
+                LogManager.debug("Working directory set to " + workingDirTemp + "!");
                 workingDir = workingDirTemp;
             } else {
                 LogManager.error("Cannot set working directory to " + workingDirTemp + " as it doesn't exist!");
@@ -642,17 +642,17 @@ public class App {
 
         noLauncherUpdate = options.has("no-launcher-update");
         if (noLauncherUpdate) {
-            LogManager.debug("Not updating the launcher!", true);
+            LogManager.debug("Not updating the launcher!");
         }
 
         skipIntegration = options.has("skip-integration");
         if (skipIntegration) {
-            LogManager.debug("Skipping integration!", true);
+            LogManager.debug("Skipping integration!");
         }
 
         skipHashChecking = options.has("skip-hash-checking");
         if (skipHashChecking) {
-            LogManager.debug("Skipping hash checking! Don't ask for support with this enabled!", true);
+            LogManager.debug("Skipping hash checking! Don't ask for support with this enabled!");
         }
     }
 }
