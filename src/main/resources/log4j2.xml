@@ -5,7 +5,7 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
         </Console>
         <RollingFile name="LogToRollingFile" fileName="logs/atlauncher.log" filePattern="logs/$${date:yyyy-MM}/atlauncher-%d{MM-dd-yyyy}-%i.log.gz">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] 5%-5level - %msg%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy />
                 <OnStartupTriggeringPolicy />
