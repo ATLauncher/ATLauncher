@@ -244,14 +244,16 @@ public class Java {
             javas.add(systemJava);
         }
 
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(FileSystem.RUNTIMES)) {
-            for (Path path : directoryStream) {
-                if (Files.exists(path.resolve("release"))) {
-                    javas.add(new JavaInfo(Java.getPathToJavaExecutable(path)));
+        if (Files.isDirectory(FileSystem.RUNTIMES)) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(FileSystem.RUNTIMES)) {
+                for (Path path : directoryStream) {
+                    if (Files.exists(path.resolve("release"))) {
+                        javas.add(new JavaInfo(Java.getPathToJavaExecutable(path)));
+                    }
                 }
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
             }
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
         }
 
         return javas;
