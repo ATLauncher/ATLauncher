@@ -4,19 +4,18 @@
         <Console name="LogToConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
         </Console>
-        <RollingRandomAccessFile name="LogToRollingFile" fileName="logs/atlauncher.log" filePattern="logs/old/%d{MM-dd-yyyy}-%i.log.gz">
+        <RollingFile name="LogToRollingFile" fileName="logs/atlauncher.log" filePattern="logs/old/%d{yyyy-MM-dd-HH-mm-ss}.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
             <Policies>
-                <TimeBasedTriggeringPolicy />
                 <OnStartupTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="logs/old/" maxDepth="1">
+                <Delete basePath="logs/old/" maxDepth="0">
                     <IfFileName glob="*.log.gz" />
-                    <IfLastModified age="PT14D" />
+                    <IfLastModified age="14d" />
                 </Delete>
             </DefaultRolloverStrategy>
-        </RollingRandomAccessFile>
+        </RollingFile>
         <ConsoleLogAppender name="LogToConsoleGui">
             <PatternLayout pattern="%msg%n"/>
         </ConsoleLogAppender>
