@@ -29,13 +29,13 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
-import com.atlauncher.utils.HTMLUtils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -105,8 +105,9 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         });
         killMinecraftButton.addActionListener(arg0 -> {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft") + "?")
-                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                            "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves.")))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves."))
+                            .build())
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent("KillMinecraft", "Launcher");

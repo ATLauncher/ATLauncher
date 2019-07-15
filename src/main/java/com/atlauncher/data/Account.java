@@ -44,6 +44,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -52,7 +53,6 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Authentication;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
@@ -687,10 +687,11 @@ public class Account implements Serializable {
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
 
-            DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
-                    .setContent(HTMLUtils.centerParagraph(HTMLUtils
-                            .centerParagraph(HTMLUtils.centerParagraph(GetText.tr("Couldn't login to Minecraft servers")
-                                    + "<br/><br/>" + response.getErrorMessage()))))
+            DialogManager
+                    .okDialog().setTitle(
+                            GetText.tr("Error Logging In"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr("Couldn't login to Minecraft servers")
+                            + "<br/><br/>" + response.getErrorMessage()).build())
                     .setType(DialogManager.ERROR).show();
 
             App.settings.setMinecraftLaunched(false);

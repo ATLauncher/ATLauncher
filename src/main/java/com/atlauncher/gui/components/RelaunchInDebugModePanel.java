@@ -25,10 +25,9 @@ import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
 import com.atlauncher.LogManager;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -36,8 +35,9 @@ import org.mini2Dx.gettext.GetText;
 public class RelaunchInDebugModePanel extends AbstractToolPanel implements ActionListener {
     private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Launch in debug mode"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(
-            Utils.splitMultilinedString(GetText.tr("Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."), 60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(60).text(GetText.tr(
+            "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."))
+            .build());
 
     public RelaunchInDebugModePanel() {
         TITLE_LABEL.setFont(BOLD_FONT);

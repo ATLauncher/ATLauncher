@@ -50,6 +50,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
@@ -63,7 +64,6 @@ import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.ErrorReporting;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -221,30 +221,25 @@ public class App {
         ErrorReporting.init(disableErrorReporting);
 
         if (Files.notExists(FileSystem.CONFIGS) && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
-            String content = HTMLUtils.centerParagraph("I've detected that you may "
-                    + "not have installed this in the right location.<br/><br/>The exe or jar file should "
-                    + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
-                    + "that's what you've done?");
-
-            int returnOption = DialogManager.optionDialog().setTitle("Warning").setContent(content)
+            if (DialogManager.optionDialog().setTitle("Warning")
+                    .setContent(new HTMLBuilder().center().text("I've detected that you may "
+                            + "not have installed this in the right location.<br/><br/>The exe or jar file should "
+                            + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
+                            + "that's what you've done?").build())
                     .addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
-                    .setType(DialogManager.ERROR).show();
-
-            if (returnOption != 0) {
+                    .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
             }
 
-            content = HTMLUtils.centerParagraph(
-                    "Are you absolutely sure you've put ATLauncher in it's own folder?<br/><br/>If you "
-                            + "haven't and you click 'Yes, delete my files', this may delete "
-                            + FileSystem.CONFIGS.getParent().toFile().listFiles().length
-                            + " files and folders.<br/><br/>Are you 100% sure?");
-
-            returnOption = DialogManager.optionDialog().setTitle("Warning").setContent(content)
+            if (DialogManager.optionDialog().setTitle("Warning")
+                    .setContent(new HTMLBuilder().center()
+                            .text("Are you absolutely sure you've put ATLauncher in it's own folder?<br/><br/>If you "
+                                    + "haven't and you click 'Yes, delete my files', this may delete "
+                                    + FileSystem.CONFIGS.getParent().toFile().listFiles().length
+                                    + " files and folders.<br/><br/>Are you 100% sure?")
+                            .build())
                     .addOption("Yes, delete my files", true).addOption("No, exit and I'll put it in a folder")
-                    .setType(DialogManager.ERROR).show();
-
-            if (returnOption != 0) {
+                    .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
             }
         }

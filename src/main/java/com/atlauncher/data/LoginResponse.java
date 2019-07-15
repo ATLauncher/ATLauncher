@@ -52,7 +52,7 @@ public class LoginResponse {
     }
 
     public String getErrorMessage() {
-        return (this.errorMessage == null ? "Unknown Error Occured" : this.errorMessage);
+        return (this.errorMessage == null ? "Unknown Error Occurred" : this.errorMessage);
     }
 
     public void setAuth(UserAuthentication auth) {

@@ -30,6 +30,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Runtime;
 import com.atlauncher.data.Runtimes;
@@ -37,7 +38,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -46,15 +46,14 @@ import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
 
+@SuppressWarnings("serial")
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
-    private static final long serialVersionUID = -2690200209156149465L;
-
     private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Runtime Downloader"));
 
-    private final JLabel INFO_LABEL = new JLabel(HTMLUtils.centerParagraph(Utils.splitMultilinedString(
-            GetText.tr(
-                    "Use this to automatically install and use a recommended version of Java to use with ATLauncher."),
-            60, "<br>")));
+    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(60)
+            .text(GetText.tr(
+                    "Use this to automatically install and use a recommended version of Java to use with ATLauncher."))
+            .build());
 
     public RuntimeDownloaderToolPanel() {
         TITLE_LABEL.setFont(BOLD_FONT);
@@ -148,8 +147,9 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
         if (dialog.getReturnValue() == null) {
             LogManager.error("Runtime downloaded failed to run!");
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(HTMLUtils.centerParagraph(
-                            GetText.tr("An error occurred downloading the runtime. Please check the logs.")))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
+                            .build())
                     .setType(DialogManager.ERROR).show();
         } else {
             LogManager.info("Runtime downloaded!");
@@ -160,8 +160,9 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
             App.settings.saveProperties();
 
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(HTMLUtils.centerParagraph(
-                            GetText.tr("The recommended version of Java has been installed and set to be used.")))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The recommended version of Java has been installed and set to be used."))
+                            .build())
                     .setType(DialogManager.INFO).show();
         }
     }

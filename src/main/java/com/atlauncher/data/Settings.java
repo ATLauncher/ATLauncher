@@ -60,6 +60,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.Update;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.MojangStatus;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
@@ -73,7 +74,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -207,12 +207,13 @@ public class Settings {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Running 32 Bit Java on 64 Bit Windows"))
-                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                            "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?")))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?"))
+                            .build())
                     .setType(DialogManager.ERROR).show();
 
             if (ret == 0) {
-                OS.openWebBrowser("http://www.atlauncher.com/help/32bit/");
+                OS.openWebBrowser("https://www.atlauncher.com/help/32bit/");
                 System.exit(0);
             }
         }
@@ -222,13 +223,14 @@ public class Settings {
 
             int ret = DialogManager.optionDialog()
                     .setTitle(GetText.tr("Warning! You may not be able to play Minecraft"))
-                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                            "You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you have issues playing some packs, you may need to install Java 8 and set it to be used in the launchers java settings")))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you have issues playing some packs, you may need to install Java 8 and set it to be used in the launchers java settings"))
+                            .build())
                     .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
                     .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
-                OS.openWebBrowser("http://atl.pw/java8download");
+                OS.openWebBrowser("https://atl.pw/java8download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideJava9Warning = true;
@@ -240,13 +242,14 @@ public class Settings {
             LogManager.warn("You're using an old version of Java that may not work!");
 
             int ret = DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
-                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 8 version 101.<br/><br/>Without doing this, some packs may not install.<br/><br/>Click Download to go to the Java downloads page and install the latest Java")))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 8 version 101.<br/><br/>Without doing this, some packs may not install.<br/><br/>Click Download to go to the Java downloads page and install the latest Java"))
+                            .build())
                     .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
                     .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.ERROR).show();
 
             if (ret == 0) {
-                OS.openWebBrowser("http://atl.pw/java8download");
+                OS.openWebBrowser("https://atl.pw/java8download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideJavaLetsEncryptWarning = true;
@@ -258,13 +261,14 @@ public class Settings {
             LogManager.warn("You're using an old unsupported version of Java (Java 7 or older)!");
 
             int ret = DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
-                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load meaning you cannot play.<br/><br/>Click Download to go to the Java downloads page")))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load meaning you cannot play.<br/><br/>Click Download to go to the Java downloads page"))
+                            .build())
                     .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
                     .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
-                OS.openWebBrowser("http://atl.pw/java8download");
+                OS.openWebBrowser("https://atl.pw/java8download");
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideOldJavaWarning = true;
@@ -541,9 +545,11 @@ public class Settings {
                 downloadUpdate(); // Update the Launcher
             } else {
                 DialogManager.okDialog().setTitle("Update Failed!")
-                        .setContent(HTMLUtils.centerParagraph("Update failed. Please click Ok to close "
-                                + "the launcher and open up the downloads page.<br/><br/>Download "
-                                + "the update and replace the old " + Constants.LAUNCHER_NAME + " file."))
+                        .setContent(new HTMLBuilder().center()
+                                .text(GetText.tr("Update failed. Please click Ok to close "
+                                        + "the launcher and open up the downloads page.<br/><br/>Download "
+                                        + "the update and replace the old " + Constants.LAUNCHER_NAME + " file."))
+                                .build())
                         .setType(DialogManager.ERROR).show();
                 OS.openWebBrowser("https://www.atlauncher.com/downloads/");
                 System.exit(0);
@@ -583,9 +589,11 @@ public class Settings {
             }
         } catch (IOException e) {
             DialogManager.okDialog().setTitle("Error!")
-                    .setContent(HTMLUtils.centerParagraph("Cannot create the config file"
-                            + ".<br/><br/>Make sure you're running the Launcher from somewhere with<br/>write"
-                            + " permissions for your user account such as your Home/Users folder or desktop."))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("Cannot create the config file"
+                                    + ".<br/><br/>Make sure you're running the Launcher from somewhere with<br/>write"
+                                    + " permissions for your user account such as your Home/Users folder or desktop."))
+                            .build())
                     .setType(DialogManager.ERROR).show();
             System.exit(0);
         }
@@ -2283,7 +2291,7 @@ public class Settings {
     public void cloneInstance(Instance instance, String clonedName) {
         Instance clonedInstance = (Instance) instance.clone();
         if (clonedInstance == null) {
-            LogManager.error("Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!");
+            LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.setName(clonedName);
             clonedInstance.getRootDirectory().mkdir();
@@ -2298,7 +2306,7 @@ public class Settings {
         InstanceV2 clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), InstanceV2.class);
 
         if (clonedInstance == null) {
-            LogManager.error("Error Occured While Cloning Instance! Instance Object Couldn't Be Cloned!");
+            LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.launcher.name = clonedName;
             FileUtils.createDirectory(clonedInstance.getRoot());

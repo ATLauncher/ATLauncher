@@ -51,6 +51,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -64,7 +65,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -189,17 +189,18 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
                     && !instance.launcher.java.conforms()) {
                 DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
-                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}",
-                                "<br/><br/>", instance.launcher.java.getVersionString())))
+                                "<br/><br/>", instance.launcher.java.getVersionString())).build())
                         .setType(DialogManager.ERROR).show();
                 return;
             }
 
             if (instance.hasUpdate()) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
-                        .setContent(HTMLUtils.centerParagraph(GetText
-                                .tr("An update is available for this instance.<br/><br/>Do you want to update now?")))
+                        .setContent(new HTMLBuilder().center().text(GetText
+                                .tr("An update is available for this instance.<br/><br/>Do you want to update now?"))
+                                .build())
                         .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                 if (ret == 0) {
@@ -259,8 +260,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.backupButton.addActionListener(e -> {
             if (Files.isDirectory(instance.getRoot().resolve("saves"))) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Backing Up {0}", instance.launcher.name))
-                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                "Backups saves all your worlds as well as some other files<br/>such as your configs, so you can restore them later.<br/>Once backed up you can find the zip file in the Backups/ folder.<br/>Do you want to backup this instance?")))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Backups saves all your worlds as well as some other files<br/>such as your configs, so you can restore them later.<br/>Once backed up you can find the zip file in the Backups/ folder.<br/>Do you want to backup this instance?"))
+                                .build())
                         .setType(DialogManager.INFO).show();
 
                 if (ret == DialogManager.YES_OPTION) {
@@ -347,19 +349,25 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                 }));
                 dialog.start();
             } else if (clonedName == null || clonedName.equals("")) {
-                LogManager.error("Error Occured While Cloning Instance! Dialog Closed/Cancelled!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(HTMLUtils.centerParagraph(GetText.tr(
-                        "An error occurred while cloning the instance.<br/><br/>Please check the console and try again.")))
+                LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                                .build())
                         .setType(DialogManager.ERROR).show();
             } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                LogManager.error("Error Occured While Cloning Instance! Invalid Name!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(HTMLUtils.centerParagraph(GetText.tr(
-                        "An error occurred while cloning the instance.<br/><br/>Please check the console and try again")))
+                LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again"))
+                                .build())
                         .setType(DialogManager.ERROR).show();
             } else {
-                LogManager.error("Error Occured While Cloning Instance! Instance With That Name Already Exists!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(HTMLUtils.centerParagraph(GetText.tr(
-                        "An error occurred while cloning the instance.<br/><br/>Please check the console and try again")))
+                LogManager.error("Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again"))
+                                .build())
                         .setType(DialogManager.ERROR).show();
             }
         });
@@ -391,8 +399,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                             && !instance.hasUpdateBeenIgnored(instance.launcher.isDev ? instance.getLatestVersion().hash
                                     : instance.getLatestVersion().version)) {
                         int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
-                                .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                        "An update is available for this instance.<br/><br/>Do you want to update now?")))
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "An update is available for this instance.<br/><br/>Do you want to update now?"))
+                                        .build())
                                 .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                         if (ret == 0) {
@@ -468,8 +477,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                 .hasUpdateBeenIgnored(instance.launcher.isDev ? instance.getLatestVersion().hash
                                         : instance.getLatestVersion().version)) {
                             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
-                                    .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                            "An update is available for this instance.<br/><br/>Do you want to update now?")))
+                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                            "An update is available for this instance.<br/><br/>Do you want to update now?"))
+                                            .build())
                                     .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                             if (ret == 0) {

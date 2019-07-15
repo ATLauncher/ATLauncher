@@ -25,9 +25,9 @@ import java.util.List;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -421,7 +421,8 @@ public class Mod {
                             .setTitle(GetText.tr("Downloading") + " "
                                     + (serverFile == null ? (isFilePattern() ? getName() : getFile())
                                             : (isFilePattern() ? getName() : getServerFile())))
-                            .setContent(HTMLUtils.centerParagraph(GetText.tr("Browser opened to download file {0}",
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "Browser opened to download file {0}",
                                     (serverFile == null ? (isFilePattern() ? getName() : getFile())
                                             : (isFilePattern() ? getName() : getServerFile())))
                                     + "<br/><br/>" + GetText.tr("Please save this file to the following location")
@@ -429,7 +430,8 @@ public class Mod {
                                     + (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS.toFile().getAbsolutePath()
                                             : (isFilePattern() ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
                                                     : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
-                                                            + FileSystem.USER_DOWNLOADS.toFile()))))
+                                                            + FileSystem.USER_DOWNLOADS.toFile())))
+                                    .build())
                             .addOption(GetText.tr("Open Folder"), true)
                             .addOption(GetText.tr("I've Downloading This File")).setType(DialogManager.INFO).show();
 
@@ -559,12 +561,14 @@ public class Mod {
 
                 int ret = DialogManager.optionDialog()
                         .setTitle(GetText.tr("Downloading") + " " + (serverFile == null ? getFile() : getServerFile()))
-                        .setContent(HTMLUtils.centerParagraph(GetText.tr("Browser opened to download file {0}",
-                                (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
-                                + GetText.tr("Please save this file to the following location") + "<br/><br/>"
-                                + (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS.toFile().getAbsolutePath()
-                                        : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
-                                                + FileSystem.USER_DOWNLOADS.toFile())))
+                        .setContent(new HTMLBuilder().center()
+                                .text(GetText.tr("Browser opened to download file {0}",
+                                        (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
+                                        + GetText.tr("Please save this file to the following location") + "<br/><br/>"
+                                        + (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS.toFile().getAbsolutePath()
+                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
+                                                        + FileSystem.USER_DOWNLOADS.toFile()))
+                                .build())
                         .setType(DialogManager.INFO).addOption(GetText.tr("I've Downloading This"), true).show();
 
                 if (ret == DialogManager.CLOSED_OPTION) {

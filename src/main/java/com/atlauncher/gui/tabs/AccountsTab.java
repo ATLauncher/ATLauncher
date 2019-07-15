@@ -44,6 +44,7 @@ import javax.swing.event.HyperlinkEvent;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -52,7 +53,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Authentication;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
@@ -206,8 +206,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         rememberField.addActionListener(e -> {
             if (rememberField.isSelected()) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Security Warning"))
-                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                "WARNING: By clicking Remember Password you potentially expose your password to bad people.<br/>This saves your encrypted password to disk and can be decrypted by bad people.<br/>Are you sure you want to do this?")))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "WARNING: By clicking Remember Password you potentially expose your password to bad people.<br/>This saves your encrypted password to disk and can be decrypted by bad people.<br/>Are you sure you want to do this?"))
+                                .build())
                         .setType(DialogManager.ERROR).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
                         .show();
 
@@ -354,11 +355,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 accountsComboBox.setSelectedItem(account);
             } else {
                 LogManager.error(response.getErrorMessage());
-                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(HTMLUtils.centerParagraph(
+                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
                         // #. {0} is the error message from Mojang as to why we couldn't login
-                        GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
-                                response.getErrorMessage())))
-                        .setType(DialogManager.INFO).show();
+                        .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
+                                response.getErrorMessage()))
+                        .build()).setType(DialogManager.INFO).show();
             }
         }
     }

@@ -22,12 +22,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.utils.HTMLUtils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -64,8 +64,9 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
         this.killMCButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             if (App.settings.isMinecraftLaunched()) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft"))
-                        .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves")))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"))
+                                .build())
                         .setType(DialogManager.ERROR).show();
 
                 if (ret == DialogManager.YES_OPTION) {

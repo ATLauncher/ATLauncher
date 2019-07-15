@@ -47,6 +47,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
@@ -54,7 +55,6 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -137,8 +137,8 @@ public class InstanceInstallerDialog extends JDialog {
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        install = new JButton(((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("Reinstall"))
-                : GetText.tr("Install")));
+        install = new JButton(
+                ((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("Reinstall")) : GetText.tr("Install")));
 
         // Top Panel Stuff
         top = new JPanel();
@@ -204,8 +204,9 @@ public class InstanceInstallerDialog extends JDialog {
                 enableUserLock.addActionListener(e -> {
                     if (enableUserLock.isSelected()) {
                         int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Enable User Lock") + "? ")
-                                .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                        "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else.<br/><br/>Are you sure you want to do this?")))
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else.<br/><br/>Are you sure you want to do this?"))
+                                        .build())
                                 .setType(DialogManager.WARNING).show();
 
                         if (ret != 0) {
@@ -224,16 +225,16 @@ public class InstanceInstallerDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                            .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                    "An instance already exists with that name.<br/><br/>Rename it and try again.")))
+                            .setContent(new HTMLBuilder().center().text(GetText
+                                    .tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
+                                    .build())
                             .setType(DialogManager.ERROR).show();
                     return;
                 } else if (!isReinstall && !isServer
                         && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                    DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                            .setContent(HTMLUtils.centerParagraph(GetText
-                                    .tr("Instance name is invalid. It must contain at least 1 letter or number.")))
-                            .setType(DialogManager.ERROR).show();
+                    DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
+                            .build()).setType(DialogManager.ERROR).show();
                     return;
                 }
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
@@ -391,8 +392,8 @@ public class InstanceInstallerDialog extends JDialog {
 
                         Utils.cleanTempDirectory();
 
-                        DialogManager.okDialog().setTitle(title).setContent(HTMLUtils.centerParagraph(text))
-                                .setType(type).show();
+                        DialogManager.okDialog().setTitle(title)
+                                .setContent(new HTMLBuilder().center().text(text).build()).setType(type).show();
                     }
 
                 };

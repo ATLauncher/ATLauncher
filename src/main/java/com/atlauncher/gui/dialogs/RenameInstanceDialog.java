@@ -32,10 +32,10 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.utils.HTMLUtils;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -135,9 +135,12 @@ public class RenameInstanceDialog extends JDialog {
                         .setType(DialogManager.ERROR).show();
             } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(HTMLUtils.centerParagraph(GetText.tr("Error") + "<br/><br/>"
-                                + GetText.tr("The name {0} is invalid. It must contain at least 1 letter or number.",
-                                        instanceName.getText())))
+                        .setContent(
+                                new HTMLBuilder().center()
+                                        .text(GetText.tr("Error") + "<br/><br/>" + GetText.tr(
+                                                "The name {0} is invalid. It must contain at least 1 letter or number.",
+                                                instanceName.getText()))
+                                        .build())
                         .setType(DialogManager.ERROR).show();
             } else {
                 if (this.instanceV2 != null && instanceV2.rename(instanceName.getText())) {
@@ -146,10 +149,11 @@ public class RenameInstanceDialog extends JDialog {
                     App.settings.saveInstances();
                     App.settings.reloadInstancesPanel();
                 } else {
-                    LogManager.error("Unknown Error Occured While Renaming Instance!");
+                    LogManager.error("Unknown Error Occurred While Renaming Instance!");
                     DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
-                            .setContent(HTMLUtils.centerParagraph(GetText.tr(
-                                    "An error occurred renaming the instance.<br/><br/>Please check the console and try again.")))
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "An error occurred renaming the instance.<br/><br/>Please check the console and try again."))
+                                    .build())
                             .setType(DialogManager.ERROR).show();
                 }
                 close();

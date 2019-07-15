@@ -17,8 +17,8 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.utils.HTMLUtils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -37,14 +37,17 @@ public class MinecraftError {
 
     static void showOutOfMemoryPopup() {
         DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
-                .setContent(HTMLUtils.centerParagraph(
-                        GetText.tr("Minecraft has crashed due to insufficent memory being allocated.<br/><br/>Please go to the settings tab and increase the maximum memory option and then try launching the instance again.")))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "Minecraft has crashed due to insufficent memory being allocated.<br/><br/>Please go to the settings tab and increase the maximum memory option and then try launching the instance again."))
+                        .build())
                 .setType(DialogManager.INFO).show();
     }
 
     static void showConcurrentModificationError16() {
         DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
-                .setContent(HTMLUtils.centerParagraph(GetText.tr("Minecraft has crashed due to an incompatability with Forge and your version of Java.<br/><br/>Please reinstall the instance to automatically fix the problem, and then try launching the instance again.")))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "Minecraft has crashed due to an incompatability with Forge and your version of Java.<br/><br/>Please reinstall the instance to automatically fix the problem, and then try launching the instance again."))
+                        .build())
                 .setType(DialogManager.INFO).show();
     }
 }
