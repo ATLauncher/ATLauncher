@@ -38,12 +38,8 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URLDecoder;
 import java.nio.file.Files;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -128,7 +124,6 @@ public class Settings {
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
     private int concurrentConnections; // Number of concurrent connections to open when downloading
-    private int daysOfLogsToKeep; // Number of days of logs to keep
     private Account account; // Account using the Launcher
     private String addedPacks; // The Semi Public packs the user has added to the Launcher
     private Proxy proxy = null; // The proxy object if any
@@ -205,8 +200,6 @@ public class Settings {
         if (this.isUsingCustomJavaPath()) {
             checkForValidJavaPath(true); // Checks for a valid Java path
         }
-
-        clearOldLogs(); // Clear all the old logs out
 
         checkAccountsForNameChanges(); // Check account for username changes
 
@@ -342,33 +335,6 @@ public class Settings {
                 }
             }, 0, this.getServerCheckerWaitInMilliseconds());
         }
-    }
-
-    public void clearOldLogs() {
-        LogManager.debug("Clearing out old logs");
-
-        Date toDeleteAfter = new Date();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(toDeleteAfter);
-        calendar.add(Calendar.DATE, -(getDaysOfLogsToKeep()));
-        toDeleteAfter = calendar.getTime();
-
-        for (File file : FileSystem.LOGS.toFile().listFiles(Utils.getLogsFileFilter())) {
-            try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
-                        .parse(file.getName().replace(Constants.LAUNCHER_NAME + "-Log_", "").replace(".log", ""));
-
-                if (date.before(toDeleteAfter)) {
-                    Utils.delete(file);
-                    LogManager.debug("Deleting log file " + file.getName());
-                }
-            } catch (ParseException e) {
-                LogManager.error("Invalid log file " + file.getName());
-            }
-        }
-
-        LogManager.debug("Finished clearing out old logs");
     }
 
     public void checkMojangStatus() {
@@ -676,11 +642,6 @@ public class Settings {
             if (this.concurrentConnections < 1) {
                 this.concurrentConnections = 8;
             }
-
-            this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
-            if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
-                this.daysOfLogsToKeep = 7;
-            }
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -865,14 +826,6 @@ public class Settings {
                 this.concurrentConnections = 8;
             }
 
-            this.daysOfLogsToKeep = Integer.parseInt(properties.getProperty("daysoflogstokeep", "7"));
-            if (this.daysOfLogsToKeep < 1 || this.daysOfLogsToKeep > 30) {
-                // Days of logs to keep should be 1 or more but less than 30
-                LogManager.warn("Tried to set the number of days worth of logs to keep to " + this.daysOfLogsToKeep
-                        + " which is not valid! Must be between 1 and 30 inclusive. Setting back to default of 7!");
-                this.daysOfLogsToKeep = 7;
-            }
-
             this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
 
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
@@ -946,7 +899,6 @@ public class Settings {
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
-            properties.setProperty("daysoflogstokeep", this.daysOfLogsToKeep + "");
             properties.setProperty("theme", this.theme);
             properties.setProperty("dateformat", this.dateFormat);
             if (account != null) {
@@ -2239,14 +2191,6 @@ public class Settings {
 
     public void setConcurrentConnections(int concurrentConnections) {
         this.concurrentConnections = concurrentConnections;
-    }
-
-    public int getDaysOfLogsToKeep() {
-        return this.daysOfLogsToKeep;
-    }
-
-    public void setDaysOfLogsToKeep(int daysOfLogsToKeep) {
-        this.daysOfLogsToKeep = daysOfLogsToKeep;
     }
 
     public String getTheme() {

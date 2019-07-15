@@ -21,9 +21,6 @@ import java.awt.GridBagConstraints;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -35,10 +32,6 @@ import org.mini2Dx.gettext.GetText;
 public class LoggingSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
-
-    private JLabelWithHover daysOfLogsToKeepLabel;
-    private SpinnerModel daysOfLogsToKeepModel;
-    private JSpinner daysOfLogsToKeep;
 
     private JLabelWithHover enableLeaderboardsLabel;
     private JCheckBox enableLeaderboards;
@@ -75,25 +68,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         forgeLoggingLevel.addItem("FINEST");
         forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
         add(forgeLoggingLevel, gbc);
-
-        // Days of logs to keep
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        daysOfLogsToKeepLabel = new JLabelWithHover(GetText.tr("Days Of Logs To Keep") + ":", HELP_ICON,
-                GetText.tr("This setting controls how many days worth of ATLauncher logs you wish to keep."));
-        add(daysOfLogsToKeepLabel, gbc);
-
-        daysOfLogsToKeepModel = new SpinnerNumberModel(App.settings.getDaysOfLogsToKeep(), 1, 30, 1);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        daysOfLogsToKeep = new JSpinner(daysOfLogsToKeepModel);
-        daysOfLogsToKeep.setValue(App.settings.getDaysOfLogsToKeep());
-        add(daysOfLogsToKeep, gbc);
 
         // Enable Leaderboards
 
@@ -198,7 +172,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
     public void save() {
         App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
-        App.settings.setDaysOfLogsToKeep((Integer) daysOfLogsToKeep.getValue());
         App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
         App.settings.setEnableLogs(enableLogs.isSelected());
         App.settings.setEnableAnalytics(enableAnalytics.isSelected());
