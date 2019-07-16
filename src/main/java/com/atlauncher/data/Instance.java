@@ -1740,6 +1740,8 @@ public class Instance implements Cloneable {
                         .setContent("Failed to download " + file.fileName + ". Please try again later.").show();
                 return;
             }
+        } else {
+            download.copy();
         }
 
         // find mods with the same curse mod id
