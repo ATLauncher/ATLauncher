@@ -54,7 +54,7 @@ public class EditModsDialog extends JDialog {
     private JPanel bottomPanel, disabledModsPanel, enabledModsPanel;
     private JSplitPane split, labelsTop, labels, modsInPack;
     private JScrollPane scroller1, scroller2;
-    private JButton addButton, enableButton, disableButton, removeButton, closeButton;
+    private JButton addButton, addCurseModButton, enableButton, disableButton, removeButton, closeButton;
     private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
@@ -164,23 +164,8 @@ public class EditModsDialog extends JDialog {
         bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
-        addButton = new JButton(GetText.tr("Add Mods"));
+        addButton = new JButton(GetText.tr("Add Mod"));
         addButton.addActionListener(e -> {
-            if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
-                    : this.instance.hasEnabledCurseIntegration()) {
-                if (instanceV2 != null) {
-                    new AddModsDialog(instanceV2);
-                } else {
-                    new AddModsDialog(instance);
-                }
-
-                loadMods();
-
-                reloadPanels();
-
-                return;
-            }
-
             boolean usesCoreMods = false;
             try {
                 usesCoreMods = App.settings.getMinecraftVersion(
@@ -196,7 +181,7 @@ public class EditModsDialog extends JDialog {
                 modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
             }
 
-            FileChooserDialog fcd = new FileChooserDialog(GetText.tr("Add Mods"), GetText.tr("Mod"), GetText.tr("Add"),
+            FileChooserDialog fcd = new FileChooserDialog(GetText.tr("Add Mod"), GetText.tr("Mod"), GetText.tr("Add"),
                     GetText.tr("Type Of Mod"), modTypes, new String[] { "jar", "zip", "litemod" });
             ArrayList<File> files = fcd.getChosenFiles();
             if (files != null && !files.isEmpty()) {
@@ -240,6 +225,25 @@ public class EditModsDialog extends JDialog {
             }
         });
         bottomPanel.add(addButton);
+
+        if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
+                : this.instance.hasEnabledCurseIntegration()) {
+            addCurseModButton = new JButton(GetText.tr("Add Curse Mod"));
+            addCurseModButton.addActionListener(e -> {
+                if (instanceV2 != null) {
+                    new AddModsDialog(instanceV2);
+                } else {
+                    new AddModsDialog(instance);
+                }
+
+                loadMods();
+
+                reloadPanels();
+
+                return;
+            });
+            bottomPanel.add(addCurseModButton);
+        }
 
         enableButton = new JButton(GetText.tr("Enable Mod"));
         enableButton.addActionListener(e -> enableMods());
