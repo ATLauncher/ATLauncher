@@ -22,17 +22,19 @@ import javax.swing.JToolTip;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ModsChooser;
-import com.atlauncher.utils.Utils;
 
 /**
- * This class extends {@link JCheckBox} and overrides the need to use JCheckBox in the {@link ModsChooser}, {@link
- * ModsChooser} and {@link EditModsDialog}, providing specific functionality for those two components. Mainly providing
- * a hover tooltip for a mods description, as well as giving pack developers a way to colour mod's names.
+ * This class extends {@link JCheckBox} and overrides the need to use JCheckBox
+ * in the {@link ModsChooser}, {@link ModsChooser} and {@link EditModsDialog},
+ * providing specific functionality for those two components. Mainly providing a
+ * hover tooltip for a mods description, as well as giving pack developers a way
+ * to colour mod's names.
  */
 public class ModsJCheckBox extends JCheckBox {
     /**
@@ -41,13 +43,14 @@ public class ModsJCheckBox extends JCheckBox {
     private static final long serialVersionUID = -4560260483416099547L;
 
     /**
-     * The mod this object will use to display it's data. Will be type {@link Mod}, {@link com.atlauncher.data.json.Mod}
-     * or {@link DisableableMod}.
+     * The mod this object will use to display it's data. Will be type {@link Mod},
+     * {@link com.atlauncher.data.json.Mod} or {@link DisableableMod}.
      */
     private Object mod;
 
     /**
-     * Static object for the {@link Border} to show around the tooltips for mods with descriptions.
+     * Static object for the {@link Border} to show around the tooltips for mods
+     * with descriptions.
      */
     private static final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
 
@@ -63,7 +66,7 @@ public class ModsJCheckBox extends JCheckBox {
         }
         this.mod = mod;
         if (mod.hasDescription()) {
-            this.setToolTipText("<html>" + Utils.splitMultilinedString(mod.getDescription(), 100, "<br/>") + "</html>");
+            this.setToolTipText(new HTMLBuilder().text(mod.getDescription()).split(100).build());
         }
     }
 

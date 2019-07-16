@@ -299,6 +299,10 @@ public class EditModsDialog extends JDialog {
         }
         enabledModsPanel.setPreferredSize(new Dimension(0, enabledMods.size() * 20));
         disabledModsPanel.setPreferredSize(new Dimension(0, disabledMods.size() * 20));
+
+        if (checkForUpdatesButton != null) {
+            checkForUpdatesButton.setEnabled(mods.stream().anyMatch(m -> m.isFromCurse()));
+        }
     }
 
     private void checkForUpdates() {
