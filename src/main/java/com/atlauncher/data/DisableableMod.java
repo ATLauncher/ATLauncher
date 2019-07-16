@@ -23,13 +23,21 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 public class DisableableMod implements Serializable {
     private static final long serialVersionUID = 8429405767313518704L;
@@ -299,4 +307,33 @@ public class DisableableMod implements Serializable {
         return this.type;
     }
 
+    public boolean checkForUpdate(InstanceV2 instance) {
+        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
+        List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
+
+        if (!curseModFiles.stream().anyMatch(mod -> mod.id > curseFileId)) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
+                    .setContent(GetText.tr("No updates were found for {0}.", name)).show();
+            return false;
+        }
+
+        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
+
+        return true;
+    }
+
+    public boolean checkForUpdate(Instance instance) {
+        Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "UpdateMods", "Instance");
+        List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
+
+        if (!curseModFiles.stream().anyMatch(mod -> mod.id > curseFileId)) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
+                    .setContent(GetText.tr("No updates were found for {0}.", name)).show();
+            return false;
+        }
+
+        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
+
+        return true;
+    }
 }

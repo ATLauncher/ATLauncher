@@ -41,6 +41,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -54,7 +55,8 @@ public class EditModsDialog extends JDialog {
     private JPanel bottomPanel, disabledModsPanel, enabledModsPanel;
     private JSplitPane split, labelsTop, labels, modsInPack;
     private JScrollPane scroller1, scroller2;
-    private JButton addButton, addCurseModButton, enableButton, disableButton, removeButton, closeButton;
+    private JButton addButton, addCurseModButton, checkForUpdatesButton, enableButton, disableButton, removeButton,
+            closeButton;
     private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
@@ -161,7 +163,7 @@ public class EditModsDialog extends JDialog {
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
 
-        bottomPanel = new JPanel();
+        bottomPanel = new JPanel(new WrapLayout());
         add(bottomPanel, BorderLayout.SOUTH);
 
         addButton = new JButton(GetText.tr("Add Mod"));
@@ -243,6 +245,10 @@ public class EditModsDialog extends JDialog {
                 return;
             });
             bottomPanel.add(addCurseModButton);
+
+            checkForUpdatesButton = new JButton(GetText.tr("Check For Updates"));
+            checkForUpdatesButton.addActionListener(e -> checkForUpdates());
+            bottomPanel.add(checkForUpdatesButton);
         }
 
         enableButton = new JButton(GetText.tr("Enable Mod"));
@@ -293,6 +299,20 @@ public class EditModsDialog extends JDialog {
         }
         enabledModsPanel.setPreferredSize(new Dimension(0, enabledMods.size() * 20));
         disabledModsPanel.setPreferredSize(new Dimension(0, disabledMods.size() * 20));
+    }
+
+    private void checkForUpdates() {
+        ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
+        for (ModsJCheckBox mod : mods) {
+            if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
+                if (this.instanceV2 != null) {
+                    mod.getDisableableMod().checkForUpdate(instanceV2);
+                } else {
+                    mod.getDisableableMod().checkForUpdate(instance);
+                }
+            }
+        }
+        reloadPanels();
     }
 
     private void enableMods() {

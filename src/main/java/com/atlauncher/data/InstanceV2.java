@@ -609,6 +609,12 @@ public class InstanceV2 extends MinecraftVersion {
         return FileSystem.RESOURCES_VIRTUAL.resolve(this.assets);
     }
 
+    public DisableableMod getDisableableModByCurseModId(int curseModId) {
+        return this.launcher.mods.stream()
+                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == curseModId)
+                .findFirst().orElse(null);
+    }
+
     public void addFileFromCurse(CurseMod mod, CurseFile file) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID

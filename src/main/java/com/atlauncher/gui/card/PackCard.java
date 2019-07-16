@@ -41,13 +41,8 @@ import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
-/**
- * Class for displaying packs in the Pack Tab
- *
- * @author Ryan
- */
+@SuppressWarnings("serial")
 public class PackCard extends CollapsiblePanel implements RelocalizationListener {
-    private static final long serialVersionUID = -2617283435728223314L;
     private final JTextArea descArea = new JTextArea();
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));

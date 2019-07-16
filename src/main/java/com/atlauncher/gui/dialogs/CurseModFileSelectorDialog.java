@@ -55,6 +55,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     private CurseMod mod;
     private Instance instance;
     private InstanceV2 instanceV2;
+    private Integer installedFileId = null;
 
     private JPanel filesPanel;
     private JPanel dependenciesPanel = new JPanel(new FlowLayout());
@@ -72,11 +73,31 @@ public class CurseModFileSelectorDialog extends JDialog {
         setupComponents();
     }
 
+    public CurseModFileSelectorDialog(CurseMod mod, Instance instance, int installedFileId) {
+        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+
+        this.mod = mod;
+        this.instance = instance;
+        this.installedFileId = installedFileId;
+
+        setupComponents();
+    }
+
     public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instanceV2 = instanceV2;
+
+        setupComponents();
+    }
+
+    public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2, int installedFileId) {
+        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+
+        this.mod = mod;
+        this.instanceV2 = instanceV2;
+        this.installedFileId = installedFileId;
 
         setupComponents();
     }
@@ -148,7 +169,7 @@ public class CurseModFileSelectorDialog extends JDialog {
             final JLabel doing = new JLabel(GetText.tr("Installing {0}", file.displayName));
             doing.setHorizontalAlignment(JLabel.CENTER);
             doing.setVerticalAlignment(JLabel.TOP);
-            topPanel.add(doing);
+            topPanel.add(doing, BorderLayout.NORTH);
 
             JPanel bottomPanel = new JPanel();
             bottomPanel.setLayout(new BorderLayout());
@@ -275,6 +296,11 @@ public class CurseModFileSelectorDialog extends JDialog {
                 DialogManager.okDialog().setParent(CurseModFileSelectorDialog.this).setTitle("No files found")
                         .setContent("No files found for this mod").setType(DialogManager.ERROR).show();
                 dispose();
+            }
+
+            if (this.installedFileId != null) {
+                filesDropdown.setSelectedItem(
+                        files.stream().filter(f -> f.id == this.installedFileId).findFirst().orElse(files.get(0)));
             }
 
             // ensures that the dropdown is at least 200 px wide
