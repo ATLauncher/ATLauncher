@@ -19,6 +19,7 @@ package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -248,19 +249,23 @@ public class EditModsDialog extends JDialog {
 
             checkForUpdatesButton = new JButton(GetText.tr("Check For Updates"));
             checkForUpdatesButton.addActionListener(e -> checkForUpdates());
+            checkForUpdatesButton.setEnabled(false);
             bottomPanel.add(checkForUpdatesButton);
         }
 
         enableButton = new JButton(GetText.tr("Enable Mod"));
         enableButton.addActionListener(e -> enableMods());
+        enableButton.setEnabled(false);
         bottomPanel.add(enableButton);
 
         disableButton = new JButton(GetText.tr("Disable Mod"));
         disableButton.addActionListener(e -> disableMods());
+        disableButton.setEnabled(false);
         bottomPanel.add(disableButton);
 
         removeButton = new JButton(GetText.tr("Remove Mod"));
         removeButton.addActionListener(e -> removeMods());
+        removeButton.setEnabled(false);
         bottomPanel.add(removeButton);
 
         closeButton = new JButton(GetText.tr("Close"));
@@ -292,21 +297,42 @@ public class EditModsDialog extends JDialog {
             }
         }
         for (ModsJCheckBox checkBox : enabledMods) {
+            checkBox.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED || e.getStateChange() == ItemEvent.DESELECTED) {
+                    checkBoxesChanged();
+                }
+            });
             enabledModsPanel.add(checkBox);
         }
         for (ModsJCheckBox checkBox : disabledMods) {
+            checkBox.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED || e.getStateChange() == ItemEvent.DESELECTED) {
+                    checkBoxesChanged();
+                }
+            });
             disabledModsPanel.add(checkBox);
         }
         enabledModsPanel.setPreferredSize(new Dimension(0, enabledMods.size() * 20));
         disabledModsPanel.setPreferredSize(new Dimension(0, disabledMods.size() * 20));
+    }
 
-        if (checkForUpdatesButton != null) {
-            checkForUpdatesButton.setEnabled(mods.stream().anyMatch(m -> m.isFromCurse()));
-        }
+    private void checkBoxesChanged() {
+        checkForUpdatesButton.setEnabled((enabledMods.stream().filter(cb -> cb.isSelected()).count() != 0 && enabledMods
+                .stream().filter(cb -> cb.isSelected()).allMatch(cb -> cb.getDisableableMod().isFromCurse()))
+                || (disabledMods.stream().filter(cb -> cb.isSelected()).count() != 0 && disabledMods.stream()
+                        .filter(cb -> cb.isSelected()).allMatch(cb -> cb.getDisableableMod().isFromCurse())));
+
+        removeButton.setEnabled((disabledMods.size() != 0 && disabledMods.stream().anyMatch(cb -> cb.isSelected()))
+                || (enabledMods.size() != 0 && enabledMods.stream().anyMatch(cb -> cb.isSelected())));
+        enableButton.setEnabled(disabledMods.size() != 0 && disabledMods.stream().anyMatch(cb -> cb.isSelected()));
+        disableButton.setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(cb -> cb.isSelected()));
     }
 
     private void checkForUpdates() {
-        ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
+        ArrayList<ModsJCheckBox> mods = new ArrayList<>();
+        mods.addAll(enabledMods);
+        mods.addAll(disabledMods);
+
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
                 if (this.instanceV2 != null) {
@@ -389,6 +415,7 @@ public class EditModsDialog extends JDialog {
         enabledModsPanel.removeAll();
         disabledModsPanel.removeAll();
         loadMods();
+        checkBoxesChanged();
         enabledModsPanel.repaint();
         disabledModsPanel.repaint();
     }
