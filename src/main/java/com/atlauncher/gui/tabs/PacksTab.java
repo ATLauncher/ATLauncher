@@ -94,7 +94,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         addComponentListener(new ComponentAdapter() {
             public void componentShown(ComponentEvent ce) {
                 new Thread(() -> {
-                    loadPacks();
+                    refresh();
                 }).start();
             }
         });
@@ -196,18 +196,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-
-        this.contentPanel.removeAll();
-
-        if (count == 0) {
-            this.contentPanel.add(
-                    new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time.")), gbc);
-        } else {
-            this.cards.stream().forEach(card -> {
-                this.contentPanel.add(card, gbc);
-                gbc.gridy++;
-            });
-        }
 
         loaded = true;
     }
