@@ -610,17 +610,6 @@ public class Settings {
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             this.enableDiscordIntegration = Boolean
                     .parseBoolean(properties.getProperty("enablediscordintegration", "true"));
-            if (!properties.containsKey("usingcustomjavapath")) {
-                this.usingCustomJavaPath = false;
-                this.javaPath = OS.getDefaultJavaPath();
-            } else {
-                this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
-                if (isUsingCustomJavaPath()) {
-                    this.javaPath = properties.getProperty("javapath", OS.getDefaultJavaPath());
-                } else {
-                    this.javaPath = OS.getDefaultJavaPath();
-                }
-            }
 
             String lang = properties.getProperty("language", "English");
             Language.setLanguage(lang);
@@ -649,6 +638,25 @@ public class Settings {
             this.concurrentConnections = Integer.parseInt(properties.getProperty("concurrentconnections", "8"));
             if (this.concurrentConnections < 1) {
                 this.concurrentConnections = 8;
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+    }
+
+    public void loadJavaPathProperties() {
+        try {
+            this.properties.load(new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()));
+            if (!properties.containsKey("usingcustomjavapath")) {
+                this.usingCustomJavaPath = false;
+                this.javaPath = OS.getDefaultJavaPath();
+            } else {
+                this.usingCustomJavaPath = Boolean.parseBoolean(properties.getProperty("usingcustomjavapath", "false"));
+                if (isUsingCustomJavaPath()) {
+                    this.javaPath = properties.getProperty("javapath", OS.getDefaultJavaPath());
+                } else {
+                    this.javaPath = OS.getDefaultJavaPath();
+                }
             }
         } catch (IOException e) {
             LogManager.logStackTrace(e);

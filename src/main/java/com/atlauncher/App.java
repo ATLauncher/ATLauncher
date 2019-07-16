@@ -296,6 +296,8 @@ public class App {
 
         LogManager.info("Operating System: " + System.getProperty("os.name"));
 
+        settings.loadJavaPathProperties();
+
         if (settings.isUsingCustomJavaPath()) {
             LogManager.warn("Custom Java Path Set!");
 
@@ -579,6 +581,7 @@ public class App {
     }
 
     private static void parseCommandLineArguments(String[] args) {
+        // Parse all the command line arguments
         OptionParser parser = new OptionParser();
         parser.accepts("updated").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
