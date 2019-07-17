@@ -240,8 +240,10 @@ public class InstanceV2 extends MinecraftVersion {
         progressDialog.setLabel(GetText.tr("Downloading Libraries"));
         DownloadPool librariesPool = new DownloadPool();
 
-        this.libraries.stream().filter(library -> library.shouldInstall() && library.downloads.artifact != null)
-                .forEach(library -> {
+        // get non native libraries otherwise we double up
+        this.libraries.stream().filter(
+                library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
+                .distinct().forEach(library -> {
                     com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                             .setUrl(library.downloads.artifact.url)
                             .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))

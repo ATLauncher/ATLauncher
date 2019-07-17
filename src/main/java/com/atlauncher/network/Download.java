@@ -347,31 +347,30 @@ public final class Download {
         }
     }
 
+    private boolean hashMatches() {
+        if (Files.exists(this.to)) {
+            if (this.md5()) {
+                return Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+            } else {
+                return Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+            }
+        }
+
+        return false;
+    }
+
     private boolean downloadRec(int attempt) {
-        if (attempt <= MAX_ATTEMPTS) {
-            Hashing.HashCode fileHash = Hashing.HashCode.EMPTY;
-            if (Files.exists(this.to)) {
-                if (this.md5()) {
-                    fileHash = Hashing.md5(this.to);
-                } else {
-                    fileHash = Hashing.sha1(this.to);
-                }
-            }
-
-            if (fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
-                return true;
-            }
-
-            if (Files.exists(this.to)) {
-                FileUtils.delete(this.to);
-            }
-
-            this.downloadDirect();
-        } else {
+        if (attempt > MAX_ATTEMPTS) {
             return false;
         }
 
+        // if file exists, delete it
+        if (Files.exists(this.to)) {
+            FileUtils.delete(this.to);
+        }
+
         try {
+            // open the connection
             this.execute();
         } catch (IOException e) {
             if (this.response != null) {
@@ -384,6 +383,16 @@ public final class Download {
             return false;
         }
 
+        // download the file to disk
+        this.downloadDirect();
+
+        // check if the hash matches
+        if (hashMatches()) {
+            return true;
+        }
+
+        // if the hash doesn't match, attempt again
+        LogManager.debug("Failed downloading " + this.url + " on attempt " + attempt);
         return this.downloadRec(attempt + 1);
     }
 
@@ -438,7 +447,7 @@ public final class Download {
             FileUtils.delete(this.to);
         }
 
-        if (!Files.exists(this.to.getParent())) {
+        if (!Files.isDirectory(this.to.getParent())) {
             FileUtils.createDirectory(this.to.getParent());
         }
 

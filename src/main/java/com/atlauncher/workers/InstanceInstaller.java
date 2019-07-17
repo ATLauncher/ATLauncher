@@ -739,7 +739,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
 
-        this.getLibraries().stream().filter(library -> library.shouldInstall() && library.downloads.artifact != null)
+        // get non native libraries otherwise we double up
+        this.getLibraries().stream().filter(
+                library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .forEach(library -> {
                     com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                             .setUrl(library.downloads.artifact.url)
