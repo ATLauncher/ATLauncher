@@ -585,6 +585,10 @@ public class Settings {
     public void loadStartingProperties() {
         try {
             if (!Files.exists(FileSystem.LAUNCHER_CONFIG)) {
+                if (!Files.isDirectory(FileSystem.CONFIGS)) {
+                    Files.createDirectories(FileSystem.CONFIGS);
+                }
+
                 Files.createFile(FileSystem.LAUNCHER_CONFIG);
             }
         } catch (IOException e) {
