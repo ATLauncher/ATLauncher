@@ -1043,8 +1043,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     protected void prepareFilesystem() throws Exception {
         if (isReinstall || isServer) {
-            FileUtils.deleteDirectory(this.root.resolve("bin"));
-            FileUtils.deleteDirectory(this.root.resolve("config"));
+            if (Files.isDirectory(this.root.resolve("bin"))) {
+                FileUtils.deleteDirectory(this.root.resolve("bin"));
+            }
+
+            if (Files.isDirectory(this.root.resolve("config"))) {
+                FileUtils.deleteDirectory(this.root.resolve("config"));
+            }
 
             if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.minecraftVersion.version)
                     && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())) {
@@ -1061,18 +1066,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));
-                if (this.version.minecraftVersion.coremods) {
+                if (this.version.minecraftVersion.coremods && Files.isDirectory(this.root.resolve("coremods"))) {
                     FileUtils.deleteDirectory(this.root.resolve("coremods"));
                 }
 
-                if (isReinstall) {
+                if (isReinstall && Files.isDirectory(this.root.resolve("jarmods"))) {
                     FileUtils.deleteDirectory(this.root.resolve("jarmods"));
                 }
             }
 
             if (isReinstall) {
-                FileUtils.delete(this.root.resolve("texturepacks/TexturePack.zip"));
-                FileUtils.delete(this.root.resolve("resourcepacks/ResourcePack.zip"));
+                if (Files.exists(this.root.resolve("texturepacks/TexturePack.zip"))) {
+                    FileUtils.delete(this.root.resolve("texturepacks/TexturePack.zip"));
+                }
+
+                if (Files.exists(this.root.resolve("resourcepacks/ResourcePack.zip"))) {
+                    FileUtils.delete(this.root.resolve("resourcepacks/ResourcePack.zip"));
+                }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("libraries"));
             }
