@@ -272,8 +272,9 @@ public class ModsChooser extends JDialog {
                                         .optionDialog().setTitle(GetText.tr("Warning")).setContent("<html>"
                                                 // #. {0} is a warning for a given mod
                                                 + GetText.tr(
-                                                        "{0}<br/><br/>Are you sure that you want to enable this mod?")
-                                                + "</html>", message)
+                                                        "{0}<br/><br/>Are you sure that you want to enable this mod?",
+                                                        message)
+                                                + "</html>")
                                         .setType(DialogManager.WARNING).addOption(GetText.tr("Yes"))
                                         .addOption(GetText.tr("No"), true).show();
 
