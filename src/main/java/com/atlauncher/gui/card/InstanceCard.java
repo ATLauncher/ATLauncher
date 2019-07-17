@@ -56,6 +56,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.APIResponse;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -98,6 +99,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
+    private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
@@ -140,6 +142,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             bottom.add(this.editButton);
         }
 
+        bottom.add(this.serversButton);
         bottom.add(this.openButton);
 
         this.rightPanel.setLayout(new BorderLayout());
@@ -327,6 +330,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "EditMods", "Instance");
             new EditModsDialog(instance);
         });
+        this.serversButton.addActionListener(e -> OS.openWebBrowser(
+                String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_button",
+                        Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRootDirectory().toPath()));
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Settings", "Instance");
@@ -570,6 +576,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.deleteButton.setText(GetText.tr("Delete"));
         this.addButton.setText(GetText.tr("Add Mods"));
         this.editButton.setText(GetText.tr("Edit Mods"));
+        this.serversButton.setText(GetText.tr("Servers"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
     }

@@ -28,6 +28,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -49,6 +50,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JButton discordInviteButton = new JButton("Discord");
     private final JButton supportButton = new JButton(GetText.tr("Support"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
+    private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton modsButton = new JButton(GetText.tr("View Mods"));
     private final JButton removePackButton = new JButton(GetText.tr("Remove"));
     private final JPanel actionsPanel = new JPanel(new BorderLayout());
@@ -77,8 +79,15 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             bottom.add(this.discordInviteButton);
         }
 
-        bottom.add(this.supportButton);
-        bottom.add(this.websiteButton);
+        if (pack.getSupportURL() != null) {
+            bottom.add(this.supportButton);
+        }
+
+        if (pack.getWebsiteURL() != null) {
+            bottom.add(this.websiteButton);
+        }
+
+        bottom.add(this.serversButton);
 
         if (!this.pack.getName().startsWith("Vanilla Minecraft")) {
             bottom.add(this.modsButton);
@@ -159,6 +168,10 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         this.websiteButton.addActionListener(e -> OS.openWebBrowser(pack.getWebsiteURL()));
 
+        this.serversButton.addActionListener(e -> OS
+                .openWebBrowser(String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=pack_button",
+                        Constants.SERVERS_LIST_PACK, pack.getSafeName())));
+
         this.modsButton.addActionListener(e -> {
             Analytics.sendEvent(pack.getName(), "ViewMods", "Pack");
             new ViewModsDialog(pack).setVisible(true);
@@ -176,6 +189,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.createServerButton.setText(GetText.tr("Create Server"));
         this.supportButton.setText(GetText.tr("Support"));
         this.websiteButton.setText(GetText.tr("Website"));
+        this.serversButton.setText(GetText.tr("Servers"));
         this.modsButton.setText(GetText.tr("View Mods"));
         this.removePackButton.setText(GetText.tr("Remove"));
     }

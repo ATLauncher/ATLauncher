@@ -21,3 +21,4 @@
 - Remove advanced backup. We're looking into how to update and make this better for the future
 - Change the way that languages are loaded, allowing for easier translations going forward
 - Add in ability to update curse mods from edit mods dialog
+- Add in Servers button to packs and instances to find servers to play on

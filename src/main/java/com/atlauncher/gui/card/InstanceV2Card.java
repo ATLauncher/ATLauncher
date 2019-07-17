@@ -52,6 +52,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -93,6 +94,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
+    private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
@@ -135,6 +137,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             bottom.add(this.editButton);
         }
 
+        bottom.add(this.serversButton);
         bottom.add(this.openButton);
 
         this.rightPanel.setLayout(new BorderLayout());
@@ -325,6 +328,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditMods", "InstanceV2");
             new EditModsDialog(instance);
         });
+        this.serversButton.addActionListener(e -> OS.openWebBrowser(
+                String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
+                        Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings", "InstanceV2");
@@ -537,6 +543,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.deleteButton.setText(GetText.tr("Delete"));
         this.addButton.setText(GetText.tr("Add Mods"));
         this.editButton.setText(GetText.tr("Edit Mods"));
+        this.serversButton.setText(GetText.tr("Servers"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
     }

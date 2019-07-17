@@ -25,6 +25,7 @@ public class Constants {
     public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
     public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
     public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
+    public static final String SERVERS_LIST_PACK = "https://servers.atlauncher.com/list/pack";
     public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
     public static final String CURSE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
     public static final int CURSE_FABRIC_CATEGORY_ID = 4780;
