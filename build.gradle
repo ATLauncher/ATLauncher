@@ -13,10 +13,11 @@ plugins {
     id 'java'
     id 'application'
 
-    id 'com.github.johnrengelman.shadow' version '5.0.0'
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'edu.sc.seis.macAppBundle' version '2.3.0'
     id 'edu.sc.seis.launch4j' version '2.4.6'
     id 'net.minecrell.licenser' version '0.4.1'
+    id "com.github.ben-manes.versions" version "0.21.0"
 }
 
 apply plugin: "org.mini2Dx.gettext"
@@ -46,15 +47,15 @@ dependencies {
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation 'org.zeroturnaround:zt-zip:1.13'
-    implementation 'com.squareup.okhttp3:okhttp:4.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
     implementation 'net.mikehardy:google-analytics-java:2.0.8'
-    implementation 'io.sentry:sentry:1.7.16'
+    implementation 'io.sentry:sentry:1.7.24'
     implementation 'org.mini2Dx:gettext-lib:1.1.0'
     implementation 'org.apache.logging.log4j:log4j-api:2.12.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.12.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.0'
 }
 
 application {

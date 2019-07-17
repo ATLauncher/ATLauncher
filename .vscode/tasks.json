@@ -22,6 +22,12 @@
             "problemMatcher": []
         },
         {
+            "label": "checkForDependencyUpdates",
+            "type": "shell",
+            "command": "./gradlew dependencyUpdates",
+            "problemMatcher": []
+        },
+        {
             "label": "clean",
             "type": "shell",
             "command": "./gradlew clean",

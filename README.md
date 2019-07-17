@@ -55,6 +55,16 @@ This project is setup to use [VSCode](https://code.visualstudio.com/) for develo
 to use any other IDE that you're accustomed to (if any), but by using VSCode, you get the benefit
 of predefined tasks and launch commands.
 
+## Checking for dependency updates
+
+To check for dependency updates with gradle, simply run:
+
+```sh
+./gradlew dependencyUpdates
+```
+
+This will print a report to the console about any dependencies which have updates.
+
 ## Plugging In Your Data
 
 To get started with the code and plug in your own data, you need to edit the
