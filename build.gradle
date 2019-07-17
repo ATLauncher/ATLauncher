@@ -110,7 +110,9 @@ license {
 
 shadowJar {
     classifier = null
-    minimize()
+    minimize {
+        exclude(dependency('org.apache.logging.log4j:.*:.*'))
+    }
     classifier = ''
 }
 
@@ -137,6 +139,7 @@ launch4j {
     icon = "${projectDir}/src/main/resources/assets/image/Icon.ico"
     initialHeapPercent = 5;
     maxHeapPercent = 100;
+    mutexName = "ATLauncher"
     jvmOptions = [
         "-Djna.nosys=true"
     ]
