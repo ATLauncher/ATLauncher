@@ -592,10 +592,9 @@ public class Settings {
                 Files.createFile(FileSystem.LAUNCHER_CONFIG);
             }
         } catch (IOException e) {
-            DialogManager.okDialog().setTitle("Error!")
+            DialogManager.okDialog().setTitle("Error!").setContent(GetText.tr("Cannot create the config file"))
                     .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("Cannot create the config file"
-                                    + ".<br/><br/>Make sure you're running the Launcher from somewhere with<br/>write"
+                            .text(GetText.tr("Make sure you're running the Launcher from somewhere with write"
                                     + " permissions for your user account such as your Home/Users folder or desktop."))
                             .build())
                     .setType(DialogManager.ERROR).show();
