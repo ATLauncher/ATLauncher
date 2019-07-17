@@ -47,9 +47,9 @@ public class Pack {
     public boolean featured;
     public boolean hasDiscordImage;
     public String description;
-    public String discordInviteURL;
-    public String supportURL;
-    public String websiteURL;
+    public String discordInviteURL = null;
+    public String supportURL = null;
+    public String websiteURL = null;
     public List<String> testers = new ArrayList<>();
     public List<String> allowedPlayers = new ArrayList<>();
     public String json; // The JSON for a version of the pack
