@@ -182,12 +182,10 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 ? App.settings.getPacksSortedAlphabetically(this.isFeatured, this.isVanilla)
                 : App.settings.getPacksSortedPositionally(this.isFeatured, this.isVanilla);
 
-        int count = 0;
         for (Pack pack : packs) {
             if (pack.canInstall()) {
                 PackCard card = new PackCard(pack);
                 this.cards.add(card);
-                count++;
             }
         }
 
@@ -198,10 +196,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         gbc.fill = GridBagConstraints.BOTH;
 
         loaded = true;
-    }
-
-    private void loadPacks() {
-        loadPacks(false);
     }
 
     private void load(boolean keep) {
