@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.2.10.0
+## 3.3.0.0
 
 - Completely reworked the instance installer (instances should install faster now)
 - Rework the instance.json file which follows same pattern as the Minecraft one
