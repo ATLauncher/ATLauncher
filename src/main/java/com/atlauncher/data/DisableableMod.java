@@ -39,20 +39,20 @@ import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
+@SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
-    private static final long serialVersionUID = 8429405767313518704L;
-    private String name;
-    private String version;
-    private boolean optional;
-    private String file;
-    private Type type;
-    private Color colour;
-    private String description;
-    private boolean disabled;
-    private boolean userAdded = false; // Default to not being user added
-    private boolean wasSelected = true; // Default to it being selected on install
-    private Integer curseModId;
-    private Integer curseFileId;
+    public String name;
+    public String version;
+    public boolean optional;
+    public String file;
+    public Type type;
+    public Color colour;
+    public String description;
+    public boolean disabled;
+    public boolean userAdded = false; // Default to not being user added
+    public boolean wasSelected = true; // Default to it being selected on install
+    public Integer curseModId;
+    public Integer curseFileId;
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseModId,
@@ -79,6 +79,9 @@ public class DisableableMod implements Serializable {
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded) {
         this(name, version, optional, file, type, colour, description, disabled, userAdded, true, null, null);
+    }
+
+    public DisableableMod() {
     }
 
     public String getName() {

@@ -22,6 +22,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
@@ -125,23 +126,29 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                             : dialog.instance.getDisabledModsDirectory();
                 }
 
-                DisableableMod mod = null;
+                DisableableMod mod = new DisableableMod();
+                mod.disabled = this.disabled;
+                mod.userAdded = true;
+                mod.wasSelected = true;
+                mod.file = file.getName();
+                mod.type = type;
+                mod.optional = true;
+                mod.name = file.getName();
+                mod.version = "Unknown";
+                mod.description = null;
 
                 MCMod mcMod = Utils.getMCModForFile(file);
                 if (mcMod != null) {
-                    mod = new DisableableMod(mcMod.name, mcMod.version, true, file.getName(), type, null,
-                            mcMod.description, this.disabled, true);
+                    mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
+                    mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
+                    mod.description = Optional.ofNullable(mcMod.description).orElse(null);
                 } else {
                     FabricMod fabricMod = Utils.getFabricModForFile(file);
                     if (fabricMod != null) {
-                        mod = new DisableableMod(fabricMod.name, fabricMod.version, true, file.getName(), type, null,
-                                fabricMod.description, this.disabled, true);
+                        mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
+                        mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
+                        mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
                     }
-                }
-
-                if (mod == null) {
-                    mod = new DisableableMod(file.getName(), "Custom", true, file.getName(), type, null, null,
-                            this.disabled, true);
                 }
 
                 if (Utils.copyFile(file, instanceFile)) {
