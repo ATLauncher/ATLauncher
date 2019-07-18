@@ -36,6 +36,7 @@ import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.FileTypeDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -68,6 +69,15 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
             for (Object item : data) {
                 File file = (File) item;
+
+                if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".litemod")
+                        && !file.getName().endsWith(".zip")) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Invalid File"))
+                            .setContent(
+                                    GetText.tr("Invalid file provided. Only zip, jar and litemod files can be added."))
+                            .setType(DialogManager.ERROR).show();
+                    return false;
+                }
 
                 boolean usesCoreMods = false;
                 try {
