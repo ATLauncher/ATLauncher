@@ -43,7 +43,6 @@ import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
