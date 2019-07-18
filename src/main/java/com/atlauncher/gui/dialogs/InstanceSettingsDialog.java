@@ -224,7 +224,7 @@ public class InstanceSettingsDialog extends JDialog {
                 this.instanceV2 != null ? this.instanceV2.launcher.javaPath : instance.getSettings().getJavaPath(),
                 App.settings.getJavaPath()));
         JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
-        javaPathResetButton.addActionListener(e -> javaPath.setText(Java.getPathToMinecraftJavaExecutable()));
+        javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
         JButton javaBrowseButton = new JButton(GetText.tr("Browse"));
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();

@@ -8,7 +8,10 @@
 package com.atlauncher.utils.javafinder;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.SoftReference;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.collection.Caching;
@@ -55,7 +58,12 @@ public class JavaInfo {
         this.is64bits = versionInfo.toUpperCase().contains("64-BIT");
         this.path = javaPath;
         this.rootPath = new File(javaPath).getParentFile().getParentFile().getAbsolutePath();
-        this.isRuntime = FileSystem.RUNTIMES.toString().contains(this.rootPath);
+
+        try {
+            this.isRuntime = Files.isSameFile(FileSystem.RUNTIMES, Paths.get(this.rootPath).getParent());
+        } catch (IOException e) {
+            this.isRuntime = false;
+        }
     }
 
     // used for testing
