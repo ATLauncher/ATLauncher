@@ -66,7 +66,10 @@ public class Processor {
     public void process(ForgeInstallProfile installProfile, File extractedDir, InstanceInstaller instanceInstaller)
             throws IOException {
         // delete any outputs that are invalid. They still need to run
-        this.checkOutputs(installProfile, extractedDir, instanceInstaller);
+        if (!this.needToRun(installProfile, extractedDir, instanceInstaller)) {
+            LogManager.debug("No need to run processor " + this.jar + " since outputs all match hashes");
+            return;
+        }
 
         File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
                 : FileSystem.LIBRARIES.toFile();
@@ -186,14 +189,12 @@ public class Processor {
             instanceInstaller.cancel(true);
             return;
         }
-
-        this.checkOutputs(installProfile, extractedDir, instanceInstaller);
     }
 
-    public void checkOutputs(ForgeInstallProfile installProfile, File extractedDir,
+    public boolean needToRun(ForgeInstallProfile installProfile, File extractedDir,
             InstanceInstaller instanceInstaller) {
         if (!this.hasOutputs()) {
-            return;
+            return true;
         }
 
         File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
@@ -214,14 +215,14 @@ public class Processor {
                     LogManager.error("Failed to process processor with jar " + this.jar + " as the output with key "
                             + key + " doesn't have a corresponding data entry");
                     instanceInstaller.cancel(true);
-                    return;
+                    return true;
                 }
 
                 String value = entry.getValue();
                 File outputFile = new File(dataItem);
 
                 if (!outputFile.exists() || !outputFile.isFile()) {
-                    return;
+                    return true;
                 }
 
                 char valueStart = value.charAt(0);
@@ -235,7 +236,7 @@ public class Processor {
                         LogManager.error("Failed to process processor with jar " + this.jar
                                 + " as the output with value " + value + " doesn't have a corresponding data entry");
                         instanceInstaller.cancel(true);
-                        return;
+                        return true;
                     }
 
                     String sha1Hash = Hashing.sha1(outputFile.toPath()).toString();
@@ -246,10 +247,12 @@ public class Processor {
                     LogManager.debug("Expecting " + sha1Hash + " to equal " + sha1Hash);
                     if (!sha1Hash.equals(expectedHash)) {
                         Utils.delete(outputFile);
-                        return;
+                        return true;
                     }
                 }
             }
         }
+
+        return false;
     }
 }
