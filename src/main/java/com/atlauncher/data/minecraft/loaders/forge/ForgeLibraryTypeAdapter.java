@@ -53,6 +53,16 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
             Downloads downloads = new Downloads();
             Download artifact = new Download();
 
+            if (object.has("checksums")) {
+                library.checksums = new Gson().fromJson(object.get("checksums").getAsJsonArray(),
+                        new TypeToken<List<String>>() {
+                        }.getType());
+            }
+
+            if (library.checksums != null && library.checksums.size() == 1) {
+                artifact.sha1 = library.checksums.get(0);
+            }
+
             artifact.path = Utils.convertMavenIdentifierToPath(object.get("name").getAsString());
 
             if (library.name.startsWith("net.minecraftforge:forge:") && !object.has("clientreq")
@@ -80,12 +90,6 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
 
             if (object.has("serverreq")) {
                 library.serverreq = object.get("serverreq").getAsBoolean();
-            }
-
-            if (object.has("checksums")) {
-                library.checksums = new Gson().fromJson(object.get("checksums").getAsJsonArray(),
-                        new TypeToken<List<String>>() {
-                        }.getType());
             }
         }
 

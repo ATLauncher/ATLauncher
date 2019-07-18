@@ -311,14 +311,14 @@ public final class Download {
         }
 
         if (Files.exists(this.to)) {
-            if (this.to.toFile().length() == this.getFilesize()) {
+            if (this.md5() && Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
+                return false;
+            } else if (Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return false;
             }
 
-            if (this.md5()) {
-                return !Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
-            } else {
-                return !Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+            if (this.to.toFile().length() == this.getFilesize()) {
+                return false;
             }
         }
 
