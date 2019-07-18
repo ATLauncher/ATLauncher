@@ -83,10 +83,14 @@ import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.ExtractRule;
+import com.atlauncher.data.minecraft.FabricMod;
+import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.google.gson.reflect.TypeToken;
 
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
+import org.zeroturnaround.zip.ZipUtil;
 
 import net.iharder.Base64;
 
@@ -1608,5 +1612,37 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static MCMod getMCModForFile(File file) {
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
+            }.getType();
+
+            List<MCMod> mods = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "mcmod.info")), type);
+
+            if (mods.size() != 0 && mods.get(0) != null) {
+                return mods.get(0);
+            }
+        } catch (Exception ignored) {
+
+        }
+
+        return null;
+    }
+
+    public static FabricMod getFabricModForFile(File file) {
+        try {
+            FabricMod mod = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "fabric.mod.json")),
+                    FabricMod.class);
+
+            if (mod != null) {
+                return mod;
+            }
+        } catch (Exception ignored2) {
+
+        }
+
+        return null;
     }
 }

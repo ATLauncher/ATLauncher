@@ -30,6 +30,8 @@ import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Type;
+import com.atlauncher.data.minecraft.FabricMod;
+import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.FileTypeDialog;
@@ -123,8 +125,24 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                             : dialog.instance.getDisabledModsDirectory();
                 }
 
-                DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(), type, null,
-                        null, this.disabled, true);
+                DisableableMod mod = null;
+
+                MCMod mcMod = Utils.getMCModForFile(file);
+                if (mcMod != null) {
+                    mod = new DisableableMod(mcMod.name, mcMod.version, true, file.getName(), type, null,
+                            mcMod.description, this.disabled, true);
+                } else {
+                    FabricMod fabricMod = Utils.getFabricModForFile(file);
+                    if (fabricMod != null) {
+                        mod = new DisableableMod(fabricMod.name, fabricMod.version, true, file.getName(), type, null,
+                                fabricMod.description, this.disabled, true);
+                    }
+                }
+
+                if (mod == null) {
+                    mod = new DisableableMod(file.getName(), "Custom", true, file.getName(), type, null, null,
+                            this.disabled, true);
+                }
 
                 if (Utils.copyFile(file, instanceFile)) {
                     if (dialog.instanceV2 != null) {
