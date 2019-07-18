@@ -22,3 +22,4 @@
 - Change the way that languages are loaded, allowing for easier translations going forward
 - Add in ability to update curse mods from edit mods dialog
 - Add in Servers button to packs and instances to find servers to play on
+- Add ability to drag and drop mods into the edit mods dialog
