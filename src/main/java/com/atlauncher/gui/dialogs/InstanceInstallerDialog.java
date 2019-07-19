@@ -603,8 +603,17 @@ public class InstanceInstallerDialog extends JDialog {
 
             if (isReinstall && (instanceV2 != null ? instanceV2.launcher.loaderVersion != null
                     : instance.installedWithLoaderVersion())) {
-                loaderVersionsDropDown.setSelectedItem(
-                        (instanceV2 != null ? instanceV2.launcher.loaderVersion : instance.getLoaderVersion()));
+                String loaderVersionString = (instanceV2 != null ? instanceV2.launcher.loaderVersion.version
+                        : instance.getLoaderVersion().version);
+
+                for (int i = 0; i < loaderVersionsDropDown.getItemCount(); i++) {
+                    LoaderVersion loaderVersion = loaderVersionsDropDown.getItemAt(i);
+
+                    if (loaderVersion.version.equals(loaderVersionString)) {
+                        loaderVersionsDropDown.setSelectedItem(loaderVersion);
+                        break;
+                    }
+                }
             }
 
             // ensures that the dropdown is at least 200 px wide
