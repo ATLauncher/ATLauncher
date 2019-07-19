@@ -298,10 +298,7 @@ public class InstanceInstallerDialog extends JDialog {
                                         pack.getName(), version.version);
 
                                 if (instanceIsCorrupt) {
-                                    if (instanceV2 != null) {
-                                        instanceV2.launcher.isPlayable = false;
-                                        instanceV2.save();
-                                    } else {
+                                    if (instance != null) {
                                         App.settings.setInstanceUnplayable(instance);
                                     }
                                 }
@@ -369,10 +366,7 @@ public class InstanceInstallerDialog extends JDialog {
                                             pack.getName(), version.version);
 
                                     if (instanceIsCorrupt) {
-                                        if (instanceV2 != null) {
-                                            instanceV2.launcher.isPlayable = false;
-                                            instanceV2.save();
-                                        } else {
+                                        if (instance != null) {
                                             App.settings.setInstanceUnplayable(instance);
                                         }
                                     }

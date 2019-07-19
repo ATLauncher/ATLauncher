@@ -385,14 +385,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void saveInstanceJson() {
-        InstanceV2 instance;
+        InstanceV2 instance = new InstanceV2(this.minecraftVersion);
         InstanceV2Launcher instanceLauncher;
 
         if (!this.isReinstall || this.instance != null) {
-            instance = new InstanceV2(this.minecraftVersion);
             instanceLauncher = new InstanceV2Launcher();
         } else {
-            instance = this.instanceV2;
             instanceLauncher = this.instanceV2.launcher;
         }
 
