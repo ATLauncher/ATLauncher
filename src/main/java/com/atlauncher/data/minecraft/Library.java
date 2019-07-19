@@ -30,12 +30,12 @@ public class Library {
     public ExtractRule extract;
 
     public boolean shouldInstall() {
-        if (this.rules == null) {
+        if (this.rules == null || this.rules.size() == 0) {
             return true; // No rules setup so we need it
         }
 
         if (this.rules.stream().filter(Rule::applies).count() == 0) {
-            return true;
+            return false; // No rules apply to us, so we don't need this
         }
 
         return this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action.equalsIgnoreCase("allow"));
