@@ -1049,21 +1049,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 FileUtils.deleteDirectory(this.root.resolve("config"));
             }
 
-            if (instance != null && instance.getMinecraftVersion().equalsIgnoreCase(version.minecraftVersion.version)
+            if (((instance != null && instance.getMinecraftVersion().equals(this.minecraftVersion.id))
+                    || (instanceV2 != null && instanceV2.id.equals(this.minecraftVersion.id)))
                     && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())) {
-                Utils.deleteWithFilter(this.root.resolve("mods").toFile(),
-                        (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.mods)
-                                : instance.getCustomMods(com.atlauncher.data.Type.mods)));
-                Utils.deleteWithFilter(this.root.resolve("coremods").toFile(),
-                        (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.coremods)
-                                : instance.getCustomMods(com.atlauncher.data.Type.coremods)));
                 if (isReinstall) {
-                    Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
-                            (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.jar)
-                                    : instance.getCustomMods(com.atlauncher.data.Type.jar)));
+                    if (Files.isDirectory(this.root.resolve("mods"))) {
+                        Utils.deleteWithFilter(this.root.resolve("mods").toFile(),
+                                (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.mods)
+                                        : instance.getCustomMods(com.atlauncher.data.Type.mods)));
+                    }
+
+                    if (Files.isDirectory(this.root.resolve("coremods"))) {
+                        Utils.deleteWithFilter(this.root.resolve("coremods").toFile(),
+                                (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.coremods)
+                                        : instance.getCustomMods(com.atlauncher.data.Type.coremods)));
+                    }
+
+                    if (Files.isDirectory(this.root.resolve("jarmods"))) {
+                        Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
+                                (instanceV2 != null ? instanceV2.getCustomMods(com.atlauncher.data.Type.jar)
+                                        : instance.getCustomMods(com.atlauncher.data.Type.jar)));
+                    }
                 }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));
+
                 if (this.version.minecraftVersion.coremods && Files.isDirectory(this.root.resolve("coremods"))) {
                     FileUtils.deleteDirectory(this.root.resolve("coremods"));
                 }
