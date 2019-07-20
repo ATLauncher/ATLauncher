@@ -120,6 +120,7 @@ public class Settings {
     private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
     private boolean enableProxy = false; // If proxy is in use
     private boolean enablePackTags = false;
+    private boolean enableModsBackups; // If mods should be backed up
     private String proxyHost; // The proxies host
     private int proxyPort; // The proxies port
     private String proxyType; // The type of proxy (socks, http)
@@ -802,6 +803,8 @@ public class Settings {
             this.enableOpenEyeReporting = Boolean
                     .parseBoolean(properties.getProperty("enableopeneyereporting", "true"));
 
+            this.enableModsBackups = Boolean.parseBoolean(properties.getProperty("enablemodsbackups", "true"));
+
             this.enableProxy = Boolean.parseBoolean(properties.getProperty("enableproxy", "false"));
 
             if (this.enableProxy) {
@@ -912,6 +915,7 @@ public class Settings {
             properties.setProperty("enablepacktags", (this.enablePackTags) ? "true" : "false");
             properties.setProperty("enableserverchecker", (this.enableServerChecker) ? "true" : "false");
             properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
+            properties.setProperty("enablemodsbackups", (this.enableModsBackups) ? "true" : "false");
             properties.setProperty("enableproxy", (this.enableProxy) ? "true" : "false");
             properties.setProperty("proxyhost", this.proxyHost);
             properties.setProperty("proxyport", this.proxyPort + "");
@@ -2158,6 +2162,14 @@ public class Settings {
 
     public void setEnableOpenEyeReporting(boolean enableOpenEyeReporting) {
         this.enableOpenEyeReporting = enableOpenEyeReporting;
+    }
+
+    public boolean enableModsBackups() {
+        return this.enableModsBackups;
+    }
+
+    public void setEnableModsBackups(boolean enableModsBackups) {
+        this.enableModsBackups = enableModsBackups;
     }
 
     public boolean getEnableProxy() {

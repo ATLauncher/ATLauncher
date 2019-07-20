@@ -264,7 +264,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             if (Files.isDirectory(instance.getRoot().resolve("saves"))) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Backing Up {0}", instance.launcher.name))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "Backups saves all your worlds as well as some other files<br/>such as your configs, so you can restore them later.<br/>Once backed up you can find the zip file in the Backups/ folder.<br/>Do you want to backup this instance?"))
+                                "Backups saves all your worlds as well as some other files such as your configs and<br/>optionally your mods (you can enable/disable this in the Settings tab), so you can restore them later.<br/><br/>Once backed up you can find the zip file in the backups/ folder.<br/><br/>Do you want to backup this instance?"))
                                 .build())
                         .setType(DialogManager.INFO).show();
 

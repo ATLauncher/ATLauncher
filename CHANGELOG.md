@@ -24,3 +24,4 @@
 - Add in Servers button to packs and instances to find servers to play on
 - Add ability to drag and drop mods into the edit mods dialog
 - Only delete mods that the pack itself installed on reinstall/update
+- Add Backups settings tab to allow backing up mods on backup

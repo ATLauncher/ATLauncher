@@ -31,6 +31,7 @@ import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
@@ -48,8 +49,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
     private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
     private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
+    private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
     private final List<Tab> tabs = Arrays.asList(new Tab[] { this.generalSettingsTab, this.javaSettingsTab,
-            this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab });
+            this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab });
     private JTabbedPane tabbedPane;
     private JPanel bottomPanel;
     private JButton saveButton = new JButton(GetText.tr("Save"));
@@ -92,6 +94,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 networkSettingsTab.save();
                 loggingSettingsTab.save();
                 toolsSettingsTab.save();
+                backupsSettingsTab.save();
                 App.settings.saveProperties();
                 SettingsManager.post();
                 if (reloadPacksPanel) {
