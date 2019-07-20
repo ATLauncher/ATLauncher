@@ -23,12 +23,15 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.mini2Dx.gettext.GetText;
+
 @SuppressWarnings("serial")
 public class NoCurseModsPanel extends JPanel {
-    public NoCurseModsPanel() {
+    public NoCurseModsPanel(boolean hasSearch) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        JLabel label = new JLabel("No mods found. Remove your search query and try again.");
+        JLabel label = new JLabel(hasSearch ? GetText.tr("No mods found. Remove your search query and try again.")
+                : GetText.tr("No mods found."));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         label.setAlignmentY(Component.CENTER_ALIGNMENT);
 

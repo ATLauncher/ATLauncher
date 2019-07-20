@@ -254,7 +254,7 @@ public final class AddModsDialog extends JDialog {
 
         if (mods.size() == 0) {
             contentPanel.setLayout(new BorderLayout());
-            contentPanel.add(new NoCurseModsPanel(), BorderLayout.CENTER);
+            contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
             contentPanel.setLayout(new GridLayout(mods.size() / 2, 2));
 
