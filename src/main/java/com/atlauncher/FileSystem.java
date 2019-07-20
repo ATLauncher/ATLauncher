@@ -110,13 +110,6 @@ public final class FileSystem {
             Files.move(oldBackupsDir.resolveSibling("backupstemp"), BACKUPS);
         }
 
-        Path oldLogsDir = BASE_DIR.resolve("Logs");
-        if (Files.exists(oldLogsDir) && (!Files.isSameFile(oldLogsDir, LOGS)
-                || (Files.isSameFile(oldLogsDir, LOGS) && LOGS.toRealPath().getFileName().toString().equals("Logs")))) {
-            Files.move(oldLogsDir, oldLogsDir.resolveSibling("logstemp"));
-            Files.move(oldLogsDir.resolveSibling("logstemp"), LOGS);
-        }
-
         Path oldInstancesDir = BASE_DIR.resolve("Instances");
         if (Files.exists(oldInstancesDir)
                 && (!Files.isSameFile(oldInstancesDir, INSTANCES) || (Files.isSameFile(oldInstancesDir, INSTANCES)
