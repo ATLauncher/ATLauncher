@@ -18,8 +18,10 @@
 package com.atlauncher.network;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -64,20 +66,19 @@ public final class DownloadPool extends LinkedList<Download> {
 
     public DownloadPool downsize() {
         final DownloadPool pool = new DownloadPool(this.wait);
+        final List<Download> downloads = this.stream().distinct().collect(Collectors.toList());
 
         ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
-        synchronized (this) {
-            for (final Download dl : this) {
-                executor.submit(() -> {
-                    if (dl.needToDownload()) {
-                        synchronized (pool) {
-                            pool.add(dl);
-                        }
-                    } else {
-                        dl.copy();
+        for (final Download dl : downloads) {
+            executor.submit(() -> {
+                if (dl.needToDownload()) {
+                    synchronized (pool) {
+                        pool.add(dl);
                     }
-                });
-            }
+                } else {
+                    dl.copy();
+                }
+            });
         }
 
         executor.shutdown();

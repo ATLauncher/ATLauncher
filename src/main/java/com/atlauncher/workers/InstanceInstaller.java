@@ -1053,7 +1053,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 if (Files.isDirectory(this.root.resolve("mods"))) {
                     Utils.deleteWithFilter(this.root.resolve("mods").toFile(),
                             (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.mods)
-                                    : instance.getPackMods(com.atlauncher.data.Type.mods)), true);
+                                    : instance.getPackMods(com.atlauncher.data.Type.mods)),
+                            true);
                 }
 
                 if (Files.isDirectory(this.root.resolve("coremods"))) {
@@ -1066,7 +1067,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 if (Files.isDirectory(this.root.resolve("jarmods"))) {
                     Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
                             (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.jar)
-                                    : instance.getPackMods(com.atlauncher.data.Type.jar)), true);
+                                    : instance.getPackMods(com.atlauncher.data.Type.jar)),
+                            true);
                 }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));

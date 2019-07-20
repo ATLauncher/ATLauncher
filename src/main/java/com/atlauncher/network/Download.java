@@ -516,4 +516,20 @@ public final class Download {
 
         return this.to.getFileName().toString();
     }
+
+    public boolean equals(Object other) {
+        if (other instanceof Download) {
+            try {
+                return Files.isSameFile(this.to, ((Download) other).to);
+            } catch (IOException e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public int hashCode() {
+        return this.to.hashCode();
+    }
 }
