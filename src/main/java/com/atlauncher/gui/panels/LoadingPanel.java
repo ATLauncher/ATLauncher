@@ -26,6 +26,8 @@ import javax.swing.JPanel;
 
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
+
 @SuppressWarnings("serial")
 public class LoadingPanel extends JPanel {
     public LoadingPanel() {
@@ -39,7 +41,7 @@ public class LoadingPanel extends JPanel {
         iconLabel.setIcon(imageIcon);
         imageIcon.setImageObserver(iconLabel);
 
-        JLabel label = new JLabel("Loading...");
+        JLabel label = new JLabel(GetText.tr("Loading") + "...");
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         label.setAlignmentY(Component.CENTER_ALIGNMENT);
 

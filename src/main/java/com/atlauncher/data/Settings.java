@@ -512,7 +512,7 @@ public class Settings {
         dialog.setLocationRelativeTo(App.settings.getParent());
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
-        dialog.add(new JLabel("Updating Launcher... Please Wait"));
+        dialog.add(new JLabel(GetText.tr("Updating Launcher. Please Wait")));
         App.TASKPOOL.execute(() -> {
             if (hasUpdatedFiles()) {
                 downloadUpdatedFiles(); // Downloads updated files on the server
