@@ -25,3 +25,5 @@
 - Add ability to drag and drop mods into the edit mods dialog
 - Only delete mods that the pack itself installed on reinstall/update
 - Add Backups settings tab to allow backing up mods on backup
+- Fix authentication using static clientToken causing issues with logins
+- Catch errors in discord initialization
