@@ -47,8 +47,6 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
         this.tcButton.setText(GetText.tr("Toggle console"));
         this.quitButton.setText(GetText.tr("Quit"));
 
-        this.tcButton.setEnabled(false);
-
         this.add(this.killMCButton);
         this.add(this.tcButton);
         this.addSeparator();
