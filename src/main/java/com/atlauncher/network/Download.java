@@ -460,8 +460,8 @@ public final class Download {
             if (!downloaded) {
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                        + " hash of " + expected.toString() + " but got " + this.getHash() + " instead. Copied to "
-                        + "FailedDownloads folder & cancelling install!");
+                        + " hash of " + expected.toString() + " but got " + Hashing.sha1(this.to)
+                        + " instead. Copied to " + "FailedDownloads folder & cancelling install!");
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);
                 }
