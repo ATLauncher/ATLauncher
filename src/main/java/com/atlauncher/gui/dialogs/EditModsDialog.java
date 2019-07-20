@@ -324,10 +324,14 @@ public class EditModsDialog extends JDialog {
     }
 
     private void checkBoxesChanged() {
-        checkForUpdatesButton.setEnabled((enabledMods.stream().filter(cb -> cb.isSelected()).count() != 0 && enabledMods
-                .stream().filter(cb -> cb.isSelected()).allMatch(cb -> cb.getDisableableMod().isFromCurse()))
-                || (disabledMods.stream().filter(cb -> cb.isSelected()).count() != 0 && disabledMods.stream()
-                        .filter(cb -> cb.isSelected()).allMatch(cb -> cb.getDisableableMod().isFromCurse())));
+        if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
+                : this.instance.hasEnabledCurseIntegration()) {
+            checkForUpdatesButton.setEnabled((enabledMods.stream().filter(cb -> cb.isSelected()).count() != 0
+                    && enabledMods.stream().filter(cb -> cb.isSelected())
+                            .allMatch(cb -> cb.getDisableableMod().isFromCurse()))
+                    || (disabledMods.stream().filter(cb -> cb.isSelected()).count() != 0 && disabledMods.stream()
+                            .filter(cb -> cb.isSelected()).allMatch(cb -> cb.getDisableableMod().isFromCurse())));
+        }
 
         removeButton.setEnabled((disabledMods.size() != 0 && disabledMods.stream().anyMatch(cb -> cb.isSelected()))
                 || (enabledMods.size() != 0 && enabledMods.stream().anyMatch(cb -> cb.isSelected())));

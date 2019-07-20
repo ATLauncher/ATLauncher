@@ -638,13 +638,19 @@ public class Utils {
         }
     }
 
-    /**
-     * Delete.
-     *
-     * @param file the file
-     */
-    public static void deleteWithFilter(File file, final List<String> filesToIgnore) {
-        FilenameFilter ffFilter = (dir, name) -> !filesToIgnore.contains(name);
+    public static void deleteWithFilter(File file, final List<String> files) {
+        deleteWithFilter(file, files, false);
+    }
+
+    public static void deleteWithFilter(File file, final List<String> files, boolean delete) {
+        FilenameFilter ffFilter;
+
+        if (delete) {
+            ffFilter = (dir, name) -> files.contains(name);
+        } else {
+            ffFilter = (dir, name) -> !files.contains(name);
+        }
+
         for (File aFile : file.listFiles(ffFilter)) {
             Utils.delete(aFile);
         }

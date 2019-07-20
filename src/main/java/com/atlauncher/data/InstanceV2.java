@@ -676,6 +676,11 @@ public class InstanceV2 extends MinecraftVersion {
                 .map(m -> m.getFilename()).collect(Collectors.toList());
     }
 
+    public List<String> getPackMods(Type type) {
+        return this.launcher.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(m -> m.getFilename())
+                .collect(Collectors.toList());
+    }
+
     public List<DisableableMod> getCustomDisableableMods() {
         return this.launcher.mods.stream().filter(DisableableMod::isUserAdded).collect(Collectors.toList());
     }

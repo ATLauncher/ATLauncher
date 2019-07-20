@@ -1635,6 +1635,11 @@ public class Instance implements Cloneable {
         return customMods;
     }
 
+    public List<String> getPackMods(Type type) {
+        return this.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(m -> m.getFilename())
+                .collect(Collectors.toList());
+    }
+
     public List<DisableableMod> getCustomDisableableMods() {
         List<DisableableMod> customMods = new ArrayList<>();
         for (DisableableMod mod : this.mods) {
