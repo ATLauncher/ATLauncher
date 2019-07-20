@@ -461,8 +461,8 @@ public class Settings {
     public void downloadUpdatedFiles() {
         ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Updates"), 1,
                 GetText.tr("Downloading Updates"));
+        getLauncherFiles().stream().forEach(d -> System.out.println(d.to));
         progressDialog.addThread(new Thread(() -> {
-            LogManager.info("Preparing for launch!");
             DownloadPool pool = new DownloadPool();
             OkHttpClient httpClient = Network.createProgressClient(progressDialog);
             pool.addAll(

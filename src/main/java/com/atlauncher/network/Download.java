@@ -211,9 +211,9 @@ public final class Download {
     }
 
     private void execute() throws IOException {
-        // connection is already open
+        // connection is already open, so close it first
         if (this.response != null) {
-            return;
+            this.response.close();
         }
 
         Request.Builder builder = new Request.Builder().url(this.url);
