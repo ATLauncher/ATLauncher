@@ -283,10 +283,10 @@ public class Settings {
 
         if (this.enableLogs) {
             App.TASKPOOL.execute(ATLauncherAPIUtils::postSystemInfo);
-        }
 
-        if (this.enableAnalytics) {
-            Analytics.startSession();
+            if (this.enableAnalytics) {
+                Analytics.startSession();
+            }
         }
     }
 
