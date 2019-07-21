@@ -144,10 +144,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         }
     }
 
-    public void updateTitle(String str) {
-        setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION + " - " + str);
-    }
-
     /**
      * Setup the individual tabs used in the Launcher sidebar
      */

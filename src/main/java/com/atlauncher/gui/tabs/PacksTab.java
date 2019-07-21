@@ -39,7 +39,6 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
-import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddPackDialog;
@@ -239,8 +238,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 }
             }
         }
-
-        ((LauncherFrame) App.settings.getParent()).updateTitle(this.getTitle() + " - " + count);
 
         if (count == 0) {
             nilCard = new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
