@@ -22,8 +22,6 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
@@ -91,13 +89,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         addLoadingCard();
 
-        addComponentListener(new ComponentAdapter() {
-            public void componentShown(ComponentEvent ce) {
-                new Thread(() -> {
-                    refresh();
-                }).start();
-            }
-        });
+        new Thread(() -> {
+            refresh();
+        }).start();
 
         TabChangeManager.addListener(() -> {
             searchField.setText("");
