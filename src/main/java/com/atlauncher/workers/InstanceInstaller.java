@@ -628,10 +628,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireSubProgressUnknown();
 
         LoggingFile loggingFile = this.minecraftVersion.logging.client.file;
+        setTotalBytes(loggingFile.size);
 
         com.atlauncher.network.Download.build().cached().setUrl(loggingFile.url).hash(loggingFile.sha1)
                 .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
-                .downloadFile();
+                .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this)).downloadFile();
 
         hideSubProgressBar();
     }
