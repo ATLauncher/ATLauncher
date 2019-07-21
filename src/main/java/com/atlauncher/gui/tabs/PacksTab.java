@@ -88,9 +88,13 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         addLoadingCard();
 
-        new Thread(() -> {
+        if (isVanilla || isFeatured) {
             refresh();
-        }).start();
+        } else {
+            new Thread(() -> {
+                refresh();
+            }).start();
+        }
 
         TabChangeManager.addListener(() -> {
             searchField.setText("");
