@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.ArgumentRule;
@@ -38,6 +39,8 @@ import com.atlauncher.network.Download;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
+
+import okhttp3.OkHttpClient;
 
 public class ForgeLoader implements Loader {
     protected String installerUrl;
@@ -112,10 +115,16 @@ public class ForgeLoader implements Loader {
 
     @Override
     public void downloadAndExtractInstaller() throws Exception {
-        Download.build().setUrl(this.installerUrl)
+        OkHttpClient httpClient = Network.createProgressClient(instanceInstaller);
+
+        Download download = Download.build().setUrl(this.installerUrl)
                 .downloadTo(
                         FileSystem.LOADERS.resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar"))
-                .unzipTo(this.tempDir.toPath()).downloadFile();
+                .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient).unzipTo(this.tempDir.toPath());
+
+        instanceInstaller.setTotalBytes(download.getFilesize());
+
+        download.downloadFile();
 
         this.copyLocalLibraries();
     }
