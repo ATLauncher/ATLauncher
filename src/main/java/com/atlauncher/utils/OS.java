@@ -436,7 +436,9 @@ public enum OS {
         } else {
             arguments.add(Java.getPathToSystemJavaExecutable());
             arguments.add("-Djna.nosys=true");
-            arguments.add("-jar");
+            arguments.add("-cp");
+            arguments.add(path);
+            arguments.add("com.atlauncher.Restart");
             arguments.add(path);
         }
 
@@ -465,7 +467,7 @@ public enum OS {
      * This restarts the launcher in debug mode.
      */
     public static void relaunchInDebugMode() {
-        restartLauncher(new ArrayList<>(Arrays.asList("--debug", "--debug-level 3")));
+        restartLauncher(new ArrayList<>(Arrays.asList("--debug", "--debug-level=3")));
     }
 
     /**
