@@ -73,7 +73,8 @@ jar {
                 'Implementation-Title': project.name,
                 'Implementation-Version': version,
                 'Implementation-Vender': 'ATLauncher',
-                'Main-Class': 'com.atlauncher.App'
+                'Main-Class': 'com.atlauncher.App',
+                'Multi-Release': 'true'
         )
     }
 }
