@@ -67,14 +67,14 @@ public class Library {
                     .get(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"));
         }
 
-        if (OS.isLinux() && this.natives != null && this.natives.containsKey("osx")) {
-            return this.downloads.classifiers
-                    .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"));
-        }
-
-        if (OS.isMac() && this.natives != null && this.natives.containsKey("linux")) {
+        if (OS.isLinux() && this.natives != null && this.natives.containsKey("linux")) {
             return this.downloads.classifiers
                     .get(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"));
+        }
+
+        if (OS.isMac() && this.natives != null && this.natives.containsKey("osx")) {
+            return this.downloads.classifiers
+                    .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"));
         }
 
         return null;
