@@ -421,13 +421,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         instance.save();
 
-        if (!this.isReinstall || this.instance != null) {
-            App.settings.instancesV2.add(instance);
+        if (this.instanceV2 != null) {
+            App.settings.instancesV2.remove(this.instanceV2);
         }
+
+        App.settings.instancesV2.add(instance);
 
         if (this.instance != null) {
             App.settings.instances.remove(this.instance);
         }
+
+        App.settings.reloadInstancesPanel();
     }
 
     private void determineMainClass() {

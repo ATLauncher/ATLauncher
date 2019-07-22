@@ -149,7 +149,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
             }
         });
 
-        App.settings.instancesV2.stream().forEach(instance -> {
+        App.settings.getInstancesV2Sorted().stream().forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 

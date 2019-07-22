@@ -1459,6 +1459,12 @@ public class Settings {
         return instances;
     }
 
+    public ArrayList<InstanceV2> getInstancesV2Sorted() {
+        ArrayList<InstanceV2> instances = new ArrayList<>(this.instancesV2);
+        instances.sort(Comparator.comparing(i -> i.launcher.name));
+        return instances;
+    }
+
     public void setInstanceUnplayable(Instance instance) {
         instance.setUnplayable();
         saveInstances();
