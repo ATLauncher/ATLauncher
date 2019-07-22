@@ -105,6 +105,36 @@ public class JavaFinder {
                 }
             }
 
+            if (OS.isLinux()) {
+                PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java");
+
+                String[] pathsToSearch = { "/usr/java", "/usr/lib/jvm", "/usr/lib32/jvm" };
+
+                for (String searchPath : pathsToSearch) {
+                    List<String> foundPaths = new ArrayList<>();
+
+                    try {
+                        Files.walkFileTree(Paths.get(searchPath), EnumSet.noneOf(FileVisitOption.class), 10,
+                                new SimpleFileVisitor<Path>() {
+                                    @Override
+                                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                                            throws IOException {
+                                        if (pathMatcher.matches(path)) {
+                                            foundPaths.add(path.toString());
+                                        }
+
+                                        return FileVisitResult.CONTINUE;
+                                    }
+                                });
+                    } catch (Exception ignored) {
+                    }
+
+                    if (foundPaths.size() != 0) {
+                        javaExecs.addAll(foundPaths);
+                    }
+                }
+            }
+
             javaPaths = new SoftReference<>(javaExecs);
         }
 
