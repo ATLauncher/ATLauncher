@@ -392,11 +392,33 @@ public class Settings {
             LogManager.info("Downloading Launcher Update");
             Analytics.sendEvent("Update", "Launcher");
 
-            com.atlauncher.network.Download.build()
-                    .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
-                    .downloadTo(newFile.toPath()).downloadFile();
+            ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Launcher Update"), 1,
+                    GetText.tr("Downloading Launcher Update"));
+            progressDialog.addThread(new Thread(() -> {
+                com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
+                        .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
+                        .withHttpClient(Network.createProgressClient(progressDialog)).downloadTo(newFile.toPath());
 
-            runUpdate(path, newFile.getAbsolutePath());
+                progressDialog.setTotalBytes(download.getFilesize());
+
+                try {
+                    download.downloadFile();
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to download update", e);
+                    progressDialog.setReturnValue(false);
+                    progressDialog.close();
+                    return;
+                }
+
+                progressDialog.setReturnValue(true);
+                progressDialog.doneTask();
+                progressDialog.close();
+            }));
+            progressDialog.start();
+
+            if ((Boolean) progressDialog.getReturnValue()) {
+                runUpdate(path, newFile.getAbsolutePath());
+            }
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
