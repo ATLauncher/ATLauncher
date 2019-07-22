@@ -106,7 +106,7 @@ public enum OS {
      * This checks to see if the user is using the Mac application.
      */
     public static boolean isUsingMacApp() {
-        return OS.isMac() && Files.exists(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
+        return OS.isMac() && Files.isDirectory(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
     }
 
     /**
@@ -427,18 +427,18 @@ public enum OS {
             LogManager.logStackTrace(e);
         }
 
+        System.out.println(thisFile);
+
         List<String> arguments = new ArrayList<>();
 
-        if (isUsingMacApp()) {
-            arguments.add("open");
-            arguments.add("-n");
-            arguments.add(FileSystem.BASE_DIR.getParent().getParent().toString());
-        } else {
-            arguments.add(Java.getPathToSystemJavaExecutable());
-            arguments.add("-Djna.nosys=true");
-            arguments.add("-cp");
-            arguments.add(path);
-            arguments.add("com.atlauncher.Restart");
+        arguments.add(Java.getPathToSystemJavaExecutable());
+        arguments.add("-Djna.nosys=true");
+        arguments.add("-cp");
+        arguments.add(path);
+        arguments.add("com.atlauncher.Restart");
+
+        // we don't need to know the path to the jar if user is using osx app
+        if (!OS.isUsingMacApp()) {
             arguments.add(path);
         }
 
@@ -449,7 +449,10 @@ public enum OS {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(FileSystem.BASE_DIR.toFile());
         processBuilder.command(arguments);
+
+        arguments.stream().forEach(a -> System.out.println(a));
 
         try {
             processBuilder.start();

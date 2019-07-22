@@ -32,6 +32,7 @@ public class Restart {
         if (OS.isMac() && OS.isUsingMacApp()) {
             arguments.add("open");
             arguments.add(FileSystem.BASE_DIR.getParent().getParent().toAbsolutePath().toString());
+            arguments.add("--args");
         } else {
             String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             if (OS.isWindows()) {
@@ -40,10 +41,12 @@ public class Restart {
             arguments.add(path);
             arguments.add("-Djna.nosys=true");
             arguments.add("-jar");
-            arguments.addAll(Arrays.asList(args));
         }
 
+        arguments.addAll(Arrays.asList(args));
+
         ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(FileSystem.BASE_DIR.toFile());
         processBuilder.command(arguments);
 
         try {

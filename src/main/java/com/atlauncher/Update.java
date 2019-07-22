@@ -38,7 +38,6 @@ public class Update {
         if (OS.isMac() && OS.isUsingMacApp()) {
             arguments.add("open");
             arguments.add(FileSystem.BASE_DIR.getParent().getParent().toAbsolutePath().toString());
-
         } else {
             String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             if (OS.isWindows()) {
@@ -51,6 +50,7 @@ public class Update {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(FileSystem.BASE_DIR.toFile());
         processBuilder.command(arguments);
 
         try {
