@@ -128,6 +128,7 @@ macAppBundle {
     javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
     javaProperties.put('apple.laf.useScreenMenuBar', 'true')
     javaExtras.put("-Djna.nosys", "true")
+    bundleExtras.put("JVMVersion", project.targetCompatibility.toString() + "+")
 }
 
 copyToResourcesJava {
