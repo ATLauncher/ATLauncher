@@ -121,6 +121,7 @@ shadowJar {
 macAppBundle {
     mainClassName = 'com.atlauncher.App'
     appName = 'ATLauncher'
+    appStyle = 'universalJavaApplicationStub'
     runtimeConfigurationName = 'shadow'
     jarTask = 'shadowJar'
     icon = 'src/main/resources/assets/image/Icon.icns'

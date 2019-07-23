@@ -18,7 +18,6 @@
 package com.atlauncher;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +30,7 @@ public class Restart {
 
         if (OS.isMac() && OS.isUsingMacApp()) {
             arguments.add("open");
+            arguments.add("-n");
             arguments.add(FileSystem.BASE_DIR.getParent().getParent().toAbsolutePath().toString());
             arguments.add("--args");
         } else {
@@ -51,7 +51,7 @@ public class Restart {
 
         try {
             processBuilder.start();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

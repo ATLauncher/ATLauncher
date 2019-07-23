@@ -37,17 +37,21 @@ public class Update {
 
         if (OS.isMac() && OS.isUsingMacApp()) {
             arguments.add("open");
+            arguments.add("-n");
             arguments.add(FileSystem.BASE_DIR.getParent().getParent().toAbsolutePath().toString());
+            arguments.add("--args");
         } else {
             String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             if (OS.isWindows()) {
                 path += "w";
             }
             arguments.add(path);
+            arguments.add("-Djna.nosys=true");
             arguments.add("-jar");
             arguments.add(launcherPath);
-            arguments.add("--updated=true");
         }
+
+        arguments.add("--updated=true");
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(FileSystem.BASE_DIR.toFile());
@@ -58,5 +62,7 @@ public class Update {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.exit(0);
     }
 }

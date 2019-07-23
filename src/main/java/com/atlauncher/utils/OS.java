@@ -427,8 +427,6 @@ public enum OS {
             LogManager.logStackTrace(e);
         }
 
-        System.out.println(thisFile);
-
         List<String> arguments = new ArrayList<>();
 
         arguments.add(Java.getPathToSystemJavaExecutable());
@@ -451,8 +449,6 @@ public enum OS {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(FileSystem.BASE_DIR.toFile());
         processBuilder.command(arguments);
-
-        arguments.stream().forEach(a -> System.out.println(a));
 
         try {
             processBuilder.start();
