@@ -386,8 +386,6 @@ public class App {
             integrate();
         }
 
-        ss.close();
-
         if (packCodeToAdd != null) {
             if (settings.addPack(packCodeToAdd)) {
                 Pack packAdded = settings.getSemiPublicPackByCode(packCodeToAdd);
@@ -401,7 +399,12 @@ public class App {
             }
         }
 
-        new LauncherFrame(open); // Open the Launcher
+        // Open the Launcher
+        final boolean openLauncher = open;
+        SwingUtilities.invokeLater(() -> {
+            new LauncherFrame(openLauncher);
+            ss.close();
+        });
     }
 
     /**

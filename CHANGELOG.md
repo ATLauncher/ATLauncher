@@ -16,7 +16,6 @@
 - Backups will now backup your saves as well as some other files such as your game options
 - Scan certain folders when looking for installed Java versions
 - Fix Java warning prompts from showing when they shouldn't
-- Speed up launcher load time by hot loading the pack tabs
 - Cache some HTTP requests
 - Remove advanced backup. We're looking into how to update and make this better for the future
 - Change the way that languages are loaded, allowing for easier translations going forward
