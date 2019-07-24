@@ -14,13 +14,13 @@
 - Add in Sentry error reporting to get information about unexpected client errors
 - Fix console not wrapping long lines
 - Backups will now backup your saves as well as some other files such as your game options
-- Scan certain Program Files folders when looking for Java versions on Windows
+- Scan certain folders when looking for installed Java versions
 - Fix Java warning prompts from showing when they shouldn't
 - Speed up launcher load time by hot loading the pack tabs
 - Cache some HTTP requests
 - Remove advanced backup. We're looking into how to update and make this better for the future
 - Change the way that languages are loaded, allowing for easier translations going forward
-- Add in ability to update curse mods from edit mods dialog
+- Add in ability to update Curse mods from edit mods dialog
 - Add in Servers button to packs and instances to find servers to play on
 - Add ability to drag and drop mods into the edit mods dialog
 - Only delete mods that the pack itself installed on reinstall/update

@@ -17,11 +17,16 @@
  */
 package com.atlauncher.data.minecraft.loaders.fabric;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 
 @Json
@@ -33,7 +38,15 @@ public class FabricLibrary extends Library {
         Downloads downloads = new Downloads();
         Download artifact = new Download();
         artifact.path = Utils.convertMavenIdentifierToPath(name);
-        artifact.url = String.format("%s/%s", url, artifact.path);
+        artifact.url = String.format("%s%s", url, artifact.path);
+
+        Path localLibraryPath = FileSystem.LIBRARIES.resolve(artifact.path);
+
+        if (Files.exists(localLibraryPath)) {
+            artifact.size = localLibraryPath.toFile().length();
+            artifact.sha1 = Hashing.sha1(localLibraryPath).toString();
+        }
+
         downloads.artifact = artifact;
 
         this.downloads = downloads;
