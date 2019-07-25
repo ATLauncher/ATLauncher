@@ -46,15 +46,18 @@ public class Library {
             return false;
         }
 
-        if (OS.isWindows() && this.natives.containsKey("windows")) {
+        if (OS.isWindows() && this.natives.containsKey("windows") && this.downloads.classifiers
+                .containsKey(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
             return true;
         }
 
-        if (OS.isLinux() && this.natives.containsKey("linux")) {
+        if (OS.isLinux() && this.natives.containsKey("linux") && this.downloads.classifiers
+                .containsKey(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
             return true;
         }
 
-        if (OS.isMac() && this.natives.containsKey("osx")) {
+        if (OS.isMac() && this.natives.containsKey("osx") && this.downloads.classifiers
+                .containsKey(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
             return true;
         }
 
