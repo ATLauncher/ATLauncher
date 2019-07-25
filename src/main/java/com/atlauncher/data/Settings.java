@@ -139,9 +139,9 @@ public class Settings {
     // Packs, Instances and Accounts
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
-    private List<News> news; // News
+    private List<News> news = new ArrayList<>(); // News
     private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
-    public List<Pack> packs; // Packs in the Launcher
+    public List<Pack> packs = new ArrayList<>(); // Packs in the Launcher
     public List<Instance> instances = new ArrayList<>(); // Users Installed Instances
     public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
