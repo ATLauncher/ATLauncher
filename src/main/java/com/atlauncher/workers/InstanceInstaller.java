@@ -39,6 +39,7 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.InstanceV2Launcher;
+import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.Deletes;
 import com.atlauncher.data.json.DownloadType;
@@ -353,6 +354,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         installMods();
+        if (isCancelled()) {
+            return false;
+        }
+
+        installLegacyJavaFixer();
         if (isCancelled()) {
             return false;
         }
@@ -904,6 +910,47 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             mod.install(this);
             addSubPercent(subPercentPerMod);
         });
+
+        hideSubProgressBar();
+    }
+
+    private void installLegacyJavaFixer() {
+        addPercent(5);
+
+        if (this.allMods.size() == 0 || !Utils.matchVersion(minecraftVersion.id, "1.6", true, true)) {
+            return;
+        }
+
+        fireTask(GetText.tr("Installing Legacy Java Fixer"));
+        fireSubProgressUnknown();
+
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
+                .setUrl(Constants.LEGACY_JAVA_FIXER_URL).hash(Constants.LEGACY_JAVA_FIXER_MD5)
+                .downloadTo(FileSystem.DOWNLOADS.resolve("legacyjavafixer-1.0.jar"))
+                .copyTo(root.resolve("mods/legacyjavafixer-1.0.jar"));
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to download Legacy Java Fixer", e);
+            }
+        } else {
+            download.copy();
+        }
+
+        DisableableMod mod = new DisableableMod();
+        mod.disabled = false;
+        mod.userAdded = false;
+        mod.wasSelected = true;
+        mod.file = "legacyjavafixer-1.0.jar";
+        mod.type = Type.mods;
+        mod.optional = false;
+        mod.name = "Legacy Java Fixer";
+        mod.version = "1.0";
+        mod.description = "Fixes issues with newer Java versions on Minecraft 1.6 and below";
+
+        this.modsInstalled.add(mod);
 
         hideSubProgressBar();
     }
