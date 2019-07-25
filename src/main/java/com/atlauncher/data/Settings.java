@@ -2279,7 +2279,12 @@ public class Settings {
 
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
-        Timestamper.updateDateFormat();
+
+        try {
+            Timestamper.updateDateFormat(dateFormat);
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error updating date format to " + dateFormat, e);
+        }
     }
 
     public Proxy getProxy() {

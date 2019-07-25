@@ -33,7 +33,7 @@ public final class Timestamper {
         return format.format(date);
     }
 
-    public static void updateDateFormat() {
-        format.applyLocalizedPattern(App.settings.getDateFormat() + " HH:mm:ss a");
+    public static void updateDateFormat(String dateFormat) {
+        format.applyLocalizedPattern(dateFormat + " HH:mm:ss a");
     }
 }
