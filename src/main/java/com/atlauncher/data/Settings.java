@@ -684,7 +684,8 @@ public class Settings {
                 }
             }
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            this.usingCustomJavaPath = false;
+            this.javaPath = OS.getDefaultJavaPath();
         }
     }
 
