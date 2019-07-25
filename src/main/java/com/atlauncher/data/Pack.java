@@ -182,7 +182,7 @@ public class Pack {
             if (isTester() || (hasVersions() && isAllowedPlayer())) {
                 return true;
             }
-        } else if (this.type == PackType.SEMIPUBLIC) {
+        } else if (this.type == PackType.SEMIPUBLIC && this.code != null) {
             if (isTester() || (hasVersions() && App.settings.canViewSemiPublicPackByCode(this.code))) {
                 return true;
             }
