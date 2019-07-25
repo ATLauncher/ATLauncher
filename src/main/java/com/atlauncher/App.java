@@ -220,7 +220,8 @@ public class App {
         // Initialize the error reporting
         ErrorReporting.init(disableErrorReporting);
 
-        if (Files.notExists(FileSystem.CONFIGS) && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
+        if ((Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
+                && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
             if (DialogManager.optionDialog().setTitle("Warning")
                     .setContent(new HTMLBuilder().center().text("I've detected that you may "
                             + "not have installed this in the right location.<br/><br/>The exe or jar file should "
