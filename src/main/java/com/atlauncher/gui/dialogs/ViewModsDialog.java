@@ -38,6 +38,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.card.ModCard;
+import com.atlauncher.network.Analytics;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -53,6 +54,8 @@ public final class ViewModsDialog extends JDialog {
         // #. {0} is the name of the pack
         super(App.settings.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.APPLICATION_MODAL);
         this.pack = pack;
+
+        Analytics.sendScreenView("View Mods Dialog");
 
         this.setPreferredSize(new Dimension(550, 450));
         this.setResizable(false);

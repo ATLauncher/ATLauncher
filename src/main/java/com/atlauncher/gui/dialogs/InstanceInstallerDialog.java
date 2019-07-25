@@ -55,6 +55,7 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -108,6 +109,8 @@ public class InstanceInstallerDialog extends JDialog {
 
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;
+
+        Analytics.sendScreenView("Instance Installer Dialog");
 
         if (object instanceof Pack) {
             pack = (Pack) object;

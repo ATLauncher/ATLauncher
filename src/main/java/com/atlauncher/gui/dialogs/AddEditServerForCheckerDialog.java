@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.MCQuery;
 import com.atlauncher.utils.Utils;
 
@@ -72,6 +73,8 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+
+        Analytics.sendScreenView("Add/Edit Server Dialog");
 
         setupComponents();
 

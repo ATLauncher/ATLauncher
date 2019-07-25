@@ -100,6 +100,8 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void setupComponents() {
+        Analytics.sendScreenView("Add Mods Dialog");
+
         JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         searchButtonsPanel.add(new JLabel(GetText.tr("Search") + ": "));

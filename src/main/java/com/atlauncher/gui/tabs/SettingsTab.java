@@ -65,7 +65,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         tabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-                Analytics.sendScreenView(title, "/settings/" + title.replace(' ', '-').toLowerCase());
+                Analytics.sendScreenView(title + " Settings");
             }
         });
 

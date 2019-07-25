@@ -154,7 +154,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         tabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-                Analytics.sendScreenView(title, "/" + title.replace(' ', '-').toLowerCase());
+                Analytics.sendScreenView(title);
             }
         });
 

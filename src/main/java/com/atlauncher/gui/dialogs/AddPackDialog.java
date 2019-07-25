@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -56,6 +57,8 @@ public class AddPackDialog extends JDialog {
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+
+        Analytics.sendScreenView("Add Pack Dialog");
 
         // Top Panel Stuff
         top = new JPanel();

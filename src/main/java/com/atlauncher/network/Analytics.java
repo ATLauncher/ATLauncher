@@ -48,8 +48,8 @@ public final class Analytics implements SettingsListener {
         }));
     }
 
-    public static void sendScreenView(String title, String path) {
-        ga.pageView(path, title).sendAsync();
+    public static void sendScreenView(String title) {
+        ga.screenView(Constants.LAUNCHER_NAME, title).sendAsync();
     }
 
     public static void sendOutboundLink(String url) {

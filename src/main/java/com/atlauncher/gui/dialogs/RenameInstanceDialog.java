@@ -36,6 +36,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -58,6 +59,8 @@ public class RenameInstanceDialog extends JDialog {
         super(null, GetText.tr("Renaming Instance"), ModalityType.APPLICATION_MODAL);
 
         this.instance = instance;
+
+        Analytics.sendScreenView("Rename Instance Dialog");
 
         setSize(300, 150);
         setLocationRelativeTo(null);

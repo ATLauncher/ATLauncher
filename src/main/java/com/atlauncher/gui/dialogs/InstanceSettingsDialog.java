@@ -43,6 +43,7 @@ import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -73,6 +74,8 @@ public class InstanceSettingsDialog extends JDialog {
         // #. {0} is the name of the instance
         super(App.settings.getParent(), GetText.tr("{0} Settings", instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
+
+        Analytics.sendScreenView("Instance Settings Dialog");
 
         setupComponents();
 
