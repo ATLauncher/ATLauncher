@@ -8,3 +8,4 @@
 - Fix NPE when semi public pack has no code
 - Add in os name and version into error reporting
 - [#362] Fix issue with dialog showing on boot on case sensitive filesystems
+- Fix v1 instances loading as v2 instances when they are not

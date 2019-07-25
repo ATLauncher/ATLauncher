@@ -1105,6 +1105,11 @@ public class Settings {
                 try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                     instanceV2 = Gsons.MINECRAFT.fromJson(fileReader, InstanceV2.class);
                     LogManager.debug("Loaded V2 instance from " + instanceDir);
+
+                    if (instanceV2.launcher == null) {
+                        instanceV2 = null;
+                        throw new JsonSyntaxException("Error parsing instance.json as InstanceV2");
+                    }
                 } catch (JsonIOException | JsonSyntaxException ignored) {
                     try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                         instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
