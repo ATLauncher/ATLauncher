@@ -37,6 +37,8 @@ public final class ErrorReporting {
             client = Sentry.init(Constants.SENTRY_DSN);
             client.setRelease(Constants.VERSION.toString());
             client.addTag("java.version", Java.getLauncherJavaVersion());
+            client.addTag("os.name", System.getProperty("os.name"));
+            client.addTag("os.version", System.getProperty("os.version"));
         }
     }
 
