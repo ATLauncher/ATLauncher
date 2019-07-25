@@ -26,3 +26,4 @@
 - Add Backups settings tab to allow backing up mods on backup
 - Fix authentication using static clientToken causing issues with logins
 - Catch errors in discord initialization
+- Fix pack codes not working for semi public packs

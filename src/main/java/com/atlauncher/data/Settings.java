@@ -1532,7 +1532,7 @@ public class Settings {
     public boolean semiPublicPackExistsFromCode(String packCode) {
         for (Pack pack : this.packs) {
             if (pack.isSemiPublic()) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.HashCode.fromString(packCode))) {
+                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
                     return true;
                 }
             }
@@ -1543,7 +1543,7 @@ public class Settings {
     public Pack getSemiPublicPackByCode(String packCode) {
         for (Pack pack : this.packs) {
             if (pack.isSemiPublic()) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.HashCode.fromString(packCode))) {
+                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
                     return pack;
                 }
             }
@@ -1554,8 +1554,8 @@ public class Settings {
 
     public boolean addPack(String packCode) {
         for (Pack pack : this.packs) {
-            if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(packCode)) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.HashCode.fromString(packCode))) {
+            if (pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(Hashing.md5(packCode).toString())) {
+                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
                     if (pack.isTester()) {
                         return false;
                     }
@@ -1573,7 +1573,7 @@ public class Settings {
 
     public void removePack(String packCode) {
         for (String code : this.addedPacks.split(",")) {
-            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
+            if (Hashing.md5(code).equals(Hashing.md5(packCode))) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
                 this.refreshVanillaPacksPanel();
