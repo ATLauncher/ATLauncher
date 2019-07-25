@@ -10,3 +10,4 @@
 - [#362] Fix issue with dialog showing on boot on case sensitive filesystems
 - Fix v1 instances loading as v2 instances when they are not
 - Fix potential issue with date formats
+- Fix analytics exceptions causing unusable launcher

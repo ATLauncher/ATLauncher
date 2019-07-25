@@ -38,7 +38,7 @@ public final class Analytics implements SettingsListener {
             .withAppVersion(Constants.VERSION.toString()).build();
 
     public static void startSession() {
-        ga.screenView().sessionControl("start").send();
+        ga.screenView().sessionControl("start").sendAsync();
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
