@@ -575,6 +575,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (index.mapToResources) {
                 download = download
                         .copyTo(new File(new File(this.root.toFile(), "resources"), entry.getKey()).toPath());
+            } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
+                download = download.copyTo(FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()));
             }
 
             pool.add(download);

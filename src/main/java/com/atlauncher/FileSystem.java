@@ -50,6 +50,7 @@ public final class FileSystem {
     public static final Path RESOURCES_VIRTUAL = ASSETS.resolve("virtual");
     public static final Path RESOURCES_OBJECTS = ASSETS.resolve("objects");
     public static final Path RESOURCES_INDEXES = ASSETS.resolve("indexes");
+    public static final Path RESOURCES_VIRTUAL_LEGACY = RESOURCES_VIRTUAL.resolve("legacy");
 
     public static final Path LIBRARIES = BASE_DIR.resolve("libraries");
 
@@ -94,10 +95,6 @@ public final class FileSystem {
 
         if (Files.exists(CONFIGS.resolve("instancesdata"))) {
             FileUtils.delete(CONFIGS.resolve("instancesdata"));
-        }
-
-        if (Files.exists(RESOURCES_VIRTUAL.resolve("legacy"))) {
-            FileUtils.delete(RESOURCES_VIRTUAL.resolve("legacy"));
         }
     }
 
@@ -227,6 +224,7 @@ public final class FileSystem {
         FileUtils.createDirectory(RESOURCES_LOG_CONFIGS);
         FileUtils.createDirectory(RESOURCES_OBJECTS);
         FileUtils.createDirectory(RESOURCES_VIRTUAL);
+        FileUtils.createDirectory(RESOURCES_VIRTUAL_LEGACY);
 
         FileUtils.createDirectory(DOWNLOADS);
         FileUtils.createDirectory(FAILED_DOWNLOADS);

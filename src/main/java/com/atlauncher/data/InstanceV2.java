@@ -294,6 +294,8 @@ public class InstanceV2 extends MinecraftVersion {
 
             if (index.mapToResources) {
                 download = download.copyTo(this.getRoot().resolve("resources/" + entry.getKey()));
+            } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
+                download = download.copyTo(FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()));
             }
 
             pool.add(download);
