@@ -9,12 +9,12 @@ package com.atlauncher.utils.javafinder;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.collection.Caching;
 import com.atlauncher.utils.Java;
 
 /**
@@ -29,8 +29,7 @@ public class JavaInfo {
     public Integer minorVersion; // The minor version
     public boolean is64bits; // ! true for 64-bit javas, false for 32
     public boolean isRuntime; // if this is a runtime provided by ATLauncher
-    private static final SoftReference<Caching.Cache<String, String>> versionInfos = new SoftReference<>(
-            Caching.<String, String>newLRU());
+    private static final Map<String, String> versionInfos = new HashMap<String, String>();
 
     /**
      * Calls 'javaPath -version' and parses the results
@@ -38,11 +37,11 @@ public class JavaInfo {
      * @param javaPath: path to a java.exe executable
      ****************************************************************************/
     public JavaInfo(String javaPath) {
-        String versionInfo = versionInfos.get().get(javaPath);
+        String versionInfo = versionInfos.get(javaPath);
 
         if (versionInfo == null) {
             versionInfo = RuntimeStreamer.execute(new String[] { javaPath, "-version" });
-            JavaInfo.versionInfos.get().put(javaPath, versionInfo);
+            JavaInfo.versionInfos.put(javaPath, versionInfo);
         }
 
         String[] tokens = versionInfo.split("\"");
