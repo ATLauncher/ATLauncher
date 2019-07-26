@@ -38,7 +38,7 @@ public class JavaInfo {
      * @param javaPath: path to a java.exe executable
      ****************************************************************************/
     public JavaInfo(String javaPath) {
-        String versionInfo = JavaInfo.versionInfos.get().get(javaPath);
+        String versionInfo = versionInfos.get().get(javaPath);
 
         if (versionInfo == null) {
             versionInfo = RuntimeStreamer.execute(new String[] { javaPath, "-version" });
