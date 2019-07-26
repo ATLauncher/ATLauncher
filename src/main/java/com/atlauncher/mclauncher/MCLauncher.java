@@ -37,6 +37,7 @@ import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.google.gson.Gson;
@@ -49,6 +50,9 @@ public class MCLauncher {
     public static Process launch(Account account, Instance instance, LoginResponse response) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
+
+        ErrorReporting.recordInstancePlay(instance.getPackName(), instance.getVersion(), instance.getLoaderVersion(),
+                1);
 
         InstanceSettings settings = instance.getSettings();
         Integer initialMemory = settings.getInitialMemory() == null ? App.settings.getInitialMemory()
@@ -315,6 +319,9 @@ public class MCLauncher {
     public static Process launch(Account account, InstanceV2 instance, LoginResponse response) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
+
+        ErrorReporting.recordInstancePlay(instance.launcher.pack, instance.launcher.version,
+                instance.launcher.loaderVersion, 2);
 
         Integer initialMemory = instance.launcher.initialMemory == null ? App.settings.getInitialMemory()
                 : instance.launcher.initialMemory;

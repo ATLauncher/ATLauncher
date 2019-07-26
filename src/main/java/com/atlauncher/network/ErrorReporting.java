@@ -106,6 +106,26 @@ public final class ErrorReporting {
         }
     }
 
+    public static void recordInstancePlay(String packName, String packVersion, LoaderVersion loader, int instanceVersion) {
+        if (client != null) {
+            Map<String, String> data = new HashMap<>();
+
+            data.put("pack.name", packName);
+            data.put("pack.version", packVersion);
+            data.put("instance.version", instanceVersion + "");
+
+            if (loader != null) {
+                data.put("loader.version", loader.version);
+                data.put("loader.type", loader.type);
+            }
+
+            client.getContext()
+                    .recordBreadcrumb(new BreadcrumbBuilder().setMessage("Playing instance")
+                            .setType(Breadcrumb.Type.USER).setLevel(Breadcrumb.Level.INFO).setCategory("instance.play")
+                            .setData(data).build());
+        }
+    }
+
     public static void reportError(Throwable t) {
         if (client != null) {
             client.sendException(t);
