@@ -399,6 +399,10 @@ public final class Download {
     public void copy() {
         if (this.copyTo != null) {
             if (Files.exists(this.copyTo)) {
+                if (hashMatches()) {
+                    return;
+                }
+
                 FileUtils.delete(this.copyTo);
             }
 
