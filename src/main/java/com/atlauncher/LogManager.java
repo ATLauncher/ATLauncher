@@ -20,6 +20,7 @@ package com.atlauncher;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 
+import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.ErrorReporting;
 
@@ -67,19 +68,21 @@ public final class LogManager {
         logger.info(message);
     }
 
-    /**
-     * Logs a stack trace to the console window
-     *
-     * @param t The throwable to show in the console
-     */
-
     public static void logStackTrace(Throwable t) {
+        logStackTrace(t, true);
+    }
+
+    public static void logStackTrace(Throwable t, boolean sendRemote) {
         t.printStackTrace();
 
         CharArrayWriter writer = new CharArrayWriter();
         try {
             Analytics.sendException(t.getMessage());
-            ErrorReporting.reportError(t);
+
+            if (!(t instanceof LocalException) && sendRemote) {
+                ErrorReporting.reportError(t);
+            }
+
             t.printStackTrace(new PrintWriter(writer));
             error(writer.toString());
         } finally {
@@ -87,15 +90,12 @@ public final class LogManager {
         }
     }
 
-    /**
-     * Logs a stack trace to the console window with a custom message before it
-     *
-     * @param message A message regarding the stack trace to show before it
-     *                providing more insight
-     * @param t       The throwable to show in the console
-     */
     public static void logStackTrace(String message, Throwable t) {
+        logStackTrace(message, t, true);
+    }
+
+    public static void logStackTrace(String message, Throwable t, boolean sendRemote) {
         error(message);
-        logStackTrace(t);
+        logStackTrace(t, sendRemote);
     }
 }

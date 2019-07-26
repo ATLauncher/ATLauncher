@@ -62,6 +62,7 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
+import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -252,7 +253,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (ret != 0) {
-            throw new Exception("Install cancelled after viewing message!");
+            throw new LocalException("Install cancelled after viewing message!");
         }
     }
 

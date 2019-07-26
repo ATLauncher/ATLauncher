@@ -17,7 +17,9 @@
  */
 package com.atlauncher.network;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.atlauncher.data.Constants;
@@ -28,13 +30,27 @@ import io.sentry.Sentry;
 import io.sentry.SentryClient;
 import io.sentry.event.Breadcrumb;
 import io.sentry.event.BreadcrumbBuilder;
+import io.sentry.event.Event;
+import io.sentry.event.helper.ShouldSendEventCallback;
 
 public final class ErrorReporting {
     public static SentryClient client;
+    public static List<String> sentEvents = new ArrayList<>();
 
     public static void init(boolean disable) {
         if (!disable) {
             client = Sentry.init(Constants.SENTRY_DSN);
+            client.addShouldSendEventCallback(new ShouldSendEventCallback() {
+                @Override
+                public boolean shouldSend(Event event) {
+                    if (sentEvents.contains(event.getMessage())) {
+                        return false;
+                    }
+
+                    sentEvents.add(event.getMessage());
+                    return true;
+                }
+            });
             client.setRelease(Constants.VERSION.toString());
             client.addTag("java.version", Java.getLauncherJavaVersion());
             client.addTag("os.name", System.getProperty("os.name"));
@@ -106,7 +122,8 @@ public final class ErrorReporting {
         }
     }
 
-    public static void recordInstancePlay(String packName, String packVersion, LoaderVersion loader, int instanceVersion) {
+    public static void recordInstancePlay(String packName, String packVersion, LoaderVersion loader,
+            int instanceVersion) {
         if (client != null) {
             Map<String, String> data = new HashMap<>();
 

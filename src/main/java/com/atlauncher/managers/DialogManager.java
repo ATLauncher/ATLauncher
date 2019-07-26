@@ -25,6 +25,7 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
+import com.atlauncher.LogManager;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -167,7 +168,13 @@ public final class DialogManager {
     }
 
     public int show() {
-        return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title, this.lookAndFeel, this.type,
-                this.icon, this.getOptions(), this.defaultOption);
+        try {
+            return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title, this.lookAndFeel, this.type,
+                    this.icon, this.getOptions(), this.defaultOption);
+        } catch (Exception e) {
+            LogManager.logStackTrace(e, false);
+        }
+
+        return -1;
     }
 }

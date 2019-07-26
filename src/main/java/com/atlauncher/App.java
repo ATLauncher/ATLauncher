@@ -267,7 +267,7 @@ public class App {
             LogManager.info("Organising filesystem");
             FileSystem.organise();
         } catch (IOException e) {
-            LogManager.logStackTrace("Error organising filesystem", e);
+            LogManager.logStackTrace("Error organising filesystem", e, false);
         }
 
         try {
