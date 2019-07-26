@@ -44,6 +44,7 @@ import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.Deletes;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.AssetIndex;
@@ -287,11 +288,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         modsInstalled = new ArrayList<>();
         for (com.atlauncher.data.json.Mod mod : this.selectedMods) {
             String file = mod.getFile();
-            if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
+
+            if (mod.type == ModType.mods && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
                 file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
-            } else if (this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
+            } else if (mod.type == ModType.mods  && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
+
             this.modsInstalled
                     .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
                             com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
@@ -964,8 +967,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        Files.walkFileTree(this.root.resolve("mods").toFile().toPath(),
-                new CaseFileVisitor(this.packVersion.caseAllFiles));
+        Files.walkFileTree(this.root.resolve("mods"), new CaseFileVisitor(this.packVersion.caseAllFiles,
+                this.selectedMods.stream().filter(m -> m.type == ModType.mods).collect(Collectors.toList())));
     }
 
     private void runActions() {

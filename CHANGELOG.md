@@ -6,3 +6,4 @@
 - Fix legacy resources not installing
 - Don't copy files from downloadable if not needed (hashes match)
 - Add Sentry breadcrumbs for instance launching
+- Fix packs using caseallfiles not working correctly

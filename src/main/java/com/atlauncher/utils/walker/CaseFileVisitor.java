@@ -17,9 +17,6 @@
  */
 package com.atlauncher.utils.walker;
 
-import com.atlauncher.data.json.CaseType;
-import com.atlauncher.utils.FileUtils;
-
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -29,23 +26,22 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.atlauncher.data.json.CaseType;
+import com.atlauncher.data.json.Mod;
+import com.atlauncher.utils.FileUtils;
+
 public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
     private CaseType caseType;
-    private List<String> filesToIgnore;
+    private List<Mod> mods;
 
-    public CaseFileVisitor(CaseType caseType) {
+    public CaseFileVisitor(CaseType caseType, List<Mod> mods) {
         this.caseType = caseType;
-        this.filesToIgnore = new ArrayList<>();
-    }
-
-    public CaseFileVisitor(CaseType caseType, List<String> filesToIgnore) {
-        this.caseType = caseType;
-        this.filesToIgnore = filesToIgnore;
+        this.mods = mods;
     }
 
     @Override
     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-        if (this.filesToIgnore.contains(path.getFileName().toString())) {
+        if (!this.mods.stream().anyMatch(m -> m.getFile().equalsIgnoreCase(path.getFileName().toString()))) {
             return FileVisitResult.CONTINUE;
         }
 
