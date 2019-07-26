@@ -88,7 +88,7 @@ public class FileUtils {
             Files.createDirectory(directory);
             return true;
         } catch (IOException e) {
-            LogManager.logStackTrace("Error creating directory " + directory, e);
+            LogManager.error("Error creating directory " + directory);
         }
 
         return false;
