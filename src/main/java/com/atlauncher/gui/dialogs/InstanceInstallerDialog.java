@@ -387,8 +387,6 @@ public class InstanceInstallerDialog extends JDialog {
 
                         dialog.dispose();
 
-                        Utils.cleanTempDirectory();
-
                         DialogManager.okDialog().setTitle(title)
                                 .setContent(new HTMLBuilder().center().text(text).build()).setType(type).show();
                     }

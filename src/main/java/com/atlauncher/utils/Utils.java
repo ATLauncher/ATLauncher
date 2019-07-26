@@ -571,20 +571,6 @@ public class Utils {
     }
 
     /**
-     * Clean temp directory.
-     */
-    public static void cleanTempDirectory() {
-        File file = FileSystem.TEMP.toFile();
-        String[] myFiles;
-        if (file.isDirectory()) {
-            myFiles = file.list();
-            for (String myFile : myFiles) {
-                new File(file, myFile).delete();
-            }
-        }
-    }
-
-    /**
      * Delete.
      *
      * @param file the file

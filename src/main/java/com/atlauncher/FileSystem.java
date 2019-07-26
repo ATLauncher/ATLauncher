@@ -73,7 +73,7 @@ public final class FileSystem {
     public static void organise() throws IOException {
         deleteDirectories();
 
-        Utils.cleanTempDirectory();
+        cleanTempDirectory();
 
         renameDirectories();
 
@@ -96,6 +96,10 @@ public final class FileSystem {
         if (Files.exists(CONFIGS.resolve("instancesdata"))) {
             FileUtils.delete(CONFIGS.resolve("instancesdata"));
         }
+    }
+
+    private static void cleanTempDirectory() {
+        Utils.deleteContents(TEMP.toFile());
     }
 
     private static void renameDirectories() throws IOException {
