@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -1096,7 +1097,8 @@ public class Settings {
         this.instances = new ArrayList<>(); // Reset the instances list
         this.instancesV2 = new ArrayList<>(); // Reset the instancesv2 list
 
-        for (String folder : FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter())) {
+        for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
+                .orElse(new String[0])) {
             File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
@@ -1114,6 +1116,7 @@ public class Settings {
                 } catch (JsonIOException | JsonSyntaxException ignored) {
                     try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                         instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
+                        LogManager.debug("Loaded V1 instance from " + instanceDir);
                     } catch (JsonIOException | JsonSyntaxException e) {
                         LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                         continue;
