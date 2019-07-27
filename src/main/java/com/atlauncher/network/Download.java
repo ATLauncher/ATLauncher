@@ -316,6 +316,10 @@ public final class Download {
             } else if (Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return false;
             }
+
+            if (this.size == -1L && this.to.toFile().length() == this.getFilesize()) {
+                return false;
+            }
         }
 
         return true;
