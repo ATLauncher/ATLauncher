@@ -9,3 +9,4 @@
 - Fix launching with native libraries in classpath
 - Fix logging Minecraft messages causing high cpu/ram and locking
 - Fix issue loading instances when there were none
+- Fix downloads redownloading without a hash. but size matches

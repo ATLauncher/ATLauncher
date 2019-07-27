@@ -53,7 +53,7 @@ public final class Download {
     public Path unzipTo;
     public Path extractedTo;
     public Path copyTo;
-    private String hash;
+    private String hash = null;
     private List<String> checksums;
     public long size = -1L;
     private InstanceInstaller instanceInstaller;
@@ -317,7 +317,7 @@ public final class Download {
                 return false;
             }
 
-            if (this.size == -1L && this.to.toFile().length() == this.getFilesize()) {
+            if (this.hash == null && this.to.toFile().length() == this.getFilesize()) {
                 return false;
             }
         }
