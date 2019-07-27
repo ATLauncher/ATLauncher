@@ -6,3 +6,4 @@
 - Don't send errors when creating directories
 - Fix NPE with JavaInfo due to GC
 - Fix temp directory not clearing on restart
+- Fix launching with native libraries in classpath

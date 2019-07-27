@@ -345,7 +345,8 @@ public class MCLauncher {
             }
         }
 
-        instance.libraries.stream().filter(Library::shouldInstall)
+        instance.libraries.stream().filter(
+                library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
                 .forEach(library -> {
                     cpb.append(File.pathSeparator);
