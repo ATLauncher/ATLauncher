@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration packages="com.atlauncher.evnt">
+<Configuration packages="com.atlauncher.thread">
     <Appenders>
         <Console name="LogToConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
@@ -16,14 +16,10 @@
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <ConsoleLogAppender name="LogToConsoleGui">
-            <PatternLayout pattern="%msg%n"/>
-        </ConsoleLogAppender>
     </Appenders>
     <Loggers>
         <Logger name="com.atlauncher" level="debug" additivity="false">
             <AppenderRef ref="LogToRollingFile"/>
-            <AppenderRef ref="LogToConsoleGui"/>
         </Logger>
         <Root level="error">
             <AppenderRef ref="LogToConsole"/>

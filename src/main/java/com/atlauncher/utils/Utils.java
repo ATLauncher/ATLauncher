@@ -78,7 +78,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;

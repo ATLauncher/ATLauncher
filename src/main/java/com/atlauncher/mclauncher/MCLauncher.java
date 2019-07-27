@@ -32,7 +32,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.LoginResponse;
-import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.data.minecraft.VersionManifest;

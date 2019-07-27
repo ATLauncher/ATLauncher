@@ -257,6 +257,7 @@ public class App {
         loadTheme();
 
         console = new LauncherConsole();
+        LogManager.start();
 
         if (settings.enableConsole()) {
             // Show the console if enabled.

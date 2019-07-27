@@ -7,3 +7,4 @@
 - Fix NPE with JavaInfo due to GC
 - Fix temp directory not clearing on restart
 - Fix launching with native libraries in classpath
+- Fix logging Minecraft messages causing high cpu/ram and locking
