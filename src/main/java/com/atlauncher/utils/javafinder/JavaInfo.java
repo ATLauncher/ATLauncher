@@ -29,7 +29,7 @@ public class JavaInfo {
     public Integer minorVersion; // The minor version
     public boolean is64bits; // ! true for 64-bit javas, false for 32
     public boolean isRuntime; // if this is a runtime provided by ATLauncher
-    private static final Map<String, String> versionInfos = new HashMap<String, String>();
+    private static final Map<String, String> versionInfos = new HashMap<>();
 
     /**
      * Calls 'javaPath -version' and parses the results

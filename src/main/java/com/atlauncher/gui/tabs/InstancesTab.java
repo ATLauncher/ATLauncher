@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
@@ -122,7 +123,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        App.settings.getInstancesSorted().stream().filter(instance -> instance.canPlay()).forEach(instance -> {
+        App.settings.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 

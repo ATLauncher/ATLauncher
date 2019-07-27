@@ -138,9 +138,7 @@ public class JavaFinder {
             javaPaths = new SoftReference<>(javaExecs);
         }
 
-        return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(java -> {
-            return new JavaInfo(java);
-        }).collect(Collectors.toList());
+        return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(JavaInfo::new).collect(Collectors.toList());
     }
 
     /**

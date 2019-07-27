@@ -27,14 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -150,7 +143,7 @@ public class EditModsDialog extends JDialog {
         modsInPack.setEnabled(false);
         add(modsInPack, BorderLayout.CENTER);
 
-        disabledModsPanel = new JList<ModsJCheckBox>();
+        disabledModsPanel = new JList<>();
         disabledModsPanel.setLayout(null);
         disabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
         disabledModsPanel.setDragEnabled(true);
@@ -162,7 +155,7 @@ public class EditModsDialog extends JDialog {
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
 
-        enabledModsPanel = new JList<ModsJCheckBox>();
+        enabledModsPanel = new JList<>();
         enabledModsPanel.setLayout(null);
         enabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
         enabledModsPanel.setDragEnabled(true);
@@ -285,7 +278,7 @@ public class EditModsDialog extends JDialog {
 
     private void loadMods() {
         List<DisableableMod> mods = instanceV2 != null
-                ? instanceV2.launcher.mods.stream().filter(m -> m.wasSelected()).collect(Collectors.toList())
+                ? instanceV2.launcher.mods.stream().filter(DisableableMod::wasSelected).collect(Collectors.toList())
                 : instance.getInstalledSelectedMods();
         enabledMods = new ArrayList<>();
         disabledMods = new ArrayList<>();
@@ -329,17 +322,17 @@ public class EditModsDialog extends JDialog {
     private void checkBoxesChanged() {
         if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
                 : this.instance.hasEnabledCurseIntegration()) {
-            checkForUpdatesButton.setEnabled((enabledMods.stream().filter(cb -> cb.isSelected()).count() != 0
-                    && enabledMods.stream().filter(cb -> cb.isSelected())
+            checkForUpdatesButton.setEnabled((enabledMods.stream().filter(AbstractButton::isSelected).count() != 0
+                    && enabledMods.stream().filter(AbstractButton::isSelected)
                             .allMatch(cb -> cb.getDisableableMod().isFromCurse()))
-                    || (disabledMods.stream().filter(cb -> cb.isSelected()).count() != 0 && disabledMods.stream()
-                            .filter(cb -> cb.isSelected()).allMatch(cb -> cb.getDisableableMod().isFromCurse())));
+                    || (disabledMods.stream().filter(AbstractButton::isSelected).count() != 0 && disabledMods.stream()
+                            .filter(AbstractButton::isSelected).allMatch(cb -> cb.getDisableableMod().isFromCurse())));
         }
 
-        removeButton.setEnabled((disabledMods.size() != 0 && disabledMods.stream().anyMatch(cb -> cb.isSelected()))
-                || (enabledMods.size() != 0 && enabledMods.stream().anyMatch(cb -> cb.isSelected())));
-        enableButton.setEnabled(disabledMods.size() != 0 && disabledMods.stream().anyMatch(cb -> cb.isSelected()));
-        disableButton.setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(cb -> cb.isSelected()));
+        removeButton.setEnabled((disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected))
+                || (enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected)));
+        enableButton.setEnabled(disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected));
+        disableButton.setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected));
     }
 
     private void checkForUpdates() {

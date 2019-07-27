@@ -26,8 +26,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -151,11 +149,9 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT : JTabbedPane.LEFT));
         tabbedPane.setBackground(App.THEME.getBaseColor());
 
-        tabbedPane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-                Analytics.sendScreenView(title);
-            }
+        tabbedPane.addChangeListener(e -> {
+            String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
+            Analytics.sendScreenView(title);
         });
 
         newsTab = new NewsTab();

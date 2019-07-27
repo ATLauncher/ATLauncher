@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -93,7 +94,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<>(Language.locales.stream().map(l -> l.getDisplayName()).toArray(String[]::new));
+        language = new JComboBox<>(Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
         language.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {

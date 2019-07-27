@@ -356,6 +356,7 @@ public class Utils {
      * @param withFilename the with filename
      * @return true, if successful
      */
+    @SuppressWarnings("resource")
     public static boolean copyFile(File from, File to, boolean withFilename) {
         if (!from.isFile()) {
             LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"

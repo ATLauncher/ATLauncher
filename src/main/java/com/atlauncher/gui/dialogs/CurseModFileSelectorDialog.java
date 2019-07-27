@@ -290,9 +290,7 @@ public class CurseModFileSelectorDialog extends JDialog {
                 }
 
                 return true;
-            }).forEach(version -> {
-                filesDropdown.addItem(version);
-            });
+            }).forEach(version -> filesDropdown.addItem(version));
 
             if (filesDropdown.getItemCount() == 0) {
                 DialogManager.okDialog().setParent(CurseModFileSelectorDialog.this).setTitle("No files found")

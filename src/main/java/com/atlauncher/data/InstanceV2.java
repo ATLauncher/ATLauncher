@@ -675,11 +675,11 @@ public class InstanceV2 extends MinecraftVersion {
 
     public List<String> getCustomMods(Type type) {
         return this.launcher.mods.stream().filter(DisableableMod::isUserAdded).filter(m -> m.getType() == type)
-                .map(m -> m.getFilename()).collect(Collectors.toList());
+                .map(DisableableMod::getFilename).collect(Collectors.toList());
     }
 
     public List<String> getPackMods(Type type) {
-        return this.launcher.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(m -> m.getFilename())
+        return this.launcher.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(DisableableMod::getFilename)
                 .collect(Collectors.toList());
     }
 

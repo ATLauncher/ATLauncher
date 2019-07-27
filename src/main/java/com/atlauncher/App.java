@@ -376,9 +376,7 @@ public class App {
 
                 discordInitialized = true;
 
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    DiscordRPC.discordShutdown();
-                }));
+                Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
             } catch (Exception e) {
                 LogManager.logStackTrace("Failed to initialize Discord integration", e);
             }

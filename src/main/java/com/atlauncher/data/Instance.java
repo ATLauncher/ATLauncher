@@ -1636,7 +1636,7 @@ public class Instance implements Cloneable {
     }
 
     public List<String> getPackMods(Type type) {
-        return this.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(m -> m.getFilename())
+        return this.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(DisableableMod::getFilename)
                 .collect(Collectors.toList());
     }
 

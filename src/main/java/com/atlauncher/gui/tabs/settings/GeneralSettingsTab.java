@@ -19,6 +19,7 @@ package com.atlauncher.gui.tabs.settings;
 
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.util.Locale;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -69,7 +70,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        language = new JComboBox<>(Language.locales.stream().map(l -> l.getDisplayName()).toArray(String[]::new));
+        language = new JComboBox<>(Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
         add(language, gbc);
 

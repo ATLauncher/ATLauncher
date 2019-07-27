@@ -24,8 +24,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -62,11 +60,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBackground(App.THEME.getBaseColor());
-        tabbedPane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-                Analytics.sendScreenView(title + " Settings");
-            }
+        tabbedPane.addChangeListener(e -> {
+            String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
+            Analytics.sendScreenView(title + " Settings");
         });
 
         tabbedPane.setFont(App.THEME.getDefaultFont().deriveFont(17.0F));
