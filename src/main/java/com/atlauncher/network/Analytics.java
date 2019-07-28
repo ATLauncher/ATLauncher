@@ -28,30 +28,45 @@ import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
 
 public final class Analytics implements SettingsListener {
-    private static GoogleAnalytics ga = GoogleAnalytics.builder()
-            .withConfig(new GoogleAnalyticsConfig().setDiscoverRequestParameters(true)
-                    .setProxyHost(App.settings.getProxyHost()).setProxyPort(App.settings.getProxyPort())
-                    .setEnabled(App.settings.enableAnalytics()))
-            .withDefaultRequest(new DefaultRequest().userAgent(Network.USER_AGENT)
-                    .clientId(App.settings.getAnalyticsClientId()).customDimension(1, Java.getLauncherJavaVersion()))
-            .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
-            .withAppVersion(Constants.VERSION.toString()).build();
+    private static GoogleAnalytics ga;
 
     public static void startSession() {
+        ga = GoogleAnalytics.builder()
+                .withConfig(new GoogleAnalyticsConfig().setDiscoverRequestParameters(true)
+                        .setProxyHost(App.settings.getProxyHost()).setProxyPort(App.settings.getProxyPort())
+                        .setEnabled(App.settings.enableAnalytics()))
+                .withDefaultRequest(
+                        new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.getAnalyticsClientId())
+                                .customDimension(1, Java.getLauncherJavaVersion()))
+                .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
+                .withAppVersion(Constants.VERSION.toString()).build();
+
         ga.screenView().sessionControl("start").sendAsync();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> endSession()));
     }
 
     public static void sendScreenView(String title) {
+        if (ga == null) {
+            return;
+        }
+
         ga.screenView(Constants.LAUNCHER_NAME, title).sendAsync();
     }
 
     public static void sendOutboundLink(String url) {
+        if (ga == null) {
+            return;
+        }
+
         ga.event().eventLabel(url).eventAction("Outbound").eventCategory("Link").sendAsync();
     }
 
     public static void sendEvent(Integer value, String label, String action, String category) {
+        if (ga == null) {
+            return;
+        }
+
         ga.event().eventValue(value).eventLabel(label).eventAction(action).eventCategory(category).sendAsync();
     }
 
@@ -64,10 +79,18 @@ public final class Analytics implements SettingsListener {
     }
 
     public static void sendException(String message) {
+        if (ga == null) {
+            return;
+        }
+
         ga.exception().exceptionDescription(message).sendAsync();
     }
 
     public static void endSession() {
+        if (ga == null) {
+            return;
+        }
+
         try {
             ga.screenView().sessionControl("end").send();
             ga.close();
@@ -78,6 +101,7 @@ public final class Analytics implements SettingsListener {
 
     @Override
     public void onSettingsSaved() {
-        ga.getConfig().setEnabled(App.settings.enableAnalytics());
+        ga.getConfig().setProxyHost(App.settings.getProxyHost()).setProxyPort(App.settings.getProxyPort())
+                .setEnabled(App.settings.enableAnalytics());
     }
 }
