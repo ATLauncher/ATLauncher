@@ -245,6 +245,13 @@ public class App {
             }
         }
 
+        try {
+            LogManager.info("Organising filesystem");
+            FileSystem.organise();
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error organising filesystem", e, false);
+        }
+
         // Setup the Settings and wait for it to finish.
         settings = new Settings();
 
@@ -262,13 +269,6 @@ public class App {
         if (settings.enableConsole()) {
             // Show the console if enabled.
             console.setVisible(true);
-        }
-
-        try {
-            LogManager.info("Organising filesystem");
-            FileSystem.organise();
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error organising filesystem", e, false);
         }
 
         try {

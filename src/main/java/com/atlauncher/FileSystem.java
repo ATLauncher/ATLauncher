@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import com.atlauncher.data.Constants;
 import com.atlauncher.utils.FileUtils;
@@ -103,104 +104,48 @@ public final class FileSystem {
     }
 
     private static void renameDirectories() throws IOException {
-        Path oldBackupsDir = BASE_DIR.resolve("Backups");
-        if (Files.exists(oldBackupsDir)
-                && (!Files.isSameFile(oldBackupsDir, BACKUPS) || (Files.isSameFile(oldBackupsDir, BACKUPS)
-                        && BACKUPS.toRealPath().getFileName().toString().equals("Backups")))) {
-            Files.move(oldBackupsDir, oldBackupsDir.resolveSibling("backupstemp"));
-            Files.move(oldBackupsDir.resolveSibling("backupstemp"), BACKUPS);
+        renameDirectory(BASE_DIR.resolve("Backups"), BACKUPS);
+        renameDirectory(BASE_DIR.resolve("Instances"), INSTANCES);
+        renameDirectory(BASE_DIR.resolve("Servers"), SERVERS);
+        renameDirectory(BASE_DIR.resolve("Temp"), TEMP);
+        renameDirectory(BASE_DIR.resolve("Downloads"), DOWNLOADS);
+        renameDirectory(BASE_DIR.resolve("FailedDownloads"), FAILED_DOWNLOADS);
+        renameDirectory(BASE_DIR.resolve("Configs"), CONFIGS);
+        renameDirectory(CONFIGS.resolve("Common"), COMMON);
+        renameDirectory(CONFIGS.resolve("Images"), IMAGES);
+        renameDirectory(CONFIGS.resolve("Skins"), SKINS);
+        renameDirectory(CONFIGS.resolve("JSON"), JSON);
+        renameDirectory(CONFIGS.resolve("Themes"), THEMES);
+        renameDirectory(CONFIGS.resolve("Tools"), TOOLS);
+    }
+
+    private static void renameDirectory(Path from, Path to) {
+        if (!Files.exists(from)) {
+            return;
         }
 
-        Path oldInstancesDir = BASE_DIR.resolve("Instances");
-        if (Files.exists(oldInstancesDir)
-                && (!Files.isSameFile(oldInstancesDir, INSTANCES) || (Files.isSameFile(oldInstancesDir, INSTANCES)
-                        && INSTANCES.toRealPath().getFileName().toString().equals("Instances")))) {
-            Files.move(oldInstancesDir, oldInstancesDir.resolveSibling("instancestemp"));
-            Files.move(oldInstancesDir.resolveSibling("instancestemp"), INSTANCES);
-        }
+        try {
+            boolean needToMove = false;
 
-        Path oldServersDir = BASE_DIR.resolve("Servers");
-        if (Files.exists(oldServersDir)
-                && (!Files.isSameFile(oldServersDir, SERVERS) || (Files.isSameFile(oldServersDir, SERVERS)
-                        && SERVERS.toRealPath().getFileName().toString().equals("Servers")))) {
-            Files.move(oldServersDir, oldServersDir.resolveSibling("serverstemp"));
-            Files.move(oldServersDir.resolveSibling("serverstemp"), SERVERS);
-        }
+            // case sensitive file systems
+            if (!Files.exists(to) || (Files.exists(to) && !Files.isSameFile(from, to))) {
+                needToMove = true;
+            }
 
-        Path oldTempDir = BASE_DIR.resolve("Temp");
-        if (Files.exists(oldTempDir) && (!Files.isSameFile(oldTempDir, TEMP)
-                || (Files.isSameFile(oldTempDir, TEMP) && TEMP.toRealPath().getFileName().toString().equals("Temp")))) {
-            Files.move(oldTempDir, oldTempDir.resolveSibling("temptemp"));
-            Files.move(oldTempDir.resolveSibling("temptemp"), TEMP);
-        }
+            // case insensitive file systems
+            if (Files.exists(to) && Files.isSameFile(from, to)
+                    && to.toRealPath().getFileName().toString().equals(from.getFileName().toString())) {
+                needToMove = true;
+            }
 
-        Path oldDownloadsDir = BASE_DIR.resolve("Downloads");
-        if (Files.exists(oldDownloadsDir)
-                && (!Files.isSameFile(oldDownloadsDir, DOWNLOADS) || (Files.isSameFile(oldDownloadsDir, DOWNLOADS)
-                        && DOWNLOADS.toRealPath().getFileName().toString().equals("Downloads")))) {
-            Files.move(oldDownloadsDir, oldDownloadsDir.resolveSibling("downloadstemp"));
-            Files.move(oldDownloadsDir.resolveSibling("downloadstemp"), DOWNLOADS);
-        }
-
-        Path oldFailedDownloadsDir = BASE_DIR.resolve("FailedDownloads");
-        if (Files.exists(oldFailedDownloadsDir) && (!Files.isSameFile(oldFailedDownloadsDir, FAILED_DOWNLOADS)
-                || (Files.isSameFile(oldFailedDownloadsDir, FAILED_DOWNLOADS)
-                        && FAILED_DOWNLOADS.toRealPath().getFileName().toString().equals("FailedDownloads")))) {
-            Files.move(oldFailedDownloadsDir, oldFailedDownloadsDir.resolveSibling("faileddownloadstemp"));
-            Files.move(oldFailedDownloadsDir.resolveSibling("faileddownloadstemp"), FAILED_DOWNLOADS);
-        }
-
-        Path oldConfigsDir = BASE_DIR.resolve("Configs");
-        if (Files.exists(oldConfigsDir)
-                && (!Files.isSameFile(oldConfigsDir, CONFIGS) || (Files.isSameFile(oldConfigsDir, CONFIGS)
-                        && CONFIGS.toRealPath().getFileName().toString().equals("Configs")))) {
-            Files.move(oldConfigsDir, oldConfigsDir.resolveSibling("configstemp"));
-            Files.move(oldConfigsDir.resolveSibling("configstemp"), CONFIGS);
-        }
-
-        Path oldCommonDir = CONFIGS.resolve("Common");
-        if (Files.exists(oldCommonDir)
-                && (!Files.isSameFile(oldCommonDir, COMMON) || (Files.isSameFile(oldCommonDir, COMMON)
-                        && COMMON.toRealPath().getFileName().toString().equals("Common")))) {
-            Files.move(oldCommonDir, oldCommonDir.resolveSibling("commontemp"));
-            Files.move(oldCommonDir.resolveSibling("commontemp"), COMMON);
-        }
-
-        Path oldImagesDir = CONFIGS.resolve("Images");
-        if (Files.exists(oldImagesDir)
-                && (!Files.isSameFile(oldImagesDir, IMAGES) || (Files.isSameFile(oldImagesDir, IMAGES)
-                        && IMAGES.toRealPath().getFileName().toString().equals("Images")))) {
-            Files.move(oldImagesDir, oldImagesDir.resolveSibling("imagestemp"));
-            Files.move(oldImagesDir.resolveSibling("imagestemp"), IMAGES);
-        }
-
-        Path oldSkinsDir = IMAGES.resolve("Skins");
-        if (Files.exists(oldSkinsDir) && (!Files.isSameFile(oldSkinsDir, SKINS) || (Files.isSameFile(oldSkinsDir, SKINS)
-                && SKINS.toRealPath().getFileName().toString().equals("Skins")))) {
-            Files.move(oldSkinsDir, oldSkinsDir.resolveSibling("skinstemp"));
-            Files.move(oldSkinsDir.resolveSibling("skinstemp"), SKINS);
-        }
-
-        Path oldJSONDir = CONFIGS.resolve("JSON");
-        if (Files.exists(oldJSONDir) && (!Files.isSameFile(oldJSONDir, JSON)
-                || (Files.isSameFile(oldJSONDir, JSON) && JSON.toRealPath().getFileName().toString().equals("JSON")))) {
-            Files.move(oldJSONDir, oldJSONDir.resolveSibling("jsontemp"));
-            Files.move(oldJSONDir.resolveSibling("jsontemp"), JSON);
-        }
-
-        Path oldThemesDir = CONFIGS.resolve("Themes");
-        if (Files.exists(oldThemesDir)
-                && (!Files.isSameFile(oldThemesDir, THEMES) || (Files.isSameFile(oldThemesDir, THEMES)
-                        && THEMES.toRealPath().getFileName().toString().equals("Themes")))) {
-            Files.move(oldThemesDir, oldThemesDir.resolveSibling("themestemp"));
-            Files.move(oldThemesDir.resolveSibling("themestemp"), THEMES);
-        }
-
-        Path oldToolsDir = CONFIGS.resolve("Tools");
-        if (Files.exists(oldToolsDir) && (!Files.isSameFile(oldToolsDir, TOOLS) || (Files.isSameFile(oldToolsDir, TOOLS)
-                && TOOLS.toRealPath().getFileName().toString().equals("Tools")))) {
-            Files.move(oldToolsDir, oldToolsDir.resolveSibling("toolstemp"));
-            Files.move(oldToolsDir.resolveSibling("toolstemp"), TOOLS);
+            if (needToMove) {
+                // we need to use an intemediary path due to case insensitive file systems
+                Path intermediaryPath = from.resolveSibling(to.getFileName().toString() + "temp");
+                Files.move(from, intermediaryPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(intermediaryPath, to, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error renaming directory", e, false);
         }
     }
 
