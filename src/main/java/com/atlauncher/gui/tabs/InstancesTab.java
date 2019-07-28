@@ -178,7 +178,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         });
 
         if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
+            nilCard = new NilCard(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
             panel.add(nilCard, gbc);
         }
 
@@ -211,7 +211,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         hasUpdateLabel.setText(GetText.tr("Has Update"));
 
         if (nilCard != null) {
-            nilCard.setMessage(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
+            nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
         }
     }
 }
