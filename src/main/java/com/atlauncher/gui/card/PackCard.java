@@ -100,6 +100,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.descArea.setEditable(false);
         this.descArea.setHighlighter(null);
         this.descArea.setWrapStyleWord(true);
+        this.descArea.setCaretPosition(0);
 
         this.actionsPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
