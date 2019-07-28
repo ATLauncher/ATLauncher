@@ -34,7 +34,7 @@ public class Constants {
     public static final int CURSE_MODS_SECTION_ID = 6;
     public static final int CURSE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
-    public static final String FABRIC_MAVEN = "https://maven.fabricmc.net";
+    public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String DOWNLOAD_SERVER = "https://download.nodecdn.net/containers/atl";
     public static final String DOWNLOAD_HOST = "download.nodecdn.net";
     public static final String LAUNCHER_META_MINECRAFT = "https://launchermeta.mojang.com";

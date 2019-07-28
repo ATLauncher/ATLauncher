@@ -12,3 +12,4 @@
 - Fix downloads redownloading without a hash, but size matches
 - Turn off mutex in exe
 - Fix organising filesystem in linux
+- Fix fabric not installing correctly due to bad urls
