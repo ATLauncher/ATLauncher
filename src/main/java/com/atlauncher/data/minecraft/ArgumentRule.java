@@ -18,6 +18,7 @@
 package com.atlauncher.data.minecraft;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.atlauncher.annot.Json;
@@ -62,7 +63,7 @@ public class ArgumentRule {
         List<String> values = new ArrayList<>();
 
         if (this.value instanceof String) {
-            values.add((String) this.value);
+            values.addAll(Arrays.asList(((String) this.value).split("=")));
         } else {
             values.addAll((ArrayList<String>) this.value);
         }

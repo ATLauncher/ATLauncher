@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -32,6 +33,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.data.minecraft.VersionManifest;
@@ -353,6 +355,13 @@ public class MCLauncher {
                             FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile().getAbsolutePath());
                 });
 
+        instance.libraries.stream().filter(Library::hasNativeForOS).forEach(library -> {
+            com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
+
+            cpb.append(File.pathSeparator);
+            cpb.append(FileSystem.LIBRARIES.resolve(download.path).toFile().getAbsolutePath());
+        });
+
         File binFolder = instance.getRoot().resolve("bin").toFile();
         File[] libraryFiles = binFolder.listFiles();
         if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
@@ -449,7 +458,7 @@ public class MCLauncher {
             props = gson.toJson(response.getAuth().getUserProperties());
         }
 
-        for (String argument : instance.arguments.asStringList()) {
+        for (String argument : instance.arguments.asStringList().stream().distinct().collect(Collectors.toList())) {
             argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
             argument = argument.replace("${profile_name}", instance.launcher.name);
             argument = argument.replace("${user_properties}", props);
