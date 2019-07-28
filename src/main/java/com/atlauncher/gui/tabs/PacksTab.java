@@ -79,8 +79,11 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
-        this.add(this.topPanel, BorderLayout.NORTH);
-        this.add(this.bottomPanel, BorderLayout.SOUTH);
+
+        if (!this.isFeatured && !this.isVanilla) {
+            this.add(this.topPanel, BorderLayout.NORTH);
+            this.add(this.bottomPanel, BorderLayout.SOUTH);
+        }
 
         RelocalizationManager.addListener(this);
 

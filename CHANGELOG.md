@@ -15,3 +15,4 @@
 - Fix fabric not installing correctly due to bad urls
 - [#365] fix duplicate launch arguments being used
 - Fix text when no instances are installed
+- Remove top and bottom bars on vanilla and featured pack tabs
