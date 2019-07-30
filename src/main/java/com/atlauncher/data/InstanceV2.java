@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -101,10 +102,6 @@ public class InstanceV2 extends MinecraftVersion {
 
     public Path getRoot() {
         return FileSystem.INSTANCES.resolve(this.getSafeName());
-    }
-
-    public Path getNativesTemp() {
-        return Paths.get(System.getProperty("java.io.tmpdir")).resolve("natives-" + this.getSafeName());
     }
 
     public Pack getPack() {
@@ -216,7 +213,7 @@ public class InstanceV2 extends MinecraftVersion {
      * Minecraft jar and libraries, as well as organise the libraries, ready to be
      * played.
      */
-    public boolean prepareForLaunch(ProgressDialog progressDialog) {
+    public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir) {
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
         try {
@@ -309,42 +306,24 @@ public class InstanceV2 extends MinecraftVersion {
 
         progressDialog.doneTask();
 
-        try {
-            progressDialog.setLabel(GetText.tr("Organising Libraries"));
-            if (Files.exists(this.getNativesTemp())) {
-                FileUtils.deleteDirectory(this.getNativesTemp());
+        progressDialog.setLabel(GetText.tr("Organising Libraries"));
+
+        // extract natives to a temp dir
+        this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
+            if (library.hasNativeForOS()) {
+                File nativeFile = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path).toFile();
+
+                ZipUtil.unpack(nativeFile, nativesTempDir.toFile(), name -> {
+                    if (library.extract != null && library.extract.shouldExclude(name)) {
+                        return null;
+                    }
+
+                    return name;
+                });
             }
+        });
 
-            Files.createDirectory(this.getNativesTemp());
-
-            // extract natives to a temp dir
-            this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
-                if (library.hasNativeForOS()) {
-                    File nativeFile = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path).toFile();
-
-                    ZipUtil.unpack(nativeFile, this.getNativesTemp().toFile(), name -> {
-                        if (library.extract != null && library.extract.shouldExclude(name)) {
-                            return null;
-                        }
-
-                        return name;
-                    });
-                }
-            });
-
-            progressDialog.doneTask();
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-            return false;
-        }
-
-        return true;
-    }
-
-    public boolean cleanAfterLaunch() {
-        if (Files.exists(this.getNativesTemp())) {
-            return FileUtils.deleteDirectory(this.getNativesTemp());
-        }
+        progressDialog.doneTask();
 
         return true;
     }
@@ -408,11 +387,19 @@ public class InstanceV2 extends MinecraftVersion {
                 return false;
             }
 
+            Path nativesTempDir = FileSystem.TEMP.resolve("natives-" + UUID.randomUUID().toString().replace("-", ""));
+
+            try {
+                Files.createDirectory(nativesTempDir);
+            } catch (IOException e2) {
+                LogManager.logStackTrace(e2, false);
+            }
+
             ProgressDialog prepareDialog = new ProgressDialog(GetText.tr("Preparing For Launch"), 4,
                     GetText.tr("Preparing For Launch"));
             prepareDialog.addThread(new Thread(() -> {
                 LogManager.info("Preparing for launch!");
-                prepareDialog.setReturnValue(prepareForLaunch(prepareDialog));
+                prepareDialog.setReturnValue(prepareForLaunch(prepareDialog, nativesTempDir));
                 prepareDialog.close();
             }));
             prepareDialog.start();
@@ -435,7 +422,7 @@ public class InstanceV2 extends MinecraftVersion {
                     LogManager.info("Launching pack " + this.launcher.pack + " " + this.launcher.version + " for "
                             + "Minecraft " + this.id);
 
-                    Process process = MCLauncher.launch(account, this, session);
+                    Process process = MCLauncher.launch(account, this, session, nativesTempDir);
 
                     if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
                         System.exit(0);
@@ -488,7 +475,6 @@ public class InstanceV2 extends MinecraftVersion {
                         }
                         LogManager.minecraft(line);
                     }
-                    this.cleanAfterLaunch();
                     App.settings.hideKillMinecraft();
                     if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
                         App.settings.getParent().setVisible(true);
@@ -536,6 +522,9 @@ public class InstanceV2 extends MinecraftVersion {
                         if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles()) {
                             App.settings.reloadLauncherData();
                         }
+                    }
+                    if (Files.isDirectory(nativesTempDir)) {
+                        FileUtils.deleteDirectory(nativesTempDir);
                     }
                     if (!App.settings.keepLauncherOpen()) {
                         System.exit(0);
@@ -679,8 +668,8 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public List<String> getPackMods(Type type) {
-        return this.launcher.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(DisableableMod::getFilename)
-                .collect(Collectors.toList());
+        return this.launcher.mods.stream().filter(dm -> !dm.userAdded && dm.type == type)
+                .map(DisableableMod::getFilename).collect(Collectors.toList());
     }
 
     public List<DisableableMod> getCustomDisableableMods() {

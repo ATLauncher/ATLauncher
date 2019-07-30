@@ -44,7 +44,7 @@ public class FileUtils {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            LogManager.error("Path " + path + " couldn't be deleted!");
+            LogManager.logStackTrace("Path " + path + " couldn't be deleted!", e, false);
             return false;
         }
 
@@ -60,7 +60,7 @@ public class FileUtils {
         try {
             Files.walkFileTree(dir, new DeleteDirVisitor());
         } catch (IOException e) {
-            LogManager.error("Error trying to delete the directory " + dir);
+            LogManager.logStackTrace("Error trying to delete the directory " + dir, e, false);
             return false;
         }
 
@@ -88,7 +88,7 @@ public class FileUtils {
             Files.createDirectory(directory);
             return true;
         } catch (IOException e) {
-            LogManager.error("Error creating directory " + directory);
+            LogManager.logStackTrace("Error creating directory " + directory, e, false);
         }
 
         return false;

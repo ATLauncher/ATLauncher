@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.3.0.4
+## 3.3.0.5
 
-- Fix analytics attempting to send before everything is initialised
+- [#366] fix native libraries sometimes breaking when already exists

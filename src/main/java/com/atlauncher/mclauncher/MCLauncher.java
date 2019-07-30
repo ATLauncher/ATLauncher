@@ -19,6 +19,7 @@ package com.atlauncher.mclauncher;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -317,7 +318,8 @@ public class MCLauncher {
         return processBuilder.start();
     }
 
-    public static Process launch(Account account, InstanceV2 instance, LoginResponse response) throws IOException {
+    public static Process launch(Account account, InstanceV2 instance, LoginResponse response, Path nativesTempDir)
+            throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
@@ -446,7 +448,7 @@ public class MCLauncher {
             }
         }
 
-        arguments.add("-Djava.library.path=" + instance.getNativesTemp().toAbsolutePath().toString());
+        arguments.add("-Djava.library.path=" + nativesTempDir.toAbsolutePath().toString());
         arguments.add("-cp");
         arguments.add(cpb.toString());
         arguments.add(instance.mainClass);
@@ -473,7 +475,7 @@ public class MCLauncher {
             argument = argument.replace("${version_type}", instance.type);
             argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
             argument = argument.replace("${launcher_version}", Constants.VERSION.toString());
-            argument = argument.replace("${natives_directory}", instance.getNativesTemp().toAbsolutePath().toString());
+            argument = argument.replace("${natives_directory}", nativesTempDir.toAbsolutePath().toString());
             argument = argument.replace("${user_type}",
                     response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
                             : response.getAuth().getUserType().getName());
