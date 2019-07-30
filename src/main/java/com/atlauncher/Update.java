@@ -33,6 +33,12 @@ public class Update {
         File temporaryUpdate = new File(temporaryUpdatePath);
         Utils.copyFile(temporaryUpdate, launcher.getParentFile());
 
+        try {
+            launcher.setExecutable(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         List<String> arguments = new ArrayList<>();
 
         if (OS.isMac() && OS.isUsingMacApp()) {
