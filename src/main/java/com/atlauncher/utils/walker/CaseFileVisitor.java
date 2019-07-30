@@ -52,7 +52,7 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
                         + filename.substring(filename.lastIndexOf("."));
                 FileUtils.moveFile(path, path.getParent().resolve(filename), true);
             } else if (caseType == CaseType.lower) {
-                FileUtils.moveFile(path, path.getParent().resolve(path.getFileName().toString().toLowerCase()));
+                FileUtils.moveFile(path, path.getParent().resolve(path.getFileName().toString().toLowerCase()), true);
             }
         }
 
