@@ -139,7 +139,8 @@ public class Mod {
     }
 
     public boolean hasWebsite() {
-        return (this.website != null && this.website.substring(0, 4).equalsIgnoreCase("http"));
+        return (this.website != null && this.website.length() >= 4
+                && this.website.substring(0, 4).equalsIgnoreCase("http"));
     }
 
     public String getWebsite() {
