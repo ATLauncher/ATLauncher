@@ -1116,6 +1116,7 @@ public class Settings {
                 } catch (JsonIOException | JsonSyntaxException ignored) {
                     try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                         instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
+                        instance.convert();
                         LogManager.debug("Loaded V1 instance from " + instanceDir);
                     } catch (JsonIOException | JsonSyntaxException e) {
                         LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
