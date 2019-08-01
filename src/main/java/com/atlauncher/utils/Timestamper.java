@@ -34,6 +34,6 @@ public final class Timestamper {
     }
 
     public static void updateDateFormat(String dateFormat) {
-        format.applyLocalizedPattern(dateFormat + " HH:mm:ss a");
+        format.applyPattern(dateFormat + " HH:mm:ss a");
     }
 }
