@@ -1127,6 +1127,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.jar)
                                     : instance.getPackMods(com.atlauncher.data.Type.jar)),
                             true);
+
+                    Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
+                            (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.forge)
+                                    : instance.getPackMods(com.atlauncher.data.Type.forge)),
+                            true);
                 }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));
