@@ -9,3 +9,4 @@
 - Add select all to the edit mods dialog
 - [#367] fix issue with showing console on *nix operating systems
 - Don't allow starting the launcher if we know it will fail anyway
+- Add a warning if running from the Downloads folder
