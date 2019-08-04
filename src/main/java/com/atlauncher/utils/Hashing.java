@@ -109,7 +109,6 @@ public final class Hashing {
             hashcodes.get().put(str, code);
             return code;
         } catch (Exception e) {
-            LogManager.logStackTrace("Error hashing (MD5) string " + str, e);
             return md5Internal(str);
         }
     }
@@ -124,7 +123,6 @@ public final class Hashing {
             hashcodes.get().put(obj, code);
             return code;
         } catch (Exception e) {
-            LogManager.logStackTrace("Error hashing (MD5) obj " + obj.getClass(), e);
             return md5Internal(obj);
         }
     }
@@ -139,7 +137,6 @@ public final class Hashing {
             hashcodes.get().put(bytes, code);
             return code;
         } catch (Exception e) {
-            LogManager.logStackTrace("Error hashing (MD5) byte array", e);
             return md5Internal(bytes);
         }
     }
