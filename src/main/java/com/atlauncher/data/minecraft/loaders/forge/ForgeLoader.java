@@ -124,8 +124,9 @@ public class ForgeLoader implements Loader {
 
         if (download.needToDownload()) {
             instanceInstaller.setTotalBytes(download.getFilesize());
-            download.downloadFile();
         }
+
+        download.downloadFile();
 
         this.copyLocalLibraries();
     }
