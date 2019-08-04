@@ -17,77 +17,191 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import com.atlauncher.App;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
+import com.atlauncher.LogManager;
+import com.atlauncher.annot.Json;
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import com.google.gson.JsonIOException;
+
+import org.mini2Dx.gettext.GetText;
+
+@Json
 public class Server {
+    @SuppressWarnings("unused")
+    private String launcher = Constants.LAUNCHER_NAME;
 
-    private String name;
-    private String baseURL;
-    private boolean userSelectable;
-    private boolean disabled;
-    private boolean isMaster;
-    private boolean isSecure;
+    @SuppressWarnings("unused")
+    private String launcherVersion = Constants.VERSION.toString();
 
-    public Server(String name, String baseURL, boolean userSelectable, boolean isMaster, boolean isSecure) {
-        this.name = name;
-        this.baseURL = baseURL;
-        this.userSelectable = userSelectable;
-        this.disabled = false;
-        this.isMaster = isMaster;
-        this.isSecure = isSecure;
+    public String name;
+    public String pack;
+    public Integer packId;
+    public String version;
+    public String hash;
+
+    public boolean isDev;
+    public List<DisableableMod> mods = new ArrayList<>();
+    public List<String> ignoredUpdates = new ArrayList<>();
+
+    public Path getRoot() {
+        return FileSystem.SERVERS.resolve(this.getSafeName());
     }
 
-    public boolean isMaster() {
-        return this.isMaster;
+    public String getSafeName() {
+        return this.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public boolean isSecure() {
-        return this.isSecure;
+    public String getSafePackName() {
+        return this.pack.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    public void disableServer() {
-        this.disabled = true;
+    public Pack getPack() {
+        return App.settings.packs.stream().filter(p -> p.id == this.packId).findFirst().orElse(null);
     }
 
-    public void enableServer() {
-        this.disabled = false;
+    public void launch(boolean close) {
+        launch("", close);
     }
 
-    public boolean isUserSelectable() {
-        return this.userSelectable;
+    public void launch(String args, boolean close) {
+        List<String> arguments = new ArrayList<>();
+
+        try {
+            if (OS.isWindows()) {
+                arguments.add("cmd");
+                arguments.add("/K");
+                arguments.add("start");
+                arguments.add(name);
+                arguments.add(getRoot().resolve("LaunchServer.bat").toString());
+                arguments.add(args);
+            } else if (OS.isLinux()) {
+                // this only covers Gnome like systems, will need to monitor user reports for
+                // alternatives
+                arguments.add("x-terminal-emulator");
+                arguments.add("-e");
+                arguments.add(getRoot().resolve("LaunchServer.sh").toString() + " " + args);
+            } else if (OS.isMac()) {
+                // unfortunately OSX doesn't allow us to pass arguments with open and Terminal :(
+                arguments.add("open");
+                arguments.add("-a");
+                arguments.add("Terminal");
+                arguments.add(getRoot().resolve("LaunchServer.command").toString());
+            }
+
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.directory(getRoot().toFile());
+            processBuilder.command(arguments);
+            processBuilder.start();
+
+            if (!close) {
+                DialogManager.okDialog().setTitle(GetText.tr("Server Launched"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "The server has been launched in an external window.<br/><br/>You can close ATLauncher which will not stop the server."))
+                                .build())
+                        .setType(DialogManager.INFO).show();
+            } else {
+                System.exit(0);
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to launch server", e);
+        }
     }
 
-    public boolean isDisabled() {
-        return this.disabled;
+    public boolean hasUpdate() {
+        Pack pack = this.getPack();
+
+        if (pack != null) {
+            if (pack.hasVersions() && !this.isDev) {
+                // Lastly check if the current version we installed is different than the latest
+                // version of the Pack and that the latest version of the Pack is not restricted
+                // to disallow updates.
+                if (!pack.getLatestVersion().version.equalsIgnoreCase(this.version)
+                        && !pack.isLatestVersionNoUpdate()) {
+                    return true;
+                }
+            }
+
+            if (this.isDev && (this.hash != null)) {
+                PackVersion devVersion = pack.getDevVersionByName(this.version);
+                if (devVersion != null && !devVersion.hashMatches(this.hash)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
-    public String getHost() {
-        return (this.baseURL.contains("/containers/atl") ? this.baseURL.replace("/containers/atl", "") : this.baseURL);
+    public PackVersion getLatestVersion() {
+        Pack pack = this.getPack();
+
+        if (pack != null) {
+            if (pack.hasVersions() && !this.isDev) {
+                return pack.getLatestVersion();
+            }
+
+            if (this.isDev) {
+                return pack.getLatestDevVersion();
+            }
+        }
+
+        return null;
     }
 
-    public String getName() {
-        return this.name;
-    }
+    public String getPackDescription() {
+        Pack pack = this.getPack();
 
-    private String getProtocol() {
-        return "http" + (this.isSecure ? "s" : "") + "://";
-    }
-
-    public String getFileURL(String file) {
-        return this.getProtocol() + this.baseURL + "/" + file;
-    }
-
-    public String getTestURL() {
-        return this.getProtocol() + this.baseURL + "/ping";
-    }
-
-    public void setUserSelectable(boolean selectable) {
-        this.userSelectable = selectable;
-    }
-
-    public String toString() {
-        if (this.disabled) {
-            return "(X) " + this.name;
+        if (pack != null) {
+            return pack.description;
         } else {
-            return this.name;
+            return GetText.tr("No Description");
+        }
+    }
+
+    public ImageIcon getImage() {
+        File customImage = this.getRoot().resolve("server.png").toFile();
+        File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
+
+        if (customImage.exists()) {
+            try {
+                BufferedImage img = ImageIO.read(customImage);
+                Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
+                return new ImageIcon(dimg);
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error creating scaled image from the custom image of instance " + this.name,
+                        e);
+            }
+        }
+
+        if (instancesImage.exists()) {
+            return Utils.getIconImage(instancesImage);
+        } else {
+            return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
+        }
+    }
+
+    public void save() {
+        try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("server.json").toFile())) {
+            Gsons.MINECRAFT.toJson(this, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace(e);
         }
     }
 }

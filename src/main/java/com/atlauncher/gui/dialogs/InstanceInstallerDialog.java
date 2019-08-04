@@ -79,7 +79,7 @@ public class InstanceInstallerDialog extends JDialog {
     private JProgressBar progressBar;
     private JProgressBar subProgressBar;
     private JLabel instanceNameLabel;
-    private JTextField instanceNameField;
+    private JTextField nameField;
     private JLabel versionLabel;
     private JComboBox<PackVersion> versionsDropDown;
     private List<PackVersion> versions = new ArrayList<>();
@@ -155,70 +155,65 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        if (!this.isServer) {
-            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
-            middle.add(instanceNameLabel, gbc);
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
+        middle.add(instanceNameLabel, gbc);
 
-            gbc.gridx++;
-            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-            instanceNameField = new JTextField(17);
-            instanceNameField
-                    .setText(((isReinstall) ? (instanceV2 != null ? instanceV2.launcher.name : instance.getName())
-                            : pack.getName()));
-            if (isReinstall) {
-                instanceNameField.setEnabled(false);
-            }
-            instanceNameField.addComponentListener(new ComponentAdapter() {
-                public void componentShown(ComponentEvent ce) {
-                    instanceNameField.requestFocusInWindow();
-                }
-            });
-            instanceNameField.addFocusListener(new FocusListener() {
-                @Override
-                public void focusLost(final FocusEvent pE) {
-                }
-
-                @Override
-                public void focusGained(final FocusEvent pE) {
-                    instanceNameField.selectAll();
-                }
-            });
-            middle.add(instanceNameField, gbc);
-
-            gbc.gridx = 0;
-            gbc.gridy++;
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        nameField = new JTextField(17);
+        nameField.setText(((isReinstall) ? (instanceV2 != null ? instanceV2.launcher.name : instance.getName())
+                : pack.getName()));
+        if (isReinstall) {
+            nameField.setEnabled(false);
         }
+        nameField.addComponentListener(new ComponentAdapter() {
+            public void componentShown(ComponentEvent ce) {
+                nameField.requestFocusInWindow();
+            }
+        });
+        nameField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusLost(final FocusEvent pE) {
+            }
+
+            @Override
+            public void focusGained(final FocusEvent pE) {
+                nameField.selectAll();
+            }
+        });
+        middle.add(nameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
 
         gbc = this.setupVersionsDropdown(gbc);
         gbc = this.setupLoaderVersionsDropdown(gbc);
 
-        if (!this.isServer) {
-            if (!isReinstall) {
-                gbc.gridx = 0;
-                gbc.gridy++;
-                gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-                enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
-                middle.add(enableUserLockLabel, gbc);
+        if (!this.isServer && !isReinstall) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
+            middle.add(enableUserLockLabel, gbc);
 
-                gbc.gridx++;
-                gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-                enableUserLock = new JCheckBox();
-                enableUserLock.addActionListener(e -> {
-                    if (enableUserLock.isSelected()) {
-                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Enable User Lock") + "? ")
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else.<br/><br/>Are you sure you want to do this?"))
-                                        .build())
-                                .setType(DialogManager.WARNING).show();
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            enableUserLock = new JCheckBox();
+            enableUserLock.addActionListener(e -> {
+                if (enableUserLock.isSelected()) {
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Enable User Lock") + "? ")
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else.<br/><br/>Are you sure you want to do this?"))
+                                    .build())
+                            .setType(DialogManager.WARNING).show();
 
-                        if (ret != 0) {
-                            enableUserLock.setSelected(false);
-                        }
+                    if (ret != 0) {
+                        enableUserLock.setSelected(false);
                     }
-                });
-                middle.add(enableUserLock, gbc);
-            }
+                }
+            });
+            middle.add(enableUserLock, gbc);
         }
 
         // Bottom Panel Stuff
@@ -226,7 +221,7 @@ public class InstanceInstallerDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!isReinstall && !isServer && App.settings.isInstance(instanceNameField.getText())) {
+                if (!isReinstall && !isServer && App.settings.isInstance(nameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText
                                     .tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
@@ -234,12 +229,26 @@ public class InstanceInstallerDialog extends JDialog {
                             .setType(DialogManager.ERROR).show();
                     return;
                 } else if (!isReinstall && !isServer
-                        && instanceNameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                        && nameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(new HTMLBuilder().center()
                             .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
                             .build()).setType(DialogManager.ERROR).show();
                     return;
+                } else if (!isReinstall && isServer && App.settings.isServer(nameField.getText())) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                            .setContent(new HTMLBuilder().center().text(GetText
+                                    .tr("A server already exists with that name.<br/><br/>Rename it and try again."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                    return;
+                } else if (!isReinstall && isServer
+                        && nameField.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("Server name is invalid. It must contain at least 1 letter or number."))
+                            .build()).setType(DialogManager.ERROR).show();
+                    return;
                 }
+
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
                 final JDialog dialog = new JDialog(App.settings.getParent(), isReinstall ? (
                 // #. {0} is the name of the pack the user is installing
@@ -279,9 +288,8 @@ public class InstanceInstallerDialog extends JDialog {
                         ? (LoaderVersion) loaderVersionsDropDown.getSelectedItem()
                         : null;
 
-                final InstanceInstaller instanceInstaller = new InstanceInstaller(
-                        (isServer ? "" : instanceNameField.getText()), pack, version, isReinstall, isServer, shareCode,
-                        showModsChooser, loaderVersion) {
+                final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
+                        isReinstall, isServer, shareCode, showModsChooser, loaderVersion) {
 
                     protected void done() {
                         Boolean success = false;
@@ -336,10 +344,10 @@ public class InstanceInstallerDialog extends JDialog {
                                     // #. {0} is the pack name and {1} is the pack version
                                     text = GetText.tr("{0} {1} has been reinstalled.", pack.getName(), version.version);
                                 } else if (isServer) {
-                                    // #. {0} is the pack name, {1} is the pack version and {2} is the folder
+                                    // #. {0} is the pack name and {1} is the pack version
                                     text = GetText.tr(
-                                            "{0} {1} server has been installed.<br/><br/>Find it in the below folder:<br/><br/>{2}",
-                                            pack.getName(), version.version, this.root.toFile().getAbsolutePath());
+                                            "{0} {1} server has been installed.<br/><br/>Find it in the servers tab.",
+                                            pack.getName(), version.version);
                                 } else {
                                     // #. {0} is the pack name and {1} is the pack version
                                     text = GetText.tr(
@@ -347,7 +355,12 @@ public class InstanceInstallerDialog extends JDialog {
                                             pack.getName(), version.version);
                                 }
 
-                                App.settings.reloadInstancesPanel();
+                                if (isServer) {
+                                    App.settings.reloadServersPanel();
+                                } else {
+                                    App.settings.reloadInstancesPanel();
+                                }
+
                                 if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev) {
                                     if (isServer) {
                                         pack.addServerInstall(version.version);

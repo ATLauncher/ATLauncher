@@ -18,7 +18,7 @@
 package com.atlauncher.data;
 
 public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 3, 0, 8);
+    public static final LauncherVersion VERSION = new LauncherVersion(3, 3, 1, 0);
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";
@@ -42,7 +42,4 @@ public class Constants {
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
     public static final String LEGACY_JAVA_FIXER_URL = "https://files.minecraftforge.net/LegacyJavaFixer/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
-    public static final Server[] SERVERS = new Server[] {
-            new Server("Auto", "download.nodecdn.net/containers/atl", true, false, true),
-            new Server("Master Server (Testing Only)", "master.atlcdn.net", false, true, true) };
 }

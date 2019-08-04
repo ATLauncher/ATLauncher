@@ -11,11 +11,15 @@ set memthirtytwo=1G
 :: Don't edit past this point ::
 
 if $SYSTEM_os_arch==x86 (
-  echo OS is 32
-  set mem=%memthirtytwo%
+    echo OS is 32
+    set mem=%memthirtytwo%
 ) else (
-  echo OS is 64
-  set mem=%memsixtyfour%
+    echo OS is 64
+    set mem=%memsixtyfour%
 )
-java -Xmx%mem% -XX:MaxPermSize=256M -jar %%SERVERJAR%% nogui
+
+echo Launching %%SERVERJAR%% with arguments '%*' and '%mem%' max memory
+
+:: add nogui to the end of this line to disable the gui ::
+java -Xmx%mem% -XX:MaxPermSize=256M -jar %%SERVERJAR%% %*
 PAUSE

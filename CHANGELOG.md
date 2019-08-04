@@ -1,7 +1,5 @@
 # Changelog
 
-## 3.3.0.8
+## 3.3.1.0
 
-- Fix instances not remembering when asked not to update
-- Fix Forge installs not working if it didn't need to download
-- Only show Downloads folder error when not already 'installed'
+- Sdd in servers tab to manage servers created through the launcher

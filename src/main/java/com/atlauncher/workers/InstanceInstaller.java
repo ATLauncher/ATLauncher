@@ -39,6 +39,7 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.InstanceV2Launcher;
+import com.atlauncher.data.Server;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.Deletes;
@@ -85,7 +86,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public Instance instance = null;
     public InstanceV2 instanceV2 = null;
-    public final String instanceName;
+    public final String name;
     public final com.atlauncher.data.Pack pack;
     public final com.atlauncher.data.PackVersion version;
     public final String shareCode;
@@ -120,10 +121,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public String mainClass;
     public Arguments arguments;
 
-    public InstanceInstaller(String instanceName, com.atlauncher.data.Pack pack,
-            com.atlauncher.data.PackVersion version, boolean isReinstall, boolean isServer, String shareCode,
-            boolean showModsChooser, LoaderVersion loaderVersion) {
-        this.instanceName = instanceName;
+    public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
+            boolean isReinstall, boolean isServer, String shareCode, boolean showModsChooser,
+            LoaderVersion loaderVersion) {
+        this.name = name;
         this.pack = pack;
         this.version = version;
         this.isReinstall = isReinstall;
@@ -132,9 +133,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.showModsChooser = showModsChooser;
 
         if (isServer) {
-            this.root = FileSystem.SERVERS.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
+            this.root = FileSystem.SERVERS.resolve(name.replaceAll("[^A-Za-z0-9]", ""));
         } else {
-            this.root = FileSystem.INSTANCES.resolve(instanceName.replaceAll("[^A-Za-z0-9]", ""));
+            this.root = FileSystem.INSTANCES.resolve(name.replaceAll("[^A-Za-z0-9]", ""));
         }
 
         this.temp = FileSystem.TEMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
@@ -182,6 +183,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             if (!this.isServer) {
                 saveInstanceJson();
+            } else {
+                saveServerJson();
             }
 
             Analytics.sendEvent(pack.name + " - " + version.version,
@@ -290,9 +293,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         for (com.atlauncher.data.json.Mod mod : this.selectedMods) {
             String file = mod.getFile();
 
-            if (mod.type == ModType.mods && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
+            if (mod.type == ModType.mods
+                    && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
                 file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
-            } else if (mod.type == ModType.mods  && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
+            } else if (mod.type == ModType.mods
+                    && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
 
@@ -408,7 +413,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instance.mainClass = this.mainClass;
         instance.arguments = this.arguments;
 
-        instanceLauncher.name = this.instanceName;
+        instanceLauncher.name = this.name;
         instanceLauncher.pack = this.pack.name;
         instanceLauncher.packId = this.pack.id;
         instanceLauncher.version = this.packVersion.version;
@@ -442,6 +447,27 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         App.settings.reloadInstancesPanel();
+    }
+
+    private void saveServerJson() {
+        Server server = new Server();
+
+        server.name = this.name;
+        server.pack = this.pack.name;
+        server.packId = this.pack.id;
+        server.version = this.packVersion.version;
+        server.isDev = this.version.isDev;
+        server.mods = this.modsInstalled;
+
+        if (this.version.isDev) {
+            server.hash = this.version.hash;
+        }
+
+        server.save();
+
+        App.settings.servers.add(server);
+
+        App.settings.reloadServersPanel();
     }
 
     private void determineMainClass() {
@@ -1244,12 +1270,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         File batFile = new File(this.root.toFile(), "LaunchServer.bat");
         File shFile = new File(this.root.toFile(), "LaunchServer.sh");
+        File commandFile = new File(this.root.toFile(), "LaunchServer.command");
         Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), batFile, "%%SERVERJAR%%",
                 getServerJar());
         Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), shFile, "%%SERVERJAR%%",
                 getServerJar());
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.command"), commandFile,
+                "%%SERVERJAR%%", getServerJar());
         batFile.setExecutable(true);
         shFile.setExecutable(true);
+        commandFile.setExecutable(true);
     }
 
     public String getServerJar() {

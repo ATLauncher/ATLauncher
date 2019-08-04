@@ -70,6 +70,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -144,12 +145,14 @@ public class Settings {
     public List<Pack> packs = new ArrayList<>(); // Packs in the Launcher
     public List<Instance> instances = new ArrayList<>(); // Users Installed Instances
     public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
+    public List<Server> servers = new ArrayList<>(); // Users Installed Servers
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
     private InstancesTab instancesPanel; // The instances panel
+    private ServersTab serversPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab vanillaPacksPanel; // The vanilla packs panel
     private PacksTab featuredPacksPanel; // The featured packs panel
@@ -206,6 +209,8 @@ public class Settings {
         loadUsers(); // Load the Testers and Allowed Players for the packs
 
         loadInstances(); // Load the users installed Instances
+
+        loadServers(); // Load the users installed servers
 
         loadAccounts(); // Load the saved Accounts
 
@@ -546,6 +551,7 @@ public class Settings {
             loadUsers(); // Load the Testers and Allowed Players for the packs
             loadInstances(); // Load the users installed Instances
             reloadInstancesPanel(); // Reload instances panel
+            reloadServersPanel(); // Reload instances panel
             dialog.setVisible(false); // Remove the dialog
             dialog.dispose(); // Dispose the dialog
         });
@@ -989,6 +995,7 @@ public class Settings {
         refreshFeaturedPacksPanel();
         refreshPacksPanel();
         reloadInstancesPanel();
+        reloadServersPanel();
         reloadAccounts();
         saveProperties();
     }
@@ -1142,6 +1149,38 @@ public class Settings {
         }
 
         LogManager.debug("Finished loading instances");
+    }
+
+    /**
+     * Loads the user installed servers
+     */
+    private void loadServers() {
+        LogManager.debug("Loading servers");
+        this.servers = new ArrayList<>(); // Reset the servers list
+
+        for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
+                .orElse(new String[0])) {
+            File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
+
+            Server server = null;
+
+            try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
+                server = Gsons.MINECRAFT.fromJson(fileReader, Server.class);
+                LogManager.debug("Loaded server from " + serverDir);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Failed to load server in the folder " + serverDir, e);
+                continue;
+            }
+
+            if (server == null) {
+                LogManager.error("Failed to load server in the folder " + serverDir);
+                continue;
+            }
+
+            this.servers.add(server);
+        }
+
+        LogManager.debug("Finished loading servers");
     }
 
     public void saveInstances() {
@@ -1462,6 +1501,24 @@ public class Settings {
         }
     }
 
+    public void setServerVisibility(Server server, boolean collapsed) {
+        if (server != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedServers().contains(server.name)) {
+                    account.getCollapsedServers().add(server.name);
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedServers().contains(server.name)) {
+                    account.getCollapsedServers().remove(server.name);
+                }
+            }
+            saveAccounts();
+            reloadServersPanel();
+        }
+    }
+
     /**
      * Get the Instances available in the Launcher
      *
@@ -1488,6 +1545,12 @@ public class Settings {
         return instances;
     }
 
+    public ArrayList<Server> getServersSorted() {
+        ArrayList<Server> servers = new ArrayList<>(this.servers);
+        servers.sort(Comparator.comparing(s -> s.name));
+        return servers;
+    }
+
     public void setInstanceUnplayable(Instance instance) {
         instance.setUnplayable();
         saveInstances();
@@ -1511,6 +1574,13 @@ public class Settings {
         if (this.instancesV2.remove(instance)) {
             FileUtils.deleteDirectory(instance.getRoot());
             reloadInstancesPanel();
+        }
+    }
+
+    public void removeServer(Server server) {
+        if (this.servers.remove(server)) {
+            FileUtils.deleteDirectory(server.getRoot());
+            reloadServersPanel();
         }
     }
 
@@ -1637,6 +1707,7 @@ public class Settings {
             reloadFeaturedPacksPanel();
             reloadPacksPanel();
             reloadInstancesPanel();
+            reloadServersPanel();
         } else {
             this.offlineMode = true;
         }
@@ -1680,6 +1751,16 @@ public class Settings {
     public void reloadInstancesPanel() {
         if (instancesPanel != null) {
             this.instancesPanel.reload(); // Reload the instances panel
+        }
+    }
+
+    public void setServersPanel(ServersTab serversPanel) {
+        this.serversPanel = serversPanel;
+    }
+
+    public void reloadServersPanel() {
+        if (serversPanel != null) {
+            this.serversPanel.reload(); // Reload the servers panel
         }
     }
 
@@ -1801,6 +1882,11 @@ public class Settings {
         }
         return this.instancesV2.stream()
                 .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+    }
+
+    public boolean isServer(String name) {
+        return this.servers.stream()
+                .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     /**
