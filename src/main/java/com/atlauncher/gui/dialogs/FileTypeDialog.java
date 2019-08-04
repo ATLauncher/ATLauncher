@@ -44,6 +44,8 @@ public class FileTypeDialog extends JDialog {
 
     private JButton bottomButton;
 
+    private boolean closed = false;
+
     public FileTypeDialog(String title, String labelName, String bottomText, String selectorText, String[] subOptions) {
         super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
         setSize(400, 175);
@@ -88,6 +90,7 @@ public class FileTypeDialog extends JDialog {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent arg0) {
+                closed = true;
                 close();
             }
         });
@@ -98,6 +101,10 @@ public class FileTypeDialog extends JDialog {
     private void close() {
         setVisible(false);
         dispose();
+    }
+
+    public boolean wasClosed() {
+        return this.closed;
     }
 
     public String getSelectorValue() {

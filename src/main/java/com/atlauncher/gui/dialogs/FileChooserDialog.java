@@ -60,6 +60,8 @@ public class FileChooserDialog extends JDialog {
     private JButton bottomButton;
     private JButton selectButton;
 
+    private boolean closed = false;
+
     public FileChooserDialog(String title, String labelName, String bottomText, String selectorText,
             String[] subOptions, String[] options) {
         super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
@@ -157,6 +159,7 @@ public class FileChooserDialog extends JDialog {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent arg0) {
+                closed = true;
                 close();
             }
         });
@@ -167,6 +170,10 @@ public class FileChooserDialog extends JDialog {
     private void close() {
         setVisible(false);
         dispose();
+    }
+
+    public boolean wasClosed() {
+        return this.closed;
     }
 
     public ArrayList<File> getChosenFiles() {

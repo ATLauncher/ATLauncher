@@ -200,6 +200,11 @@ public class EditModsDialog extends JDialog {
 
             FileChooserDialog fcd = new FileChooserDialog(GetText.tr("Add Mod"), GetText.tr("Mod"), GetText.tr("Add"),
                     GetText.tr("Type Of Mod"), modTypes, new String[] { "jar", "zip", "litemod" });
+
+            if (fcd.wasClosed()) {
+                return;
+            }
+
             ArrayList<File> files = fcd.getChosenFiles();
             if (files != null && !files.isEmpty()) {
                 boolean reload = false;

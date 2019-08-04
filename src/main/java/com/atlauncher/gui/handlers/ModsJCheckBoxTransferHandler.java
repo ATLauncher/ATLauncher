@@ -86,8 +86,14 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                 modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
             }
 
-            FileTypeDialog fcd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding {0} Mods", data.size()),
-                    GetText.tr("Add"), GetText.tr("Type"), modTypes);
+            FileTypeDialog fcd = new FileTypeDialog(GetText.tr("Add Mod"),
+                    GetText.trn("Adding {0} Mod", "Adding {0} Mods", data.size(), data.size()), GetText.tr("Add"),
+                    GetText.tr("Type"), modTypes);
+
+            if (fcd.wasClosed()) {
+                return false;
+            }
+
             String typeTemp = fcd.getSelectorValue();
 
             if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
@@ -116,8 +122,9 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                         : dialog.instance.getModsDirectory();
             }
 
-            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
-                    GetText.tr("Copying Mods"));
+            final ProgressDialog progressDialog = new ProgressDialog(
+                    GetText.trn("Copying Mod", "Copying Mods", data.size()), 0,
+                    GetText.trn("Copying Mod", "Copying Mods", data.size()));
 
             progressDialog.addThread(new Thread(() -> {
                 for (Object item : data) {
