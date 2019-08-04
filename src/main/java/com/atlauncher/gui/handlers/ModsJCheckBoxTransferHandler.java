@@ -36,6 +36,7 @@ import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.FileTypeDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
@@ -62,117 +63,121 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
     public boolean importData(TransferSupport ts) {
         try {
             @SuppressWarnings("unchecked")
-            List<File> data = (List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+            final List<File> data = (List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
             if (data.size() < 1) {
                 return false;
             }
 
-            for (Object item : data) {
-                File file = (File) item;
+            Type type;
+            File instanceFile;
 
-                if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".litemod")
-                        && !file.getName().endsWith(".zip")) {
-                    DialogManager.okDialog().setTitle(GetText.tr("Invalid File"))
-                            .setContent(
-                                    GetText.tr("Invalid file provided. Only zip, jar and litemod files can be added."))
-                            .setType(DialogManager.ERROR).show();
-                    return false;
-                }
-
-                boolean usesCoreMods = false;
-                try {
-                    usesCoreMods = App.settings.getMinecraftVersion(dialog.instanceV2 != null ? dialog.instanceV2.id
-                            : dialog.instance.getMinecraftVersion()).coremods;
-                } catch (InvalidMinecraftVersion e1) {
-                    LogManager.logStackTrace(e1);
-                }
-                String[] modTypes;
-                if (usesCoreMods) {
-                    modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack",
-                            "Shader Pack" };
-                } else {
-                    modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
-                }
-
-                FileTypeDialog fcd = new FileTypeDialog(GetText.tr("Add Mod"),
-                        GetText.tr("Adding Mod {0}", file.getName()), GetText.tr("Add"), GetText.tr("Type"), modTypes);
-                String typeTemp = fcd.getSelectorValue();
-
-                Type type;
-                File instanceFile;
-
-                if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                    type = Type.jar;
-                    instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("jarmods").toFile()
-                            : dialog.instance.getJarModsDirectory();
-                } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
-                    type = Type.coremods;
-                    instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("coremods").toFile()
-                            : dialog.instance.getCoreModsDirectory();
-                } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
-                    type = Type.texturepack;
-                    instanceFile = dialog.instanceV2 != null
-                            ? dialog.instanceV2.getRoot().resolve("texturepacks").toFile()
-                            : dialog.instance.getTexturePacksDirectory();
-                } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
-                    type = Type.resourcepack;
-                    instanceFile = dialog.instanceV2 != null
-                            ? dialog.instanceV2.getRoot().resolve("resourcepacks").toFile()
-                            : dialog.instance.getResourcePacksDirectory();
-                } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
-                    type = Type.shaderpack;
-                    instanceFile = dialog.instanceV2 != null
-                            ? dialog.instanceV2.getRoot().resolve("shaderpacks").toFile()
-                            : dialog.instance.getShaderPacksDirectory();
-                } else {
-                    type = Type.mods;
-                    instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("mods").toFile()
-                            : dialog.instance.getModsDirectory();
-                }
-
-                if (this.disabled) {
-                    instanceFile = dialog.instanceV2 != null
-                            ? dialog.instanceV2.getRoot().resolve("disabledmods").toFile()
-                            : dialog.instance.getDisabledModsDirectory();
-                }
-
-                DisableableMod mod = new DisableableMod();
-                mod.disabled = this.disabled;
-                mod.userAdded = true;
-                mod.wasSelected = true;
-                mod.file = file.getName();
-                mod.type = type;
-                mod.optional = true;
-                mod.name = file.getName();
-                mod.version = "Unknown";
-                mod.description = null;
-
-                MCMod mcMod = Utils.getMCModForFile(file);
-                if (mcMod != null) {
-                    mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
-                    mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-                    mod.description = Optional.ofNullable(mcMod.description).orElse(null);
-                } else {
-                    FabricMod fabricMod = Utils.getFabricModForFile(file);
-                    if (fabricMod != null) {
-                        mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
-                        mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                        mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
-                    }
-                }
-
-                if (!instanceFile.exists()) {
-                    instanceFile.mkdirs();
-                }
-
-                if (Utils.copyFile(file, instanceFile)) {
-                    if (dialog.instanceV2 != null) {
-                        dialog.instanceV2.launcher.mods.add(mod);
-                    } else {
-                        dialog.instance.getInstalledMods().add(mod);
-                    }
-                }
+            boolean usesCoreMods = false;
+            try {
+                usesCoreMods = App.settings.getMinecraftVersion(dialog.instanceV2 != null ? dialog.instanceV2.id
+                        : dialog.instance.getMinecraftVersion()).coremods;
+            } catch (InvalidMinecraftVersion e1) {
+                LogManager.logStackTrace(e1);
             }
+            String[] modTypes;
+            if (usesCoreMods) {
+                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack",
+                        "Shader Pack" };
+            } else {
+                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
+            }
+
+            FileTypeDialog fcd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding {0} Mods", data.size()),
+                    GetText.tr("Add"), GetText.tr("Type"), modTypes);
+            String typeTemp = fcd.getSelectorValue();
+
+            if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
+                type = Type.jar;
+                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("jarmods").toFile()
+                        : dialog.instance.getJarModsDirectory();
+            } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
+                type = Type.coremods;
+                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("coremods").toFile()
+                        : dialog.instance.getCoreModsDirectory();
+            } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
+                type = Type.texturepack;
+                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("texturepacks").toFile()
+                        : dialog.instance.getTexturePacksDirectory();
+            } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
+                type = Type.resourcepack;
+                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("resourcepacks").toFile()
+                        : dialog.instance.getResourcePacksDirectory();
+            } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
+                type = Type.shaderpack;
+                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("shaderpacks").toFile()
+                        : dialog.instance.getShaderPacksDirectory();
+            } else {
+                type = Type.mods;
+                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("mods").toFile()
+                        : dialog.instance.getModsDirectory();
+            }
+
+            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
+                    GetText.tr("Copying Mods"));
+
+            progressDialog.addThread(new Thread(() -> {
+                for (Object item : data) {
+                    File file = (File) item;
+                    File copyTo = instanceFile;
+
+                    if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".litemod")
+                            && !file.getName().endsWith(".zip")) {
+                        DialogManager.okDialog().setTitle(GetText.tr("Invalid File")).setContent(GetText
+                                .tr("Skipping file {0}. Only zip, jar and litemod files can be added.", file.getName()))
+                                .setType(DialogManager.ERROR).show();
+                        continue;
+                    }
+
+                    if (this.disabled) {
+                        copyTo = dialog.instanceV2 != null
+                                ? dialog.instanceV2.getRoot().resolve("disabledmods").toFile()
+                                : dialog.instance.getDisabledModsDirectory();
+                    }
+
+                    DisableableMod mod = new DisableableMod();
+                    mod.disabled = this.disabled;
+                    mod.userAdded = true;
+                    mod.wasSelected = true;
+                    mod.file = file.getName();
+                    mod.type = type;
+                    mod.optional = true;
+                    mod.name = file.getName();
+                    mod.version = "Unknown";
+                    mod.description = null;
+
+                    MCMod mcMod = Utils.getMCModForFile(file);
+                    if (mcMod != null) {
+                        mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
+                        mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
+                        mod.description = Optional.ofNullable(mcMod.description).orElse(null);
+                    } else {
+                        FabricMod fabricMod = Utils.getFabricModForFile(file);
+                        if (fabricMod != null) {
+                            mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
+                            mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
+                            mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+                        }
+                    }
+
+                    if (!copyTo.exists()) {
+                        copyTo.mkdirs();
+                    }
+
+                    if (Utils.copyFile(file, copyTo)) {
+                        if (dialog.instanceV2 != null) {
+                            dialog.instanceV2.launcher.mods.add(mod);
+                        } else {
+                            dialog.instance.getInstalledMods().add(mod);
+                        }
+                    }
+                }
+                progressDialog.close();
+            }));
+            progressDialog.start();
 
             dialog.reloadPanels();
             return true;
