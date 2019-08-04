@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.3.0.6
+## 3.3.1.0
 
-- [#369] fix date format setting not saving correctly
-- Fix Forge not being deleted on update/reinstall
+- Install packs from Curse through dragging and dropping the Install button

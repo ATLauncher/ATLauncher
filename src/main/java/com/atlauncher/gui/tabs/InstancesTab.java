@@ -40,6 +40,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.handlers.CursePackTransferHandler;
 import com.atlauncher.network.Analytics;
 
 import org.mini2Dx.gettext.GetText;
@@ -66,6 +67,8 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         setLayout(new BorderLayout());
         loadContent(false);
         RelocalizationManager.addListener(this);
+
+        setTransferHandler(new CursePackTransferHandler());
     }
 
     public void loadContent(boolean keepFilters) {
