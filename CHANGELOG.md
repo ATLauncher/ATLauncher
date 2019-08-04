@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.3.0.6
+## 3.3.0.7
 
-- [#369] fix date format setting not saving correctly
-- Fix Forge not being deleted on update/reinstall
+- Fix adding mods to an instance not working if directory doesn't exist

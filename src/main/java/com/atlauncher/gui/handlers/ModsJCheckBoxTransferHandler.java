@@ -161,6 +161,10 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     }
                 }
 
+                if (!instanceFile.exists()) {
+                    instanceFile.mkdirs();
+                }
+
                 if (Utils.copyFile(file, instanceFile)) {
                     if (dialog.instanceV2 != null) {
                         dialog.instanceV2.launcher.mods.add(mod);
