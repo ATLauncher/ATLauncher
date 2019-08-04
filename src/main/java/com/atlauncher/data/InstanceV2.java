@@ -195,6 +195,18 @@ public class InstanceV2 extends MinecraftVersion {
         }
     }
 
+    public boolean hasLatestUpdateBeenIgnored() {
+        String version;
+
+        if (this.launcher.isDev) {
+            version = getLatestVersion().hash;
+        } else {
+            version = getLatestVersion().version;
+        }
+
+        return hasUpdateBeenIgnored(version);
+    }
+
     public boolean hasUpdateBeenIgnored(String version) {
         if (version == null || this.launcher.ignoredUpdates.size() == 0) {
             return false;

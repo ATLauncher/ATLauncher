@@ -199,7 +199,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                 return;
             }
 
-            if (instance.hasUpdate()) {
+            if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
                         .setContent(new HTMLBuilder().center().text(GetText
                                 .tr("An update is available for this instance.<br/><br/>Do you want to update now?"))
