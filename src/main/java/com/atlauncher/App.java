@@ -407,7 +407,8 @@ public class App {
             }
         }
 
-        if (!matched && FileSystem.BASE_DIR.equals(FileSystem.USER_DOWNLOADS)) {
+        if (!matched && (Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
+                && FileSystem.BASE_DIR.equals(FileSystem.USER_DOWNLOADS)) {
             matched = true;
 
             if (DialogManager.optionDialog().setTitle("Warning").setContent(new HTMLBuilder().center().text(
