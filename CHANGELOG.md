@@ -7,3 +7,4 @@
 - Fix adding multiple mods via drag and drop asking for type every file
 - Fix closing add mod file dialog still addding the file
 - Add select all to the edit mods dialog
+- [#367] fix issue with showing console on *nix operating systems

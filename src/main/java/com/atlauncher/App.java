@@ -282,7 +282,9 @@ public class App {
 
         if (settings.enableConsole()) {
             // Show the console if enabled.
-            console.setVisible(true);
+            SwingUtilities.invokeLater(() -> {
+                console.setVisible(true);
+            });
         }
 
         if (settings.enableTrayIcon() && !skipTrayIntegration) {
