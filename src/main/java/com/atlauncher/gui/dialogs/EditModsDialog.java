@@ -25,15 +25,26 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
+import com.atlauncher.data.minecraft.FabricMod;
+import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
@@ -209,12 +220,35 @@ public class EditModsDialog extends JDialog {
                         type = com.atlauncher.data.Type.shaderpack;
                     }
                     if (type != null) {
-                        DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(), type,
-                                null, null, true, true);
-                        if (Utils.copyFile(file,
-                                instanceV2 != null ? instanceV2.getRoot().resolve("disabledmods").toFile()
-                                        : instance.getDisabledModsDirectory())) {
+                        DisableableMod mod = new DisableableMod();
+                        mod.disabled = true;
+                        mod.userAdded = true;
+                        mod.wasSelected = true;
+                        mod.file = file.getName();
+                        mod.type = type;
+                        mod.optional = true;
+                        mod.name = file.getName();
+                        mod.version = "Unknown";
+                        mod.description = null;
 
+                        MCMod mcMod = Utils.getMCModForFile(file);
+                        if (mcMod != null) {
+                            mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
+                            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
+                            mod.description = Optional.ofNullable(mcMod.description).orElse(null);
+                        } else {
+                            FabricMod fabricMod = Utils.getFabricModForFile(file);
+                            if (fabricMod != null) {
+                                mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
+                                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
+                                mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+                            }
+                        }
+
+                        File copyTo = instanceV2 != null ? instanceV2.getRoot().resolve("disabledmods").toFile()
+                                : instance.getDisabledModsDirectory();
+
+                        if (Utils.copyFile(file, copyTo)) {
                             if (this.instanceV2 != null) {
                                 instanceV2.launcher.mods.add(mod);
                             } else {
