@@ -344,7 +344,7 @@ public final class Download {
                 ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LogManager.logStackTrace("Failed to download file " + this.to, e, false);
         }
     }
 

@@ -132,7 +132,6 @@ public class Settings {
     private String theme; // The theme to use
     private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
-    private boolean hideJavaLetsEncryptWarning; // If the user has hidden the <= java 8.101 warning
     private boolean hideJava9Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
@@ -168,6 +167,21 @@ public class Settings {
 
     public Settings() {
         loadStartingProperties(); // Get users Console preference and Java Path
+    }
+
+    public void checkIfWeCanLoad() {
+        if (!Java.isUsingJavaSupportingLetsEncrypt()) {
+            LogManager.warn("You're using an old version of Java that will not work!");
+
+            DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "You're using an unsupported version of Java. You need to upgrade your Java to at minimum Java 8 version 101.<br/><br/>The launcher will not start until you do this.<br/><br/>If you're seeing this message even after installing a newer version, you may need to uninstall the old version first.<br/><br/>Click ok to open the Java download page and close the launcher."))
+                            .build())
+                    .addOption(GetText.tr("Ok")).setType(DialogManager.ERROR).show();
+
+            OS.openWebBrowser("https://atl.pw/java8download");
+            System.exit(0);
+        }
     }
 
     public void loadEverything() {
@@ -236,25 +250,6 @@ public class Settings {
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideJava9Warning = true;
-                this.saveProperties();
-            }
-        }
-
-        if (!Java.isUsingJavaSupportingLetsEncrypt() && !this.hideJavaLetsEncryptWarning) {
-            LogManager.warn("You're using an old version of Java that may not work!");
-
-            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 8 version 101.<br/><br/>Without doing this, some packs may not install.<br/><br/>Click Download to go to the Java downloads page and install the latest Java"))
-                            .build())
-                    .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
-                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.ERROR).show();
-
-            if (ret == 0) {
-                OS.openWebBrowser("https://atl.pw/java8download");
-                System.exit(0);
-            } else if (ret == 2) {
-                this.hideJavaLetsEncryptWarning = true;
                 this.saveProperties();
             }
         }
@@ -709,9 +704,6 @@ public class Settings {
 
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
 
-            this.hideJavaLetsEncryptWarning = Boolean
-                    .parseBoolean(properties.getProperty("hidejavaletsencryptwarning", "false"));
-
             this.hideJava9Warning = Boolean.parseBoolean(properties.getProperty("hideJava9Warning", "false"));
 
             this.forgeLoggingLevel = properties.getProperty("forgelogginglevel", "INFO");
@@ -912,7 +904,6 @@ public class Settings {
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
-            properties.setProperty("hidejavaletsencryptwarning", this.hideJavaLetsEncryptWarning + "");
             properties.setProperty("hideJava9Warning", this.hideJava9Warning + "");
             properties.setProperty("language", Language.selected);
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);

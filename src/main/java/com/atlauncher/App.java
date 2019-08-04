@@ -68,6 +68,8 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+import org.mini2Dx.gettext.GetText;
+
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -277,9 +279,6 @@ public class App {
             LogManager.logStackTrace("Error loading language", e1);
         }
 
-        // Setup the theme of the console
-        // console.setupTheme();
-
         if (settings.enableConsole()) {
             // Show the console if enabled.
             SwingUtilities.invokeLater(() -> {
@@ -348,6 +347,9 @@ public class App {
                 LogManager.logStackTrace("Failed to set dock icon", ex);
             }
         }
+
+        // Check to make sure the user can load the launcher
+        settings.checkIfWeCanLoad();
 
         LogManager.info("Showing splash screen and loading everything");
         settings.loadEverything(); // Loads everything that needs to be loaded
