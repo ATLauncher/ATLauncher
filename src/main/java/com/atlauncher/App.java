@@ -427,7 +427,7 @@ public class App {
                                     + FileSystem.CONFIGS.getParent().toFile().listFiles().length
                                     + " files and folders.<br/><br/>Are you 100% sure?")
                             .build())
-                    .addOption("Yes, delete my files", true).addOption("No, exit and I'll put it in a folder")
+                    .addOption("Yes, I understand", true).addOption("No, exit and I'll put it in a folder")
                     .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
             }
