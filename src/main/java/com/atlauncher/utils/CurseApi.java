@@ -33,15 +33,22 @@ import com.google.gson.reflect.TypeToken;
  * Various utility methods for interacting with the Curse API.
  */
 public class CurseApi {
-    public static List<CurseMod> searchMods(String gameVersion, String query, int page, int categoryId) {
+    public static List<CurseMod> searchCurse(int sectionId, String query, int page, int categoryId) {
+        return searchCurse(null, sectionId, query, page, categoryId);
+    }
+
+    public static List<CurseMod> searchCurse(String gameVersion, int sectionId, String query, int page,
+            int categoryId) {
         try {
             String url = String.format(
-                    "%s/addon/search?gameId=432&gameVersion=%s&categoryId=%d&sectionId=%s&searchFilter=%s&sort=Popularity&sortDescending=true&pageSize=%d&index=%d",
-                    Constants.CURSE_API_URL, gameVersion, categoryId,
-                    URLEncoder.encode(String.format("%d,%d", Constants.CURSE_MODS_SECTION_ID,
-                            Constants.CURSE_RESOURCE_PACKS_SECTION_ID), StandardCharsets.UTF_8.name()),
+                    "%s/addon/search?gameId=432&categoryId=%d&sectionId=%s&searchFilter=%s&sort=Popularity&sortDescending=true&pageSize=%d&index=%d",
+                    Constants.CURSE_API_URL, categoryId, sectionId,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), Constants.CURSE_PAGINATION_SIZE,
                     page * Constants.CURSE_PAGINATION_SIZE);
+
+            if (gameVersion != null) {
+                url += "&gameVersion=" + gameVersion;
+            }
 
             java.lang.reflect.Type type = new TypeToken<List<CurseMod>>() {
             }.getType();
@@ -54,12 +61,17 @@ public class CurseApi {
         return null;
     }
 
+    public static List<CurseMod> searchResourcePacks(String query, int page) {
+        return searchCurse(Constants.CURSE_RESOURCE_PACKS_SECTION_ID, query, page, 0);
+    }
+
     public static List<CurseMod> searchMods(String gameVersion, String query, int page) {
-        return searchMods(gameVersion, query, page, 0);
+        return searchCurse(gameVersion, Constants.CURSE_MODS_SECTION_ID, query, page, 0);
     }
 
     public static List<CurseMod> searchModsForFabric(String gameVersion, String query, int page) {
-        return searchMods(gameVersion, query, page, Constants.CURSE_FABRIC_CATEGORY_ID);
+        return searchCurse(gameVersion, Constants.CURSE_MODS_SECTION_ID, query, page,
+                Constants.CURSE_FABRIC_CATEGORY_ID);
     }
 
     public static List<CurseFile> getFilesForMod(int modId) {

@@ -25,6 +25,7 @@ import java.awt.GridLayout;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,6 +55,7 @@ public final class AddModsDialog extends JDialog {
     private JPanel topPanel = new JPanel(new BorderLayout());
     private JTextField searchField = new JTextField(16);
     private JButton searchButton = new JButton(GetText.tr("Search"));
+    private JComboBox<String> sectionComboBox = new JComboBox<>(new String[] { "Mods", "Resource Packs" });
     private JButton installFabricApiButton = new JButton("Install Fabric API");
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -104,9 +106,9 @@ public final class AddModsDialog extends JDialog {
 
         JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        searchButtonsPanel.add(new JLabel(GetText.tr("Search") + ": "));
         searchButtonsPanel.add(this.searchField);
         searchButtonsPanel.add(this.searchButton);
+        searchButtonsPanel.add(this.sectionComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
             CurseMod mod = CurseApi.getModById(Constants.CURSE_FABRIC_MOD_ID);
@@ -160,6 +162,14 @@ public final class AddModsDialog extends JDialog {
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);
 
+        this.sectionComboBox.addActionListener(e -> {
+            if (searchField.getText().isEmpty()) {
+                loadDefaultMods();
+            } else {
+                searchForMods();
+            }
+        });
+
         this.searchField.addActionListener(e -> searchForMods());
 
         this.searchButton.addActionListener(e -> searchForMods());
@@ -202,13 +212,19 @@ public final class AddModsDialog extends JDialog {
         nextButton.setEnabled(false);
 
         Runnable r = () -> {
-            if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion : this.instance.getLoaderVersion())
-                    .isFabric()) {
-                setMods(CurseApi.searchModsForFabric(
-                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "", page));
+            if (((String) sectionComboBox.getSelectedItem()).equals("Resource Packs")) {
+                setMods(CurseApi.searchResourcePacks("", page));
             } else {
-                setMods(CurseApi.searchMods(
-                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "", page));
+                if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
+                        : this.instance.getLoaderVersion()).isFabric()) {
+                    setMods(CurseApi.searchModsForFabric(
+                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "",
+                            page));
+                } else {
+                    setMods(CurseApi.searchMods(
+                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "",
+                            page));
+                }
             }
 
             setLoading(false);
@@ -224,12 +240,21 @@ public final class AddModsDialog extends JDialog {
     private void searchForMods() {
         setLoading(true);
         page = 0;
+        prevButton.setEnabled(false);
+        nextButton.setEnabled(false);
 
         Runnable r = () -> {
             String query = searchField.getText();
 
-            List<CurseMod> mods = CurseApi.searchMods(
-                    this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query, page);
+            List<CurseMod> mods;
+
+            if (((String) sectionComboBox.getSelectedItem()).equals("Resource Packs")) {
+                mods = CurseApi.searchResourcePacks(query, page);
+            } else {
+                mods = CurseApi.searchMods(
+                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
+                        page);
+            }
 
             setMods(mods);
 

@@ -78,8 +78,6 @@ public class CursePackUtils {
             fileId = Integer.parseInt(matcher.group(2));
         }
 
-        System.out.println("Found pack with slug " + packSlug + " and file id of " + fileId);
-
         NickyMoeGraphqlSlugResponse modInfo = new Download()
                 .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
                         "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
@@ -97,8 +95,6 @@ public class CursePackUtils {
                     "Cannot install as the id's couldn't be found. Try using a specific files install link instead.");
             return false;
         }
-
-        System.out.println("Resolved to project id " + projectId + " and file id of " + fileId);
 
         CurseFile curseFile = CurseApi.getFileForMod(projectId, fileId);
         Path tempZip = FileSystem.TEMP.resolve(curseFile.fileName);
