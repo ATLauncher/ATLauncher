@@ -38,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.gui.handlers.CursePackTransferHandler;
 import com.atlauncher.managers.DialogManager;
@@ -58,7 +59,7 @@ public class AddCursePackDialog extends JDialog {
     private JButton addButton;
 
     public AddCursePackDialog() {
-        super(null, GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
+        super(App.settings.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
         setSize(450, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -66,17 +67,14 @@ public class AddCursePackDialog extends JDialog {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
-        setTransferHandler(new CursePackTransferHandler());
-
         Analytics.sendScreenView("Add Curse Pack Dialog");
 
         // Middle Panel Stuff
         middle = new JPanel();
         middle.setLayout(new BorderLayout());
 
-        JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().split(60).text(GetText.tr(
-                "Paste in a link to a modpack on CurseForge, or alternatively drag and drop an Install link or download zip from curseforge.com"))
-                .build());
+        JEditorPane infoMessage = new JEditorPane("text/html",
+                new HTMLBuilder().center().text(GetText.tr("Paste in a link to a modpack on CurseForge")).build());
         infoMessage.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);
@@ -111,6 +109,8 @@ public class AddCursePackDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         addButton = new JButton(GetText.tr("Add"));
         addButton.addActionListener(e -> {
+            setVisible(false);
+
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Adding Curse Pack"), 0,
                     GetText.tr("Adding Curse Pack"));
 
@@ -128,8 +128,6 @@ public class AddCursePackDialog extends JDialog {
                                 .build())
                         .setType(DialogManager.ERROR).show();
             }
-
-            setVisible(false);
             dispose();
         });
         bottom.add(addButton);
