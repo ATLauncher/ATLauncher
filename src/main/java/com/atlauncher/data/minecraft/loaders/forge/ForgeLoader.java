@@ -122,7 +122,9 @@ public class ForgeLoader implements Loader {
                         FileSystem.LOADERS.resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar"))
                 .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient).unzipTo(this.tempDir.toPath());
 
-        instanceInstaller.setTotalBytes(download.getFilesize());
+        if (download.needToDownload()) {
+            instanceInstaller.setTotalBytes(download.getFilesize());
+        }
 
         download.downloadFile();
 

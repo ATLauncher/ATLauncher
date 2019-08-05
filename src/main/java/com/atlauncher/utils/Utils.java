@@ -1006,6 +1006,16 @@ public class Utils {
         };
     }
 
+    public static FilenameFilter getServerFileFilter() {
+        return (dir, name) -> {
+            File serverDir = new File(dir, name);
+            if (serverDir.isDirectory()) {
+                return new File(serverDir, "server.json").exists();
+            }
+            return false;
+        };
+    }
+
     /**
      * Gets the open eye pending reports file filter.
      *

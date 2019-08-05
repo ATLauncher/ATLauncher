@@ -47,6 +47,7 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.Server;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -67,6 +68,7 @@ public class CollapsiblePanel extends JPanel {
     JButton arrow = createArrowButton();// the arrow
     JPanel panel;
     Pack pack = null;
+    Server server = null;
     Instance instance = null;
     InstanceV2 instanceV2 = null;
     boolean collapsed; // stores current state of the collapsible panel
@@ -148,6 +150,20 @@ public class CollapsiblePanel extends JPanel {
         commonConstructor();
         if (App.settings.getAccount() != null) {
             if (App.settings.getAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
+                setCollapsed(true);
+            }
+        }
+    }
+
+    public CollapsiblePanel(Server server) {
+        this.server = server;
+        arrow.setText(server.name + " (" + server.pack + " " + server.version + ")");
+        arrow.setForeground(App.THEME.getNormalInstanceColor());
+        titleComponent = arrow;
+        collapsed = false;
+        commonConstructor();
+        if (App.settings.getAccount() != null) {
+            if (App.settings.getAccount().getCollapsedServers().contains(server.name)) {
                 setCollapsed(true);
             }
         }
@@ -302,6 +318,9 @@ public class CollapsiblePanel extends JPanel {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0,
                         instanceV2.launcher.pack + " - " + instanceV2.launcher.version, "Collapse", "InstanceV2");
                 App.settings.setInstanceVisbility(instanceV2, isCollapsed());
+            } else if (server != null) {
+                Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
+                App.settings.setServerVisibility(server, isCollapsed());
             }
         }
 
@@ -313,6 +332,8 @@ public class CollapsiblePanel extends JPanel {
                 App.settings.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
                 App.settings.setInstanceVisbility(instanceV2, isCollapsed());
+            } else if (server != null) {
+                App.settings.setServerVisibility(server, isCollapsed());
             }
         }
     }

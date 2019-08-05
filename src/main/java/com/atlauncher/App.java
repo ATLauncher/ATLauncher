@@ -220,30 +220,8 @@ public class App {
         // Initialize the error reporting
         ErrorReporting.init(disableErrorReporting);
 
-        if ((Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
-                && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
-            if (DialogManager.optionDialog().setTitle("Warning")
-                    .setContent(new HTMLBuilder().center().text("I've detected that you may "
-                            + "not have installed this in the right location.<br/><br/>The exe or jar file should "
-                            + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
-                            + "that's what you've done?").build())
-                    .addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
-                    .setType(DialogManager.ERROR).show() != 0) {
-                System.exit(0);
-            }
-
-            if (DialogManager.optionDialog().setTitle("Warning")
-                    .setContent(new HTMLBuilder().center()
-                            .text("Are you absolutely sure you've put ATLauncher in it's own folder?<br/><br/>If you "
-                                    + "haven't and you click 'Yes, delete my files', this may delete "
-                                    + FileSystem.CONFIGS.getParent().toFile().listFiles().length
-                                    + " files and folders.<br/><br/>Are you 100% sure?")
-                            .build())
-                    .addOption("Yes, delete my files", true).addOption("No, exit and I'll put it in a folder")
-                    .setType(DialogManager.ERROR).show() != 0) {
-                System.exit(0);
-            }
-        }
+        // check the launcher has been 'installed' correctly
+        checkInstalledCorrectly();
 
         try {
             LogManager.info("Organising filesystem");
@@ -277,12 +255,11 @@ public class App {
             LogManager.logStackTrace("Error loading language", e1);
         }
 
-        // Setup the theme of the console
-        // console.setupTheme();
-
         if (settings.enableConsole()) {
             // Show the console if enabled.
-            console.setVisible(true);
+            SwingUtilities.invokeLater(() -> {
+                console.setVisible(true);
+            });
         }
 
         if (settings.enableTrayIcon() && !skipTrayIntegration) {
@@ -347,6 +324,9 @@ public class App {
             }
         }
 
+        // Check to make sure the user can load the launcher
+        settings.checkIfWeCanLoad();
+
         LogManager.info("Showing splash screen and loading everything");
         settings.loadEverything(); // Loads everything that needs to be loaded
         LogManager.info("Launcher finished loading everything");
@@ -405,6 +385,51 @@ public class App {
             new LauncherFrame(openLauncher);
             ss.close();
         });
+    }
+
+    private static void checkInstalledCorrectly() {
+        boolean matched = false;
+
+        if ((Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
+                && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
+            matched = true;
+
+            if (DialogManager.optionDialog().setTitle("Warning")
+                    .setContent(new HTMLBuilder().center().text("I've detected that you may "
+                            + "not have installed this in the right location.<br/><br/>The exe or jar file should "
+                            + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
+                            + "that's what you've done?").build())
+                    .addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
+                    .setType(DialogManager.ERROR).show() != 0) {
+                System.exit(0);
+            }
+        }
+
+        if (!matched && (Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
+                && FileSystem.BASE_DIR.equals(FileSystem.USER_DOWNLOADS)) {
+            matched = true;
+
+            if (DialogManager.optionDialog().setTitle("Warning").setContent(new HTMLBuilder().center().text(
+                    "ATLauncher shouldn't be run from the Downloads folder.<br/><br/>Please put ATLauncher in it's own folder and run the launcher from there!")
+                    .build()).addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
+                    .setType(DialogManager.ERROR).show() != 0) {
+                System.exit(0);
+            }
+        }
+
+        if (matched) {
+            if (DialogManager.optionDialog().setTitle("Warning")
+                    .setContent(new HTMLBuilder().center()
+                            .text("Are you absolutely sure you've put ATLauncher in it's own folder?<br/><br/>If you "
+                                    + "haven't and you click 'Yes, delete my files', this may delete "
+                                    + FileSystem.CONFIGS.getParent().toFile().listFiles().length
+                                    + " files and folders.<br/><br/>Are you 100% sure?")
+                            .build())
+                    .addOption("Yes, I understand", true).addOption("No, exit and I'll put it in a folder")
+                    .setType(DialogManager.ERROR).show() != 0) {
+                System.exit(0);
+            }
+        }
     }
 
     /**

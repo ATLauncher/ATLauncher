@@ -120,6 +120,8 @@ public class Account implements Serializable {
      */
     private List<String> collapsedInstances;
 
+    private List<String> collapsedServers;
+
     /**
      * If the skin is currently being updated.
      */
@@ -153,6 +155,7 @@ public class Account implements Serializable {
         this.isReal = true;
         this.collapsedPacks = new ArrayList<>();
         this.collapsedInstances = new ArrayList<>();
+        this.collapsedServers = new ArrayList<>();
         this.clientToken = clientToken;
     }
 
@@ -170,6 +173,7 @@ public class Account implements Serializable {
         this.isReal = false;
         this.collapsedPacks = new ArrayList<>();
         this.collapsedInstances = new ArrayList<>();
+        this.collapsedServers = new ArrayList<>();
     }
 
     /**
@@ -463,6 +467,13 @@ public class Account implements Serializable {
             this.collapsedInstances = new ArrayList<>();
         }
         return this.collapsedInstances;
+    }
+
+    public List<String> getCollapsedServers() {
+        if (this.collapsedServers == null) {
+            this.collapsedServers = new ArrayList<>();
+        }
+        return this.collapsedServers;
     }
 
     /**

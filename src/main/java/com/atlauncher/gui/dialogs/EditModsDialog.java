@@ -19,21 +19,34 @@ package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
+import com.atlauncher.data.minecraft.FabricMod;
+import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
@@ -55,6 +68,7 @@ public class EditModsDialog extends JDialog {
     private JScrollPane scroller1, scroller2;
     private JButton addButton, addCurseModButton, checkForUpdatesButton, enableButton, disableButton, removeButton,
             closeButton;
+    private JCheckBox selectAllEnabledModsCheckbox, selectAllDisabledModsCheckbox;
     private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
@@ -128,13 +142,41 @@ public class EditModsDialog extends JDialog {
         labels.setEnabled(false);
         split.setRightComponent(labels);
 
+        JPanel topLeftPanel = new JPanel(new FlowLayout());
+
         topLabelLeft = new JLabel(GetText.tr("Enabled Mods"));
         topLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
-        labels.setLeftComponent(topLabelLeft);
+        topLeftPanel.add(topLabelLeft);
+
+        selectAllEnabledModsCheckbox = new JCheckBox();
+        selectAllEnabledModsCheckbox.addActionListener(e -> {
+            boolean selected = selectAllEnabledModsCheckbox.isSelected();
+
+            enabledMods.stream().forEach(em -> {
+                em.setSelected(selected);
+            });
+        });
+        topLeftPanel.add(selectAllEnabledModsCheckbox);
+
+        labels.setLeftComponent(topLeftPanel);
+
+        JPanel topRightPanel = new JPanel(new FlowLayout());
 
         topLabelRight = new JLabel(GetText.tr("Disabled Mods"));
         topLabelRight.setHorizontalAlignment(SwingConstants.CENTER);
-        labels.setRightComponent(topLabelRight);
+        topRightPanel.add(topLabelRight);
+
+        selectAllDisabledModsCheckbox = new JCheckBox();
+        selectAllDisabledModsCheckbox.addActionListener(e -> {
+            boolean selected = selectAllDisabledModsCheckbox.isSelected();
+
+            disabledMods.stream().forEach(dm -> {
+                dm.setSelected(selected);
+            });
+        });
+        topRightPanel.add(selectAllDisabledModsCheckbox);
+
+        labels.setRightComponent(topRightPanel);
 
         modsInPack = new JSplitPane();
         modsInPack.setDividerLocation(275);
@@ -189,6 +231,11 @@ public class EditModsDialog extends JDialog {
 
             FileChooserDialog fcd = new FileChooserDialog(GetText.tr("Add Mod"), GetText.tr("Mod"), GetText.tr("Add"),
                     GetText.tr("Type Of Mod"), modTypes, new String[] { "jar", "zip", "litemod" });
+
+            if (fcd.wasClosed()) {
+                return;
+            }
+
             ArrayList<File> files = fcd.getChosenFiles();
             if (files != null && !files.isEmpty()) {
                 boolean reload = false;
@@ -209,12 +256,35 @@ public class EditModsDialog extends JDialog {
                         type = com.atlauncher.data.Type.shaderpack;
                     }
                     if (type != null) {
-                        DisableableMod mod = new DisableableMod(file.getName(), "Custom", true, file.getName(), type,
-                                null, null, true, true);
-                        if (Utils.copyFile(file,
-                                instanceV2 != null ? instanceV2.getRoot().resolve("disabledmods").toFile()
-                                        : instance.getDisabledModsDirectory())) {
+                        DisableableMod mod = new DisableableMod();
+                        mod.disabled = true;
+                        mod.userAdded = true;
+                        mod.wasSelected = true;
+                        mod.file = file.getName();
+                        mod.type = type;
+                        mod.optional = true;
+                        mod.name = file.getName();
+                        mod.version = "Unknown";
+                        mod.description = null;
 
+                        MCMod mcMod = Utils.getMCModForFile(file);
+                        if (mcMod != null) {
+                            mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
+                            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
+                            mod.description = Optional.ofNullable(mcMod.description).orElse(null);
+                        } else {
+                            FabricMod fabricMod = Utils.getFabricModForFile(file);
+                            if (fabricMod != null) {
+                                mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
+                                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
+                                mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+                            }
+                        }
+
+                        File copyTo = instanceV2 != null ? instanceV2.getRoot().resolve("disabledmods").toFile()
+                                : instance.getDisabledModsDirectory();
+
+                        if (Utils.copyFile(file, copyTo)) {
                             if (this.instanceV2 != null) {
                                 instanceV2.launcher.mods.add(mod);
                             } else {
@@ -333,6 +403,11 @@ public class EditModsDialog extends JDialog {
                 || (enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected)));
         enableButton.setEnabled(disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected));
         disableButton.setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected));
+
+        selectAllEnabledModsCheckbox
+                .setSelected(enabledMods.size() != 0 && enabledMods.stream().allMatch(AbstractButton::isSelected));
+        selectAllDisabledModsCheckbox
+                .setSelected(disabledMods.size() != 0 && disabledMods.stream().allMatch(AbstractButton::isSelected));
     }
 
     private void checkForUpdates() {

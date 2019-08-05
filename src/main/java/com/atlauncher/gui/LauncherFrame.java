@@ -40,6 +40,7 @@ import com.atlauncher.gui.tabs.AccountsTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
@@ -54,6 +55,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
     private PacksTab featuredPacksTab;
     private PacksTab packsTab;
     private InstancesTab instancesTab;
+    private ServersTab serversTab;
     private AccountsTab accountsTab;
     private ToolsTab toolsTab;
     private SettingsTab settingsTab;
@@ -169,12 +171,15 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         instancesTab = new InstancesTab();
         App.settings.setInstancesPanel(instancesTab);
 
+        serversTab = new ServersTab();
+        App.settings.setServersPanel(serversTab);
+
         accountsTab = new AccountsTab();
         toolsTab = new ToolsTab();
         settingsTab = new SettingsTab();
 
         this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
-                accountsTab, toolsTab, settingsTab });
+                serversTab, accountsTab, toolsTab, settingsTab });
 
         tabbedPane.setFont(App.THEME.getTabFont().deriveFont(32.0F));
         for (Tab tab : this.tabs) {

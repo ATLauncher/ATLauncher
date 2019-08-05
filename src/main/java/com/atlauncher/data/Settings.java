@@ -70,6 +70,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -132,7 +133,6 @@ public class Settings {
     private String theme; // The theme to use
     private String dateFormat; // The date format to use
     private boolean hideOldJavaWarning; // If the user has hidden the old Java warning
-    private boolean hideJavaLetsEncryptWarning; // If the user has hidden the <= java 8.101 warning
     private boolean hideJava9Warning; // If the user has hidden the Java 8 warning
     private boolean enableServerChecker; // If to enable server checker
     private int serverCheckerWait; // Time to wait in minutes between checking server status
@@ -145,12 +145,14 @@ public class Settings {
     public List<Pack> packs = new ArrayList<>(); // Packs in the Launcher
     public List<Instance> instances = new ArrayList<>(); // Users Installed Instances
     public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
+    public List<Server> servers = new ArrayList<>(); // Users Installed Servers
     private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
     // Launcher Settings
     private JFrame parent; // Parent JFrame of the actual Launcher
     private Properties properties = new Properties(); // Properties to store everything in
     private InstancesTab instancesPanel; // The instances panel
+    private ServersTab serversPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksTab vanillaPacksPanel; // The vanilla packs panel
     private PacksTab featuredPacksPanel; // The featured packs panel
@@ -168,6 +170,21 @@ public class Settings {
 
     public Settings() {
         loadStartingProperties(); // Get users Console preference and Java Path
+    }
+
+    public void checkIfWeCanLoad() {
+        if (!Java.isUsingJavaSupportingLetsEncrypt()) {
+            LogManager.warn("You're using an old version of Java that will not work!");
+
+            DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "You're using an unsupported version of Java. You need to upgrade your Java to at minimum Java 8 version 101.<br/><br/>The launcher will not start until you do this.<br/><br/>If you're seeing this message even after installing a newer version, you may need to uninstall the old version first.<br/><br/>Click ok to open the Java download page and close the launcher."))
+                            .build())
+                    .addOption(GetText.tr("Ok")).setType(DialogManager.ERROR).show();
+
+            OS.openWebBrowser("https://atl.pw/java8download");
+            System.exit(0);
+        }
     }
 
     public void loadEverything() {
@@ -192,6 +209,8 @@ public class Settings {
         loadUsers(); // Load the Testers and Allowed Players for the packs
 
         loadInstances(); // Load the users installed Instances
+
+        loadServers(); // Load the users installed servers
 
         loadAccounts(); // Load the saved Accounts
 
@@ -236,25 +255,6 @@ public class Settings {
                 System.exit(0);
             } else if (ret == 2) {
                 this.hideJava9Warning = true;
-                this.saveProperties();
-            }
-        }
-
-        if (!Java.isUsingJavaSupportingLetsEncrypt() && !this.hideJavaLetsEncryptWarning) {
-            LogManager.warn("You're using an old version of Java that may not work!");
-
-            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 8 version 101.<br/><br/>Without doing this, some packs may not install.<br/><br/>Click Download to go to the Java downloads page and install the latest Java"))
-                            .build())
-                    .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
-                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.ERROR).show();
-
-            if (ret == 0) {
-                OS.openWebBrowser("https://atl.pw/java8download");
-                System.exit(0);
-            } else if (ret == 2) {
-                this.hideJavaLetsEncryptWarning = true;
                 this.saveProperties();
             }
         }
@@ -551,6 +551,7 @@ public class Settings {
             loadUsers(); // Load the Testers and Allowed Players for the packs
             loadInstances(); // Load the users installed Instances
             reloadInstancesPanel(); // Reload instances panel
+            reloadServersPanel(); // Reload instances panel
             dialog.setVisible(false); // Remove the dialog
             dialog.dispose(); // Dispose the dialog
         });
@@ -708,9 +709,6 @@ public class Settings {
             this.firstTimeRun = Boolean.parseBoolean(properties.getProperty("firsttimerun", "true"));
 
             this.hideOldJavaWarning = Boolean.parseBoolean(properties.getProperty("hideoldjavawarning", "false"));
-
-            this.hideJavaLetsEncryptWarning = Boolean
-                    .parseBoolean(properties.getProperty("hidejavaletsencryptwarning", "false"));
 
             this.hideJava9Warning = Boolean.parseBoolean(properties.getProperty("hideJava9Warning", "false"));
 
@@ -912,7 +910,6 @@ public class Settings {
         try {
             properties.setProperty("firsttimerun", "false");
             properties.setProperty("hideoldjavawarning", this.hideOldJavaWarning + "");
-            properties.setProperty("hidejavaletsencryptwarning", this.hideJavaLetsEncryptWarning + "");
             properties.setProperty("hideJava9Warning", this.hideJava9Warning + "");
             properties.setProperty("language", Language.selected);
             properties.setProperty("forgelogginglevel", this.forgeLoggingLevel);
@@ -998,6 +995,7 @@ public class Settings {
         refreshFeaturedPacksPanel();
         refreshPacksPanel();
         reloadInstancesPanel();
+        reloadServersPanel();
         reloadAccounts();
         saveProperties();
     }
@@ -1151,6 +1149,38 @@ public class Settings {
         }
 
         LogManager.debug("Finished loading instances");
+    }
+
+    /**
+     * Loads the user installed servers
+     */
+    private void loadServers() {
+        LogManager.debug("Loading servers");
+        this.servers = new ArrayList<>(); // Reset the servers list
+
+        for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
+                .orElse(new String[0])) {
+            File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
+
+            Server server = null;
+
+            try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
+                server = Gsons.MINECRAFT.fromJson(fileReader, Server.class);
+                LogManager.debug("Loaded server from " + serverDir);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Failed to load server in the folder " + serverDir, e);
+                continue;
+            }
+
+            if (server == null) {
+                LogManager.error("Failed to load server in the folder " + serverDir);
+                continue;
+            }
+
+            this.servers.add(server);
+        }
+
+        LogManager.debug("Finished loading servers");
     }
 
     public void saveInstances() {
@@ -1471,6 +1501,24 @@ public class Settings {
         }
     }
 
+    public void setServerVisibility(Server server, boolean collapsed) {
+        if (server != null && account.isReal()) {
+            if (collapsed) {
+                // Closed It
+                if (!account.getCollapsedServers().contains(server.name)) {
+                    account.getCollapsedServers().add(server.name);
+                }
+            } else {
+                // Opened It
+                if (account.getCollapsedServers().contains(server.name)) {
+                    account.getCollapsedServers().remove(server.name);
+                }
+            }
+            saveAccounts();
+            reloadServersPanel();
+        }
+    }
+
     /**
      * Get the Instances available in the Launcher
      *
@@ -1497,6 +1545,12 @@ public class Settings {
         return instances;
     }
 
+    public ArrayList<Server> getServersSorted() {
+        ArrayList<Server> servers = new ArrayList<>(this.servers);
+        servers.sort(Comparator.comparing(s -> s.name));
+        return servers;
+    }
+
     public void setInstanceUnplayable(Instance instance) {
         instance.setUnplayable();
         saveInstances();
@@ -1520,6 +1574,13 @@ public class Settings {
         if (this.instancesV2.remove(instance)) {
             FileUtils.deleteDirectory(instance.getRoot());
             reloadInstancesPanel();
+        }
+    }
+
+    public void removeServer(Server server) {
+        if (this.servers.remove(server)) {
+            FileUtils.deleteDirectory(server.getRoot());
+            reloadServersPanel();
         }
     }
 
@@ -1646,6 +1707,7 @@ public class Settings {
             reloadFeaturedPacksPanel();
             reloadPacksPanel();
             reloadInstancesPanel();
+            reloadServersPanel();
         } else {
             this.offlineMode = true;
         }
@@ -1689,6 +1751,16 @@ public class Settings {
     public void reloadInstancesPanel() {
         if (instancesPanel != null) {
             this.instancesPanel.reload(); // Reload the instances panel
+        }
+    }
+
+    public void setServersPanel(ServersTab serversPanel) {
+        this.serversPanel = serversPanel;
+    }
+
+    public void reloadServersPanel() {
+        if (serversPanel != null) {
+            this.serversPanel.reload(); // Reload the servers panel
         }
     }
 
@@ -1810,6 +1882,11 @@ public class Settings {
         }
         return this.instancesV2.stream()
                 .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+    }
+
+    public boolean isServer(String name) {
+        return this.servers.stream()
+                .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     /**

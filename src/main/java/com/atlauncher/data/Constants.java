@@ -42,7 +42,4 @@ public class Constants {
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
     public static final String LEGACY_JAVA_FIXER_URL = "https://files.minecraftforge.net/LegacyJavaFixer/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
-    public static final Server[] SERVERS = new Server[] {
-            new Server("Auto", "download.nodecdn.net/containers/atl", true, false, true),
-            new Server("Master Server (Testing Only)", "master.atlcdn.net", false, true, true) };
 }
