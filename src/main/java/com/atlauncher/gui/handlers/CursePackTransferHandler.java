@@ -26,7 +26,12 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.CursePackUtils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class CursePackTransferHandler extends TransferHandler {
@@ -41,17 +46,35 @@ public class CursePackTransferHandler extends TransferHandler {
 
     @SuppressWarnings("unchecked")
     public boolean importData(TransferSupport ts) {
-        try {
-            if (ts.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                return CursePackUtils.loadFromUrl((String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor));
-            } else if (ts.getTransferable().isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                return CursePackUtils.loadFromFile(
-                        ((List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0));
+        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Adding Curse Pack"), 0,
+                GetText.tr("Adding Curse Pack"));
+
+        dialog.addThread(new Thread(() -> {
+            try {
+                if (ts.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    dialog.setReturnValue(CursePackUtils
+                            .loadFromUrl((String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor)));
+                } else if (ts.getTransferable().isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                    dialog.setReturnValue(CursePackUtils.loadFromFile(
+                            ((List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0)));
+                }
+            } catch (UnsupportedFlavorException | IOException e) {
+                dialog.setReturnValue(false);
             }
-        } catch (UnsupportedFlavorException | IOException e) {
-            return false;
+
+            dialog.close();
+        }));
+
+        dialog.start();
+
+        if (!((boolean) dialog.getReturnValue())) {
+            DialogManager.okDialog().setTitle(GetText.tr("Failed To Add Pack"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "An error occured when trying to add Curse pack.<br/><br/>Check the console for more information."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
         }
 
-        return false;
+        return (boolean) dialog.getReturnValue();
     }
 }
