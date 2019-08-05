@@ -74,7 +74,7 @@ public class CursePackUtils {
         Integer projectId = null;
         Integer fileId = null;
 
-        if (matcher.groupCount() == 2) {
+        if (matcher.groupCount() == 2 && matcher.group(2) != null) {
             fileId = Integer.parseInt(matcher.group(2));
         }
 
