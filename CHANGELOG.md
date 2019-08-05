@@ -4,3 +4,4 @@
 
 - Add in servers tab to manage servers created through the launcher
 - Add Curse packs from the packs tab
+- [#370] fix JVM arguments not adding in correct order

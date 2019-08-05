@@ -448,11 +448,6 @@ public class MCLauncher {
             }
         }
 
-        arguments.add("-Djava.library.path=" + nativesTempDir.toAbsolutePath().toString());
-        arguments.add("-cp");
-        arguments.add(cpb.toString());
-        arguments.add(instance.mainClass);
-
         String props = "[]";
 
         if (!response.isOffline()) {
@@ -460,7 +455,37 @@ public class MCLauncher {
             props = gson.toJson(response.getAuth().getUserProperties());
         }
 
-        for (String argument : instance.arguments.asStringList().stream().distinct().collect(Collectors.toList())) {
+        for (String argument : instance.arguments.jvmAsStringList().stream().distinct().collect(Collectors.toList())) {
+            argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
+            argument = argument.replace("${profile_name}", instance.launcher.name);
+            argument = argument.replace("${user_properties}", props);
+            argument = argument.replace("${version_name}", instance.id);
+            argument = argument.replace("${game_directory}", instance.getRoot().toAbsolutePath().toString());
+            argument = argument.replace("${game_assets}", instance.getAssetsDir().toAbsolutePath().toString());
+            argument = argument.replace("${assets_root}", FileSystem.ASSETS.toAbsolutePath().toString());
+            argument = argument.replace("${assets_index_name}", instance.assets);
+            argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
+            argument = argument.replace("${auth_access_token}", account.getAccessToken());
+            argument = argument.replace("${auth_session}", account.getSession(response));
+            argument = argument.replace("${version_type}", instance.type);
+            argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
+            argument = argument.replace("${launcher_version}", Constants.VERSION.toString());
+            argument = argument.replace("${natives_directory}", nativesTempDir.toAbsolutePath().toString());
+            argument = argument.replace("${user_type}",
+                    response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
+                            : response.getAuth().getUserType().getName());
+
+            if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
+                arguments.add(argument);
+            }
+        }
+
+        arguments.add("-Djava.library.path=" + nativesTempDir.toAbsolutePath().toString());
+        arguments.add("-cp");
+        arguments.add(cpb.toString());
+        arguments.add(instance.mainClass);
+
+        for (String argument : instance.arguments.gameAsStringList().stream().distinct().collect(Collectors.toList())) {
             argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
             argument = argument.replace("${profile_name}", instance.launcher.name);
             argument = argument.replace("${user_properties}", props);

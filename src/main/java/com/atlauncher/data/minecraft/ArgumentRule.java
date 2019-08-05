@@ -63,7 +63,7 @@ public class ArgumentRule {
         List<String> values = new ArrayList<>();
 
         if (this.value instanceof String) {
-            values.addAll(Arrays.asList(((String) this.value).split("=")));
+            values.add((String) this.value);
         } else {
             values.addAll((ArrayList<String>) this.value);
         }

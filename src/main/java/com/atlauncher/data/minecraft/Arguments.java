@@ -87,4 +87,32 @@ public class Arguments {
 
         return arguments;
     }
+
+    public List<String> jvmAsStringList() {
+        List<String> arguments = new ArrayList<>();
+
+        if (this.jvm != null) {
+            for (ArgumentRule rule : this.jvm) {
+                if (rule.applies()) {
+                    arguments.addAll(rule.getValueAsList());
+                }
+            }
+        }
+
+        return arguments;
+    }
+
+    public List<String> gameAsStringList() {
+        List<String> arguments = new ArrayList<>();
+
+        if (this.game != null) {
+            for (ArgumentRule rule : this.game) {
+                if (rule.applies()) {
+                    arguments.addAll(rule.getValueAsList());
+                }
+            }
+        }
+
+        return arguments;
+    }
 }

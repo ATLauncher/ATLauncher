@@ -55,12 +55,12 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
 
         if (rootJsonObject.has("jvm")) {
             final JsonArray jvmArray = rootJsonObject.getAsJsonArray("jvm");
-            for (JsonElement gameArg : jvmArray) {
-                if (gameArg.isJsonObject()) {
-                    JsonObject argument = gameArg.getAsJsonObject();
+            for (JsonElement jvmArg : jvmArray) {
+                if (jvmArg.isJsonObject()) {
+                    JsonObject argument = jvmArg.getAsJsonObject();
                     jvm.add(Gsons.DEFAULT_ALT.fromJson(argument, ArgumentRule.class));
                 } else {
-                    String argument = gameArg.getAsString();
+                    String argument = jvmArg.getAsString();
                     jvm.add(new ArgumentRule(null, argument));
                 }
             }
