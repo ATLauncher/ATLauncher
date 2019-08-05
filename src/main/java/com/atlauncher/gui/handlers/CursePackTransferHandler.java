@@ -26,8 +26,12 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
-import com.atlauncher.workers.CursePackInstaller;
+import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+
+import org.zeroturnaround.zip.ZipUtil;
 
 @SuppressWarnings("serial")
 public class CursePackTransferHandler extends TransferHandler {
@@ -43,19 +47,36 @@ public class CursePackTransferHandler extends TransferHandler {
         try {
             @SuppressWarnings("unchecked")
             List<File> data = (List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-            if (data.size() < 1) {
+            if (data.size() != 1) {
                 return false;
             }
 
-            for (Object item : data) {
-                File file = (File) item;
+            File file = data.get(0);
 
-                System.out.println(file.getAbsolutePath());
+            if (!file.getName().endsWith(".zip")) {
+                LogManager.error("Cannot install as the file was not a zip file");
+                return false;
+            }
 
-                CursePackInstaller installer = new CursePackInstaller(file);
-                installer.startInstall();
+            try {
+                CurseManifest manifest = Gsons.MINECRAFT
+                        .fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")), CurseManifest.class);
 
-                System.out.println("Done");
+                if (!manifest.manifestType.equals("minecraftModpack")) {
+                    LogManager.error("Cannot install as the manifest is not a Minecraft Modpack");
+                    return false;
+                }
+
+                if (manifest.manifestVersion != 1) {
+                    LogManager.error("Cannot install as the manifest is version " + manifest.manifestVersion
+                            + " which I cannot install");
+                    return false;
+                }
+
+                new InstanceInstallerDialog(manifest, file);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Failed to install Curse pack from drag and drop", e);
+                return false;
             }
 
             return true;

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
@@ -34,6 +35,7 @@ public class InstanceV2Launcher {
 
     public String name;
     public String pack;
+    public String description;
     public Integer packId;
     public String version;
     public String hash;
@@ -57,6 +59,8 @@ public class InstanceV2Launcher {
     public boolean isDev;
     public boolean isPlayable;
     public boolean assetsMapToResources;
+
+    public CurseManifest curseManifest;
 
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();

@@ -129,6 +129,12 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
 
+        if (instance.launcher.curseManifest != null) {
+            this.reinstallButton.setVisible(false);
+            this.updateButton.setVisible(false);
+            this.serversButton.setVisible(false);
+        }
+
         if (instance.launcher.enableCurseIntegration) {
             bottom.add(this.addButton);
         }
@@ -214,7 +220,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     } else {
                         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
                                 "UpdateFromPlay", "InstanceV2");
-                        new InstanceInstallerDialog(instance, true, false, null, null, true);
+                        new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                     }
                 } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
                     if (ret == 2) {
@@ -253,7 +259,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Update", "InstanceV2");
-                new InstanceInstallerDialog(instance, true, false, null, null, true);
+                new InstanceInstallerDialog(instance, true, false, null, null, true, null);
             }
         });
         this.renameButton.addActionListener(e -> {
@@ -418,7 +424,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                             } else {
                                 Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
                                         "UpdateFromPlay", "InstanceV2");
-                                new InstanceInstallerDialog(instance, true, false, null, null, true);
+                                new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                             }
                         } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
                             if (!App.settings.isMinecraftLaunched()) {
@@ -449,6 +455,10 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
 
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     rightClickMenu.add(updateItem);
+
+                    if (instance.launcher.curseManifest != null) {
+                        updateItem.setVisible(false);
+                    }
 
                     if (!instance.hasUpdate()) {
                         updateItem.setEnabled(false);
@@ -497,7 +507,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                 } else {
                                     Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
                                             "Update", "InstanceV2");
-                                    new InstanceInstallerDialog(instance, true, false, null, null, true);
+                                    new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                                 }
                             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
                                 if (!App.settings.isMinecraftLaunched()) {

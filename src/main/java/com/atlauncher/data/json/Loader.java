@@ -30,12 +30,12 @@ import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Loader {
-    private String type;
-    private boolean choose = false;
-    private Map<String, Object> metadata;
-    private String className;
-    private String chooseClassName;
-    private String chooseMethod;
+    public String type;
+    public boolean choose = false;
+    public Map<String, Object> metadata;
+    public String className;
+    public String chooseClassName;
+    public String chooseMethod;
 
     public String getType() {
         return this.type;

@@ -36,7 +36,9 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.Gson;
+import com.sangupta.murmur.Murmur2;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
@@ -54,6 +56,7 @@ public final class Download {
     public Path extractedTo;
     public Path copyTo;
     private String hash;
+    private Long fingerprint = null;
     private List<String> checksums;
     public long size = -1L;
     private InstanceInstaller instanceInstaller;
@@ -160,6 +163,12 @@ public final class Download {
 
     public Download hash(String hash) {
         this.hash = hash;
+
+        return this;
+    }
+
+    public Download fingerprint(long fingerprint) {
+        this.fingerprint = fingerprint;
 
         return this;
     }
@@ -311,6 +320,23 @@ public final class Download {
         }
 
         if (Files.exists(this.to)) {
+            if (this.fingerprint != null) {
+                try {
+                    byte[] bytes = ArrayUtils.removeAllOccurences(ArrayUtils.removeAllOccurences(
+                            ArrayUtils.removeAllOccurences(
+                                    ArrayUtils.removeAllOccurences(Files.readAllBytes(this.to), (byte) 9), (byte) 10),
+                            (byte) 13), (byte) 32);
+
+                    long hash = Murmur2.hash(bytes, bytes.length, 1L);
+
+                    if (hash == this.fingerprint) {
+                        return false;
+                    }
+                } catch (IOException e) {
+                    LogManager.error("Error getting murmur hash");
+                }
+            }
+
             if (this.md5() && Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return false;
             } else if (Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {

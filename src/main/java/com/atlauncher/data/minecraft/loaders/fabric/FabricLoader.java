@@ -234,4 +234,9 @@ public class FabricLoader implements Loader {
     public List<Library> getInstallLibraries() {
         return null;
     }
+
+    @Override
+    public LoaderVersion getLoaderVersion() {
+        return new LoaderVersion(version.loader.version, false, "Fabric");
+    }
 }

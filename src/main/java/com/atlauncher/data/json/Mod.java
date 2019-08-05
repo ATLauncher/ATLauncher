@@ -44,6 +44,7 @@ public class Mod {
     public String file;
     public String md5;
     public int filesize;
+    public long fingerprint;
     public DownloadType download;
     public String website;
     public String donation;

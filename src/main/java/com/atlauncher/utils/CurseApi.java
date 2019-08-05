@@ -69,6 +69,11 @@ public class CurseApi {
         return Download.build().setUrl(String.format("%s/addon/%d/files", Constants.CURSE_API_URL, modId)).asType(type);
     }
 
+    public static CurseFile getFileForMod(int modId, int fileId) {
+        return Download.build().setUrl(String.format("%s/addon/%d/file/%d", Constants.CURSE_API_URL, modId, fileId))
+                .asClass(CurseFile.class);
+    }
+
     public static CurseMod getModById(int modId) {
         return Download.build().setUrl(String.format("%s/addon/%d", Constants.CURSE_API_URL, modId))
                 .asClass(CurseMod.class);

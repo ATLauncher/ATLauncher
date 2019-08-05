@@ -31,7 +31,9 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -52,10 +54,14 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -70,6 +76,7 @@ public class InstanceInstallerDialog extends JDialog {
     private Pack pack = null;
     private Instance instance = null;
     private InstanceV2 instanceV2 = null;
+    private CurseManifest curseManifest = null;
 
     private JPanel top;
     private JPanel middle;
@@ -91,20 +98,25 @@ public class InstanceInstallerDialog extends JDialog {
     private boolean isUpdate;
     private PackVersion autoInstallVersion;
 
+    public InstanceInstallerDialog(CurseManifest manifest, File manifestFile) {
+        this(manifest, false, false, null, null, false, manifestFile);
+    }
+
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false, null, null, true);
+        this(object, false, false, null, null, true, null);
     }
 
     public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
-        this(pack, false, false, version, shareCode, showModsChooser);
+        this(pack, false, false, version, shareCode, showModsChooser, null);
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this((Object) pack, false, true, null, null, true);
+        this((Object) pack, false, true, null, null, true, null);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
-            final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser) {
+            final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
+            File manifestFile) {
         super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.isUpdate = isUpdate;
@@ -127,6 +139,35 @@ public class InstanceInstallerDialog extends JDialog {
             isReinstall = true; // We're reinstalling
             // #. {0} is the name of the pack the user is reinstalling
             setTitle(GetText.tr("Reinstalling {0}", instance.getName()));
+        } else if (object instanceof CurseManifest) {
+            curseManifest = (CurseManifest) object;
+
+            CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
+
+            pack = new Pack();
+            pack.id = curseManifest.projectID;
+            pack.name = curseManifest.name;
+            pack.description = cursePack.summary;
+            pack.cursePack = cursePack;
+
+            PackVersion packVersion = new PackVersion();
+            packVersion.version = curseManifest.version;
+
+            try {
+                packVersion.minecraftVersion = App.settings.getMinecraftVersion(curseManifest.minecraft.version);
+            } catch (InvalidMinecraftVersion e) {
+                LogManager.error(e.getMessage());
+                return;
+            }
+
+            packVersion.hasLoader = true;
+
+            pack.versions = Arrays.asList(packVersion);
+
+            isReinstall = false;
+
+            // #. {0} is the name of the pack the user is installing from Curse
+            setTitle(GetText.tr("Installing {0} From Curse", curseManifest.name));
         } else {
             instanceV2 = (InstanceV2) object;
             pack = instanceV2.getPack();
@@ -289,7 +330,7 @@ public class InstanceInstallerDialog extends JDialog {
                         : null;
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
-                        isReinstall, isServer, shareCode, showModsChooser, loaderVersion) {
+                        isReinstall, isServer, shareCode, showModsChooser, loaderVersion, curseManifest, manifestFile) {
 
                     protected void done() {
                         Boolean success = false;

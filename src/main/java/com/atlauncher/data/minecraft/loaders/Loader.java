@@ -46,4 +46,6 @@ public interface Loader {
     public boolean useMinecraftLibraries();
 
     public boolean useMinecraftArguments();
+
+    public LoaderVersion getLoaderVersion();
 }

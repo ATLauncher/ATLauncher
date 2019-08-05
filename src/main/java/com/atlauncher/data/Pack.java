@@ -30,6 +30,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.utils.Utils;
 
@@ -47,6 +48,7 @@ public class Pack {
     public boolean featured;
     public boolean hasDiscordImage;
     public String description;
+    public CurseMod cursePack;
     public String discordInviteURL = null;
     public String supportURL = null;
     public String websiteURL = null;

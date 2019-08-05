@@ -149,6 +149,10 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public String getPackDescription() {
+        if (launcher.description != null) {
+            return launcher.description;
+        }
+
         Pack pack = this.getPack();
 
         if (pack != null) {

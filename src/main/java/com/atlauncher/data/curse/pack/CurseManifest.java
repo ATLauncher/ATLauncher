@@ -22,7 +22,7 @@ import java.util.List;
 public class CurseManifest {
     public CurseMinecraft minecraft;
     public String manifestType;
-    public String manifestVersion;
+    public int manifestVersion;
     public String name;
     public String version;
     public String author;

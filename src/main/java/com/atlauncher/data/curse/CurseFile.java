@@ -19,6 +19,10 @@ package com.atlauncher.data.curse;
 
 import java.util.List;
 
+import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.Mod;
+import com.atlauncher.data.json.ModType;
+
 public class CurseFile {
     public int id;
     public String displayName;
@@ -42,5 +46,25 @@ public class CurseFile {
     public String toString() {
         String releaseTypeString = this.releaseType == 1 ? "" : this.releaseType == 2 ? " (Beta)" : " (Alpha)";
         return this.displayName + releaseTypeString;
+    }
+
+    public Mod convertToMod(CurseMod curseMod) {
+        Mod mod = new Mod();
+
+        mod.curseFileId = id;
+        mod.curseModId = curseMod.id;
+        mod.client = true;
+        mod.description = curseMod.summary;
+        mod.download = DownloadType.direct;
+        mod.file = fileName;
+        mod.filesize = fileLength;
+        mod.fingerprint = packageFingerprint;
+        mod.name = curseMod.name;
+        mod.type = ModType.mods;
+        mod.url = downloadUrl;
+        mod.version = displayName;
+        mod.website = curseMod.websiteUrl;
+
+        return mod;
     }
 }

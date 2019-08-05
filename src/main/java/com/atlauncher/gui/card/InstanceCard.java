@@ -220,7 +220,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     } else {
                         Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "UpdateFromPlay",
                                 "Instance");
-                        new InstanceInstallerDialog(instance, true, false, null, null, true);
+                        new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                     }
                 } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
                     if (ret == 2) {
@@ -258,7 +258,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Update", "Instance");
-                new InstanceInstallerDialog(instance, true, false, null, null, true);
+                new InstanceInstallerDialog(instance, true, false, null, null, true, null);
             }
         });
         this.renameButton.addActionListener(e -> new RenameInstanceDialog(instance));
@@ -420,7 +420,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             } else {
                                 Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(),
                                         "UpdateFromPlay", "Instance");
-                                new InstanceInstallerDialog(instance, true, false, null, null, true);
+                                new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                             }
                         } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
                             if (!App.settings.isMinecraftLaunched()) {
@@ -500,7 +500,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 } else {
                                     Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(),
                                             "Update", "Instance");
-                                    new InstanceInstallerDialog(instance, true, false, null, null, true);
+                                    new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                                 }
                             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
                                 if (!App.settings.isMinecraftLaunched()) {
