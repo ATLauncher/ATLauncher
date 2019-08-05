@@ -43,6 +43,7 @@ import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public final class Download {
@@ -62,6 +63,7 @@ public final class Download {
     private InstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
     private boolean usesPackXz = false;
+    private RequestBody post = null;
 
     // generated on/after request
     private Response response;
@@ -155,6 +157,12 @@ public final class Download {
         return this;
     }
 
+    public Download post(RequestBody post) {
+        this.post = post;
+
+        return this;
+    }
+
     public Download unzipTo(Path unzipTo) {
         this.unzipTo = unzipTo;
 
@@ -226,6 +234,10 @@ public final class Download {
         }
 
         Request.Builder builder = new Request.Builder().url(this.url);
+
+        if (this.post != null) {
+            builder.post(this.post);
+        }
 
         this.response = httpClient.newCall(builder.build()).execute();
 

@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -169,8 +170,19 @@ public class InstanceV2 extends MinecraftVersion {
         if (customImage.exists()) {
             try {
                 BufferedImage img = ImageIO.read(customImage);
-                Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
-                return new ImageIcon(dimg);
+
+                // if a square image, then make it 300x150 (without stretching) centered
+                if (img.getHeight(null) == img.getWidth(null)) {
+                    BufferedImage dimg = new BufferedImage(300, 150, BufferedImage.TYPE_INT_ARGB);
+
+                    Graphics2D g2d = dimg.createGraphics();
+                    g2d.drawImage(img, 75, 0, 150, 150, null);
+                    g2d.dispose();
+
+                    return new ImageIcon(dimg);
+                }
+
+                return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
             } catch (IOException e) {
                 LogManager.logStackTrace(
                         "Error creating scaled image from the custom image of instance " + this.launcher.name, e);

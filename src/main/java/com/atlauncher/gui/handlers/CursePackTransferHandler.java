@@ -26,12 +26,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.data.curse.pack.CurseManifest;
-import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
-
-import org.zeroturnaround.zip.ZipUtil;
+import com.atlauncher.utils.CursePackUtils;
 
 @SuppressWarnings("serial")
 public class CursePackTransferHandler extends TransferHandler {
@@ -40,53 +35,23 @@ public class CursePackTransferHandler extends TransferHandler {
     }
 
     public boolean canImport(TransferSupport ts) {
-        return ts.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+        return ts.isDataFlavorSupported(DataFlavor.javaFileListFlavor)
+                || ts.isDataFlavorSupported(DataFlavor.stringFlavor);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean importData(TransferSupport ts) {
         try {
-            @SuppressWarnings("unchecked")
-            List<File> data = (List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-            if (data.size() != 1) {
-                return false;
+            if (ts.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                return CursePackUtils.loadFromUrl((String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor));
+            } else if (ts.getTransferable().isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                return CursePackUtils.loadFromFile(
+                        ((List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0));
             }
-
-            File file = data.get(0);
-
-            if (!file.getName().endsWith(".zip")) {
-                LogManager.error("Cannot install as the file was not a zip file");
-                return false;
-            }
-
-            try {
-                CurseManifest manifest = Gsons.MINECRAFT
-                        .fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")), CurseManifest.class);
-
-                if (!manifest.manifestType.equals("minecraftModpack")) {
-                    LogManager.error("Cannot install as the manifest is not a Minecraft Modpack");
-                    return false;
-                }
-
-                if (manifest.manifestVersion != 1) {
-                    LogManager.error("Cannot install as the manifest is version " + manifest.manifestVersion
-                            + " which I cannot install");
-                    return false;
-                }
-
-                new InstanceInstallerDialog(manifest, file);
-            } catch (Exception e) {
-                LogManager.logStackTrace("Failed to install Curse pack from drag and drop", e);
-                return false;
-            }
-
-            return true;
-
-        } catch (UnsupportedFlavorException e) {
-            return false;
-        } catch (IOException e) {
-            return false;
-        } catch (Exception e) {
+        } catch (UnsupportedFlavorException | IOException e) {
             return false;
         }
+
+        return false;
     }
 }

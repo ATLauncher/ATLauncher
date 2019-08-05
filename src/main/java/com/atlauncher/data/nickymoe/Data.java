@@ -15,19 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse.pack;
+package com.atlauncher.data.nickymoe;
 
 import java.util.List;
 
-public class CurseManifest {
-    public CurseMinecraft minecraft;
-    public String manifestType;
-    public int manifestVersion;
-    public String name;
-    public String version;
-    public String author;
-    public Integer projectID = null;
-    public Integer fileID = null;
-    public List<CurseManifestFile> files;
-    public String overrides;
+import com.atlauncher.annot.Json;
+
+@Json
+public class Data {
+    public List<Addon> addons;
 }
