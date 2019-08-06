@@ -8,3 +8,4 @@
 - Fix adding mods showing modpacks and add dropdown for resource packs
 - Fix changing pages when adding mods not keeping search query
 - Fix adding resource packs limiting to current Minecraft version
+- Add ability to reinstall Curse mods from Edit Mods dialog

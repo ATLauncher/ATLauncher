@@ -311,7 +311,7 @@ public class DisableableMod implements Serializable {
     }
 
     public boolean checkForUpdate(InstanceV2 instance) {
-        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
+        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "InstanceV2");
         List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
 
         if (!curseModFiles.stream().anyMatch(mod -> mod.id > curseFileId)) {
@@ -334,6 +334,22 @@ public class DisableableMod implements Serializable {
                     .setContent(GetText.tr("No updates were found for {0}.", name)).show();
             return false;
         }
+
+        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
+
+        return true;
+    }
+
+    public boolean reinstall(InstanceV2 instance) {
+        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "InstanceV2");
+
+        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
+
+        return true;
+    }
+
+    public boolean reinstall(Instance instance) {
+        Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "ReinstallMods", "Instance");
 
         new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
 

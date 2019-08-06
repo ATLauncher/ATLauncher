@@ -66,8 +66,8 @@ public class EditModsDialog extends JDialog {
     private JList<ModsJCheckBox> disabledModsPanel, enabledModsPanel;
     private JSplitPane split, labelsTop, labels, modsInPack;
     private JScrollPane scroller1, scroller2;
-    private JButton addButton, addCurseModButton, checkForUpdatesButton, enableButton, disableButton, removeButton,
-            closeButton;
+    private JButton addButton, addCurseModButton, checkForUpdatesButton, reinstallButton, enableButton, disableButton,
+            removeButton, closeButton;
     private JCheckBox selectAllEnabledModsCheckbox, selectAllDisabledModsCheckbox;
     private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
@@ -324,6 +324,11 @@ public class EditModsDialog extends JDialog {
             checkForUpdatesButton.addActionListener(e -> checkForUpdates());
             checkForUpdatesButton.setEnabled(false);
             bottomPanel.add(checkForUpdatesButton);
+
+            reinstallButton = new JButton(GetText.tr("Reinstall"));
+            reinstallButton.addActionListener(e -> reinstall());
+            reinstallButton.setEnabled(false);
+            bottomPanel.add(reinstallButton);
         }
 
         enableButton = new JButton(GetText.tr("Enable Mod"));
@@ -392,11 +397,14 @@ public class EditModsDialog extends JDialog {
     private void checkBoxesChanged() {
         if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
                 : this.instance.hasEnabledCurseIntegration()) {
-            checkForUpdatesButton.setEnabled((enabledMods.stream().filter(AbstractButton::isSelected).count() != 0
+            boolean hasSelectedAllCurseMods = (enabledMods.stream().filter(AbstractButton::isSelected).count() != 0
                     && enabledMods.stream().filter(AbstractButton::isSelected)
                             .allMatch(cb -> cb.getDisableableMod().isFromCurse()))
                     || (disabledMods.stream().filter(AbstractButton::isSelected).count() != 0 && disabledMods.stream()
-                            .filter(AbstractButton::isSelected).allMatch(cb -> cb.getDisableableMod().isFromCurse())));
+                            .filter(AbstractButton::isSelected).allMatch(cb -> cb.getDisableableMod().isFromCurse()));
+
+            checkForUpdatesButton.setEnabled(hasSelectedAllCurseMods);
+            reinstallButton.setEnabled(hasSelectedAllCurseMods);
         }
 
         removeButton.setEnabled((disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected))
@@ -421,6 +429,23 @@ public class EditModsDialog extends JDialog {
                     mod.getDisableableMod().checkForUpdate(instanceV2);
                 } else {
                     mod.getDisableableMod().checkForUpdate(instance);
+                }
+            }
+        }
+        reloadPanels();
+    }
+
+    private void reinstall() {
+        ArrayList<ModsJCheckBox> mods = new ArrayList<>();
+        mods.addAll(enabledMods);
+        mods.addAll(disabledMods);
+
+        for (ModsJCheckBox mod : mods) {
+            if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
+                if (this.instanceV2 != null) {
+                    mod.getDisableableMod().reinstall(instanceV2);
+                } else {
+                    mod.getDisableableMod().reinstall(instance);
                 }
             }
         }
