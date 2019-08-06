@@ -36,6 +36,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseFile;
@@ -262,8 +263,9 @@ public class CurseModFileSelectorDialog extends JDialog {
         Runnable r = () -> {
             files.addAll(CurseApi.getFilesForMod(mod.id).stream()
                     .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
-                    .filter(file -> file.gameVersion.contains(
-                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()))
+                    .filter(file -> mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
+                            || file.gameVersion.contains(
+                                    this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()))
                     .collect(Collectors.toList()));
 
             // ensures that font width is taken into account
