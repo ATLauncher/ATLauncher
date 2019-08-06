@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +36,7 @@ import com.atlauncher.network.Download;
 
 import org.zeroturnaround.zip.ZipUtil;
 
+import okhttp3.CacheControl;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -83,7 +85,7 @@ public class CursePackUtils {
                 .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
                         "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
                                 + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
-                .setUrl("https://curse.nikky.moe/graphql").asClass(NickyMoeGraphqlSlugResponse.class);
+                .setUrl("https://curse.nikky.moe/graphql").cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asClass(NickyMoeGraphqlSlugResponse.class);
 
         projectId = modInfo.data.addons.get(0).id;
 

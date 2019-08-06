@@ -39,6 +39,7 @@ import com.google.gson.Gson;
 
 import org.zeroturnaround.zip.ZipUtil;
 
+import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -62,6 +63,7 @@ public final class Download {
     private OkHttpClient httpClient = Network.CLIENT;
     private boolean usesPackXz = false;
     private RequestBody post = null;
+    private CacheControl cacheControl = null;
 
     // generated on/after request
     private Response response;
@@ -197,7 +199,12 @@ public final class Download {
     }
 
     public Download cached() {
+        return cached(null);
+    }
+
+    public Download cached(CacheControl cacheControl) {
         this.httpClient = Network.CACHED_CLIENT;
+        this.cacheControl = cacheControl;
         return this;
     }
 
@@ -235,6 +242,10 @@ public final class Download {
 
         if (this.post != null) {
             builder.post(this.post);
+        }
+
+        if (this.cacheControl != null) {
+            builder.cacheControl(this.cacheControl);
         }
 
         this.response = httpClient.newCall(builder.build()).execute();

@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
@@ -28,6 +29,8 @@ import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
+
+import okhttp3.CacheControl;
 
 /**
  * Various utility methods for interacting with the Curse API.
@@ -53,7 +56,8 @@ public class CurseApi {
             java.lang.reflect.Type type = new TypeToken<List<CurseMod>>() {
             }.getType();
 
-            return Download.build().setUrl(url).asType(type);
+            return Download.build().cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                    .setUrl(url).asType(type);
         } catch (UnsupportedEncodingException e) {
             LogManager.logStackTrace(e);
         }
@@ -78,16 +82,17 @@ public class CurseApi {
         java.lang.reflect.Type type = new TypeToken<List<CurseFile>>() {
         }.getType();
 
-        return Download.build().setUrl(String.format("%s/addon/%d/files", Constants.CURSE_API_URL, modId)).asType(type);
+        return Download.build().setUrl(String.format("%s/addon/%d/files", Constants.CURSE_API_URL, modId))
+                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asType(type);
     }
 
     public static CurseFile getFileForMod(int modId, int fileId) {
         return Download.build().setUrl(String.format("%s/addon/%d/file/%d", Constants.CURSE_API_URL, modId, fileId))
-                .asClass(CurseFile.class);
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asClass(CurseFile.class);
     }
 
     public static CurseMod getModById(int modId) {
         return Download.build().setUrl(String.format("%s/addon/%d", Constants.CURSE_API_URL, modId))
-                .asClass(CurseMod.class);
+                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asClass(CurseMod.class);
     }
 }
