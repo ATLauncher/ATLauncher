@@ -1132,7 +1132,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             Utils.delete(configs);
         } else {
             fireSubProgressUnknown();
-            fireTask(GetText.tr("Installing Configs"));
+            fireTask(GetText.tr("Copying Overrides"));
             ZipUtil.unpack(manifestFile, this.temp.resolve("manifest").toFile());
             Utils.copyDirectory(
                     this.temp.resolve("manifest/" + Optional.of(curseManifest.overrides).orElse("overrides")).toFile(),
