@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -59,6 +60,7 @@ public final class CurseModCard extends JPanel {
 
     private void setupComponents() {
         setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(250, 180));
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();

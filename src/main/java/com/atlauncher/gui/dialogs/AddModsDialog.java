@@ -39,6 +39,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.card.CurseModCard;
+import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.network.Analytics;
@@ -211,7 +212,7 @@ public final class AddModsDialog extends JDialog {
         prevButton.setEnabled(false);
         nextButton.setEnabled(false);
 
-        Runnable r = () -> {
+        new Thread(() -> {
             if (((String) sectionComboBox.getSelectedItem()).equals("Resource Packs")) {
                 setMods(CurseApi.searchResourcePacks("", page));
             } else {
@@ -228,9 +229,7 @@ public final class AddModsDialog extends JDialog {
             }
 
             setLoading(false);
-        };
-
-        new Thread(r).start();
+        }).start();
     }
 
     private void loadDefaultMods() {
@@ -283,7 +282,7 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
-            contentPanel.setLayout(new GridLayout(mods.size() / 2, 2));
+            contentPanel.setLayout(new WrapLayout());
 
             mods.stream().forEach(curseMod -> {
                 if (this.instanceV2 != null) {
