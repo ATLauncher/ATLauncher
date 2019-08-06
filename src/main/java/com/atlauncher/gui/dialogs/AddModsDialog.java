@@ -212,18 +212,20 @@ public final class AddModsDialog extends JDialog {
         prevButton.setEnabled(false);
         nextButton.setEnabled(false);
 
+        String query = searchField.getText();
+
         new Thread(() -> {
             if (((String) sectionComboBox.getSelectedItem()).equals("Resource Packs")) {
-                setMods(CurseApi.searchResourcePacks("", page));
+                setMods(CurseApi.searchResourcePacks(query, page));
             } else {
                 if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                         : this.instance.getLoaderVersion()).isFabric()) {
                     setMods(CurseApi.searchModsForFabric(
-                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "",
+                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
                             page));
                 } else {
                     setMods(CurseApi.searchMods(
-                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), "",
+                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
                             page));
                 }
             }
@@ -237,32 +239,11 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void searchForMods() {
-        setLoading(true);
-        page = 0;
-        prevButton.setEnabled(false);
-        nextButton.setEnabled(false);
+        String query = searchField.getText();
 
-        Runnable r = () -> {
-            String query = searchField.getText();
+        Analytics.sendEvent(query, "Search", "CurseMod");
 
-            List<CurseMod> mods;
-
-            if (((String) sectionComboBox.getSelectedItem()).equals("Resource Packs")) {
-                mods = CurseApi.searchResourcePacks(query, page);
-            } else {
-                mods = CurseApi.searchMods(
-                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
-                        page);
-            }
-
-            setMods(mods);
-
-            Analytics.sendEvent(mods.size(), query, "Search", "CurseMod");
-
-            setLoading(false);
-        };
-
-        new Thread(r).start();
+        getMods();
     }
 
     private void setMods(List<CurseMod> mods) {
