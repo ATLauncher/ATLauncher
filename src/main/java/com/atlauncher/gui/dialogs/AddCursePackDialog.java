@@ -27,20 +27,25 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.gui.handlers.CursePackTransferHandler;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CursePackUtils;
@@ -55,6 +60,10 @@ public class AddCursePackDialog extends JDialog {
 
     private JLabel urlLabel;
     private JTextField url;
+
+    private JLabel zipLabel;
+    private JTextField zipPath;
+    private JButton zipBrowseButton;
 
     private JButton addButton;
 
@@ -73,23 +82,89 @@ public class AddCursePackDialog extends JDialog {
         middle = new JPanel();
         middle.setLayout(new BorderLayout());
 
-        JEditorPane infoMessage = new JEditorPane("text/html",
-                new HTMLBuilder().center().text(GetText.tr("Paste in a link to a modpack on CurseForge")).build());
+        JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center()
+                .text(GetText.tr("Paste in a link to a modpack, or upload a zip file from CurseForge")).build());
         infoMessage.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);
 
-        JPanel urlPanel = new JPanel(new GridBagLayout());
+        JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        urlLabel = new JLabel(GetText.tr("Curse Url") + ": ");
-        urlPanel.add(urlLabel, gbc);
+        urlLabel = new JLabel(GetText.tr("CurseForge Url") + ": ");
+        mainPanel.add(urlLabel, gbc);
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         url = new JTextField(25);
+        url.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                emptyZipPathField();
+                changeAddButtonStatus();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                emptyZipPathField();
+                changeAddButtonStatus();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                emptyZipPathField();
+                changeAddButtonStatus();
+            }
+        });
+        mainPanel.add(url, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        zipLabel = new JLabel(GetText.tr("CurseForge Zip") + ": ");
+        zipLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        mainPanel.add(zipLabel, gbc);
+
+        gbc.gridx++;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JPanel zipPathPanel = new JPanel(new FlowLayout());
+        zipPath = new JTextField(17);
+        zipPath.setEnabled(false);
+        zipPathPanel.add(zipPath);
+
+        zipBrowseButton = new JButton(GetText.tr("Browse"));
+        zipBrowseButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(FileSystem.USER_DOWNLOADS.toFile());
+            chooser.setDialogTitle(GetText.tr("Select"));
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.setFileFilter(new FileFilter() {
+                @Override
+                public String getDescription() {
+                    return "CurseForge modpack files (.zip)";
+                }
+
+                @Override
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
+                        return false;
+                    }
+
+                    return f.getName().endsWith(".zip");
+                }
+            });
+
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                zipPath.setText(chooser.getSelectedFile().getAbsolutePath());
+                url.setText("");
+                changeAddButtonStatus();
+            }
+        });
+        zipPathPanel.add(zipBrowseButton);
+        mainPanel.add(zipPathPanel, gbc);
 
         try {
             String clipboard = (String) Toolkit.getDefaultToolkit().getSystemClipboard()
@@ -101,8 +176,7 @@ public class AddCursePackDialog extends JDialog {
         } catch (HeadlessException | UnsupportedFlavorException | IOException ignored) {
         }
 
-        urlPanel.add(url, gbc);
-        middle.add(urlPanel, BorderLayout.CENTER);
+        middle.add(mainPanel, BorderLayout.CENTER);
 
         // Bottom Panel Stuff
         bottom = new JPanel();
@@ -115,7 +189,13 @@ public class AddCursePackDialog extends JDialog {
                     GetText.tr("Adding Curse Pack"));
 
             dialog.addThread(new Thread(() -> {
-                dialog.setReturnValue(CursePackUtils.loadFromUrl(url.getText()));
+                if (!url.getText().isEmpty()) {
+                    dialog.setReturnValue(CursePackUtils.loadFromUrl(url.getText()));
+                } else if (!zipPath.getText().isEmpty()) {
+                    dialog.setReturnValue(CursePackUtils.loadFromFile(new File(zipPath.getText())));
+                } else {
+                    dialog.setReturnValue(false);
+                }
                 dialog.close();
             }));
 
@@ -145,4 +225,13 @@ public class AddCursePackDialog extends JDialog {
         setVisible(true);
     }
 
+    private void emptyZipPathField() {
+        if (!url.getText().isEmpty()) {
+            zipPath.setText("");
+        }
+    }
+
+    private void changeAddButtonStatus() {
+        addButton.setEnabled(!url.getText().isEmpty() || !zipPath.getText().isEmpty());
+    }
 }

@@ -105,6 +105,10 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public Pack getPack() {
+        if (this.launcher.curseManifest != null) {
+            return null;
+        }
+
         return App.settings.packs.stream().filter(p -> p.id == this.launcher.packId).findFirst().orElse(null);
     }
 
