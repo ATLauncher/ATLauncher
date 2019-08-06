@@ -40,6 +40,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.dialogs.AddCursePackDialog;
 import com.atlauncher.network.Analytics;
 
 import org.mini2Dx.gettext.GetText;
@@ -47,6 +48,7 @@ import org.mini2Dx.gettext.GetText;
 public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
+    private JButton addCurseButton;
     private JButton clearButton;
     private JTextField searchBox;
     private JButton searchButton;
@@ -71,6 +73,12 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
     public void loadContent(boolean keepFilters) {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
+        addCurseButton.addActionListener(e -> {
+            new AddCursePackDialog();
+        });
+        topPanel.add(addCurseButton);
 
         clearButton = new JButton(GetText.tr("Clear"));
         clearButton.addActionListener(e -> {

@@ -1593,6 +1593,10 @@ public class Settings {
         return false;
     }
 
+    public boolean isMinecraftVersion(String version) {
+        return this.minecraftVersions.containsKey(version);
+    }
+
     public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
         if (this.minecraftVersions.containsKey(version)) {
             return this.minecraftVersions.get(version);

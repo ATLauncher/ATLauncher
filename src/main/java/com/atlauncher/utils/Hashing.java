@@ -34,6 +34,9 @@ import java.util.Map;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.collection.Caching;
+import com.sangupta.murmur.Murmur2;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 public final class Hashing {
     private static final char[] hex = "0123456789abcdef".toCharArray();
@@ -51,6 +54,15 @@ public final class Hashing {
             LogManager.logStackTrace("Error hashing (MD5) file " + file.getFileName(), e);
             return HashCode.EMPTY;
         }
+    }
+
+    public static long murmur(Path to) throws IOException {
+        byte[] bytes = ArrayUtils.removeAllOccurences(
+                ArrayUtils.removeAllOccurences(ArrayUtils.removeAllOccurences(
+                        ArrayUtils.removeAllOccurences(Files.readAllBytes(to), (byte) 9), (byte) 10), (byte) 13),
+                (byte) 32);
+
+        return Murmur2.hash(bytes, bytes.length, 1L);
     }
 
     private static HashCode md5Internal(String str) {

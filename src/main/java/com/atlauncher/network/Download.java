@@ -36,9 +36,7 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.Gson;
-import com.sangupta.murmur.Murmur2;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
@@ -334,14 +332,7 @@ public final class Download {
         if (Files.exists(this.to)) {
             if (this.fingerprint != null) {
                 try {
-                    byte[] bytes = ArrayUtils.removeAllOccurences(ArrayUtils.removeAllOccurences(
-                            ArrayUtils.removeAllOccurences(
-                                    ArrayUtils.removeAllOccurences(Files.readAllBytes(this.to), (byte) 9), (byte) 10),
-                            (byte) 13), (byte) 32);
-
-                    long hash = Murmur2.hash(bytes, bytes.length, 1L);
-
-                    if (hash == this.fingerprint) {
+                    if (Hashing.murmur(this.to) == this.fingerprint) {
                         return false;
                     }
                 } catch (IOException e) {
