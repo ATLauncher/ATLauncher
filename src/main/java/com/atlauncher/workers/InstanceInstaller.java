@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.SwingWorker;
@@ -1133,7 +1134,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireSubProgressUnknown();
             fireTask(GetText.tr("Installing Configs"));
             ZipUtil.unpack(manifestFile, this.temp.resolve("manifest").toFile());
-            Utils.copyDirectory(this.temp.resolve("manifest/overrides").toFile(), this.root.toFile(), false);
+            Utils.copyDirectory(
+                    this.temp.resolve("manifest/" + Optional.of(curseManifest.overrides).orElse("overrides")).toFile(),
+                    this.root.toFile(), false);
         }
     }
 
