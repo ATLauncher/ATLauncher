@@ -166,16 +166,6 @@ public class AddCursePackDialog extends JDialog {
         zipPathPanel.add(zipBrowseButton);
         mainPanel.add(zipPathPanel, gbc);
 
-        try {
-            String clipboard = (String) Toolkit.getDefaultToolkit().getSystemClipboard()
-                    .getData(DataFlavor.stringFlavor);
-
-            if (clipboard.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
-                url.setText(clipboard);
-            }
-        } catch (HeadlessException | UnsupportedFlavorException | IOException ignored) {
-        }
-
         middle.add(mainPanel, BorderLayout.CENTER);
 
         // Bottom Panel Stuff
@@ -223,6 +213,16 @@ public class AddCursePackDialog extends JDialog {
                 dispose();
             }
         });
+
+        try {
+            String clipboard = (String) Toolkit.getDefaultToolkit().getSystemClipboard()
+                    .getData(DataFlavor.stringFlavor);
+
+            if (clipboard.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
+                url.setText(clipboard);
+            }
+        } catch (HeadlessException | UnsupportedFlavorException | IOException ignored) {
+        }
 
         setVisible(true);
     }

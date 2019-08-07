@@ -1,13 +1,5 @@
 # Changelog
 
-## 3.3.1.0
+## 3.3.1.1
 
-- Add in servers tab to manage servers created through the launcher
-- Add Curse packs from the packs tab
-- [#370] fix JVM arguments not adding in correct order
-- Fix adding mods showing modpacks and add dropdown for resource packs
-- Fix changing pages when adding mods not keeping search query
-- Fix adding resource packs limiting to current Minecraft version
-- Add ability to reinstall Curse mods from Edit Mods dialog
-- Fix fabric library sha1 error when failing to hash
-- Add error to console when file fails to download and is html
+- Fix add curse pack button not working when you have a link copied
