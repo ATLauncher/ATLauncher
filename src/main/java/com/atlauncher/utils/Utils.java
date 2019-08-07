@@ -1188,7 +1188,7 @@ public class Utils {
             LogManager.info("Proxy returned code " + connection.getResponseCode() + " when testing!");
             return connection.getResponseCode() == 200;
         } catch (IOException e) {
-            LogManager.error("Proxy couldn't establish a connection when testing!");
+            LogManager.logStackTrace("Proxy couldn't establish a connection when testing!", e);
             return false;
         }
     }

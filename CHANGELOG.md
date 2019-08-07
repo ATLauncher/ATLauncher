@@ -10,3 +10,4 @@
 - Fix adding resource packs limiting to current Minecraft version
 - Add ability to reinstall Curse mods from Edit Mods dialog
 - Fix fabric library sha1 error when failing to hash
+- Add error to console when file fails to download and is html

@@ -503,6 +503,13 @@ public final class Download {
             boolean downloaded = this.downloadRec(1);
 
             if (!downloaded) {
+                if (this.response.header("content-type").contains("text/html")) {
+                    LogManager.error(
+                            "The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
+
+                    LogManager.error(new String(Files.readAllBytes(this.to)));
+                }
+
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
                         + " hash of " + expected.toString() + " but got " + Hashing.sha1(this.to)
