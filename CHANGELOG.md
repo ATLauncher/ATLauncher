@@ -9,3 +9,4 @@
 - Fix changing pages when adding mods not keeping search query
 - Fix adding resource packs limiting to current Minecraft version
 - Add ability to reinstall Curse mods from Edit Mods dialog
+- Fix fabric library sha1 error when failing to hash

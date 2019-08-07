@@ -44,7 +44,11 @@ public class FabricLibrary extends Library {
 
         if (Files.exists(localLibraryPath)) {
             artifact.size = localLibraryPath.toFile().length();
-            artifact.sha1 = Hashing.sha1(localLibraryPath).toString();
+
+            Hashing.HashCode sha1 = Hashing.sha1(localLibraryPath);
+            if (sha1 != null) {
+                artifact.sha1 = sha1.toString();
+            }
         }
 
         downloads.artifact = artifact;
