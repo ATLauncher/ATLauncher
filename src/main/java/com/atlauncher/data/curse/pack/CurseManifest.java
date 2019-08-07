@@ -22,10 +22,12 @@ import java.util.List;
 public class CurseManifest {
     public CurseMinecraft minecraft;
     public String manifestType;
+    public String websiteUrl = null;
     public int manifestVersion;
     public String name;
     public String version;
     public String author;
+    public String curse;
     public Integer projectID = null;
     public Integer fileID = null;
     public List<CurseManifestFile> files;

@@ -144,6 +144,8 @@ public class InstanceInstallerDialog extends JDialog {
 
             CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
 
+            curseManifest.websiteUrl = cursePack.websiteUrl;
+
             pack = new Pack();
             pack.id = curseManifest.projectID;
             pack.name = curseManifest.name;

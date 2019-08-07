@@ -95,6 +95,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
+    private final JButton openCurseForgeButton = new JButton(GetText.tr("Open CurseForge"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
@@ -135,6 +136,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             this.serversButton.setVisible(false);
         }
 
+        this.openCurseForgeButton.setVisible(
+                instance.launcher.curseManifest != null && instance.launcher.curseManifest.websiteUrl != null);
+
         if (instance.launcher.enableCurseIntegration) {
             bottom.add(this.addButton);
         }
@@ -144,6 +148,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         }
 
         bottom.add(this.serversButton);
+        bottom.add(this.openCurseForgeButton);
         bottom.add(this.openButton);
 
         this.rightPanel.setLayout(new BorderLayout());
@@ -337,6 +342,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
+        this.openCurseForgeButton.addActionListener(e -> OS.openWebBrowser(instance.launcher.curseManifest.websiteUrl));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings", "InstanceV2");
@@ -554,6 +560,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.addButton.setText(GetText.tr("Add Mods"));
         this.editButton.setText(GetText.tr("Edit Mods"));
         this.serversButton.setText(GetText.tr("Servers"));
+        this.openCurseForgeButton.setText(GetText.tr("Open CurseForge"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
     }
