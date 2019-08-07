@@ -190,8 +190,10 @@ public class AddCursePackDialog extends JDialog {
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
+                    Analytics.sendEvent(url.getText(), "AddFromUrl", "CursePack");
                     dialog.setReturnValue(CursePackUtils.loadFromUrl(url.getText()));
                 } else if (!zipPath.getText().isEmpty()) {
+                    Analytics.sendEvent(new File(zipPath.getText()).getName(), "AddFromZip", "CursePack");
                     dialog.setReturnValue(CursePackUtils.loadFromFile(new File(zipPath.getText())));
                 } else {
                     dialog.setReturnValue(false);

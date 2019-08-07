@@ -441,7 +441,8 @@ public class InstanceV2 extends MinecraftVersion {
                 return false;
             }
 
-            Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play", "InstanceV2");
+            Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play",
+                    (launcher.curseManifest != null ? "CursePack" : "InstanceV2"));
 
             Thread launcher = new Thread(() -> {
                 try {
