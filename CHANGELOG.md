@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.3.1.1
+## 3.3.1.2
 
-- Fix add curse pack button not working when you have a link copied
-- Add Open CurseForge button on Instances tab for Curse packs
+- Fix add curse pack dialog being unusable if failed

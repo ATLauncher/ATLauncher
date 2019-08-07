@@ -194,13 +194,15 @@ public class AddCursePackDialog extends JDialog {
             dialog.start();
 
             if (!((boolean) dialog.getReturnValue())) {
+                setVisible(true);
                 DialogManager.okDialog().setTitle(GetText.tr("Failed To Add Pack"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "An error occured when trying to add Curse pack.<br/><br/>Check the console for more information."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
+            } else {
+                dispose();
             }
-            dispose();
         });
         bottom.add(addButton);
 
