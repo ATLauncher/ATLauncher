@@ -140,14 +140,6 @@ public class App {
     public static boolean skipHashChecking = false;
 
     /**
-     * This forces the launcher to start in offline mode. It can be enabled with the
-     * below command line argument.
-     * <p/>
-     * --force-offline-mode
-     */
-    public static boolean forceOfflineMode = false;
-
-    /**
      * This forces the working directory for the launcher. It can be changed with
      * the below command line argument.
      * <p/>
@@ -649,11 +641,6 @@ public class App {
         disableErrorReporting = options.has("disable-error-reporting");
         if (disableErrorReporting) {
             LogManager.debug("Disabling error reporting!");
-        }
-
-        forceOfflineMode = options.has("force-offline-mode");
-        if (forceOfflineMode) {
-            LogManager.debug("Forcing offline mode!");
         }
 
         if (options.has("working-dir")) {

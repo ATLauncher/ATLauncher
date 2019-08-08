@@ -285,82 +285,76 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     }
 
     private void leftButtonActions() {
-        if (App.settings.isInOfflineMode()) {
-            DialogManager.okDialog().setTitle(GetText.tr("You're In Offline Mode")).setContent(GetText.tr(
-                    "Cannot change/add account as you're in offline mode. Please connect to the internet and try again."))
-                    .setType(DialogManager.ERROR).show();
-        } else {
-            Account account;
-            String clientToken = UUID.randomUUID().toString().replace("-", "");
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
-            boolean remember = rememberField.isSelected();
-            if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
-                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
-                        .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
-                return;
-            }
+        Account account;
+        String clientToken = UUID.randomUUID().toString().replace("-", "");
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
+        boolean remember = rememberField.isSelected();
+        if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
+            DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
+                    .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
+            return;
+        }
 
-            LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
-                    GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
-            dialog.addThread(new Thread(() -> {
-                LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
-                        new String(passwordField.getPassword()), clientToken);
-                dialog.setReturnValue(resp);
-                dialog.close();
-            }));
-            dialog.start();
-            LoginResponse response = (LoginResponse) dialog.getReturnValue();
-            if (response != null && response.hasAuth() && response.isValidAuth()) {
-                if (accountsComboBox.getSelectedIndex() == 0) {
-                    account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
-                            response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken);
-                    account.setStore(response.getAuth().saveForStorage());
-                    App.settings.addAccount(account);
-                    Analytics.sendEvent("Add", "Account");
-                    LogManager.info("Added Account " + account);
+        LogManager.info("Logging into Minecraft!");
+        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+                GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
+        dialog.addThread(new Thread(() -> {
+            LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
+                    new String(passwordField.getPassword()), clientToken);
+            dialog.setReturnValue(resp);
+            dialog.close();
+        }));
+        dialog.start();
+        LoginResponse response = (LoginResponse) dialog.getReturnValue();
+        if (response != null && response.hasAuth() && response.isValidAuth()) {
+            if (accountsComboBox.getSelectedIndex() == 0) {
+                account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
+                        response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken);
+                account.setStore(response.getAuth().saveForStorage());
+                App.settings.addAccount(account);
+                Analytics.sendEvent("Add", "Account");
+                LogManager.info("Added Account " + account);
 
-                    int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
-                            .setContent(GetText.tr("Account added successfully. Switch to it now?"))
-                            .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
-                            .show();
+                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
+                        .setContent(GetText.tr("Account added successfully. Switch to it now?"))
+                        .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
+                        .show();
 
-                    if (ret == 0) {
-                        App.settings.switchAccount(account);
-                    }
-                } else {
-                    account = (Account) accountsComboBox.getSelectedItem();
-                    account.setUsername(username);
-                    account.setMinecraftUsername(response.getAuth().getSelectedProfile().getName());
-                    account.setUUID(response.getAuth().getSelectedProfile().getId().toString());
-                    if (remember) {
-                        account.setPassword(password);
-                    }
-                    account.setRemember(remember);
-                    account.setClientToken(clientToken);
-                    account.setStore(response.getAuth().saveForStorage());
-                    Analytics.sendEvent("Edit", "Account");
-                    LogManager.info("Edited Account " + account);
-                    DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
-                            .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
+                if (ret == 0) {
+                    App.settings.switchAccount(account);
                 }
-                App.settings.saveAccounts();
-                App.settings.reloadAccounts();
-                accountsComboBox.removeAllItems();
-                accountsComboBox.addItem(fillerAccount);
-                for (Account accountt : App.settings.getAccounts()) {
-                    accountsComboBox.addItem(accountt);
-                }
-                accountsComboBox.setSelectedItem(account);
             } else {
-                LogManager.error(response.getErrorMessage());
-                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
-                        // #. {0} is the error message from Mojang as to why we couldn't login
-                        .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
-                                response.getErrorMessage()))
-                        .build()).setType(DialogManager.INFO).show();
+                account = (Account) accountsComboBox.getSelectedItem();
+                account.setUsername(username);
+                account.setMinecraftUsername(response.getAuth().getSelectedProfile().getName());
+                account.setUUID(response.getAuth().getSelectedProfile().getId().toString());
+                if (remember) {
+                    account.setPassword(password);
+                }
+                account.setRemember(remember);
+                account.setClientToken(clientToken);
+                account.setStore(response.getAuth().saveForStorage());
+                Analytics.sendEvent("Edit", "Account");
+                LogManager.info("Edited Account " + account);
+                DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
+                        .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
+            App.settings.saveAccounts();
+            App.settings.reloadAccounts();
+            accountsComboBox.removeAllItems();
+            accountsComboBox.addItem(fillerAccount);
+            for (Account accountt : App.settings.getAccounts()) {
+                accountsComboBox.addItem(accountt);
+            }
+            accountsComboBox.setSelectedItem(account);
+        } else {
+            LogManager.error(response.getErrorMessage());
+            DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
+                    // #. {0} is the error message from Mojang as to why we couldn't login
+                    .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
+                            response.getErrorMessage()))
+                    .build()).setType(DialogManager.INFO).show();
         }
     }
 

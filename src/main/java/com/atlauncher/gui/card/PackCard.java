@@ -130,36 +130,24 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     private void addActionListeners() {
         this.newInstanceButton.addActionListener(e -> {
-            if (App.settings.isInOfflineMode()) {
-                DialogManager.okDialog().setTitle(GetText.tr("You're In Offline Mode")).setContent(GetText.tr(
-                        "Cannot create new instance as you're in offline mode. Please connect to the internet and try again."))
+            if (App.settings.getAccount() == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                if (App.settings.getAccount() == null) {
-                    DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                            .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                            .setType(DialogManager.ERROR).show();
-                } else {
-                    Analytics.sendEvent(pack.getName(), "Install", "Pack");
-                    new InstanceInstallerDialog(pack);
-                }
+                Analytics.sendEvent(pack.getName(), "Install", "Pack");
+                new InstanceInstallerDialog(pack);
             }
         });
 
         this.createServerButton.addActionListener(e -> {
-            if (App.settings.isInOfflineMode()) {
-                DialogManager.okDialog().setTitle(GetText.tr("You're In Offline Mode")).setContent(GetText.tr(
-                        "Cannot create server as you're in offline mode. Please connect to the internet and try again."))
+            if (App.settings.getAccount() == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                if (App.settings.getAccount() == null) {
-                    DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                            .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                            .setType(DialogManager.ERROR).show();
-                } else {
-                    Analytics.sendEvent(pack.getName(), "ServerInstall", "Pack");
-                    new InstanceInstallerDialog(pack, true);
-                }
+                Analytics.sendEvent(pack.getName(), "ServerInstall", "Pack");
+                new InstanceInstallerDialog(pack, true);
             }
         });
 

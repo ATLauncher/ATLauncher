@@ -512,9 +512,6 @@ public class InstanceV2 extends MinecraftVersion {
                         App.settings.getParent().setVisible(true);
                     }
                     long end = System.currentTimeMillis();
-                    if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {
-                        App.settings.checkOnlineStatus();
-                    }
                     if (App.settings.enableDiscordIntegration()) {
                         DiscordRPC.discordClearPresence();
                     }
@@ -540,20 +537,17 @@ public class InstanceV2 extends MinecraftVersion {
                     }
 
                     App.settings.setMinecraftLaunched(false);
-                    if (!App.settings.isInOfflineMode()) {
-                        if (this.getPack() != null && this.getPack().isLeaderboardsEnabled()
-                                && this.getPack().isLoggingEnabled() && !this.launcher.isDev
-                                && App.settings.enableLogs()) {
-                            final int timePlayed = (int) (end - start) / 1000;
-                            if (timePlayed > 0) {
-                                App.TASKPOOL.submit(() -> {
-                                    addTimePlayed(timePlayed, this.launcher.version);
-                                });
-                            }
+                    if (this.getPack() != null && this.getPack().isLeaderboardsEnabled()
+                            && this.getPack().isLoggingEnabled() && !this.launcher.isDev && App.settings.enableLogs()) {
+                        final int timePlayed = (int) (end - start) / 1000;
+                        if (timePlayed > 0) {
+                            App.TASKPOOL.submit(() -> {
+                                addTimePlayed(timePlayed, this.launcher.version);
+                            });
                         }
-                        if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles()) {
-                            App.settings.reloadLauncherData();
-                        }
+                    }
+                    if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles()) {
+                        App.settings.reloadLauncherData();
                     }
                     if (Files.isDirectory(nativesTempDir)) {
                         FileUtils.deleteDirectory(nativesTempDir);

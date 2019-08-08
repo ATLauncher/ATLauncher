@@ -1481,9 +1481,6 @@ public class Instance implements Cloneable {
                         App.settings.getParent().setVisible(true);
                     }
                     long end = System.currentTimeMillis();
-                    if (App.settings.isInOfflineMode() && !App.forceOfflineMode) {
-                        App.settings.checkOnlineStatus();
-                    }
                     if (App.settings.enableDiscordIntegration()) {
                         DiscordRPC.discordClearPresence();
                     }
@@ -1510,20 +1507,16 @@ public class Instance implements Cloneable {
                     }
 
                     App.settings.setMinecraftLaunched(false);
-                    if (!App.settings.isInOfflineMode()) {
-                        if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && App.settings.enableLogs()) {
-                            final int timePlayed = (int) (end - start) / 1000;
-                            if (timePlayed > 0) {
-                                App.TASKPOOL.submit(() -> {
-                                    addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
-                                });
-                            }
+                    if (isLeaderboardsEnabled() && isLoggingEnabled() && !isDev() && App.settings.enableLogs()) {
+                        final int timePlayed = (int) (end - start) / 1000;
+                        if (timePlayed > 0) {
+                            App.TASKPOOL.submit(() -> {
+                                addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
+                            });
                         }
-                        if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles())
-
-                        {
-                            App.settings.reloadLauncherData();
-                        }
+                    }
+                    if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles()) {
+                        App.settings.reloadLauncherData();
                     }
                     if (!App.settings.keepLauncherOpen()) {
                         System.exit(0);

@@ -159,7 +159,6 @@ public class Settings {
     private PacksTab packsPanel; // The packs panel
     private LauncherBottomBar bottomBar; // The bottom bar
     private boolean firstTimeRun = false; // If this is the first time the Launcher has been run
-    private boolean offlineMode = false; // If offline mode is enabled
     private Process minecraftProcess = null; // The process minecraft is running on
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " + ""
@@ -188,10 +187,6 @@ public class Settings {
     }
 
     public void loadEverything() {
-        if (App.forceOfflineMode) {
-            this.offlineMode = true;
-        }
-
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -467,13 +462,11 @@ public class Settings {
                         .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER)).asType(type);
             } catch (Exception e) {
                 LogManager.logStackTrace("Error loading in file hashes!", e);
-                this.offlineMode = true;
                 return null;
             }
         }
 
         if (this.launcherFiles == null) {
-            this.offlineMode = true;
             return null;
         }
 
@@ -513,15 +506,10 @@ public class Settings {
      * differ from what the user has
      */
     public boolean hasUpdatedFiles() {
-        if (isInOfflineMode()) {
-            return false;
-        }
-
         LogManager.info("Checking for updated files!");
         List<com.atlauncher.network.Download> downloads = getLauncherFiles();
 
         if (downloads == null) {
-            this.offlineMode = true;
             return false;
         }
 
@@ -1078,7 +1066,6 @@ public class Settings {
             LogManager.logStackTrace(e);
         }
         if (packUsers == null) {
-            this.offlineMode = true;
             return;
         }
         for (PackUsers pu : packUsers) {
@@ -1691,44 +1678,6 @@ public class Settings {
         }
         news += "</html>";
         return news;
-    }
-
-    /**
-     * Determines if offline mode is enabled or not
-     *
-     * @return true if offline mode is enabled, false otherwise
-     */
-    public boolean isInOfflineMode() {
-        return this.offlineMode;
-    }
-
-    public void checkOnlineStatus() {
-        this.offlineMode = false;
-        String test = com.atlauncher.network.Download.build()
-                .setUrl(String.format("%s/ping", Constants.DOWNLOAD_SERVER)).asString();
-        if (test != null && test.equalsIgnoreCase("pong")) {
-            reloadVanillaPacksPanel();
-            reloadFeaturedPacksPanel();
-            reloadPacksPanel();
-            reloadInstancesPanel();
-            reloadServersPanel();
-        } else {
-            this.offlineMode = true;
-        }
-    }
-
-    /**
-     * Sets the launcher to offline mode
-     */
-    public void setOfflineMode() {
-        this.offlineMode = true;
-    }
-
-    /**
-     * Sets the launcher to online mode
-     */
-    public void setOnlineMode() {
-        this.offlineMode = false;
     }
 
     /**
