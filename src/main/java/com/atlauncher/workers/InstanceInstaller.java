@@ -71,6 +71,7 @@ import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.forge.ATLauncherApiForgeVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
@@ -265,10 +266,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         String forgeVersionString = forgeVersion.id.replace("forge-", "");
 
+        java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
+        }.getType();
+
+        APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
+                .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString)).asType(type);
+
         Map<String, Object> loaderMeta = new HashMap<>();
         loaderMeta.put("minecraft", curseManifest.minecraft.version);
-        loaderMeta.put("version", forgeVersionString);
-        loaderMeta.put("rawVersion", curseManifest.minecraft.version + "-" + forgeVersionString);
+        loaderMeta.put("version", forgeVersionInfo.getData().version);
+        loaderMeta.put("rawVersion", forgeVersionInfo.getData().raw_version);
         packVersion.loader.metadata = loaderMeta;
 
         if (Utils.matchVersion(forgeVersionString, "1.13", false, true)) {

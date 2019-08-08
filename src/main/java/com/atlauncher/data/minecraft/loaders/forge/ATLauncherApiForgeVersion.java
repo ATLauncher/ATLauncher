@@ -17,20 +17,8 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
-public class ATLauncherApiForgeVersions {
-    private String version;
-    private boolean recommended;
-    private String raw_version;
-
-    public String getVersion() {
-        return this.version;
-    }
-
-    public boolean isRecommended() {
-        return this.recommended;
-    }
-
-    public String getRawVersion() {
-        return this.raw_version;
-    }
+public class ATLauncherApiForgeVersion {
+    public String version;
+    public boolean recommended;
+    public String raw_version;
 }

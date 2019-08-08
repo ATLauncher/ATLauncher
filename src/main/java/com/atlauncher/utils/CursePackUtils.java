@@ -85,7 +85,9 @@ public class CursePackUtils {
                 .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
                         "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
                                 + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
-                .setUrl("https://curse.nikky.moe/graphql").cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asClass(NickyMoeGraphqlSlugResponse.class);
+                .setUrl("https://curse.nikky.moe/graphql")
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                .asClass(NickyMoeGraphqlSlugResponse.class);
 
         projectId = modInfo.data.addons.get(0).id;
 

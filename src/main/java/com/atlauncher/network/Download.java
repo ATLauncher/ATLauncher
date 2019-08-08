@@ -348,10 +348,9 @@ public final class Download {
                     }
                 } catch (IOException e) {
                     LogManager.error("Error getting murmur hash");
+                    return false;
                 }
-            }
-
-            if (this.md5() && Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
+            } else if (this.md5() && Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return false;
             } else if (Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
                 return false;
@@ -390,7 +389,14 @@ public final class Download {
 
     private boolean hashMatches() {
         if (Files.exists(this.to)) {
-            if (this.md5()) {
+            if (this.fingerprint != null) {
+                try {
+                    return Hashing.murmur(this.to) == this.fingerprint;
+                } catch (IOException e) {
+                    LogManager.error("Error getting murmur hash");
+                    return false;
+                }
+            } else if (this.md5()) {
                 return Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
             } else {
                 return Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
@@ -462,17 +468,26 @@ public final class Download {
 
         if (!this.needToDownload()) {
             if (this.copyTo != null) {
-                Hashing.HashCode fileHash = Hashing.HashCode.EMPTY;
-                if (Files.exists(this.copyTo)) {
-                    if (this.md5()) {
-                        fileHash = Hashing.md5(this.to);
-                    } else {
-                        fileHash = Hashing.sha1(this.to);
+                if (this.fingerprint != null) {
+                    try {
+                        if (Hashing.murmur(this.copyTo) != this.fingerprint) {
+                            this.copy();
+                        }
+                    } catch (IOException ignored) {
                     }
-                }
+                } else {
+                    Hashing.HashCode fileHash = Hashing.HashCode.EMPTY;
+                    if (Files.exists(this.copyTo)) {
+                        if (this.md5()) {
+                            fileHash = Hashing.md5(this.copyTo);
+                        } else {
+                            fileHash = Hashing.sha1(this.copyTo);
+                        }
+                    }
 
-                if (!fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
-                    this.copy();
+                    if (!fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
+                        this.copy();
+                    }
                 }
             }
 
@@ -496,8 +511,13 @@ public final class Download {
             FileUtils.createDirectory(this.to.getParent());
         }
 
-        Hashing.HashCode expected = Hashing.HashCode.fromString(this.getHash());
-        if (expected.equals(Hashing.HashCode.EMPTY)) {
+        Hashing.HashCode expected = null;
+
+        if (this.fingerprint == null) {
+            expected = Hashing.HashCode.fromString(this.getHash());
+        }
+
+        if (expected != null && expected.equals(Hashing.HashCode.EMPTY)) {
             this.downloadDirect();
         } else {
             boolean downloaded = this.downloadRec(1);
@@ -511,26 +531,41 @@ public final class Download {
                 }
 
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
-                LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                        + " hash of " + expected.toString() + " but got " + Hashing.sha1(this.to)
-                        + " instead. Copied to " + "FailedDownloads folder & cancelling install!");
+                if (fingerprint != null) {
+                    LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
+                            + " fingerprint of " + fingerprint.toString() + " but got " + Hashing.murmur(this.to)
+                            + " instead. Copied to FailedDownloads folder & cancelling install!");
+                } else {
+                    LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
+                            + " hash of " + expected.toString() + " but got " + Hashing.sha1(this.to)
+                            + " instead. Copied to FailedDownloads folder & cancelling install!");
+                }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);
                 }
             }
 
             if (downloaded && this.copyTo != null) {
-                Hashing.HashCode fileHash2 = Hashing.HashCode.EMPTY;
-                if (Files.exists(this.copyTo)) {
-                    if (this.md5()) {
-                        fileHash2 = Hashing.md5(this.to);
-                    } else {
-                        fileHash2 = Hashing.sha1(this.to);
+                if (this.fingerprint != null) {
+                    try {
+                        if (Hashing.murmur(this.copyTo) != this.fingerprint) {
+                            this.copy();
+                        }
+                    } catch (IOException ignored) {
                     }
-                }
+                } else {
+                    Hashing.HashCode fileHash2 = Hashing.HashCode.EMPTY;
+                    if (Files.exists(this.copyTo)) {
+                        if (this.md5()) {
+                            fileHash2 = Hashing.md5(this.copyTo);
+                        } else {
+                            fileHash2 = Hashing.sha1(this.copyTo);
+                        }
+                    }
 
-                if (!fileHash2.equals(expected)) {
-                    this.copy();
+                    if (!fileHash2.equals(expected)) {
+                        this.copy();
+                    }
                 }
             }
         }

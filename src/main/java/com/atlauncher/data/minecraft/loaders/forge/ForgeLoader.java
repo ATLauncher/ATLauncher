@@ -195,14 +195,15 @@ public class ForgeLoader implements Loader {
     }
 
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
-        java.lang.reflect.Type type = new TypeToken<APIResponse<List<ATLauncherApiForgeVersions>>>() {
+        java.lang.reflect.Type type = new TypeToken<APIResponse<List<ATLauncherApiForgeVersion>>>() {
         }.getType();
 
-        APIResponse<List<ATLauncherApiForgeVersions>> data = Download.build()
+        APIResponse<List<ATLauncherApiForgeVersion>> data = Download.build()
                 .setUrl(String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft)).asType(type);
 
-        return data.getData().stream().map(version -> new LoaderVersion(version.getVersion(), version.getRawVersion(),
-                version.isRecommended(), "Forge")).collect(Collectors.toList());
+        return data.getData().stream()
+                .map(version -> new LoaderVersion(version.version, version.raw_version, version.recommended, "Forge"))
+                .collect(Collectors.toList());
     }
 
     @Override
