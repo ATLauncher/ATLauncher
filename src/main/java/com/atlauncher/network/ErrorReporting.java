@@ -43,6 +43,10 @@ public final class ErrorReporting {
                     return false;
                 }
 
+                if (event.getMessage().contains("Permission denied: connect")) {
+                    return false;
+                }
+
                 sentEvents.add(event.getMessage());
                 return true;
             });
