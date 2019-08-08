@@ -6,3 +6,4 @@
 - Fix older MC versions of Curse packs not installing
 - [#371] Remove offline mode checks
 - Don't report network related exceptions
+- Put some defensive programming around offline users

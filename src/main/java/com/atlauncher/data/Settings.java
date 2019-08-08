@@ -342,10 +342,15 @@ public class Settings {
         try {
             MojangStatus status = com.atlauncher.network.Download.build().setUrl("https://status.mojang.com/check")
                     .asClass(MojangStatus.class);
+
+            if (status == null) {
+                minecraftSessionServerUp = false;
+                minecraftLoginServerUp = false;
+            }
+
             minecraftLoginServerUp = status.isAuthServerUp();
             minecraftSessionServerUp = status.isSessionServerUp();
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
             minecraftSessionServerUp = false;
             minecraftLoginServerUp = false;
         }

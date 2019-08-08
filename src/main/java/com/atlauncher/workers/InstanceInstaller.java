@@ -223,13 +223,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         return false;
     }
 
-    private void downloadPackVersionJson() {
+    private void downloadPackVersionJson() throws Exception {
         addPercent(5);
         fireTask(GetText.tr("Downloading Pack Version Definition"));
         fireSubProgressUnknown();
 
         this.packVersion = com.atlauncher.network.Download.build().cached()
                 .setUrl(this.pack.getJsonDownloadUrl(version.version)).asClass(com.atlauncher.data.json.Version.class);
+
+        if (this.packVersion == null) {
+            throw new Exception("Failed to download pack version definition");
+        }
 
         this.packVersion.compileColours();
 

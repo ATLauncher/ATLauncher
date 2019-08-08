@@ -643,6 +643,10 @@ public class InstanceInstallerDialog extends JDialog {
         Runnable r = () -> {
             Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.version), Version.class);
 
+            if (jsonVersion == null) {
+                return;
+            }
+
             loaderVersions.clear();
             loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
 
