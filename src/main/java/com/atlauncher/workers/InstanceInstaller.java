@@ -1002,11 +1002,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
 
-        this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser)
-                .forEach(mod -> pool.add(new com.atlauncher.network.Download().setUrl(mod.getDownloadUrl())
-                        .downloadTo(FileSystem.DOWNLOADS.resolve(mod.getFile())).hash(mod.md5)
-                        .fingerprint(mod.fingerprint).size(mod.filesize).withInstanceInstaller(this)
-                        .withHttpClient(httpClient)));
+        this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser).forEach(mod -> {
+            com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                    .setUrl(mod.getDownloadUrl()).downloadTo(FileSystem.DOWNLOADS.resolve(mod.getFile())).hash(mod.md5)
+                    .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient);
+
+            if (mod.fingerprint != null) {
+                download = download.fingerprint(mod.fingerprint);
+            }
+
+            pool.add(download);
+        });
 
         DownloadPool smallPool = pool.downsize();
 
