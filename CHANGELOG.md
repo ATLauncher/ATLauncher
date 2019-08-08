@@ -7,3 +7,4 @@
 - [#371] Remove offline mode checks
 - Don't report network related exceptions
 - Put some defensive programming around offline users
+- Fix removing semi public packs not working

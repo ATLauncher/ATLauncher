@@ -1640,7 +1640,7 @@ public class Settings {
 
     public void removePack(String packCode) {
         for (String code : this.addedPacks.split(",")) {
-            if (Hashing.md5(code).equals(Hashing.md5(packCode))) {
+            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
                 this.addedPacks = this.addedPacks.replace(code + ",", ""); // Remove the string
                 this.saveProperties();
                 this.refreshVanillaPacksPanel();
