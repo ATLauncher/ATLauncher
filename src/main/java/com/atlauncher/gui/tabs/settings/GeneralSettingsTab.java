@@ -21,14 +21,18 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.util.Locale;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -37,6 +41,7 @@ import org.mini2Dx.gettext.GetText;
 public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover languageLabel;
     private JComboBox<String> language;
+    private JButton translateButton;
     private JLabelWithHover themeLabel;
     private JComboBox<String> theme;
     private JLabelWithHover themeLabelRestart;
@@ -65,14 +70,23 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
                 GetText.tr("This specifies the language used by the Launcher."));
+        languageLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         add(languageLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JPanel languagePanel = new JPanel(new FlowLayout());
+
         language = new JComboBox<>(Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
-        add(language, gbc);
+        languagePanel.add(language);
+
+        translateButton = new JButton(GetText.tr("Help Translate"));
+        translateButton.addActionListener(e -> OS.openWebBrowser(Constants.CROWDIN_URL));
+        languagePanel.add(translateButton);
+
+        add(languagePanel, gbc);
 
         // Theme
 

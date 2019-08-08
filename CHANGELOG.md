@@ -1,10 +1,5 @@
 # Changelog
 
-## 3.3.1.2
+## 3.3.1.3
 
-- Fix add curse pack dialog being unusable if failed
-- Fix older MC versions of Curse packs not installing
-- [#371] Remove offline mode checks
-- Don't report network related exceptions
-- Put some defensive programming around offline users
-- Fix removing semi public packs not working
+- Add help translate button
