@@ -145,7 +145,8 @@ public class CursePackUtils {
             }
 
             if (manifest.projectID == null) {
-                LogManager.error("Cannot install as the project id was not specified in the manifest");
+                LogManager.error(
+                        "Cannot install as the project id was not specified in the manifest. Try using a link instead");
                 return false;
             }
 
