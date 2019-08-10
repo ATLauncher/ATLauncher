@@ -33,7 +33,6 @@ import com.atlauncher.data.ATLauncherApiCurseModpack;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.pack.CurseManifest;
-import com.atlauncher.data.nickymoe.NickyMoeGraphqlSlugResponse;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
@@ -41,8 +40,6 @@ import com.google.gson.reflect.TypeToken;
 import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.CacheControl;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class CursePackUtils {
     /**
