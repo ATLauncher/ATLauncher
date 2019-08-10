@@ -282,7 +282,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         loaderMeta.put("rawVersion", forgeVersionInfo.getData().raw_version);
         packVersion.loader.metadata = loaderMeta;
 
-        if (Utils.matchVersion(forgeVersionString, "1.13", false, true)) {
+        if (Utils.matchVersion(curseManifest.minecraft.version, "1.13", false, true)) {
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.Forge113Loader";
         } else {
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
