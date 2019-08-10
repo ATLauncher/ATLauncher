@@ -28,11 +28,15 @@ import java.util.regex.Pattern;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.data.APIResponse;
+import com.atlauncher.data.ATLauncherApiCurseModpack;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.nickymoe.NickyMoeGraphqlSlugResponse;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.network.Download;
+import com.google.gson.reflect.TypeToken;
 
 import org.zeroturnaround.zip.ZipUtil;
 
@@ -81,24 +85,24 @@ public class CursePackUtils {
             fileId = Integer.parseInt(matcher.group(2));
         }
 
-        NickyMoeGraphqlSlugResponse modInfo = new Download()
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
-                        "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
-                                + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
-                .setUrl("https://curse.nikky.moe/graphql")
-                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                .asClass(NickyMoeGraphqlSlugResponse.class);
+        java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiCurseModpack>>() {
+        }.getType();
 
-        if (modInfo == null || modInfo.data == null || modInfo.data.addons.size() == 0) {
+        APIResponse<ATLauncherApiCurseModpack> curseModpackInfo = com.atlauncher.network.Download.build()
+                .setUrl(String.format("%scurse-modpack/%s", Constants.API_BASE_URL, packSlug))
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asType(type);
+
+        if (curseModpackInfo.wasError() || curseModpackInfo.getData() == null
+                || curseModpackInfo.getData().id == null) {
             LogManager.error(
                     "Cannot install as we couldn't convert the slug to a project id. Try using a zip file download instead.");
             return false;
         }
 
-        projectId = modInfo.data.addons.get(0).id;
+        projectId = curseModpackInfo.getData().id;
 
         if (fileId == null) {
-            fileId = modInfo.data.addons.get(0).defaultFileId;
+            fileId = curseModpackInfo.getData().defaultFileId;
         }
 
         if (projectId == null || fileId == null) {
