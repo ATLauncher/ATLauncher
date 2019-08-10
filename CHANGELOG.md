@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.3.1.3
+## 3.3.1.4
 
-- Add help translate button
-- Fix packs not downloading mods due to expecting a fingerprint
+- Add in some more error checking for project id's from slugs

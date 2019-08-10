@@ -89,7 +89,7 @@ public class CursePackUtils {
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
                 .asClass(NickyMoeGraphqlSlugResponse.class);
 
-        if (modInfo == null) {
+        if (modInfo == null || modInfo.data == null || modInfo.data.addons.size() == 0) {
             LogManager.error(
                     "Cannot install as we couldn't convert the slug to a project id. Try using a zip file download instead.");
             return false;
