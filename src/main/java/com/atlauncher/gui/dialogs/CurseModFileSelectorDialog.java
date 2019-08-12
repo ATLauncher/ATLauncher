@@ -42,6 +42,7 @@ import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.gui.card.CurseFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
@@ -261,6 +262,9 @@ public class CurseModFileSelectorDialog extends JDialog {
         filesDropdown.setVisible(true);
 
         Runnable r = () -> {
+            LoaderVersion loaderVersion = (this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
+                    : this.instance.getLoaderVersion());
+
             files.addAll(CurseApi.getFilesForMod(mod.id).stream()
                     .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
                     .filter(file -> mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
@@ -279,14 +283,12 @@ public class CurseModFileSelectorDialog extends JDialog {
                 String fileName = version.fileName.toLowerCase();
                 String displayName = version.displayName.toLowerCase();
 
-                if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
-                        : this.instance.getLoaderVersion()).isFabric()) {
+                if (loaderVersion != null && loaderVersion.isFabric()) {
                     return !displayName.contains("-forge-") && !displayName.contains("(forge)")
                             && !displayName.contains("[forge") && !fileName.contains("forgemod");
                 }
 
-                if (!(this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
-                        : this.instance.getLoaderVersion()).isFabric()) {
+                if (loaderVersion != null && !loaderVersion.isFabric()) {
                     return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
                             && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
                 }

@@ -38,6 +38,7 @@ import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.gui.card.CurseModCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
@@ -56,7 +57,7 @@ public final class AddModsDialog extends JDialog {
     private JPanel topPanel = new JPanel(new BorderLayout());
     private JTextField searchField = new JTextField(16);
     private JButton searchButton = new JButton(GetText.tr("Search"));
-    private JComboBox<String> sectionComboBox = new JComboBox<>(new String[] { "Mods", "Resource Packs", "Worlds" });
+    private JComboBox<String> sectionComboBox = new JComboBox<>();
     private JButton installFabricApiButton = new JButton("Install Fabric API");
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -73,6 +74,13 @@ public final class AddModsDialog extends JDialog {
         this.setPreferredSize(new Dimension(550, 450));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        if (instance.installedWithLoaderVersion()) {
+            sectionComboBox.addItem("Mods");
+        }
+
+        sectionComboBox.addItem("Resource Packs");
+        sectionComboBox.addItem("Worlds");
 
         setupComponents();
 
@@ -92,6 +100,13 @@ public final class AddModsDialog extends JDialog {
         this.setPreferredSize(new Dimension(550, 450));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        if (instanceV2.launcher.loaderVersion != null) {
+            sectionComboBox.addItem("Mods");
+        }
+
+        sectionComboBox.addItem("Resource Packs");
+        sectionComboBox.addItem("Worlds");
 
         setupComponents();
 
@@ -122,8 +137,10 @@ public final class AddModsDialog extends JDialog {
             }
         });
 
-        if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion : this.instance.getLoaderVersion())
-                .isFabric()
+        LoaderVersion loaderVersion = (this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
+                : this.instance.getLoaderVersion());
+
+        if (loaderVersion != null && loaderVersion.isFabric()
                 && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
                         .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
                         .count() == 0) {
