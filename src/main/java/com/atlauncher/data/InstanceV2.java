@@ -638,12 +638,19 @@ public class InstanceV2 extends MinecraftVersion {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
                 ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
-                : this.getRoot().resolve("mods").resolve(file.fileName);
+                : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID
+                        ? this.getRoot().resolve("saves").resolve(file.fileName)
+                        : this.getRoot().resolve("mods").resolve(file.fileName));
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
-                .downloadTo(downloadLocation).size(file.fileLength).copyTo(finalLocation);
+                .downloadTo(downloadLocation).size(file.fileLength);
 
-        if (Files.exists(finalLocation)) {
-            FileUtils.delete(finalLocation);
+        if (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID) {
+            download = download.unzipTo(this.getRoot().resolve("saves"));
+        } else {
+            download = download.copyTo(finalLocation);
+            if (Files.exists(finalLocation)) {
+                FileUtils.delete(finalLocation);
+            }
         }
 
         if (download.needToDownload()) {
@@ -675,7 +682,8 @@ public class InstanceV2 extends MinecraftVersion {
         // add this mod
         this.launcher.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
                 mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
-                        : Type.mods,
+                        : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID ? Type.worlds
+                                : Type.mods),
                 null, mod.summary, false, true, true, mod.id, file.id));
 
         this.save();

@@ -56,7 +56,7 @@ public final class AddModsDialog extends JDialog {
     private JPanel topPanel = new JPanel(new BorderLayout());
     private JTextField searchField = new JTextField(16);
     private JButton searchButton = new JButton(GetText.tr("Search"));
-    private JComboBox<String> sectionComboBox = new JComboBox<>(new String[] { "Mods", "Resource Packs" });
+    private JComboBox<String> sectionComboBox = new JComboBox<>(new String[] { "Mods", "Resource Packs", "Worlds" });
     private JButton installFabricApiButton = new JButton("Install Fabric API");
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -217,6 +217,10 @@ public final class AddModsDialog extends JDialog {
         new Thread(() -> {
             if (((String) sectionComboBox.getSelectedItem()).equals("Resource Packs")) {
                 setMods(CurseApi.searchResourcePacks(query, page));
+            } else if (((String) sectionComboBox.getSelectedItem()).equals("Worlds")) {
+                setMods(CurseApi.searchWorlds(
+                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
+                        page));
             } else {
                 if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                         : this.instance.getLoaderVersion()).isFabric()) {

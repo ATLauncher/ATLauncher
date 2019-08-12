@@ -18,7 +18,7 @@
 package com.atlauncher.data;
 
 public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 3, 1, 4);
+    public static final LauncherVersion VERSION = new LauncherVersion(3, 3, 2, 0);
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";
@@ -34,6 +34,7 @@ public class Constants {
     public static final int CURSE_FABRIC_MOD_ID = 306612;
     public static final int CURSE_MODS_SECTION_ID = 6;
     public static final int CURSE_RESOURCE_PACKS_SECTION_ID = 12;
+    public static final int CURSE_WORLDS_SECTION_ID = 17;
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String DOWNLOAD_SERVER = "https://download.nodecdn.net/containers/atl";

@@ -65,6 +65,10 @@ public class CurseApi {
         return null;
     }
 
+    public static List<CurseMod> searchWorlds(String gameVersion, String query, int page) {
+        return searchCurse(gameVersion, Constants.CURSE_WORLDS_SECTION_ID, query, page, 0);
+    }
+
     public static List<CurseMod> searchResourcePacks(String query, int page) {
         return searchCurse(Constants.CURSE_RESOURCE_PACKS_SECTION_ID, query, page, 0);
     }

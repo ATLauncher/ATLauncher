@@ -1721,12 +1721,21 @@ public class Instance implements Cloneable {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         File finalLocation = new File(mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
                 ? this.getResourcePacksDirectory()
-                : this.getModsDirectory(), file.fileName);
+                : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID
+                        ? FileSystem.DOWNLOADS.toFile()
+                        : this.getModsDirectory()),
+                file.fileName);
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
-                .downloadTo(downloadLocation).size(file.fileLength).copyTo(finalLocation.toPath());
+                .downloadTo(downloadLocation).size(file.fileLength);
 
-        if (finalLocation.exists()) {
-            Utils.delete(finalLocation);
+        if (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID) {
+            download = download.unzipTo(this.getSavesDirectory().toPath());
+        } else {
+            download = download.copyTo(finalLocation.toPath());
+
+            if (finalLocation.exists()) {
+                Utils.delete(finalLocation);
+            }
         }
 
         if (download.needToDownload()) {
@@ -1758,7 +1767,7 @@ public class Instance implements Cloneable {
         // add this mod
         this.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
                 mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
-                        : Type.mods,
+                        : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID ? Type.worlds : Type.mods),
                 null, mod.summary, false, true, true, mod.id, file.id));
 
         this.save(false);
