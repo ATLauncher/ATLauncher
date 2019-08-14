@@ -1,0 +1,25 @@
+name: Java CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java_version: [1.8, 1.9, 1.10, 1.11, 1.12]
+
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Set up JDK ${{ matrix.java_version }}
+      uses: actions/setup-java@v1
+      with:
+        version: ${{ matrix.java_version }}
+        
+    - name: Test
+      run: ./gradlew test
+      
+    - name: Build
+      run: ./gradlew build
