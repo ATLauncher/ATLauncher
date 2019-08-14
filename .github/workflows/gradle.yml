@@ -18,6 +18,9 @@ jobs:
       with:
         version: ${{ matrix.java_version }}
         
+    - name: Marke gradle as executable
+      run: chmod a+x gradlew
+        
     - name: Test
       run: ./gradlew test
       
