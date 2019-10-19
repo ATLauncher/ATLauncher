@@ -207,7 +207,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             if (rememberField.isSelected()) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Security Warning"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "WARNING: By clicking Remember Password you potentially expose your password to bad people.<br/>This saves your encrypted password to disk and can be decrypted by bad people.<br/>Are you sure you want to do this?"))
+                                "Make sure you only do this on a computer you trust.<br/>If you do this on a shared computer, your password may be stolen.<br/>Do you still want to save your password?"))
                                 .build())
                         .setType(DialogManager.ERROR).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
                         .show();
