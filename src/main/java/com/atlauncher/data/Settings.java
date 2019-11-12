@@ -116,6 +116,7 @@ public class Settings {
     private boolean enableConsole; // If to show the console by default
     private boolean enableTrayIcon; // If to enable tray icon
     private boolean enableDiscordIntegration; // If to enable Discord integration
+    private boolean enableFeralGamemode; // If to enable Feral Gamemode
     private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
     private boolean enableAnalytics; // If to enable analytics
@@ -630,6 +631,8 @@ public class Settings {
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             this.enableDiscordIntegration = Boolean
                     .parseBoolean(properties.getProperty("enablediscordintegration", "true"));
+            this.enableFeralGamemode = Boolean
+                    .parseBoolean(properties.getProperty("enableferalgamemode", Boolean.toString(Utils.executableInPath("gamemoderun"))));
 
             String lang = properties.getProperty("language", "English");
             Language.setLanguage(lang);
@@ -806,6 +809,9 @@ public class Settings {
             this.enableDiscordIntegration = Boolean
                     .parseBoolean(properties.getProperty("enablediscordintegration", "true"));
 
+            this.enableFeralGamemode = Boolean
+                    .parseBoolean(properties.getProperty("enableferalgamemode", "true"));
+
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty("enableleaderboards", "false"));
 
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
@@ -922,6 +928,7 @@ public class Settings {
             properties.setProperty("enableconsole", (this.enableConsole) ? "true" : "false");
             properties.setProperty("enabletrayicon", (this.enableTrayIcon) ? "true" : "false");
             properties.setProperty("enablediscordintegration", (this.enableDiscordIntegration) ? "true" : "false");
+            properties.setProperty("enableferalgamemode", (this.enableFeralGamemode) ? "true" : "false");
             properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true" : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
             properties.setProperty("enableanalytics", (this.enableAnalytics) ? "true" : "false");
@@ -2176,6 +2183,10 @@ public class Settings {
         return this.enableDiscordIntegration;
     }
 
+    public boolean enableFeralGamemode() {
+        return this.enableFeralGamemode;
+    }
+
     public void setEnableConsole(boolean enableConsole) {
         this.enableConsole = enableConsole;
     }
@@ -2194,6 +2205,10 @@ public class Settings {
 
     public void setEnableDiscordIntegration(boolean enableDiscordIntegration) {
         this.enableDiscordIntegration = enableDiscordIntegration;
+    }
+
+    public void setEnableFeralGameMode(boolean enableFeralGamemode) {
+        this.enableFeralGamemode = enableFeralGamemode;
     }
 
     public boolean enableLeaderboards() {

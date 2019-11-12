@@ -58,6 +58,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JCheckBox enableTrayIcon;
     private JLabelWithHover enableDiscordIntegrationLabel;
     private JCheckBox enableDiscordIntegration;
+    private JLabelWithHover enableFeralGamemodeLabel;
+    private JCheckBox enableFeralGamemode;
     private JLabelWithHover enablePackTagsLabel;
     private JCheckBox enablePackTags;
 
@@ -238,12 +240,47 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
         add(enableDiscordIntegration, gbc);
 
+        // Enable Feral Gamemode
+        if (OS.isLinux()) {
+            boolean gameModeExistsInPath = Utils.executableInPath("gamemoderun");
+
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            enableFeralGamemodeLabel = new JLabelWithHover(GetText.tr("Enable Feral Gamemode") + "?", HELP_ICON,
+                    GetText.tr("This will enable Feral Gamemode for packs launched."));
+            add(enableFeralGamemodeLabel, gbc);
+
+            gbc.gridx++;
+            gbc.insets = FIELD_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            enableFeralGamemode = new JCheckBox();
+            if (App.settings.enableFeralGamemode()) {
+                enableFeralGamemode.setSelected(true);
+            }
+
+            if (! gameModeExistsInPath) {
+                enableFeralGamemodeLabel.setToolTipText(
+                    GetText.tr("This will enable Feral Gamemode for packs launched (disabled because gamemoderun not found in PATH, please install Feral Gamemode or add it to your PATH).")
+                );
+                enableFeralGamemodeLabel.setEnabled(false);
+
+                enableFeralGamemode.setEnabled(false);
+                enableFeralGamemode.setSelected(false);
+            }
+            add(enableFeralGamemode, gbc);
+        }
+
+        // Pack tags
+
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enablePackTagsLabel = new JLabelWithHover(GetText.tr("Enable Pack Tags"), HELP_ICON,
-                GetText.tr("Pack tags shows you if a pack is public, semi public or private"));
+            GetText.tr("Pack tags shows you if a pack is public, semi public or private")
+        );
         add(enablePackTagsLabel, gbc);
 
         gbc.gridx++;
@@ -275,6 +312,13 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.setEnableConsole(enableConsole.isSelected());
         App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
         App.settings.setEnableDiscordIntegration(enableDiscordIntegration.isSelected());
+
+        if (OS.isLinux()) {
+            App.settings.setEnableFeralGameMode(enableFeralGamemode.isSelected());
+        } else {
+            App.settings.setEnableFeralGameMode(false);
+        }
+
         App.settings.setPackTags(enablePackTags.isSelected());
     }
 
