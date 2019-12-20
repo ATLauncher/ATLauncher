@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -265,12 +266,17 @@ public class CurseModFileSelectorDialog extends JDialog {
             LoaderVersion loaderVersion = (this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                     : this.instance.getLoaderVersion());
 
-            files.addAll(CurseApi.getFilesForMod(mod.id).stream()
-                    .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
-                    .filter(file -> mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
-                            || file.gameVersion.contains(
-                                    this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()))
-                    .collect(Collectors.toList()));
+            Stream<CurseFile> curseFilesStream = CurseApi.getFilesForMod(mod.id).stream()
+                    .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
+
+            if (!App.settings.disabledAddModRestrictions()) {
+                curseFilesStream = curseFilesStream.filter(file -> App.settings.disabledAddModRestrictions()
+                        || mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
+                        || file.gameVersion.contains(
+                                this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+            }
+
+            files.addAll(curseFilesStream.collect(Collectors.toList()));
 
             // ensures that font width is taken into account
             for (CurseFile file : files) {
@@ -278,23 +284,27 @@ public class CurseModFileSelectorDialog extends JDialog {
                         getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 100);
             }
 
-            // try to filter out non compatable mods
-            files.stream().filter(version -> {
-                String fileName = version.fileName.toLowerCase();
-                String displayName = version.displayName.toLowerCase();
+            // try to filter out non compatable mods (Forge on Fabric and vice versa)
+            if (App.settings.disabledAddModRestrictions()) {
+                files.stream().forEach(version -> filesDropdown.addItem(version));
+            } else {
+                files.stream().filter(version -> {
+                    String fileName = version.fileName.toLowerCase();
+                    String displayName = version.displayName.toLowerCase();
 
-                if (loaderVersion != null && loaderVersion.isFabric()) {
-                    return !displayName.contains("-forge-") && !displayName.contains("(forge)")
-                            && !displayName.contains("[forge") && !fileName.contains("forgemod");
-                }
+                    if (loaderVersion != null && loaderVersion.isFabric()) {
+                        return !displayName.contains("-forge-") && !displayName.contains("(forge)")
+                                && !displayName.contains("[forge") && !fileName.contains("forgemod");
+                    }
 
-                if (loaderVersion != null && !loaderVersion.isFabric()) {
-                    return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
-                            && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
-                }
+                    if (loaderVersion != null && !loaderVersion.isFabric()) {
+                        return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
+                                && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
+                    }
 
-                return true;
-            }).forEach(version -> filesDropdown.addItem(version));
+                    return true;
+                }).forEach(version -> filesDropdown.addItem(version));
+            }
 
             if (filesDropdown.getItemCount() == 0) {
                 DialogManager.okDialog().setParent(CurseModFileSelectorDialog.this).setTitle("No files found")
