@@ -161,9 +161,9 @@ msgstr ""
 #: src\main\java\com\atlauncher\data\InstanceV2.java:592
 #: src\main\java\com\atlauncher\data\json\Messages.java:52
 #: src\main\java\com\atlauncher\data\json\Messages.java:73
-#: src\main\java\com\atlauncher\data\Settings.java:183
-#: src\main\java\com\atlauncher\data\Settings.java:246
-#: src\main\java\com\atlauncher\data\Settings.java:265
+#: src\main\java\com\atlauncher\data\Settings.java:184
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
 #: src\main\java\com\atlauncher\managers\DialogManager.java:78
 #: src\main\java\com\atlauncher\managers\DialogManager.java:86
 msgid "Ok"
@@ -306,12 +306,12 @@ msgid ""
 "ATLauncher which will not stop the server."
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:179
-#: src\main\java\com\atlauncher\data\Settings.java:261
+#: src\main\java\com\atlauncher\data\Settings.java:180
+#: src\main\java\com\atlauncher\data\Settings.java:262
 msgid "Unsupported Java Version"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:180
+#: src\main\java\com\atlauncher\data\Settings.java:181
 msgid ""
 "You're using an unsupported version of Java. You need to upgrade your Java "
 "to at minimum Java 8 version 101.<br/><br/>The launcher will not start until "
@@ -320,35 +320,35 @@ msgid ""
 ">Click ok to open the Java download page and close the launcher."
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:226
+#: src\main\java\com\atlauncher\data\Settings.java:227
 msgid "Running 32 Bit Java on 64 Bit Windows"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:227
+#: src\main\java\com\atlauncher\data\Settings.java:228
 msgid ""
 "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/"
 "><br/>This will cause severe issues playing all packs if not fixed.<br/><br/"
 ">Do you want to close the launcher and learn how to fix this issue now?"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:242
+#: src\main\java\com\atlauncher\data\Settings.java:243
 msgid "Warning! You may not be able to play Minecraft"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:243
+#: src\main\java\com\atlauncher\data\Settings.java:244
 msgid ""
 "You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you "
 "have issues playing some packs, you may need to install Java 8 and set it to "
 "be used in the launchers java settings"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:246
-#: src\main\java\com\atlauncher\data\Settings.java:265
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
 msgid "Download"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:247
-#: src\main\java\com\atlauncher\data\Settings.java:266
+#: src\main\java\com\atlauncher\data\Settings.java:248
+#: src\main\java\com\atlauncher\data\Settings.java:267
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:213
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:413
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:492
@@ -358,7 +358,7 @@ msgstr ""
 msgid "Don't Remind Me Again"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:262
+#: src\main\java\com\atlauncher\data\Settings.java:263
 msgid ""
 "You're using an unsupported version of Java. You should upgrade your Java to "
 "at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load "
@@ -366,25 +366,25 @@ msgid ""
 "page"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:397
 #: src\main\java\com\atlauncher\data\Settings.java:398
+#: src\main\java\com\atlauncher\data\Settings.java:399
 msgid "Downloading Launcher Update"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:484
 #: src\main\java\com\atlauncher\data\Settings.java:485
+#: src\main\java\com\atlauncher\data\Settings.java:486
 msgid "Downloading Updates"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:532
+#: src\main\java\com\atlauncher\data\Settings.java:533
 msgid "Updating Launcher. Please Wait"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:613
+#: src\main\java\com\atlauncher\data\Settings.java:614
 msgid "Cannot create the config file"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Settings.java:615
+#: src\main\java\com\atlauncher\data\Settings.java:616
 msgid ""
 "Make sure you're running the Launcher from somewhere with write permissions "
 "for your user account such as your Home/Users folder or desktop."
@@ -1581,7 +1581,7 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:92
 #: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:166
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:74
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:76
 msgid "Language"
 msgstr ""
 
@@ -1682,9 +1682,9 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:209
 msgid ""
-"Make sure you only do this on a computer you trust.<br/>If you do " 
-"this on a shared computer, your password may be stolen.<br/>Do you "
-"still want to save your password? "
+"Make sure you only do this on a computer you trust.<br/>If you do this on a "
+"shared computer, your password may be stolen.<br/>Do you still want to save "
+"your password?"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:239
@@ -1816,69 +1816,69 @@ msgstr ""
 msgid "Backups"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:75
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:77
 msgid "This specifies the language used by the Launcher."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:88
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:90
 msgid "Help Translate"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:102
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:104
 msgid "Changing this setting will automatically restart the launcher."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:104
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:106
 msgid "Theme"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:105
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:107
 msgid "This sets the theme that the launcher will use."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:132
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:134
 msgid "Date Format"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:132
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:134
 msgid ""
 "This controls the format that dates are displayed in the launcher with the "
 "value dd meaning the day, M being the month and yyy being the year."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:154
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:156
 msgid "Sort Packs Alphabetically"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:155
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:157
 msgid ""
 "If you want to sort the packs in the packs panel alphabetically by default "
 "or not."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:173
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:175
 msgid "Keep Launcher Open"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:174
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:176
 msgid ""
 "This determines if ATLauncher should stay open or exit after Minecraft has "
 "exited"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:192
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:194
 msgid "Enable Console"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:193
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:195
 msgid "If you want the console to be visible when opening the Launcher."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:211
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:213
 msgid "Enable Tray Menu"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:211
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:213
 msgid ""
 "The Tray Menu is a little icon that shows in your system taskbar which<br/"
 ">allows you to perform different functions to do various things with the "
@@ -1886,27 +1886,42 @@ msgid ""
 "closing ATLauncher."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:231
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:233
 msgid "Enable Discord Integration"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:232
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:234
 msgid "This will enable showing which pack you're playing in Discord."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:250
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:255
+msgid "Enable Feral Gamemode"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:256
+msgid "This will enable Feral Gamemode for packs launched."
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:269
+msgid ""
+"This will enable Feral Gamemode for packs launched (disabled because "
+"gamemoderun not found in PATH, please install Feral Gamemode or add it to "
+"your PATH)."
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:285
 msgid "Enable Pack Tags"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:251
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:286
 msgid "Pack tags shows you if a pack is public, semi public or private"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:267
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:303
 msgid "Disable Add Mod Restrictions"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:268
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:304
 msgid ""
 "This will allow you to disable the restrictions in place to prevent you from "
 "installing mods from Curse that are not for your current Minecraft version "
@@ -1915,7 +1930,7 @@ msgid ""
 "(if any) that you're on."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:308
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:351
 msgid "General"
 msgstr ""
 
