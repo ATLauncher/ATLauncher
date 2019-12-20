@@ -50,6 +50,8 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -1646,5 +1648,11 @@ public class Utils {
         }
 
         return null;
+    }
+
+    public static boolean executableInPath(String executableName) {
+          return java.util.stream.Stream.of(System.getenv("PATH").split(java.util.regex.Pattern.quote(File.pathSeparator)))
+            .map(Paths::get)
+            .anyMatch(path -> Files.exists(path.resolve(executableName)) && Files.isExecutable(path.resolve(executableName)));
     }
 }

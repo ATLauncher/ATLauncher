@@ -42,6 +42,7 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
@@ -376,6 +377,10 @@ public class MCLauncher {
         }
 
         List<String> arguments = new ArrayList<>();
+
+        if (OS.isLinux() && App.settings.enableFeralGamemode() && Utils.executableInPath("gamemoderun")) {
+          arguments.add("gamemoderun");
+        }
 
         String path = javaPath + File.separator + "bin" + File.separator + "java";
         if (OS.isWindows()) {
