@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -60,6 +61,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JCheckBox enableDiscordIntegration;
     private JLabelWithHover enablePackTagsLabel;
     private JCheckBox enablePackTags;
+    private JLabelWithHover disableAddModRestrictionsLabel;
+    private JCheckBox disableAddModRestrictions;
 
     public GeneralSettingsTab() {
         // Language
@@ -238,6 +241,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
         add(enableDiscordIntegration, gbc);
 
+        // Enable Pack Tags
+
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
@@ -252,6 +257,25 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         enablePackTags = new JCheckBox();
         enablePackTags.setSelected(App.settings.enabledPackTags());
         add(enablePackTags, gbc);
+
+        // Disable Curse Minecraft version restrictions
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        disableAddModRestrictionsLabel = new JLabelWithHover(GetText.tr("Disable Add Mod Restrictions"), HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr(
+                        "This will allow you to disable the restrictions in place to prevent you from installing mods from Curse that are not for your current Minecraft version or loader.<br/><br/>By disabling these restrictions, you can install any mod, so be sure that it's compatable with the Minecraft version and loader (if any) that you're on."))
+                        .build());
+        add(disableAddModRestrictionsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        disableAddModRestrictions = new JCheckBox();
+        disableAddModRestrictions.setSelected(App.settings.disabledAddModRestrictions());
+        add(disableAddModRestrictions, gbc);
     }
 
     public boolean needToReloadTheme() {
@@ -276,6 +300,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
         App.settings.setEnableDiscordIntegration(enableDiscordIntegration.isSelected());
         App.settings.setPackTags(enablePackTags.isSelected());
+        App.settings.setAddModRestrictions(disableAddModRestrictions.isSelected());
     }
 
     @Override

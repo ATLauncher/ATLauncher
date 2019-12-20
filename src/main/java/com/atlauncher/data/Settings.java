@@ -122,6 +122,7 @@ public class Settings {
     private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
     private boolean enableProxy = false; // If proxy is in use
     private boolean enablePackTags = false;
+    private boolean disableAddModRestrictions = false;
     private boolean enableModsBackups; // If mods should be backed up
     private String proxyHost; // The proxies host
     private int proxyPort; // The proxies port
@@ -626,6 +627,7 @@ public class Settings {
                 this.dateFormat = "dd/M/yyy";
             }
             this.enablePackTags = Boolean.parseBoolean(properties.getProperty("enablepacktags", "false"));
+            this.disableAddModRestrictions = Boolean.parseBoolean(properties.getProperty("disableaddmodrestrictions", "false"));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             this.enableDiscordIntegration = Boolean
@@ -690,6 +692,14 @@ public class Settings {
 
     public void setPackTags(boolean b) {
         this.enablePackTags = b;
+    }
+
+    public boolean disabledAddModRestrictions() {
+        return this.disableAddModRestrictions;
+    }
+
+    public void setAddModRestrictions(boolean b) {
+        this.disableAddModRestrictions = b;
     }
 
     /**
@@ -926,6 +936,7 @@ public class Settings {
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
             properties.setProperty("enableanalytics", (this.enableAnalytics) ? "true" : "false");
             properties.setProperty("enablepacktags", (this.enablePackTags) ? "true" : "false");
+            properties.setProperty("disableaddmodrestrictions", (this.disableAddModRestrictions) ? "true" : "false");
             properties.setProperty("enableserverchecker", (this.enableServerChecker) ? "true" : "false");
             properties.setProperty("enableopeneyereporting", (this.enableOpenEyeReporting) ? "true" : "false");
             properties.setProperty("enablemodsbackups", (this.enableModsBackups) ? "true" : "false");

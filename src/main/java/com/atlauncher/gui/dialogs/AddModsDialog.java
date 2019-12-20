@@ -236,18 +236,19 @@ public final class AddModsDialog extends JDialog {
                 setMods(CurseApi.searchResourcePacks(query, page));
             } else if (((String) sectionComboBox.getSelectedItem()).equals("Worlds")) {
                 setMods(CurseApi.searchWorlds(
-                        this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
-                        page));
+                        App.settings.disabledAddModRestrictions() ? null
+                                : (this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()),
+                        query, page));
             } else {
                 if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                         : this.instance.getLoaderVersion()).isFabric()) {
-                    setMods(CurseApi.searchModsForFabric(
-                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
-                            page));
+                    setMods(CurseApi.searchModsForFabric(App.settings.disabledAddModRestrictions() ? null
+                            : (this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()),
+                            query, page));
                 } else {
-                    setMods(CurseApi.searchMods(
-                            this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion(), query,
-                            page));
+                    setMods(CurseApi.searchMods(App.settings.disabledAddModRestrictions() ? null
+                            : (this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()),
+                            query, page));
                 }
             }
 
