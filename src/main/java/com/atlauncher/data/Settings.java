@@ -628,13 +628,19 @@ public class Settings {
                 this.dateFormat = "dd/M/yyy";
             }
             this.enablePackTags = Boolean.parseBoolean(properties.getProperty("enablepacktags", "false"));
-            this.disableAddModRestrictions = Boolean.parseBoolean(properties.getProperty("disableaddmodrestrictions", "false"));
+            this.disableAddModRestrictions = Boolean
+                    .parseBoolean(properties.getProperty("disableaddmodrestrictions", "false"));
             this.enableConsole = Boolean.parseBoolean(properties.getProperty("enableconsole", "true"));
             this.enableTrayIcon = Boolean.parseBoolean(properties.getProperty("enabletrayicon", "true"));
             this.enableDiscordIntegration = Boolean
                     .parseBoolean(properties.getProperty("enablediscordintegration", "true"));
-            this.enableFeralGamemode = Boolean
-                    .parseBoolean(properties.getProperty("enableferalgamemode", Boolean.toString(Utils.executableInPath("gamemoderun"))));
+
+            if (OS.isLinux()) {
+                this.enableFeralGamemode = Boolean.parseBoolean(properties.getProperty("enableferalgamemode",
+                        Boolean.toString(Utils.executableInPath("gamemoderun"))));
+            } else {
+                this.enableFeralGamemode = false;
+            }
 
             String lang = properties.getProperty("language", "English");
             Language.setLanguage(lang);
@@ -819,8 +825,7 @@ public class Settings {
             this.enableDiscordIntegration = Boolean
                     .parseBoolean(properties.getProperty("enablediscordintegration", "true"));
 
-            this.enableFeralGamemode = Boolean
-                    .parseBoolean(properties.getProperty("enableferalgamemode", "true"));
+            this.enableFeralGamemode = Boolean.parseBoolean(properties.getProperty("enableferalgamemode", "true"));
 
             this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty("enableleaderboards", "false"));
 

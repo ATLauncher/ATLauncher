@@ -1651,8 +1651,14 @@ public class Utils {
     }
 
     public static boolean executableInPath(String executableName) {
-          return java.util.stream.Stream.of(System.getenv("PATH").split(java.util.regex.Pattern.quote(File.pathSeparator)))
-            .map(Paths::get)
-            .anyMatch(path -> Files.exists(path.resolve(executableName)) && Files.isExecutable(path.resolve(executableName)));
+        try {
+            return java.util.stream.Stream
+                    .of(System.getenv("PATH").split(java.util.regex.Pattern.quote(File.pathSeparator)))
+                    .map(path -> path.replace("\"", "")).map(Paths::get)
+                    .anyMatch(path -> Files.exists(path.resolve(executableName))
+                            && Files.isExecutable(path.resolve(executableName)));
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
