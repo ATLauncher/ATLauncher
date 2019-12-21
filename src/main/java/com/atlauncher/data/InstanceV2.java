@@ -684,7 +684,7 @@ public class InstanceV2 extends MinecraftVersion {
                 mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
                         : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID ? Type.worlds
                                 : Type.mods),
-                null, mod.summary, false, true, true, mod.id, file.id));
+                null, mod.summary, false, true, true, mod, file));
 
         this.save();
 

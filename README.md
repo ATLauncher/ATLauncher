@@ -135,8 +135,15 @@ Revision should be incremented when there are no new features and only contains 
 previous minor.
 
 Build is used for beta releases allowing you to have higher version numbers but force users to
-update when the real
-release comes.
+update when the real release comes.
+
+### Updating The Version
+
+The version should be updated manually in the following files:
+
+- CHANGELOG.md
+- build.gradle
+- /src/main/java/com/atlauncher/data/Constants.java
 
 ## Translating
 

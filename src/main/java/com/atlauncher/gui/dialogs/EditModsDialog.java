@@ -289,7 +289,7 @@ public class EditModsDialog extends JDialog {
                                 instanceV2.launcher.mods.add(mod);
                             } else {
                                 instance.getInstalledMods().add(mod);
-                                disabledMods.add(new ModsJCheckBox(mod));
+                                disabledMods.add(new ModsJCheckBox(mod, this));
                             }
                             reload = true;
                         }
@@ -363,7 +363,7 @@ public class EditModsDialog extends JDialog {
             ModsJCheckBox checkBox = null;
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
 
-            checkBox = new ModsJCheckBox(mod);
+            checkBox = new ModsJCheckBox(mod, this);
             if (mod.isDisabled()) {
                 checkBox.setBounds(0, (dCount * 20), Math.max(nameSize + 23, 250), 20);
                 disabledMods.add(checkBox);

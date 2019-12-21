@@ -31,6 +31,7 @@ import java.util.jar.JarOutputStream;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
@@ -53,10 +54,12 @@ public class DisableableMod implements Serializable {
     public boolean wasSelected = true; // Default to it being selected on install
     public Integer curseModId;
     public Integer curseFileId;
+    public CurseMod curseMod;
+    public CurseFile curseFile;
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseModId,
-            Integer curseFileId) {
+            Integer curseFileId, CurseMod curseMod, CurseFile curseFile) {
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -69,16 +72,34 @@ public class DisableableMod implements Serializable {
         this.wasSelected = wasSelected;
         this.curseModId = curseModId;
         this.curseFileId = curseFileId;
+        this.curseMod = curseMod;
+        this.curseFile = curseFile;
+    }
+
+    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, CurseMod curseMod,
+            CurseFile curseFile) {
+        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected, curseMod.id,
+                curseFile.id, curseMod, curseFile);
+    }
+
+    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseModId,
+            Integer curseFileId) {
+        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected, curseModId,
+                curseFileId, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected, null, null);
+        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected, null, null,
+                null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, true, null, null);
+        this(name, version, optional, file, type, colour, description, disabled, userAdded, true, null, null, null,
+                null);
     }
 
     public DisableableMod() {
@@ -129,6 +150,10 @@ public class DisableableMod implements Serializable {
 
     public boolean isFromCurse() {
         return this.curseModId != null && this.curseFileId != null;
+    }
+
+    public boolean hasFullCurseInformation() {
+        return this.curseMod != null && this.curseFile != null;
     }
 
     public Integer getCurseModId() {

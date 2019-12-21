@@ -1767,8 +1767,9 @@ public class Instance implements Cloneable {
         // add this mod
         this.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
                 mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
-                        : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID ? Type.worlds : Type.mods),
-                null, mod.summary, false, true, true, mod.id, file.id));
+                        : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID ? Type.worlds
+                                : Type.mods),
+                null, mod.summary, false, true, true, mod, file));
 
         this.save(false);
 
