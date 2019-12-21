@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.3.3.0
+## 3.3.4.0
 
-- Add right click menu on Edit Mods dialog
-- Fix issue with quotes in path causing runtime issues
+- Remove files from Edit Mods Dialog that don't exists anymore

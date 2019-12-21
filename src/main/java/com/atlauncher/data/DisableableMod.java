@@ -245,6 +245,22 @@ public class DisableableMod implements Serializable {
         return false;
     }
 
+    public boolean doesFileExist(Instance instance) {
+        if (isDisabled()) {
+            return getDisabledFile(instance).exists();
+        }
+
+        return getFile(instance).exists();
+    }
+
+    public boolean doesFileExist(InstanceV2 instanceV2) {
+        if (isDisabled()) {
+            return getDisabledFile(instanceV2).exists();
+        }
+
+        return getFile(instanceV2).exists();
+    }
+
     public File getDisabledFile(Instance instance) {
         return new File(instance.getDisabledModsDirectory(), this.file);
     }

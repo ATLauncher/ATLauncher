@@ -359,7 +359,12 @@ public class EditModsDialog extends JDialog {
         disabledMods = new ArrayList<>();
         int dCount = 0;
         int eCount = 0;
-        for (DisableableMod mod : mods) {
+
+        List<DisableableMod> validMods = mods.stream()
+                .filter(mod -> instanceV2 != null ? mod.doesFileExist(instanceV2) : mod.doesFileExist(instance))
+                .collect(Collectors.toList());
+
+        for (DisableableMod mod : validMods) {
             ModsJCheckBox checkBox = null;
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
 
@@ -374,6 +379,7 @@ public class EditModsDialog extends JDialog {
                 eCount++;
             }
         }
+
         for (ModsJCheckBox checkBox : enabledMods) {
             checkBox.addItemListener(e -> {
                 if (e.getStateChange() == ItemEvent.SELECTED || e.getStateChange() == ItemEvent.DESELECTED) {
