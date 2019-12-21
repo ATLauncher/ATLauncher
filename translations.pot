@@ -60,13 +60,13 @@ msgstr ""
 msgid "Couldn't login to Minecraft servers"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\DisableableMod.java:318
-#: src\main\java\com\atlauncher\data\DisableableMod.java:333
+#: src\main\java\com\atlauncher\data\DisableableMod.java:343
+#: src\main\java\com\atlauncher\data\DisableableMod.java:358
 msgid "No Updates Found"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\DisableableMod.java:319
-#: src\main\java\com\atlauncher\data\DisableableMod.java:334
+#: src\main\java\com\atlauncher\data\DisableableMod.java:344
+#: src\main\java\com\atlauncher\data\DisableableMod.java:359
 msgid "No updates were found for {0}."
 msgstr ""
 
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Instance {0} Saved!"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\Instance.java:1775
+#: src\main\java\com\atlauncher\data\Instance.java:1776
 msgid "Installed"
 msgstr ""
 
@@ -421,6 +421,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:571
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:89
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:554
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:187
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:328
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:187
 msgid "Reinstall"
@@ -756,6 +757,7 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:55
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:183
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:170
 msgid "Remove"
 msgstr ""
 
@@ -914,6 +916,23 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
 msgid "Successfully cleared the logs."
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:138
+msgid "Open On Curse"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Enable"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Disable"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:199
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
+msgid "Check For Updates"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:46
@@ -1233,10 +1252,6 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:307
 msgid "Add Curse Mod"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
-msgid "Check For Updates"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:334
