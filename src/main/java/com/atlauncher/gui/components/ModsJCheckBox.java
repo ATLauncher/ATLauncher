@@ -144,7 +144,8 @@ public class ModsJCheckBox extends JCheckBox {
             contextMenu.add(new JPopupMenu.Separator());
         }
 
-        JMenuItem enableDisableButton = new JMenuItem(GetText.tr(getDisableableMod().disabled ? "Enable" : "Disable"));
+        JMenuItem enableDisableButton = new JMenuItem(
+                getDisableableMod().disabled ? GetText.tr("Enable") : GetText.tr("Disable"));
         enableDisableButton.addActionListener(e -> {
             if (dialog.instance != null) {
                 if (getDisableableMod().disabled) {
