@@ -167,6 +167,26 @@ public class ModsJCheckBox extends JCheckBox {
 
         contextMenu.add(new JPopupMenu.Separator());
 
+        JMenuItem showInFileExplorer = new JMenuItem(GetText.tr("Show In File Explorer"));
+        showInFileExplorer.addActionListener(e -> {
+            if (dialog.instance != null) {
+                if (getDisableableMod().disabled) {
+                    OS.openFileExplorer(getDisableableMod().getDisabledFile(dialog.instance).toPath());
+                } else {
+                    OS.openFileExplorer(getDisableableMod().getFile(dialog.instance).toPath());
+                }
+            } else if (dialog.instanceV2 != null) {
+                if (getDisableableMod().disabled) {
+                    OS.openFileExplorer(getDisableableMod().getDisabledFile(dialog.instanceV2).toPath());
+                } else {
+                    OS.openFileExplorer(getDisableableMod().getFile(dialog.instanceV2).toPath());
+                }
+            }
+        });
+        contextMenu.add(showInFileExplorer);
+
+        contextMenu.add(new JPopupMenu.Separator());
+
         JMenuItem remove = new JMenuItem(GetText.tr("Remove"));
         remove.addActionListener(e -> {
             if (dialog.instance != null) {

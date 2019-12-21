@@ -153,11 +153,21 @@ public enum OS {
      */
     public static void openFileExplorer(Path path) {
         try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                Desktop.getDesktop().open(path.toFile());
-            } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open"))
-                    || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
-                Runtime.getRuntime().exec("xdg-open " + path.toString());
+            if (!Files.isDirectory(path) && OS.isWindows()) {
+                new ProcessBuilder("explorer", "/select," + path.toAbsolutePath()).start();
+            } else {
+                Path pathToOpen = path;
+
+                if (!Files.isDirectory(path)) {
+                    pathToOpen = path.getParent();
+                }
+
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                    Desktop.getDesktop().open(pathToOpen.toFile());
+                } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open"))
+                        || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
+                    Runtime.getRuntime().exec("xdg-open " + pathToOpen.toString());
+                }
             }
         } catch (Exception e) {
             LogManager.logStackTrace("Error opening file explorer!", e);
