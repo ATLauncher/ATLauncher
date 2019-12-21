@@ -20,7 +20,6 @@ package com.atlauncher.utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -142,29 +141,6 @@ public class CursePackUtils {
 
             if (fileId != null) {
                 manifest.fileID = fileId;
-            }
-
-            if (manifest.projectID == null) {
-                LogManager.error(
-                        "Cannot install as the project id was not specified in the manifest. Try using a link instead");
-                return false;
-            }
-
-            if (manifest.fileID == null) {
-                List<CurseFile> versions = CurseApi.getFilesForMod(manifest.projectID);
-
-                CurseFile foundFile = versions.stream().filter(f -> {
-                    try {
-                        return f.fileName.equalsIgnoreCase(file.getName())
-                                || Hashing.murmur(file.toPath()) == f.packageFingerprint;
-                    } catch (IOException e) {
-                        return false;
-                    }
-                }).findFirst().orElse(null);
-
-                if (foundFile != null) {
-                    manifest.fileID = foundFile.id;
-                }
             }
 
             if (!manifest.manifestType.equals("minecraftModpack")) {

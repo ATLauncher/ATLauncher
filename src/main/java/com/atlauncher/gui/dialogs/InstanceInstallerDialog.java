@@ -142,15 +142,18 @@ public class InstanceInstallerDialog extends JDialog {
         } else if (object instanceof CurseManifest) {
             curseManifest = (CurseManifest) object;
 
-            CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
-
-            curseManifest.websiteUrl = cursePack.websiteUrl;
-
             pack = new Pack();
-            pack.id = curseManifest.projectID;
             pack.name = curseManifest.name;
-            pack.description = cursePack.summary;
-            pack.cursePack = cursePack;
+
+            if (curseManifest.projectID != null) {
+                CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
+
+                curseManifest.websiteUrl = cursePack.websiteUrl;
+
+                pack.id = curseManifest.projectID;
+                pack.description = cursePack.summary;
+                pack.cursePack = cursePack;
+            }
 
             PackVersion packVersion = new PackVersion();
             packVersion.version = curseManifest.version;

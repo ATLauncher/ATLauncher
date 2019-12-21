@@ -1160,7 +1160,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadInstanceImage() throws Exception {
         addPercent(5);
 
-        if (curseManifest == null) {
+        if (curseManifest == null || this.pack.cursePack == null) {
             return;
         }
 
