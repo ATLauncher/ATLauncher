@@ -24,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -44,6 +45,7 @@ import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseApi;
 
 import org.mini2Dx.gettext.GetText;
@@ -57,8 +59,12 @@ public final class AddModsDialog extends JDialog {
     private JPanel topPanel = new JPanel(new BorderLayout());
     private JTextField searchField = new JTextField(16);
     private JButton searchButton = new JButton(GetText.tr("Search"));
-    private JComboBox<String> sectionComboBox = new JComboBox<>();
-    private JButton installFabricApiButton = new JButton("Install Fabric API");
+    private JComboBox<ComboItem> sectionComboBox = new JComboBox<>();
+    private JComboBox<ComboItem> sortComboBox = new JComboBox<>();
+
+    // #. Fabric API is the name of a mod, so should be left untranslated
+    private JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
+
     private JScrollPane jscrollPane;
     private JButton nextButton;
     private JButton prevButton;
@@ -76,11 +82,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instance.installedWithLoaderVersion()) {
-            sectionComboBox.addItem("Mods");
+            sectionComboBox.addItem(new ComboItem("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem("Resource Packs");
-        sectionComboBox.addItem("Worlds");
+        sectionComboBox.addItem(new ComboItem("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem("Worlds", GetText.tr("Worlds")));
+
+        sortComboBox.addItem(new ComboItem("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
@@ -102,11 +112,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instanceV2.launcher.loaderVersion != null) {
-            sectionComboBox.addItem("Mods");
+            sectionComboBox.addItem(new ComboItem("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem("Resource Packs");
-        sectionComboBox.addItem("Worlds");
+        sectionComboBox.addItem(new ComboItem("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem("Worlds", GetText.tr("Worlds")));
+
+        sortComboBox.addItem(new ComboItem("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
@@ -120,11 +134,14 @@ public final class AddModsDialog extends JDialog {
     private void setupComponents() {
         Analytics.sendScreenView("Add Mods Dialog");
 
+        this.topPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
         JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         searchButtonsPanel.add(this.searchField);
         searchButtonsPanel.add(this.searchButton);
         searchButtonsPanel.add(this.sectionComboBox);
+        searchButtonsPanel.add(this.sortComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
             CurseMod mod = CurseApi.getModById(Constants.CURSE_FABRIC_MOD_ID);
@@ -144,11 +161,12 @@ public final class AddModsDialog extends JDialog {
                 && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
                         .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
                         .count() == 0) {
-            searchButtonsPanel.add(this.installFabricApiButton);
 
             JLabel fabricApiWarningLabel = new JLabel(
                     "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
+
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
+            this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
         }
 
         this.topPanel.add(searchButtonsPanel, BorderLayout.NORTH);
@@ -181,6 +199,14 @@ public final class AddModsDialog extends JDialog {
         this.add(bottomPanel, BorderLayout.SOUTH);
 
         this.sectionComboBox.addActionListener(e -> {
+            if (searchField.getText().isEmpty()) {
+                loadDefaultMods();
+            } else {
+                searchForMods();
+            }
+        });
+
+        this.sortComboBox.addActionListener(e -> {
             if (searchField.getText().isEmpty()) {
                 loadDefaultMods();
             } else {
@@ -232,23 +258,30 @@ public final class AddModsDialog extends JDialog {
         String query = searchField.getText();
 
         new Thread(() -> {
-            if (((String) sectionComboBox.getSelectedItem()).equals("Resource Packs")) {
-                setMods(CurseApi.searchResourcePacks(query, page));
-            } else if (((String) sectionComboBox.getSelectedItem()).equals("Worlds")) {
-                setMods(CurseApi.searchWorlds(
-                        App.settings.disabledAddModRestrictions() ? null
-                                : (this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()),
-                        query, page));
+            if (((ComboItem) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+                setMods(CurseApi.searchResourcePacks(query, page,
+                        ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
+            } else if (((ComboItem) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
+                setMods(CurseApi
+                        .searchWorlds(
+                                App.settings.disabledAddModRestrictions() ? null
+                                        : (this.instanceV2 != null ? this.instanceV2.id
+                                                : this.instance.getMinecraftVersion()),
+                                query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
             } else {
                 if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                         : this.instance.getLoaderVersion()).isFabric()) {
-                    setMods(CurseApi.searchModsForFabric(App.settings.disabledAddModRestrictions() ? null
-                            : (this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()),
-                            query, page));
+                    setMods(CurseApi.searchModsForFabric(
+                            App.settings.disabledAddModRestrictions() ? null
+                                    : (this.instanceV2 != null ? this.instanceV2.id
+                                            : this.instance.getMinecraftVersion()),
+                            query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
                 } else {
-                    setMods(CurseApi.searchMods(App.settings.disabledAddModRestrictions() ? null
-                            : (this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()),
-                            query, page));
+                    setMods(CurseApi.searchMods(
+                            App.settings.disabledAddModRestrictions() ? null
+                                    : (this.instanceV2 != null ? this.instanceV2.id
+                                            : this.instance.getMinecraftVersion()),
+                            query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
 

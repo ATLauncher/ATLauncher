@@ -36,18 +36,18 @@ import okhttp3.CacheControl;
  * Various utility methods for interacting with the Curse API.
  */
 public class CurseApi {
-    public static List<CurseMod> searchCurse(int sectionId, String query, int page, int categoryId) {
-        return searchCurse(null, sectionId, query, page, categoryId);
+    public static List<CurseMod> searchCurse(int sectionId, String query, int page, int categoryId, String sort) {
+        return searchCurse(null, sectionId, query, page, categoryId, sort);
     }
 
-    public static List<CurseMod> searchCurse(String gameVersion, int sectionId, String query, int page,
-            int categoryId) {
+    public static List<CurseMod> searchCurse(String gameVersion, int sectionId, String query, int page, int categoryId,
+            String sort) {
         try {
             String url = String.format(
-                    "%s/addon/search?gameId=432&categoryId=%d&sectionId=%s&searchFilter=%s&sort=Popularity&sortDescending=true&pageSize=%d&index=%d",
+                    "%s/addon/search?gameId=432&categoryId=%d&sectionId=%s&searchFilter=%s&sort=%s&sortDescending=true&pageSize=%d&index=%d",
                     Constants.CURSE_API_URL, categoryId, sectionId,
-                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()), Constants.CURSE_PAGINATION_SIZE,
-                    page * Constants.CURSE_PAGINATION_SIZE);
+                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()), sort.replace(" ", ""),
+                    Constants.CURSE_PAGINATION_SIZE, page * Constants.CURSE_PAGINATION_SIZE);
 
             if (gameVersion != null) {
                 url += "&gameVersion=" + gameVersion;
@@ -65,21 +65,26 @@ public class CurseApi {
         return null;
     }
 
-    public static List<CurseMod> searchWorlds(String gameVersion, String query, int page) {
-        return searchCurse(gameVersion, Constants.CURSE_WORLDS_SECTION_ID, query, page, 0);
+    public static List<CurseMod> searchCurse(String gameVersion, int sectionId, String query, int page,
+            int categoryId) {
+        return searchCurse(gameVersion, sectionId, query, page, categoryId, "Popularity");
     }
 
-    public static List<CurseMod> searchResourcePacks(String query, int page) {
-        return searchCurse(Constants.CURSE_RESOURCE_PACKS_SECTION_ID, query, page, 0);
+    public static List<CurseMod> searchWorlds(String gameVersion, String query, int page, String sort) {
+        return searchCurse(gameVersion, Constants.CURSE_WORLDS_SECTION_ID, query, page, 0, sort);
     }
 
-    public static List<CurseMod> searchMods(String gameVersion, String query, int page) {
-        return searchCurse(gameVersion, Constants.CURSE_MODS_SECTION_ID, query, page, 0);
+    public static List<CurseMod> searchResourcePacks(String query, int page, String sort) {
+        return searchCurse(Constants.CURSE_RESOURCE_PACKS_SECTION_ID, query, page, 0, sort);
     }
 
-    public static List<CurseMod> searchModsForFabric(String gameVersion, String query, int page) {
+    public static List<CurseMod> searchMods(String gameVersion, String query, int page, String sort) {
+        return searchCurse(gameVersion, Constants.CURSE_MODS_SECTION_ID, query, page, 0, sort);
+    }
+
+    public static List<CurseMod> searchModsForFabric(String gameVersion, String query, int page, String sort) {
         return searchCurse(gameVersion, Constants.CURSE_MODS_SECTION_ID, query, page,
-                Constants.CURSE_FABRIC_CATEGORY_ID);
+                Constants.CURSE_FABRIC_CATEGORY_ID, sort);
     }
 
     public static List<CurseFile> getFilesForMod(int modId) {

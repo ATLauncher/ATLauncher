@@ -29,10 +29,10 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:163
 #: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:167
 #: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:189
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:268
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:276
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:281
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:289
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:271
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:279
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:284
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:292
 #: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:134
 #: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:140
 #: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:143
@@ -60,13 +60,13 @@ msgstr ""
 msgid "Couldn't login to Minecraft servers"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\DisableableMod.java:343
-#: src\main\java\com\atlauncher\data\DisableableMod.java:358
+#: src\main\java\com\atlauncher\data\DisableableMod.java:359
+#: src\main\java\com\atlauncher\data\DisableableMod.java:374
 msgid "No Updates Found"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\DisableableMod.java:344
-#: src\main\java\com\atlauncher\data\DisableableMod.java:359
+#: src\main\java\com\atlauncher\data\DisableableMod.java:360
+#: src\main\java\com\atlauncher\data\DisableableMod.java:375
 msgid "No updates were found for {0}."
 msgstr ""
 
@@ -213,20 +213,20 @@ msgid "{0} Installed"
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\json\Messages.java:51
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:192
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
 msgid "Installing"
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\json\Messages.java:52
 #: src\main\java\com\atlauncher\data\json\Messages.java:73
 #: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:250
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:538
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:541
 #: src\main\java\com\atlauncher\managers\DialogManager.java:87
 msgid "Cancel"
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\json\Messages.java:72
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:192
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
 msgid "Reinstalling"
 msgstr ""
 
@@ -421,9 +421,9 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:571
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:89
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:554
-#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:187
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:207
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:328
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:187
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
 msgid "Reinstall"
 msgstr ""
 
@@ -433,7 +433,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:90
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:462
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:555
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:187
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
 msgid "Update"
 msgstr ""
 
@@ -757,7 +757,7 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:55
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:183
-#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:170
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:190
 msgid "Remove"
 msgstr ""
 
@@ -930,7 +930,11 @@ msgstr ""
 msgid "Disable"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:199
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:170
+msgid "Show In File Explorer"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:219
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
 msgid "Check For Updates"
 msgstr ""
@@ -1101,7 +1105,7 @@ msgid "Edit"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:103
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:202
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:205
 msgid "Name"
 msgstr ""
 
@@ -1147,7 +1151,7 @@ msgstr ""
 msgid "Server Edited"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:59
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:61
 #: src\main\java\com\atlauncher\gui\dialogs\ViewModsDialog.java:64
 #: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:105
 #: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:218
@@ -1157,10 +1161,45 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
+#. Fabric API is the name of a mod, so should be left untranslated
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:66
+msgid "Install Fabric API"
+msgstr ""
+
 #. {0} is the name of the mod we're installing
-#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:70
-#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:96
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:76
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:106
 msgid "Adding Mods For {0}"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:85
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:115
+msgid "Mods"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:88
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:118
+msgid "Resource Packs"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:89
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:119
+msgid "Worlds"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:91
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:121
+msgid "Popularity"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:92
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:122
+msgid "Last Updated"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:93
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:123
+msgid "Total Downloads"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
@@ -1209,7 +1248,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:164
 #: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:174
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:130
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:304
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:307
 msgid "Installing {0}"
 msgstr ""
 
@@ -1218,7 +1257,7 @@ msgid "The below mods need to be installed"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:139
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:551
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:554
 msgid "Version To Install"
 msgstr ""
 
@@ -1268,7 +1307,7 @@ msgstr ""
 
 #. {0} is the name of the pack the user is installing
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:133
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:302
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:305
 msgid "Installing {0} Server"
 msgstr ""
 
@@ -1276,115 +1315,115 @@ msgstr ""
 #. {0} is the name of the pack the user is installing
 #. {0} is the name of the pack the user is installing
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:141
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:178
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:300
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:181
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:303
 msgid "Reinstalling {0}"
 msgstr ""
 
 #. {0} is the name of the pack the user is installing from Curse
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:172
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:175
 msgid "Installing {0} From Curse"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:187
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
 #: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:200
 msgid "Install"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:240
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:248
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:243
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:251
 msgid "Enable User Lock"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:249
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:252
 msgid ""
 "Enabling the user lock setting will lock this instance to only be played<br/"
 ">by the person installing this instance (you) and will not show the instance "
 "to anyone else.<br/><br/>Are you sure you want to do this?"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:269
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:272
 msgid ""
 "An instance already exists with that name.<br/><br/>Rename it and try again."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:277
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:280
 msgid "Instance name is invalid. It must contain at least 1 letter or number."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:282
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:285
 msgid ""
 "A server already exists with that name.<br/><br/>Rename it and try again."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:290
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:293
 msgid "Server name is invalid. It must contain at least 1 letter or number."
 msgstr ""
 
 #. {0} is the name of the pack the user is installing
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:298
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:301
 msgid "Reinstalling {0} Server"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:311
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:314
 msgid "Starting Reinstall Process"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:312
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:315
 msgid "Starting Install Process"
-msgstr ""
-
-#. {0} is the pack name and {1} is the pack version
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:347
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:420
-msgid "{0} {1} Not Reinstalled"
 msgstr ""
 
 #. {0} is the pack name and {1} is the pack version
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:350
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:423
+msgid "{0} {1} Not Reinstalled"
+msgstr ""
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:353
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:426
 msgid ""
 "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information."
 msgstr ""
 
 #. {0} is the pack name and {1} is the pack version
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:361
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:434
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:364
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:437
 msgid "{0} {1} Not Installed"
 msgstr ""
 
 #. {0} is the pack name and {1} is the pack version
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:364
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:437
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:367
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:440
 msgid ""
 "{0} {1} wasn't installed.<br/><br/>Check error logs for more information."
 msgstr ""
 
 #. {0} is the pack name and {1} is the pack version
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:384
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:387
 msgid "{0} {1} Installed"
 msgstr ""
 
 #. {0} is the pack name and {1} is the pack version
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:388
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:391
 msgid "{0} {1} has been reinstalled."
 msgstr ""
 
 #. {0} is the pack name and {1} is the pack version
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:391
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:394
 msgid "{0} {1} server has been installed.<br/><br/>Find it in the servers tab."
 msgstr ""
 
 #. {0} is the pack name and {1} is the pack version
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:396
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:399
 msgid "{0} {1} has been installed.<br/><br/>Find it in the instances tab."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:635
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:638
 msgid "Getting Loader Versions"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:700
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:703
 msgid "Loader Version"
 msgstr ""
 
