@@ -360,11 +360,7 @@ public class EditModsDialog extends JDialog {
         int dCount = 0;
         int eCount = 0;
 
-        List<DisableableMod> validMods = mods.stream()
-                .filter(mod -> instanceV2 != null ? mod.doesFileExist(instanceV2) : mod.doesFileExist(instance))
-                .collect(Collectors.toList());
-
-        for (DisableableMod mod : validMods) {
+        for (DisableableMod mod : mods) {
             ModsJCheckBox checkBox = null;
             int nameSize = getFontMetrics(Utils.getFont()).stringWidth(mod.getName());
 
