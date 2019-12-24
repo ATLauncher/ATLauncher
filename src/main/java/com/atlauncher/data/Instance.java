@@ -1356,7 +1356,7 @@ public class Instance implements Cloneable {
         final Account account = App.settings.getAccount();
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                    .setContent(GetText.tr("Cannot play instance as you have no account selected"))
+                    .setContent(GetText.tr("Cannot play instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
 
             App.settings.setMinecraftLaunched(false);

@@ -1,8 +1,5 @@
 # Changelog
 
-## 3.3.4.0
+## 3.3.4.1
 
-- Remove files from Edit Mods Dialog that don't exist anymore
-- Add Show In File Explorer button to Edit Mods right click menu
-- Allow importing packs without project or file id in manifest
-- Allow changing sort order when adding Curse mods
+- Fix wording on some English strings

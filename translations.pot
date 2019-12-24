@@ -94,7 +94,8 @@ msgid "No Account Selected"
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\Instance.java:1359
-msgid "Cannot play instance as you have no account selected"
+#: src\main\java\com\atlauncher\data\InstanceV2.java:368
+msgid "Cannot play instance as you have no account selected."
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\Instance.java:1369
@@ -198,10 +199,6 @@ msgstr ""
 msgid "Organising Libraries"
 msgstr ""
 
-#: src\main\java\com\atlauncher\data\InstanceV2.java:368
-msgid "Cannot play instance as you have no account selected."
-msgstr ""
-
 #: src\main\java\com\atlauncher\data\InstanceV2.java:429
 #: src\main\java\com\atlauncher\data\InstanceV2.java:430
 msgid "Preparing For Launch"
@@ -247,6 +244,7 @@ msgid "Please save this file to the following location"
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\json\Mod.java:437
+#: src\main\java\com\atlauncher\data\json\Mod.java:574
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:103
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:580
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:99
@@ -259,11 +257,8 @@ msgid "Open Folder"
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\json\Mod.java:438
-msgid "I've Downloading This File"
-msgstr ""
-
-#: src\main\java\com\atlauncher\data\json\Mod.java:574
-msgid "I've Downloading This"
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
 msgstr ""
 
 #: src\main\java\com\atlauncher\data\MinecraftError.java:40

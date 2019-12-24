@@ -435,7 +435,7 @@ public class Mod {
                                                             + FileSystem.USER_DOWNLOADS.toFile())))
                                     .build())
                             .addOption(GetText.tr("Open Folder"), true)
-                            .addOption(GetText.tr("I've Downloading This File")).setType(DialogManager.INFO).show();
+                            .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO).show();
 
                     if (retValue == DialogManager.CLOSED_OPTION) {
                         installer.cancel(true);
@@ -571,7 +571,8 @@ public class Mod {
                                                 : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
                                                         + FileSystem.USER_DOWNLOADS.toFile()))
                                 .build())
-                        .setType(DialogManager.INFO).addOption(GetText.tr("I've Downloading This"), true).show();
+                        .setType(DialogManager.INFO).addOption(GetText.tr("Open Folder"), true)
+                        .addOption(GetText.tr("I've Downloaded This File")).show();
 
                 if (ret == DialogManager.CLOSED_OPTION) {
                     installer.cancel(true);
