@@ -368,14 +368,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again"))
+                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
             } else {
                 LogManager.error("Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again"))
+                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
             }

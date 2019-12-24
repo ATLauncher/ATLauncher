@@ -638,19 +638,14 @@ msgid "Cloned Instance Successfully"
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:363
-#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:372
-msgid ""
-"An error occurred while cloning the instance.<br/><br/>Please check the "
-"console and try again."
-msgstr ""
-
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:370
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:377
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:372
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:379
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:386
 msgid ""
 "An error occurred while cloning the instance.<br/><br/>Please check the "
-"console and try again"
+"console and try again."
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:384

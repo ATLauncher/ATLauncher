@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.3.4.1
+## 3.3.4.2
 
-- Fix wording on some English strings
-- Fix issue with Edit Mods dialog not showing all
+- Fix wording on some more English strings
