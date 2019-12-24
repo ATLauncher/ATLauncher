@@ -1,0 +1,642 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: atlauncher\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-12-24 06:24\n"
+"Last-Translator: \n"
+"Language-Team: Hungarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: atlauncher\n"
+"X-Crowdin-Language: hu\n"
+"X-Crowdin-File: launcher.pot\n"
+"Language: hu_HU\n"
+
+#: src\main\java\com\atlauncher\data\Account.java:488
+msgid "Downloading Skin"
+msgstr "Skin letöltése"
+
+#: src\main\java\com\atlauncher\data\Account.java:489
+msgid "Downloading Skin For {0}"
+msgstr "Skin letöltése ennyiért {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:541
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:362
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:369
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:376
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:371
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:378
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:385
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:163
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:167
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:189
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:271
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:279
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:284
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:292
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:134
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:140
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:143
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:156
+msgid "Error"
+msgstr "Hiba"
+
+#: src\main\java\com\atlauncher\data\Account.java:542
+msgid "Error downloading skin. Please try again later!"
+msgstr "Skin letöltése sikertelen. Próbálkozz később!"
+
+#: src\main\java\com\atlauncher\data\Account.java:672
+msgid "Enter password for {0}"
+msgstr "Jelszó beírása ennyiért {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:678
+msgid "Enter Password"
+msgstr "Adja meg a jelszót"
+
+#: src\main\java\com\atlauncher\data\Account.java:703
+msgid "Error Logging In"
+msgstr "Bejelentkezés sikertelen"
+
+#: src\main\java\com\atlauncher\data\Account.java:704
+msgid "Couldn't login to Minecraft servers"
+msgstr "Nem sikerült bejelentkezni a Minecraft szerverére"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:359
+#: src\main\java\com\atlauncher\data\DisableableMod.java:374
+msgid "No Updates Found"
+msgstr "Nem található új frissítés"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:360
+#: src\main\java\com\atlauncher\data\DisableableMod.java:375
+msgid "No updates were found for {0}."
+msgstr "Nem található fejlesztés ennyiért {0}."
+
+#: src\main\java\com\atlauncher\data\Instance.java:514
+#: src\main\java\com\atlauncher\data\InstanceV2.java:166
+#: src\main\java\com\atlauncher\data\Server.java:174
+msgid "No Description"
+msgstr "Nincs leírás"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1358
+#: src\main\java\com\atlauncher\data\InstanceV2.java:366
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:217
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:246
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:256
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:417
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:496
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:222
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:251
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:262
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:427
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:509
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:134
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:145
+msgid "No Account Selected"
+msgstr "Nincs kiválasztva felhasználó"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1359
+#: src\main\java\com\atlauncher\data\InstanceV2.java:368
+msgid "Cannot play instance as you have no account selected."
+msgstr "Nem lehet lejátszani a példányt mivel nincs fiók kiválasztva."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1369
+#: src\main\java\com\atlauncher\data\InstanceV2.java:378
+msgid "Insufficient Ram"
+msgstr "Nincs elegendő memória"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1370
+#: src\main\java\com\atlauncher\data\InstanceV2.java:379
+msgid ""
+"This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/"
+">Do you want to continue loading the instance anyway?"
+msgstr ""
+"Ez a csomag minimum tárhelyet igényel <b>{0}</b> MB. <br/><br/> Szeretnéd "
+"folytatni a példány letöltését?"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1399
+#: src\main\java\com\atlauncher\data\Instance.java:1400
+#: src\main\java\com\atlauncher\data\InstanceV2.java:407
+#: src\main\java\com\atlauncher\data\InstanceV2.java:408
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:300
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:301
+msgid "Logging Into Minecraft"
+msgstr "Csatlakozás a Minecraftba"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1553
+#: src\main\java\com\atlauncher\data\InstanceV2.java:584
+#: src\main\java\com\atlauncher\data\MinecraftError.java:39
+#: src\main\java\com\atlauncher\data\MinecraftError.java:47
+msgid "About Your Crash"
+msgstr "A Kifagyásodról"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1560
+#: src\main\java\com\atlauncher\data\InstanceV2.java:591
+msgid "Open Crash Report"
+msgstr "Kifagyás jelentésének megnyitása"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1561
+#: src\main\java\com\atlauncher\data\InstanceV2.java:592
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\data\Settings.java:184
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+#: src\main\java\com\atlauncher\managers\DialogManager.java:78
+#: src\main\java\com\atlauncher\managers\DialogManager.java:86
+msgid "Ok"
+msgstr "Oké"
+
+#. {0} is the name of the instance
+#: src\main\java\com\atlauncher\data\Instance.java:1665
+msgid "Instance {0} Saved!"
+msgstr "Indító {0} mentve!"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1776
+msgid "Installed"
+msgstr "Telepítve"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:251
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:723
+msgid "Downloading Minecraft"
+msgstr "Minecraft letöltése"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:268
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:873
+msgid "Downloading Libraries"
+msgstr "Könyvtárak letöltése"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:305
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
+msgid "Downloading Resources"
+msgstr "Erőforrások betöltése"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:340
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
+msgid "Organising Libraries"
+msgstr "Könyvtárak elrendezése"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:429
+#: src\main\java\com\atlauncher\data\InstanceV2.java:430
+msgid "Preparing For Launch"
+msgstr "Készülés az indításhoz"
+
+#. {0} is the name of a mod that was installed
+#: src\main\java\com\atlauncher\data\InstanceV2.java:692
+msgid "{0} Installed"
+msgstr "{0} telepítve"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:250
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:541
+#: src\main\java\com\atlauncher\managers\DialogManager.java:87
+msgid "Cancel"
+msgstr "Mégse"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:72
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Reinstalling"
+msgstr "Újraindítás"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:423
+#: src\main\java\com\atlauncher\data\json\Mod.java:565
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:112
+msgid "Downloading"
+msgstr "Letöltés"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:426
+#: src\main\java\com\atlauncher\data\json\Mod.java:567
+msgid "Browser opened to download file {0}"
+msgstr "Böngésző megnyitása a {0} fájl letöltéséhez"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:430
+#: src\main\java\com\atlauncher\data\json\Mod.java:569
+msgid "Please save this file to the following location"
+msgstr "Kérlek mentsd el a fájlt a következő helyre"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:437
+#: src\main\java\com\atlauncher\data\json\Mod.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:103
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:580
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:564
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:79
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:282
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:135
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
+msgid "Open Folder"
+msgstr "Mappa megnyitása"
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:40
+msgid ""
+"Minecraft has crashed due to insufficent memory being allocated.<br/><br/"
+">Please go to the settings tab and increase the maximum memory option and "
+"then try launching the instance again."
+msgstr ""
+"A Minecraft kényszerítetten bezárta magát mert kevés a memória ami hozzá "
+"lett rendelve. <br/><br/> A beállítások fülön növeld meg a hozzárendelhető "
+"memória mennyiséget, majd próbáld meg újra indítani az adott indítót."
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:48
+msgid ""
+"Minecraft has crashed due to an incompatability with Forge and your version "
+"of Java.<br/><br/>Please reinstall the instance to automatically fix the "
+"problem, and then try launching the instance again."
+msgstr ""
+"A Minecraft kényszerítetten bezárta magát, mert a Forge verziód nem "
+"kompatibilis a Java verzioddal.<br/><br/> Telepítsd újra az indítót hogy "
+"automatikusan megoldjad a problémát, majd indítsd el újra az indítót."
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:152
+msgid "Offline"
+msgstr "Nem elérhető"
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:154
+msgid "Online"
+msgstr "Elérhető"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:88
+msgid "A note attached to the crash can be seen below:"
+msgstr "Egy jegyzet a kifagyáshoz lent látható:"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:91
+msgid "There is no note attached to this crash."
+msgstr "Nincs jegyzet ehhez a kifagyáshoz csatolva."
+
+#: src\main\java\com\atlauncher\data\Server.java:114
+msgid "Server Launched"
+msgstr "Szerver Elindítva"
+
+#: src\main\java\com\atlauncher\data\Server.java:115
+msgid ""
+"The server has been launched in an external window.<br/><br/>You can close "
+"ATLauncher which will not stop the server."
+msgstr ""
+"A szerver egy külső ablakban elindult.<br/><br/>Ha szeretnéd bezárhatod az "
+"ATLauncher-t, nem fog megállni emiatt a szerver."
+
+#: src\main\java\com\atlauncher\data\Settings.java:180
+#: src\main\java\com\atlauncher\data\Settings.java:262
+msgid "Unsupported Java Version"
+msgstr "Nem támogatott Java verzió"
+
+#: src\main\java\com\atlauncher\data\Settings.java:181
+msgid ""
+"You're using an unsupported version of Java. You need to upgrade your Java "
+"to at minimum Java 8 version 101.<br/><br/>The launcher will not start until "
+"you do this.<br/><br/>If you're seeing this message even after installing a "
+"newer version, you may need to uninstall the old version first.<br/><br/"
+">Click ok to open the Java download page and close the launcher."
+msgstr ""
+"Egy nem támogatott Java verziót használsz. Frissítsd fel a Java-t egy "
+"legalább Java 8, 101-es verziószámr.<br/><br/>. A launcher nem fog elindulni "
+"amíg ezt meg nem teszed<br/><br/>ha ez az üzenet azután is megjelenik hogy "
+"egy újabb Java-t telepítetél, lehet hogy manuálisan le kell töröld a régebbi "
+"Java verziót.<br/><br/>Nyomj az ok gombra hogy megnyisd a Java letöltő "
+"oldalt, és bezárd a launchert."
+
+#: src\main\java\com\atlauncher\data\Settings.java:227
+msgid "Running 32 Bit Java on 64 Bit Windows"
+msgstr "32 bites java futtatása egy 64 bites windowson"
+
+#: src\main\java\com\atlauncher\data\Settings.java:228
+msgid ""
+"We have detected that you're running 64 bit Windows but not 64 bit Java.<br/"
+"><br/>This will cause severe issues playing all packs if not fixed.<br/><br/"
+">Do you want to close the launcher and learn how to fix this issue now?"
+msgstr ""
+"Azt érzékeltük hogy egy 64 bites Windows-t használsz de nem egy 64 bites "
+"Java-t<br/><br/>Ez komoly gondokhoz vetethet ha nem javítod ki.<br/><br/"
+">Szeretnéd bezárni a launchert és utánanézni hogyan tudnád megjavítani ezt a "
+"problémát?"
+
+#: src\main\java\com\atlauncher\data\Settings.java:243
+msgid "Warning! You may not be able to play Minecraft"
+msgstr "Vigyázz! Lehet hogy nem tudsz a minecraftal játszani"
+
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+msgid "Download"
+msgstr "Letöltés"
+
+#: src\main\java\com\atlauncher\data\Settings.java:248
+#: src\main\java\com\atlauncher\data\Settings.java:267
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:213
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:413
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:492
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:423
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:505
+msgid "Don't Remind Me Again"
+msgstr "Ne Emlékeztessen Újra"
+
+#: src\main\java\com\atlauncher\data\Settings.java:398
+#: src\main\java\com\atlauncher\data\Settings.java:399
+msgid "Downloading Launcher Update"
+msgstr "Indító frissítés letöltése"
+
+#: src\main\java\com\atlauncher\data\Settings.java:485
+#: src\main\java\com\atlauncher\data\Settings.java:486
+msgid "Downloading Updates"
+msgstr "Frissítések letöltése"
+
+#: src\main\java\com\atlauncher\data\Settings.java:533
+msgid "Updating Launcher. Please Wait"
+msgstr "Indító frissítése. Kérem várjon"
+
+#: src\main\java\com\atlauncher\data\Settings.java:614
+msgid "Cannot create the config file"
+msgstr "Nem lehet elkészíteni a következő fájlt"
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:82
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:78
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:174
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:142
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:86
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:120
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:50
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:89
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:136
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:228
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:371
+msgid "Add"
+msgstr "Hozzáad"
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:83
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:79
+msgid "View"
+msgstr "Megnéz"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:570
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:88
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:553
+msgid "Play"
+msgstr "Játék"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:571
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:89
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:554
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:207
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:328
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Reinstall"
+msgstr "Újratelepítés"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:455
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:572
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:90
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:462
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:555
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Update"
+msgstr "Frissítés"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:573
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:91
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:556
+msgid "Rename"
+msgstr "Átnevez"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:92
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:557
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:77
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:280
+msgid "Backup"
+msgstr "Biztonsági Mentés"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:575
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:558
+msgid "Clone"
+msgstr "Másolat"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:576
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:559
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:78
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:281
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:52
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:143
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:238
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:375
+#: src\main\java\com\atlauncher\gui\tabs\ServersForCheckerTab.java:49
+msgid "Delete"
+msgstr "Töröl"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:577
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:560
+msgid "Add Mods"
+msgstr "Modok hozzáadása"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:101
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:578
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:561
+msgid "Edit Mods"
+msgstr "Modok szerkesztése"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:102
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:579
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:562
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:53
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:181
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:69
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:154
+msgid "Servers"
+msgstr "Szerverek"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:104
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:581
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:565
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:112
+msgid "Settings"
+msgstr "Beállítások"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:173
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:180
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:187
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:179
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:186
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:193
+msgid "Instance Corrupt"
+msgstr "Megfertőzött példány"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
+msgid "No Saves Found"
+msgstr "Nem található mentés"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:48
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:177
+msgid "New Instance"
+msgstr "Új indító"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:49
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:178
+msgid "Create Server"
+msgstr "Szerver létrehozása"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:51
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:179
+msgid "Support"
+msgstr "Támogatás"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:52
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:180
+msgid "Website"
+msgstr "Weboldal"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:54
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:182
+msgid "View Mods"
+msgstr "Modok megnézése"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:55
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:183
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:190
+msgid "Remove"
+msgstr "Eltávolítás"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:135
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:146
+msgid "Cannot create instance as you have no account selected."
+msgstr "Nem lehet elkészíteni a példányt mivel nincs fiók kiválasztva."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:73
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:276
+#: src\main\java\com\atlauncher\gui\components\AbstractToolPanel.java:40
+msgid "Launch"
+msgstr "Indítás"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:74
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:277
+msgid "Launch & Close"
+msgstr "Indít és Bezár"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:199
+msgid "Delete Server"
+msgstr "Szerver törlése"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:200
+msgid "Are you sure you want to delete this server?"
+msgstr "Biztosan törölni akarod ezt a Szervert?"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:205
+msgid "Deleting Server"
+msgstr "Szerver törlése"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:206
+msgid "Deleting Server. Please wait..."
+msgstr "Szerver törlése. Kérem várjon..."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:210
+msgid "Deleted Server Successfully"
+msgstr "Szerver sikeresen törölve"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:47
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:134
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:137
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:230
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:372
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:83
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:217
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:58
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:281
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:68
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:159
+msgid "Clear"
+msgstr "Kiürítés"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:50
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:107
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:137
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:46
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:64
+msgid "Kill Minecraft"
+msgstr "Minecraft megölése"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:121
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:132
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:212
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:85
+msgid "Show Console"
+msgstr "Konzol mutatása"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:122
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:130
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:210
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:90
+msgid "Hide Console"
+msgstr "Konzol elrejtése"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:140
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:216
+msgid "Select An Account"
+msgstr "Válassz egy fiókot"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:62
+msgid "Success"
+msgstr "Siker"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:55
+msgid "Dev"
+msgstr "Fejlesztő"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:59
+msgid "Private"
+msgstr "Privát"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:62
+msgid "Public"
+msgstr "Nyilvános"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:65
+msgid "Semi Public"
+msgstr "Félig nyilvános"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:56
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:279
+msgid "Add Pack"
+msgstr "Csomag hozzáadás"
+
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the pack the user is installing
+#. {0} is the name of the pack the user is installing
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:112
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:130
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:164
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:174
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:130
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:307
+msgid "Installing {0}"
+msgstr "Telepítés {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:215
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:89
+msgid "Add Mod"
+msgstr "Mod hozzáadása"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+msgid "Mod"
+msgstr "Mod"

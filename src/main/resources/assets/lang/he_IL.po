@@ -1,0 +1,1067 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: atlauncher\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-12-24 06:24\n"
+"Last-Translator: \n"
+"Language-Team: Hebrew\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.3\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
+"%100==4 ? 2 : 3;\n"
+"X-Crowdin-Project: atlauncher\n"
+"X-Crowdin-Language: he\n"
+"X-Crowdin-File: launcher.pot\n"
+"Language: he_IL\n"
+
+#: src\main\java\com\atlauncher\data\Account.java:488
+msgid "Downloading Skin"
+msgstr "מתבצעת הורדה"
+
+#: src\main\java\com\atlauncher\data\Account.java:489
+msgid "Downloading Skin For {0}"
+msgstr "מוריד מראה עבור {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:541
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:362
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:369
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:376
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:371
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:378
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:385
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:163
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:167
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:189
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:271
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:279
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:284
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:292
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:134
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:140
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:143
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:156
+msgid "Error"
+msgstr "שגיאה"
+
+#: src\main\java\com\atlauncher\data\Account.java:542
+msgid "Error downloading skin. Please try again later!"
+msgstr "שגיאה בהורדת מראה. אנא נסה מאוחר יותר!"
+
+#: src\main\java\com\atlauncher\data\Account.java:672
+msgid "Enter password for {0}"
+msgstr "הזן סיסמא עבור {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:678
+msgid "Enter Password"
+msgstr "הזן סיסמה"
+
+#: src\main\java\com\atlauncher\data\Account.java:703
+msgid "Error Logging In"
+msgstr "שגיאה בהתחברות"
+
+#: src\main\java\com\atlauncher\data\Account.java:704
+msgid "Couldn't login to Minecraft servers"
+msgstr "לא מצליח להתחבר לשרתי מיינקראפט"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:359
+#: src\main\java\com\atlauncher\data\DisableableMod.java:374
+msgid "No Updates Found"
+msgstr "לא נמצאו עדכונים"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:360
+#: src\main\java\com\atlauncher\data\DisableableMod.java:375
+msgid "No updates were found for {0}."
+msgstr "לא נמצאו עדכונים עבור {0}."
+
+#: src\main\java\com\atlauncher\data\Instance.java:514
+#: src\main\java\com\atlauncher\data\InstanceV2.java:166
+#: src\main\java\com\atlauncher\data\Server.java:174
+msgid "No Description"
+msgstr "אין תיאור"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1358
+#: src\main\java\com\atlauncher\data\InstanceV2.java:366
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:217
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:246
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:256
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:417
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:496
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:222
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:251
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:262
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:427
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:509
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:134
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:145
+msgid "No Account Selected"
+msgstr "לא נבחר חשבון"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1359
+#: src\main\java\com\atlauncher\data\InstanceV2.java:368
+msgid "Cannot play instance as you have no account selected."
+msgstr "לא יכול לשחק במקרה כי לא נבחר חשבון."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1369
+#: src\main\java\com\atlauncher\data\InstanceV2.java:378
+msgid "Insufficient Ram"
+msgstr "RAM לא מספיק"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1370
+#: src\main\java\com\atlauncher\data\InstanceV2.java:379
+msgid ""
+"This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/"
+">Do you want to continue loading the instance anyway?"
+msgstr ""
+"חבילה זו קבעה את כמות RAM המינימום הדרושה ל-<b>{0}</b> מ\"ב.<br/><br/>האם "
+"את/ה רוצה להמשיך לטעון את המקרה בכל זאת?"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1385
+#: src\main\java\com\atlauncher\data\InstanceV2.java:393
+msgid "Insufficent Permgen"
+msgstr "יצירה קבועה לא מספיקה"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1386
+#: src\main\java\com\atlauncher\data\InstanceV2.java:394
+msgid ""
+"This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do "
+"you want to continue loading the instance anyway?"
+msgstr ""
+"חבילה זו קבעה את כמות היצירה הקבועה המינימלית הדרושה ל-<b>{0}</b> מ\"ב.<br/"
+"><br/>האם את/ה רוצה להמשיך לטעון את המקרה בכל זאת?"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1399
+#: src\main\java\com\atlauncher\data\Instance.java:1400
+#: src\main\java\com\atlauncher\data\InstanceV2.java:407
+#: src\main\java\com\atlauncher\data\InstanceV2.java:408
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:300
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:301
+msgid "Logging Into Minecraft"
+msgstr "מתחבר למיינקראפט"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1553
+#: src\main\java\com\atlauncher\data\InstanceV2.java:584
+#: src\main\java\com\atlauncher\data\MinecraftError.java:39
+#: src\main\java\com\atlauncher\data\MinecraftError.java:47
+msgid "About Your Crash"
+msgstr "על גבי הקריסה שלך"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1554
+#: src\main\java\com\atlauncher\data\InstanceV2.java:585
+msgid ""
+"We detected a previous unreported crash generated by the OpenEye mod.<br/"
+"><br/>This has now been sent off to OpenEye and you can open the crash "
+"report below or continue without viewing it."
+msgstr ""
+"זיהינו דוח קריסה קודם שנוצר ע\"י המוד OpenEye ולא דווח.<br/><br/>הדוח נשלח ל-"
+"OpenEye ועכשיו את/ה יכול לפתוח את דוח הקריסה למטה או להמשיך בלי לצפות בו."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1557
+#: src\main\java\com\atlauncher\data\InstanceV2.java:588
+msgid ""
+"You can turn this off by unchecking the OpenEye Reporting setting in the "
+"Settings tab. Click Ok to continue."
+msgstr ""
+"את/ה יכול/ה לכבות את זה ע\"י ביטול הסימון של האפשרות \"דיווח OpenEye\" "
+"בכרטיסיית האפשרויות. לחץ OK כדי להמשיך."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1560
+#: src\main\java\com\atlauncher\data\InstanceV2.java:591
+msgid "Open Crash Report"
+msgstr "פתח/י דוח קריסה"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1561
+#: src\main\java\com\atlauncher\data\InstanceV2.java:592
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\data\Settings.java:184
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+#: src\main\java\com\atlauncher\managers\DialogManager.java:78
+#: src\main\java\com\atlauncher\managers\DialogManager.java:86
+msgid "Ok"
+msgstr "OK"
+
+#. {0} is the name of the instance
+#: src\main\java\com\atlauncher\data\Instance.java:1665
+msgid "Instance {0} Saved!"
+msgstr "מקרה {0} נשמר!"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1776
+msgid "Installed"
+msgstr "הותקן"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:251
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:723
+msgid "Downloading Minecraft"
+msgstr "מוריד מיינקראפט"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:268
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:873
+msgid "Downloading Libraries"
+msgstr "מוריד ספריות"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:305
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
+msgid "Downloading Resources"
+msgstr "מוריד משאבים"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:340
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
+msgid "Organising Libraries"
+msgstr "מארגן ספריות"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:429
+#: src\main\java\com\atlauncher\data\InstanceV2.java:430
+msgid "Preparing For Launch"
+msgstr "מתכונן לפתיחה"
+
+#. {0} is the name of a mod that was installed
+#: src\main\java\com\atlauncher\data\InstanceV2.java:692
+msgid "{0} Installed"
+msgstr "{0} הותקן"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:51
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Installing"
+msgstr "מתקין"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:250
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:541
+#: src\main\java\com\atlauncher\managers\DialogManager.java:87
+msgid "Cancel"
+msgstr "ביטול"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:72
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Reinstalling"
+msgstr "מתקין מחדש"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:423
+#: src\main\java\com\atlauncher\data\json\Mod.java:565
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:112
+msgid "Downloading"
+msgstr "מוריד"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:426
+#: src\main\java\com\atlauncher\data\json\Mod.java:567
+msgid "Browser opened to download file {0}"
+msgstr "דפדפן נפתח כדי להוריד קובץ {0}"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:430
+#: src\main\java\com\atlauncher\data\json\Mod.java:569
+msgid "Please save this file to the following location"
+msgstr "בבקשה לשמור את הקובץ למיקום הבא"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:437
+#: src\main\java\com\atlauncher\data\json\Mod.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:103
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:580
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:564
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:79
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:282
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:135
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
+msgid "Open Folder"
+msgstr "פתח/י תיקייה"
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:40
+msgid ""
+"Minecraft has crashed due to insufficent memory being allocated.<br/><br/"
+">Please go to the settings tab and increase the maximum memory option and "
+"then try launching the instance again."
+msgstr ""
+"מיינקראפט קרס עקב זיכרון לא מספיק.<br/><br/>תלכ/י בבקשה לכרטיסיית האפשרויות "
+"ותגדיל/י את אפשרות הזיכרון המקסימלי ואז נסה/י לפתוח את המקרה הזה שוב."
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:48
+msgid ""
+"Minecraft has crashed due to an incompatability with Forge and your version "
+"of Java.<br/><br/>Please reinstall the instance to automatically fix the "
+"problem, and then try launching the instance again."
+msgstr ""
+"מיינקראפט קרס עקב חוסר תאימות בין Forge לגרסאת ה-Java שלך.<br/><br/>אנא "
+"התקנ/י את המקרה בכדי לתקן את הבעיה אוטומטית, ואז נסה/י לפתוח את המקרה הזה "
+"שוב."
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:152
+msgid "Offline"
+msgstr "מנותק"
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:154
+msgid "Online"
+msgstr "מחובר"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:88
+msgid "A note attached to the crash can be seen below:"
+msgstr "הערה המחוברת לקריסה זמינה לצפייה למטה:"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:91
+msgid "There is no note attached to this crash."
+msgstr "אין הערה המחוברת לקריסה זו."
+
+#: src\main\java\com\atlauncher\data\Server.java:114
+msgid "Server Launched"
+msgstr "שרת נפתח"
+
+#: src\main\java\com\atlauncher\data\Server.java:115
+msgid ""
+"The server has been launched in an external window.<br/><br/>You can close "
+"ATLauncher which will not stop the server."
+msgstr ""
+"השרת נפתח בחלון חיצוני.<br/><br/>את/ה יכול/ה לסגור את ATLauncher וזה לא "
+"יעצור את השרת."
+
+#: src\main\java\com\atlauncher\data\Settings.java:180
+#: src\main\java\com\atlauncher\data\Settings.java:262
+msgid "Unsupported Java Version"
+msgstr "גרסאת Java לא נתמכת"
+
+#: src\main\java\com\atlauncher\data\Settings.java:181
+msgid ""
+"You're using an unsupported version of Java. You need to upgrade your Java "
+"to at minimum Java 8 version 101.<br/><br/>The launcher will not start until "
+"you do this.<br/><br/>If you're seeing this message even after installing a "
+"newer version, you may need to uninstall the old version first.<br/><br/"
+">Click ok to open the Java download page and close the launcher."
+msgstr ""
+"את/ה משתמש/ת בגרסאת Java שלא נתמכת. את/ה צריכ/ה לשדרג את Java למינימום Java "
+"8 גרסא 101.<br/><br/>המשגר לא יתחיל עד שתעשה/י זאת.<br/><br/>אם את/ה רואה "
+"הודעה זו גם לאחר התקנת גרסא חדשה, את/ה אולי צריכ/ה להסיר את הגרסא הישנה קודם."
+"<br/><br/>לחץ על OK כדי לפתוח את דף ההורדה של Java ולסגור את המשגר."
+
+#: src\main\java\com\atlauncher\data\Settings.java:227
+msgid "Running 32 Bit Java on 64 Bit Windows"
+msgstr "מריץ Java 32 סיביות על Windows 64 סיביות"
+
+#: src\main\java\com\atlauncher\data\Settings.java:228
+msgid ""
+"We have detected that you're running 64 bit Windows but not 64 bit Java.<br/"
+"><br/>This will cause severe issues playing all packs if not fixed.<br/><br/"
+">Do you want to close the launcher and learn how to fix this issue now?"
+msgstr ""
+"זיהינו שאת/ה מריצ/ה Windows 64 סיביות אבל לא Java 64 סיביות.<br/><br/>זה "
+"יגרום לבעיות קשות במשחק כל החבילות אם לא יתוקן.<br/><br/>האם את/ה רוצה לסגור "
+"את המשגר וללמוד איך לתקן את בעיה זו עכשיו?"
+
+#: src\main\java\com\atlauncher\data\Settings.java:243
+msgid "Warning! You may not be able to play Minecraft"
+msgstr "אזהרה! את/ה אולי לא תוכל/י לשחק מיינקראפט"
+
+#: src\main\java\com\atlauncher\data\Settings.java:244
+msgid ""
+"You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you "
+"have issues playing some packs, you may need to install Java 8 and set it to "
+"be used in the launchers java settings"
+msgstr ""
+"את/ה משתמש/ת ב-Java 9 או חדש יותר! חבילות מודים ישנות אולי לא יעבדו.<br/><br/"
+">אם יש לך בעיות לשחק בחלק מהחבילות, אולי את/ה צריכ/ה להתקין Java 8 ולקבוע "
+"אותו לשימוש באפשרויות ה-Java של המשגר"
+
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+msgid "Download"
+msgstr "הורד"
+
+#: src\main\java\com\atlauncher\data\Settings.java:248
+#: src\main\java\com\atlauncher\data\Settings.java:267
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:213
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:413
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:492
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:423
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:505
+msgid "Don't Remind Me Again"
+msgstr "אל תציג שוב"
+
+#: src\main\java\com\atlauncher\data\Settings.java:263
+msgid ""
+"You're using an unsupported version of Java. You should upgrade your Java to "
+"at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load "
+"meaning you cannot play.<br/><br/>Click Download to go to the Java downloads "
+"page"
+msgstr ""
+"את/ה משתמש/ת בגרסא לא נתמכת של Java. את/ה צריכ/ה לשדרג לפחות ל-Java 7.<br/"
+"><br/>בלי Java 7 חלק מהמודים יסרבו להיטען מה שאומר שאת/ה לא תוכל/י לשחק.<br/"
+"><br/>לחץ על הורד/י כדי ללכת לדף ההורדות של Java"
+
+#: src\main\java\com\atlauncher\data\Settings.java:398
+#: src\main\java\com\atlauncher\data\Settings.java:399
+msgid "Downloading Launcher Update"
+msgstr "מוריד עדכון משגר"
+
+#: src\main\java\com\atlauncher\data\Settings.java:485
+#: src\main\java\com\atlauncher\data\Settings.java:486
+msgid "Downloading Updates"
+msgstr "מוריד עדכונים"
+
+#: src\main\java\com\atlauncher\data\Settings.java:533
+msgid "Updating Launcher. Please Wait"
+msgstr "מעדכן משגר. אנא המתנ/י"
+
+#: src\main\java\com\atlauncher\data\Settings.java:614
+msgid "Cannot create the config file"
+msgstr "לא יכול ליצור את קובץ התצורה"
+
+#: src\main\java\com\atlauncher\data\Settings.java:616
+msgid ""
+"Make sure you're running the Launcher from somewhere with write permissions "
+"for your user account such as your Home/Users folder or desktop."
+msgstr ""
+"אנא וודא/י כי את/ה מריצ/ה את המשגר ממקום בעל רשויות כתיבה לחשבון המשתמש שלך "
+"כמו תיקיית הבית/המשתמש או שולחן העבודה."
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:82
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:78
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:174
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:142
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:86
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:120
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:50
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:89
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:136
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:228
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:371
+msgid "Add"
+msgstr "הוספ/י"
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:83
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:79
+msgid "View"
+msgstr "צפה/י"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:570
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:88
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:553
+msgid "Play"
+msgstr "שחק"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:571
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:89
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:554
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:207
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:328
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Reinstall"
+msgstr "התקנ/י מחדש"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:455
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:572
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:90
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:462
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:555
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Update"
+msgstr "עדכנ/י"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:573
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:91
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:556
+msgid "Rename"
+msgstr "שנה/י שם"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:92
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:557
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:77
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:280
+msgid "Backup"
+msgstr "גבה/י"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:575
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:558
+msgid "Clone"
+msgstr "שכפל/י"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:576
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:559
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:78
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:281
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:52
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:143
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:238
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:375
+#: src\main\java\com\atlauncher\gui\tabs\ServersForCheckerTab.java:49
+msgid "Delete"
+msgstr "מחק/י"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:577
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:560
+msgid "Add Mods"
+msgstr "הוספ/י מודים"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:101
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:578
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:561
+msgid "Edit Mods"
+msgstr "ערוך/ערכי מודים"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:102
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:579
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:562
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:53
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:181
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:69
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:154
+msgid "Servers"
+msgstr "שרתים"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:104
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:581
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:565
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:112
+msgid "Settings"
+msgstr "הגדרות"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:173
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:180
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:187
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:179
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:186
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:193
+msgid "Instance Corrupt"
+msgstr "מקרה משובש"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:174
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:180
+msgid ""
+"Cannot play instance as it's corrupted. Please reinstall, update or delete "
+"it."
+msgstr ""
+"לא יכול לשחק במקרה מכיוון שהוא משובש. אנא התקנ/י מחדש, עדכנ/י או מחק/י אותו."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:181
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:187
+msgid ""
+"Cannot backup instance as it's corrupted. Please reinstall, update or delete "
+"it."
+msgstr ""
+"לא יכול לגבות מקרה מכיוון שהוא משובש. אנא התקנ/י מחדש, עדכנ/י או מחק/י אותו."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:188
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:194
+msgid ""
+"Cannot clone instance as it's corrupted. Please reinstall, update or delete "
+"it."
+msgstr ""
+"לא יכול לשכפל מקרה מכיוון שהוא משובש. אנא התקנ/י מחדש, עדכנ/י או מחק/י אותו."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:198
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:205
+msgid "Cannot launch instance due to your Java version"
+msgstr "לא יכול לשגר מקרה בגלל גרסאת ה-Java שלך"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:199
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:206
+msgid ""
+"There was an issue launching this instance.<br/><br/>This version of the "
+"pack requires a Java version which you are not using.<br/><br/>Please "
+"install that version of Java and try again.<br/><br/>Java version needed: {0}"
+msgstr ""
+"ישנה בעיה בפתיחת המקרה.<br/><br/>גרסא זו של החבילה דורשת גרסא של Java שאת/ה "
+"לא משתמש/ת בה.<br/><br/>אנא התקנ/י את הגרסא הזאת של Java ונסה/י מחדש.<br/"
+"><br/>גרסאת Java דרושה: {0}"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:209
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:409
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:488
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:214
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:419
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:501
+msgid "Update Available"
+msgstr "עדכון זמין"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:210
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:410
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:489
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:215
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:420
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:502
+msgid ""
+"An update is available for this instance.<br/><br/>Do you want to update now?"
+msgstr "עדכון זמין למקרה זה.<br/><br/>האם את/ה רוצה לעדכן עכשיו?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:257
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:418
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:498
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:223
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:263
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:428
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:511
+msgid "Cannot update pack as you have no account selected."
+msgstr "לא יכול לעדכן חבילה כי לא נבחר חשבון."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:247
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:252
+msgid "Cannot reinstall pack as you have no account selected."
+msgstr "לא יכול להתקין חבילה מחדש כי לא נבחר חשבון."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:267
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:275
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:282
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:276
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:284
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:291
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:146
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:153
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:161
+msgid "Backing Up {0}"
+msgstr "מגבה {0}"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:268
+msgid ""
+"Backups saves all your worlds as well as some other files<br/>such as your "
+"configs, so you can restore them later.<br/>Once backed up you can find the "
+"zip file in the Backups/ folder.<br/>Do you want to backup this instance?"
+msgstr ""
+"גיבוי שומר את כל העולמות שלך וקבצים נוספים<br/>כגון התצורות שלך, כדי שתוכל/י "
+"לשחזר אותם מאוחר יותר.<br/>ברגע שהם מגובים את/ה יכול/ה למצוא את קובץ ה-zip "
+"בתיקייה Backups.<br/>האם ברצונך לגבות מקרה זה?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:306
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:316
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:184
+msgid ""
+"Backup is complete. Your backup was saved to the following location:<br/><br/"
+">{0}"
+msgstr "גיבוי הושלם. הגיבוי שלך נשמר למקום הבא:<br/><br/>{0}"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
+msgid "No Saves Found"
+msgstr "לא נמצאו שמירות"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:321
+msgid "Can't backup instance as no saves were found."
+msgstr "לא יכול לגבות מקרה כי לא נמצאו שמירות."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:353
+msgid "Enter a new name for this cloned instance."
+msgstr "הכנס/י שם חדש למקרה המשוכפל הזה."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:352
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:353
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:361
+msgid "Cloning Instance"
+msgstr "משכפל מקרה"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:353
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:362
+msgid "Cloning Instance. Please wait..."
+msgstr "משכפל מקרה. אנא המתנ/י..."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:357
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:366
+msgid "Cloned Instance Successfully"
+msgstr "מקרה שוכפל בהצלחה"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:363
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:370
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:377
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:372
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:379
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:386
+msgid ""
+"An error occurred while cloning the instance.<br/><br/>Please check the "
+"console and try again."
+msgstr ""
+"אירעה שגיאה במהלך השכפול של המקרה.<br/><br/>אנא בדוק/בדקי את הקונסולה ונסה/י "
+"שוב."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:384
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:393
+msgid "Delete Instance"
+msgstr "מחק/י מקרה"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:385
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:394
+msgid "Are you sure you want to delete this instance?"
+msgstr "האם את/ה בטוח/ה שברצונך למחוק מקרה זה?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:390
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:399
+msgid "Deleting Instance"
+msgstr "מוחק מקרה"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:391
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:400
+msgid "Deleting Instance. Please wait..."
+msgstr "מוחק מקרה. אנא המתנ/י..."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:395
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:404
+msgid "Deleted Instance Successfully"
+msgstr "מקרה נמחק בהצלחה"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:449
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:459
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:232
+msgid "Change Image"
+msgstr "שנה/י תמונה"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:452
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:140
+msgid "Share Code"
+msgstr "שתף קוד"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:537
+msgid "Error getting share code."
+msgstr "שגיאה בקבלת קוד שיתוף."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:543
+msgid "Share code copied to clipboard"
+msgstr "קוד שיתוף הועתק ללוח"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:563
+msgid "Open CurseForge"
+msgstr "פתח את CurseForge"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:277
+msgid ""
+"Backups saves all your worlds as well as some other files such as your "
+"configs and<br/>optionally your mods (you can enable/disable this in the "
+"Settings tab), so you can restore them later.<br/><br/>Once backed up you "
+"can find the zip file in the backups/ folder.<br/><br/>Do you want to backup "
+"this instance?"
+msgstr ""
+"גיבוי שומר את כל העולמות שלך וקבצים נוספים כגון התצורות,<br/>וברשות, המודים "
+"שלך (את/ה יכול/ה לאפשר זאת או לא בכרטיסיית האפשרויות), כדי שתוכל/י לשחזר "
+"אותם מאוחר יותר.<br/><br/>ברגע שהם מגובים את/ה יכול/ה למצוא את קובץ ה-zip "
+"בתיקייה backups.<br/><br/> האם ברצונך לגבות מקרה זה?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:330
+msgid "No saves found"
+msgstr "לא נמצאו שמירות"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:331
+msgid "No saves were found for this instance"
+msgstr "לא נמצאו שמירות למקרה זה"
+
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:55
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:58
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:83
+msgid "Nothing To Show"
+msgstr "אין מה להציג"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:48
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:177
+msgid "New Instance"
+msgstr "מקרה חדש"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:49
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:178
+msgid "Create Server"
+msgstr "צור שרת"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:51
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:179
+msgid "Support"
+msgstr "תמיכה"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:52
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:180
+msgid "Website"
+msgstr "אתר אינטרנט"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:54
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:182
+msgid "View Mods"
+msgstr "צפה במודים"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:55
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:183
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:190
+msgid "Remove"
+msgstr "הסר"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:135
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:146
+msgid "Cannot create instance as you have no account selected."
+msgstr "לא יכול ליצור מקרה כי לא נבחר חשבון."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:73
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:276
+#: src\main\java\com\atlauncher\gui\components\AbstractToolPanel.java:40
+msgid "Launch"
+msgstr "הפעל"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:74
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:277
+msgid "Launch & Close"
+msgstr "הפעל וסגור"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:75
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:278
+msgid "Launch With GUI"
+msgstr "הפעל עם ממשק גרפי"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:76
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:279
+msgid "Launch With GUI & Close"
+msgstr "הפעל עם ממשק גרפי וסגור"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:147
+msgid ""
+"This will backup your entire server folder so you can restore in case of an "
+"incident.<br/><br/>Do you want to backup this server?"
+msgstr ""
+"זה יגבה את תיקיית השרת שלך במלואה כדי שתוכל/י לשחזר אותה במקרה של תקלה.<br/"
+"><br/>האם את/ה רוצה לגבות את השרת?"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:199
+msgid "Delete Server"
+msgstr "מחק שרת"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:200
+msgid "Are you sure you want to delete this server?"
+msgstr "את/ה בטוח/ה שאת/ה רוצה למחוק את השרת הזה?"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:205
+msgid "Deleting Server"
+msgstr "מוחק שרת"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:206
+msgid "Deleting Server. Please wait..."
+msgstr "מוחק שרת. אנא המתנ/י..."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:210
+msgid "Deleted Server Successfully"
+msgstr "שרת נמחק בהצלחה"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:47
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:134
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:137
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:230
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:372
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:83
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:217
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:58
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:281
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:68
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:159
+msgid "Clear"
+msgstr "נקה"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:48
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:135
+msgid "Copy Log"
+msgstr "העתק/י יומן"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:49
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:136
+msgid "Upload Log"
+msgstr "העלה/י יומן"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:50
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:107
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:137
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:46
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:64
+msgid "Kill Minecraft"
+msgstr "הרוג את מיינקראפט"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:108
+msgid ""
+"Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can "
+"cause corruption of your saves."
+msgstr ""
+"האם את/ה בטוח/ה שאת/ה רוצה להרוג את תהליך המיינקראפט?<br/><br/>לעשות את זה "
+"יכול לקלקל את השמירות שלך."
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
+msgid "Checking For Updated"
+msgstr "מחפש עידכונים"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
+msgid "Checking For Updates"
+msgstr "מחפש עידכונים"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:121
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:132
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:212
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:85
+msgid "Show Console"
+msgstr "הצג קונסולה"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:122
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:130
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:210
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:90
+msgid "Hide Console"
+msgstr "החבא קונסולה"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:136
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:214
+msgid "Update Data"
+msgstr "עדכן מידע"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:140
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:216
+msgid "Select An Account"
+msgstr "בחר חשבון"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:161
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:172
+msgid "Checking Minecraft server status..."
+msgstr "בודק מצב שרתי מיינקראפט..."
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:176
+msgid "All Minecraft servers are up!"
+msgstr "כל שרתי מיינקראפט פועלים!"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:180
+msgid "Minecraft servers are down!"
+msgstr "שרתי מיינקראפט כבויים!"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:184
+msgid "Some Minecraft servers are down!"
+msgstr "חלק משרתי מיינקראפט כבויים!"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:38
+msgid "Log Clearer"
+msgstr "מנקה יומן"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:40
+msgid ""
+"This tool clears out all logs created by the launcher (not included those "
+"made by instances) to free up space and old junk."
+msgstr ""
+"כלי זה מנקה את כל היומנים שנוצרו ע\"י המשגר (לא כולל אלה שנוצרו ע\"י מקרים) "
+"כדי לפנות מקום וזבל ישן."
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:62
+msgid "Success"
+msgstr "הצלחה"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
+msgid "Successfully cleared the logs."
+msgstr "ניקוי היומנים הסתיים בהצלחה."
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:46
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:73
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:80
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:161
+msgid "Network Checker"
+msgstr "בודק רשת"
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:49
+msgid ""
+"This tool does various tests on your network and determines any issues that "
+"may pop up with connecting to our file servers and to other servers."
+msgstr ""
+"כלי זה מבצע מספר בדיקות רשת ומצביע על בעיות העשויות לצוץ עם חיבור לשרת "
+"הקבצים ולשרתים אחרים."
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:81
+msgid "Network Checker Running. Please Wait!"
+msgstr "בודק רשת רץ. אנא חכה!"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:55
+msgid "Dev"
+msgstr "מפתח"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:59
+msgid "Private"
+msgstr "פרטי"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:62
+msgid "Public"
+msgstr "ציבורי"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:65
+msgid "Semi Public"
+msgstr "כציבורי"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:137
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:230
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:258
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:434
+msgid "Browse"
+msgstr "עיין"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:141
+#: src\main\java\com\atlauncher\gui\dialogs\FileChooserDialog.java:99
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:262
+msgid "Select"
+msgstr "בחר"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:178
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:179
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:49
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:50
+msgid "Adding Curse Pack"
+msgstr "מוסיף חבילת קללות"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:198
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:71
+msgid "Failed To Add Pack"
+msgstr "כישלון בהוספת חבילה"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:61
+#: src\main\java\com\atlauncher\gui\dialogs\ViewModsDialog.java:64
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:105
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:218
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:62
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:89
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:160
+msgid "Search"
+msgstr "חיפוש"
+
+#. {0} is the name of the mod we're installing
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:76
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:106
+msgid "Adding Mods For {0}"
+msgstr "מוסיף מודים בשביל {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:56
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:279
+msgid "Add Pack"
+msgstr "הוסף חבילה"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:75
+msgid "Pack Code"
+msgstr "קוד חבילה"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:90
+msgid "Pack Added"
+msgstr "חבילה נוספה"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:91
+msgid "The pack has been added!"
+msgstr "החבילה נוספה!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:93
+msgid "Pack Already Added"
+msgstr "החבילה כבר נוספה"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:94
+msgid "The pack was already added!"
+msgstr "החבילה כבר נוספה!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:99
+msgid "Error Adding Pack"
+msgstr "תקלה בהוספת חבילה"

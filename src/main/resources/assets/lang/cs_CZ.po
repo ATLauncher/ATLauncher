@@ -1,0 +1,953 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: atlauncher\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-12-24 06:24\n"
+"Last-Translator: \n"
+"Language-Team: Czech\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.3\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
+"X-Crowdin-Project: atlauncher\n"
+"X-Crowdin-Language: cs\n"
+"X-Crowdin-File: launcher.pot\n"
+"Language: cs_CZ\n"
+
+#: src\main\java\com\atlauncher\data\Account.java:488
+msgid "Downloading Skin"
+msgstr "Stahuji skin"
+
+#: src\main\java\com\atlauncher\data\Account.java:489
+msgid "Downloading Skin For {0}"
+msgstr "Stahuji skin pro {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:541
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:362
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:369
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:376
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:371
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:378
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:385
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:163
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:167
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:189
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:271
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:279
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:284
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:292
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:134
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:140
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:143
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:156
+msgid "Error"
+msgstr "Chyba"
+
+#: src\main\java\com\atlauncher\data\Account.java:542
+msgid "Error downloading skin. Please try again later!"
+msgstr "Chyba při stahování skinu. Zkuste to prosím později!"
+
+#: src\main\java\com\atlauncher\data\Account.java:672
+msgid "Enter password for {0}"
+msgstr "Vložte heslo pro {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:678
+msgid "Enter Password"
+msgstr "Vložte heslo"
+
+#: src\main\java\com\atlauncher\data\Account.java:703
+msgid "Error Logging In"
+msgstr "Chyba při přihlašování"
+
+#: src\main\java\com\atlauncher\data\Account.java:704
+msgid "Couldn't login to Minecraft servers"
+msgstr "Nemohli jsme vás přihlásit na minecraftové servery"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:359
+#: src\main\java\com\atlauncher\data\DisableableMod.java:374
+msgid "No Updates Found"
+msgstr "Aktualizace nenalezeny"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:360
+#: src\main\java\com\atlauncher\data\DisableableMod.java:375
+msgid "No updates were found for {0}."
+msgstr "Aktualizace nenalezeny pro {0}."
+
+#: src\main\java\com\atlauncher\data\Instance.java:514
+#: src\main\java\com\atlauncher\data\InstanceV2.java:166
+#: src\main\java\com\atlauncher\data\Server.java:174
+msgid "No Description"
+msgstr "Žádný popisek"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1358
+#: src\main\java\com\atlauncher\data\InstanceV2.java:366
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:217
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:246
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:256
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:417
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:496
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:222
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:251
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:262
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:427
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:509
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:134
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:145
+msgid "No Account Selected"
+msgstr "Nevybrán žádný účet"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1359
+#: src\main\java\com\atlauncher\data\InstanceV2.java:368
+msgid "Cannot play instance as you have no account selected."
+msgstr "Nemůžeš teď hrát, když nemáš vybrán žádný účet."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1369
+#: src\main\java\com\atlauncher\data\InstanceV2.java:378
+msgid "Insufficient Ram"
+msgstr "Nedostatečná paměť RAM"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1370
+#: src\main\java\com\atlauncher\data\InstanceV2.java:379
+msgid ""
+"This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/"
+">Do you want to continue loading the instance anyway?"
+msgstr ""
+"Tento Balíček vyžaduje minimálně <b>{0}</b>MB RAM. <br/><br/> Žádáš, aby se "
+"Modpack načítal dál?"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1385
+#: src\main\java\com\atlauncher\data\InstanceV2.java:393
+msgid "Insufficent Permgen"
+msgstr "Nedostatek trvalé generace Permgen"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1386
+#: src\main\java\com\atlauncher\data\InstanceV2.java:394
+msgid ""
+"This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do "
+"you want to continue loading the instance anyway?"
+msgstr ""
+"Tento balík je nastaven na minimální trvalou generaci permgen <b>{0}</b> MB."
+"<br/><br/>Přejete si přesto načíst modpack?"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1399
+#: src\main\java\com\atlauncher\data\Instance.java:1400
+#: src\main\java\com\atlauncher\data\InstanceV2.java:407
+#: src\main\java\com\atlauncher\data\InstanceV2.java:408
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:300
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:301
+msgid "Logging Into Minecraft"
+msgstr "Přihlašování do Minecraftu"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1553
+#: src\main\java\com\atlauncher\data\InstanceV2.java:584
+#: src\main\java\com\atlauncher\data\MinecraftError.java:39
+#: src\main\java\com\atlauncher\data\MinecraftError.java:47
+msgid "About Your Crash"
+msgstr "Hlášení o chybě"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1554
+#: src\main\java\com\atlauncher\data\InstanceV2.java:585
+msgid ""
+"We detected a previous unreported crash generated by the OpenEye mod.<br/"
+"><br/>This has now been sent off to OpenEye and you can open the crash "
+"report below or continue without viewing it."
+msgstr ""
+"Registrujeme předchozí nenahlášený pád módem OpenEye.<br/><br/>Hlášení bylo "
+"odesláno na OpenEye a nyní můžete otevřít zprávu o chybách níže nebo "
+"pokračovat."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1557
+#: src\main\java\com\atlauncher\data\InstanceV2.java:588
+msgid ""
+"You can turn this off by unchecking the OpenEye Reporting setting in the "
+"Settings tab. Click Ok to continue."
+msgstr ""
+"Toto můžete zrušit odškrtnutím v nastavení OpenEye hlášení v kartě "
+"nastavení. Stiskněte Ok pro pokračování."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1560
+#: src\main\java\com\atlauncher\data\InstanceV2.java:591
+msgid "Open Crash Report"
+msgstr "Otevřít hlášení o chybách"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1561
+#: src\main\java\com\atlauncher\data\InstanceV2.java:592
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\data\Settings.java:184
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+#: src\main\java\com\atlauncher\managers\DialogManager.java:78
+#: src\main\java\com\atlauncher\managers\DialogManager.java:86
+msgid "Ok"
+msgstr "Ok"
+
+#. {0} is the name of the instance
+#: src\main\java\com\atlauncher\data\Instance.java:1665
+msgid "Instance {0} Saved!"
+msgstr "Instancí {0} Uloženo!"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1776
+msgid "Installed"
+msgstr "Nainstalováno"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:251
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:723
+msgid "Downloading Minecraft"
+msgstr "Stahování Minecraftu"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:268
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:873
+msgid "Downloading Libraries"
+msgstr "Stahování knihoven"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:305
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
+msgid "Downloading Resources"
+msgstr "Stahování zdrojů"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:340
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
+msgid "Organising Libraries"
+msgstr "Organizování knihoven"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:429
+#: src\main\java\com\atlauncher\data\InstanceV2.java:430
+msgid "Preparing For Launch"
+msgstr "Příprava pro spuštění"
+
+#. {0} is the name of a mod that was installed
+#: src\main\java\com\atlauncher\data\InstanceV2.java:692
+msgid "{0} Installed"
+msgstr "{0} nainstalováno"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:51
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Installing"
+msgstr "Instaluji"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:250
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:541
+#: src\main\java\com\atlauncher\managers\DialogManager.java:87
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:72
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Reinstalling"
+msgstr "Přeinstaluji"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:423
+#: src\main\java\com\atlauncher\data\json\Mod.java:565
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:112
+msgid "Downloading"
+msgstr "Stahuji"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:426
+#: src\main\java\com\atlauncher\data\json\Mod.java:567
+msgid "Browser opened to download file {0}"
+msgstr "Prohlížeč otevřen do složky stahování {0}"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:430
+#: src\main\java\com\atlauncher\data\json\Mod.java:569
+msgid "Please save this file to the following location"
+msgstr "Prosím uložte tento soubor do následující lokace"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:437
+#: src\main\java\com\atlauncher\data\json\Mod.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:103
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:580
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:564
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:79
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:282
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:135
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
+msgid "Open Folder"
+msgstr "Otevřít složku"
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:40
+msgid ""
+"Minecraft has crashed due to insufficent memory being allocated.<br/><br/"
+">Please go to the settings tab and increase the maximum memory option and "
+"then try launching the instance again."
+msgstr ""
+"Minecraft se ukončil z důvodu nedostatku paměti.<br/><br/>Otevřete kartu "
+"nastavení a přidělte více paměti, poté spusťte instanci znovu."
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:48
+msgid ""
+"Minecraft has crashed due to an incompatability with Forge and your version "
+"of Java.<br/><br/>Please reinstall the instance to automatically fix the "
+"problem, and then try launching the instance again."
+msgstr ""
+"Minecraft se ukončil z důvodu nekompatibility Forge a vaší verze Java.<br/"
+"><br/>Prosím reinstalujte instanci pro automatickou opravu chyby a poté "
+"zkuste spustit instanci znovu."
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:152
+msgid "Offline"
+msgstr "Offline"
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:154
+msgid "Online"
+msgstr "Online"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:88
+msgid "A note attached to the crash can be seen below:"
+msgstr "Poznámka k pádu je připojená níže:"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:91
+msgid "There is no note attached to this crash."
+msgstr "Není zde žádná poznámka připojená k tomuto pádu."
+
+#: src\main\java\com\atlauncher\data\Server.java:114
+msgid "Server Launched"
+msgstr "Server spuštěn"
+
+#: src\main\java\com\atlauncher\data\Server.java:115
+msgid ""
+"The server has been launched in an external window.<br/><br/>You can close "
+"ATLauncher which will not stop the server."
+msgstr ""
+"Server byl spuštěn v externím okně. <br/><br/>Můžete zavřít ATLauncher "
+"zatímco server poběží dál."
+
+#: src\main\java\com\atlauncher\data\Settings.java:180
+#: src\main\java\com\atlauncher\data\Settings.java:262
+msgid "Unsupported Java Version"
+msgstr "Nepodporovaná verze Javy"
+
+#: src\main\java\com\atlauncher\data\Settings.java:181
+msgid ""
+"You're using an unsupported version of Java. You need to upgrade your Java "
+"to at minimum Java 8 version 101.<br/><br/>The launcher will not start until "
+"you do this.<br/><br/>If you're seeing this message even after installing a "
+"newer version, you may need to uninstall the old version first.<br/><br/"
+">Click ok to open the Java download page and close the launcher."
+msgstr ""
+"Používáte nepodporovanou verzi Javy. Musíte si upgradovat vaši Javu alespoň "
+"na Java 8 verze 101.<br/><br/>Do tě doby se launcher nespustí.<br/><br/"
+">Pokud vidíte tuto zprávu i po instalaci nové verze, možná byste měli "
+"nejprve odinstalovat starou verzi Javy.<br/><br/>Stiskněte ok pro otevření "
+"stránky pro stažení Javy a zavření launcheru."
+
+#: src\main\java\com\atlauncher\data\Settings.java:227
+msgid "Running 32 Bit Java on 64 Bit Windows"
+msgstr "Spuštěna 32 Bitová Java na 64 Bitových Windows"
+
+#: src\main\java\com\atlauncher\data\Settings.java:228
+msgid ""
+"We have detected that you're running 64 bit Windows but not 64 bit Java.<br/"
+"><br/>This will cause severe issues playing all packs if not fixed.<br/><br/"
+">Do you want to close the launcher and learn how to fix this issue now?"
+msgstr ""
+"Zjistili jsme, že používáte 64 bitový Windows ale ne 64 bitovou Javu.<br/"
+"><br/>Toto způsobí vážné problémy při hraní všech modpacků pokud to nebude "
+"spraveno.<br/><br/>Chcete zavřít launcher a zjitit jak opravit tento problém "
+"nyní?"
+
+#: src\main\java\com\atlauncher\data\Settings.java:243
+msgid "Warning! You may not be able to play Minecraft"
+msgstr "Pozor! Možná nebudete schopni hrát Minecraft"
+
+#: src\main\java\com\atlauncher\data\Settings.java:244
+msgid ""
+"You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you "
+"have issues playing some packs, you may need to install Java 8 and set it to "
+"be used in the launchers java settings"
+msgstr ""
+"Používáte Java 9 nebo novější. Starší modpacky nemusejí fungovat.<br/><br/"
+">Pokud máte problém při hraní modpacku, zkuste nainstalovat Java 8 a "
+"nastavte jí v kartě Java ve spouštěči"
+
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+msgid "Download"
+msgstr "Stáhnout"
+
+#: src\main\java\com\atlauncher\data\Settings.java:248
+#: src\main\java\com\atlauncher\data\Settings.java:267
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:213
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:413
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:492
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:423
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:505
+msgid "Don't Remind Me Again"
+msgstr "Znovu nepřipomínat"
+
+#: src\main\java\com\atlauncher\data\Settings.java:263
+msgid ""
+"You're using an unsupported version of Java. You should upgrade your Java to "
+"at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load "
+"meaning you cannot play.<br/><br/>Click Download to go to the Java downloads "
+"page"
+msgstr ""
+"Používáte nepodporovanou verzi Java. Měli by jste upgradovat minimálně na "
+"Java 7.<br/><br/> Bez Javy 7 se některé módy nebudou schopny načíst.<br/><br/"
+">Klikněte download pro přesměrování na stránky Javy"
+
+#: src\main\java\com\atlauncher\data\Settings.java:398
+#: src\main\java\com\atlauncher\data\Settings.java:399
+msgid "Downloading Launcher Update"
+msgstr "Stahování aktualizace launcheru"
+
+#: src\main\java\com\atlauncher\data\Settings.java:485
+#: src\main\java\com\atlauncher\data\Settings.java:486
+msgid "Downloading Updates"
+msgstr "Stahování aktualizací"
+
+#: src\main\java\com\atlauncher\data\Settings.java:533
+msgid "Updating Launcher. Please Wait"
+msgstr "Aktualizace launcheru. Prosím čekejte"
+
+#: src\main\java\com\atlauncher\data\Settings.java:614
+msgid "Cannot create the config file"
+msgstr "Není možné vytvořit konfigurační soubor"
+
+#: src\main\java\com\atlauncher\data\Settings.java:616
+msgid ""
+"Make sure you're running the Launcher from somewhere with write permissions "
+"for your user account such as your Home/Users folder or desktop."
+msgstr ""
+"Ujistěte se, že spouštíte Launcher ze správného umístění s povolením vašeho "
+"uživatelského účtu jako je adresář Místní disk/Uživatelé nebo z plochy."
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:82
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:78
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:174
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:142
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:86
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:120
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:50
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:89
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:136
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:228
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:371
+msgid "Add"
+msgstr "Přidat"
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:83
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:79
+msgid "View"
+msgstr "Zobrazit"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:570
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:88
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:553
+msgid "Play"
+msgstr "Spustit"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:571
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:89
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:554
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:207
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:328
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Reinstall"
+msgstr "Přeinstalovat"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:455
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:572
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:90
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:462
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:555
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Update"
+msgstr "Aktualizovat"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:573
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:91
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:556
+msgid "Rename"
+msgstr "Přejmenovat"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:92
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:557
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:77
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:280
+msgid "Backup"
+msgstr "Zálohovat"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:575
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:558
+msgid "Clone"
+msgstr "Duplikovat"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:576
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:559
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:78
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:281
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:52
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:143
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:238
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:375
+#: src\main\java\com\atlauncher\gui\tabs\ServersForCheckerTab.java:49
+msgid "Delete"
+msgstr "Smazat"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:577
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:560
+msgid "Add Mods"
+msgstr "Přidat módy"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:101
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:578
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:561
+msgid "Edit Mods"
+msgstr "Upravit módy"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:102
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:579
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:562
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:53
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:181
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:69
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:154
+msgid "Servers"
+msgstr "Servery"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:104
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:581
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:565
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:112
+msgid "Settings"
+msgstr "Nastavení"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:173
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:180
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:187
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:179
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:186
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:193
+msgid "Instance Corrupt"
+msgstr "Porušená instance"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:174
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:180
+msgid ""
+"Cannot play instance as it's corrupted. Please reinstall, update or delete "
+"it."
+msgstr ""
+"Nelze spustit porušenou instanci. Prosím přeinstalujte, aktualizujte nebo ji "
+"smažte."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:181
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:187
+msgid ""
+"Cannot backup instance as it's corrupted. Please reinstall, update or delete "
+"it."
+msgstr ""
+"Nelze zálohovat porušenou instanci. Prosím přeinstalujte, aktualizujte nebo "
+"ji smažte."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:188
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:194
+msgid ""
+"Cannot clone instance as it's corrupted. Please reinstall, update or delete "
+"it."
+msgstr ""
+"Nelze duplikovat porušenou instanci. Prosím přeinstalujte, aktualizujte nebo "
+"ji smažte."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:198
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:205
+msgid "Cannot launch instance due to your Java version"
+msgstr "Nelze spustit instanci s vaší verzí Javy"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:199
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:206
+msgid ""
+"There was an issue launching this instance.<br/><br/>This version of the "
+"pack requires a Java version which you are not using.<br/><br/>Please "
+"install that version of Java and try again.<br/><br/>Java version needed: {0}"
+msgstr ""
+"Během spouštění instance nastala chyba.<br/><br/>Tato verze balíčku vyžaduje "
+"verzi Java, kterou nepoužíváte.<br/><br/>Prosím nainstalujte správnou verzi "
+"Javy a zkuste to znovu.<br/><br/>Potřebná verze Javy:{0}"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:209
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:409
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:488
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:214
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:419
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:501
+msgid "Update Available"
+msgstr "Dostupná aktualizace"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:210
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:410
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:489
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:215
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:420
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:502
+msgid ""
+"An update is available for this instance.<br/><br/>Do you want to update now?"
+msgstr ""
+"Pro tuto instanci je dostupná aktualizace.<br/><br/>Přejete si aktualizovat "
+"nyní?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:257
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:418
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:498
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:223
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:263
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:428
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:511
+msgid "Cannot update pack as you have no account selected."
+msgstr "Nelze aktualizovat balíček, když není vybraný žádný účet."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:247
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:252
+msgid "Cannot reinstall pack as you have no account selected."
+msgstr "Nelze přeinstalovat balíček, když není vybraný žádný účet."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:267
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:275
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:282
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:276
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:284
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:291
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:146
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:153
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:161
+msgid "Backing Up {0}"
+msgstr "Zálohování {0}"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:268
+msgid ""
+"Backups saves all your worlds as well as some other files<br/>such as your "
+"configs, so you can restore them later.<br/>Once backed up you can find the "
+"zip file in the Backups/ folder.<br/>Do you want to backup this instance?"
+msgstr ""
+"Záloha uloží všechny vaše světy a další soubory<br/>jako jsou nastavení, "
+"můžete je obnovit později.<br/>Zálohu lze najít v souboru zip v adresáři "
+"Zálohy.<br/>Přejete si zálohovat tuto instanci?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:306
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:316
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:184
+msgid ""
+"Backup is complete. Your backup was saved to the following location:<br/><br/"
+">{0}"
+msgstr ""
+"Záloha je hotová. Vaše záloha byla uložena do následujícího umístění:<br/"
+"><br/>{0}"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
+msgid "No Saves Found"
+msgstr "Nenalezeny žádné uložené pozice"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:321
+msgid "Can't backup instance as no saves were found."
+msgstr "Nelze provést zálohu, nebyla nalezena žádná uložená pozice."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:205
+msgid "Deleting Server"
+msgstr "Smazání serveru"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:180
+msgid "Minecraft servers are down!"
+msgstr "Minecraft servery nejsou k dispozici!"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:184
+msgid "Some Minecraft servers are down!"
+msgstr "Některé Minecraft servery nejsou k dispozici!"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:38
+msgid "Log Clearer"
+msgstr "Čištění záznamu"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:40
+msgid ""
+"This tool clears out all logs created by the launcher (not included those "
+"made by instances) to free up space and old junk."
+msgstr ""
+"Tento nástroj vyčistí všechny záznamy vytvořené launcherem (nezahrnuje "
+"záznamy vytvořené instancí) pro uvolnění místa a nepotřebných záznamů."
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:62
+msgid "Success"
+msgstr "Úspěšně dokončeno"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
+msgid "Successfully cleared the logs."
+msgstr "Záznamy byly úspěšně vymazány."
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:46
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:73
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:80
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:161
+msgid "Network Checker"
+msgstr "Kontrola sítě"
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:49
+msgid ""
+"This tool does various tests on your network and determines any issues that "
+"may pop up with connecting to our file servers and to other servers."
+msgstr ""
+"Tento nástroj otestuje vaši síť a vyhledá problémy, které mohou nastat během "
+"spojení se souborovými servery a dalšími servery."
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:74
+msgid ""
+"Please note that the data from this tool is sent to ATLauncher so we can "
+"diagnose possible issues in your setup. This test may take up to 10 minutes "
+"or longer to complete and you will be unable to do anything while it's "
+"running. Please also keep in mind that this test will use some of your "
+"bandwidth, it will use approximately 20MB.<br/><br/>Do you wish to continue?"
+msgstr ""
+"Vezměte na vědomí, že data z tohoto nástroje jsou odesílána do ATLauncheru "
+"pro diagnostiku možných problémů ve vašem nastavení. Tento test může trvat "
+"10 minut nebo více a nebudete schopni nic dělat během tohoto testu. Dále "
+"prosím mějte na paměti, že tento test vytíží část vašeho pásma, přibližně "
+"20MB.<br/><br/>Přejete si pokračovat?"
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:81
+msgid "Network Checker Running. Please Wait!"
+msgstr "Provádí se kontrola sítě. Prosím čekejte!"
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:162
+msgid ""
+"The network checker tool has completed and the data sent off to ATLauncher."
+"<br/><br/>Thanks for your input to help understand and fix network related "
+"issues."
+msgstr ""
+"Nástroj pro kontrolu sítě dokončil kontrolu a odeslal data do ATLauncheru."
+"<br/><br/>Děkujeme za poskytnutí dat pro pochopení a opravu budoucích "
+"síťových chyb."
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:55
+msgid "Dev"
+msgstr "Zař"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:59
+msgid "Private"
+msgstr "Soukromé"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:62
+msgid "Public"
+msgstr "Veřejné"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:65
+msgid "Semi Public"
+msgstr "Poloveřejný"
+
+#: src\main\java\com\atlauncher\gui\components\RelaunchInDebugModePanel.java:36
+msgid "Launch in debug mode"
+msgstr "Spustit v modu ladění"
+
+#: src\main\java\com\atlauncher\gui\components\RelaunchInDebugModePanel.java:38
+msgid ""
+"Use this to relaunch ATLauncher in debug mode. This can be used to get more "
+"debug logs in order to help diagnose issues with ATLauncher."
+msgstr ""
+"Použít toto pro spuštění ATLauncheru v modu ladění. Může být použito pro "
+"získání záznamů ladění na diagnostikování chyb s ATLauncherem."
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:51
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:76
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:149
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:162
+msgid "Runtime Downloader"
+msgstr "Stahování běhu programu"
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:54
+msgid ""
+"Use this to automatically install and use a recommended version of Java to "
+"use with ATLauncher."
+msgstr ""
+"Použít toto pro automatické instalování a použití doporučené verze Java pro "
+"použití s ATLauncherem."
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:77
+msgid "Downloading. Please Wait!"
+msgstr "Stahování. Prosím čekejte!"
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:127
+msgid "Extracting"
+msgstr "Rozbalování"
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:151
+msgid "An error occurred downloading the runtime. Please check the logs."
+msgstr "Při stahování runtime došlo k chybě. Prosím zkontrolujte záznamy."
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:164
+msgid "The recommended version of Java has been installed and set to be used."
+msgstr "Doporučená verze Javy byla nainstalována a nastavena k používání."
+
+#: src\main\java\com\atlauncher\gui\components\ServerCheckerToolPanel.java:38
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:60
+msgid "Server Checker"
+msgstr "Kontrola serveru"
+
+#: src\main\java\com\atlauncher\gui\components\ServerCheckerToolPanel.java:40
+msgid ""
+"This tool checks specified Minecraft servers to see if they are up or not "
+"and how many players are logged in. Settings can be configured in the "
+"Settings tab under the Tools sub tab."
+msgstr ""
+"Tento nástroj testuje vybrané servery Minecraft, zda jsou zapnuté nebo "
+"nikoliv a kolik hráčů je přihlášených. Nastavení může být změněno v kartě "
+"Nastavení pod položkou Nástroje."
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:71
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:77
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:57
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:280
+msgid "Add Curse Pack"
+msgstr "Přidat balík Curse"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:86
+msgid "Paste in a link to a modpack, or upload a zip file from CurseForge"
+msgstr "Zadat odkaz na modpack nebo nahrát soubor zip z CurseForge"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:96
+msgid "CurseForge Url"
+msgstr "Odkaz CurseForge"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:126
+msgid "CurseForge Zip"
+msgstr "CurseForge soubor zip"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:137
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:230
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:258
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:434
+msgid "Browse"
+msgstr "Procházet"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:141
+#: src\main\java\com\atlauncher\gui\dialogs\FileChooserDialog.java:99
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:262
+msgid "Select"
+msgstr "Vybrat"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:178
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:179
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:49
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:50
+msgid "Adding Curse Pack"
+msgstr "Přidávání Curse Packu"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:198
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:71
+msgid "Failed To Add Pack"
+msgstr "Nepodařilo se přidat balíček"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:199
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:72
+msgid ""
+"An error occured when trying to add Curse pack.<br/><br/>Check the console "
+"for more information."
+msgstr ""
+"Při přidávání Curse Packu nastala chyba.<br/><br/>Zkontrolujte konzoli pro "
+"více informací."
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:68
+msgid "Add Server"
+msgstr "Přidat server"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:68
+msgid "Edit Server"
+msgstr "Upravit server"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:83
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:53
+#: src\main\java\com\atlauncher\gui\tabs\ServersForCheckerTab.java:48
+msgid "Edit"
+msgstr "Upravit"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:103
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:205
+msgid "Name"
+msgstr "Jméno"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:116
+msgid "Host/IP"
+msgstr "Host/IP"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:129
+msgid "Port"
+msgstr "Port"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:146
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:349
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:51
+msgid "Close"
+msgstr "Zavřít"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:164
+msgid "Not all fields were filled in. Please go back and fill them in!"
+msgstr "Nebyla vyplněna všechna pole. Vraťte se a vyplňte je!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:168
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:183
+msgid "The port you specified is invalid. Please check it and try again."
+msgstr ""
+"Port, který jste zadali je nesprávný. Prosím zkontrolujte ho a zkuste znovu."
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:176
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:177
+msgid "Checking Server"
+msgstr "Kontrola serveru"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:189
+msgid ""
+"Couldn't connect to server. All servers must be online and successfully "
+"checked once before adding."
+msgstr ""
+"Nelze se připojit k serveru. Všechny servery musí být online a úspěšně "
+"zkontrolovány před přidáním."
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:194
+msgid "Server Added"
+msgstr "Server přidán"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:194
+msgid "Server Edited"
+msgstr "Server upraven"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:61
+#: src\main\java\com\atlauncher\gui\dialogs\ViewModsDialog.java:64
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:105
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:218
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:62
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:89
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:160
+msgid "Search"
+msgstr "Hledat"
+
+#. {0} is the name of the mod we're installing
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:76
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:106
+msgid "Adding Mods For {0}"
+msgstr "Přidání módů pro {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:56
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:279
+msgid "Add Pack"
+msgstr "Přidání balíku"

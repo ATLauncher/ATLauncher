@@ -1,0 +1,1486 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: atlauncher\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2019-12-24 06:24\n"
+"Last-Translator: \n"
+"Language-Team: Norwegian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: atlauncher\n"
+"X-Crowdin-Language: no\n"
+"X-Crowdin-File: launcher.pot\n"
+"Language: no_NO\n"
+
+#: src\main\java\com\atlauncher\data\Account.java:488
+msgid "Downloading Skin"
+msgstr "Laster ned Skall"
+
+#: src\main\java\com\atlauncher\data\Account.java:489
+msgid "Downloading Skin For {0}"
+msgstr "Laster ned skall for {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:541
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:362
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:369
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:376
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:371
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:378
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:385
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:163
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:167
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:189
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:271
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:279
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:284
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:292
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:134
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:140
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:143
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:156
+msgid "Error"
+msgstr "Feil"
+
+#: src\main\java\com\atlauncher\data\Account.java:542
+msgid "Error downloading skin. Please try again later!"
+msgstr "Feil på nedlasting av skall. Prøv på nytt senere!"
+
+#: src\main\java\com\atlauncher\data\Account.java:672
+msgid "Enter password for {0}"
+msgstr "Skriv inn passord for {0}"
+
+#: src\main\java\com\atlauncher\data\Account.java:678
+msgid "Enter Password"
+msgstr "Skriv inn passord"
+
+#: src\main\java\com\atlauncher\data\Account.java:703
+msgid "Error Logging In"
+msgstr "Feil ved innlogging"
+
+#: src\main\java\com\atlauncher\data\Account.java:704
+msgid "Couldn't login to Minecraft servers"
+msgstr "Klarte ikke logge inn på Minecraft serverene"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:359
+#: src\main\java\com\atlauncher\data\DisableableMod.java:374
+msgid "No Updates Found"
+msgstr "Ingen oppdateringer funnet"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:360
+#: src\main\java\com\atlauncher\data\DisableableMod.java:375
+msgid "No updates were found for {0}."
+msgstr "Ingen oppdateringer funnet for {0}."
+
+#: src\main\java\com\atlauncher\data\Instance.java:514
+#: src\main\java\com\atlauncher\data\InstanceV2.java:166
+#: src\main\java\com\atlauncher\data\Server.java:174
+msgid "No Description"
+msgstr "Ingen beskrivelse"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1358
+#: src\main\java\com\atlauncher\data\InstanceV2.java:366
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:217
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:246
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:256
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:417
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:496
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:222
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:251
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:262
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:427
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:509
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:134
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:145
+msgid "No Account Selected"
+msgstr "Ingen bruker valgt"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1359
+#: src\main\java\com\atlauncher\data\InstanceV2.java:368
+msgid "Cannot play instance as you have no account selected."
+msgstr "Kan ikke starte forekomst da du ikke har en Konto selektert."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1369
+#: src\main\java\com\atlauncher\data\InstanceV2.java:378
+msgid "Insufficient Ram"
+msgstr "Ikke nok Ram"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1370
+#: src\main\java\com\atlauncher\data\InstanceV2.java:379
+msgid ""
+"This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/"
+">Do you want to continue loading the instance anyway?"
+msgstr ""
+"Denne pakken har en minimum mengde ram som trenges <b>{0}</b> MB. <br/><br/> "
+"Vil du starte denne instansen likevel?"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1385
+#: src\main\java\com\atlauncher\data\InstanceV2.java:393
+msgid "Insufficent Permgen"
+msgstr "Ikke nok Permgen"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1386
+#: src\main\java\com\atlauncher\data\InstanceV2.java:394
+msgid ""
+"This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do "
+"you want to continue loading the instance anyway?"
+msgstr ""
+"Denne pakken har en minimum mengde permgen som trenges<b>{0}</b> MB.<br/><br/"
+"> Vil du fortsette likevel?"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1399
+#: src\main\java\com\atlauncher\data\Instance.java:1400
+#: src\main\java\com\atlauncher\data\InstanceV2.java:407
+#: src\main\java\com\atlauncher\data\InstanceV2.java:408
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:300
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:301
+msgid "Logging Into Minecraft"
+msgstr "Logger inn på Minecraft"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1553
+#: src\main\java\com\atlauncher\data\InstanceV2.java:584
+#: src\main\java\com\atlauncher\data\MinecraftError.java:39
+#: src\main\java\com\atlauncher\data\MinecraftError.java:47
+msgid "About Your Crash"
+msgstr "Angående kræsjen din"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1554
+#: src\main\java\com\atlauncher\data\InstanceV2.java:585
+msgid ""
+"We detected a previous unreported crash generated by the OpenEye mod.<br/"
+"><br/>This has now been sent off to OpenEye and you can open the crash "
+"report below or continue without viewing it."
+msgstr ""
+"Vi oppdaget en tidligere feil som ikke ble rapportert, generert av OpenEye "
+"utvidelsen. <br/><br/> Dette har nå blitt sent til OpenEye, og du kan åpne "
+"rapporten under, eller fortsette uten å se den."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1557
+#: src\main\java\com\atlauncher\data\InstanceV2.java:588
+msgid ""
+"You can turn this off by unchecking the OpenEye Reporting setting in the "
+"Settings tab. Click Ok to continue."
+msgstr ""
+"Du kan skru av denne funskjonen ved å avmarkere OpenEye Rapport "
+"innstillingene under Innstillinger fanen. Klikk OK for å fortsette."
+
+#: src\main\java\com\atlauncher\data\Instance.java:1560
+#: src\main\java\com\atlauncher\data\InstanceV2.java:591
+msgid "Open Crash Report"
+msgstr "Åpne kræsj logger"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1561
+#: src\main\java\com\atlauncher\data\InstanceV2.java:592
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\data\Settings.java:184
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+#: src\main\java\com\atlauncher\managers\DialogManager.java:78
+#: src\main\java\com\atlauncher\managers\DialogManager.java:86
+msgid "Ok"
+msgstr "Ok"
+
+#. {0} is the name of the instance
+#: src\main\java\com\atlauncher\data\Instance.java:1665
+msgid "Instance {0} Saved!"
+msgstr "Forekomst {0} Lagret!"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1776
+msgid "Installed"
+msgstr "Installert"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:251
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:723
+msgid "Downloading Minecraft"
+msgstr "Laster ned Minecraft"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:268
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:873
+msgid "Downloading Libraries"
+msgstr "Laster ned Bibliotek"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:305
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
+msgid "Downloading Resources"
+msgstr "Laster ned ressurser"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:340
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
+msgid "Organising Libraries"
+msgstr "Organiserer bibliotek"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:429
+#: src\main\java\com\atlauncher\data\InstanceV2.java:430
+msgid "Preparing For Launch"
+msgstr "Forbereder oppstart"
+
+#. {0} is the name of a mod that was installed
+#: src\main\java\com\atlauncher\data\InstanceV2.java:692
+msgid "{0} Installed"
+msgstr "{0} Installert"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:51
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Installing"
+msgstr "Installerer"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:52
+#: src\main\java\com\atlauncher\data\json\Messages.java:73
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:250
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:541
+#: src\main\java\com\atlauncher\managers\DialogManager.java:87
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:72
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Reinstalling"
+msgstr "Reinstallerer"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:423
+#: src\main\java\com\atlauncher\data\json\Mod.java:565
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:112
+msgid "Downloading"
+msgstr "Laster ned"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:426
+#: src\main\java\com\atlauncher\data\json\Mod.java:567
+msgid "Browser opened to download file {0}"
+msgstr "Nettleser åpnet til ned lastet fil {0}"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:430
+#: src\main\java\com\atlauncher\data\json\Mod.java:569
+msgid "Please save this file to the following location"
+msgstr "Vennligst lagre denne filen i følgende lokasjon"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:437
+#: src\main\java\com\atlauncher\data\json\Mod.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:103
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:580
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:564
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:79
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:282
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:135
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
+msgid "Open Folder"
+msgstr "Åpne Mappe"
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:40
+msgid ""
+"Minecraft has crashed due to insufficent memory being allocated.<br/><br/"
+">Please go to the settings tab and increase the maximum memory option and "
+"then try launching the instance again."
+msgstr ""
+"Minecraft har kræsjet grunnet manglende tildelt minne. <br/><br/> Vennligst "
+"gå til Innstillinger fanen og øk maksimalt minne alternativet, deretter "
+"forsøk å åpne spillpakken på nytt."
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:152
+msgid "Offline"
+msgstr "Frakoblet"
+
+#: src\main\java\com\atlauncher\data\MinecraftServer.java:154
+msgid "Online"
+msgstr "Pålogget"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:91
+msgid "There is no note attached to this crash."
+msgstr "Det er intet notat festet til denne kræsjen."
+
+#: src\main\java\com\atlauncher\data\Server.java:114
+msgid "Server Launched"
+msgstr "Server startet"
+
+#: src\main\java\com\atlauncher\data\Server.java:115
+msgid ""
+"The server has been launched in an external window.<br/><br/>You can close "
+"ATLauncher which will not stop the server."
+msgstr ""
+"Serveren har startet i ett eksternt vindu.<br/><br/> Du kan lukke ATLauncher "
+"uten og stoppe serveren."
+
+#: src\main\java\com\atlauncher\data\Settings.java:180
+#: src\main\java\com\atlauncher\data\Settings.java:262
+msgid "Unsupported Java Version"
+msgstr "Denne Java versjonen støttes ikke"
+
+#: src\main\java\com\atlauncher\data\Settings.java:227
+msgid "Running 32 Bit Java on 64 Bit Windows"
+msgstr "Kjører 32 bit Java på 64 Bit Windows"
+
+#: src\main\java\com\atlauncher\data\Settings.java:243
+msgid "Warning! You may not be able to play Minecraft"
+msgstr "Advarsel! Det kan hende du ikke kan spille Minecraft"
+
+#: src\main\java\com\atlauncher\data\Settings.java:247
+#: src\main\java\com\atlauncher\data\Settings.java:266
+msgid "Download"
+msgstr "Last ned"
+
+#: src\main\java\com\atlauncher\data\Settings.java:248
+#: src\main\java\com\atlauncher\data\Settings.java:267
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:213
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:413
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:492
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:423
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:505
+msgid "Don't Remind Me Again"
+msgstr "Ikke minn meg på dette igjen"
+
+#: src\main\java\com\atlauncher\data\Settings.java:398
+#: src\main\java\com\atlauncher\data\Settings.java:399
+msgid "Downloading Launcher Update"
+msgstr "Laster ned Programvelger oppdatering"
+
+#: src\main\java\com\atlauncher\data\Settings.java:485
+#: src\main\java\com\atlauncher\data\Settings.java:486
+msgid "Downloading Updates"
+msgstr "Laster ned Oppdateringer"
+
+#: src\main\java\com\atlauncher\data\Settings.java:533
+msgid "Updating Launcher. Please Wait"
+msgstr "Oppdaterer Programvelger. Vennligst vent"
+
+#: src\main\java\com\atlauncher\data\Settings.java:614
+msgid "Cannot create the config file"
+msgstr "Kan ikke lage konfigurasjons fil"
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:82
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:78
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:174
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:142
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:86
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:120
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:50
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:89
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:136
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:228
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:371
+msgid "Add"
+msgstr "Legg til"
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:83
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:79
+msgid "View"
+msgstr "Se på"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:570
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:88
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:553
+msgid "Play"
+msgstr "Spill"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:571
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:89
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:554
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:207
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:328
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Reinstall"
+msgstr "Reinstaller"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:455
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:572
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:90
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:462
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:555
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+msgid "Update"
+msgstr "Oppdater"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:573
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:91
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:556
+msgid "Rename"
+msgstr "Gi nytt navn"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:574
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:92
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:557
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:77
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:280
+msgid "Backup"
+msgstr "Sikkerhetskopier"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:575
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:558
+msgid "Clone"
+msgstr "Klone"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:99
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:576
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:94
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:559
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:78
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:281
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:52
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:143
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:238
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:375
+#: src\main\java\com\atlauncher\gui\tabs\ServersForCheckerTab.java:49
+msgid "Delete"
+msgstr "Slett"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:577
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:95
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:560
+msgid "Add Mods"
+msgstr "Legg til modifikasjon"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:101
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:578
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:96
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:561
+msgid "Edit Mods"
+msgstr "Redigere modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:102
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:579
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:97
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:562
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:53
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:181
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:69
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:154
+msgid "Servers"
+msgstr "Servere"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:104
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:581
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:100
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:565
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:112
+msgid "Settings"
+msgstr "Innstillinger"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:209
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:409
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:488
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:214
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:419
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:501
+msgid "Update Available"
+msgstr "Oppdatering Tilgjengelig"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:257
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:418
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:498
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:223
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:263
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:428
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:511
+msgid "Cannot update pack as you have no account selected."
+msgstr "Kan ikke oppdatere pakken fordi du ikke har en bruker valgt."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:247
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:252
+msgid "Cannot reinstall pack as you have no account selected."
+msgstr "Kan ikke re-installeres siden du ikke har valgt en bruker."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
+msgid "No Saves Found"
+msgstr "Ingen Lagring funnet"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:384
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:393
+msgid "Delete Instance"
+msgstr "Slett Instanse"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:385
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:394
+msgid "Are you sure you want to delete this instance?"
+msgstr "Er du sikker på at du vil slette denne instansen?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:390
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:399
+msgid "Deleting Instance"
+msgstr "Sletter Instanse"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:391
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:400
+msgid "Deleting Instance. Please wait..."
+msgstr "Sletter Instanse. Vennligst vent..."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:395
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:404
+msgid "Deleted Instance Successfully"
+msgstr "Instansen er blitt slettet"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:449
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:459
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:232
+msgid "Change Image"
+msgstr "Forandre bilde"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:452
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:140
+msgid "Share Code"
+msgstr "Del kode"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:537
+msgid "Error getting share code."
+msgstr "En feil er oppstått ved deling av kode."
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:543
+msgid "Share code copied to clipboard"
+msgstr "Delt kode kopiert til utklippstavlen"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:563
+msgid "Open CurseForge"
+msgstr "Åpne CurseForge"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:277
+msgid ""
+"Backups saves all your worlds as well as some other files such as your "
+"configs and<br/>optionally your mods (you can enable/disable this in the "
+"Settings tab), so you can restore them later.<br/><br/>Once backed up you "
+"can find the zip file in the backups/ folder.<br/><br/>Do you want to backup "
+"this instance?"
+msgstr ""
+"Backups lagrer alle verdenene dine samt andre filer som innstillings filene "
+"og <br/>eventuelt modifikasjonene (du kan aktivere/deaktivere dette i "
+"Innstillinger), så du kan gjenopprette dem senere.<br/><br/> Når backupen er "
+"ferdig kan du finne .zip filen i backups/ mappen.<br/><br/> Vil du starte "
+"backup av denne instansen nå?"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:330
+msgid "No saves found"
+msgstr "Ingen lagrings fil funnet"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:331
+msgid "No saves were found for this instance"
+msgstr "Ingen lagrede filer ble funnet for denne forekomsten"
+
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:55
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:58
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:83
+msgid "Nothing To Show"
+msgstr "Ingen ting og vise"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:48
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:177
+msgid "New Instance"
+msgstr "Ny forekomst"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:49
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:178
+msgid "Create Server"
+msgstr "Lag Server"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:51
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:179
+msgid "Support"
+msgstr "Brukerstøtte"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:52
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:180
+msgid "Website"
+msgstr "Nettsted"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:54
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:182
+msgid "View Mods"
+msgstr "Se modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:55
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:183
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:190
+msgid "Remove"
+msgstr "Fjern"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:135
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:146
+msgid "Cannot create instance as you have no account selected."
+msgstr "Kan ikke lage en forekomst da du ikke har en bruker selektert."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:73
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:276
+#: src\main\java\com\atlauncher\gui\components\AbstractToolPanel.java:40
+msgid "Launch"
+msgstr "Start"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:74
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:277
+msgid "Launch & Close"
+msgstr "Start & Lukk"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:75
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:278
+msgid "Launch With GUI"
+msgstr "Start med GUI"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:199
+msgid "Delete Server"
+msgstr "Slett Serveren"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:200
+msgid "Are you sure you want to delete this server?"
+msgstr "Er du sikker på at du vil fjerne denne serveren?"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:205
+msgid "Deleting Server"
+msgstr "Sletter Serveren"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:206
+msgid "Deleting Server. Please wait..."
+msgstr "Sletter serveren. Vennligst vent..."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:210
+msgid "Deleted Server Successfully"
+msgstr "Slettet serveren vellykket"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:47
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:134
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:137
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:230
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:372
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:83
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:217
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:58
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:281
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:68
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:159
+msgid "Clear"
+msgstr "Fjern"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:48
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:135
+msgid "Copy Log"
+msgstr "Kopier liste"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:49
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:136
+msgid "Upload Log"
+msgstr "Last opp liste"
+
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:50
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:107
+#: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:137
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:46
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:64
+msgid "Kill Minecraft"
+msgstr "Drep Minecraft"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
+msgid "Checking For Updated"
+msgstr "Ser etter oppdateringer"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
+msgid "Checking For Updates"
+msgstr "Ser etter oppdateringer"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:121
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:132
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:212
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:85
+msgid "Show Console"
+msgstr "Vis Konsollen"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:122
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:130
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:210
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:90
+msgid "Hide Console"
+msgstr "Skjul Konsollen"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:136
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:214
+msgid "Update Data"
+msgstr "Oppdater data"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:140
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:216
+msgid "Select An Account"
+msgstr "Velg en Konto"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:161
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:172
+msgid "Checking Minecraft server status..."
+msgstr "Sjekker Minecraft server status..."
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:176
+msgid "All Minecraft servers are up!"
+msgstr "Alle Minecraft servere er oppe!"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:180
+msgid "Minecraft servers are down!"
+msgstr "Minecraft serverne er nede!"
+
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:184
+msgid "Some Minecraft servers are down!"
+msgstr "Noen Minecraft servere er nede!"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:38
+msgid "Log Clearer"
+msgstr "Gjør ren loggen"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:62
+msgid "Success"
+msgstr "Suksess"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
+msgid "Successfully cleared the logs."
+msgstr "Rengjorde loggene suksessfullt."
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:219
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
+msgid "Check For Updates"
+msgstr "Sjekk etter oppdateringer"
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:46
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:73
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:80
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:161
+msgid "Network Checker"
+msgstr "Nettverks sjekker"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:55
+msgid "Dev"
+msgstr "Dev"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:59
+msgid "Private"
+msgstr "Privat"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:62
+msgid "Public"
+msgstr "Offentlig"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:65
+msgid "Semi Public"
+msgstr "Semi Offentlig"
+
+#: src\main\java\com\atlauncher\gui\components\RelaunchInDebugModePanel.java:36
+msgid "Launch in debug mode"
+msgstr "Start i Debug Mode"
+
+#: src\main\java\com\atlauncher\gui\components\RelaunchInDebugModePanel.java:38
+msgid ""
+"Use this to relaunch ATLauncher in debug mode. This can be used to get more "
+"debug logs in order to help diagnose issues with ATLauncher."
+msgstr ""
+"Bruk dette for og restarte ATLauncher i debug mode. Dette kan bli brukt for "
+"og få flere debug logger å hjelpe deg i og diagnostisere problemer med "
+"ATLauncher."
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:51
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:76
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:149
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:162
+msgid "Runtime Downloader"
+msgstr "Runtime Nedlaster"
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:54
+msgid ""
+"Use this to automatically install and use a recommended version of Java to "
+"use with ATLauncher."
+msgstr ""
+"Bruk dette for også automatisk installere en anbefalt versjon av Java som "
+"kan brukes med ATLauncher."
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:77
+msgid "Downloading. Please Wait!"
+msgstr "Laster ned, Vennligst vent!"
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:127
+msgid "Extracting"
+msgstr "Ekstraksjon"
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:151
+msgid "An error occurred downloading the runtime. Please check the logs."
+msgstr ""
+"En feil har oppstått ved nedlasting av Runtime. Vennligst sjekk loggene."
+
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:164
+msgid "The recommended version of Java has been installed and set to be used."
+msgstr ""
+"Den anbefalte versjonen av Java er blitt installert og satt til å brukes."
+
+#: src\main\java\com\atlauncher\gui\components\ServerCheckerToolPanel.java:38
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:60
+msgid "Server Checker"
+msgstr "Server sjekker"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:71
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:77
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:57
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:280
+msgid "Add Curse Pack"
+msgstr "Legg til Curse Pack"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:96
+msgid "CurseForge Url"
+msgstr "CurseForge Url"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:126
+msgid "CurseForge Zip"
+msgstr "CurseForge Zip"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:137
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:230
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:258
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:434
+msgid "Browse"
+msgstr "Bla"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:141
+#: src\main\java\com\atlauncher\gui\dialogs\FileChooserDialog.java:99
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:262
+msgid "Select"
+msgstr "Velg"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:178
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:179
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:49
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:50
+msgid "Adding Curse Pack"
+msgstr "Legger til Curse Pack"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:198
+#: src\main\java\com\atlauncher\gui\handlers\CursePackTransferHandler.java:71
+msgid "Failed To Add Pack"
+msgstr "Klarte ikke å legge til Pakke"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:68
+msgid "Add Server"
+msgstr "Legg til Server"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:68
+msgid "Edit Server"
+msgstr "Rediger Server"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:83
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:53
+#: src\main\java\com\atlauncher\gui\tabs\ServersForCheckerTab.java:48
+msgid "Edit"
+msgstr "Rediger"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:103
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:205
+msgid "Name"
+msgstr "Navn"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:116
+msgid "Host/IP"
+msgstr "Host/IP"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:129
+msgid "Port"
+msgstr "Port"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:146
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:349
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:51
+msgid "Close"
+msgstr "Lukk"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:164
+msgid "Not all fields were filled in. Please go back and fill them in!"
+msgstr "Ikke alle felt er utfylte. Vennligst gå tilbake og fyll dem inn!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:168
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:183
+msgid "The port you specified is invalid. Please check it and try again."
+msgstr "Porten du valgte er ugyldig. Vennligst sjekk den og prøv igjen."
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:176
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:177
+msgid "Checking Server"
+msgstr "Sjekker Server"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:189
+msgid ""
+"Couldn't connect to server. All servers must be online and successfully "
+"checked once before adding."
+msgstr ""
+"Klarte ikke koble til server. Alle servere må være på nett og vellykket en "
+"gang før du kan legge den til."
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:194
+msgid "Server Added"
+msgstr "Server lagt til"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:194
+msgid "Server Edited"
+msgstr "Server redigert"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:61
+#: src\main\java\com\atlauncher\gui\dialogs\ViewModsDialog.java:64
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:105
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:218
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:62
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:89
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:160
+msgid "Search"
+msgstr "Søk"
+
+#. {0} is the name of the mod we're installing
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:76
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:106
+msgid "Adding Mods For {0}"
+msgstr "Legger til modifikasjon for {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:56
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:279
+msgid "Add Pack"
+msgstr "Legg til Pakke"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:75
+msgid "Pack Code"
+msgstr "Pakke Kode"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:90
+msgid "Pack Added"
+msgstr "Pakke lagt til"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:91
+msgid "The pack has been added!"
+msgstr "Pakken har blitt lagt til!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:93
+msgid "Pack Already Added"
+msgstr "Pakken er allerede lagt til"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:94
+msgid "The pack was already added!"
+msgstr "Pakken er allerede lagt til!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:99
+msgid "Error Adding Pack"
+msgstr "En feil oppsto i forsøket på og legge til pakken"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:100
+msgid "A pack with that code doesn't exist!"
+msgstr "En pakke med den koden eksisterer ikke!"
+
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the pack the user is installing
+#. {0} is the name of the pack the user is installing
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:112
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:130
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:164
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:174
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:130
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:307
+msgid "Installing {0}"
+msgstr "Installerer {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:125
+msgid "The below mods need to be installed"
+msgstr "Modifikasjonene under må installeres"
+
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:139
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:554
+msgid "Version To Install"
+msgstr "Versjon og installere"
+
+#. {0} is the name of the instance
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:78
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:102
+msgid "Editing Mods For {0}"
+msgstr "Rediger modifikasjoner for {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:147
+msgid "Enabled Mods"
+msgstr "Aktiver Modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:165
+msgid "Disabled Mods"
+msgstr "Deaktivere modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:215
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:89
+msgid "Add Mod"
+msgstr "Legg til Modifikasjon"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:232
+msgid "Mod"
+msgstr "Modifikasjon"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:307
+msgid "Add Curse Mod"
+msgstr "Legg til Curse Modifikasjon"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:334
+msgid "Enable Mod"
+msgstr "Aktiver Modifikasjon"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:339
+msgid "Disable Mod"
+msgstr "Deaktiver Modifikasjon"
+
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:344
+msgid "Remove Mod"
+msgstr "Fjern Modifikasjon"
+
+#. {0} is the name of the pack the user is installing
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:133
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:305
+msgid "Installing {0} Server"
+msgstr "Installerer {0} Server"
+
+#. {0} is the name of the pack the user is reinstalling
+#. {0} is the name of the pack the user is installing
+#. {0} is the name of the pack the user is installing
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:141
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:181
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:303
+msgid "Reinstalling {0}"
+msgstr "Installerer {0} på nytt"
+
+#. {0} is the name of the pack the user is installing from Curse
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:175
+msgid "Installing {0} From Curse"
+msgstr "Installerer {0} fra Curse"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:200
+msgid "Install"
+msgstr "Installer"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:243
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:251
+msgid "Enable User Lock"
+msgstr "Aktiver Bruker lås"
+
+#. {0} is the name of the pack the user is installing
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:301
+msgid "Reinstalling {0} Server"
+msgstr "Reinstallerer {0} Server"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:314
+msgid "Starting Reinstall Process"
+msgstr "Starter reinstallerings prosses"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:315
+msgid "Starting Install Process"
+msgstr "Starter installerings prosess"
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:350
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:423
+msgid "{0} {1} Not Reinstalled"
+msgstr "{0} {1} Er ikke Reinstallert"
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:353
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:426
+msgid ""
+"{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information."
+msgstr ""
+"{0} {1} Ble ikke reinstallert. <br/><br/> Sjekk Feilsøkings loggene for mer "
+"informasjon."
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:364
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:437
+msgid "{0} {1} Not Installed"
+msgstr "{0} {1} Ikke installert"
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:367
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:440
+msgid ""
+"{0} {1} wasn't installed.<br/><br/>Check error logs for more information."
+msgstr ""
+"{0} {1} Ble ikke installert.<br/><br/> Sjekk feilsøkings loggene for mer "
+"informasjon."
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:387
+msgid "{0} {1} Installed"
+msgstr "{0} {1} Installert"
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:391
+msgid "{0} {1} has been reinstalled."
+msgstr "{0} {1} Har blitt reinstallert."
+
+#. {0} is the pack name and {1} is the pack version
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:394
+msgid "{0} {1} server has been installed.<br/><br/>Find it in the servers tab."
+msgstr ""
+"{0} {1} Server har blitt installert.<br/><br/> Du kan finne den i Server "
+"fanen."
+
+#. {0} is the name of the instance
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:75
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:92
+msgid "{0} Settings"
+msgstr "{0} Innstillinger"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:123
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:99
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:143
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:405
+msgid ""
+"You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. "
+"Please see http://atl.pw/32bit for help."
+msgstr ""
+"Du kjører en 32 bit Java og kan derfor ikke bruke mer enn 1GB med Ram. Vær "
+"så snill å se http://atl.pw/32bit for hjelp."
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:161
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:134
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:414
+msgid "Maximum Memory/Ram"
+msgstr "Maksimum Hukommelse/Ram"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:228
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:266
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:256
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:295
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:432
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:439
+msgid "Reset"
+msgstr "Tilbakestill"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:274
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:131
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:137
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:172
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:142
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:374
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:55
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:120
+msgid "Save"
+msgstr "Lagre"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:65
+msgid "Select Mods To Install"
+msgstr "Velg Modifikasjon å installere"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:101
+msgid "Required Mods"
+msgstr "Nødvendige modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:105
+msgid "Optional Mods"
+msgstr "Valgfrie Modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:138
+msgid "Use Share Code"
+msgstr "Bruk Del Kode"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:140
+msgid "Enter Share Code"
+msgstr "Legg til Delt Kode"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:152
+msgid "Select Recommended"
+msgstr "Velg Anbefalte"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:154
+msgid "Select All"
+msgstr "Velg Alle"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:182
+msgid "Clear All"
+msgstr "Fjern Alle"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:276
+msgid "Warning"
+msgstr "Advarsel"
+
+#. {0} is a warning for a given mod
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:278
+msgid "{0}<br/><br/>Are you sure that you want to enable this mod?"
+msgstr "{0}<br/><br/>Er du sikker på at du vil aktivere denne Modifikasjonen?"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:282
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:212
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:321
+#: src\main\java\com\atlauncher\managers\DialogManager.java:95
+msgid "Yes"
+msgstr "Ja"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:283
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:212
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:321
+#: src\main\java\com\atlauncher\managers\DialogManager.java:96
+msgid "No"
+msgstr "Nei"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ProgressDialog.java:115
+msgid "Tasks Done"
+msgstr "Oppgaver utført"
+
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:59
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:84
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:109
+msgid "Renaming Instance"
+msgstr "Gi nytt navn til Forekomst"
+
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:119
+msgid "Instance Name"
+msgstr "Forekomst navn"
+
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:136
+msgid ""
+"There is already an instance called {0}.<br/><br/>Rename it and try again."
+msgstr ""
+"Det er allerede en forekomst kalt {0}.<br/><br/> Gi nytt navn og prøv igjen."
+
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:143
+msgid "The name {0} is invalid. It must contain at least 1 letter or number."
+msgstr ""
+"Navnet {0} er ikke tilgjengelig. Det må inneholde minst 1 bokstav eller "
+"nummer."
+
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:157
+msgid ""
+"An error occurred renaming the instance.<br/><br/>Please check the console "
+"and try again."
+msgstr ""
+"En feil har oppstått ved omdøping av forekomsten.<br/><br/> Vennligst sjekk "
+"Consolen og prøv igjen."
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:68
+msgid "{0} Setup"
+msgstr "{0} Oppsett"
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:81
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:165
+msgid "Setting up {0}"
+msgstr "Setter opp {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:92
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:166
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:76
+msgid "Language"
+msgstr "Språk"
+
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:109
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:167
+#: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:78
+msgid "Enable Leaderboards"
+msgstr "Aktiver Ledertavle"
+
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:121
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:168
+#: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:133
+msgid "Enable Anonymous Analytics"
+msgstr "Aktiver Anonyme Analytikere"
+
+#. {0} is the name of the pack
+#: src\main\java\com\atlauncher\gui\dialogs\ViewModsDialog.java:55
+msgid "Mods in {0}"
+msgstr "Modifikasjoner i {0}"
+
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:89
+msgid "Adding Mods"
+msgstr "Legger til Modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:90
+msgid "Type"
+msgstr "Skriv"
+
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:124
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:125
+msgid "Copying Mods"
+msgstr "Kopierer Modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:134
+msgid "Invalid File"
+msgstr "Ugyldig fil"
+
+#: src\main\java\com\atlauncher\gui\LauncherConsole.java:93
+#: src\main\java\com\atlauncher\gui\LauncherConsole.java:137
+#: src\main\java\com\atlauncher\gui\LauncherConsole.java:148
+#: src\main\java\com\atlauncher\gui\tabs\NewsTab.java:112
+msgid "Copy"
+msgstr "Kopier"
+
+#: src\main\java\com\atlauncher\gui\panels\LoadingPanel.java:44
+msgid "Loading"
+msgstr "Laster"
+
+#: src\main\java\com\atlauncher\gui\panels\NoCurseModsPanel.java:33
+msgid "No mods found. Remove your search query and try again."
+msgstr "Ingen modifikasjoner funnet. Fjern søket ditt og prøv igjen."
+
+#: src\main\java\com\atlauncher\gui\panels\NoCurseModsPanel.java:34
+msgid "No mods found."
+msgstr "Ingen modifikasjoner funnet."
+
+#: src\main\java\com\atlauncher\gui\SplashScreen.java:75
+msgid "Force quit"
+msgstr "Tving avslutning"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:121
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:368
+msgid "Add An Account"
+msgstr "Legg til Konto"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:156
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:378
+msgid "Username/Email"
+msgstr "Brukernavn/E-post"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:177
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:379
+msgid "Password"
+msgstr "Passord"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:198
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:380
+msgid "Remember Password"
+msgstr "Husk Passord"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:208
+msgid "Security Warning"
+msgstr "Sikkerhets-advarsel"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:239
+msgid "Are you sure you want to delete this account?"
+msgstr "Er du sikker på at du vil slette denne Kontoen?"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:262
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:381
+msgid "Reload Skin"
+msgstr "Last inn Utsende på nytt"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:294
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:353
+msgid "Account Not Added"
+msgstr "Konto er ikke lagt til"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:295
+msgid "This account already exists."
+msgstr "Denne kontoen eksisterer allerede."
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:319
+msgid "Account Added"
+msgstr "Konto Lagt til"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:320
+msgid "Account added successfully. Switch to it now?"
+msgstr "Konto lagt til vellykket. Bytt til den nå?"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:340
+msgid "Account Edited"
+msgstr "Konto Redigert"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:341
+msgid "Account edited successfully"
+msgstr "Kontoen ble vellykket endret"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:363
+msgid "Accounts"
+msgstr "Brukere"
+
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:274
+msgid "Vanilla Packs"
+msgstr "Vanilla Pakker"
+
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:274
+msgid "Packs"
+msgstr "Pakker"
+
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:132
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:163
+msgid ""
+"There are no servers to display.\n"
+"\n"
+"Install one from the Packs tab."
+msgstr ""
+"Det er ingen servere og vise.\n"
+"\n"
+"Installer en fra Pakke-fanen."
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\BackupsSettingsTab.java:40
+msgid "Enable Mods Backups"
+msgstr "Aktiver sikkerhetskopiering av modifikasjoner"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\BackupsSettingsTab.java:58
+msgid "Backups"
+msgstr "Sikkerhetskopier"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:106
+msgid "Theme"
+msgstr "Tema"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:134
+msgid "Date Format"
+msgstr "Dato format"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:194
+msgid "Enable Console"
+msgstr "Aktiver Konsollen"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:351
+msgid "General"
+msgstr "Generelt"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:187
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:423
+msgid "Window Size"
+msgstr "Vindu Størrelse"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:308
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:441
+msgid "Start Minecraft Maximised"
+msgstr "Start Minecraft i Fullskjerm"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:365
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:377
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:167
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:182
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:224
+#: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:94
+msgid "Help"
+msgstr "Hjelp"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:400
+msgid "Java/Minecraft"
+msgstr "Java/Minecraft"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:80
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:255
+msgid "Enable Proxy"
+msgstr "Aktiver Proxy"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:246
+msgid "Network"
+msgstr "Nettverk"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:115
+#: src\main\java\com\atlauncher\gui\tabs\ToolsTab.java:57
+msgid "Tools"
+msgstr "Verktøy"
+
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:48
+msgid "Quit"
+msgstr "Avslutt"
+
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:999
+msgid "Downloading Mods"
+msgstr "Laster ned Modifikasjoner"
+
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:1039
+msgid "Installing Mods"
+msgstr "Installerer Modifikasjoner"
