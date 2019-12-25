@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-25 02:37\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -268,6 +268,11 @@ msgstr "Veuillez enregistrer ce fichier à l'emplacement suivant"
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
 msgid "Open Folder"
 msgstr "Ouvrir le dossier"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:438
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
+msgstr "J'ai téléchargé ce fichier"
 
 #: src\main\java\com\atlauncher\data\MinecraftError.java:40
 msgid ""
@@ -2287,6 +2292,22 @@ msgstr ""
 "Le lanceur renvoie des logs d'utilisation et d'erreur anonymes<br/>à nos "
 "serveurs afin de rendre le lanceur et les packs<br/>meilleurs. Si vous ne "
 "voulez pas que cela se produise, alors simplement<br/>désactivez cette "
+"option."
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:134
+msgid ""
+"The Launcher sends back anonymous analytics to Google Analytics<br/>in order "
+"to track what people do and don't use in the launcher.<br/>This helps "
+"determine what new features we implement in the future.<br/>All analytics "
+"are anonymous and contain no user/instance information in it at all.<br/>If "
+"you don't want to send anonymous analytics, you can disable this option."
+msgstr ""
+"Le Launcher envoie des analyses anonymes a Google Analystics<br/>dans le but "
+"de comprendre ce que les gens utilisent et n'utilisent pas dans le launcher."
+"<br/>Cela nous aide a déterminer qu'elles nouvelles fonctionnalités nous "
+"implémenteront dans le futur.<br/>Toute les analyses sont anonymes et ne "
+"contiennent aucune informations utilisateur/instance dedans.<br/>Si vous ne "
+"souhaitez pas envoyer d'analyses anonymes, vous pouvez désactiver cette "
 "option."
 
 #: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:154

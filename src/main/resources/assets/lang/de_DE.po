@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-25 02:37\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,7 @@ msgstr "Fehler"
 #: src\main\java\com\atlauncher\data\Account.java:542
 msgid "Error downloading skin. Please try again later!"
 msgstr ""
-"Fehler beim Herunterladen der Skin. Bitte versuchen Sie es später erneut!"
+"Fehler beim Herunterladen des Skins. Bitte versuchen Sie es später erneut!"
 
 #: src\main\java\com\atlauncher\data\Account.java:672
 msgid "Enter password for {0}"
@@ -115,13 +115,13 @@ msgid ""
 "This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/"
 ">Do you want to continue loading the instance anyway?"
 msgstr ""
-"Dieses Paket erfordert mindestens <b>{0}</b>MB<br/><br/> Ram. Möchtest du "
-"trotzdem die Instanz laden?"
+"Dieses Paket erfordert mindestens <b>{0}</b>MB<br/><br/> Arbeitsspeicher "
+"(Ram). Möchtest du die Instanz trotzdem laden?"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1385
 #: src\main\java\com\atlauncher\data\InstanceV2.java:393
 msgid "Insufficent Permgen"
-msgstr "Unzureichende Berechtigung"
+msgstr "Unzureichende PermGen"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1386
 #: src\main\java\com\atlauncher\data\InstanceV2.java:394
@@ -129,8 +129,8 @@ msgid ""
 "This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do "
 "you want to continue loading the instance anyway?"
 msgstr ""
-"Dieses Paket erfordert mindestens <b>{0}</b>MB<br/><br/> Ram. Möchtest du "
-"die Instanz trotzdem laden?"
+"Dieses Paket hat eine PermGen-Untergrenze von <b>{0}</b>MB.<br/><br/> "
+"Möchtest du die Instanz trotzdem laden?"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1399
 #: src\main\java\com\atlauncher\data\Instance.java:1400
@@ -202,12 +202,12 @@ msgstr "Minecraft wird heruntergeladen"
 #: src\main\java\com\atlauncher\data\InstanceV2.java:268
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:873
 msgid "Downloading Libraries"
-msgstr "Bibliotheken herunterladen"
+msgstr "Bibliotheken werden heruntergeladen"
 
 #: src\main\java\com\atlauncher\data\InstanceV2.java:305
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
 msgid "Downloading Resources"
-msgstr "Resourcen werden heruntergeladen"
+msgstr "Ressourcen werden heruntergeladen"
 
 #: src\main\java\com\atlauncher\data\InstanceV2.java:340
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
@@ -271,6 +271,11 @@ msgstr "Bitte speichere diese Datei am folgenden Ort"
 msgid "Open Folder"
 msgstr "Ordner öffnen"
 
+#: src\main\java\com\atlauncher\data\json\Mod.java:438
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
+msgstr "Ich habe diese Datei heruntergeladen"
+
 #: src\main\java\com\atlauncher\data\MinecraftError.java:40
 msgid ""
 "Minecraft has crashed due to insufficent memory being allocated.<br/><br/"
@@ -289,7 +294,7 @@ msgid ""
 msgstr ""
 "Minecraft ist aufgrund einer Inkompatibilität zwischen Forge und deiner "
 "Version von Java abgestützt.<br/><br/>Bitte installiere die Instanz neu um "
-"das Problem automatisch zu lösen. Versuche anschliessend die Instanz erneut "
+"das Problem automatisch zu lösen. Versuche anschließend die Instanz erneut "
 "zu starten."
 
 #: src\main\java\com\atlauncher\data\MinecraftServer.java:152
@@ -983,6 +988,10 @@ msgstr "Erfolgreich"
 #: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
 msgid "Successfully cleared the logs."
 msgstr "Logs erfolgreich gelöscht."
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:138
+msgid "Open On Curse"
+msgstr "Auf Curse öffnen"
 
 #: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
 msgid "Enable"
@@ -2118,6 +2127,25 @@ msgstr "Discord-Verknüpfung aktivieren"
 msgid "This will enable showing which pack you're playing in Discord."
 msgstr "Dies wird in Discord anzeigen, welches Pack du spielst."
 
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:255
+msgid "Enable Feral Gamemode"
+msgstr "Aktiviere den Feral Gamemode"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:256
+msgid "This will enable Feral Gamemode for packs launched."
+msgstr "Dies wird den Feral Gamemode für alle gestarteten Packs aktivieren."
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:269
+msgid ""
+"This will enable Feral Gamemode for packs launched (disabled because "
+"gamemoderun not found in PATH, please install Feral Gamemode or add it to "
+"your PATH)."
+msgstr ""
+"Dies wird den Wilden Spielmodus für alle gestarteten Packs aktivieren "
+"(deaktiviert, da Gamemoderun nicht in PATH gefunden wurde, bitte "
+"installieren Sie den Wilden Spielmodus oder fügen Sie ihn in Ihrem PATH "
+"hinzu)."
+
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:285
 msgid "Enable Pack Tags"
 msgstr "Pack-Tags aktivieren"
@@ -2131,6 +2159,21 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:303
 msgid "Disable Add Mod Restrictions"
 msgstr "Deaktiviere das Hinzufügen von Mod-Einschränkungen"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:304
+msgid ""
+"This will allow you to disable the restrictions in place to prevent you from "
+"installing mods from Curse that are not for your current Minecraft version "
+"or loader.<br/><br/>By disabling these restrictions, you can install any "
+"mod, so be sure that it's compatable with the Minecraft version and loader "
+"(if any) that you're on."
+msgstr ""
+"Dies erlaubt dir, die bestehenden Einschränkungen zu deaktivieren, um zu "
+"verhindern, dass du Mods von Curse installierst, die nicht für deine "
+"aktuelle Minecraft-Version oder -Loader geeignet sind.<br/><br/>Durch "
+"Deaktivieren dieser Einschränkungen kannst du jeden Mod installieren, also "
+"stelle sicher, dass er mit der Minecraft-Version und dem Loader (falls "
+"vorhanden) kompatibel ist."
 
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:351
 msgid "General"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-25 02:37\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -269,6 +269,11 @@ msgstr "Salve este arquivo para a seguinte localização"
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
 msgid "Open Folder"
 msgstr "Abrir pasta"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:438
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
+msgstr "Transferi o arquivo"
 
 #: src\main\java\com\atlauncher\data\MinecraftError.java:40
 msgid ""
