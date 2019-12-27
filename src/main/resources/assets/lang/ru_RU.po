@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr "Ошибка"
 
 #: src\main\java\com\atlauncher\data\Account.java:542
 msgid "Error downloading skin. Please try again later!"
-msgstr "Ошибка загрузки скина. Пожалуйста, повторите попытку позже!"
+msgstr "Ошибка при загрузке скина. Пожалуйста, повторите попытку позже!"
 
 #: src\main\java\com\atlauncher\data\Account.java:672
 msgid "Enter password for {0}"
@@ -156,8 +156,8 @@ msgid ""
 "report below or continue without viewing it."
 msgstr ""
 "Мы обнаружили предыдущий несообщённый сбой, созданный модом OpenEye. <br/"
-"><br/>Это было отправлено OpenEye и Вы можете открыть отчёт ниже или "
-"продолжить без этого."
+"><br/>Он был отправлен в OpenEye и Вы можете просмотреть отчёт ниже или "
+"продолжить не просматривая."
 
 #: src\main\java\com\atlauncher\data\Instance.java:1557
 #: src\main\java\com\atlauncher\data\InstanceV2.java:588
@@ -165,8 +165,8 @@ msgid ""
 "You can turn this off by unchecking the OpenEye Reporting setting in the "
 "Settings tab. Click Ok to continue."
 msgstr ""
-"Вы можете отключить это, сняв отметку с параметра «OpenEye Reporting» на "
-"вкладке «Настройки». Нажмите ОК, чтобы продолжить."
+"Вы можете отключить отправку статистики, сняв отметку с параметра «OpenEye "
+"Reporting» на вкладке «Настройки». Нажмите Ок, чтобы продолжить."
 
 #: src\main\java\com\atlauncher\data\Instance.java:1560
 #: src\main\java\com\atlauncher\data\InstanceV2.java:591
@@ -909,9 +909,6 @@ msgstr ""
 "повреждению ваших сохранений."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "Проверка на наличие обновлений"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "Проверка на наличие обновлений"

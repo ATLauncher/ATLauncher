@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-25 02:37\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -920,9 +920,6 @@ msgstr ""
 "corruption de vos sauvegardes."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "Recherche de mises à jour"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "Recherche de mises à jour"

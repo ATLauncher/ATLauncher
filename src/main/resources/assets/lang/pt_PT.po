@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "MIME-Version: 1.0\n"
@@ -887,9 +887,6 @@ msgid "Kill Minecraft"
 msgstr "Fechar Minecraft"
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "À procura de actualizações"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "À Procura De Actualizações"

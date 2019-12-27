@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-25 02:37\n"
+"PO-Revision-Date: 2019-12-27 03:13\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -17,11 +17,11 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\data\Account.java:488
 msgid "Downloading Skin"
-msgstr "Fazendo o Download da Skin"
+msgstr "Baixando skin"
 
 #: src\main\java\com\atlauncher\data\Account.java:489
 msgid "Downloading Skin For {0}"
-msgstr "Baixando Skin para {0}"
+msgstr "Baixando skin para {0}"
 
 #: src\main\java\com\atlauncher\data\Account.java:541
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:362
@@ -46,15 +46,15 @@ msgstr "Erro"
 
 #: src\main\java\com\atlauncher\data\Account.java:542
 msgid "Error downloading skin. Please try again later!"
-msgstr "Erro ao baixar a Skin. Por Favor, tente novamente mais tarde!"
+msgstr "Erro ao baixar skin. Por favor, tente novamente mais tarde!"
 
 #: src\main\java\com\atlauncher\data\Account.java:672
 msgid "Enter password for {0}"
-msgstr "Entre com a senha para {0}"
+msgstr "Insira a senha para {0}"
 
 #: src\main\java\com\atlauncher\data\Account.java:678
 msgid "Enter Password"
-msgstr "Digite a senha"
+msgstr "Insira a senha"
 
 #: src\main\java\com\atlauncher\data\Account.java:703
 msgid "Error Logging In"
@@ -101,12 +101,12 @@ msgstr "Nenhuma conta selecionada"
 #: src\main\java\com\atlauncher\data\InstanceV2.java:368
 msgid "Cannot play instance as you have no account selected."
 msgstr ""
-"Não é possível reproduzir a instância pois você não selecionou nenhuma conta."
+"Não foi possível iniciar a instância, pois não há uma conta selecionada."
 
 #: src\main\java\com\atlauncher\data\Instance.java:1369
 #: src\main\java\com\atlauncher\data\InstanceV2.java:378
 msgid "Insufficient Ram"
-msgstr "Memória Ram insuficiente"
+msgstr "RAM insuficiente"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1370
 #: src\main\java\com\atlauncher\data\InstanceV2.java:379
@@ -115,12 +115,12 @@ msgid ""
 ">Do you want to continue loading the instance anyway?"
 msgstr ""
 "Este pacote definiu uma quantidade mínima de ram necessária para <b>{0}</b> "
-"MB.<br/><br/>Você quer continuar carregando a instância mesmo assim?"
+"MB.<br/><br/>Deseja continuar carregando a instância mesmo assim?"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1385
 #: src\main\java\com\atlauncher\data\InstanceV2.java:393
 msgid "Insufficent Permgen"
-msgstr "Memória do Permgen Insuficiente"
+msgstr "Permgen insuficiente"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1386
 #: src\main\java\com\atlauncher\data\InstanceV2.java:394
@@ -128,8 +128,8 @@ msgid ""
 "This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do "
 "you want to continue loading the instance anyway?"
 msgstr ""
-"Este pacote definiu uma quantidade mínima de ram necessária para <b>{0}</b> "
-"MB.<br/><br/>Você quer continuar carregando a instância mesmo assim?"
+"Este pacote definiu a quantidade mínima de permgen para <b>{0}</b> MB.<br/"
+"><br/>Deseja continuar mesmo assim?"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1399
 #: src\main\java\com\atlauncher\data\Instance.java:1400
@@ -138,7 +138,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:300
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:301
 msgid "Logging Into Minecraft"
-msgstr "Logando no Minecraft"
+msgstr "Entrando no Minecraft"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1553
 #: src\main\java\com\atlauncher\data\InstanceV2.java:584
@@ -170,7 +170,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\data\Instance.java:1560
 #: src\main\java\com\atlauncher\data\InstanceV2.java:591
 msgid "Open Crash Report"
-msgstr "Abrir Relatório de Erro"
+msgstr "Abrir relatório de erro"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1561
 #: src\main\java\com\atlauncher\data\InstanceV2.java:592
@@ -182,12 +182,12 @@ msgstr "Abrir Relatório de Erro"
 #: src\main\java\com\atlauncher\managers\DialogManager.java:78
 #: src\main\java\com\atlauncher\managers\DialogManager.java:86
 msgid "Ok"
-msgstr "Ok"
+msgstr "OK"
 
 #. {0} is the name of the instance
 #: src\main\java\com\atlauncher\data\Instance.java:1665
 msgid "Instance {0} Saved!"
-msgstr "Instância {0} Salva!"
+msgstr "Instância {0} salva!"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1776
 msgid "Installed"
@@ -201,17 +201,17 @@ msgstr "Baixando Minecraft"
 #: src\main\java\com\atlauncher\data\InstanceV2.java:268
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:873
 msgid "Downloading Libraries"
-msgstr "Baixando Bibliotecas"
+msgstr "Baixando bibliotecas"
 
 #: src\main\java\com\atlauncher\data\InstanceV2.java:305
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
 msgid "Downloading Resources"
-msgstr "Baixando Recursos"
+msgstr "Baixando recursos"
 
 #: src\main\java\com\atlauncher\data\InstanceV2.java:340
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
 msgid "Organising Libraries"
-msgstr "Organizando Bibliotecas"
+msgstr "Organizando bibliotecas"
 
 #: src\main\java\com\atlauncher\data\InstanceV2.java:429
 #: src\main\java\com\atlauncher\data\InstanceV2.java:430
@@ -221,7 +221,7 @@ msgstr "Preparando para iniciar"
 #. {0} is the name of a mod that was installed
 #: src\main\java\com\atlauncher\data\InstanceV2.java:692
 msgid "{0} Installed"
-msgstr "{0} Instalado"
+msgstr "{0} instalado"
 
 #: src\main\java\com\atlauncher\data\json\Messages.java:51
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
@@ -245,17 +245,17 @@ msgstr "Reinstalando"
 #: src\main\java\com\atlauncher\data\json\Mod.java:565
 #: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:112
 msgid "Downloading"
-msgstr "Fazendo o download"
+msgstr "Baixando"
 
 #: src\main\java\com\atlauncher\data\json\Mod.java:426
 #: src\main\java\com\atlauncher\data\json\Mod.java:567
 msgid "Browser opened to download file {0}"
-msgstr "Navegador aberto para baixar arquivo {0}"
+msgstr "Navegador aberto para baixar o arquivo {0}"
 
 #: src\main\java\com\atlauncher\data\json\Mod.java:430
 #: src\main\java\com\atlauncher\data\json\Mod.java:569
 msgid "Please save this file to the following location"
-msgstr "Salve este arquivo para a seguinte localização"
+msgstr "Salve este arquivo na seguinte localização"
 
 #: src\main\java\com\atlauncher\data\json\Mod.java:437
 #: src\main\java\com\atlauncher\data\json\Mod.java:574
@@ -273,7 +273,7 @@ msgstr "Abrir pasta"
 #: src\main\java\com\atlauncher\data\json\Mod.java:438
 #: src\main\java\com\atlauncher\data\json\Mod.java:575
 msgid "I've Downloaded This File"
-msgstr "Transferi o arquivo"
+msgstr "Baixei o arquivo"
 
 #: src\main\java\com\atlauncher\data\MinecraftError.java:40
 msgid ""
@@ -281,9 +281,9 @@ msgid ""
 ">Please go to the settings tab and increase the maximum memory option and "
 "then try launching the instance again."
 msgstr ""
-"Minecraft falhou devido à falta de memória alocada.<br/><br/>Por favor, vá "
-"para a aba de configurações e aumente a opção máxima de memória e tente "
-"iniciar a instância novamente."
+"O Minecraft falhou devido à falta de memória.<br/><br/>Por favor, vá para a "
+"aba de configurações, aumente a memória máxima e tente iniciar a instância "
+"novamente."
 
 #: src\main\java\com\atlauncher\data\MinecraftError.java:48
 msgid ""
@@ -291,9 +291,9 @@ msgid ""
 "of Java.<br/><br/>Please reinstall the instance to automatically fix the "
 "problem, and then try launching the instance again."
 msgstr ""
-"Minecraft falhou devido a uma incompatabilidade com o Forge e sua versão do "
-"Java.<br/><br/>Por favor, reinstale a instância para corrigir "
-"automaticamente o problema e tente iniciar a instância novamente."
+"O Minecraft encerrou inesperadamente devido a uma incompatibilidade com o "
+"Forge e sua versão do Java.<br/><br/>Por favor, reinstale a instância para "
+"corrigir automaticamente o problema e tente inicia-la novamente."
 
 #: src\main\java\com\atlauncher\data\MinecraftServer.java:152
 msgid "Offline"
@@ -305,11 +305,11 @@ msgstr "Disponível"
 
 #: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:88
 msgid "A note attached to the crash can be seen below:"
-msgstr "Uma nota anexada ao crash pode ser vista abaixo:"
+msgstr "Uma nota anexada à falha pode ser vista abaixo:"
 
 #: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:91
 msgid "There is no note attached to this crash."
-msgstr "Não há nenhuma nota anexada a este crash."
+msgstr "Não há nenhuma nota anexada a esta falha."
 
 #: src\main\java\com\atlauncher\data\Server.java:114
 msgid "Server Launched"
@@ -320,13 +320,13 @@ msgid ""
 "The server has been launched in an external window.<br/><br/>You can close "
 "ATLauncher which will not stop the server."
 msgstr ""
-"O servidor foi lançado em uma janela externa.<br/><br/>Você pode fechar o "
-"ATLauncher que não irá parar o servidor."
+"O servidor foi iniciado em uma janela externa.<br/><br/>Você pode fechar o "
+"ATLauncher que o servidor não será encerrado."
 
 #: src\main\java\com\atlauncher\data\Settings.java:180
 #: src\main\java\com\atlauncher\data\Settings.java:262
 msgid "Unsupported Java Version"
-msgstr "Versão Java não suportada"
+msgstr "Versão do Java não suportada"
 
 #: src\main\java\com\atlauncher\data\Settings.java:181
 msgid ""
@@ -336,16 +336,16 @@ msgid ""
 "newer version, you may need to uninstall the old version first.<br/><br/"
 ">Click ok to open the Java download page and close the launcher."
 msgstr ""
-"Você está usando uma versão não suportada do Java. Você precisa atualizar "
-"seu Java para a versão 1 Java 8.<br/><br/>O launcher não começará até que "
-"você faça isso.<br/><br/>Se você estiver vendo esta mensagem mesmo após a "
-"instalação de uma versão mais recente, você pode precisar desinstalar a "
-"versão antiga primeiro.<br/><br/>Clique em ok para abrir a página de "
-"download do Java e fechar o launcher."
+"Você está usando uma versão não suportada do Java, o mínimo suportado é o "
+"Java 8 versão 101.<br/><br/>O launcher não iniciará até que você atualize o "
+"Java.<br/><br/>Se você estiver vendo esta mensagem mesmo após a instalação "
+"de uma versão mais recente, você pode precisar desinstalar a versão antiga "
+"primeiro.<br/><br/>Clique em OK para abrir a página de download do Java e "
+"fechar o launcher."
 
 #: src\main\java\com\atlauncher\data\Settings.java:227
 msgid "Running 32 Bit Java on 64 Bit Windows"
-msgstr "Executando 32 Bit Java em 64 Bit Windows"
+msgstr "Executando Java 32-bits em um Windows de 64-bits"
 
 #: src\main\java\com\atlauncher\data\Settings.java:228
 msgid ""
@@ -353,14 +353,13 @@ msgid ""
 "><br/>This will cause severe issues playing all packs if not fixed.<br/><br/"
 ">Do you want to close the launcher and learn how to fix this issue now?"
 msgstr ""
-"Detectamos que você está executando 64 bits Windows mas não 64 bits Java.<br/"
-"><br/>Isso causará graves problemas jogando todos os pacotes se não "
-"corrigidos.<br/><br/>Você quer fechar o launcher e aprender a consertar este "
-"problema agora?"
+"Detectamos que você está executando um Windows de 64-bits, mas não um Java "
+"de 64-bits.<br/><br/>Isso causará graves problemas se não corrigido.<br/><br/"
+">Você quer fechar o launcher e aprender a consertar este problema agora?"
 
 #: src\main\java\com\atlauncher\data\Settings.java:243
 msgid "Warning! You may not be able to play Minecraft"
-msgstr "Aviso! Você pode não ser capaz de jogar Minecraft"
+msgstr "Aviso! Você poderá não conseguir jogar Minecraft"
 
 #: src\main\java\com\atlauncher\data\Settings.java:244
 msgid ""
@@ -376,7 +375,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\data\Settings.java:247
 #: src\main\java\com\atlauncher\data\Settings.java:266
 msgid "Download"
-msgstr "Download"
+msgstr "Baixar"
 
 #: src\main\java\com\atlauncher\data\Settings.java:248
 #: src\main\java\com\atlauncher\data\Settings.java:267
@@ -441,12 +440,12 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:228
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:371
 msgid "Add"
-msgstr "Adicionar Feedback"
+msgstr "Adicionar"
 
 #: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:83
 #: src\main\java\com\atlauncher\gui\card\CurseModCard.java:79
 msgid "View"
-msgstr "Visualização"
+msgstr "Ver"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:93
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:570
@@ -489,7 +488,7 @@ msgstr "Renomear"
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:77
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:280
 msgid "Backup"
-msgstr "Cópia de segurança"
+msgstr "Backup"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:98
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:575
@@ -517,14 +516,14 @@ msgstr "Apagar"
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:95
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:560
 msgid "Add Mods"
-msgstr "Adicionar Mods"
+msgstr "Adicionar mods"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:101
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:578
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:96
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:561
 msgid "Edit Mods"
-msgstr "Editar Mods"
+msgstr "Editar mods"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:102
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:579
@@ -552,7 +551,7 @@ msgstr "Configurações"
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:186
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:193
 msgid "Instance Corrupt"
-msgstr "Instância Corrupta"
+msgstr "Instância corrompida"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:174
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:180
@@ -560,8 +559,8 @@ msgid ""
 "Cannot play instance as it's corrupted. Please reinstall, update or delete "
 "it."
 msgstr ""
-"Não é possível reproduzir a instância como está corrompida. Por favor, "
-"reinstale, atualize ou exclua-a."
+"Não é possível reproduzir a instância como está corrompida. Por favor, a "
+"reinstale, atualize ou exclua."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:181
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:187
@@ -569,8 +568,8 @@ msgid ""
 "Cannot backup instance as it's corrupted. Please reinstall, update or delete "
 "it."
 msgstr ""
-"Não é possível reproduzir a instância como está corrompida. Por favor, "
-"reinstale, atualize ou exclua-a."
+"Não foi possível fazer o backup da instância, porque ela está corrompida. "
+"Por favor, a reinstale, atualize ou exclua."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:188
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:194
@@ -578,13 +577,13 @@ msgid ""
 "Cannot clone instance as it's corrupted. Please reinstall, update or delete "
 "it."
 msgstr ""
-"Não é possível reproduzir a instância como está corrompida. Por favor, "
-"reinstale, atualize ou exclua-a."
+"Não é possível reproduzir a instância como está corrompida. Por favor, a "
+"reinstale, atualize ou exclua."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:198
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:205
 msgid "Cannot launch instance due to your Java version"
-msgstr "Não é possível iniciar a instância devido à sua versão Java"
+msgstr "Não foi possível iniciar a instância devido à sua versão do Java"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:199
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:206
@@ -593,10 +592,9 @@ msgid ""
 "pack requires a Java version which you are not using.<br/><br/>Please "
 "install that version of Java and try again.<br/><br/>Java version needed: {0}"
 msgstr ""
-"Houve um problema ao iniciar esta instância.<br/><br/>Esta versão do pacote "
-"requer uma versão Java que você não está usando.<br/><br/>Por favor, instale "
-"essa versão do Java e tente novamente.<br/><br/>versão do Java necessária: "
-"{0}"
+"Houve um problema ao tentar iniciar esta instância.<br/><br/>Este pacote "
+"requer uma versão do Java não instalada.<br/><br/>Por favor, instale-a e "
+"tente novamente.<br/><br/>Versão necessária: {0}"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:209
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:409
@@ -616,8 +614,8 @@ msgstr "Atualização disponível"
 msgid ""
 "An update is available for this instance.<br/><br/>Do you want to update now?"
 msgstr ""
-"Uma atualização está disponível para esta instância.<br/><br/>Você deseja "
-"atualizar agora?"
+"Uma atualização está disponível para esta instância.<br/><br/>Deseja "
+"atualiza-la agora?"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:218
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:257
@@ -629,13 +627,13 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:511
 msgid "Cannot update pack as you have no account selected."
 msgstr ""
-"Não é possível reproduzir a instância pois você não selecionou nenhuma conta."
+"Não foi possível atualizar o pacote, pois não há uma conta selecionada."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:247
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:252
 msgid "Cannot reinstall pack as you have no account selected."
 msgstr ""
-"Não é possível reproduzir a instância pois você não selecionou nenhuma conta."
+"Não foi possível reinstalar o pacote, pois não há uma conta selecionada."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:267
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:275
@@ -655,10 +653,10 @@ msgid ""
 "configs, so you can restore them later.<br/>Once backed up you can find the "
 "zip file in the Backups/ folder.<br/>Do you want to backup this instance?"
 msgstr ""
-"Backups salva todos os seus mundos, assim como alguns outros arquivos<br/>, "
-"como suas configurações, então você pode restaurá-los mais tarde.<br/>Uma "
-"vez que o backup for feito, você pode encontrar o arquivo zip na pasta "
-"Backups.<br/>Deseja fazer backup desta instância?"
+"Os backups salvam os seus mundos e outros arquivos,<br/> como configurações, "
+"para que você possa restaurá-los mais tarde.<br/>Uma vez que o backup for "
+"feito, você pode encontrar o arquivo .zip na pasta Backups.<br/>Deseja "
+"realizar o backup desta instância?"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:306
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:316
@@ -672,34 +670,35 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
 msgid "No Saves Found"
-msgstr "Imagens não encontradas"
+msgstr "Nenhum save encontrado"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:321
 msgid "Can't backup instance as no saves were found."
 msgstr ""
-"Não foi possível fazer backup de instância, pois não foram encontrados saves."
+"Não foi possível fazer o backup da instância, pois não foram encontrados "
+"saves."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:353
 msgid "Enter a new name for this cloned instance."
-msgstr "Digite um novo nome para esta instância clonada."
+msgstr "Digite um novo nome para a instância clonada."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:352
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:353
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:361
 msgid "Cloning Instance"
-msgstr "Clonando Instância"
+msgstr "Clonando instância"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:353
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:362
 msgid "Cloning Instance. Please wait..."
-msgstr "Clonando a instância. Por favor aguarde..."
+msgstr "Clonando instância. Por favor, aguarde..."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:357
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:366
 msgid "Cloned Instance Successfully"
-msgstr "Instância Clonada com Sucesso"
+msgstr "Instância clonada com sucesso"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:363
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:370
@@ -711,13 +710,13 @@ msgid ""
 "An error occurred while cloning the instance.<br/><br/>Please check the "
 "console and try again."
 msgstr ""
-"Ocorreu um erro ao clonar a instância.<br/><br/>Por favor, verifique o "
-"console e tente novamente."
+"Ocorreu um erro ao tentar clonar a instância.<br/><br/>Por favor, verifique "
+"o registro e tente novamente."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:384
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:393
 msgid "Delete Instance"
-msgstr "Excluir Instância"
+msgstr "Excluir instância"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:385
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:394
@@ -727,12 +726,12 @@ msgstr "Tem certeza que deseja excluir esta instância?"
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:390
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:399
 msgid "Deleting Instance"
-msgstr "Excluir Instância"
+msgstr "Excluindo instância"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:391
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:400
 msgid "Deleting Instance. Please wait..."
-msgstr "Excluindo dados, por favor, aguarde..."
+msgstr "Excluindo instância. Por favor, aguarde..."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:395
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:404
@@ -748,7 +747,7 @@ msgstr "Alterar imagem"
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:452
 #: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:140
 msgid "Share Code"
-msgstr "Compartilhar vídeo"
+msgstr "Código de compartilhamento"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:537
 msgid "Error getting share code."
@@ -756,7 +755,7 @@ msgstr "Erro ao obter o código de compartilhamento."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:543
 msgid "Share code copied to clipboard"
-msgstr "Stacktrace copiado para a área de transferência"
+msgstr "Código de compartilhamento copiado para a área de transferência"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:98
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:563
@@ -771,35 +770,35 @@ msgid ""
 "can find the zip file in the backups/ folder.<br/><br/>Do you want to backup "
 "this instance?"
 msgstr ""
-"Backups salva todos os seus mundos, assim como alguns outros arquivos, como "
-"suas configurações e<br/>opcionalmente seus mods (você pode habilitar/"
-"desativar isso na aba Configurações), então você pode restaurá-los mais "
-"tarde.<br/><br/>Uma vez feito backup, você pode encontrar o arquivo zip na "
-"pasta backups/<br/><br/>Você deseja fazer backup desta instância?"
+"Os backups salvam os seus mundos e outros arquivos, como configurações e,<br/"
+">opcionalmente, mods (você pode alterar isso na aba Configurações), para que "
+"você possa restaurá-los mais tarde.<br/><br/>Uma vez feito o backup, você "
+"pode encontrar o arquivo .zip na pasta Backups/<br/><br/>Deseja fazer o "
+"backup desta instância?"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:330
 msgid "No saves found"
-msgstr "Imagens não encontradas"
+msgstr "Nenhum save encontrado"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:331
 msgid "No saves were found for this instance"
-msgstr "Não foram encontrados saves para esta instância"
+msgstr "Não foram encontrados saves nesta instância"
 
 #: src\main\java\com\atlauncher\gui\card\NilCard.java:55
 #: src\main\java\com\atlauncher\gui\card\NilCard.java:58
 #: src\main\java\com\atlauncher\gui\card\NilCard.java:83
 msgid "Nothing To Show"
-msgstr "Nada para ser exibido"
+msgstr "Nada para exibir"
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:48
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:177
 msgid "New Instance"
-msgstr "Nova Instância"
+msgstr "Nova instância"
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:49
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:178
 msgid "Create Server"
-msgstr "Crie um servidor"
+msgstr "Criar servidor"
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:51
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:179
@@ -809,12 +808,12 @@ msgstr "Suporte"
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:52
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:180
 msgid "Website"
-msgstr "Website"
+msgstr "Site"
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:54
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:182
 msgid "View Mods"
-msgstr "Ver Mods"
+msgstr "Ver mods"
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:55
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:183
@@ -825,8 +824,7 @@ msgstr "Remover"
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:135
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:146
 msgid "Cannot create instance as you have no account selected."
-msgstr ""
-"Não é possível criar a instância pois você não selecionou nenhuma conta."
+msgstr "Não foi possível criar a instância, pois não há uma conta selecionada."
 
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:73
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:276
@@ -837,12 +835,12 @@ msgstr "Iniciar"
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:74
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:277
 msgid "Launch & Close"
-msgstr "Iniciar e Fechar"
+msgstr "Iniciar e fechar"
 
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:75
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:278
 msgid "Launch With GUI"
-msgstr "Iniciar com GUI"
+msgstr "Iniciar com interface"
 
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:76
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:279
@@ -919,9 +917,6 @@ msgstr ""
 "isso pode corromper seus saves."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "Verificando Atualizados"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "Verificando atualizações"

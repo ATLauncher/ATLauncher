@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\data\Account.java:488
 msgid "Downloading Skin"
-msgstr "Download dell'aggiornamento in corso"
+msgstr "Download Skin"
 
 #: src\main\java\com\atlauncher\data\Account.java:489
 msgid "Downloading Skin For {0}"
@@ -120,7 +120,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\data\Instance.java:1385
 #: src\main\java\com\atlauncher\data\InstanceV2.java:393
 msgid "Insufficent Permgen"
-msgstr "Permgen Insufficent"
+msgstr "Permgen Insufficente"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1386
 #: src\main\java\com\atlauncher\data\InstanceV2.java:394
@@ -138,7 +138,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:300
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:301
 msgid "Logging Into Minecraft"
-msgstr "Logging in Minecraft"
+msgstr "Accesso in Minecraft"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1553
 #: src\main\java\com\atlauncher\data\InstanceV2.java:584
@@ -201,7 +201,7 @@ msgstr "Download di Minecraft"
 #: src\main\java\com\atlauncher\data\InstanceV2.java:268
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:873
 msgid "Downloading Libraries"
-msgstr "Download Librerie"
+msgstr "Download delle Librerie"
 
 #: src\main\java\com\atlauncher\data\InstanceV2.java:305
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
@@ -211,12 +211,12 @@ msgstr "Scarica risorsa"
 #: src\main\java\com\atlauncher\data\InstanceV2.java:340
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
 msgid "Organising Libraries"
-msgstr "Organizzazione Librerie"
+msgstr "Organizzazione delle Librerie"
 
 #: src\main\java\com\atlauncher\data\InstanceV2.java:429
 #: src\main\java\com\atlauncher\data\InstanceV2.java:430
 msgid "Preparing For Launch"
-msgstr "Preparazione per il lancio"
+msgstr "Preparazione per L'avvio"
 
 #. {0} is the name of a mod that was installed
 #: src\main\java\com\atlauncher\data\InstanceV2.java:692
@@ -234,7 +234,7 @@ msgstr "Installazione"
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:541
 #: src\main\java\com\atlauncher\managers\DialogManager.java:87
 msgid "Cancel"
-msgstr "Annulla"
+msgstr "Cancella"
 
 #: src\main\java\com\atlauncher\data\json\Messages.java:72
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
@@ -270,6 +270,11 @@ msgstr "Salva questo file nella seguente posizione"
 msgid "Open Folder"
 msgstr "Apri cartella"
 
+#: src\main\java\com\atlauncher\data\json\Mod.java:438
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
+msgstr "Ho scaricato questo file"
+
 #: src\main\java\com\atlauncher\data\MinecraftError.java:40
 msgid ""
 "Minecraft has crashed due to insufficent memory being allocated.<br/><br/"
@@ -292,7 +297,7 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\data\MinecraftServer.java:152
 msgid "Offline"
-msgstr "Non in linea"
+msgstr "Offline"
 
 #: src\main\java\com\atlauncher\data\MinecraftServer.java:154
 msgid "Online"
@@ -399,7 +404,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\data\Settings.java:398
 #: src\main\java\com\atlauncher\data\Settings.java:399
 msgid "Downloading Launcher Update"
-msgstr "Download aggiornamento Launcher"
+msgstr "Download dell'aggiornamento dell Launcher"
 
 #: src\main\java\com\atlauncher\data\Settings.java:485
 #: src\main\java\com\atlauncher\data\Settings.java:486
@@ -448,7 +453,7 @@ msgstr "Visualizza"
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:88
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:553
 msgid "Play"
-msgstr "Esegui"
+msgstr "Gioca"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:94
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:571
@@ -806,6 +811,11 @@ msgstr "Supporto"
 msgid "Website"
 msgstr "Sito web"
 
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:54
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:182
+msgid "View Mods"
+msgstr "Visualizza le mods"
+
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:55
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:183
 #: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:190
@@ -879,17 +889,17 @@ msgstr "I file eliminati con successo"
 #: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:68
 #: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:159
 msgid "Clear"
-msgstr "Azzera"
+msgstr "Svuota"
 
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:48
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:135
 msgid "Copy Log"
-msgstr "Copia Log"
+msgstr "Copia il registro"
 
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:49
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:136
 msgid "Upload Log"
-msgstr "Jetzt hochladen"
+msgstr "aggiorna il registro"
 
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:50
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:107
@@ -904,16 +914,13 @@ msgid ""
 "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can "
 "cause corruption of your saves."
 msgstr ""
-"Sei sicuro di voler uccidere il processo di Minecraft?<br/><br/>Fare così "
-"può causare corruzione ai tuoi salvataggi."
+"Sei sicuro di voler disabilitare il processo di Minecraft?<br/><br/>Fare "
+"così può causare corruzione ai tuoi salvataggi."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "Controllo aggiornamenti in corso"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
-msgstr "Controllo aggiornamenti in corso"
+msgstr "Controllo dell'aggiornamenti in corso"
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:121
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:132
@@ -946,15 +953,15 @@ msgstr "Controllo stato del server Minecraft..."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:176
 msgid "All Minecraft servers are up!"
-msgstr "Tutti i server di Minecraft sono in attivo!"
+msgstr "Tutti i server di Minecraft sono attivi!"
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:180
 msgid "Minecraft servers are down!"
-msgstr "Tutti i server di Minecraft sono in attivo!"
+msgstr "Tutti i server di Minecraft sono inattivi!"
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:184
 msgid "Some Minecraft servers are down!"
-msgstr "Tutti i server di Minecraft sono in attivo!"
+msgstr "Alcuni server Minecraft sono inattivi!"
 
 #: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:38
 msgid "Log Clearer"
@@ -965,8 +972,8 @@ msgid ""
 "This tool clears out all logs created by the launcher (not included those "
 "made by instances) to free up space and old junk."
 msgstr ""
-"Questo strumento elimina tutti i log creati dal launcher (non inclusi quelli "
-"fatti da istanze) per liberare spazio e vecchi spazzatura."
+"Questo strumento elimina tutti i registri creati dal launcher (non inclusi "
+"quelli fatti da istanze) per liberare spazio e ripulire."
 
 #: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:62
 msgid "Success"
@@ -974,19 +981,35 @@ msgstr "Successo"
 
 #: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
 msgid "Successfully cleared the logs."
-msgstr "Cache pulita con successo."
+msgstr "Cache pulita con successo"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:138
+msgid "Open On Curse"
+msgstr "Apri in Curse"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Enable"
+msgstr "Attivà"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Disable"
+msgstr "Disattivà"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:170
+msgid "Show In File Explorer"
+msgstr "Mostra in Esplora file"
 
 #: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:219
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
 msgid "Check For Updates"
-msgstr "Controlla aggiornamenti"
+msgstr "Controllo degli aggiornamenti"
 
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:46
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:73
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:80
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:161
 msgid "Network Checker"
-msgstr "Controllo rete"
+msgstr "Controllo della rete"
 
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:49
 msgid ""
@@ -1014,7 +1037,7 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:81
 msgid "Network Checker Running. Please Wait!"
-msgstr "Controllo di rete in corso. Attendere prego!"
+msgstr "Controllo della rete in corso. Attendere prego!"
 
 #: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:162
 msgid ""
@@ -1052,7 +1075,7 @@ msgid ""
 "debug logs in order to help diagnose issues with ATLauncher."
 msgstr ""
 "Usa questo per rilanciare ATLauncher in modalità debug. Questo può essere "
-"utilizzato per ottenere più log di debug per aiutare a diagnosticare "
+"utilizzato per ottenere più registri di debug per aiutare a diagnosticare "
 "problemi con ATLauncher."
 
 #: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:51
@@ -1121,7 +1144,7 @@ msgstr "Url di CurseForge"
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:126
 msgid "CurseForge Zip"
-msgstr "Negozio Zip"
+msgstr "CurseForge Zip"
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:137
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:230
@@ -1134,7 +1157,7 @@ msgstr "Apri nel browser"
 #: src\main\java\com\atlauncher\gui\dialogs\FileChooserDialog.java:99
 #: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:262
 msgid "Select"
-msgstr "Lingua predefinita impostata per il lato Amministrativo: %s"
+msgstr "Selezionare"
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:178
 #: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:179
@@ -1231,11 +1254,46 @@ msgstr "Server aggiunto"
 msgid "Search"
 msgstr "Trova"
 
+#. Fabric API is the name of a mod, so should be left untranslated
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:66
+msgid "Install Fabric API"
+msgstr "Installa Fabric API"
+
 #. {0} is the name of the mod we're installing
 #: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:76
 #: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:106
 msgid "Adding Mods For {0}"
 msgstr "Aggiunta di Mods per {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:85
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:115
+msgid "Mods"
+msgstr "Mods"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:88
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:118
+msgid "Resource Packs"
+msgstr "Pacchetti di risorse"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:89
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:119
+msgid "Worlds"
+msgstr "Mondi"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:91
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:121
+msgid "Popularity"
+msgstr "Popolare"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:92
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:122
+msgid "Last Updated"
+msgstr "Ultimo Aggiornamento"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:93
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:123
+msgid "Total Downloads"
+msgstr "Download Totali"
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
@@ -1271,6 +1329,21 @@ msgstr "Errore aggiungendo la connessione"
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:100
 msgid "A pack with that code doesn't exist!"
 msgstr "Non esiste un programma con il nome specificato!"
+
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the mod we're installing
+#. {0} is the name of the pack the user is installing
+#. {0} is the name of the pack the user is installing
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:112
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:130
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:164
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:174
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:130
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:307
+msgid "Installing {0}"
+msgstr "Installazione {0}"
 
 #: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:125
 msgid "The below mods need to be installed"
@@ -1331,6 +1404,15 @@ msgstr "Rimuovi riga"
 msgid "Installing {0} Server"
 msgstr "Reinstallando il server {0}"
 
+#. {0} is the name of the pack the user is reinstalling
+#. {0} is the name of the pack the user is installing
+#. {0} is the name of the pack the user is installing
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:141
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:181
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:303
+msgid "Reinstalling {0}"
+msgstr "Reinstalla {0}"
+
 #. {0} is the name of the pack the user is installing from Curse
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:175
 msgid "Installing {0} From Curse"
@@ -1339,7 +1421,7 @@ msgstr "Installazione {0} dalla Curse"
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
 #: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:200
 msgid "Install"
-msgstr "Configurazione email"
+msgstr "Installa"
 
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:243
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:251
@@ -1644,6 +1726,10 @@ msgid ""
 "There is already an instance called {0}.<br/><br/>Rename it and try again."
 msgstr "C'è già un'istanza chiamata {0}.<br/><br/>Rinomina e riprova."
 
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:143
+msgid "The name {0} is invalid. It must contain at least 1 letter or number."
+msgstr "Il nome {0} non è valido. Deve contenere almeno 1 lettera o un numero."
+
 #: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:157
 msgid ""
 "An error occurred renaming the instance.<br/><br/>Please check the console "
@@ -1769,6 +1855,16 @@ msgstr "Ricorda la password"
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:208
 msgid "Security Warning"
 msgstr "Avviso di sicurezza"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:209
+msgid ""
+"Make sure you only do this on a computer you trust.<br/>If you do this on a "
+"shared computer, your password may be stolen.<br/>Do you still want to save "
+"your password?"
+msgstr ""
+"Assicurati di farlo solo su un computer di cui ti fidi. <br/> Se lo fai su "
+"un computer condiviso, la tua password potrebbe essere rubata. <br/> Vuoi "
+"ancora salvare la tua password?"
 
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:239
 msgid "Are you sure you want to delete this account?"
@@ -2011,6 +2107,24 @@ msgstr ""
 "I tag dei pacchetti ti mostrano se un pacchetto è pubblico, semipubblico o "
 "privato"
 
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:303
+msgid "Disable Add Mod Restrictions"
+msgstr "Disabilita Aggiungi restrizioni Mod"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:304
+msgid ""
+"This will allow you to disable the restrictions in place to prevent you from "
+"installing mods from Curse that are not for your current Minecraft version "
+"or loader.<br/><br/>By disabling these restrictions, you can install any "
+"mod, so be sure that it's compatable with the Minecraft version and loader "
+"(if any) that you're on."
+msgstr ""
+"Ciò ti consentirà di disabilitare le restrizioni in atto per impedirti di "
+"installare mod da Curse che non sono per la tua versione o caricate in "
+"Minecraft corrente.<br/><br/>Disabilitando queste restrizioni, puoi "
+"installare qualsiasi mod, quindi è sicuro che sia compatibile con la "
+"versione di Minecraft e caricare (se presente) su cui ti trovi."
+
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:351
 msgid "General"
 msgstr "Generale"
@@ -2140,6 +2254,21 @@ msgstr ""
 "Il Launcher invia i log anonimi di utilizzo e errori<br/>ai nostri server "
 "per migliorare il Launcher e i pacchetti<br/>. Se non vuoi che ciò accada, "
 "semplicemente<br/>disabilita questa opzione."
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:134
+msgid ""
+"The Launcher sends back anonymous analytics to Google Analytics<br/>in order "
+"to track what people do and don't use in the launcher.<br/>This helps "
+"determine what new features we implement in the future.<br/>All analytics "
+"are anonymous and contain no user/instance information in it at all.<br/>If "
+"you don't want to send anonymous analytics, you can disable this option."
+msgstr ""
+"Il Launcher restituisce analisi anonime a Google Analytics <br/> per tenere "
+"traccia di ciò che le persone fanno e non utilizzano nel programma di avvio. "
+"<br/> Questo aiuta a determinare quali nuove funzionalità implementeremo in "
+"futuro. <br/> Tutto le analisi sono anonime e non contengono alcuna "
+"informazione utente/istanza. <br/> Se non si desidera inviare analisi "
+"anonime, è possibile disabilitare questa opzione."
 
 #: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:154
 msgid "Enable OpenEye Reporting"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-25 02:37\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -356,8 +356,8 @@ msgid ""
 "><br/>This will cause severe issues playing all packs if not fixed.<br/><br/"
 ">Do you want to close the launcher and learn how to fix this issue now?"
 msgstr ""
-"Wir haben festgestellt, das du mit 64-Bit Windows verwendest, aber kein 64-"
-"Bit Java verwendest.<br/><br/>Dies wird schwere Fehler beim Spielen aller "
+"Wir haben festgestellt, das du ein 64-Bit Windows, aber kein entsprachendes "
+"64-Bit Java verwendest.<br/><br/>Dies wird schwere Fehler beim Spielen aller "
 "Packs verursachen, sofern es nicht behoben wird.<br/><br/>Möchtest du den "
 "Launcher schließen und erfahren, wie du diesen Fehler behebst?"
 
@@ -371,10 +371,10 @@ msgid ""
 "have issues playing some packs, you may need to install Java 8 and set it to "
 "be used in the launchers java settings"
 msgstr ""
-"Du benutzt Java 9 oder neuer! Ältere Modpackete funktionieren unter "
-"Umständen nicht.<br/><br/>Wenn du Probleme hast, einige Packs zu spielen, "
-"versuche Java 8 zu installieren und stelle in den Java-Einstellungen des "
-"Launchers ein, das Java 8 genutzt werden soll"
+"Du benutzt Java 9 oder neuer! Ältere Modpacks funktionieren unter Umständen "
+"nicht.<br/><br/>Wenn du Probleme hast einige Packs zu spielen, versuche Java "
+"8 zu installieren und stelle in den Java-Einstellungen des Launchers ein, "
+"dass Java 8 genutzt werden soll"
 
 #: src\main\java\com\atlauncher\data\Settings.java:247
 #: src\main\java\com\atlauncher\data\Settings.java:266
@@ -608,7 +608,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:419
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:501
 msgid "Update Available"
-msgstr "Aktualisierung möglich"
+msgstr "Update verfügbar"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:210
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:410
@@ -619,8 +619,8 @@ msgstr "Aktualisierung möglich"
 msgid ""
 "An update is available for this instance.<br/><br/>Do you want to update now?"
 msgstr ""
-"Eine Aktualisierung für diese Instanz ist möglich.<br/><br/>Möchtest du sie "
-"jetzt aktualisieren?"
+"Eine Update für diese Instanz ist verfügbar.<br/><br/>Möchtest du sie jetzt "
+"aktualisieren?"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:218
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:257
@@ -675,33 +675,33 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
 msgid "No Saves Found"
-msgstr "Keine Sicherung gefunden"
+msgstr "Keine Speicherdatei gefunden"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:321
 msgid "Can't backup instance as no saves were found."
-msgstr "Kann Instanz nicht sichern, weil keine Sicherung gefunden wurde."
+msgstr "Kann Instanz nicht sichern, weil keine Speicherdatei gefunden wurde."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:353
 msgid "Enter a new name for this cloned instance."
-msgstr "Gib einen Namen für diese kopierte Instanz ein."
+msgstr "Gib einen Namen für diese geklonte Instanz ein."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:352
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:353
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:361
 msgid "Cloning Instance"
-msgstr "Kopiere Instanz"
+msgstr "Klone Instanz"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:353
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:362
 msgid "Cloning Instance. Please wait..."
-msgstr "Kopiere Instanz. Bitte warten..."
+msgstr "Klone Instanz. Bitte warten..."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:357
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:366
 msgid "Cloned Instance Successfully"
-msgstr "Kopieren der Instanz erfolgreich abgeschlossen"
+msgstr "Klonen der Instanz erfolgreich abgeschlossen"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:363
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:370
@@ -719,7 +719,7 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:384
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:393
 msgid "Delete Instance"
-msgstr "Instanz lösche"
+msgstr "Instanz Löschen"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:385
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:394
@@ -782,17 +782,17 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:330
 msgid "No saves found"
-msgstr "Keine Sicherungen gefunden"
+msgstr "Keine Speicherdateien gefunden"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:331
 msgid "No saves were found for this instance"
-msgstr "Für diese Instanz wurden keine Sicherungen gefunden"
+msgstr "Für diese Instanz wurden keine Speicherdateien gefunden"
 
 #: src\main\java\com\atlauncher\gui\card\NilCard.java:55
 #: src\main\java\com\atlauncher\gui\card\NilCard.java:58
 #: src\main\java\com\atlauncher\gui\card\NilCard.java:83
 msgid "Nothing To Show"
-msgstr "Nichts zum anzeigen"
+msgstr "Nichts anzuzeigen"
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:48
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:177
@@ -802,7 +802,7 @@ msgstr "Neue Instanz"
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:49
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:178
 msgid "Create Server"
-msgstr "Erstelle einen Server"
+msgstr "Server Erstellen"
 
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:51
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:179
@@ -921,9 +921,6 @@ msgstr ""
 "dies tust, könnten deine Sicherungen zerstört werden."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "Suche nach Updates"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "Nach Updates suchen"

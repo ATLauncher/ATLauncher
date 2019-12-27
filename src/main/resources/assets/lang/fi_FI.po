@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -68,6 +68,11 @@ msgstr "Ei voitu kirjautua sisään Minecraft-palvelimiin"
 #: src\main\java\com\atlauncher\data\DisableableMod.java:374
 msgid "No Updates Found"
 msgstr "Päivityksiä ei löytynyt"
+
+#: src\main\java\com\atlauncher\data\DisableableMod.java:360
+#: src\main\java\com\atlauncher\data\DisableableMod.java:375
+msgid "No updates were found for {0}."
+msgstr "Päivityksiä ei löytynyt {0}."
 
 #: src\main\java\com\atlauncher\data\Instance.java:514
 #: src\main\java\com\atlauncher\data\InstanceV2.java:166
@@ -263,6 +268,11 @@ msgstr "Tallenna tiedosto seuraavaan sijaintiin"
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
 msgid "Open Folder"
 msgstr "Avaa tiedosto"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:438
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
+msgstr "Olen ladannut tämän tiedoston"
 
 #: src\main\java\com\atlauncher\data\MinecraftError.java:40
 msgid ""
@@ -898,9 +908,6 @@ msgstr ""
 "aiheuttaa tallennukseen korruption."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "Tarkistetaan päivityksiä"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "Tarkistetaan päivityksiä"
@@ -965,6 +972,22 @@ msgstr "Onnistui"
 #: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
 msgid "Successfully cleared the logs."
 msgstr "Logit tyhjennettiin onnistuneesti."
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:138
+msgid "Open On Curse"
+msgstr "Avaa Cursessa"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Enable"
+msgstr "Ota käyttöön"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Disable"
+msgstr "Poista käytöstä"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:170
+msgid "Show In File Explorer"
+msgstr "Avaa resurssienhallinnassa"
 
 #: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:219
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
@@ -1214,11 +1237,41 @@ msgstr "Palvelin muokattu"
 msgid "Search"
 msgstr "Etsi"
 
+#. Fabric API is the name of a mod, so should be left untranslated
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:66
+msgid "Install Fabric API"
+msgstr "Lataa Fabric API"
+
 #. {0} is the name of the mod we're installing
 #: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:76
 #: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:106
 msgid "Adding Mods For {0}"
 msgstr "Lisätään modeja {0}"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:85
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:115
+msgid "Mods"
+msgstr "Modit"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:88
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:118
+msgid "Resource Packs"
+msgstr "Resurssipaketit"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:89
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:119
+msgid "Worlds"
+msgstr "Maailmat"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:91
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:121
+msgid "Popularity"
+msgstr "Suositut"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:92
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:122
+msgid "Last Updated"
+msgstr "Päivitetty viimeksi"
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
@@ -2041,6 +2094,10 @@ msgstr "Aika tarkistuksien välissä"
 #: src\main\java\com\atlauncher\gui\tabs\ToolsTab.java:57
 msgid "Tools"
 msgstr "Työkalut"
+
+#: src\main\java\com\atlauncher\gui\TrayMenu.java:47
+msgid "Toggle console"
+msgstr "Näytä/piilota konsoli"
 
 #: src\main\java\com\atlauncher\gui\TrayMenu.java:48
 msgid "Quit"

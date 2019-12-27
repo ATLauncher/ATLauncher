@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -258,6 +258,31 @@ msgstr "Lütfen bu dosyayı belirtilen konuma kaydedin"
 msgid "Open Folder"
 msgstr "Klasörü Aç"
 
+#: src\main\java\com\atlauncher\data\json\Mod.java:438
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
+msgstr "Bu dosyayı indirdim"
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:40
+msgid ""
+"Minecraft has crashed due to insufficent memory being allocated.<br/><br/"
+">Please go to the settings tab and increase the maximum memory option and "
+"then try launching the instance again."
+msgstr ""
+"Minecraft yetersiz hafıza paylaşımı sebebiyle çöktü.<br/><br/>Lütfen ayarlar "
+"sekmesine girip azami hafıza ayarını arttırın ve örneği tekrar başlatmayı "
+"deneyin."
+
+#: src\main\java\com\atlauncher\data\MinecraftError.java:48
+msgid ""
+"Minecraft has crashed due to an incompatability with Forge and your version "
+"of Java.<br/><br/>Please reinstall the instance to automatically fix the "
+"problem, and then try launching the instance again."
+msgstr ""
+"Minecraft, Forge ve Java versiyonunuzun uyumsuzluğu sebebiyle çöktü.<br/><br/"
+">Lütfen sorunu otomatik olarak çözmek için örneği tekrar yükleyin, ardından "
+"örneği tekrar başlatmayı deneyin."
+
 #: src\main\java\com\atlauncher\data\MinecraftServer.java:152
 msgid "Offline"
 msgstr "Çevrimdışı"
@@ -266,14 +291,45 @@ msgstr "Çevrimdışı"
 msgid "Online"
 msgstr "Çevrimiçi"
 
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:88
+msgid "A note attached to the crash can be seen below:"
+msgstr "Çökmeye iliştirilmiş not aşağıda görülebilir:"
+
+#: src\main\java\com\atlauncher\data\openmods\OpenEyeReportResponse.java:91
+msgid "There is no note attached to this crash."
+msgstr "Bu çökmeye iliştirilmiş not yok."
+
 #: src\main\java\com\atlauncher\data\Server.java:114
 msgid "Server Launched"
 msgstr "Sunucu Başlatıldı"
+
+#: src\main\java\com\atlauncher\data\Server.java:115
+msgid ""
+"The server has been launched in an external window.<br/><br/>You can close "
+"ATLauncher which will not stop the server."
+msgstr ""
+"Bu sunucu harici bir pencerede başlatıldı.<br/><br/>ATLauncher'i "
+"kapatabilirsiniz, bu işlem sunucuyu durdurmayacaktır."
 
 #: src\main\java\com\atlauncher\data\Settings.java:180
 #: src\main\java\com\atlauncher\data\Settings.java:262
 msgid "Unsupported Java Version"
 msgstr "Desteklenmeyen Java Sürümü"
+
+#: src\main\java\com\atlauncher\data\Settings.java:181
+msgid ""
+"You're using an unsupported version of Java. You need to upgrade your Java "
+"to at minimum Java 8 version 101.<br/><br/>The launcher will not start until "
+"you do this.<br/><br/>If you're seeing this message even after installing a "
+"newer version, you may need to uninstall the old version first.<br/><br/"
+">Click ok to open the Java download page and close the launcher."
+msgstr ""
+"Desteklenmeyen bir Java sürümü kullanıyorsunuz. Java'yı en az \"Java 8 "
+"version 101\" e yükseltmeniz gerekiyor.<br/><br/>Bunu yapana kadar "
+"ATLauncher başlatılamayacaktır.<br/><br/>Bu mesaji yeni sürümü yükledikten "
+"sonra da görüyorsanız, eski sürümü silmeniz gerekiyor olabilir.<br/><br/>Ok "
+"tuşuna tıklayarak Java indirme sayfasına gidebilir ve ATLauncher'i "
+"kapatabilirsiniz."
 
 #: src\main\java\com\atlauncher\data\Settings.java:227
 msgid "Running 32 Bit Java on 64 Bit Windows"
@@ -294,6 +350,17 @@ msgstr ""
 msgid "Warning! You may not be able to play Minecraft"
 msgstr "Uyarı! Minecraft oynayamayabilirsiniz"
 
+#: src\main\java\com\atlauncher\data\Settings.java:244
+msgid ""
+"You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you "
+"have issues playing some packs, you may need to install Java 8 and set it to "
+"be used in the launchers java settings"
+msgstr ""
+"Java 9 veya daha üst bir sürüm kullanıyorsunuz! Eski mod paketleri "
+"çalışmayabilir.<br/><br/>Eğer bazı paketleri oynamakta sıkıntı yaşıyorsanız, "
+"Java 8 i yükleyip ATLauncher java ayarları kısmından kullanılabilir olarak "
+"ayarlamanız gerekebilir"
+
 #: src\main\java\com\atlauncher\data\Settings.java:247
 #: src\main\java\com\atlauncher\data\Settings.java:266
 msgid "Download"
@@ -309,6 +376,18 @@ msgstr "İndir"
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:505
 msgid "Don't Remind Me Again"
 msgstr "Tekrar Hatırlatma"
+
+#: src\main\java\com\atlauncher\data\Settings.java:263
+msgid ""
+"You're using an unsupported version of Java. You should upgrade your Java to "
+"at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load "
+"meaning you cannot play.<br/><br/>Click Download to go to the Java downloads "
+"page"
+msgstr ""
+"Desteklenmeyen bir Java sürümü kullanıyorsunuz. Java'yı en az Java 7 "
+"sürümüne yükseltmeniz gerekiyor.<br/><br/>Java 7 olmadan bazı modlar "
+"yüklenilmeyi reddedecektir, bu da oynayamayacağınız anlamına geliyor.<br/"
+"><br/>İndir e tıklayarak Java indirme sayfasına gidebilirsiniz"
 
 #: src\main\java\com\atlauncher\data\Settings.java:398
 #: src\main\java\com\atlauncher\data\Settings.java:399
@@ -495,6 +574,18 @@ msgstr "Oluşum, Java sürümünüzden dolayı çalıştırılamıyor"
 msgid "Update Available"
 msgstr "Güncelleme Mevcut"
 
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:210
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:410
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:489
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:215
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:420
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:502
+msgid ""
+"An update is available for this instance.<br/><br/>Do you want to update now?"
+msgstr ""
+"Bu örnek için bir güncelleştirme kullanılabilir.<br/><br/>Şimdi güncellemek "
+"istiyor musunuz?"
+
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:267
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:275
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:282
@@ -510,6 +601,11 @@ msgstr "Yedekleniyor {0}"
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
 msgid "No Saves Found"
 msgstr "Kayıt Bulanamadı"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:353
+msgid "Enter a new name for this cloned instance."
+msgstr "Bu klonlanmış örnek için yeni bir ad girin."
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:343
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:352
@@ -566,6 +662,33 @@ msgstr "Oluşum Kaldırılıyor. Lütfen bekleyin..."
 msgid "Deleted Instance Successfully"
 msgstr "Oluşum Başarıyla Kaldırıldı"
 
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:449
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:459
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:232
+msgid "Change Image"
+msgstr "Görseli değiştir"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:452
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:140
+msgid "Share Code"
+msgstr "Kodu Paylaş"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:563
+msgid "Open CurseForge"
+msgstr "CurseForge Aç"
+
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:55
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:58
+#: src\main\java\com\atlauncher\gui\card\NilCard.java:83
+msgid "Nothing To Show"
+msgstr "Gösterilecek bir şey yok"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:49
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:178
+msgid "Create Server"
+msgstr "Sunucu Oluştur"
+
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:51
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:179
 msgid "Support"
@@ -606,6 +729,10 @@ msgstr "Kullanıcı Arayüzüyle Birlikte Çalıştır & Kapat"
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:199
 msgid "Delete Server"
 msgstr "Sunucuyu Sil"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:200
+msgid "Are you sure you want to delete this server?"
+msgstr "Bu sunucuyı silmek istediğinizden emin misiniz?"
 
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:205
 msgid "Deleting Server"
@@ -660,9 +787,6 @@ msgstr ""
 "işlem kayıt dosyalarınızın bozulmasına yol açabilir."
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "Güncellenenler Kontrol Ediliyor"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "Güncellemeler Kontrol Ediliyor"
@@ -715,6 +839,34 @@ msgstr "Günlük Temizleyici"
 #: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:62
 msgid "Success"
 msgstr "Başarılı"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:63
+msgid "Successfully cleared the logs."
+msgstr "Günlükler başarıyla temizlendi."
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Enable"
+msgstr "Etkinleştir"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Disable"
+msgstr "Devre dışı bırak"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:170
+msgid "Show In File Explorer"
+msgstr "Dosya Gezgini'nde Göster"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:219
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
+msgid "Check For Updates"
+msgstr "Güncellemeleri kontrol et"
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:46
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:73
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:80
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:161
+msgid "Network Checker"
+msgstr "Ağ Denetleyicisi"
 
 #: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:59
 msgid "Private"
@@ -830,6 +982,36 @@ msgstr "Sunucu Düzenlendi"
 msgid "Search"
 msgstr "Ara"
 
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:85
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:115
+msgid "Mods"
+msgstr "Modlar"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:88
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:118
+msgid "Resource Packs"
+msgstr "Kaynak Paketleri"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:89
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:119
+msgid "Worlds"
+msgstr "Dünyalar"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:91
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:121
+msgid "Popularity"
+msgstr "Popülerlik"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:92
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:122
+msgid "Last Updated"
+msgstr "Son Güncelleme"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:93
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:123
+msgid "Total Downloads"
+msgstr "Toplam indirme"
+
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
 #: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:56
@@ -860,6 +1042,10 @@ msgstr "Bu paket zaten ekli!"
 #: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:99
 msgid "Error Adding Pack"
 msgstr "Paket Eklemede Hata"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:100
+msgid "A pack with that code doesn't exist!"
+msgstr "Bu koda sahip bir paket yok!"
 
 #. {0} is the name of the mod we're installing
 #. {0} is the name of the mod we're installing
@@ -920,6 +1106,11 @@ msgstr "Mod Çıkar"
 msgid "Install"
 msgstr "Yükle"
 
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:243
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:251
+msgid "Enable User Lock"
+msgstr "Kullanıcı Kilidini Etkinleştir"
+
 #. {0} is the pack name and {1} is the pack version
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:387
 msgid "{0} {1} Installed"
@@ -930,11 +1121,21 @@ msgstr "{0} {1} Yüklendi"
 msgid "{0} {1} has been reinstalled."
 msgstr "{0} {1} yeniden yüklendi."
 
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:703
+msgid "Loader Version"
+msgstr "Yükleyici Sürümü"
+
 #. {0} is the name of the instance
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:75
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:92
 msgid "{0} Settings"
 msgstr "{0} Ayarları"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:161
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:134
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:414
+msgid "Maximum Memory/Ram"
+msgstr "Maksimum Bellek/Ram"
 
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:214
 #: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:235
@@ -955,6 +1156,12 @@ msgstr "Sıfırla"
 msgid "Select path to Java install"
 msgstr "Java kurulumu için dizin seçin"
 
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:254
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:284
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:436
+msgid "Java Parameters"
+msgstr "Java Parametreleri"
+
 #: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:274
 #: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:131
 #: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:137
@@ -965,6 +1172,34 @@ msgstr "Java kurulumu için dizin seçin"
 #: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:120
 msgid "Save"
 msgstr "Kaydet"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:65
+msgid "Select Mods To Install"
+msgstr "Kurulum yapılacak modları seçiniz"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:101
+msgid "Required Mods"
+msgstr "Gerekli Modlar"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:105
+msgid "Optional Mods"
+msgstr "İsteğe Bağlı Modlar"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:152
+msgid "Select Recommended"
+msgstr "Önerilen'i Seçin"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:154
+msgid "Select All"
+msgstr "Tümünü Seç"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:182
+msgid "Clear All"
+msgstr "Tümünü Temizle"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:276
+msgid "Warning"
+msgstr "Uyarı"
 
 #: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:282
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:212
@@ -979,6 +1214,17 @@ msgstr "Evet"
 #: src\main\java\com\atlauncher\managers\DialogManager.java:96
 msgid "No"
 msgstr "Hayır"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:374
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:384
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:391
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:415
+msgid "Invalid Share Code"
+msgstr "Geçersiz Paylaşım Kodu"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ProgressDialog.java:115
+msgid "Tasks Done"
+msgstr "Tamamlanan Görevler"
 
 #. {0} is the name of the launcher (ATLauncher)
 #: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:68
@@ -1024,6 +1270,10 @@ msgstr "Kopyala"
 msgid "Loading"
 msgstr "Yükleniyor"
 
+#: src\main\java\com\atlauncher\gui\panels\NoCurseModsPanel.java:34
+msgid "No mods found."
+msgstr "Mod bulunamadı."
+
 #: src\main\java\com\atlauncher\gui\SplashScreen.java:75
 msgid "Force quit"
 msgstr "Kapanmaya Zorla"
@@ -1052,9 +1302,26 @@ msgstr "Parolayı hatırla"
 msgid "Security Warning"
 msgstr "Güvenlik Uyarısı"
 
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:239
+msgid "Are you sure you want to delete this account?"
+msgstr "Bu hesabı silmek istediğinize emin misiniz?"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:294
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:353
+msgid "Account Not Added"
+msgstr "Hesap eklenmedi"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:295
+msgid "This account already exists."
+msgstr "Bu hesap zaten var."
+
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:319
 msgid "Account Added"
 msgstr "Hesap Eklendi"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:320
+msgid "Account added successfully. Switch to it now?"
+msgstr "Hesap başarıyla eklendi. Şimdi mi geçilsin?"
 
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:340
 msgid "Account Edited"
@@ -1082,6 +1349,11 @@ msgstr "Tümünü genişlet"
 msgid "Collapse All"
 msgstr "Tümünü Daralt"
 
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:64
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:285
+msgid "Private Packs Only"
+msgstr "Yalnızca Özel Paketler"
+
 #: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:65
 #: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:286
 msgid "Search Description"
@@ -1099,6 +1371,10 @@ msgstr "Vanilya Paketler"
 msgid "Packs"
 msgstr "Paketler"
 
+#: src\main\java\com\atlauncher\gui\tabs\settings\BackupsSettingsTab.java:40
+msgid "Enable Mods Backups"
+msgstr "Mod Yedeklemelerini Etkinleştir"
+
 #: src\main\java\com\atlauncher\gui\tabs\settings\BackupsSettingsTab.java:58
 msgid "Backups"
 msgstr "Yedekler"
@@ -1106,6 +1382,11 @@ msgstr "Yedekler"
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:90
 msgid "Help Translate"
 msgstr "Çeviriye Yardımda Bulun"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:104
+msgid "Changing this setting will automatically restart the launcher."
+msgstr ""
+"Bu ayarı değiştirmek başlatıcıyı otomatik olarak yeniden başlatacaktır."
 
 #: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:106
 msgid "Theme"
@@ -1149,9 +1430,50 @@ msgstr "Java/Minecraft"
 msgid "Forge Logging Level"
 msgstr "Forge Günlük Seviyesi"
 
+#: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:183
+msgid "Logging"
+msgstr "Günlükleme"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:80
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:255
+msgid "Enable Proxy"
+msgstr "Proxy'yi etkinleştir"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:81
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:257
+msgid "If you use a proxy to connect to the internet you can enable it here."
+msgstr ""
+"Eğer internete bağlanmak için bir proxy kullanıyorsanız buradan "
+"etkinleştirebilirsiniz."
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:128
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:262
+msgid "Proxy Port"
+msgstr "Proxy Bağlantı Noktası"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:129
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:263
+msgid "This is the port used to connect to the proxy."
+msgstr "Bu proxy bağlanmak için kullanılan bağlantı noktasıdır."
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:147
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:265
+msgid "Proxy Type"
+msgstr "Proxy Türü"
+
 #: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:246
 msgid "Network"
 msgstr "Ağ"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:49
+#: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:120
+msgid "Enable Server Checker"
+msgstr "Sunucu Denetleyicisini Etkinleştir"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:74
+#: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:124
+msgid "Time Between Checks"
+msgstr "Denetimler Arasındaki Süre"
 
 #: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:115
 #: src\main\java\com\atlauncher\gui\tabs\ToolsTab.java:57

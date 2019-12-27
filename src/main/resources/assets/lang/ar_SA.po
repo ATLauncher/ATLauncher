@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: atlauncher\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-12-24 06:24\n"
+"PO-Revision-Date: 2019-12-27 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "MIME-Version: 1.0\n"
@@ -65,6 +65,11 @@ msgstr "حدت خطأ اتناء تسجيل الدخول"
 msgid "Couldn't login to Minecraft servers"
 msgstr "فشل تسجيل الدخول لسيرفرات ماينكرافت"
 
+#: src\main\java\com\atlauncher\data\DisableableMod.java:359
+#: src\main\java\com\atlauncher\data\DisableableMod.java:374
+msgid "No Updates Found"
+msgstr "لم يُعثر على تحديثات"
+
 #: src\main\java\com\atlauncher\data\DisableableMod.java:360
 #: src\main\java\com\atlauncher\data\DisableableMod.java:375
 msgid "No updates were found for {0}."
@@ -93,6 +98,11 @@ msgstr "بدون وصف"
 msgid "No Account Selected"
 msgstr "لم يتم تحديد اي حساب"
 
+#: src\main\java\com\atlauncher\data\Instance.java:1359
+#: src\main\java\com\atlauncher\data\InstanceV2.java:368
+msgid "Cannot play instance as you have no account selected."
+msgstr "لا تستطيع اللعب بسبب عدم اختيار حساب."
+
 #: src\main\java\com\atlauncher\data\Instance.java:1369
 #: src\main\java\com\atlauncher\data\InstanceV2.java:378
 msgid "Insufficient Ram"
@@ -102,6 +112,15 @@ msgstr "رام غير كافٍ"
 #: src\main\java\com\atlauncher\data\InstanceV2.java:393
 msgid "Insufficent Permgen"
 msgstr "بيرمن غير كافٍ"
+
+#: src\main\java\com\atlauncher\data\Instance.java:1399
+#: src\main\java\com\atlauncher\data\Instance.java:1400
+#: src\main\java\com\atlauncher\data\InstanceV2.java:407
+#: src\main\java\com\atlauncher\data\InstanceV2.java:408
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:300
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:301
+msgid "Logging Into Minecraft"
+msgstr "يتم التسجيل إلى ماينكرافت"
 
 #: src\main\java\com\atlauncher\data\Instance.java:1553
 #: src\main\java\com\atlauncher\data\InstanceV2.java:584
@@ -132,6 +151,10 @@ msgstr ""
 msgid "Ok"
 msgstr "حسناً"
 
+#: src\main\java\com\atlauncher\data\Instance.java:1776
+msgid "Installed"
+msgstr "تم التثبيت"
+
 #: src\main\java\com\atlauncher\data\InstanceV2.java:251
 #: src\main\java\com\atlauncher\workers\InstanceInstaller.java:723
 msgid "Downloading Minecraft"
@@ -142,6 +165,26 @@ msgstr "تحميل ماين كرافت"
 msgid "Downloading Libraries"
 msgstr "تحميل المكتبات"
 
+#: src\main\java\com\atlauncher\data\InstanceV2.java:305
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:675
+msgid "Downloading Resources"
+msgstr "تحميل الملفات"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:340
+#: src\main\java\com\atlauncher\workers\InstanceInstaller.java:926
+msgid "Organising Libraries"
+msgstr "ترتيب الملفات"
+
+#: src\main\java\com\atlauncher\data\InstanceV2.java:429
+#: src\main\java\com\atlauncher\data\InstanceV2.java:430
+msgid "Preparing For Launch"
+msgstr "الإستعداد للإطلاق"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:51
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Installing"
+msgstr "جارِ التثبيت"
+
 #: src\main\java\com\atlauncher\data\json\Messages.java:52
 #: src\main\java\com\atlauncher\data\json\Messages.java:73
 #: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:250
@@ -149,6 +192,22 @@ msgstr "تحميل المكتبات"
 #: src\main\java\com\atlauncher\managers\DialogManager.java:87
 msgid "Cancel"
 msgstr "الغاء"
+
+#: src\main\java\com\atlauncher\data\json\Messages.java:72
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:195
+msgid "Reinstalling"
+msgstr "إعادة التثبيت"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:423
+#: src\main\java\com\atlauncher\data\json\Mod.java:565
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:112
+msgid "Downloading"
+msgstr "جارٍ التنزيل"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:430
+#: src\main\java\com\atlauncher\data\json\Mod.java:569
+msgid "Please save this file to the following location"
+msgstr "من فضلك إحفظ الملف في الموقع اللآتي"
 
 #: src\main\java\com\atlauncher\data\json\Mod.java:437
 #: src\main\java\com\atlauncher\data\json\Mod.java:574
@@ -162,6 +221,11 @@ msgstr "الغاء"
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:215
 msgid "Open Folder"
 msgstr "فتح المجلد"
+
+#: src\main\java\com\atlauncher\data\json\Mod.java:438
+#: src\main\java\com\atlauncher\data\json\Mod.java:575
+msgid "I've Downloaded This File"
+msgstr "قمت بتنزيل الملف"
 
 #: src\main\java\com\atlauncher\data\MinecraftServer.java:152
 msgid "Offline"
@@ -181,6 +245,17 @@ msgstr "نسخة جافا غير مدعومة"
 msgid "Download"
 msgstr "تنزيل"
 
+#: src\main\java\com\atlauncher\data\Settings.java:248
+#: src\main\java\com\atlauncher\data\Settings.java:267
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:213
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:413
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:492
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:218
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:423
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:505
+msgid "Don't Remind Me Again"
+msgstr "لاتذكرني مرة أخرى"
+
 #: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:82
 #: src\main\java\com\atlauncher\gui\card\CurseModCard.java:78
 #: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:174
@@ -195,6 +270,11 @@ msgstr "تنزيل"
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:371
 msgid "Add"
 msgstr "اضافة"
+
+#: src\main\java\com\atlauncher\gui\card\CurseFileDependencyCard.java:83
+#: src\main\java\com\atlauncher\gui\card\CurseModCard.java:79
+msgid "View"
+msgstr "عرض"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:93
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:570
@@ -238,6 +318,13 @@ msgstr "إعادة تسمية"
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:280
 msgid "Backup"
 msgstr "نسخة احتياطية"
+
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:98
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:575
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:93
+#: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:558
+msgid "Clone"
+msgstr "نسخ"
 
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:99
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:576
@@ -288,16 +375,68 @@ msgstr "إعدادات"
 msgid "Update Available"
 msgstr "تحديث متوفر"
 
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:320
+msgid "No Saves Found"
+msgstr "لم يتم العثور على ملفات محفوظة"
+
 #: src\main\java\com\atlauncher\gui\card\InstanceCard.java:449
 #: src\main\java\com\atlauncher\gui\card\InstanceV2Card.java:459
 #: src\main\java\com\atlauncher\gui\card\ServerCard.java:232
 msgid "Change Image"
 msgstr "تغيير الصورة"
 
+#: src\main\java\com\atlauncher\gui\card\InstanceCard.java:452
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:140
+msgid "Share Code"
+msgstr "رمز المشاركة"
+
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:51
 #: src\main\java\com\atlauncher\gui\card\PackCard.java:179
 msgid "Support"
 msgstr "الدعم"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:52
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:180
+msgid "Website"
+msgstr "الموقع"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:55
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:183
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:190
+msgid "Remove"
+msgstr "إزالة"
+
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:135
+#: src\main\java\com\atlauncher\gui\card\PackCard.java:146
+msgid "Cannot create instance as you have no account selected."
+msgstr "لا تستطيع اللعب بسبب عدم اختيار حساب."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:73
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:276
+#: src\main\java\com\atlauncher\gui\components\AbstractToolPanel.java:40
+msgid "Launch"
+msgstr "بدأ"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:74
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:277
+msgid "Launch & Close"
+msgstr "بدأ & إغلاق"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:199
+msgid "Delete Server"
+msgstr "حذف الخادم"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:205
+msgid "Deleting Server"
+msgstr "جاري حذف الخادم"
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:206
+msgid "Deleting Server. Please wait..."
+msgstr "جاري حذف البيانات ، الرجاء الإنتظار..."
+
+#: src\main\java\com\atlauncher\gui\card\ServerCard.java:210
+msgid "Deleted Server Successfully"
+msgstr "تم حذف الخادم بنجاح"
 
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:47
 #: src\main\java\com\atlauncher\gui\components\ConsoleBottomBar.java:134
@@ -314,9 +453,6 @@ msgid "Clear"
 msgstr "مسح"
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr "البحث عن تحديثات"
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr "البحث عن تحديثات"
@@ -335,10 +471,47 @@ msgstr "اظهار وحدة التحكم"
 msgid "Hide Console"
 msgstr "اخفاء وحدة التحكم"
 
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:136
+#: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:214
+msgid "Update Data"
+msgstr "حدث البيانات"
+
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:140
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:216
 msgid "Select An Account"
 msgstr "اختيار الحساب"
+
+#: src\main\java\com\atlauncher\gui\components\LogClearerToolPanel.java:62
+msgid "Success"
+msgstr "نجاح"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Enable"
+msgstr "تفعيل"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:148
+msgid "Disable"
+msgstr "تعطيل"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:170
+msgid "Show In File Explorer"
+msgstr "أظهر في متصفّح الملفات"
+
+#: src\main\java\com\atlauncher\gui\components\ModsJCheckBox.java:219
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:323
+msgid "Check For Updates"
+msgstr "التحقق من وجود تحديثات"
+
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:46
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:73
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:80
+#: src\main\java\com\atlauncher\gui\components\NetworkCheckerToolPanel.java:161
+msgid "Network Checker"
+msgstr "المتحقق من الشبكة"
+
+#: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:55
+msgid "Dev"
+msgstr "تطوير"
 
 #: src\main\java\com\atlauncher\gui\components\PackImagePanel.java:59
 msgid "Private"
@@ -352,9 +525,260 @@ msgstr "عام"
 msgid "Semi Public"
 msgstr "شبه عام"
 
+#: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:77
+msgid "Downloading. Please Wait!"
+msgstr "جارِ تنزيل الملف. يُرجى الانتظار!"
+
 #: src\main\java\com\atlauncher\gui\components\RuntimeDownloaderToolPanel.java:127
 msgid "Extracting"
 msgstr "استخراج"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:137
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:230
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:258
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:434
+msgid "Browse"
+msgstr "تصفح"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:141
+#: src\main\java\com\atlauncher\gui\dialogs\FileChooserDialog.java:99
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:262
+msgid "Select"
+msgstr "تحديد"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:83
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:53
+#: src\main\java\com\atlauncher\gui\tabs\ServersForCheckerTab.java:48
+msgid "Edit"
+msgstr "تعديل"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:103
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:205
+msgid "Name"
+msgstr "الإسم"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:129
+msgid "Port"
+msgstr "المنفذ"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:146
+#: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:349
+#: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:51
+msgid "Close"
+msgstr "إغلاق"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:61
+#: src\main\java\com\atlauncher\gui\dialogs\ViewModsDialog.java:64
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:105
+#: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:218
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:62
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:89
+#: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:160
+msgid "Search"
+msgstr "البحث"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:89
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:119
+msgid "Worlds"
+msgstr "عوالم"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:91
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:121
+msgid "Popularity"
+msgstr "الأكثر شعبية"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:92
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:122
+msgid "Last Updated"
+msgstr "آخر تحديث"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:93
+#: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:123
+msgid "Total Downloads"
+msgstr "إجمالي التنزيلات"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:53
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:65
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:56
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:279
+msgid "Add Pack"
+msgstr "إضافة الحزمة"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:75
+msgid "Pack Code"
+msgstr "النص البرمجي للحزمة"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:90
+msgid "Pack Added"
+msgstr "الحزمة أضيفت"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:91
+msgid "The pack has been added!"
+msgstr "تم إضافة الحزمة!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:93
+msgid "Pack Already Added"
+msgstr "الحزمة مضافة بالفعل"
+
+#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:94
+msgid "The pack was already added!"
+msgstr "تم إضافة الحزمة بالفعل!"
+
+#: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:139
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:554
+msgid "Version To Install"
+msgstr "النسخة للتثبيت"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceInstallerDialog.java:190
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:200
+msgid "Install"
+msgstr "تثبيت"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:228
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:266
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:256
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:295
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:432
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:439
+msgid "Reset"
+msgstr "إعادة ضبط"
+
+#: src\main\java\com\atlauncher\gui\dialogs\InstanceSettingsDialog.java:274
+#: src\main\java\com\atlauncher\gui\dialogs\RenameInstanceDialog.java:131
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:137
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:172
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:142
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:374
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:55
+#: src\main\java\com\atlauncher\gui\tabs\SettingsTab.java:120
+msgid "Save"
+msgstr "حفظ"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:154
+msgid "Select All"
+msgstr "تحديد الكل"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:182
+msgid "Clear All"
+msgstr "مسح الكل"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:276
+msgid "Warning"
+msgstr "تحذير"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:282
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:212
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:321
+#: src\main\java\com\atlauncher\managers\DialogManager.java:95
+msgid "Yes"
+msgstr "نعم"
+
+#: src\main\java\com\atlauncher\gui\dialogs\ModsChooser.java:283
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:212
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:321
+#: src\main\java\com\atlauncher\managers\DialogManager.java:96
+msgid "No"
+msgstr "لا"
+
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:92
+#: src\main\java\com\atlauncher\gui\dialogs\SetupDialog.java:166
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:76
+msgid "Language"
+msgstr "اللغة"
+
+#: src\main\java\com\atlauncher\gui\handlers\ModsJCheckBoxTransferHandler.java:90
+msgid "Type"
+msgstr "أكتب"
+
+#: src\main\java\com\atlauncher\gui\LauncherConsole.java:93
+#: src\main\java\com\atlauncher\gui\LauncherConsole.java:137
+#: src\main\java\com\atlauncher\gui\LauncherConsole.java:148
+#: src\main\java\com\atlauncher\gui\tabs\NewsTab.java:112
+msgid "Copy"
+msgstr "نسخ"
+
+#: src\main\java\com\atlauncher\gui\panels\LoadingPanel.java:44
+msgid "Loading"
+msgstr "جار التحميل"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:121
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:368
+msgid "Add An Account"
+msgstr "إضافة حساب"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:156
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:378
+msgid "Username/Email"
+msgstr "البريد الإلكتروني/إسم المستخدم"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:177
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:379
+msgid "Password"
+msgstr "كلمة المُرور"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:198
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:380
+msgid "Remember Password"
+msgstr "تذكَّر كلمة السر"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:208
+msgid "Security Warning"
+msgstr "تحذير أمني"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:319
+msgid "Account Added"
+msgstr "أضيف الحساب"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:320
+msgid "Account added successfully. Switch to it now?"
+msgstr "تم إضافة الحساب بنجاح. الإنتقال إليه الأن؟"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:341
+msgid "Account edited successfully"
+msgstr "تم تعديل الحساب بنجاح"
+
+#: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:363
+msgid "Accounts"
+msgstr "الحسابات"
+
+#: src\main\java\com\atlauncher\gui\tabs\NewsTab.java:107
+msgid "News"
+msgstr "الأخبار"
+
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:59
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:282
+msgid "Expand All"
+msgstr "توسيع الكل"
+
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:60
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:283
+msgid "Collapse All"
+msgstr "طوي الكل"
+
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:274
+msgid "Packs"
+msgstr "حزم"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\GeneralSettingsTab.java:134
+msgid "Date Format"
+msgstr "صيغة التاريخ"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:365
+#: src\main\java\com\atlauncher\gui\tabs\settings\JavaSettingsTab.java:377
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:167
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:182
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:224
+#: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:94
+msgid "Help"
+msgstr "مساعدة"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\LoggingSettingsTab.java:100
+msgid "Enable Logging"
+msgstr "تفعيل تسجيل الدخول"
+
+#: src\main\java\com\atlauncher\gui\tabs\settings\NetworkSettingsTab.java:246
+msgid "Network"
+msgstr "الشبكة"
 
 #: src\main\java\com\atlauncher\gui\tabs\settings\ToolsSettingsTab.java:115
 #: src\main\java\com\atlauncher\gui\tabs\ToolsTab.java:57
