@@ -842,9 +842,6 @@ msgid ""
 msgstr ""
 
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:102
-msgid "Checking For Updated"
-msgstr ""
-
 #: src\main\java\com\atlauncher\gui\components\LauncherBottomBar.java:103
 msgid "Checking For Updates"
 msgstr ""
