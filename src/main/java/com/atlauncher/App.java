@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,6 +54,7 @@ import javax.swing.text.DefaultEditorKit;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
@@ -330,13 +332,28 @@ public class App {
 
         boolean open = true;
 
-        if (autoLaunch != null && settings.isInstanceBySafeName(autoLaunch)) {
-            Instance instance = settings.getInstanceBySafeName(autoLaunch);
-            LogManager.info("Opening Instance " + instance.getName());
-            if (instance.launch()) {
-                open = false;
-            } else {
-                LogManager.error("Error Opening Instance " + instance.getName());
+        if (autoLaunch != null) {
+            if (settings.isInstanceBySafeName(autoLaunch)) {
+                Instance instance = settings.getInstanceBySafeName(autoLaunch);
+                LogManager.info("Opening Instance " + instance.getName());
+                if (instance.launch()) {
+                    open = false;
+                } else {
+                    LogManager.error("Error Opening Instance " + instance.getName());
+                }
+            } else if (settings.instancesV2.stream()
+                    .anyMatch(instance -> instance.getSafeName().equalsIgnoreCase(autoLaunch))) {
+                Optional<InstanceV2> instance = settings.instancesV2.stream()
+                        .filter(instanceV2 -> instanceV2.getSafeName().equalsIgnoreCase(autoLaunch)).findFirst();
+
+                if (instance.isPresent()) {
+                    LogManager.info("Opening Instance " + instance.get().launcher.name);
+                    if (instance.get().launch()) {
+                        open = false;
+                    } else {
+                        LogManager.error("Error Opening Instance " + instance.get().launcher.name);
+                    }
+                }
             }
         }
 
