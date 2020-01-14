@@ -39,37 +39,6 @@ public class Language {
     // add in the languages we have support for
     static {
         locales.add(Locale.ENGLISH);
-        locales.add(new Locale("af", "ZA"));
-        locales.add(new Locale("ar", "SA"));
-        locales.add(new Locale("ca", "ES"));
-        locales.add(new Locale("cs", "CZ"));
-        locales.add(new Locale("da", "DK"));
-        locales.add(new Locale("de", "DE"));
-        locales.add(new Locale("el", "GR"));
-        locales.add(new Locale("es", "ES"));
-        locales.add(new Locale("fi", "FI"));
-        locales.add(new Locale("fr", "FR"));
-        locales.add(new Locale("gl", "ES"));
-        locales.add(new Locale("he", "IL"));
-        locales.add(new Locale("hu", "HU"));
-        locales.add(new Locale("it", "IT"));
-        locales.add(new Locale("ja", "JP"));
-        locales.add(new Locale("ko", "KR"));
-        locales.add(new Locale("nl", "NL"));
-        locales.add(new Locale("no", "NO"));
-        locales.add(new Locale("pl", "PL"));
-        locales.add(new Locale("pt", "BR"));
-        locales.add(new Locale("pt", "PT"));
-        locales.add(new Locale("ro", "RO"));
-        locales.add(new Locale("ru", "RU"));
-        locales.add(new Locale("sr", "CS"));
-        locales.add(new Locale("sr", "SP"));
-        locales.add(new Locale("sv", "SE"));
-        locales.add(new Locale("tr", "TR"));
-        locales.add(new Locale("uk", "UA"));
-        locales.add(new Locale("vi", "VN"));
-        locales.add(new Locale("zh", "CN"));
-        locales.add(new Locale("zh", "TW"));
     }
 
     public static void init() throws IOException {
