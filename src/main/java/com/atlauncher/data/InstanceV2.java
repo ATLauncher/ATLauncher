@@ -653,6 +653,14 @@ public class InstanceV2 extends MinecraftVersion {
             }
         }
 
+        // find mods with the same curse mod id
+        List<DisableableMod> sameMods = this.launcher.mods.stream()
+                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == mod.id)
+                .collect(Collectors.toList());
+
+        // delete mod files that are the same mod id
+        sameMods.stream().forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+
         if (download.needToDownload()) {
             try {
                 download.downloadFile();
@@ -665,14 +673,6 @@ public class InstanceV2 extends MinecraftVersion {
         } else {
             download.copy();
         }
-
-        // find mods with the same curse mod id
-        List<DisableableMod> sameMods = this.launcher.mods.stream()
-                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == mod.id)
-                .collect(Collectors.toList());
-
-        // delete mod files that are the same mod id
-        sameMods.stream().forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
 
         // remove any mods that are from the same mod on Curse from the master mod list
         this.launcher.mods = this.launcher.mods.stream()
