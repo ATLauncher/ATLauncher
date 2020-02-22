@@ -23,11 +23,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Stream;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.curse.CurseFile;
@@ -272,35 +275,35 @@ public class DisableableMod implements Serializable {
     public File getFile(Instance instance) {
         File dir = null;
         switch (type) {
-        case jar:
-        case forge:
-        case mcpc:
-            dir = instance.getJarModsDirectory();
-            break;
-        case texturepack:
-            dir = instance.getTexturePacksDirectory();
-            break;
-        case resourcepack:
-            dir = instance.getResourcePacksDirectory();
-            break;
-        case mods:
-            dir = instance.getModsDirectory();
-            break;
-        case ic2lib:
-            dir = instance.getIC2LibDirectory();
-            break;
-        case denlib:
-            dir = instance.getDenLibDirectory();
-            break;
-        case coremods:
-            dir = instance.getCoreModsDirectory();
-            break;
-        case shaderpack:
-            dir = instance.getShaderPacksDirectory();
-            break;
-        default:
-            LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
-            break;
+            case jar:
+            case forge:
+            case mcpc:
+                dir = instance.getJarModsDirectory();
+                break;
+            case texturepack:
+                dir = instance.getTexturePacksDirectory();
+                break;
+            case resourcepack:
+                dir = instance.getResourcePacksDirectory();
+                break;
+            case mods:
+                dir = instance.getModsDirectory();
+                break;
+            case ic2lib:
+                dir = instance.getIC2LibDirectory();
+                break;
+            case denlib:
+                dir = instance.getDenLibDirectory();
+                break;
+            case coremods:
+                dir = instance.getCoreModsDirectory();
+                break;
+            case shaderpack:
+                dir = instance.getShaderPacksDirectory();
+                break;
+            default:
+                LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
+                break;
         }
         if (dir == null) {
             return null;
@@ -311,35 +314,35 @@ public class DisableableMod implements Serializable {
     public File getFile(InstanceV2 instance) {
         File dir = null;
         switch (type) {
-        case jar:
-        case forge:
-        case mcpc:
-            dir = instance.getRoot().resolve("jarmods").toFile();
-            break;
-        case texturepack:
-            dir = instance.getRoot().resolve("texturepacks").toFile();
-            break;
-        case resourcepack:
-            dir = instance.getRoot().resolve("resourcepacks").toFile();
-            break;
-        case mods:
-            dir = instance.getRoot().resolve("mods").toFile();
-            break;
-        case ic2lib:
-            dir = instance.getRoot().resolve("mods/ic2").toFile();
-            break;
-        case denlib:
-            dir = instance.getRoot().resolve("mods/denlib").toFile();
-            break;
-        case coremods:
-            dir = instance.getRoot().resolve("coremods").toFile();
-            break;
-        case shaderpack:
-            dir = instance.getRoot().resolve("shaderpacks").toFile();
-            break;
-        default:
-            LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
-            break;
+            case jar:
+            case forge:
+            case mcpc:
+                dir = instance.getRoot().resolve("jarmods").toFile();
+                break;
+            case texturepack:
+                dir = instance.getRoot().resolve("texturepacks").toFile();
+                break;
+            case resourcepack:
+                dir = instance.getRoot().resolve("resourcepacks").toFile();
+                break;
+            case mods:
+                dir = instance.getRoot().resolve("mods").toFile();
+                break;
+            case ic2lib:
+                dir = instance.getRoot().resolve("mods/ic2").toFile();
+                break;
+            case denlib:
+                dir = instance.getRoot().resolve("mods/denlib").toFile();
+                break;
+            case coremods:
+                dir = instance.getRoot().resolve("coremods").toFile();
+                break;
+            case shaderpack:
+                dir = instance.getRoot().resolve("shaderpacks").toFile();
+                break;
+            default:
+                LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
+                break;
         }
         if (dir == null) {
             return null;
@@ -355,7 +358,15 @@ public class DisableableMod implements Serializable {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "InstanceV2");
         List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
 
-        if (!curseModFiles.stream().anyMatch(mod -> mod.id > curseFileId)) {
+        Stream<CurseFile> curseFilesStream = curseModFiles.stream()
+                .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
+
+        if (!App.settings.disabledAddModRestrictions()) {
+            curseFilesStream = curseFilesStream.filter(
+                    file -> App.settings.disabledAddModRestrictions() || file.gameVersion.contains(instance.id));
+        }
+
+        if (!curseFilesStream.anyMatch(mod -> mod.id > curseFileId)) {
             DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
                     .setContent(GetText.tr("No updates were found for {0}.", name)).show();
             return false;
@@ -370,7 +381,15 @@ public class DisableableMod implements Serializable {
         Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "UpdateMods", "Instance");
         List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
 
-        if (!curseModFiles.stream().anyMatch(mod -> mod.id > curseFileId)) {
+        Stream<CurseFile> curseFilesStream = curseModFiles.stream()
+                .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
+
+        if (!App.settings.disabledAddModRestrictions()) {
+            curseFilesStream = curseFilesStream.filter(file -> App.settings.disabledAddModRestrictions()
+                    || file.gameVersion.contains(instance.getMinecraftVersion()));
+        }
+
+        if (!curseFilesStream.anyMatch(mod -> mod.id > curseFileId)) {
             DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
                     .setContent(GetText.tr("No updates were found for {0}.", name)).show();
             return false;
