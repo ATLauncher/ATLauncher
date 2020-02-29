@@ -116,7 +116,7 @@ public class Java {
      * @return the parsed build number
      */
     public static int parseJavaBuildVersion(String version) {
-        Matcher m = Pattern.compile(".*[_\\.]([0-9]+)").matcher(version);
+        Matcher m = Pattern.compile(".*[_\\.]([0-9]+).*").matcher(version);
 
         if (m.find()) {
             return Integer.parseInt(m.group(1));
