@@ -26,6 +26,7 @@ import com.atlauncher.annot.Json;
 public class ForgeInstallProfile {
     public String version;
     public String target; // in <= 1.12.3
+    public Integer spec;
     public String json;
     public String path;
     public String filePath; // in <= 1.12.3

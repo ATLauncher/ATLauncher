@@ -133,14 +133,25 @@ public class ForgeLoader implements Loader {
 
     public void copyLocalLibraries() {
         ForgeInstallProfile installProfile = getInstallProfile();
-        installProfile.getLibraries().stream().forEach(library -> {
-            // copy over any local files from the loader zip file
-            if (installProfile.install != null && installProfile.install.filePath != null
-                    && library.name.equalsIgnoreCase(installProfile.install.path)) {
-                FileUtils.copyFile(new File(tempDir, installProfile.install.filePath).toPath(),
-                        FileSystem.LIBRARIES.resolve(library.downloads.artifact.path), true);
-            }
-        });
+
+        if (installProfile.spec != null) {
+            getLibraries().stream().forEach(library -> {
+                // copy over any local files from the loader zip file
+                if (library.name.equalsIgnoreCase(installProfile.path)) {
+                    FileUtils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path).toPath(),
+                            FileSystem.LIBRARIES.resolve(library.downloads.artifact.path), true);
+                }
+            });
+        } else {
+            this.getLibraries().stream().forEach(library -> {
+                // copy over any local files from the loader zip file
+                if (installProfile.install != null && installProfile.install.filePath != null
+                        && library.name.equalsIgnoreCase(installProfile.install.path)) {
+                    FileUtils.copyFile(new File(tempDir, installProfile.install.filePath).toPath(),
+                            FileSystem.LIBRARIES.resolve(library.downloads.artifact.path), true);
+                }
+            });
+        }
     }
 
     public ForgeInstallProfile getInstallProfile() {
@@ -156,6 +167,23 @@ public class ForgeLoader implements Loader {
         return installProfile;
     }
 
+    public ForgeInstallProfile getVersionInfo() {
+        if (this.getInstallProfile().versionInfo != null) {
+            return this.getInstallProfile().versionInfo;
+        }
+
+        ForgeInstallProfile versionInfo = null;
+
+        try {
+            versionInfo = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "version.json")),
+                    ForgeInstallProfile.class);
+        } catch (Throwable e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return versionInfo;
+    }
+
     @Override
     public void runProcessors() {
 
@@ -165,18 +193,26 @@ public class ForgeLoader implements Loader {
     public List<Library> getLibraries() {
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
-        return installProfile.getLibraries().stream().collect(Collectors.toList());
+        List<ForgeLibrary> libraries;
+
+        if (installProfile.spec != null) {
+            libraries = this.getVersionInfo().getLibraries();
+        } else {
+            libraries = installProfile.getLibraries();
+        }
+
+        return libraries.stream().collect(Collectors.toList());
     }
 
     @Override
     public Arguments getArguments() {
-        return new Arguments(Arrays.asList(this.getInstallProfile().versionInfo.minecraftArguments.split(" ")).stream()
+        return new Arguments(Arrays.asList(this.getVersionInfo().minecraftArguments.split(" ")).stream()
                 .map(arg -> new ArgumentRule(null, arg)).collect(Collectors.toList()));
     }
 
     @Override
     public String getMainClass() {
-        return this.getInstallProfile().versionInfo.mainClass;
+        return this.getVersionInfo().mainClass;
     }
 
     @Override

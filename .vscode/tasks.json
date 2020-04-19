@@ -41,6 +41,20 @@
                 "kind": "test",
                 "isDefault": true
             }
+        },
+        {
+            "label": "makeTestLauncherDirectory",
+            "type": "shell",
+            "linux": {
+                "command": "mkdir -p ./testLauncher"
+            },
+            "windows": {
+                "command": "cmd",
+                "args": [
+                    "/C",
+                    "if not exist .\\testLauncher mkdir .\\testLauncher"
+                ]
+            }
         }
     ]
 }
