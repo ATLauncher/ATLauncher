@@ -19,6 +19,9 @@ package com.atlauncher.data.curse;
 
 import java.util.List;
 
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.json.ModType;
+
 public class CurseMod {
     public int id;
     public String name;
@@ -48,4 +51,12 @@ public class CurseMod {
     public String dateReleased;
     public boolean isAvailable;
     public boolean isExperiemental;
+
+    public ModType getModType() {
+        if (categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID) {
+            return ModType.resourcepack;
+        }
+
+        return ModType.mods;
+    }
 }

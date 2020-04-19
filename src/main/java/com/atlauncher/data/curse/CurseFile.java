@@ -19,6 +19,7 @@ package com.atlauncher.data.curse;
 
 import java.util.List;
 
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
@@ -60,7 +61,7 @@ public class CurseFile {
         mod.filesize = fileLength;
         mod.fingerprint = packageFingerprint;
         mod.name = curseMod.name;
-        mod.type = ModType.mods;
+        mod.type = curseMod.getModType();
         mod.url = downloadUrl;
         mod.version = displayName;
         mod.website = curseMod.websiteUrl;
