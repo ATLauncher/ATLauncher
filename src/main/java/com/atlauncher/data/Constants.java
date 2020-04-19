@@ -18,7 +18,7 @@
 package com.atlauncher.data;
 
 public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 3, 4, 3);
+    public static final LauncherVersion VERSION = new LauncherVersion(3, 3, 4, 4);
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";
@@ -42,6 +42,6 @@ public class Constants {
     public static final String LAUNCHER_META_MINECRAFT = "https://launchermeta.mojang.com";
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
-    public static final String LEGACY_JAVA_FIXER_URL = "https://enderman.atlcdn.com/legacyjavafixer-1.0.jar";
+    public static final String LEGACY_JAVA_FIXER_URL = "https://enderman.atlcdn.net/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
 }
