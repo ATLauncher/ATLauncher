@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.3.4.4
+## 3.3.4.5
 
-- Fix legacyjavafixer download url
+- Fix Java 14 not working with Pack200 (#383)

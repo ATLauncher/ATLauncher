@@ -64,7 +64,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -88,6 +87,8 @@ import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.google.gson.reflect.TypeToken;
+
+import io.pack200.Pack200;
 
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
