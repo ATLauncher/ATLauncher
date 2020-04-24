@@ -17,7 +17,15 @@
  */
 package com.atlauncher.data;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+
+import com.atlauncher.App;
+import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * News class contains a single news article.
@@ -30,26 +38,33 @@ public class News {
     private String title;
 
     /**
-     * The number of comments on this news article.
-     */
-    private int comments;
-
-    /**
-     * The link to this news article.
-     */
-    private String link;
-
-    /**
      * The content of this news article.
      */
     private String content;
 
     /**
+     * The time the news item was created at.
+     */
+    @SerializedName("created_at")
+    private String createdAt;
+
+    private String getFormattedDate() {
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX");
+        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.getDateFormat() + " HH:mm:ss a");
+
+        try {
+            return formatter.format(iso8601Format.parse(this.createdAt));
+        } catch (ParseException e) {
+            LogManager.logStackTrace(e);
+            return null;
+        }
+    }
+
+    /**
      * Gets the HTML of this object.
      */
     public String getHTML() {
-        return "<p id=\"newsHeader\">- <a href=\"" + this.link + "\">" + this.title + "</a> (" + this.comments + " "
-                + (this.comments == 1 ? "comment" : "comments") + ")</p>" + "<p id=\"newsBody\">" + this.content +
-                "</p><br/>";
+        return "<p id=\"newsHeader\">- " + this.title + " (" + this.getFormattedDate() + ")</p>" + "<p id=\"newsBody\">"
+                + this.content + "</p><br/>";
     }
 }

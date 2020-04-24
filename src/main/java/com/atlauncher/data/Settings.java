@@ -1024,7 +1024,7 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
-            File fileDir = FileSystem.JSON.resolve("news.json").toFile();
+            File fileDir = FileSystem.JSON.resolve("newnews.json").toFile();
             BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
 
             this.news = Gsons.DEFAULT.fromJson(in, type);
@@ -2365,21 +2365,21 @@ public class Settings {
         if (this.proxy == null) {
             Type type;
             switch (this.proxyType) {
-            case "HTTP":
-                type = Type.HTTP;
-                break;
-            case "SOCKS":
-                type = Type.SOCKS;
-                break;
-            case "DIRECT":
-                type = Type.DIRECT;
-                break;
-            default:
-                // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
-                        + "disabled!");
-                this.enableProxy = false;
-                return null;
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
+                default:
+                    // Oh noes, problem!
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType
+                            + " which is not valid! Proxy support " + "disabled!");
+                    this.enableProxy = false;
+                    return null;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }
@@ -2393,21 +2393,21 @@ public class Settings {
         if (this.proxy == null) {
             Type type;
             switch (this.proxyType) {
-            case "HTTP":
-                type = Type.HTTP;
-                break;
-            case "SOCKS":
-                type = Type.SOCKS;
-                break;
-            case "DIRECT":
-                type = Type.DIRECT;
-                break;
-            default:
-                // Oh noes, problem!
-                LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy support "
-                        + "disabled!");
-                this.enableProxy = false;
-                return Proxy.NO_PROXY;
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
+                default:
+                    // Oh noes, problem!
+                    LogManager.warn("Tried to set proxy type to " + this.proxyType
+                            + " which is not valid! Proxy support " + "disabled!");
+                    this.enableProxy = false;
+                    return Proxy.NO_PROXY;
             }
             this.proxy = new Proxy(type, new InetSocketAddress(this.proxyHost, this.proxyPort));
         }
