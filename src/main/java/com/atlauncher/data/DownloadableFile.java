@@ -19,12 +19,15 @@ package com.atlauncher.data;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.network.Download;
+import com.atlauncher.utils.OS;
 
 public class DownloadableFile {
     public String name;
     public String folder;
     public int size;
     public String sha1;
+    public String arch;
+    public String os;
 
     public boolean isLauncher() {
         return this.name.equals("launcher");
@@ -32,6 +35,28 @@ public class DownloadableFile {
 
     public boolean isFiles() {
         return this.name.equals("files.json");
+    }
+
+    public boolean isForArchAndOs() {
+        if (os != null) {
+            if (os.equalsIgnoreCase("osx") && !OS.isMac()) {
+                return false;
+            }
+
+            if (os.equalsIgnoreCase("windows") && !OS.isWindows()) {
+                return false;
+            }
+
+            if (os.equalsIgnoreCase("linux") && !OS.isLinux()) {
+                return false;
+            }
+        }
+
+        if (arch != null) {
+            return (arch.equalsIgnoreCase("x86") && !OS.is64Bit()) || (arch.equalsIgnoreCase("x64") && OS.is64Bit());
+        }
+
+        return true;
     }
 
     public Download getDownload() {

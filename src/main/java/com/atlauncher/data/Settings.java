@@ -477,7 +477,8 @@ public class Settings {
             return null;
         }
 
-        return this.launcherFiles.stream().filter(file -> !file.isLauncher() && !file.isFiles())
+        return this.launcherFiles.stream()
+                .filter(file -> !file.isLauncher() && !file.isFiles() && file.isForArchAndOs())
                 .map(DownloadableFile::getDownload).collect(Collectors.toList());
     }
 
