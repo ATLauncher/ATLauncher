@@ -33,9 +33,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover forgeLoggingLevelLabel;
     private JComboBox<String> forgeLoggingLevel;
 
-    private JLabelWithHover enableLeaderboardsLabel;
-    private JCheckBox enableLeaderboards;
-
     private JLabelWithHover enableLoggingLabel;
     private JCheckBox enableLogs;
 
@@ -69,28 +66,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
         add(forgeLoggingLevel, gbc);
 
-        // Enable Leaderboards
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabelWithHover(GetText.tr("Enable Leaderboards") + "?", HELP_ICON,
-                GetText.tr("If you want to participate in the Leaderboards."));
-        add(enableLeaderboardsLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLeaderboards = new JCheckBox();
-        if (App.settings.enableLeaderboards()) {
-            enableLeaderboards.setSelected(true);
-        }
-        if (!App.settings.enableLogs()) {
-            enableLeaderboards.setEnabled(false);
-        }
-        add(enableLeaderboards, gbc);
-
         // Enable Logging
 
         gbc.gridx = 0;
@@ -110,13 +85,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
             if (!enableLogs.isSelected()) {
                 enableOpenEyeReporting.setSelected(false);
                 enableOpenEyeReporting.setEnabled(false);
-                enableLeaderboards.setSelected(false);
-                enableLeaderboards.setEnabled(false);
             } else {
                 enableOpenEyeReporting.setSelected(true);
                 enableOpenEyeReporting.setEnabled(true);
-                enableLeaderboards.setSelected(true);
-                enableLeaderboards.setEnabled(true);
             }
         });
         if (App.settings.enableLogs()) {
@@ -172,7 +143,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
     public void save() {
         App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
-        App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
         App.settings.setEnableLogs(enableLogs.isSelected());
         App.settings.setEnableAnalytics(enableAnalytics.isSelected());
         App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());

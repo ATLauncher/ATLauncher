@@ -55,9 +55,6 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
     private JLabel languageLabel;
     private JComboBox<String> language;
 
-    private JLabel enableLeaderboardsLabel;
-    private JCheckBox enableLeaderboards;
-
     private JLabel enableAnalyticsLabel;
     private JCheckBox enableAnalytics;
 
@@ -106,18 +103,6 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLeaderboardsLabel = new JLabel(GetText.tr("Enable Leaderboards") + "? ");
-        middle.add(enableLeaderboardsLabel, gbc);
-
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLeaderboards = new JCheckBox();
-        enableLeaderboards.setSelected(true);
-        middle.add(enableLeaderboards, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "? ",
                 Utils.getIconImage("/assets/image/Help.png"),
                 "<html>" + Utils.splitMultilinedString(GetText.tr(
@@ -137,7 +122,6 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
             Language.setLanguage((String) language.getSelectedItem());
-            App.settings.setEnableLeaderboards(enableLeaderboards.isSelected());
             App.settings.setEnableAnalytics(enableAnalytics.isSelected());
             App.settings.saveProperties();
             setVisible(false);
@@ -164,7 +148,6 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
     public void onRelocalization() {
         setupLabel.setText(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
         languageLabel.setText(GetText.tr("Language") + ": ");
-        enableLeaderboardsLabel.setText(GetText.tr("Enable Leaderboards") + "? ");
         enableAnalyticsLabel.setText(GetText.tr("Enable Anonymous Analytics") + "? ");
         enableAnalyticsLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
                 "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),

@@ -117,7 +117,6 @@ public class Settings {
     private boolean enableTrayIcon; // If to enable tray icon
     private boolean enableDiscordIntegration; // If to enable Discord integration
     private boolean enableFeralGamemode; // If to enable Feral Gamemode
-    private boolean enableLeaderboards; // If to enable the leaderboards
     private boolean enableLogs; // If to enable logs
     private boolean enableAnalytics; // If to enable analytics
     private boolean enableOpenEyeReporting; // If to enable OpenEye reporting
@@ -828,8 +827,6 @@ public class Settings {
 
             this.enableFeralGamemode = Boolean.parseBoolean(properties.getProperty("enableferalgamemode", "true"));
 
-            this.enableLeaderboards = Boolean.parseBoolean(properties.getProperty("enableleaderboards", "false"));
-
             this.enableLogs = Boolean.parseBoolean(properties.getProperty("enablelogs", "true"));
 
             this.enableAnalytics = Boolean.parseBoolean(properties.getProperty("enableanalytics", "true"));
@@ -945,7 +942,6 @@ public class Settings {
             properties.setProperty("enabletrayicon", (this.enableTrayIcon) ? "true" : "false");
             properties.setProperty("enablediscordintegration", (this.enableDiscordIntegration) ? "true" : "false");
             properties.setProperty("enableferalgamemode", (this.enableFeralGamemode) ? "true" : "false");
-            properties.setProperty("enableleaderboards", (this.enableLeaderboards) ? "true" : "false");
             properties.setProperty("enablelogs", (this.enableLogs) ? "true" : "false");
             properties.setProperty("enableanalytics", (this.enableAnalytics) ? "true" : "false");
             properties.setProperty("enablepacktags", (this.enablePackTags) ? "true" : "false");
@@ -2226,14 +2222,6 @@ public class Settings {
 
     public void setEnableFeralGameMode(boolean enableFeralGamemode) {
         this.enableFeralGamemode = enableFeralGamemode;
-    }
-
-    public boolean enableLeaderboards() {
-        return this.enableLeaderboards;
-    }
-
-    public void setEnableLeaderboards(boolean enableLeaderboards) {
-        this.enableLeaderboards = enableLeaderboards;
     }
 
     public boolean enableLogs() {

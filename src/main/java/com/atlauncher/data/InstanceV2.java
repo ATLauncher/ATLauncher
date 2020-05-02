@@ -537,8 +537,8 @@ public class InstanceV2 extends MinecraftVersion {
                     }
 
                     App.settings.setMinecraftLaunched(false);
-                    if (this.getPack() != null && this.getPack().isLeaderboardsEnabled()
-                            && this.getPack().isLoggingEnabled() && !this.launcher.isDev && App.settings.enableLogs()) {
+                    if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
+                            && App.settings.enableLogs()) {
                         final int timePlayed = (int) (end - start) / 1000;
                         if (timePlayed > 0) {
                             App.TASKPOOL.submit(() -> {
@@ -604,11 +604,6 @@ public class InstanceV2 extends MinecraftVersion {
     public String addTimePlayed(int time, String version) {
         Map<String, Object> request = new HashMap<>();
 
-        if (App.settings.enableLeaderboards()) {
-            request.put("username", App.settings.getAccount().getMinecraftUsername());
-        } else {
-            request.put("username", null);
-        }
         request.put("version", version);
         request.put("time", time);
 

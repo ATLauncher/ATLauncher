@@ -43,7 +43,6 @@ public class Pack {
     public List<PackVersion> versions;
     public List<PackVersion> devVersions;
     public boolean createServer;
-    public boolean leaderboards;
     public boolean logging;
     public boolean featured;
     public boolean hasDiscordImage;
@@ -128,10 +127,6 @@ public class Pack {
 
     public boolean isLoggingEnabled() {
         return this.logging;
-    }
-
-    public boolean isLeaderboardsEnabled() {
-        return this.leaderboards;
     }
 
     public boolean isFeatured() {
@@ -301,7 +296,6 @@ public class Pack {
     public String addInstall(String version) {
         Map<String, Object> request = new HashMap<>();
 
-        request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);
 
         try {
@@ -315,7 +309,6 @@ public class Pack {
     public String addServerInstall(String version) {
         Map<String, Object> request = new HashMap<>();
 
-        request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);
 
         try {
@@ -329,7 +322,6 @@ public class Pack {
     public String addUpdate(String version) {
         Map<String, Object> request = new HashMap<>();
 
-        request.put("username", App.settings.getAccount().getMinecraftUsername());
         request.put("version", version);
 
         try {
