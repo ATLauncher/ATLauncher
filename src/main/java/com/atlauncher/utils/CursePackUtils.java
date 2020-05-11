@@ -98,7 +98,7 @@ public class CursePackUtils {
         projectId = curseModpackInfo.getData().id;
 
         if (fileId == null) {
-            fileId = curseModpackInfo.getData().defaultFileId;
+            fileId = CurseApi.getModById(projectId).defaultFileId;
         }
 
         if (projectId == null || fileId == null) {

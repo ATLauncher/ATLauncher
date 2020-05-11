@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.3.4.6
+## 3.3.4.7
 
-- Remove leaderboard and username logging
+- Fix adding curse pack not getting default file id from Curse
