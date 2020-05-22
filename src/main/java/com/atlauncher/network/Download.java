@@ -61,7 +61,6 @@ public final class Download {
     public long size = -1L;
     private InstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
-    private boolean usesPackXz = false;
     private RequestBody post = null;
     private CacheControl cacheControl = null;
 
@@ -74,6 +73,23 @@ public final class Download {
 
     public static Download build() {
         return new Download();
+    }
+
+    public boolean exists() {
+        try {
+            this.execute();
+
+            return this.response.isSuccessful();
+        } catch (IOException e) {
+            if (this.response != null) {
+                this.response.close();
+                this.response = null;
+            }
+
+            LogManager.logStackTrace(e);
+        }
+
+        return false;
     }
 
     public String asString() {
@@ -218,15 +234,6 @@ public final class Download {
         return this;
     }
 
-    public Download usesPackXz(List<String> checksums) {
-        this.usesPackXz = true;
-        this.extractedTo = this.to;
-        this.checksums = checksums;
-        this.url = this.url + ".pack.xz";
-        this.to = this.to.resolveSibling(this.to.getFileName().toString() + ".pack.xz");
-        return this;
-    }
-
     public Download withFriendlyFileName(String friendlyFileName) {
         this.friendlyFileName = friendlyFileName;
         return this;
@@ -334,10 +341,6 @@ public final class Download {
     public boolean needToDownload() {
         if (this.to == null) {
             return true;
-        }
-
-        if (this.usesPackXz && Files.exists(this.extractedTo)) {
-            return this.checksumsMatch();
         }
 
         if (Files.exists(this.to)) {
@@ -578,17 +581,6 @@ public final class Download {
     }
 
     private void runPostProcessors() {
-        if (Files.exists(this.to) && this.usesPackXz) {
-            try {
-                Utils.unXZPackFile(this.to.toFile(), this.extractedTo.toFile());
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-                if (this.instanceInstaller != null) {
-                    this.instanceInstaller.cancel(true);
-                }
-            }
-        }
-
         if (Files.exists(this.to) && this.unzipTo != null) {
             FileUtils.createDirectory(this.unzipTo);
 

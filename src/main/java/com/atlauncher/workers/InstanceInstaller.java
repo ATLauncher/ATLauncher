@@ -886,10 +886,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
                             .withInstanceInstaller(this).withHttpClient(httpClient);
 
-                    if (library instanceof ForgeLibrary && ((ForgeLibrary) library).isUsingPackXz()) {
-                        download = download.usesPackXz(((ForgeLibrary) library).checksums);
-                    }
-
                     pool.add(download);
                 });
 

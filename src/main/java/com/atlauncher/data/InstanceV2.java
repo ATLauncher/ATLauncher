@@ -278,10 +278,6 @@ public class InstanceV2 extends MinecraftVersion {
                             .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
                             .withHttpClient(httpClient);
 
-                    if (library instanceof ForgeLibrary && ((ForgeLibrary) library).isUsingPackXz()) {
-                        download = download.usesPackXz(((ForgeLibrary) library).checksums);
-                    }
-
                     librariesPool.add(download);
                 });
 

@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.3.4.7
+## 3.3.4.8
 
-- Fix adding curse pack not getting default file id from Curse
+- Fix issue downloading libraries from Forge as .pack.xz is not used
