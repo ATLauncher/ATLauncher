@@ -99,6 +99,11 @@ public class Version {
     public Deletes deletes;
 
     /**
+     * The keeps which should be made when updating/reinstalling this version.
+     */
+    public Keeps keeps;
+
+    /**
      * The messages that should be shown to the user upon various different
      * conditions such as a new install or update.
      */
@@ -228,6 +233,14 @@ public class Version {
 
     public Deletes getDeletes() {
         return this.deletes;
+    }
+
+    public boolean hasKeeps() {
+        return this.keeps != null;
+    }
+
+    public Keeps getKeeps() {
+        return this.keeps;
     }
 
     public Messages getMessages() {

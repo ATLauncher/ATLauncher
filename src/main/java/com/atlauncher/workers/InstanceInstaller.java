@@ -52,6 +52,8 @@ import com.atlauncher.data.curse.pack.CurseModLoader;
 import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.Deletes;
 import com.atlauncher.data.json.DownloadType;
+import com.atlauncher.data.json.Keep;
+import com.atlauncher.data.json.Keeps;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
 import com.atlauncher.data.json.Version;
@@ -189,6 +191,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             determineModsToBeInstalled();
+
+            backupSelectFiles();
+            addPercent(5);
 
             prepareFilesystem();
 
@@ -409,9 +414,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private Boolean install() throws Exception {
         this.instanceIsCorrupt = true; // From this point on the instance has become corrupt
-
-        backupSelectFiles();
-        addPercent(5);
 
         determineMainClass();
         determineArguments();
@@ -1251,6 +1253,36 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             savedPortalGunSounds = true;
             Utils.copyFile(portalGunSounds, this.temp.toFile());
         }
+
+        if (isReinstall && this.packVersion.keeps != null) {
+            Keeps keeps = this.packVersion.keeps;
+
+            if (keeps.hasFileKeeps()) {
+                for (Keep keep : keeps.getFiles()) {
+                    if (keep.isAllowed()) {
+                        File file = keep.getFile(
+                                keep.getBase().equalsIgnoreCase("config") ? this.root.resolve("config").toFile()
+                                        : this.root.toFile());
+                        if (file.exists()) {
+                            Utils.copyFile(file, this.temp.toFile());
+                        }
+                    }
+                }
+            }
+
+            if (keeps.hasFolderKeeps()) {
+                for (Keep keep : keeps.getFolders()) {
+                    if (keep.isAllowed()) {
+                        File file = keep.getFile(
+                                keep.getBase().equalsIgnoreCase("config") ? this.root.resolve("config").toFile()
+                                        : this.root.toFile());
+                        if (file.exists() && file.isDirectory()) {
+                            Utils.copyDirectory(file, this.temp.toFile(), true);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected void prepareFilesystem() throws Exception {
@@ -1390,6 +1422,40 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (savedPortalGunSounds) {
             Utils.copyFile(new File(this.temp.toFile(), "PortalGunSounds.pak"),
                     new File(this.root.resolve("mods").toFile(), "PortalGunSounds.pak"), true);
+        }
+
+        if (isReinstall && this.packVersion.keeps != null) {
+            Keeps keeps = this.packVersion.keeps;
+
+            if (keeps.hasFileKeeps()) {
+                for (Keep keep : keeps.getFiles()) {
+                    if (keep.isAllowed()) {
+                        File from = keep.getFile(this.temp.toFile());
+                        File to = keep.getFile(
+                                keep.getBase().equalsIgnoreCase("config") ? this.root.resolve("config").toFile()
+                                        : this.root.toFile());
+                        if (from.exists()) {
+                            to.getParentFile().mkdirs();
+                            Utils.copyFile(from, to, true);
+                        }
+                    }
+                }
+            }
+
+            if (keeps.hasFolderKeeps()) {
+                for (Keep keep : keeps.getFolders()) {
+                    if (keep.isAllowed()) {
+                        File from = keep.getFile(this.temp.toFile());
+                        File to = keep.getFile(
+                                keep.getBase().equalsIgnoreCase("config") ? this.root.resolve("config").toFile()
+                                        : this.root.toFile());
+                        if (from.exists()) {
+                            to.getParentFile().mkdirs();
+                            Utils.copyDirectory(from, to);
+                        }
+                    }
+                }
+            }
         }
     }
 

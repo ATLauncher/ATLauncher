@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.3.4.8
+## 3.3.5.0
 
-- Fix issue downloading libraries from Forge as .pack.xz is not used
-- Fix newer legacy Forge versions not installing the server
+- Add ability for pack devs to keep files between update/reinstall
