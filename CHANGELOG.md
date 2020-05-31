@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.3.5.0
+## 3.3.5.1
 
-- Add ability for pack devs to keep files between update/reinstall
+- Fix the Discord integration exceptions not being caught correctly
