@@ -67,6 +67,7 @@ issues or pull requests you're interested in.
 | `more-information-needed` | More information needs to be collected about these problems or feature requests.        |
 | `triage-help-needed`      | Help is needed to triage the issue.                                                     |
 | `blocked`                 | Issues blocked on other issues.                                                         |
+| `known-workaround`        | Issues which have a known workaround.                                                   |
 | `duplicate`               | Issues which are duplicates of other issues, i.e. they have been reported before.       |
 | `wontfix`                 | The ATLauncher team has decided not to fix these issues for now for some reason.        |
 | `invalid`                 | Issues which aren't valid (e.g. user errors).                                           |
