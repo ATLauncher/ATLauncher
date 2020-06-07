@@ -27,6 +27,11 @@ Take a look at [CONTRIBUTING.md](CONTRIBUTING.md)
 
 Please see the [TESTING.md](TESTING.md) file for information on how we write tests.
 
+## Prerequisites
+
+In order to build ATLauncher, you will Java 8, 9, 10, 11 or 12. Java 8 is recommended since we
+compile to Java 8 compatability regardless.
+
 ## Building
 
 To build this project, simply run:
