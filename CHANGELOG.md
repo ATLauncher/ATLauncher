@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.3.5.1
+## 3.3.5.2
 
-- Fix the Discord integration exceptions not being caught correctly
+- Fix newer Forge installs not working on linux due to bad logic (#386)

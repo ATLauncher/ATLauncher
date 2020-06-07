@@ -130,8 +130,12 @@ public class Processor {
                 }
 
                 LogManager.debug("Got value of " + value);
+                // checking for local file paths returned "/data/client.lzma" and then makes
+                // sure we localise it to the libraries folder if it's indeed local
                 if (value.charAt(0) == '/') {
-                    if (value.toLowerCase().contains(FileSystem.LIBRARIES.toString().toLowerCase())) {
+                    if (value.toLowerCase()
+                            .contains(instanceInstaller.root.resolve("libraries").toFile().toString().toLowerCase())
+                            || value.toLowerCase().contains(FileSystem.LIBRARIES.toString().toLowerCase())) {
                         args.add(value);
                     } else {
                         File localFile = new File(extractedDir, value);
