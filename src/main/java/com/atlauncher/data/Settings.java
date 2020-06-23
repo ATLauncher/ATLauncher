@@ -1402,7 +1402,7 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted alphabetically
      */
-    public List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean isVanilla) {
+    public List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean isSystem) {
         List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : this.packs) {
@@ -1412,12 +1412,12 @@ public class Settings {
                 }
             }
 
-            if (isVanilla) {
-                if (pack.getSafeName().startsWith("VanillaMinecraft")) {
+            if (isSystem) {
+                if (pack.isSystem()) {
                     packs.add(pack);
                 }
             } else {
-                if (!pack.getSafeName().startsWith("VanillaMinecraft")) {
+                if (!pack.isSystem()) {
                     packs.add(pack);
                 }
             }
@@ -1432,7 +1432,7 @@ public class Settings {
      *
      * @return The Packs available in the Launcher sorted by position
      */
-    public List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean isVanilla) {
+    public List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean isSystem) {
         List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : this.packs) {
@@ -1442,12 +1442,12 @@ public class Settings {
                 }
             }
 
-            if (isVanilla) {
-                if (pack.getSafeName().startsWith("VanillaMinecraft")) {
+            if (isSystem) {
+                if (pack.isSystem()) {
                     packs.add(pack);
                 }
             } else {
-                if (!pack.getSafeName().startsWith("VanillaMinecraft")) {
+                if (!pack.isSystem()) {
                     packs.add(pack);
                 }
             }

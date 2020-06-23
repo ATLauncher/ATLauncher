@@ -45,6 +45,7 @@ public class Pack {
     public boolean createServer;
     public boolean logging;
     public boolean featured;
+    public boolean system;
     public boolean hasDiscordImage;
     public String description;
     public CurseMod cursePack;
@@ -131,6 +132,10 @@ public class Pack {
 
     public boolean isFeatured() {
         return this.featured;
+    }
+
+    public boolean isSystem() {
+        return this.system;
     }
 
     public boolean hasDiscordImage() {

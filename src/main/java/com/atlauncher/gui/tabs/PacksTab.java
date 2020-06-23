@@ -64,16 +64,16 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JCheckBox privateBox = new JCheckBox(GetText.tr("Private Packs Only"));
     private final JCheckBox searchDescBox = new JCheckBox(GetText.tr("Search Description"));
     private NilCard nilCard;
-    private boolean isVanilla;
+    private boolean isSystem;
     private boolean isFeatured;
     private boolean loaded = false;
 
     private List<PackCard> cards = new LinkedList<>();
 
-    public PacksTab(boolean isFeatured, boolean isVanilla) {
+    public PacksTab(boolean isFeatured, boolean isSystem) {
         super(new BorderLayout());
         this.isFeatured = isFeatured;
-        this.isVanilla = isVanilla;
+        this.isSystem = isSystem;
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
 
@@ -82,7 +82,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
 
-        if (!this.isFeatured && !this.isVanilla) {
+        if (!this.isFeatured && !this.isSystem) {
             this.add(this.topPanel, BorderLayout.NORTH);
             this.add(this.bottomPanel, BorderLayout.SOUTH);
         }
@@ -179,8 +179,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         }
 
         List<Pack> packs = App.settings.sortPacksAlphabetically()
-                ? App.settings.getPacksSortedAlphabetically(this.isFeatured, this.isVanilla)
-                : App.settings.getPacksSortedPositionally(this.isFeatured, this.isVanilla);
+                ? App.settings.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
+                : App.settings.getPacksSortedPositionally(this.isFeatured, this.isSystem);
 
         for (Pack pack : packs) {
             if (pack.canInstall()) {
@@ -271,7 +271,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     @Override
     public String getTitle() {
         return (this.isFeatured ? GetText.tr("Featured Packs")
-                : (this.isVanilla ? GetText.tr("Vanilla Packs") : GetText.tr("Packs")));
+                : (this.isSystem ? GetText.tr("Vanilla Packs") : GetText.tr("Packs")));
     }
 
     @Override
