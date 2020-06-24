@@ -40,6 +40,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -124,6 +125,11 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
             Language.setLanguage((String) language.getSelectedItem());
             App.settings.setEnableAnalytics(enableAnalytics.isSelected());
             App.settings.saveProperties();
+
+            if (enableAnalytics.isSelected()) {
+                Analytics.sendEvent("SetupDialogComplete", "Launcher");
+            }
+
             setVisible(false);
             dispose();
         });

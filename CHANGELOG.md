@@ -4,3 +4,4 @@
 
 - Switch to using system property for Vanilla tab
 - Fix debug logging not logging if request was cached or not correctly
+- Add in SetupDialogComplete tracking event
