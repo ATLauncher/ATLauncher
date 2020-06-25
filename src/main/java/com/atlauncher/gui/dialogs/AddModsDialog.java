@@ -77,7 +77,7 @@ public final class AddModsDialog extends JDialog {
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
-        this.setPreferredSize(new Dimension(550, 450));
+        this.setPreferredSize(new Dimension(600, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
@@ -107,7 +107,7 @@ public final class AddModsDialog extends JDialog {
                 ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
 
-        this.setPreferredSize(new Dimension(550, 450));
+        this.setPreferredSize(new Dimension(600, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
@@ -141,6 +141,7 @@ public final class AddModsDialog extends JDialog {
         searchButtonsPanel.add(this.searchField);
         searchButtonsPanel.add(this.searchButton);
         searchButtonsPanel.add(this.sectionComboBox);
+        searchButtonsPanel.add(new JLabel(GetText.tr("Sort") + ":"));
         searchButtonsPanel.add(this.sortComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
