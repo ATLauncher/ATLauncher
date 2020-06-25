@@ -372,7 +372,7 @@ public class DisableableMod implements Serializable {
             return false;
         }
 
-        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance);
+        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
 
         return true;
     }
@@ -395,7 +395,7 @@ public class DisableableMod implements Serializable {
             return false;
         }
 
-        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance);
+        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
 
         return true;
     }
