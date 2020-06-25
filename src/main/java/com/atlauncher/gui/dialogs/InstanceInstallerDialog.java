@@ -95,6 +95,8 @@ public class InstanceInstallerDialog extends JDialog {
     private List<LoaderVersion> loaderVersions = new ArrayList<>();
     private JLabel enableUserLockLabel;
     private JCheckBox enableUserLock;
+    private JLabel saveModsLabel;
+    private JCheckBox saveModsCheckbox;
     private boolean isUpdate;
     private PackVersion autoInstallVersion;
 
@@ -262,6 +264,38 @@ public class InstanceInstallerDialog extends JDialog {
             middle.add(enableUserLock, gbc);
         }
 
+        if (!this.isServer && isReinstall) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            saveModsLabel = new JLabel(GetText.tr("Save Mods") + "? ");
+            middle.add(saveModsLabel, gbc);
+
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            saveModsCheckbox = new JCheckBox();
+            saveModsCheckbox.addActionListener(e -> {
+                if (saveModsCheckbox.isSelected()) {
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Save Mods") + "? ")
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed.<br/><br/>Are you sure you want to do this?"))
+                                    .build())
+                            .setType(DialogManager.INFO).show();
+
+                    if (ret != 0) {
+                        saveModsCheckbox.setSelected(false);
+                    }
+                }
+            });
+
+            saveModsLabel.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
+                    .equalsIgnoreCase(instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+            saveModsCheckbox.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
+                    .equalsIgnoreCase(instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+
+            middle.add(saveModsCheckbox, gbc);
+        }
+
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
@@ -334,8 +368,11 @@ public class InstanceInstallerDialog extends JDialog {
                         ? (LoaderVersion) loaderVersionsDropDown.getSelectedItem()
                         : null;
 
+                boolean saveMods = !isServer && isReinstall && saveModsCheckbox.isSelected();
+
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
-                        isReinstall, isServer, shareCode, showModsChooser, loaderVersion, curseManifest, manifestFile) {
+                        isReinstall, isServer, saveMods, shareCode, showModsChooser, loaderVersion, curseManifest,
+                        manifestFile) {
 
                     protected void done() {
                         Boolean success = false;
@@ -613,6 +650,15 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 updateLoaderVersions((PackVersion) e.getItem());
+
+                if (!isServer && isReinstall) {
+                    this.saveModsLabel
+                            .setVisible(!((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(
+                                    instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                    this.saveModsCheckbox
+                            .setVisible(!((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(
+                                    instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                }
             }
         });
 

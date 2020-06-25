@@ -79,8 +79,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JButton javaParametersResetButton;
     private JLabelWithHover startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
-    private JLabelWithHover saveCustomModsLabel;
-    private JCheckBox saveCustomMods;
     private JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
     private JCheckBox ignoreJavaOnInstanceLaunch;
 
@@ -319,26 +317,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         }
         add(startMinecraftMaximised, gbc);
 
-        // Save Custom Mods
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        saveCustomModsLabel = new JLabelWithHover(GetText.tr("Save Custom Mods") + "?", HELP_ICON, GetText
-                .tr("This enables the saving of custom mods added to an instance when it's updated or reinstalled."));
-        add(saveCustomModsLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        saveCustomMods = new JCheckBox();
-        if (App.settings.saveCustomMods()) {
-            saveCustomMods.setSelected(true);
-        }
-        add(saveCustomMods, gbc);
-
-        // Save Custom Mods
+        // Ignore Java checks On Launch
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -391,7 +370,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.setJavaPath(javaPath.getText());
         App.settings.setJavaParameters(javaParameters.getText());
         App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
-        App.settings.setSaveCustomMods(saveCustomMods.isSelected());
         App.settings.setIgnoreJavaOnInstanceLaunch(ignoreJavaOnInstanceLaunch.isSelected());
     }
 
@@ -441,10 +419,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.startMinecraftMaximisedLabel.setText(GetText.tr("Start Minecraft Maximised") + "?");
         this.startMinecraftMaximisedLabel.setToolTipText(GetText
                 .tr("Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
-
-        this.saveCustomModsLabel.setText(GetText.tr("Save Custom Mods") + "?");
-        this.saveCustomModsLabel.setToolTipText(GetText
-                .tr("This enables the saving of custom mods added to an instance when it's updated or reinstalled."));
 
         this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java checks On Launch") + "?");
         this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(

@@ -111,6 +111,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public boolean isReinstall;
     public boolean isServer;
     public boolean instanceIsCorrupt;
+    public boolean saveMods = false;
 
     public final Path root;
     public final Path temp;
@@ -137,13 +138,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public Arguments arguments;
 
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
-            boolean isReinstall, boolean isServer, String shareCode, boolean showModsChooser,
+            boolean isReinstall, boolean isServer, boolean saveMods, String shareCode, boolean showModsChooser,
             LoaderVersion loaderVersion, CurseManifest curseManifest, File manifestFile) {
         this.name = name;
         this.pack = pack;
         this.version = version;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
+        this.saveMods = saveMods;
         this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
 
@@ -402,12 +404,33 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             mod.getCurseModId(), mod.getCurseFileId()));
         }
 
-        if (this.isReinstall && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())
-                && (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
-                        .equalsIgnoreCase(version.minecraftVersion.version)) {
-            for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null ? instanceV2.getCustomDisableableMods()
-                    : instance.getCustomDisableableMods())) {
-                modsInstalled.add(mod);
+        if (this.isReinstall && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())) {
+            // user chose to save mods even though Minecraft version changed, so add them to
+            // the installed list
+            if (this.saveMods || (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
+                    .equalsIgnoreCase(version.minecraftVersion.version)) {
+                for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null
+                        ? instanceV2.getCustomDisableableMods()
+                        : instance.getCustomDisableableMods())) {
+                    modsInstalled.add(mod);
+                }
+            }
+
+            // user choosing to not save mods and Minecraft version changed, so delete
+            // custom mods
+            if (!this.saveMods && !(instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
+                    .equalsIgnoreCase(version.minecraftVersion.version)) {
+                for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null
+                        ? instanceV2.getCustomDisableableMods()
+                        : instance.getCustomDisableableMods())) {
+                    if (this.instanceV2 != null) {
+                        this.instanceV2.launcher.mods.remove(mod);
+                        Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this.instanceV2)
+                                : mod.getFile(this.instanceV2)));
+                    } else {
+                        instance.removeInstalledMod(mod);
+                    }
+                }
             }
         }
     }
