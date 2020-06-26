@@ -10,3 +10,4 @@
 - Fix updating Curse mod not selecting current version by default
 - Remove Minecraft status checking as api no longer returns correct
 - Fix share codes not working on InstanceV2 [#384]
+- Fix newer 1.8 skins not showing different arms correctly [#379]

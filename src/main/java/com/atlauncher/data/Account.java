@@ -262,11 +262,32 @@ public class Account implements Serializable {
             LogManager.logStackTrace(e);
         }
 
+        // new skins are 64x64 and old ones are 64x32
+        boolean isNewImage = image.getWidth() == 64 && image.getHeight() == 64;
+
         BufferedImage head = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
-        BufferedImage arm = image.getSubimage(44, 20, 4, 12);
+
+        BufferedImage leftArm = image.getSubimage(44, 20, 4, 12);
+        BufferedImage rightArm;
+
+        if (!isNewImage || Utils.nonTransparentPixels(image.getSubimage(36, 52, 4, 12)) == 48) {
+            rightArm = Utils.flipImage(leftArm);
+        } else {
+            rightArm = image.getSubimage(36, 52, 4, 12);
+        }
+
         BufferedImage body = image.getSubimage(20, 20, 8, 12);
-        BufferedImage leg = image.getSubimage(4, 20, 4, 12);
+
+        BufferedImage leftLeg = image.getSubimage(4, 20, 4, 12);
+        BufferedImage rightLeg;
+
+        if (!isNewImage || Utils.nonTransparentPixels(image.getSubimage(20, 52, 4, 12)) == 48) {
+            rightLeg = Utils.flipImage(leftLeg);
+        } else {
+            rightLeg = image.getSubimage(20, 52, 4, 12);
+        }
+
         BufferedImage skin = new BufferedImage(16, 32, BufferedImage.TYPE_INT_ARGB);
 
         Graphics g = skin.getGraphics();
@@ -278,11 +299,13 @@ public class Account implements Serializable {
             g.drawImage(helmet, 4, 0, null);
         }
 
-        g.drawImage(arm, 0, 8, null);
-        g.drawImage(Utils.flipImage(arm), 12, 8, null);
+        g.drawImage(leftArm, 0, 8, null);
+        g.drawImage(rightArm, 12, 8, null);
+
         g.drawImage(body, 4, 8, null);
-        g.drawImage(leg, 4, 20, null);
-        g.drawImage(Utils.flipImage(leg), 8, 20, null);
+
+        g.drawImage(leftLeg, 4, 20, null);
+        g.drawImage(rightLeg, 8, 20, null);
 
         return new ImageIcon(skin.getScaledInstance(128, 256, Image.SCALE_SMOOTH));
     }

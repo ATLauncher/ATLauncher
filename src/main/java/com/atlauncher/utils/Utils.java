@@ -179,13 +179,13 @@ public class Utils {
 
     public static File getOSStorageDir() {
         switch (OS.getOS()) {
-        case WINDOWS:
-            return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
-        case OSX:
-            return new File(System.getProperty("user.home"),
-                    "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
-        default:
-            return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+            case WINDOWS:
+                return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+            case OSX:
+                return new File(System.getProperty("user.home"),
+                        "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
+            default:
+                return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -1209,7 +1209,7 @@ public class Utils {
      * @param image The image to flip
      * @return The flipped image
      */
-    public static Image flipImage(BufferedImage image) {
+    public static BufferedImage flipImage(BufferedImage image) {
         AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
         tx.translate(-image.getWidth(null), 0);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -1226,8 +1226,8 @@ public class Utils {
      */
     public static int nonTransparentPixels(BufferedImage image) {
         int count = 0;
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
                 if (image.getRGB(x, y) == -1) {
                     count++;
                 }
