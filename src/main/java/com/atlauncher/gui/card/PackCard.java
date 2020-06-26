@@ -87,9 +87,9 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             bottom.add(this.websiteButton);
         }
 
-        bottom.add(this.serversButton);
+        if (!this.pack.isSystem()) {
+            bottom.add(this.serversButton);
 
-        if (!this.pack.getName().startsWith("Vanilla Minecraft")) {
             bottom.add(this.modsButton);
         }
 

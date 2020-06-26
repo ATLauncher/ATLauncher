@@ -11,3 +11,4 @@
 - Remove Minecraft status checking as api no longer returns correct
 - Fix share codes not working on InstanceV2 [#384]
 - Fix newer 1.8 skins not showing different arms correctly [#379]
+- Hide servers and mods buttons on system packs
