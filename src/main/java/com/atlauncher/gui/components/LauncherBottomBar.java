@@ -23,28 +23,21 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
-import com.atlauncher.data.Status;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
-import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -58,8 +51,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private JButton openFolder;
     private JButton updateData;
     private JComboBox<Account> username;
-
-    private JLabel statusIcon;
 
     public LauncherBottomBar() {
         leftSide = new JPanel();
@@ -84,8 +75,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
         middle.add(username, gbc);
-        gbc.gridx++;
-        middle.add(statusIcon, gbc);
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
@@ -147,45 +136,6 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             username.setSelectedIndex(0);
         } else {
             username.setSelectedItem(active);
-        }
-
-        statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")) {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        statusIcon.setBorder(BorderFactory.createEmptyBorder());
-        statusIcon.setToolTipText(GetText.tr("Checking Minecraft server status..."));
-    }
-
-    /**
-     * Update the status icon to show the current Minecraft server status.
-     *
-     * @param status The status of servers
-     */
-    public void updateStatus(Status status) {
-        switch (status) {
-        case UNKNOWN:
-            statusIcon.setToolTipText(GetText.tr("Checking Minecraft server status..."));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
-            break;
-        case ONLINE:
-            statusIcon.setToolTipText(GetText.tr("All Minecraft servers are up!"));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
-            break;
-        case OFFLINE:
-            statusIcon.setToolTipText(GetText.tr("Minecraft servers are down!"));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
-            break;
-        case PARTIAL:
-            statusIcon.setToolTipText(GetText.tr("Some Minecraft servers are down!"));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
-            break;
-        default:
-            break;
         }
     }
 

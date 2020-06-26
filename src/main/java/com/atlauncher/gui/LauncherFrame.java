@@ -96,11 +96,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         RelocalizationManager.addListener(this);
 
-        App.TASKPOOL.execute(() -> {
-            App.settings.checkMojangStatus(); // Check Minecraft status
-            bottomBar.updateStatus(App.settings.getMojangStatus());
-        });
-
         if (App.packToInstall != null) {
             Pack pack = App.settings.getPackBySafeName(App.packToInstall);
 

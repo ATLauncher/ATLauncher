@@ -62,7 +62,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.Update;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.minecraft.MojangStatus;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.components.LauncherBottomBar;
@@ -335,34 +334,6 @@ public class Settings {
                     }
                 }
             }, 0, this.getServerCheckerWaitInMilliseconds());
-        }
-    }
-
-    public void checkMojangStatus() {
-        try {
-            MojangStatus status = com.atlauncher.network.Download.build().setUrl("https://status.mojang.com/check")
-                    .asClass(MojangStatus.class);
-
-            if (status == null) {
-                minecraftSessionServerUp = false;
-                minecraftLoginServerUp = false;
-            }
-
-            minecraftLoginServerUp = status.isAuthServerUp();
-            minecraftSessionServerUp = status.isSessionServerUp();
-        } catch (Exception e) {
-            minecraftSessionServerUp = false;
-            minecraftLoginServerUp = false;
-        }
-    }
-
-    public Status getMojangStatus() {
-        if (minecraftLoginServerUp && minecraftSessionServerUp) {
-            return Status.ONLINE;
-        } else if (!minecraftLoginServerUp && !minecraftSessionServerUp) {
-            return Status.OFFLINE;
-        } else {
-            return Status.PARTIAL;
         }
     }
 

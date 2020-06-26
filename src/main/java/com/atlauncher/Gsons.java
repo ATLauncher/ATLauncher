@@ -26,8 +26,6 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.ArgumentsTypeAdapter;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LibraryTypeAdapter;
-import com.atlauncher.data.minecraft.MojangStatus;
-import com.atlauncher.data.minecraft.MojangStatusTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMeta;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
@@ -48,6 +46,5 @@ public final class Gsons {
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
-            .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())
-            .registerTypeAdapter(MojangStatus.class, new MojangStatusTypeAdapter()).create();
+            .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter()).create();
 }
