@@ -9,3 +9,4 @@
 - Fix sort box on Add Mods dialog not showing
 - Fix updating Curse mod not selecting current version by default
 - Remove Minecraft status checking as api no longer returns correct
+- Fix share codes not working on InstanceV2 [#384]

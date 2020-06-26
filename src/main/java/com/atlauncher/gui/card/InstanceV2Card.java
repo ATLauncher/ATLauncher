@@ -22,6 +22,9 @@ import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -47,12 +50,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import com.google.gson.reflect.TypeToken;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -459,8 +466,15 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
 
+                    JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
+                    rightClickMenu.add(shareCodeItem);
+
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     rightClickMenu.add(updateItem);
+
+                    if (!instance.launcher.mods.stream().anyMatch(mod -> mod.optional)) {
+                        shareCodeItem.setVisible(false);
+                    }
 
                     if (instance.launcher.curseManifest != null) {
                         updateItem.setVisible(false);
@@ -529,6 +543,33 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                     }
                                 }
                             }
+                        }
+                    });
+
+                    shareCodeItem.addActionListener(e1 -> {
+                        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "MakeShareCode",
+                                "InstanceV2");
+                        try {
+                            java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
+                            }.getType();
+
+                            APIResponse<String> response = Gsons.DEFAULT.fromJson(
+                                    Utils.sendAPICall("pack/" + instance.getSafePackName() + "/"
+                                            + instance.launcher.version + "/share-code", instance.getShareCodeData()),
+                                    type);
+
+                            if (response.wasError()) {
+                                App.TOASTER.pop(GetText.tr("Error getting share code."));
+                            } else {
+                                StringSelection text = new StringSelection(response.getData());
+                                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                clipboard.setContents(text, null);
+
+                                App.TOASTER.pop(GetText.tr("Share code copied to clipboard"));
+                                LogManager.info("Share code copied to clipboard");
+                            }
+                        } catch (IOException ex) {
+                            LogManager.logStackTrace("API call failed", ex);
                         }
                     });
                 }

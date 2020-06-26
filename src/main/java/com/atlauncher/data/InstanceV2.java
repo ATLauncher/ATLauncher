@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -721,6 +722,24 @@ public class InstanceV2 extends MinecraftVersion {
             }
         }
         return false;
+    }
+
+    public Map<String, Object> getShareCodeData() {
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> mods = new HashMap<>();
+        List<Map<String, Object>> optional = new ArrayList<>();
+
+        this.launcher.mods.stream().filter(mod -> mod.optional && !mod.userAdded).forEach(mod -> {
+            Map<String, Object> modInfo = new HashMap<>();
+            modInfo.put("name", mod.name);
+            modInfo.put("selected", true);
+            optional.add(modInfo);
+        });
+
+        mods.put("optional", optional);
+        data.put("mods", mods);
+
+        return data;
     }
 
     public boolean rename(String newName) {
