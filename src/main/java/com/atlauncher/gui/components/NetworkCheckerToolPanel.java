@@ -72,7 +72,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
         int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Network Checker"))
                 .setContent(new HTMLBuilder().center().split(75).text(GetText.tr(
-                        "Please note that the data from this tool is sent to ATLauncher so we can diagnose possible issues in your setup. This test may take up to 10 minutes or longer to complete and you will be unable to do anything while it's running. Please also keep in mind that this test will use some of your bandwidth, it will use approximately 20MB.<br/><br/>Do you wish to continue?"))
+                        "Please note that the data from this tool is sent to ATLauncher so we can diagnose possible issues in your setup. This test may take up to 10 minutes or longer to complete and you will be unable to do anything while it's running. Please also keep in mind that this test will use some of your bandwidth, it will use approximately 100MB.<br/><br/>Do you wish to continue?"))
                         .build())
                 .setType(DialogManager.INFO).show();
 
@@ -96,7 +96,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     results.append(String.format("Response code to %s was %d\n\n----------------\n\n",
                             Constants.DOWNLOAD_SERVER,
                             Download.build()
-                                    .setUrl(String.format("%s/launcher/json/hashes.json", Constants.DOWNLOAD_SERVER))
+                                    .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER))
                                     .getResponseCode()));
                 } catch (Exception e1) {
                     results.append(String.format("Exception thrown when connecting to %s\n\n----------------\n\n",
@@ -112,17 +112,17 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 dialog.doneTask();
 
                 // Speed Test
-                File file = FileSystem.TEMP.resolve("20MB.test").toFile();
+                File file = FileSystem.TEMP.resolve("100MB.bin").toFile();
                 if (file.exists()) {
                     Utils.delete(file);
                 }
                 long started = System.currentTimeMillis();
                 try {
-                    Download.build().setUrl(String.format("%s/20MB.test", Constants.DOWNLOAD_SERVER))
+                    Download.build().setUrl(String.format("%s/100MB.bin", Constants.DOWNLOAD_SERVER))
                             .downloadTo(file.toPath()).downloadFile();
                 } catch (Exception e2) {
                     results.append(
-                            String.format("Exception thrown when downloading 20MB.test from %s\n\n----------------\n\n",
+                            String.format("Exception thrown when downloading 100MB.bin from %s\n\n----------------\n\n",
                                     Constants.DOWNLOAD_SERVER));
                     results.append(e2.toString());
                 }
@@ -136,7 +136,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         : String.format("%.2f MB/s", mbps));
                 results.append(String.format(
                         "Download speed to %s was %s, " + ""
-                                + "taking %.2f seconds to download 20MB\n\n----------------\n\n",
+                                + "taking %.2f seconds to download 100MB\n\n----------------\n\n",
                         Constants.DOWNLOAD_SERVER, speed, (timeTaken / 1000.0)));
                 dialog.doneTask();
 
@@ -160,8 +160,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                 DialogManager.okDialog().setTitle(GetText.tr("Network Checker"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "The network checker tool has completed and the data sent off to ATLauncher.<br/><br/>Thanks for your input to help understand and fix network related issues."))
-                        .build())
+                                "The network checker tool has completed and the data sent off to ATLauncher.<br/><br/>Thanks for your input to help understand and fix network related issues."))
+                                .build())
                         .setType(DialogManager.INFO).show();
             }
         }

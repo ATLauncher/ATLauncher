@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix share codes not working on InstanceV2 [#384]
 - Fix newer 1.8 skins not showing different arms correctly [#379]
 - Hide servers and mods buttons on system packs
+- Change Network Tool's download file to 100MB
