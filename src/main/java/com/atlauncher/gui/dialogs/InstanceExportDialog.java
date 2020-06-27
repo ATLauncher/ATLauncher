@@ -26,25 +26,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.border.Border;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -57,11 +48,6 @@ public class InstanceExportDialog extends JDialog {
     private JPanel bottomPanel = new JPanel();
 
     final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
-    final ImageIcon ERROR_ICON = Utils.getIconImage("/assets/image/Error.png");
-    final ImageIcon WARNING_ICON = Utils.getIconImage("/assets/image/Warning.png");
-
-    final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
-    final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
 
     final GridBagConstraints gbc = new GridBagConstraints();
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);

@@ -23,9 +23,9 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolTip;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import com.atlauncher.App;
 import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.utils.Utils;
 
@@ -47,7 +47,7 @@ public class SMButton extends JButton {
 
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
+        Border border = new CustomLineBorder(5, UIManager.getColor("SMButton.hoverBorderColor"), 2);
         tip.setBorder(border);
         return tip;
     }

@@ -1,0 +1,99 @@
+{
+  "name": "ATLauncher",
+  "author": "RyanTheAllmighty",
+  "dark": true,
+  "ui": {
+    "*": {
+      "background": "secondary.700",
+      "foreground": "white",
+      "selectionBackground": "primary.500",
+      "selectionForeground": "secondary.900",
+      "selectionInactiveBackground": "#3a3f4b",
+      "selectionBackgroundInactive": "#0e293f",
+      "errorForeground": "#ef5350"
+    },
+    "Component": {
+      "focusWidth": 1
+    },
+    "TabbedPane": {
+      "tabSelectionHeight": 3,
+      "focusColor": "secondary.500",
+      "hoverColor": "secondary.500",
+      "underlineColor": "primary.500"
+    },
+    "JLabelWithHover": {
+      "borderColor": "#50aa6b"
+    },
+    "CollapsiblePanel": {
+      "normal": "white",
+      "error": "#ff0000"
+    },
+    "Console": {
+      "LogType": {
+        "debug": "#ff00ff",
+        "error": "#ee2222",
+        "info": "primary.500",
+        "warn": "#ffff4c"
+      }
+    },
+    "Mods": {
+      "modSelectionColor": "#32373c"
+    },
+    "ModsJCheckBox": {
+      "hoverBorderColor": "#50aa6b"
+    },
+    "SMButton": {
+      "hoverBorderColor": "#50aa6b"
+    },
+    "Toaster": {
+      "bgColor": "#1e2328",
+      "msgColor": "white",
+      "borderColor": "#50aa6b"
+    }
+  },
+  "colors": {
+    "primary.100": "#f3f9eb",
+    "primary.200": "#e2f0cd",
+    "primary.300": "#d0e7af",
+    "primary.400": "#acd472",
+    "primary.500": "#89c236",
+    "primary.600": "#7baf31",
+    "primary.700": "#527420",
+    "primary.800": "#3e5718",
+    "primary.900": "#293a10",
+    "secondary.100": "#ebebeb",
+    "secondary.200": "#cecece",
+    "secondary.300": "#b1b1b1",
+    "secondary.400": "#767676",
+    "secondary.500": "#3b3b3b",
+    "secondary.600": "#333333",
+    "secondary.700": "#2e2e2e",
+    "secondary.800": "#1b1b1b",
+    "secondary.900": "#121212",
+    "gray.100": "#f7fafc",
+    "gray.200": "#edf2f7",
+    "gray.300": "#e2e8f0",
+    "gray.400": "#cbd5e0",
+    "gray.500": "#a0aec0",
+    "gray.600": "#718096",
+    "gray.700": "#4a5568",
+    "gray.800": "#2d3748",
+    "gray.900": "#1a202c",
+    "white": "#ffffff",
+    "transparent": "#00000000"
+  },
+  "icons": {
+    "ColorPalette": {
+      "Checkbox.Border.Default.Dark": "secondary.400",
+      "Checkbox.Border.Selected.Dark": "secondary.400",
+      "Checkbox.Background.Default.Dark": "secondary.500",
+      "Checkbox.Foreground.Selected.Dark": "primary.500",
+      "Checkbox.Focus.Thin.Selected.Dark": "secondary.400",
+      "Checkbox.Focus.Thin.Default.Dark": "secondary.400"
+    }
+  },
+  "fonts": {
+    "normal": "SansSerif",
+    "tab": "Oswald-Regular"
+  }
+}

@@ -20,14 +20,15 @@ package com.atlauncher.gui.components;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import com.atlauncher.App;
 import com.atlauncher.gui.CustomLineBorder;
 
 public class JLabelWithHover extends JLabel {
     private static final long serialVersionUID = -4371080285355832166L;
-    private static final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
+    private static final Border HOVER_BORDER = new CustomLineBorder(5,
+            UIManager.getColor("JLabelWithHover.borderColor"), 2);
 
     public JLabelWithHover(Icon icon, String tooltipText, Border border) {
         super();

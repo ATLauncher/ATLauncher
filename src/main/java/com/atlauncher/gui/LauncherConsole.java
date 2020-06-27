@@ -62,9 +62,6 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         this.setLayout(new BorderLayout());
 
         console = new Console();
-        console.setFont(Theme.DEFAULT_THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(Theme.DEFAULT_THEME.getConsoleTextColor());
-        console.setSelectionColor(Theme.DEFAULT_THEME.getSelectionColor());
 
         setupContextMenu(); // Setup the right click menu
 
@@ -107,12 +104,6 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                 }
             }
         });
-    }
-
-    public void setupTheme() {
-        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(App.THEME.getConsoleTextColor());
-        console.setSelectionColor(App.THEME.getSelectionColor());
     }
 
     /**

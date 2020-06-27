@@ -143,8 +143,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
      * Setup the individual tabs used in the Launcher sidebar
      */
     private void setupTabs() {
-        tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT : JTabbedPane.LEFT));
-        tabbedPane.setBackground(App.THEME.getBaseColor());
+        tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
 
         tabbedPane.addChangeListener(e -> {
             String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
@@ -176,11 +175,10 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
                 serversTab, accountsTab, toolsTab, settingsTab });
 
-        tabbedPane.setFont(App.THEME.getTabFont().deriveFont(32.0F));
+        tabbedPane.setFont(App.THEME.fonts.getTabFont().deriveFont(32.0F));
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
-        tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
     }
 

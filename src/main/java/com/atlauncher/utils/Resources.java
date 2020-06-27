@@ -59,44 +59,13 @@ public final class Resources {
             if (resources.containsKey(name)) {
                 Object obj = resources.get(name);
                 if (!(obj instanceof StyleSheet)) {
-                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " +
-                            "suggested=" + StyleSheet.class.getName() + "; got=" + obj.getClass().getName());
+                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " + "suggested="
+                            + StyleSheet.class.getName() + "; got=" + obj.getClass().getName());
                 } else {
                     return (StyleSheet) obj;
                 }
             } else {
                 StyleSheet sheet = new StyleSheet();
-
-                File themeFile = App.settings.getThemeFile();
-
-                if (themeFile != null) {
-                    InputStream stream = null;
-
-                    ZipFile zipFile = new ZipFile(themeFile);
-                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                    while (entries.hasMoreElements()) {
-                        ZipEntry entry = entries.nextElement();
-                        if (entry.getName().equals("css/" + name + ".css")) {
-                            stream = zipFile.getInputStream(entry);
-                            break;
-                        }
-                    }
-
-                    if (stream != null) {
-                        Reader reader = new InputStreamReader(stream);
-                        sheet.loadRules(reader, null);
-                        reader.close();
-
-                        stream.close();
-                        zipFile.close();
-
-                        resources.put(name, sheet);
-                        return sheet;
-                    }
-
-                    zipFile.close();
-                }
 
                 Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + ".css"));
                 sheet.loadRules(reader, null);
@@ -115,8 +84,8 @@ public final class Resources {
             if (resources.containsKey(name)) {
                 Object obj = resources.get(name);
                 if (!(obj instanceof Font)) {
-                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " +
-                            "suggested=" + Font.class.getName() + "; got=" + obj.getClass().getName());
+                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " + "suggested="
+                            + Font.class.getName() + "; got=" + obj.getClass().getName());
                 } else {
                     return (Font) obj;
                 }
@@ -128,36 +97,6 @@ public final class Resources {
                 } else {
                     URL url = System.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
-                        File themeFile = App.settings.getThemeFile();
-
-                        if (themeFile != null) {
-                            InputStream stream = null;
-
-                            ZipFile zipFile = new ZipFile(themeFile);
-                            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                            while (entries.hasMoreElements()) {
-                                ZipEntry entry = entries.nextElement();
-                                if (entry.getName().equals("font/" + name + ".ttf")) {
-                                    stream = zipFile.getInputStream(entry);
-                                    break;
-                                }
-                            }
-
-                            if (stream != null) {
-                                Font f = Font.createFont(Font.TRUETYPE_FONT, stream);
-                                resources.put(name, f);
-
-                                stream.close();
-                                zipFile.close();
-
-                                resources.put(name, f);
-                                return f;
-                            }
-
-                            zipFile.close();
-                        }
-
                         LogManager.error("Cannot find font " + name);
                         return new Font("Sans-Serif", Font.PLAIN, 0);
                     } else {

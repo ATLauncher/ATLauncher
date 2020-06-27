@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
@@ -115,7 +116,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel1 = new JPanel();
         checkBoxPanel1.setLayout(null);
-        checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColor());
+        checkBoxPanel1.setBackground(UIManager.getColor("Mods.modSelectionColor"));
 
         JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -124,7 +125,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel2 = new JPanel();
         checkBoxPanel2.setLayout(null);
-        checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColor());
+        checkBoxPanel2.setBackground(UIManager.getColor("Mods.modSelectionColor"));
 
         JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

@@ -55,6 +55,7 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.12.0'
     implementation 'com.sangupta:murmur:1.0.0'
     implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'com.formdev:flatlaf:0.36'
     implementation 'com.github.pack200:pack200:d5fd0807d6'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'

@@ -17,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Hide servers and mods buttons on system packs
 - Change Network Tool's download file to 100MB
 - Add ability to export packs in CurseForge/Twitch format
+- Change the theme system to use [FlatLaF](https://github.com/JFormDesigner/FlatLaf)

@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
@@ -187,7 +188,7 @@ public class EditModsDialog extends JDialog {
 
         disabledModsPanel = new JList<>();
         disabledModsPanel.setLayout(null);
-        disabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
+        disabledModsPanel.setBackground(UIManager.getColor("Mods.modSelectionColor"));
         disabledModsPanel.setDragEnabled(true);
         disabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, true));
 
@@ -199,7 +200,7 @@ public class EditModsDialog extends JDialog {
 
         enabledModsPanel = new JList<>();
         enabledModsPanel.setLayout(null);
-        enabledModsPanel.setBackground(App.THEME.getModSelectionBackgroundColor());
+        enabledModsPanel.setBackground(UIManager.getColor("Mods.modSelectionColor"));
         enabledModsPanel.setDragEnabled(true);
         enabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, false));
 

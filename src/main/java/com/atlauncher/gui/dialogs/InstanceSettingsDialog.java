@@ -62,7 +62,6 @@ public class InstanceSettingsDialog extends JDialog {
     final ImageIcon WARNING_ICON = Utils.getIconImage("/assets/image/Warning.png");
 
     final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
-    final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
 
     final GridBagConstraints gbc = new GridBagConstraints();
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);

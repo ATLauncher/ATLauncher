@@ -59,17 +59,15 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBackground(App.THEME.getBaseColor());
         tabbedPane.addChangeListener(e -> {
             String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
             Analytics.sendScreenView(title + " Settings");
         });
 
-        tabbedPane.setFont(App.THEME.getDefaultFont().deriveFont(17.0F));
+        tabbedPane.setFont(App.THEME.fonts.getNormalFont().deriveFont(17.0F));
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
-        tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
 
         add(tabbedPane, BorderLayout.CENTER);

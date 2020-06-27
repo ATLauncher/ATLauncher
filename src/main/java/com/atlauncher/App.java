@@ -44,6 +44,7 @@ import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -68,7 +69,12 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.IntelliJTheme;
 
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
@@ -192,7 +198,7 @@ public class App {
      * <p/>
      * For more information on themeing, please see https://atl.pw/theme
      */
-    public static Theme THEME = Theme.DEFAULT_THEME;
+    public static Theme THEME;
 
     static {
         // Prefer to use IPv4
@@ -299,7 +305,6 @@ public class App {
         LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
 
         LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
-        LogManager.info("Using Theme: " + THEME);
 
         // Now for some Mac specific stuff, mainly just setting the name of the
         // application and icon.
@@ -445,33 +450,6 @@ public class App {
      * Loads the theme and applies the theme's settings to the look and feel.
      */
     public static void loadTheme() {
-        File themeFile = settings.getThemeFile();
-        if (themeFile != null) {
-            try {
-                InputStream stream = null;
-
-                ZipFile zipFile = new ZipFile(themeFile);
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("theme.json")) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
-                    }
-                }
-
-                if (stream != null) {
-                    THEME = Gsons.THEMES.fromJson(new InputStreamReader(stream), Theme.class);
-                    stream.close();
-                }
-
-                zipFile.close();
-            } catch (Exception ex) {
-                THEME = Theme.DEFAULT_THEME;
-            }
-        }
-
         try {
             setLAF();
             modifyLAF();
@@ -481,16 +459,15 @@ public class App {
     }
 
     /**
-     * Sets the look and feel to be that of nimbus which is the base.
+     * Sets the look and feel of the application.
      *
      * @throws Exception
      */
     private static void setLAF() throws Exception {
-        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (info.getName().equalsIgnoreCase("nimbus")) {
-                UIManager.setLookAndFeel(info.getClassName());
-            }
-        }
+        IntelliJTheme.install(App.class.getResourceAsStream("/themes/ATLauncher.theme.json"));
+
+        THEME = Gsons.DEFAULT.fromJson(
+                new InputStreamReader(App.class.getResourceAsStream("/themes/ATLauncher.theme.json")), Theme.class);
     }
 
     /**
@@ -499,9 +476,15 @@ public class App {
      * @throws Exception
      */
     private static void modifyLAF() throws Exception {
-        THEME.apply();
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
+
+        UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
+        UIManager.put("defaultFont", App.THEME.fonts.getNormalFont().deriveFont(Utils.getBaseFontSize()));
+        UIManager.put("Button.font", App.THEME.fonts.getNormalFont().deriveFont(Utils.getBaseFontSize()));
+        UIManager.put("Toaster.font", App.THEME.fonts.getNormalFont().deriveFont(Utils.getBaseFontSize()));
+        UIManager.put("Toaster.opacity", 0.75F);
+
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         UIManager.put("ScrollBar.minimumThumbSize", new Dimension(50, 50));
 

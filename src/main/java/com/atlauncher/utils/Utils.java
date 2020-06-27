@@ -123,50 +123,6 @@ public class Utils {
      * @return the icon image
      */
     public static ImageIcon getIconImage(String path) {
-        File themeFile = App.settings == null ? null : App.settings.getThemeFile();
-
-        if (themeFile != null) {
-            ZipFile zipFile;
-            try {
-                zipFile = new ZipFile(themeFile);
-            } catch (ZipException e) {
-                LogManager.logStackTrace("Invalid zip file", e);
-                return null;
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to open theme zip file", e);
-                return null;
-            }
-
-            try {
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                InputStream stream = null;
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + path.substring(path.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
-                    }
-                }
-
-                if (stream != null) {
-                    try {
-                        return new ImageIcon(ImageIO.read(stream));
-                    } finally {
-                        stream.close();
-                    }
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to read icon from theme zip file", e);
-            } finally {
-                try {
-                    zipFile.close();
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to close zip file", e);
-                }
-            }
-        }
-
         URL url = App.class.getResource(path);
 
         if (url == null) {
@@ -227,51 +183,6 @@ public class Utils {
 
         if (!name.endsWith(".png")) {
             name += ".png";
-        }
-
-        File themeFile = App.settings == null ? null : App.settings.getThemeFile();
-
-        if (themeFile != null) {
-
-            ZipFile zipFile;
-            try {
-                zipFile = new ZipFile(themeFile);
-            } catch (ZipException e) {
-                LogManager.logStackTrace("Invalid zip file", e);
-                return null;
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to open theme zip file", e);
-                return null;
-            }
-
-            try {
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                InputStream stream = null;
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + name.substring(name.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
-                    }
-                }
-
-                if (stream != null) {
-                    try {
-                        return ImageIO.read(stream);
-                    } finally {
-                        stream.close();
-                    }
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to read image from theme zip file", e);
-            } finally {
-                try {
-                    zipFile.close();
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to close zip file", e);
-                }
-            }
         }
 
         InputStream stream = App.class.getResourceAsStream(name);

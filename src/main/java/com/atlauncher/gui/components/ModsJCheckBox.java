@@ -21,12 +21,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.json.Mod;
@@ -59,7 +59,8 @@ public class ModsJCheckBox extends JCheckBox {
      * Static object for the {@link Border} to show around the tooltips for mods
      * with descriptions.
      */
-    private static final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
+    private static final Border HOVER_BORDER = new CustomLineBorder(5,
+            UIManager.getColor("ModsJCheckBox.hoverBorderColor"), 2);
 
     /**
      * Constructor for use in the {@link ModsChooser} dialog with new JSON format.

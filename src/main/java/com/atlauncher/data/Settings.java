@@ -162,8 +162,6 @@ public class Settings {
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
     private String userAgent = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, " + ""
             + "like Gecko) Chrome/28.0.1500.72 Safari/537.36";
-    private boolean minecraftLoginServerUp = false; // If the Minecraft Login server is up
-    private boolean minecraftSessionServerUp = false; // If the Minecraft Session server is up
     private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public Settings() {
@@ -233,7 +231,7 @@ public class Settings {
             }
         }
 
-        if (Java.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
+        if (!Java.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
             LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch!");
 
             int ret = DialogManager.optionDialog()
@@ -2281,15 +2279,6 @@ public class Settings {
 
     public void setTheme(String theme) {
         this.theme = theme;
-    }
-
-    public File getThemeFile() {
-        File themeFile = FileSystem.THEMES.resolve(this.theme + ".zip").toFile();
-        if (themeFile.exists()) {
-            return themeFile;
-        } else {
-            return null;
-        }
     }
 
     public String getDateFormat() {

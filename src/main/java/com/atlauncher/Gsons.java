@@ -17,9 +17,6 @@
  */
 package com.atlauncher;
 
-import java.awt.Color;
-
-import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.PackVersionTypeAdapter;
 import com.atlauncher.data.minecraft.Arguments;
@@ -35,9 +32,6 @@ import com.google.gson.GsonBuilder;
 
 public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder().setPrettyPrinting().create();
-
-    public static final Gson THEMES = new GsonBuilder().setPrettyPrinting()
-            .registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
 
     public static final Gson DEFAULT_ALT = new GsonBuilder()
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).create();
