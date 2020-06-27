@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,12 +48,17 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.data.curse.pack.CurseManifestFile;
+import com.atlauncher.data.curse.pack.CurseMinecraft;
+import com.atlauncher.data.curse.pack.CurseModLoader;
 import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.AssetObject;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -740,6 +746,153 @@ public class InstanceV2 extends MinecraftVersion {
         data.put("mods", mods);
 
         return data;
+    }
+
+    public boolean canBeExported() {
+        if (launcher.loaderVersion == null) {
+            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader");
+            return false;
+        }
+
+        // check pack is a system pack or imported from Curse
+        if ((getPack() != null && !getPack().system) && launcher.curseManifest == null) {
+            LogManager.debug("Instance " + launcher.name
+                    + " cannot be exported due to: Not being a system pack or imported from Curse");
+            return false;
+        }
+
+        // make sure there's at least one mod from Curse
+        if (!launcher.mods.stream().anyMatch(mod -> mod.isFromCurse())) {
+            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No mods from Curse");
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean exportAsCurseZip(String name, String author, String saveTo) {
+        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        CurseManifest manifest = new CurseManifest();
+
+        CurseMinecraft minecraft = new CurseMinecraft();
+
+        List<CurseModLoader> modLoaders = new ArrayList<CurseModLoader>();
+        CurseModLoader modLoader = new CurseModLoader();
+
+        String loaderVersion = launcher.loaderVersion.version;
+
+        // Since Curse treats Farbic as a second class citizen :(, we need to force a
+        // forge loader and people need to use Jumploader in order to have Fabric packs
+        // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
+        if (launcher.loaderVersion.type.equals("Fabric")) {
+            loaderVersion = ForgeLoader.getRecommendedVersion(id);
+        }
+
+        modLoader.id = "forge-" + loaderVersion;
+        modLoader.primary = true;
+        modLoaders.add(modLoader);
+
+        minecraft.version = this.id;
+        minecraft.modLoaders = modLoaders;
+
+        manifest.minecraft = minecraft;
+        manifest.manifestType = "minecraftModpack";
+        manifest.manifestVersion = 1;
+        manifest.name = name;
+        manifest.version = this.launcher.version;
+        manifest.author = author;
+        manifest.files = this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).map(mod -> {
+            CurseManifestFile file = new CurseManifestFile();
+            file.projectID = mod.curseModId;
+            file.fileID = mod.curseFileId;
+            file.required = !mod.disabled;
+
+            return file;
+        }).collect(Collectors.toList());
+        manifest.overrides = "overrides";
+
+        // create temp directory to put this in
+        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        FileUtils.createDirectory(tempDir);
+
+        // create manifest.json
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("manifest.json").toFile())) {
+            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save manifest.json", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // create modlist.html
+        StringBuilder sb = new StringBuilder("<ul>");
+        this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+            if (mod.hasFullCurseInformation()) {
+                sb.append("<li><a href=\"" + mod.curseMod.websiteUrl + "\">" + mod.name + "</a></li>");
+            } else {
+                sb.append("<li>" + mod.name + "</li>");
+            }
+        });
+        sb.append("</ul>");
+
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modlist.html").toFile())) {
+            fileWriter.write(sb.toString());
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save modlist.html", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // copy over the overrides folder
+        Path overrides = tempDir.resolve("overrides");
+        FileUtils.createDirectory(overrides);
+
+        if (getRoot().resolve("config").toFile().exists() && getRoot().resolve("config").toFile().list().length != 0) {
+            Utils.copyDirectory(getRoot().resolve("config").toFile(), overrides.resolve("config").toFile());
+        }
+
+        if (getRoot().resolve("mods").toFile().exists()) {
+            Utils.copyDirectory(getRoot().resolve("mods").toFile(), overrides.resolve("mods").toFile());
+
+            // remove files that come from Curse
+            launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+                File file = mod.getFile(this, overrides);
+
+                if (file.exists()) {
+                    FileUtils.delete(file.toPath());
+                }
+            });
+
+            // if no files, remove the directory
+            if (overrides.resolve("mods").toFile().list().length == 0) {
+                FileUtils.deleteDirectory(overrides.resolve("mods"));
+            }
+        }
+
+        if (getRoot().resolve("oresources").toFile().exists()
+                && getRoot().resolve("oresources").toFile().list().length != 0) {
+            Utils.copyDirectory(getRoot().resolve("oresources").toFile(), overrides.resolve("oresources").toFile());
+        }
+
+        if (getRoot().resolve("resources").toFile().exists()
+                && getRoot().resolve("resources").toFile().list().length != 0) {
+            Utils.copyDirectory(getRoot().resolve("resources").toFile(), overrides.resolve("resources").toFile());
+        }
+
+        if (getRoot().resolve("scripts").toFile().exists()
+                && getRoot().resolve("scripts").toFile().list().length != 0) {
+            Utils.copyDirectory(getRoot().resolve("scripts").toFile(), overrides.resolve("scripts").toFile());
+        }
+
+        ZipUtil.pack(tempDir.toFile(), to.toFile());
+
+        FileUtils.deleteDirectory(tempDir);
+
+        return true;
     }
 
     public boolean rename(String newName) {

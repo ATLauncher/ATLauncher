@@ -59,7 +59,6 @@ import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
-import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -67,6 +66,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
+import com.atlauncher.gui.dialogs.InstanceExportDialog;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -99,6 +99,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
     private final JButton backupButton = new JButton(GetText.tr("Backup"));
     private final JButton cloneButton = new JButton(GetText.tr("Clone"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
+    private final JButton exportButton = new JButton(GetText.tr("Export"));
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
@@ -136,6 +137,12 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         top.add(this.settingsButton);
         bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
+        bottom.add(this.exportButton);
+
+        // check it can be exported
+        if (!instance.canBeExported()) {
+            this.exportButton.setVisible(false);
+        }
 
         if (instance.launcher.curseManifest != null) {
             this.reinstallButton.setVisible(false);
@@ -412,6 +419,10 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                 }));
                 dialog.start();
             }
+        });
+        this.exportButton.addActionListener(e -> {
+            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Export", "InstanceV2");
+            new InstanceExportDialog(instance);
         });
     }
 

@@ -81,20 +81,20 @@ public class ForgeLoader implements Loader {
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
-            this.version = this.getRecommendedVersion();
+            this.version = getRecommendedVersion(this.minecraft);
             this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         }
     }
 
-    public ForgePromotions getPromotions() {
+    public static ForgePromotions getPromotions() {
         return Download.build().cached().setUrl(String.format("%s/promotions_slim.json", Constants.FORGE_MAVEN))
                 .asClass(ForgePromotions.class);
     }
 
     public String getLatestVersion() {
-        ForgePromotions promotions = this.getPromotions();
+        ForgePromotions promotions = getPromotions();
 
         if (promotions == null || !promotions.hasPromo(this.minecraft + "-latest")) {
             return null;
@@ -103,14 +103,14 @@ public class ForgeLoader implements Loader {
         return promotions.getPromo(this.minecraft + "-latest");
     }
 
-    public String getRecommendedVersion() {
-        ForgePromotions promotions = this.getPromotions();
+    public static String getRecommendedVersion(String minecraft) {
+        ForgePromotions promotions = getPromotions();
 
-        if (promotions == null || !promotions.hasPromo(this.minecraft + "-recommended")) {
+        if (promotions == null || !promotions.hasPromo(minecraft + "-recommended")) {
             return null;
         }
 
-        return promotions.getPromo(this.minecraft + "-recommended");
+        return promotions.getPromo(minecraft + "-recommended");
     }
 
     @Override

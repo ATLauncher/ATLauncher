@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -312,33 +313,37 @@ public class DisableableMod implements Serializable {
     }
 
     public File getFile(InstanceV2 instance) {
+        return getFile(instance, instance.getRoot());
+    }
+
+    public File getFile(InstanceV2 instance, Path base) {
         File dir = null;
         switch (type) {
             case jar:
             case forge:
             case mcpc:
-                dir = instance.getRoot().resolve("jarmods").toFile();
+                dir = base.resolve("jarmods").toFile();
                 break;
             case texturepack:
-                dir = instance.getRoot().resolve("texturepacks").toFile();
+                dir = base.resolve("texturepacks").toFile();
                 break;
             case resourcepack:
-                dir = instance.getRoot().resolve("resourcepacks").toFile();
+                dir = base.resolve("resourcepacks").toFile();
                 break;
             case mods:
-                dir = instance.getRoot().resolve("mods").toFile();
+                dir = base.resolve("mods").toFile();
                 break;
             case ic2lib:
-                dir = instance.getRoot().resolve("mods/ic2").toFile();
+                dir = base.resolve("mods/ic2").toFile();
                 break;
             case denlib:
-                dir = instance.getRoot().resolve("mods/denlib").toFile();
+                dir = base.resolve("mods/denlib").toFile();
                 break;
             case coremods:
-                dir = instance.getRoot().resolve("coremods").toFile();
+                dir = base.resolve("coremods").toFile();
                 break;
             case shaderpack:
-                dir = instance.getRoot().resolve("shaderpacks").toFile();
+                dir = base.resolve("shaderpacks").toFile();
                 break;
             default:
                 LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
