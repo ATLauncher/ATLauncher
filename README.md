@@ -143,11 +143,10 @@ code and the ATLauncher files it downloads.
 Starting with version 3.2.1.0 a new versioning system was put into place. It works off the
 following:
 
-Reserved.Major.Minor.Revision.Build
+Reserved.Major.Minor.Revision.Stream
 
-So for 3.2.1.0.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is
-used as a base, only incremented on complete rewrites. The build number is optional and should be 0
-on releases.
+So for 3.2.1.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is
+used as a base, only incremented on complete rewrites. The stream is optional.
 
 Major should be incremented when large changes/features are made.
 
@@ -159,13 +158,14 @@ previous minor.
 Build is used for beta releases allowing you to have higher version numbers but force users to
 update when the real release comes.
 
+Stream is used to define if it's a "Release" or a "Beta". When not provided, it defaults to "Release".
+
 ### Updating The Version
 
-The version should be updated manually in the following files:
+The version can be updated in a single place in the `/src/main/resources/version` file.
 
-- CHANGELOG.md
-- build.gradle
-- /src/main/java/com/atlauncher/data/Constants.java
+The stream value doesn't need to be provided, but should only ever be "Beta". When a release is ready
+to go out, the stream should be removed from the version so that everything will automatically release.
 
 ## Translating
 

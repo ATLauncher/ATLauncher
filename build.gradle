@@ -26,7 +26,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group = 'com.atlauncher'
-version = '3.3.6.0'
+version = rootProject.file('src/main/resources/version').text.trim().replace(".Beta", "")
 
 repositories {
     mavenCentral()

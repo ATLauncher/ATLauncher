@@ -1,4 +1,4 @@
-name: Application
+name: Run Tests
 
 on: [push]
 
@@ -17,18 +17,8 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
 
-      - name: Marke gradle as executable
+      - name: Mark gradle wrapper as executable
         run: chmod a+x gradlew
 
       - name: Test
         run: ./gradlew test
-
-      - name: Build
-        run: ./gradlew build
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        if: ${{ matrix.java-version == '1.8' }}
-        with:
-          name: ATLauncher
-          path: dist/*

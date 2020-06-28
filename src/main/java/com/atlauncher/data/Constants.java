@@ -17,8 +17,32 @@
  */
 package com.atlauncher.data;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
+
+import com.atlauncher.App;
+
 public class Constants {
-    public static final LauncherVersion VERSION = new LauncherVersion(3, 3, 6, 0);
+    static {
+        String versionFromFile = new BufferedReader(
+                new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("")).trim();
+        String[] versionParts = versionFromFile.split("\\.", 4);
+
+        String stream = "Release";
+
+        if (versionParts[3].endsWith(".Beta")) {
+            versionParts[3] = versionParts[3].replace(".Beta", "");
+            stream = "Beta";
+        }
+
+        VERSION = new LauncherVersion(Integer.parseInt(versionParts[0]), Integer.parseInt(versionParts[1]),
+                Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream);
+    }
+
+    public static final LauncherVersion VERSION;
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";

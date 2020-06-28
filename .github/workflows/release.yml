@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Mark gradle wrapper as executable
+        run: chmod a+x gradlew
+
+      - name: Test
+        run: ./gradlew test
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Read version
+        id: changelog
+        uses: pCYSl5EDgo/cat@master
+        with:
+          path: ./CHANGELOG.md
+
+      - name: Read version
+        id: version
+        uses: pCYSl5EDgo/cat@master
+        with:
+          path: ./src/main/resources/version
+          trim: true
+
+      - name: Remove stream from version
+        id: clean-version
+        uses: frabert/replace-string-action@v1.1
+        with:
+          string: ${{ steps.version.outputs.text }}
+          pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
+          replace-with: "$1"
+
+      - name: Release
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ steps.clean-version.outputs.replaced }}
+          name: ${{ steps.clean-version.outputs.replaced }}
+          body: ${{ steps.changelog.outputs.text }}
+          prerelease: ${{ endsWith(steps.version.outputs.text, '.Beta') }}
+          allow_override: true
+          files: |
+            ./dist/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
+            ./dist/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
+            ./dist/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar

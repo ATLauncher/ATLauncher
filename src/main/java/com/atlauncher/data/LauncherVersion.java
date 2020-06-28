@@ -25,18 +25,18 @@ public class LauncherVersion {
     private int major;
     private int minor;
     private int revision;
-    private int build = 0;
+    private String stream;
 
     public LauncherVersion(int reserved, int major, int minor, int revision) {
-        this(reserved, major, minor, revision, 0);
+        this(reserved, major, minor, revision, "Release");
     }
 
-    public LauncherVersion(int reserved, int major, int minor, int revision, int build) {
+    public LauncherVersion(int reserved, int major, int minor, int revision, String stream) {
         this.reserved = reserved;
         this.major = major;
         this.minor = minor;
         this.revision = revision;
-        this.build = build;
+        this.stream = stream;
     }
 
     public int getReserved() {
@@ -55,8 +55,12 @@ public class LauncherVersion {
         return this.revision;
     }
 
-    public int getBuild() {
-        return this.build;
+    public String getStream() {
+        return this.stream;
+    }
+
+    public boolean isReleaseStream() {
+        return this.stream.equals("Release");
     }
 
     public boolean needsUpdate(LauncherVersion toThis) {
@@ -80,9 +84,9 @@ public class LauncherVersion {
                     } else if (this.revision < toThis.getRevision()) {
                         return true;
                     } else {
-                        return (toThis.getBuild() == 0 ? this.build != 0 : this.build < toThis.getBuild()); // Only
-                        // update if the build is lower unless the version to update to is a 0 build which means it's
-                        // official and should be updated to
+                        // if versions are the same, update if current version is not a release stream
+                        // but new version is in release stream
+                        return !this.isReleaseStream() && toThis.isReleaseStream();
                     }
                 }
             }
@@ -91,15 +95,10 @@ public class LauncherVersion {
 
     @Override
     public String toString() {
-        if (this.build == 0) {
+        if (this.isReleaseStream()) {
             return String.format("%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
-        } else {
-            return String.format("%d.%d.%d.%d Build %d", this.reserved, this.major, this.minor, this.revision, this
-                .build);
         }
-    }
 
-    public boolean isBeta() {
-        return this.build != 0;
+        return String.format("%d.%d.%d.%d %s", this.reserved, this.major, this.minor, this.revision, this.stream);
     }
 }
