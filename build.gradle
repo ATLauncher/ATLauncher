@@ -118,6 +118,7 @@ shadowJar {
     classifier = null
     minimize {
         exclude(dependency('org.apache.logging.log4j:.*:.*'))
+        exclude(dependency('com.formdev:.*:.*'))
     }
     classifier = ''
 }
