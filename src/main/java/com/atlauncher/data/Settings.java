@@ -231,7 +231,7 @@ public class Settings {
             }
         }
 
-        if (!Java.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
+        if (Java.isMinecraftJavaNewerThanJava8() && !this.hideJava9Warning) {
             LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch!");
 
             int ret = DialogManager.optionDialog()
