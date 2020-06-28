@@ -1,8 +1,3 @@
-# Changelog
-
-This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
-[releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
-
 - Switch to using system property for Vanilla tab
 - Fix debug logging not logging if request was cached or not correctly
 - Add in SetupDialogComplete tracking event
