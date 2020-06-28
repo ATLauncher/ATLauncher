@@ -26,11 +26,19 @@ jobs:
       - name: Build
         run: ./gradlew build
 
-      - name: Read version
+      - name: Read changelog
         id: changelog
         uses: pCYSl5EDgo/cat@master
         with:
           path: ./CHANGELOG.md
+
+      - name: Remove unnecessary things from changelog
+        id: clean-changelog
+        uses: frabert/replace-string-action@v1.1
+        with:
+          string: ${{ steps.changelog.outputs.text }}
+          pattern: '.*?-(.*)'
+          replace-with: "$1"
 
       - name: Read version
         id: version
@@ -53,9 +61,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: v${{ steps.clean-version.outputs.replaced }}
           name: ${{ steps.clean-version.outputs.replaced }}
-          body: ${{ steps.changelog.outputs.text }}
+          body: ${{ steps.clean-changelog.outputs.replaced }}
           prerelease: ${{ endsWith(steps.version.outputs.text, '.Beta') }}
           allow_override: true
+          gzip: false
           files: |
             ./dist/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
             ./dist/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
