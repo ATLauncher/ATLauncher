@@ -1,6 +1,6 @@
 # ATLauncher
 
-[![CircleCI](https://circleci.com/gh/ATLauncher/ATLauncher/tree/master.svg?style=shield)](https://circleci.com/gh/ATLauncher/ATLauncher/tree/master)
+![Application](https://github.com/ATLauncher/ATLauncher/workflows/Application/badge.svg?branch=master)
 [![Discord](https://discordapp.com/api/guilds/117047818136322057/embed.png?style=shield)](https://atl.pw/discordfromgithub)
 
 ## What is it

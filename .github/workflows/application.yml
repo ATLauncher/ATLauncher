@@ -1,0 +1,34 @@
+name: Application
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: ["1.8", "1.9", "1.10", "1.11", "1.12", "1.13", "1.14"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - name: Marke gradle as executable
+        run: chmod a+x gradlew
+
+      - name: Test
+        run: ./gradlew test
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: ${{ matrix.java-version == '1.8' }}
+        with:
+          name: ATLauncher
+          path: dist/*
