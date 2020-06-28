@@ -70,6 +70,23 @@ To check for dependency updates with gradle, simply run:
 
 This will print a report to the console about any dependencies which have updates.
 
+## Updating license headers in all files
+
+If you add new files, or update the `LICENSEHEADER` file, you can add that to all source files by running:
+
+```sh
+./gradlew updateLicenses
+```
+
+To check that they're all correct, you can runthe below command:
+
+```sh
+./gradlew checkLicenses
+```
+
+This is run during the CI process, and will fail if the license is missing or not up to date, so make sure that you add
+this to all new files you create.
+
 ## Plugging In Your Data
 
 To get started with the code and plug in your own data, you need to edit the
