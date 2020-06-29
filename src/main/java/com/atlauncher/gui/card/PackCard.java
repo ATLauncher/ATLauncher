@@ -60,8 +60,9 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     public PackCard(final Pack pack) {
         super(pack);
-        RelocalizationManager.addListener(this);
         this.pack = pack;
+
+        RelocalizationManager.addListener(this);
 
         this.splitter.setLeftComponent(new PackImagePanel(pack));
         this.splitter.setRightComponent(this.actionsPanel);

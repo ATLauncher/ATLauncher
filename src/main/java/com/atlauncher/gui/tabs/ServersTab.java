@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
@@ -105,6 +106,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.weightx = 1.0;
+        gbc.insets = new Insets(2, 0, 2, 0);
         gbc.fill = GridBagConstraints.BOTH;
 
         App.settings.getServersSorted().stream().forEach(server -> {

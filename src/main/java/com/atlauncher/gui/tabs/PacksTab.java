@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
@@ -186,6 +187,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
+        gbc.insets = new Insets(5, 0, 5, 0);
         gbc.fill = GridBagConstraints.BOTH;
 
         Pack pack;
