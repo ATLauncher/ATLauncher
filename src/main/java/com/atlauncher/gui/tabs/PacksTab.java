@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -60,9 +59,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JButton collapseAllButton = new JButton(GetText.tr("Collapse All"));
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
-    private final JCheckBox serversBox = new JCheckBox(GetText.tr("Can Create Server"));
-    private final JCheckBox privateBox = new JCheckBox(GetText.tr("Private Packs Only"));
-    private final JCheckBox searchDescBox = new JCheckBox(GetText.tr("Search Description"));
     private NilCard nilCard;
     private boolean isSystem;
     private boolean isFeatured;
@@ -97,9 +93,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         TabChangeManager.addListener(() -> {
             searchField.setText("");
-            serversBox.setSelected(false);
-            privateBox.setSelected(false);
-            searchDescBox.setSelected(false);
         });
 
         this.collapseAllButton.addActionListener(e -> {
@@ -125,9 +118,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         });
         this.clearButton.addActionListener(e -> {
             searchField.setText("");
-            searchDescBox.setSelected(false);
-            serversBox.setSelected(false);
-            privateBox.setSelected(false);
             reload();
         });
 
@@ -144,10 +134,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             Analytics.sendEvent(searchField.getText(), "Search", "Pack");
             reload();
         });
-
-        this.privateBox.addItemListener(e -> reload());
-        this.serversBox.addItemListener(e -> reload());
-        this.searchDescBox.addItemListener(e -> reload());
     }
 
     private void addLoadingCard() {
@@ -165,9 +151,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.topPanel.add(this.clearButton);
         this.topPanel.add(this.searchField);
         this.topPanel.add(this.searchButton);
-        this.topPanel.add(this.serversBox);
-        this.topPanel.add(this.privateBox);
-        this.topPanel.add(this.searchDescBox);
 
         this.bottomPanel.add(this.expandAllButton);
         this.bottomPanel.add(this.collapseAllButton);
@@ -214,27 +197,15 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             if (keep) {
                 if (!this.searchField.getText().isEmpty()) {
                     if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
-                            .matcher(pack.getName()).find()) {
+                            .matcher(pack.getName()).find()
+                            || Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
+                                    .matcher(pack.getDescription()).find()) {
                         show = false;
                     }
-                }
 
-                if (this.searchDescBox.isSelected()) {
                     if (Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
                             .matcher(pack.getDescription()).find()) {
                         show = true;
-                    }
-                }
-
-                if (this.serversBox.isSelected()) {
-                    if (!pack.canCreateServer()) {
-                        show = false;
-                    }
-                }
-
-                if (privateBox.isSelected()) {
-                    if (!pack.isPrivate()) {
-                        show = false;
                     }
                 }
 
@@ -281,9 +252,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         clearButton.setText(GetText.tr("Clear"));
         expandAllButton.setText(GetText.tr("Expand All"));
         collapseAllButton.setText(GetText.tr("Collapse All"));
-        serversBox.setText(GetText.tr("Can Create Server"));
-        privateBox.setText(GetText.tr("Private Packs Only"));
-        searchDescBox.setText(GetText.tr("Search Description"));
 
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
