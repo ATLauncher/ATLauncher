@@ -44,7 +44,7 @@ public class Constants {
 
     public static final LauncherVersion VERSION;
     public static final String LAUNCHER_NAME = "ATLauncher";
-    public static final String DEFAULT_THEME_CLASS = "com.atlauncher.themes.ATLauncherLaF";
+    public static final String DEFAULT_THEME_CLASS = "com.atlauncher.themes.Dark";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";
     public static final String CROWDIN_URL = "https://crowdin.com/project/atlauncher";

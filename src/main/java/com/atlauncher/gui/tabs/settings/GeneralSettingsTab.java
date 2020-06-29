@@ -108,8 +108,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<>();
-        theme.addItem(new ComboItem("com.atlauncher.themes.ATLauncherLaF", "ATLauncher"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.TestLaF", "Test"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.Dark", "Dark"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.Light", "Light"));
 
         for (int i = 0; i < theme.getItemCount(); i++) {
             ComboItem item = theme.getItemAt(i);

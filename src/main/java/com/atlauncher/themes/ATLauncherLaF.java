@@ -18,33 +18,30 @@
 package com.atlauncher.themes;
 
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.plaf.basic.BasicLookAndFeel;
 
 import com.atlauncher.utils.Resources;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
-/**
- * LaF for ATLauncher.
- *
- * The UI defaults are loaded from ATLauncherLaF.properties,
- * FlatDarkLaf.properties and FlatLaf.properties
- *
- * @see src/main/resources/com/atlauncher/themes/ATLauncherLaF.properties
- * @author Ryan Dowling
- */
 @SuppressWarnings("serial")
-public class ATLauncherLaF extends FlatDarkLaf {
-    public static ATLauncherLaF instance;
+public class ATLauncherLaf extends FlatLaf {
+    public static ATLauncherLaf instance;
 
     public String defaultFontName = "SansSerif";
     public String tabFontName = "Oswald-Regular";
 
     public static boolean install() {
-        instance = new ATLauncherLaF();
+        instance = new ATLauncherLaf();
 
         return install(instance);
     }
 
-    public static ATLauncherLaF getInstance() {
+    public static ATLauncherLaf getInstance() {
         return instance;
     }
 
@@ -69,5 +66,25 @@ public class ATLauncherLaF extends FlatDarkLaf {
     @Override
     public boolean isDark() {
         return true;
+    }
+
+    @Override
+    public List<Class<?>> getLafClassesForDefaultsLoading() {
+        List<Class<?>> classes = new ArrayList<>();
+
+        classes.add(BasicLookAndFeel.class); // BasicLookAndFeel class
+        classes.add(FlatLaf.class); // FlatLaf class
+
+        // Add the themes base dark/light class
+        if (isDark()) {
+            classes.add(FlatDarkLaf.class);
+        } else {
+            classes.add(FlatLightLaf.class);
+        }
+
+        classes.add(ATLauncherLaf.class); // ATLauncher base class
+        classes.add(getClass()); // Theme's class
+
+        return classes;
     }
 }

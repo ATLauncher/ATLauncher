@@ -17,30 +17,26 @@
  */
 package com.atlauncher.themes;
 
-/**
- * Test LaF.
- *
- * The UI defaults are loaded from TestLaF.properties, ATLauncherLaF.properties,
- * FlatDarkLaf.properties and FlatLaf.properties
- *
- * @see src/main/resources/com/atlauncher/themes/ATLauncherLaF.properties
- * @author Ryan Dowling
- */
 @SuppressWarnings("serial")
-public class TestLaF extends ATLauncherLaF {
+public class Light extends ATLauncherLaf {
     public static boolean install() {
-        instance = new TestLaF();
+        instance = new Light();
 
         return install(instance);
     }
 
     @Override
     public String getName() {
-        return "Test";
+        return "Light";
     }
 
     @Override
     public String getDescription() {
-        return "Test theme of ATLauncher";
+        return "Light theme of ATLauncher";
+    }
+
+    @Override
+    public boolean isDark() {
+        return false;
     }
 }

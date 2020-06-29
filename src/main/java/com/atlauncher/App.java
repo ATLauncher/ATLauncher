@@ -62,7 +62,7 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.ErrorReporting;
-import com.atlauncher.themes.ATLauncherLaF;
+import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -189,7 +189,7 @@ public class App {
      * <p/>
      * For more information on themeing, please see https://atl.pw/theme
      */
-    public static ATLauncherLaF THEME;
+    public static ATLauncherLaf THEME;
 
     static {
         // Prefer to use IPv4
@@ -460,8 +460,8 @@ public class App {
     private static void setLAF(String theme) throws Exception {
         try {
             Class.forName(theme);
-        } catch (ClassNotFoundException e) {
-            theme = "com.atlauncher.themes.ATLauncherLaF";
+        } catch (NoClassDefFoundError | ClassNotFoundException e) {
+            theme = Constants.DEFAULT_THEME_CLASS;
             App.settings.setTheme(theme);
         }
 
@@ -469,7 +469,7 @@ public class App {
         Class.forName(theme).getMethod("install").invoke(null);
 
         // then grab the instance
-        THEME = (ATLauncherLaF) Class.forName(theme).getMethod("getInstance").invoke(null);
+        THEME = (ATLauncherLaf) Class.forName(theme).getMethod("getInstance").invoke(null);
     }
 
     /**
