@@ -17,20 +17,19 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Insets;
 
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
 @SuppressWarnings("serial")
-public class CustomLineBorder extends LineBorder {
+public class HoverLineBorder extends LineBorder {
     private int insets = 0;
 
-    public CustomLineBorder(int insets, Color color, int thickness, boolean rounded) {
-        super(color, thickness, rounded);
-
-        this.insets = insets;
+    public HoverLineBorder() {
+        super(UIManager.getColor("HoverLineBorder.borderColor"), (int) UIManager.get("HoverLineBorder.borderWidth"));
+        this.insets = (int) UIManager.get("HoverLineBorder.insetWidth");
     }
 
     @Override

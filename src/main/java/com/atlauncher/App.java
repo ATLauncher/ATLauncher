@@ -224,16 +224,13 @@ public class App {
         // Setup the Settings and wait for it to finish.
         settings = new Settings();
 
+        // Load the theme and style everything.
+        loadTheme(settings.getTheme());
+
         final SplashScreen ss = new SplashScreen();
 
         // Load and show the splash screen while we load other things.
         SwingUtilities.invokeLater(() -> ss.setVisible(true));
-
-        // Load the theme and style everything.
-        loadTheme(settings.getTheme());
-
-        // now the theme is loaded, we can intialize the toaster
-        TOASTER = Toaster.instance();
 
         console = new LauncherConsole();
         LogManager.start();
@@ -447,6 +444,9 @@ public class App {
         try {
             setLAF(theme);
             modifyLAF();
+
+            // now the theme is loaded, we can intialize the toaster
+            TOASTER = Toaster.instance();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

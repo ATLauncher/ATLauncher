@@ -72,13 +72,15 @@ public class SplashScreen extends JWindow {
      * giving a force quit option.
      */
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem FORCE_QUIT = new JMenuItem(GetText.tr("Force quit"));
-
         public ContextMenu() {
             super();
 
-            this.FORCE_QUIT.addActionListener(e -> System.exit(0));
-            this.add(this.FORCE_QUIT);
+            // no idea why, but this fixes some weird bottom and right margin
+            setLightWeightPopupEnabled(false);
+
+            JMenuItem forceQuit = new JMenuItem(GetText.tr("Force quit"));
+            forceQuit.addActionListener(e -> System.exit(0));
+            add(forceQuit);
         }
     }
 }

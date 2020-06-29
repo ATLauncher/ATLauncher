@@ -17,20 +17,18 @@
  */
 package com.atlauncher.gui.components;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.json.Mod;
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.OS;
@@ -54,14 +52,6 @@ public class ModsJCheckBox extends JCheckBox {
     private Object mod;
 
     private EditModsDialog dialog;
-
-    /**
-     * Static object for the {@link Border} to show around the tooltips for mods
-     * with descriptions.
-     */
-    private static final Border HOVER_BORDER = new CustomLineBorder((int) UIManager.get("JLabelWithHover.insetWidth"),
-            UIManager.getColor("JLabelWithHover.borderColor"), (int) UIManager.get("JLabelWithHover.borderWidth"),
-            true);
 
     /**
      * Constructor for use in the {@link ModsChooser} dialog with new JSON format.
@@ -243,7 +233,7 @@ public class ModsJCheckBox extends JCheckBox {
     @Override
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        tip.setBorder(HOVER_BORDER);
+        tip.setBorder(new HoverLineBorder());
         return tip;
     }
 

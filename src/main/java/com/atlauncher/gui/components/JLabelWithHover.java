@@ -20,17 +20,12 @@ package com.atlauncher.gui.components;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.HoverLineBorder;
 
 @SuppressWarnings("serial")
 public class JLabelWithHover extends JLabel {
-    private static final Border HOVER_BORDER = new CustomLineBorder((int) UIManager.get("JLabelWithHover.insetWidth"),
-            UIManager.getColor("JLabelWithHover.borderColor"), (int) UIManager.get("JLabelWithHover.borderWidth"),
-            true);
-
     public JLabelWithHover(Icon icon, String tooltipText, Border border) {
         super();
         super.setIcon(icon);
@@ -47,7 +42,7 @@ public class JLabelWithHover extends JLabel {
     @Override
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        tip.setBorder(HOVER_BORDER);
+        tip.setBorder(new HoverLineBorder());
         return tip;
     }
 }

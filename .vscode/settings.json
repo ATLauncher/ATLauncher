@@ -1,10 +1,15 @@
 {
-    "java.import.gradle.wrapper.enabled": true,
     "[po]": {
         "files.trimTrailingWhitespace": true,
         "files.insertFinalNewline": false,
         "files.trimFinalNewlines": true,
     },
+    "[java]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    "editor.formatOnSave": true,
     "better-comments.tags": [
         {
             "tag": "#.",
@@ -17,8 +22,10 @@
     "editor.rulers": [
         120
     ],
+    "java.import.gradle.wrapper.enabled": true,
     "java.completion.filteredTypes": [
         "java.awt.List",
         "com.sun.*"
     ],
+    "java.codeGeneration.generateComments": true,
 }

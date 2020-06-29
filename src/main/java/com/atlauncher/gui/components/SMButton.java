@@ -23,10 +23,8 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolTip;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
 
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -47,10 +45,7 @@ public class SMButton extends JButton {
 
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        Border border = new CustomLineBorder((int) UIManager.get("JLabelWithHover.insetWidth"),
-                UIManager.getColor("JLabelWithHover.borderColor"), (int) UIManager.get("JLabelWithHover.borderWidth"),
-                true);
-        tip.setBorder(border);
+        tip.setBorder(new HoverLineBorder());
         return tip;
     }
 }
