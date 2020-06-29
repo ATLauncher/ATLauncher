@@ -19,6 +19,8 @@ package com.atlauncher.gui.tabs.settings;
 
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
@@ -46,7 +48,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JLabelWithHover themeLabel;
     private JComboBox<ComboItem> theme;
     private JLabelWithHover dateFormatLabel;
-    private JComboBox<String> dateFormat;
+    private JComboBox<ComboItem> dateFormat;
     private JLabelWithHover sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
     private JLabelWithHover keepLauncherOpenLabel;
@@ -128,8 +130,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        dateFormatLabel = new JLabelWithHover(GetText.tr("Date Format") + ":", HELP_ICON, GetText.tr(
-                "This controls the format that dates are displayed in the launcher with the value dd meaning the day, M being the month and yyy being the year."));
+        dateFormatLabel = new JLabelWithHover(GetText.tr("Date Format") + ":", HELP_ICON,
+                GetText.tr("This controls the format that dates are displayed in the launcher."));
 
         add(dateFormatLabel, gbc);
 
@@ -137,9 +139,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         dateFormat = new JComboBox<>();
-        dateFormat.addItem("dd/M/yyy");
-        dateFormat.addItem("M/dd/yyy");
-        dateFormat.addItem("yyy/M/dd");
+
+        for (String format : Constants.DATE_FORMATS) {
+            dateFormat.addItem(new ComboItem(format, new SimpleDateFormat(format).format(new Date())));
+        }
+
         dateFormat.setSelectedItem(App.settings.getDateFormat());
 
         add(dateFormat, gbc);
@@ -324,7 +328,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     public void save() {
         Language.setLanguage((String) language.getSelectedItem());
         App.settings.setTheme(((ComboItem) theme.getSelectedItem()).getValue());
-        App.settings.setDateFormat((String) dateFormat.getSelectedItem());
+        App.settings.setDateFormat(((ComboItem) dateFormat.getSelectedItem()).getValue());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
         App.settings.setEnableConsole(enableConsole.isSelected());

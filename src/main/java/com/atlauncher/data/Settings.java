@@ -39,6 +39,7 @@ import java.net.Proxy.Type;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -80,7 +81,6 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import com.formdev.flatlaf.FlatLaf;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -591,11 +591,20 @@ public class Settings {
         try {
             this.properties.load(new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()));
             this.theme = properties.getProperty("themeClass", Constants.DEFAULT_THEME_CLASS);
-            this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
-            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
-                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
-                this.dateFormat = "dd/M/yyy";
+            this.dateFormat = properties.getProperty("dateformat", "dd/MM/yyyy");
+
+            if (this.dateFormat.equalsIgnoreCase("dd/M/yyy")) {
+                this.dateFormat = "dd/MM/yyyy";
+            } else if (this.dateFormat.equalsIgnoreCase("M/dd/yyy")) {
+                this.dateFormat = "MM/dd/yyyy";
+            } else if (this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+                this.dateFormat = "yyyy/MM/dd";
             }
+
+            if (!isValidDateFormat(this.dateFormat)) {
+                this.dateFormat = "dd/MM/yyyy";
+            }
+
             this.enablePackTags = Boolean.parseBoolean(properties.getProperty("enablepacktags", "false"));
             this.disableAddModRestrictions = Boolean
                     .parseBoolean(properties.getProperty("disableaddmodrestrictions", "false"));
@@ -850,12 +859,20 @@ public class Settings {
 
             this.theme = properties.getProperty("themeClass", Constants.DEFAULT_THEME_CLASS);
 
-            this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
-            if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
-                    && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+            this.dateFormat = properties.getProperty("dateformat", "dd/MM/yyyy");
+
+            if (this.dateFormat.equalsIgnoreCase("dd/M/yyy")) {
+                this.dateFormat = "dd/MM/yyyy";
+            } else if (this.dateFormat.equalsIgnoreCase("M/dd/yyy")) {
+                this.dateFormat = "MM/dd/yyyy";
+            } else if (this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
+                this.dateFormat = "yyyy/MM/dd";
+            }
+
+            if (!isValidDateFormat(this.dateFormat)) {
                 LogManager.warn("Tried to set the date format to " + this.dateFormat + " which is not valid! Setting "
-                        + "back to default of dd/M/yyy!");
-                this.dateFormat = "dd/M/yyy";
+                        + "back to default of dd/MM/yyyy!");
+                this.dateFormat = "dd/MM/yyyy";
             }
 
             String lastAccountTemp = properties.getProperty("lastaccount", "");
@@ -2300,6 +2317,10 @@ public class Settings {
         } catch (Exception e) {
             LogManager.logStackTrace("Error updating date format to " + dateFormat, e);
         }
+    }
+
+    public boolean isValidDateFormat(String dateFormat) {
+        return Arrays.asList(Constants.DATE_FORMATS).contains(dateFormat);
     }
 
     public Proxy getProxy() {

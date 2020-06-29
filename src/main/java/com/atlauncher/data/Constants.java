@@ -69,4 +69,6 @@ public class Constants {
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
     public static final String LEGACY_JAVA_FIXER_URL = "https://enderman.atlcdn.net/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
+    public static final String[] DATE_FORMATS = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", "dd MMMM yyyy",
+            "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
 }

@@ -13,3 +13,4 @@
 - Change the theme system to use [FlatLaF](https://github.com/JFormDesigner/FlatLaf)
 - Changing theme will not require a launcher restart
 - Remove filler account and account switcher when 0 accounts
+- Fix bad date formats and add in more options
