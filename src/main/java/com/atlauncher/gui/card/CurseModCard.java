@@ -99,7 +99,7 @@ public final class CurseModCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.ABOVE_TOP, new Font(App.THEME.fonts.normal, Font.BOLD, 12));
+                TitledBorder.ABOVE_TOP, new Font(App.THEME.defaultFontName, Font.BOLD, 12));
         setBorder(border);
     }
 }

@@ -165,9 +165,9 @@ public class Utils {
      */
     public static Font getFont() {
         if (OS.isMac()) {
-            return new Font(App.THEME.fonts.normal, Font.PLAIN, 11);
+            return new Font(App.THEME.defaultFontName, Font.PLAIN, 11);
         } else {
-            return new Font(App.THEME.fonts.normal, Font.PLAIN, 12);
+            return new Font(App.THEME.defaultFontName, Font.PLAIN, 12);
         }
     }
 

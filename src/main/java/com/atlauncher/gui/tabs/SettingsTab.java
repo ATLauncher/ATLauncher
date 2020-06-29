@@ -64,7 +64,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             Analytics.sendScreenView(title + " Settings");
         });
 
-        tabbedPane.setFont(App.THEME.fonts.getNormalFont().deriveFont(17.0F));
+        tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(17.0F));
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }

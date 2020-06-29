@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -61,13 +60,12 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
-import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.ErrorReporting;
+import com.atlauncher.themes.ATLauncherLaF;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.formdev.flatlaf.IntelliJTheme;
 
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
@@ -191,7 +189,7 @@ public class App {
      * <p/>
      * For more information on themeing, please see https://atl.pw/theme
      */
-    public static Theme THEME;
+    public static ATLauncherLaF THEME;
 
     static {
         // Prefer to use IPv4
@@ -460,10 +458,12 @@ public class App {
      * @throws Exception
      */
     private static void setLAF() throws Exception {
-        IntelliJTheme.install(App.class.getResourceAsStream("/themes/ATLauncher.theme.json"));
+        // install the theme
+        Class.forName("com.atlauncher.themes.ATLauncherLaF").getMethod("install").invoke(null);
 
-        THEME = Gsons.DEFAULT.fromJson(
-                new InputStreamReader(App.class.getResourceAsStream("/themes/ATLauncher.theme.json")), Theme.class);
+        // then grab the instance
+        THEME = (ATLauncherLaF) Class.forName("com.atlauncher.themes.ATLauncherLaF").getMethod("getInstance")
+                .invoke(null);
     }
 
     /**
@@ -476,9 +476,9 @@ public class App {
         ToolTipManager.sharedInstance().setInitialDelay(50);
 
         UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
-        UIManager.put("defaultFont", App.THEME.fonts.getNormalFont().deriveFont(Utils.getBaseFontSize()));
-        UIManager.put("Button.font", App.THEME.fonts.getNormalFont().deriveFont(Utils.getBaseFontSize()));
-        UIManager.put("Toaster.font", App.THEME.fonts.getNormalFont().deriveFont(Utils.getBaseFontSize()));
+        UIManager.put("defaultFont", App.THEME.getNormalFont().deriveFont(Utils.getBaseFontSize()));
+        UIManager.put("Button.font", App.THEME.getNormalFont().deriveFont(Utils.getBaseFontSize()));
+        UIManager.put("Toaster.font", App.THEME.getNormalFont().deriveFont(Utils.getBaseFontSize()));
         UIManager.put("Toaster.opacity", 0.75F);
 
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);

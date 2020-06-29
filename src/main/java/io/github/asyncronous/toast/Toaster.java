@@ -50,7 +50,7 @@ public final class Toaster {
         UIManager.put(ToasterConstants.ERROR_ICON, createImage("error"));
         UIManager.put(ToasterConstants.QUESTION_ICON, createImage("question"));
         UIManager.put(ToasterConstants.WARNING_ICON, createImage("warning"));
-        UIManager.put(ToasterConstants.FONT, new Font(App.THEME.fonts.normal, Font.BOLD, 12).deriveFont(24.0F));
+        UIManager.put(ToasterConstants.FONT, new Font(App.THEME.defaultFontName, Font.BOLD, 12).deriveFont(24.0F));
         UIManager.put(ToasterConstants.MSG_COLOR, Color.BLACK);
         UIManager.put(ToasterConstants.BORDER_COLOR, Color.BLACK);
         UIManager.put(ToasterConstants.BG_COLOR, Color.WHITE);
@@ -117,9 +117,10 @@ public final class Toaster {
      *
      * @param msg The text of the message you want to display
      * @param ico The icon you would like to display
-     * @example ImageIcon image = new ImageIcon(ImageIO.read(getClass().getResourceAsStream
-     * ("/assets/toaster/icons/error.png"
-     * ))); Toaster.pop("This is an error", image);
+     * @example ImageIcon image = new
+     *          ImageIcon(ImageIO.read(getClass().getResourceAsStream
+     *          ("/assets/toaster/icons/error.png" ))); Toaster.pop("This is an
+     *          error", image);
      */
     public void pop(String msg, Icon ico) {
         ToastWindow window = new ToastWindow();

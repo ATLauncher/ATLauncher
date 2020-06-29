@@ -54,10 +54,10 @@ public class NilCard extends JPanel implements RelocalizationListener {
 
         if (OS.isMac()) {
             this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.fonts.normal, Font.BOLD, 14)));
+                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.defaultFontName, Font.BOLD, 14)));
         } else {
             this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.fonts.normal, Font.BOLD, 15)));
+                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.defaultFontName, Font.BOLD, 15)));
         }
 
         this.error.setBorder(BorderFactory.createEmptyBorder());

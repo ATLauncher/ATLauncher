@@ -283,9 +283,9 @@ public class CollapsiblePanel extends JPanel {
         // Use the same font as that used in the titled border font
         Font font;
         if (OS.isMac()) {
-            font = new Font(App.THEME.fonts.normal, Font.BOLD, 14);
+            font = new Font(App.THEME.defaultFontName, Font.BOLD, 14);
         } else {
-            font = new Font(App.THEME.fonts.normal, Font.BOLD, 15);
+            font = new Font(App.THEME.defaultFontName, Font.BOLD, 15);
         }
         button.setFont(font);
         button.setFocusable(false);
