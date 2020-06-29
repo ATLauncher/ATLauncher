@@ -12,3 +12,4 @@
 - Add ability to export packs in CurseForge/Twitch format
 - Change the theme system to use [FlatLaF](https://github.com/JFormDesigner/FlatLaf)
 - Changing theme will not require a launcher restart
+- Remove filler account and account switcher when 0 accounts

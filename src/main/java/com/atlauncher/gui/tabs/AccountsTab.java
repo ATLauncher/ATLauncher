@@ -316,12 +316,18 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 Analytics.sendEvent("Add", "Account");
                 LogManager.info("Added Account " + account);
 
-                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
-                        .setContent(GetText.tr("Account added successfully. Switch to it now?"))
-                        .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
-                        .show();
+                if (App.settings.getAccounts().size() > 1) {
+                    // not first account? ask if they want to switch to it
+                    int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
+                            .setContent(GetText.tr("Account added successfully. Switch to it now?"))
+                            .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
+                            .show();
 
-                if (ret == 0) {
+                    if (ret == 0) {
+                        App.settings.switchAccount(account);
+                    }
+                } else {
+                    // first account? switch to it immediately
                     App.settings.switchAccount(account);
                 }
             } else {

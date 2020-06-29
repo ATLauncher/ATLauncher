@@ -45,7 +45,6 @@ import org.mini2Dx.gettext.GetText;
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
     private JPanel leftSide;
     private JPanel middle;
-    private Account fillerAccount;
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
@@ -75,6 +74,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
         middle.add(username, gbc);
+
+        username.setVisible(App.settings.getAccounts().size() != 0);
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
@@ -126,15 +127,14 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
-        fillerAccount = new Account(GetText.tr("Select An Account"));
-        username.addItem(fillerAccount);
+
         for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
+
         Account active = App.settings.getAccount();
-        if (active == null) {
-            username.setSelectedIndex(0);
-        } else {
+
+        if (active != null) {
             username.setSelectedItem(active);
         }
     }
@@ -142,15 +142,17 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     public void reloadAccounts() {
         dontSave = true;
         username.removeAllItems();
-        username.addItem(fillerAccount);
+
         for (Account account : App.settings.getAccounts()) {
             username.addItem(account);
         }
-        if (App.settings.getAccount() == null) {
-            username.setSelectedIndex(0);
-        } else {
+
+        if (App.settings.getAccount() != null) {
             username.setSelectedItem(App.settings.getAccount());
         }
+
+        username.setVisible(App.settings.getAccounts().size() != 0);
+
         dontSave = false;
     }
 
@@ -163,6 +165,5 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
         this.updateData.setText(GetText.tr("Update Data"));
         this.openFolder.setText(GetText.tr("Open Folder"));
-        this.fillerAccount.setMinecraftUsername(GetText.tr("Select An Account"));
     }
 }

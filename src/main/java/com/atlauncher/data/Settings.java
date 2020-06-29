@@ -1264,7 +1264,13 @@ public class Settings {
 
     public void removeAccount(Account account) {
         if (this.account == account) {
-            switchAccount(null);
+            if (accounts.size() == 1) {
+                // if this was the only account, don't set an account
+                switchAccount(null);
+            } else {
+                // if they have more accounts, switch to the first one
+                switchAccount(accounts.get(0));
+            }
         }
         accounts.remove(account);
         saveAccounts();
