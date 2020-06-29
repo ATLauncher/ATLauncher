@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.OS;
@@ -43,7 +44,7 @@ public abstract class BottomBar extends JPanel {
 
     public BottomBar() {
         super(new BorderLayout());
-        this.setBorder(BorderFactory.createEtchedBorder());
+        this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
         this.setPreferredSize(new Dimension(0, 50));
         this.add(this.rightSide, BorderLayout.EAST);
         this.setupSocialButtonListeners();

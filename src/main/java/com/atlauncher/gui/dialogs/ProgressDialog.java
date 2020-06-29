@@ -111,8 +111,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     }
 
     public void doneTask() {
-        this.progressBar.setString(
-                ++this.tasksDone + "/" + tasksToDo + " " + GetText.tr("Tasks Done"));
+        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + GetText.tr("Tasks Done"));
         this.progressBar.setValue(this.tasksDone);
         this.clearDownloadedBytes();
         this.label.setText(this.labelText);

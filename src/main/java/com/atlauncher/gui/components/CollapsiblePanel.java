@@ -179,11 +179,7 @@ public class CollapsiblePanel extends JPanel {
      */
     public CollapsiblePanel(String text, JRadioButton component) {
         collapsed = !component.isSelected();
-        // component.addItemListener(new CollapsiblePanel.ExpandAndCollapseAction());
-        // arrow.setText(text);
-        // /if(!collapsed)
         titleComponent = arrow;
-        // else titleComponent=null;
 
         setLayout(new BorderLayout());
         JLabel label = new JLabel(text);
@@ -287,9 +283,9 @@ public class CollapsiblePanel extends JPanel {
         // Use the same font as that used in the titled border font
         Font font;
         if (OS.isMac()) {
-            font = new Font("SansSerif", Font.BOLD, 14);
+            font = new Font(App.THEME.fonts.normal, Font.BOLD, 14);
         } else {
-            font = new Font("SansSerif", Font.BOLD, 15);
+            font = new Font(App.THEME.fonts.normal, Font.BOLD, 15);
         }
         button.setFont(font);
         button.setFocusable(false);
@@ -382,8 +378,8 @@ public class CollapsiblePanel extends JPanel {
                 case TOP:
                 case DEFAULT_POSITION:
                     diff = insets.top / 2 - borderInsets.top - EDGE_SPACING;
-                    borderR.y += diff + 7;
-                    borderR.height -= diff;
+                    borderR.y += diff - 1;
+                    borderR.height -= diff + 1;
                     break;
                 case BELOW_TOP:
                 case ABOVE_BOTTOM:

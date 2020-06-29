@@ -94,12 +94,15 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.descArea.setWrapStyleWord(true);
         this.descArea.setEditable(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);
         as.setTopComponent(top);
         as.setBottomComponent(bottom);
+        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
         top.add(this.launchButton);
         top.add(this.launchAndCloseButton);
         top.add(this.launchWithGui);

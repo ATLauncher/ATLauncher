@@ -25,10 +25,11 @@ import javax.swing.border.Border;
 
 import com.atlauncher.gui.CustomLineBorder;
 
+@SuppressWarnings("serial")
 public class JLabelWithHover extends JLabel {
-    private static final long serialVersionUID = -4371080285355832166L;
-    private static final Border HOVER_BORDER = new CustomLineBorder(5,
-            UIManager.getColor("JLabelWithHover.borderColor"), 2);
+    private static final Border HOVER_BORDER = new CustomLineBorder((int) UIManager.get("JLabelWithHover.insetWidth"),
+            UIManager.getColor("JLabelWithHover.borderColor"), (int) UIManager.get("JLabelWithHover.borderWidth"),
+            true);
 
     public JLabelWithHover(Icon icon, String tooltipText, Border border) {
         super();

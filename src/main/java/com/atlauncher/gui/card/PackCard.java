@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -66,12 +67,15 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.splitter.setRightComponent(this.actionsPanel);
         this.splitter.setEnabled(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);
         as.setTopComponent(top);
         as.setBottomComponent(bottom);
+        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
         top.add(this.newInstanceButton);
         top.add(this.createServerButton);
 

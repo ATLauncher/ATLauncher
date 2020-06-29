@@ -29,6 +29,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseMod;
@@ -98,7 +99,7 @@ public final class CurseModCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.ABOVE_TOP, new Font("SansSerif", Font.BOLD, 12));
+                TitledBorder.ABOVE_TOP, new Font(App.THEME.fonts.normal, Font.BOLD, 12));
         setBorder(border);
     }
 }

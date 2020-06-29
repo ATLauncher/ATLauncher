@@ -36,13 +36,10 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
@@ -69,11 +66,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Resources;
 import com.atlauncher.utils.Utils;
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 
 import io.github.asyncronous.toast.Toaster;
@@ -95,7 +88,7 @@ public class App {
     /**
      * The instance of toaster to show popups in the bottom right.
      */
-    public static final Toaster TOASTER = Toaster.instance();
+    public static Toaster TOASTER;
 
     /**
      * The tray menu shown in the notification area or whatever it's called in non
@@ -240,6 +233,9 @@ public class App {
 
         // Load the theme and style everything.
         loadTheme();
+
+        // now the theme is loaded, we can intialize the toaster
+        TOASTER = Toaster.instance();
 
         console = new LauncherConsole();
         LogManager.start();
@@ -487,6 +483,7 @@ public class App {
 
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         UIManager.put("ScrollBar.minimumThumbSize", new Dimension(50, 50));
+        UIManager.put("ScrollPane.border", BorderFactory.createEmptyBorder());
 
         // for Mac we setup correct copy/cut/paste shortcuts otherwise it just uses Ctrl
         if (OS.isMac()) {

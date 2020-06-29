@@ -59,8 +59,9 @@ public class ModsJCheckBox extends JCheckBox {
      * Static object for the {@link Border} to show around the tooltips for mods
      * with descriptions.
      */
-    private static final Border HOVER_BORDER = new CustomLineBorder(5,
-            UIManager.getColor("ModsJCheckBox.hoverBorderColor"), 2);
+    private static final Border HOVER_BORDER = new CustomLineBorder((int) UIManager.get("JLabelWithHover.insetWidth"),
+            UIManager.getColor("JLabelWithHover.borderColor"), (int) UIManager.get("JLabelWithHover.borderWidth"),
+            true);
 
     /**
      * Constructor for use in the {@link ModsChooser} dialog with new JSON format.

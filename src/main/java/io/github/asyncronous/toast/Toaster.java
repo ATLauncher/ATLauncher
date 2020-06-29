@@ -12,6 +12,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
+import com.atlauncher.App;
 import com.atlauncher.LogManager;
 
 import io.github.asyncronous.toast.ui.ToastWindow;
@@ -49,7 +50,7 @@ public final class Toaster {
         UIManager.put(ToasterConstants.ERROR_ICON, createImage("error"));
         UIManager.put(ToasterConstants.QUESTION_ICON, createImage("question"));
         UIManager.put(ToasterConstants.WARNING_ICON, createImage("warning"));
-        UIManager.put(ToasterConstants.FONT, new Font("SansSerif", Font.BOLD, 12).deriveFont(24.0F));
+        UIManager.put(ToasterConstants.FONT, new Font(App.THEME.fonts.normal, Font.BOLD, 12).deriveFont(24.0F));
         UIManager.put(ToasterConstants.MSG_COLOR, Color.BLACK);
         UIManager.put(ToasterConstants.BORDER_COLOR, Color.BLACK);
         UIManager.put(ToasterConstants.BG_COLOR, Color.WHITE);

@@ -30,7 +30,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
-import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -39,7 +38,6 @@ import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
-import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;

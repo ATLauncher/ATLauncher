@@ -27,6 +27,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -53,10 +54,10 @@ public class NilCard extends JPanel implements RelocalizationListener {
 
         if (OS.isMac()) {
             this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
+                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.fonts.normal, Font.BOLD, 14)));
         } else {
             this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
+                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.fonts.normal, Font.BOLD, 15)));
         }
 
         this.error.setBorder(BorderFactory.createEmptyBorder());

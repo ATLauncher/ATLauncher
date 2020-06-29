@@ -18,7 +18,6 @@
 package com.atlauncher.utils;
 
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -66,7 +65,6 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -167,9 +165,9 @@ public class Utils {
      */
     public static Font getFont() {
         if (OS.isMac()) {
-            return new Font("SansSerif", Font.PLAIN, 11);
+            return new Font(App.THEME.fonts.normal, Font.PLAIN, 11);
         } else {
-            return new Font("SansSerif", Font.PLAIN, 12);
+            return new Font(App.THEME.fonts.normal, Font.PLAIN, 12);
         }
     }
 

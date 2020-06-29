@@ -123,12 +123,15 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.descArea.setWrapStyleWord(true);
         this.descArea.setEditable(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);
         as.setTopComponent(top);
         as.setBottomComponent(bottom);
+        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        
         top.add(this.playButton);
         top.add(this.reinstallButton);
         top.add(this.updateButton);

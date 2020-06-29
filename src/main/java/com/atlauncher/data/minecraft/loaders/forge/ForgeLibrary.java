@@ -17,17 +17,10 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import com.atlauncher.LogManager;
-import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.minecraft.Library;
-
-import okhttp3.CacheControl;
-import okhttp3.Request;
 
 @Json
 public class ForgeLibrary extends Library {

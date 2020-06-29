@@ -13,16 +13,33 @@
       "errorForeground": "#ef5350"
     },
     "Component": {
-      "focusWidth": 1
+      "focusWidth": 1,
+      "innerFocusWidth": 0,
+      "arrowType": "chevron"
     },
     "TabbedPane": {
       "tabSelectionHeight": 3,
       "focusColor": "secondary.500",
       "hoverColor": "secondary.500",
-      "underlineColor": "primary.500"
+      "underlineColor": "primary.500",
+      "contentAreaColor": "secondary.500",
+      "tabSeparatorColor": "secondary.500",
+      "tabSeparatorsFullHeight": true,
+      "showTabSeparators": true
+    },
+    "ToolPanel": {
+      "borderColor": "secondary.500"
+    },
+    "BottomBar": {
+      "dividerColor": "secondary.500"
     },
     "JLabelWithHover": {
-      "borderColor": "#50aa6b"
+      "borderColor": "primary.500",
+      "insetWidth": 4,
+      "borderWidth": 1
+    },
+    "ProgressBar": {
+      "progressColor": "primary.500"
     },
     "CollapsiblePanel": {
       "normal": "white",
@@ -35,6 +52,9 @@
         "info": "primary.500",
         "warn": "#ffff4c"
       }
+    },
+    "SplitPane": {
+      "dividerSize": 0
     },
     "Mods": {
       "modSelectionColor": "#32373c"
@@ -49,6 +69,9 @@
       "bgColor": "#1e2328",
       "msgColor": "white",
       "borderColor": "#50aa6b"
+    },
+    "TextComponent": {
+      "arc": 5
     }
   },
   "colors": {

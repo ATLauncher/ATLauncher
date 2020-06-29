@@ -20,7 +20,6 @@ package com.atlauncher.data;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 
 import com.atlauncher.App;
 import com.atlauncher.LogManager;

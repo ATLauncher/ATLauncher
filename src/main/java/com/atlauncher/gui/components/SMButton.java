@@ -47,7 +47,9 @@ public class SMButton extends JButton {
 
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        Border border = new CustomLineBorder(5, UIManager.getColor("SMButton.hoverBorderColor"), 2);
+        Border border = new CustomLineBorder((int) UIManager.get("JLabelWithHover.insetWidth"),
+                UIManager.getColor("JLabelWithHover.borderColor"), (int) UIManager.get("JLabelWithHover.borderWidth"),
+                true);
         tip.setBorder(border);
         return tip;
     }

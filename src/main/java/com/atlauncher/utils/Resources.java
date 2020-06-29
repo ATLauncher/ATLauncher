@@ -19,20 +19,14 @@ package com.atlauncher.utils;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.swing.text.html.StyleSheet;
 
-import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
 
