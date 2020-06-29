@@ -28,11 +28,11 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -44,8 +44,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JComboBox<String> language;
     private JButton translateButton;
     private JLabelWithHover themeLabel;
-    private JComboBox<String> theme;
-    private JLabelWithHover themeLabelRestart;
+    private JComboBox<ComboItem> theme;
     private JPanel themeLabelPanel;
     private JLabelWithHover dateFormatLabel;
     private JComboBox<String> dateFormat;
@@ -100,27 +99,26 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        themeLabelRestart = new JLabelWithHover(ERROR_ICON,
-                GetText.tr("Changing this setting will automatically restart the launcher."), RESTART_BORDER);
-
         themeLabel = new JLabelWithHover(GetText.tr("Theme") + ":", HELP_ICON,
                 GetText.tr("This sets the theme that the launcher will use."));
 
-        themeLabelPanel = new JPanel();
-        themeLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        themeLabelPanel.add(themeLabelRestart);
-        themeLabelPanel.add(themeLabel);
-
-        add(themeLabelPanel, gbc);
+        add(themeLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<>();
-        for (String themee : FileSystem.THEMES.toFile().list(Utils.getThemesFileFilter())) {
-            theme.addItem(themee.replace(".zip", ""));
+        theme.addItem(new ComboItem("com.atlauncher.themes.ATLauncherLaF", "ATLauncher"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.TestLaF", "Test"));
+
+        for (int i = 0; i < theme.getItemCount(); i++) {
+            ComboItem item = theme.getItemAt(i);
+
+            if (item.getValue().equalsIgnoreCase(App.settings.getTheme())) {
+                theme.setSelectedIndex(i);
+                break;
+            }
         }
-        theme.setSelectedItem(App.settings.getTheme());
 
         add(theme, gbc);
 
@@ -244,7 +242,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(enableDiscordIntegration, gbc);
 
         // Enable Feral Gamemode
-      
+
         if (OS.isLinux()) {
             boolean gameModeExistsInPath = Utils.executableInPath("gamemoderun");
 
@@ -264,10 +262,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
                 enableFeralGamemode.setSelected(true);
             }
 
-            if (! gameModeExistsInPath) {
-                enableFeralGamemodeLabel.setToolTipText(
-                    GetText.tr("This will enable Feral Gamemode for packs launched (disabled because gamemoderun not found in PATH, please install Feral Gamemode or add it to your PATH).")
-                );
+            if (!gameModeExistsInPath) {
+                enableFeralGamemodeLabel.setToolTipText(GetText.tr(
+                        "This will enable Feral Gamemode for packs launched (disabled because gamemoderun not found in PATH, please install Feral Gamemode or add it to your PATH)."));
                 enableFeralGamemodeLabel.setEnabled(false);
 
                 enableFeralGamemode.setEnabled(false);
@@ -283,8 +280,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enablePackTagsLabel = new JLabelWithHover(GetText.tr("Enable Pack Tags"), HELP_ICON,
-            GetText.tr("Pack tags shows you if a pack is public, semi public or private")
-        );
+                GetText.tr("Pack tags shows you if a pack is public, semi public or private"));
         add(enablePackTagsLabel, gbc);
 
         gbc.gridx++;
@@ -315,7 +311,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean needToReloadTheme() {
-        return !((String) theme.getSelectedItem()).equalsIgnoreCase(App.settings.getTheme());
+        return !((ComboItem) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.getTheme());
     }
 
     public boolean needToReloadPacksPanel() {
@@ -328,7 +324,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
     public void save() {
         Language.setLanguage((String) language.getSelectedItem());
-        App.settings.setTheme((String) theme.getSelectedItem());
+        App.settings.setTheme(((ComboItem) theme.getSelectedItem()).getValue());
         App.settings.setDateFormat((String) dateFormat.getSelectedItem());
         App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
         App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());

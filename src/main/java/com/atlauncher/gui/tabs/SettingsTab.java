@@ -37,6 +37,7 @@ import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
+import com.formdev.flatlaf.FlatLaf;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -98,7 +99,8 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     App.settings.startCheckingServers();
                 }
                 if (reloadTheme) {
-                    OS.restartLauncher();
+                    App.loadTheme(App.settings.getTheme());
+                    FlatLaf.updateUILater();
                 }
                 App.TOASTER.pop("Settings Saved");
             }

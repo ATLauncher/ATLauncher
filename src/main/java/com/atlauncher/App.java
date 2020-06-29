@@ -230,7 +230,7 @@ public class App {
         SwingUtilities.invokeLater(() -> ss.setVisible(true));
 
         // Load the theme and style everything.
-        loadTheme();
+        loadTheme(settings.getTheme());
 
         // now the theme is loaded, we can intialize the toaster
         TOASTER = Toaster.instance();
@@ -443,9 +443,9 @@ public class App {
     /**
      * Loads the theme and applies the theme's settings to the look and feel.
      */
-    public static void loadTheme() {
+    public static void loadTheme(String theme) {
         try {
-            setLAF();
+            setLAF(theme);
             modifyLAF();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -457,13 +457,19 @@ public class App {
      *
      * @throws Exception
      */
-    private static void setLAF() throws Exception {
+    private static void setLAF(String theme) throws Exception {
+        try {
+            Class.forName(theme);
+        } catch (ClassNotFoundException e) {
+            theme = "com.atlauncher.themes.ATLauncherLaF";
+            App.settings.setTheme(theme);
+        }
+
         // install the theme
-        Class.forName("com.atlauncher.themes.ATLauncherLaF").getMethod("install").invoke(null);
+        Class.forName(theme).getMethod("install").invoke(null);
 
         // then grab the instance
-        THEME = (ATLauncherLaF) Class.forName("com.atlauncher.themes.ATLauncherLaF").getMethod("getInstance")
-                .invoke(null);
+        THEME = (ATLauncherLaF) Class.forName(theme).getMethod("getInstance").invoke(null);
     }
 
     /**

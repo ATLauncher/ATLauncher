@@ -17,57 +17,30 @@
  */
 package com.atlauncher.themes;
 
-import java.awt.Font;
-
-import com.atlauncher.utils.Resources;
-import com.formdev.flatlaf.FlatDarkLaf;
-
 /**
- * LaF for ATLauncher.
+ * Test LaF.
  *
- * The UI defaults are loaded from ATLauncherLaF.properties,
+ * The UI defaults are loaded from TestLaF.properties, ATLauncherLaF.properties,
  * FlatDarkLaf.properties and FlatLaf.properties
  *
  * @see src/main/resources/com/atlauncher/themes/ATLauncherLaF.properties
  * @author Ryan Dowling
  */
 @SuppressWarnings("serial")
-public class ATLauncherLaF extends FlatDarkLaf {
-    public static ATLauncherLaF instance;
-
-    public String defaultFontName = "SansSerif";
-    public String tabFontName = "Oswald-Regular";
-
+public class TestLaF extends ATLauncherLaF {
     public static boolean install() {
-        instance = new ATLauncherLaF();
+        instance = new TestLaF();
 
         return install(instance);
     }
 
-    public static ATLauncherLaF getInstance() {
-        return instance;
-    }
-
-    public Font getNormalFont() {
-        return Resources.makeFont(defaultFontName);
-    }
-
-    public Font getTabFont() {
-        return Resources.makeFont(tabFontName);
-    }
-
     @Override
     public String getName() {
-        return "ATLauncher";
+        return "Test";
     }
 
     @Override
     public String getDescription() {
-        return "Default theme of ATLauncher";
-    }
-
-    @Override
-    public boolean isDark() {
-        return true;
+        return "Test theme of ATLauncher";
     }
 }

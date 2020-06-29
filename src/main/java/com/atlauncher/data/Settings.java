@@ -80,6 +80,7 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
+import com.formdev.flatlaf.FlatLaf;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -589,7 +590,7 @@ public class Settings {
         }
         try {
             this.properties.load(new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()));
-            this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
+            this.theme = properties.getProperty("themeClass", Constants.DEFAULT_THEME_CLASS);
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
                     && !this.dateFormat.equalsIgnoreCase("yyy/M/dd")) {
@@ -847,7 +848,7 @@ public class Settings {
                 this.concurrentConnections = 8;
             }
 
-            this.theme = properties.getProperty("theme", Constants.LAUNCHER_NAME);
+            this.theme = properties.getProperty("themeClass", Constants.DEFAULT_THEME_CLASS);
 
             this.dateFormat = properties.getProperty("dateformat", "dd/M/yyy");
             if (!this.dateFormat.equalsIgnoreCase("dd/M/yyy") && !this.dateFormat.equalsIgnoreCase("M/dd/yyy")
@@ -920,7 +921,7 @@ public class Settings {
             properties.setProperty("proxytype", this.proxyType);
             properties.setProperty("servercheckerwait", this.serverCheckerWait + "");
             properties.setProperty("concurrentconnections", this.concurrentConnections + "");
-            properties.setProperty("theme", this.theme);
+            properties.setProperty("themeClass", this.theme);
             properties.setProperty("dateformat", this.dateFormat);
             if (account != null) {
                 properties.setProperty("lastaccount", account.getUsername());

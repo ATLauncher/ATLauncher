@@ -11,3 +11,4 @@
 - Change Network Tool's download file to 100MB
 - Add ability to export packs in CurseForge/Twitch format
 - Change the theme system to use [FlatLaF](https://github.com/JFormDesigner/FlatLaf)
+- Changing theme will not require a launcher restart
