@@ -62,8 +62,6 @@ public class InstanceExportDialog extends JDialog {
     final GridBagConstraints gbc = new GridBagConstraints();
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
     final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
-    final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
-    final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
     public InstanceExportDialog(InstanceV2 instance) {
         super(App.settings.getParent(), GetText.tr("Export {0}", instance.launcher.name),
@@ -101,7 +99,7 @@ public class InstanceExportDialog extends JDialog {
         topPanel.add(nameLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField name = new JTextField(30);
         name.setText(instance.launcher.name);
@@ -118,7 +116,7 @@ public class InstanceExportDialog extends JDialog {
         topPanel.add(authorLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
         author.setText(App.settings.getAccount().getMinecraftUsername());
@@ -128,14 +126,14 @@ public class InstanceExportDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         JLabelWithHover saveToLabel = new JLabelWithHover(GetText.tr("Save To") + ":", HELP_ICON,
                 GetText.tr("Select the folder you wish to export the instance to"));
         topPanel.add(saveToLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JPanel saveToPanel = new JPanel();
@@ -164,14 +162,14 @@ public class InstanceExportDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover overridesLabel = new JLabelWithHover(GetText.tr("Folders To Export") + ":", HELP_ICON,
                 GetText.tr("Select the folders you wish to include for this export"));
         topPanel.add(overridesLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JPanel overridesPanel = new JPanel();

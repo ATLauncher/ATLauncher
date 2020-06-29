@@ -33,8 +33,6 @@ import com.atlauncher.utils.Utils;
 public abstract class AbstractSettingsTab extends JPanel implements Tab {
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
     final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
-    final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
-    final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
     final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
     final ImageIcon ERROR_ICON = Utils.getIconImage("/assets/image/Error.png");

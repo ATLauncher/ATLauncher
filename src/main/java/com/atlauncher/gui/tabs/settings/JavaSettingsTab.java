@@ -180,14 +180,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         windowSizeLabel = new JLabelWithHover(GetText.tr("Window Size") + ":", HELP_ICON,
                 GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
         add(windowSizeLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS_SMALL;
+        gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         windowSizePanel = new JPanel();
         windowSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -228,7 +228,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText.tr(
                 "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/><br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
@@ -236,7 +236,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         javaPathPanel = new JPanel(new BorderLayout());
 
@@ -277,14 +277,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         javaParametersPanel = new JPanel();
         javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));

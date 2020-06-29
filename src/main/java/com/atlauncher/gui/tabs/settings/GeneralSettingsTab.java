@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -71,17 +70,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
 
         languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
                 GetText.tr("This specifies the language used by the Launcher."));
-        languageLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         add(languageLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JPanel languagePanel = new JPanel(new FlowLayout());
+        JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
         language = new JComboBox<>(Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
@@ -282,7 +280,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enablePackTagsLabel = new JLabelWithHover(GetText.tr("Enable Pack Tags"), HELP_ICON,
+        enablePackTagsLabel = new JLabelWithHover(GetText.tr("Enable Pack Tags?"), HELP_ICON,
                 GetText.tr("Pack tags shows you if a pack is public, semi public or private"));
         add(enablePackTagsLabel, gbc);
 
@@ -299,7 +297,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        disableAddModRestrictionsLabel = new JLabelWithHover(GetText.tr("Disable Add Mod Restrictions"), HELP_ICON,
+        disableAddModRestrictionsLabel = new JLabelWithHover(GetText.tr("Disable Add Mod Restrictions?"), HELP_ICON,
                 new HTMLBuilder().center().text(GetText.tr(
                         "This will allow you to disable the restrictions in place to prevent you from installing mods from Curse that are not for your current Minecraft version or loader.<br/><br/>By disabling these restrictions, you can install any mod, so be sure that it's compatable with the Minecraft version and loader (if any) that you're on."))
                         .build());

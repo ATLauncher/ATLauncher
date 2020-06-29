@@ -65,8 +65,6 @@ public class InstanceSettingsDialog extends JDialog {
     final GridBagConstraints gbc = new GridBagConstraints();
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
     final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
-    final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
-    final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
     public InstanceSettingsDialog(Instance instance) {
         // #. {0} is the name of the instance
@@ -104,7 +102,7 @@ public class InstanceSettingsDialog extends JDialog {
 
     private void setupComponents() {
         int systemRam = OS.getSystemRam();
-        setSize(700, 300);
+        setSize(750, 300);
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -207,15 +205,15 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText
                 .tr("This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
                 + "</html>");
         topPanel.add(javaPathLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JPanel javaPathPanel = new JPanel();
         javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -247,14 +245,14 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         JLabelWithHover javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         topPanel.add(javaParametersLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JPanel javaParametersPanel = new JPanel();
         javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
