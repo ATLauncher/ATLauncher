@@ -22,8 +22,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.io.File;
-import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -31,6 +31,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
@@ -76,7 +77,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JButton javaBrowseButton;
     private JPanel javaParametersPanel;
     private JLabelWithHover javaParametersLabel;
-    private JTextField javaParameters;
+    private JTextArea javaParameters;
     private JButton javaParametersResetButton;
     private JLabelWithHover startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
@@ -219,7 +220,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         commonScreenSizes.setPreferredSize(new Dimension(commonScreenSizes.getPreferredSize().width + 10,
                 commonScreenSizes.getPreferredSize().height));
         windowSizePanel.add(widthField);
-        windowSizePanel.add(new JLabel("x"));
+        windowSizePanel.add(new JLabel("x") {
+            {
+                this.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
+            }
+        });
         windowSizePanel.add(heightField);
         windowSizePanel.add(commonScreenSizes);
         add(windowSizePanel, gbc);
@@ -245,7 +250,17 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         JPanel javaPathPanelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
         installedJavas = new JComboBox<>();
-        addInstalledJavas();
+        installedJavas.setPreferredSize(new Dimension(516, 24));
+        if (Java.getInstalledJavas().size() != 0) {
+            Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
+
+            installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
+                    .orElse(null));
+
+            installedJavas
+                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+        }
         if (installedJavas.getItemCount() != 0) {
             javaPathPanelTop.add(installedJavas);
         }
@@ -279,18 +294,26 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
         javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         javaParametersPanel = new JPanel();
-        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        javaParameters = new JTextField(40);
+        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0) {
+            {
+                this.setAlignOnBaseline(true);
+            }
+        });
+
+        javaParameters = new JTextArea(6, 40);
         javaParameters.setText(App.settings.getJavaParameters());
+        javaParameters.setLineWrap(true);
+        javaParameters.setWrapStyleWord(true);
+
         javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
         javaParametersPanel.add(javaParameters);
@@ -423,23 +446,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java checks On Launch") + "?");
         this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(
                 "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
-    }
-
-    public void addInstalledJavas() {
-        installedJavas.removeAll();
-
-        List<JavaInfo> systemJavas = Java.getInstalledJavas();
-
-        if (systemJavas.size() != 0) {
-            systemJavas.stream().forEach(installedJavas::addItem);
-
-            installedJavas.setSelectedItem(systemJavas.stream()
-                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
-                    .orElse(null));
-
-            installedJavas
-                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
-        }
     }
 
     @Override

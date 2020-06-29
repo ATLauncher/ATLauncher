@@ -15,3 +15,4 @@
 - Remove filler account and account switcher when 0 accounts
 - Fix bad date formats and add in more options
 - Remove checkbox filters on Packs tab
+- Make Java Parameters entry larger

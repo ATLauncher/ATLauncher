@@ -33,12 +33,12 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
@@ -103,7 +103,7 @@ public class InstanceSettingsDialog extends JDialog {
 
     private void setupComponents() {
         int systemRam = OS.getSystemRam();
-        setSize(750, 300);
+        setSize(750, 350);
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -247,21 +247,28 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
         JLabelWithHover javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         topPanel.add(javaParametersLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         JPanel javaParametersPanel = new JPanel();
-        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        final JTextField javaParameters = new JTextField(40);
+        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0) {
+            {
+                this.setAlignOnBaseline(true);
+            }
+        });
+
+        final JTextArea javaParameters = new JTextArea(6, 40);
         javaParameters.setText(getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.javaArguments
                 : instance.getSettings().getJavaArguments(), App.settings.getJavaParameters()));
+        javaParameters.setLineWrap(true);
+        javaParameters.setWrapStyleWord(true);
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(App.settings.getJavaParameters()));
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(javaParametersResetButton);
         topPanel.add(javaParametersPanel, gbc);
