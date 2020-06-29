@@ -17,4 +17,8 @@
     "editor.rulers": [
         120
     ],
+    "java.completion.filteredTypes": [
+        "java.awt.List",
+        "com.sun.*"
+    ],
 }

@@ -769,7 +769,7 @@ public class InstanceV2 extends MinecraftVersion {
         return true;
     }
 
-    public boolean exportAsCurseZip(String name, String author, String saveTo) {
+    public boolean exportAsCurseZip(String name, String author, String saveTo, List<String> overrides) {
         Path to = Paths.get(saveTo).resolve(name + ".zip");
         CurseManifest manifest = new CurseManifest();
 
@@ -847,44 +847,36 @@ public class InstanceV2 extends MinecraftVersion {
         }
 
         // copy over the overrides folder
-        Path overrides = tempDir.resolve("overrides");
-        FileUtils.createDirectory(overrides);
+        Path overridesPath = tempDir.resolve("overrides");
+        FileUtils.createDirectory(overridesPath);
 
-        if (getRoot().resolve("config").toFile().exists() && getRoot().resolve("config").toFile().list().length != 0) {
-            Utils.copyDirectory(getRoot().resolve("config").toFile(), overrides.resolve("config").toFile());
-        }
-
-        if (getRoot().resolve("mods").toFile().exists()) {
-            Utils.copyDirectory(getRoot().resolve("mods").toFile(), overrides.resolve("mods").toFile());
-
-            // remove files that come from Curse
-            launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
-                File file = mod.getFile(this, overrides);
-
-                if (file.exists()) {
-                    FileUtils.delete(file.toPath());
+        for (String path : overrides) {
+            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+                    && (getRoot().resolve(path).toFile().isFile()
+                            || getRoot().resolve(path).toFile().list().length != 0)) {
+                if (getRoot().resolve(path).toFile().isDirectory()) {
+                    Utils.copyDirectory(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile());
+                } else {
+                    Utils.copyFile(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile(), true);
                 }
-            });
-
-            // if no files, remove the directory
-            if (overrides.resolve("mods").toFile().list().length == 0) {
-                FileUtils.deleteDirectory(overrides.resolve("mods"));
             }
         }
 
-        if (getRoot().resolve("oresources").toFile().exists()
-                && getRoot().resolve("oresources").toFile().list().length != 0) {
-            Utils.copyDirectory(getRoot().resolve("oresources").toFile(), overrides.resolve("oresources").toFile());
-        }
+        // remove files that come from Curse
+        launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+            File file = mod.getFile(this, overridesPath);
 
-        if (getRoot().resolve("resources").toFile().exists()
-                && getRoot().resolve("resources").toFile().list().length != 0) {
-            Utils.copyDirectory(getRoot().resolve("resources").toFile(), overrides.resolve("resources").toFile());
-        }
+            if (file.exists()) {
+                FileUtils.delete(file.toPath());
+            }
+        });
 
-        if (getRoot().resolve("scripts").toFile().exists()
-                && getRoot().resolve("scripts").toFile().list().length != 0) {
-            Utils.copyDirectory(getRoot().resolve("scripts").toFile(), overrides.resolve("scripts").toFile());
+        for (String path : overrides) {
+            // if no files, remove the directory
+            if (overridesPath.resolve(path).toFile().isDirectory()
+                    && overridesPath.resolve(path).toFile().list().length == 0) {
+                FileUtils.deleteDirectory(overridesPath.resolve(path));
+            }
         }
 
         ZipUtil.pack(tempDir.toFile(), to.toFile());

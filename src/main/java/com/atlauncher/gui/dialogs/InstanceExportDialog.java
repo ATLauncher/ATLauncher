@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,13 +26,21 @@ import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
 import com.atlauncher.data.InstanceV2;
@@ -43,6 +52,7 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class InstanceExportDialog extends JDialog {
     private InstanceV2 instance;
+    private List<String> overrides = new ArrayList<>();
 
     private JPanel topPanel = new JPanel();
     private JPanel bottomPanel = new JPanel();
@@ -72,7 +82,7 @@ public class InstanceExportDialog extends JDialog {
     }
 
     private void setupComponents() {
-        setSize(500, 200);
+        setSize(550, 400);
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -150,6 +160,70 @@ public class InstanceExportDialog extends JDialog {
         saveToPanel.add(browseButton);
         topPanel.add(saveToPanel, gbc);
 
+        // Overrides
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover overridesLabel = new JLabelWithHover(GetText.tr("Folders To Export") + ":", HELP_ICON,
+                GetText.tr("Select the folders you wish to include for this export"));
+        topPanel.add(overridesLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
+        JPanel overridesPanel = new JPanel();
+        overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
+
+        File[] files = instance.getRoot().toFile().listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return !pathname.getName().equalsIgnoreCase(".fabric")
+                        && !pathname.getName().equalsIgnoreCase(".jumploader")
+                        && !pathname.getName().equalsIgnoreCase(".mixin.out")
+                        && !pathname.getName().equalsIgnoreCase("disabledmods")
+                        && !pathname.getName().equalsIgnoreCase("jarmods")
+                        && !pathname.getName().equalsIgnoreCase("instance.json");
+            }
+        });
+
+        for (File filename : files) {
+            JCheckBox checkBox = new JCheckBox(filename.getName());
+
+            checkBox.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    if (checkBox.isSelected()) {
+                        overrides.add(checkBox.getText());
+                    } else {
+                        overrides.remove(checkBox.getText());
+                    }
+                }
+            });
+
+            if (filename.getName().equalsIgnoreCase("config") || filename.getName().equalsIgnoreCase("mods")
+                    || filename.getName().equalsIgnoreCase("oresources")
+                    || filename.getName().equalsIgnoreCase("resourcepacks")
+                    || filename.getName().equalsIgnoreCase("resources")
+                    || filename.getName().equalsIgnoreCase("scripts")) {
+                checkBox.setSelected(true);
+            }
+
+            overridesPanel.add(checkBox);
+        }
+
+        JScrollPane overridesScrollPanel = new JScrollPane(overridesPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED) {
+            {
+                this.getVerticalScrollBar().setUnitIncrement(8);
+            }
+        };
+        overridesScrollPanel.setPreferredSize(new Dimension(350, 200));
+
+        topPanel.add(overridesScrollPanel, gbc);
+
         // bottom panel
         bottomPanel.setLayout(new FlowLayout());
 
@@ -159,7 +233,7 @@ public class InstanceExportDialog extends JDialog {
                     GetText.tr("Exporting Instance. Please wait..."), null);
 
             dialog.addThread(new Thread(() -> {
-                if (instance.exportAsCurseZip(name.getText(), author.getText(), saveTo.getText())) {
+                if (instance.exportAsCurseZip(name.getText(), author.getText(), saveTo.getText(), overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                 } else {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
