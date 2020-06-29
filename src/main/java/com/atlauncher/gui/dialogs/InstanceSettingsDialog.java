@@ -38,6 +38,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
@@ -260,8 +261,7 @@ public class InstanceSettingsDialog extends JDialog {
         javaParameters.setText(getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.javaArguments
                 : instance.getSettings().getJavaArguments(), App.settings.getJavaParameters()));
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> javaParameters.setText(
-                "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(javaParametersResetButton);
         topPanel.add(javaParametersPanel, gbc);

@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -291,8 +292,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParameters = new JTextField(40);
         javaParameters.setText(App.settings.getJavaParameters());
         javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> javaParameters.setText(
-                "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(javaParametersResetButton);
         add(javaParametersPanel, gbc);

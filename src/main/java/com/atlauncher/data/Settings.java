@@ -781,8 +781,7 @@ public class Settings {
                 }
             }
 
-            this.javaParamaters = properties.getProperty("javaparameters",
-                    "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M");
+            this.javaParamaters = properties.getProperty("javaparameters", Constants.DEFAULT_JAVA_PARAMETERS);
 
             this.maximiseMinecraft = Boolean.parseBoolean(properties.getProperty("maximiseminecraft", "false"));
 
