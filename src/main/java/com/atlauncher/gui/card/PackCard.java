@@ -67,8 +67,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.splitter.setRightComponent(this.actionsPanel);
         this.splitter.setEnabled(false);
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
 
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);

@@ -49,6 +49,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicBorders;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -112,15 +113,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.splitter.setEnabled(false);
 
         this.descArea.setText(instance.getPackDescription());
-        this.descArea.setBorder(BorderFactory.createEmptyBorder());
+        this.descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.descArea.setEditable(false);
         this.descArea.setHighlighter(null);
         this.descArea.setLineWrap(true);
         this.descArea.setWrapStyleWord(true);
         this.descArea.setEditable(false);
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
 
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);

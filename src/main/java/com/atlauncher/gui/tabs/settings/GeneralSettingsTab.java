@@ -45,7 +45,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JButton translateButton;
     private JLabelWithHover themeLabel;
     private JComboBox<ComboItem> theme;
-    private JPanel themeLabelPanel;
     private JLabelWithHover dateFormatLabel;
     private JComboBox<String> dateFormat;
     private JLabelWithHover sortPacksAlphabeticallyLabel;

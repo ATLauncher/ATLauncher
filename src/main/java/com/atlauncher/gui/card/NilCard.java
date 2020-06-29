@@ -60,7 +60,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
                     TitledBorder.DEFAULT_POSITION, new Font(App.THEME.defaultFontName, Font.BOLD, 15)));
         }
 
-        this.error.setBorder(BorderFactory.createEmptyBorder());
+        this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.error.setEditable(false);
         this.error.setHighlighter(null);
         this.error.setLineWrap(true);
@@ -70,6 +70,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
         this.splitter.setEnabled(false);
         this.splitter.setLeftComponent(new ImagePanel(defaultImage));
         this.splitter.setRightComponent(this.error);
+        this.splitter.setBorder(BorderFactory.createEmptyBorder());
 
         this.add(this.splitter, BorderLayout.CENTER);
     }
