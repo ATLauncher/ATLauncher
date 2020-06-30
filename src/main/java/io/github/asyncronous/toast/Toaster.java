@@ -1,6 +1,5 @@
 package io.github.asyncronous.toast;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -50,13 +49,7 @@ public final class Toaster {
         UIManager.put(ToasterConstants.ERROR_ICON, createImage("error"));
         UIManager.put(ToasterConstants.QUESTION_ICON, createImage("question"));
         UIManager.put(ToasterConstants.WARNING_ICON, createImage("warning"));
-        UIManager.put(ToasterConstants.FONT, new Font(App.THEME.defaultFontName, Font.BOLD, 12).deriveFont(24.0F));
-        UIManager.put(ToasterConstants.MSG_COLOR, Color.BLACK);
-        UIManager.put(ToasterConstants.BORDER_COLOR, Color.BLACK);
-        UIManager.put(ToasterConstants.BG_COLOR, Color.WHITE);
-        UIManager.put(ToasterConstants.TIME, 5000);
-        UIManager.put(ToasterConstants.OPAQUE, false);
-        UIManager.put(ToasterConstants.OPACITY, 0.5F);
+        UIManager.put(ToasterConstants.FONT, new Font(App.THEME.defaultFontName, Font.BOLD, 12).deriveFont(20.0F));
         UIManager.put("Toaster.contBounds", GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
     }
 

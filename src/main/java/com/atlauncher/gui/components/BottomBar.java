@@ -32,20 +32,21 @@ import com.atlauncher.utils.OS;
 public abstract class BottomBar extends JPanel {
     private static final long serialVersionUID = -7488195680365431776L;
 
-    protected final JButton nodeCraftIcon = new SMButton("/assets/image/NodeCraftIcon.png",
+    protected final JButton nodeCraftIcon = new SMButton("/assets/image/social/nodecraft.png",
             "Nodecraft - Setup a Minecraft server with an ATLauncher modpack in less than 60 seconds");
-    protected final JButton discordIcon = new SMButton("/assets/image/DiscordIcon.png", "Discord");
-    protected final JButton facebookIcon = new SMButton("/assets/image/FacebookIcon.png", "Facebook");
-    protected final JButton githubIcon = new SMButton("/assets/image/GitHubIcon.png", "GitHub");
-    protected final JButton twitterIcon = new SMButton("/assets/image/TwitterIcon.png", "Twitter");
-    protected final JButton redditIcon = new SMButton("/assets/image/RedditIcon.png", "Reddit");
+    protected final JButton discordIcon = new SMButton("/assets/image/social/discord.png", "Discord");
+    protected final JButton facebookIcon = new SMButton("/assets/image/social/facebook.png", "Facebook");
+    protected final JButton githubIcon = new SMButton("/assets/image/social/github.png", "GitHub");
+    protected final JButton twitterIcon = new SMButton("/assets/image/social/twitter.png", "Twitter");
+    protected final JButton redditIcon = new SMButton("/assets/image/social/reddit.png", "Reddit");
 
-    protected final JPanel rightSide = new JPanel(new FlowLayout());
+    protected final JPanel rightSide = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 7));
 
     public BottomBar() {
         super(new BorderLayout());
         this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
         this.setPreferredSize(new Dimension(0, 50));
+
         this.add(this.rightSide, BorderLayout.EAST);
         this.setupSocialButtonListeners();
         this.rightSide.add(this.nodeCraftIcon);
