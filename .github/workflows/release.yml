@@ -52,6 +52,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: v${{ steps.clean-version.outputs.replaced }}
+          commitish: master
           name: ${{ steps.clean-version.outputs.replaced }}
           body: ${{ steps.changelog.outputs.text }}
           prerelease: ${{ endsWith(steps.version.outputs.text, '.Beta') }}
