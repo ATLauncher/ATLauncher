@@ -31,7 +31,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -51,13 +50,8 @@ public class NilCard extends JPanel implements RelocalizationListener {
         super(new BorderLayout());
         RelocalizationManager.addListener(this);
 
-        if (OS.isMac()) {
-            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(14f)));
-        } else {
-            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
+        this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
                     TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
-        }
 
         this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.error.setEditable(false);

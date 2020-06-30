@@ -157,19 +157,6 @@ public class Utils {
         return new ImageIcon(file.getAbsolutePath());
     }
 
-    /**
-     * Gets the font.
-     *
-     * @return the font
-     */
-    public static Font getFont() {
-        if (OS.isMac()) {
-            return new Font(App.THEME.defaultFontName, Font.PLAIN, 11);
-        } else {
-            return new Font(App.THEME.defaultFontName, Font.PLAIN, 12);
-        }
-    }
-
     public static BufferedImage getImage(String img) {
         String name;
         if (!img.startsWith("/assets/image/")) {
@@ -1073,14 +1060,6 @@ public class Utils {
             }
         }
         return sb.toString();
-    }
-
-    public static Float getBaseFontSize() {
-        if (OS.isMac()) {
-            return (float) 11;
-        } else {
-            return (float) 12;
-        }
     }
 
     public static boolean testProxy(Proxy proxy) {

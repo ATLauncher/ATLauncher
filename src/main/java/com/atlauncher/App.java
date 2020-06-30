@@ -482,9 +482,9 @@ public class App {
         ToolTipManager.sharedInstance().setInitialDelay(50);
 
         UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
-        UIManager.put("defaultFont", App.THEME.getNormalFont().deriveFont(Utils.getBaseFontSize()));
-        UIManager.put("Button.font", App.THEME.getNormalFont().deriveFont(Utils.getBaseFontSize()));
-        UIManager.put("Toaster.font", App.THEME.getNormalFont().deriveFont(Utils.getBaseFontSize()));
+        UIManager.put("defaultFont", App.THEME.getNormalFont());
+        UIManager.put("Button.font", App.THEME.getNormalFont());
+        UIManager.put("Toaster.font", App.THEME.getNormalFont());
         UIManager.put("Toaster.opacity", 0.75F);
 
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);

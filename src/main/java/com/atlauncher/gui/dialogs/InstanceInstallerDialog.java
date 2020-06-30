@@ -62,7 +62,6 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
-import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import org.mini2Dx.gettext.GetText;
@@ -635,7 +634,7 @@ public class InstanceInstallerDialog extends JDialog {
         // ensures that font width is taken into account
         for (PackVersion version : versions) {
             versionLength = Math.max(versionLength,
-                    getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
+                    getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
         }
 
         // ensures that the dropdown is at least 200 px wide
@@ -702,7 +701,7 @@ public class InstanceInstallerDialog extends JDialog {
             // ensures that font width is taken into account
             for (LoaderVersion version : loaderVersions) {
                 loaderVersionLength = Math.max(loaderVersionLength,
-                        getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
+                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
             }
 
             loaderVersionsDropDown.removeAllItems();

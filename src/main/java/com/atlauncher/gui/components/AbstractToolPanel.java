@@ -24,14 +24,13 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
 public abstract class AbstractToolPanel extends JPanel {
     private static final long serialVersionUID = -7755529465856056647L;
 
-    protected final Font BOLD_FONT = App.THEME.getBoldFont().deriveFont(Utils.getBaseFontSize());
+    protected final Font BOLD_FONT = App.THEME.getBoldFont();
     protected final JPanel TOP_PANEL = new JPanel();
     protected final JPanel MIDDLE_PANEL = new JPanel();
     protected final JPanel BOTTOM_PANEL = new JPanel();

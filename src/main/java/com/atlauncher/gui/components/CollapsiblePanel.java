@@ -280,13 +280,7 @@ public class CollapsiblePanel extends JPanel {
         button.setHorizontalTextPosition(AbstractButton.LEFT);
 
         // Use the same font as that used in the titled border font
-        Font font;
-        if (OS.isMac()) {
-            font = App.THEME.getBoldFont().deriveFont(14f);
-        } else {
-            font = App.THEME.getBoldFont().deriveFont(15f);
-        }
-        button.setFont(font);
+        button.setFont(App.THEME.getBoldFont().deriveFont(15f));
         button.setFocusable(false);
         button.setContentAreaFilled(false);
         button.addActionListener(new CollapsiblePanel.ExpandAndCollapseAction());

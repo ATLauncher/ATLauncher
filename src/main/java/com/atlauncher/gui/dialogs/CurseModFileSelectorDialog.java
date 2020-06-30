@@ -48,7 +48,6 @@ import com.atlauncher.gui.card.CurseFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -281,7 +280,7 @@ public class CurseModFileSelectorDialog extends JDialog {
             // ensures that font width is taken into account
             for (CurseFile file : files) {
                 filesLength = Math.max(filesLength,
-                        getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 100);
+                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
             }
 
             // try to filter out non compatable mods (Forge on Fabric and vice versa)

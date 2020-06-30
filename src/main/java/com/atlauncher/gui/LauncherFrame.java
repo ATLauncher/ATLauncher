@@ -175,7 +175,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
                 serversTab, accountsTab, toolsTab, settingsTab });
 
-        tabbedPane.setFont(App.THEME.getTabFont().deriveFont(32.0F));
+        tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
