@@ -265,8 +265,8 @@ public class CollapsiblePanel extends JPanel {
      */
     private ImageIcon[] createExpandAndCollapseIcon() {
         ImageIcon[] iconArrow = new ImageIcon[2];
-        iconArrow[COLLAPSED] = Utils.getIconImage("/assets/image/Collapsed.png");
-        iconArrow[EXPANDED] = Utils.getIconImage("/assets/image/Expanded.png");
+        iconArrow[COLLAPSED] = Utils.getIconImage("/assets/image/icons/collapsed.png");
+        iconArrow[EXPANDED] = Utils.getIconImage("/assets/image/icons/expanded.png");
         return iconArrow;
     }
 
@@ -278,7 +278,6 @@ public class CollapsiblePanel extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder(0, 1, 5, 1));
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.LEFT);
-        button.setMargin(new Insets(0, 0, 3, 0));
 
         // Use the same font as that used in the titled border font
         Font font;
