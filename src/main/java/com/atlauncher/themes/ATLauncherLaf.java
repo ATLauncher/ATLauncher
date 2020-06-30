@@ -32,7 +32,9 @@ import com.formdev.flatlaf.FlatLightLaf;
 public class ATLauncherLaf extends FlatLaf {
     public static ATLauncherLaf instance;
 
-    public String defaultFontName = "SansSerif";
+    public String defaultFontName = "OpenSans-Regular";
+    public String defaultBoldFontName = "OpenSans-Bold";
+    public String consoleFontName = "SansSerif";
     public String tabFontName = "Oswald-Regular";
 
     public static boolean install() {
@@ -47,6 +49,14 @@ public class ATLauncherLaf extends FlatLaf {
 
     public Font getNormalFont() {
         return Resources.makeFont(defaultFontName);
+    }
+
+    public Font getBoldFont() {
+        return Resources.makeFont(defaultBoldFontName).deriveFont(Font.BOLD);
+    }
+
+    public Font getConsoleFont() {
+        return Resources.makeFont(consoleFontName);
     }
 
     public Font getTabFont() {

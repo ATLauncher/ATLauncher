@@ -18,7 +18,6 @@
 package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.Image;
 
 import javax.swing.BorderFactory;
@@ -54,10 +53,10 @@ public class NilCard extends JPanel implements RelocalizationListener {
 
         if (OS.isMac()) {
             this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.defaultFontName, Font.BOLD, 14)));
+                    TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(14f)));
         } else {
             this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font(App.THEME.defaultFontName, Font.BOLD, 15)));
+                    TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
         }
 
         this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));

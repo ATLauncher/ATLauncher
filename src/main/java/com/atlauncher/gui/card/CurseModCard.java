@@ -20,7 +20,6 @@ package com.atlauncher.gui.card;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -99,7 +98,7 @@ public final class CurseModCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.ABOVE_TOP, new Font(App.THEME.defaultFontName, Font.BOLD, 12));
+                TitledBorder.ABOVE_TOP, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
     }
 }

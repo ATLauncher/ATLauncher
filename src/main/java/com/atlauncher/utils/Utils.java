@@ -86,12 +86,11 @@ import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.google.gson.reflect.TypeToken;
 
-import io.pack200.Pack200;
-
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 import org.zeroturnaround.zip.ZipUtil;
 
+import io.pack200.Pack200;
 import net.iharder.Base64;
 
 public class Utils {

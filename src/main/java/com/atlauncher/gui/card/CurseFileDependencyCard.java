@@ -103,7 +103,7 @@ public final class CurseFileDependencyCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.ABOVE_TOP, new Font(App.THEME.defaultFontName, Font.BOLD, 12));
+                TitledBorder.ABOVE_TOP, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
     }
 }

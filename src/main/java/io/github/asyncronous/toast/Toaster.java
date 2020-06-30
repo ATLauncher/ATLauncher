@@ -1,6 +1,5 @@
 package io.github.asyncronous.toast;
 
-import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.io.IOException;
@@ -49,7 +48,7 @@ public final class Toaster {
         UIManager.put(ToasterConstants.ERROR_ICON, createImage("error"));
         UIManager.put(ToasterConstants.QUESTION_ICON, createImage("question"));
         UIManager.put(ToasterConstants.WARNING_ICON, createImage("warning"));
-        UIManager.put(ToasterConstants.FONT, new Font(App.THEME.defaultFontName, Font.BOLD, 12).deriveFont(20.0F));
+        UIManager.put(ToasterConstants.FONT, App.THEME.getBoldFont().deriveFont(20.0F));
         UIManager.put("Toaster.contBounds", GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
     }
 
