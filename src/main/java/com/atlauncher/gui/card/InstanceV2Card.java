@@ -50,7 +50,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import com.google.gson.reflect.TypeToken;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -77,6 +76,7 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
+import com.google.gson.reflect.TypeToken;
 
 import org.mini2Dx.gettext.GetText;
 import org.zeroturnaround.zip.ZipUtil;
@@ -150,6 +150,10 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         if (instance.launcher.curseManifest != null) {
             this.reinstallButton.setVisible(false);
             this.updateButton.setVisible(false);
+            this.serversButton.setVisible(false);
+        }
+
+        if (instance.getPack() != null && instance.getPack().system) {
             this.serversButton.setVisible(false);
         }
 

@@ -49,7 +49,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicBorders;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -162,6 +161,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         if (!instance.hasUpdate()) {
             this.updateButton.setVisible(false);
+        }
+
+        if (instance.getRealPack() != null && instance.getRealPack().system) {
+            this.serversButton.setVisible(false);
         }
 
         this.addActionListeners();

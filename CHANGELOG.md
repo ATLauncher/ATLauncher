@@ -16,3 +16,4 @@
 - Fix bad date formats and add in more options
 - Remove checkbox filters on Packs tab
 - Make Java Parameters entry larger
+- Remove servers button from system instances
