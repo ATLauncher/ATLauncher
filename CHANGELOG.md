@@ -17,3 +17,4 @@
 - Remove checkbox filters on Packs tab
 - Make Java Parameters entry larger
 - Remove servers button from system instances
+- Move Clone button on instance to right click menu

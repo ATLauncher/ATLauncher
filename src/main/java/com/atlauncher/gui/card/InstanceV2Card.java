@@ -97,7 +97,6 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
     private final JButton updateButton = new JButton(GetText.tr("Update"));
     private final JButton renameButton = new JButton(GetText.tr("Rename"));
     private final JButton backupButton = new JButton(GetText.tr("Backup"));
-    private final JButton cloneButton = new JButton(GetText.tr("Clone"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton exportButton = new JButton(GetText.tr("Export"));
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
@@ -138,7 +137,6 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         top.add(this.renameButton);
         top.add(this.backupButton);
         top.add(this.settingsButton);
-        bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
         bottom.add(this.exportButton);
 
@@ -207,13 +205,6 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             backupButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
                     .setContent(GetText
                             .tr("Cannot backup instance as it's corrupted. Please reinstall, update or delete it."))
-                    .setType(DialogManager.ERROR).show());
-            for (ActionListener al : cloneButton.getActionListeners()) {
-                cloneButton.removeActionListener(al);
-            }
-            cloneButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
-                    .setContent(GetText
-                            .tr("Cannot clone instance as it's corrupted. Please reinstall, update or delete it."))
                     .setType(DialogManager.ERROR).show());
         }
     }
@@ -369,47 +360,6 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings", "InstanceV2");
             new InstanceSettingsDialog(instance);
         });
-        this.cloneButton.addActionListener(e -> {
-            String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
-                    GetText.tr("Enter a new name for this cloned instance."), GetText.tr("Cloning Instance"),
-                    JOptionPane.INFORMATION_MESSAGE);
-            if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) == null
-                    && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                    && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
-                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Clone", "InstanceV2");
-
-                final String newName = clonedName;
-                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
-                        GetText.tr("Cloning Instance. Please wait..."), null);
-                dialog.addThread(new Thread(() -> {
-                    App.settings.cloneInstance(instance, newName);
-                    dialog.close();
-                    App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
-                }));
-                dialog.start();
-            } else if (clonedName == null || clonedName.equals("")) {
-                LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
-            } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
-            } else {
-                LogManager.error("Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
-            }
-        });
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete Instance"))
                     .setContent(GetText.tr("Are you sure you want to delete this instance?"))
@@ -484,6 +434,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
 
+                    JMenuItem cloneItem = new JMenuItem(GetText.tr("Clone"));
+                    rightClickMenu.add(cloneItem);
+
                     JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
                     rightClickMenu.add(shareCodeItem);
 
@@ -499,6 +452,10 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     }
 
                     if (!instance.hasUpdate()) {
+                        updateItem.setEnabled(false);
+                    }
+
+                    if (!instance.launcher.isPlayable) {
                         updateItem.setEnabled(false);
                     }
 
@@ -523,6 +480,51 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                     LogManager.logStackTrace("Failed to set instance image", ex);
                                 }
                             }
+                        }
+                    });
+
+                    cloneItem.addActionListener(e14 -> {
+                        String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
+                                GetText.tr("Enter a new name for this cloned instance."),
+                                GetText.tr("Cloning Instance"), JOptionPane.INFORMATION_MESSAGE);
+                        if (clonedName != null && clonedName.length() >= 1
+                                && App.settings.getInstanceByName(clonedName) == null
+                                && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
+                                && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
+                            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Clone",
+                                    "InstanceV2");
+
+                            final String newName = clonedName;
+                            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
+                                    GetText.tr("Cloning Instance. Please wait..."), null);
+                            dialog.addThread(new Thread(() -> {
+                                App.settings.cloneInstance(instance, newName);
+                                dialog.close();
+                                App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
+                            }));
+                            dialog.start();
+                        } else if (clonedName == null || clonedName.equals("")) {
+                            LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
+                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                                            .build())
+                                    .setType(DialogManager.ERROR).show();
+                        } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+                            LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
+                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                                            .build())
+                                    .setType(DialogManager.ERROR).show();
+                        } else {
+                            LogManager.error(
+                                    "Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
+                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                                            .build())
+                                    .setType(DialogManager.ERROR).show();
                         }
                     });
 
@@ -614,7 +616,6 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.updateButton.setText(GetText.tr("Update"));
         this.renameButton.setText(GetText.tr("Rename"));
         this.backupButton.setText(GetText.tr("Backup"));
-        this.cloneButton.setText(GetText.tr("Clone"));
         this.deleteButton.setText(GetText.tr("Delete"));
         this.addButton.setText(GetText.tr("Add Mods"));
         this.editButton.setText(GetText.tr("Edit Mods"));
