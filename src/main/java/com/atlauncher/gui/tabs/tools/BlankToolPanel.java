@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.components;
+package com.atlauncher.gui.tabs.tools;
 
+@SuppressWarnings("serial")
 public class BlankToolPanel extends AbstractToolPanel {
-    /**
-     * Auto generated serial.
-     */
-    private static final long serialVersionUID = -5618131685589325394L;
+
+    public BlankToolPanel() {
+        super(null);
+    }
 }

@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.components;
+package com.atlauncher.gui.tabs.tools;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -40,24 +38,20 @@ import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
+@SuppressWarnings("serial")
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
-    private static final long serialVersionUID = 4811953376698111667L;
-
-    private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Network Checker"));
-
-    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(60)
+    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
             .text(GetText
                     .tr("This tool does various tests on your network and determines any issues that may pop up with "
                             + "connecting to our file servers and to other servers."))
             .build());
 
     public NetworkCheckerToolPanel() {
-        TITLE_LABEL.setFont(BOLD_FONT);
-        TOP_PANEL.add(TITLE_LABEL);
+        super(GetText.tr("Network Checker"));
+
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         SettingsManager.addListener(this);
         this.checkLaunchButtonEnabled();
     }

@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.components;
+package com.atlauncher.gui.tabs.tools;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -48,20 +46,17 @@ import okhttp3.OkHttpClient;
 
 @SuppressWarnings("serial")
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
-    private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Runtime Downloader"));
-
-    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(60)
+    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
             .text(GetText.tr(
                     "Use this to automatically install and use a recommended version of Java to use with ATLauncher."))
             .build());
 
     public RuntimeDownloaderToolPanel() {
-        TITLE_LABEL.setFont(BOLD_FONT);
-        TOP_PANEL.add(TITLE_LABEL);
+        super(GetText.tr("Runtime Downloader"));
+
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         this.checkLaunchButtonEnabled();
     }
 

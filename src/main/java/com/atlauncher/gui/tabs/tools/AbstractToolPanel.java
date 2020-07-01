@@ -15,32 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.components;
+package com.atlauncher.gui.tabs.tools;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 
 import org.mini2Dx.gettext.GetText;
 
+@SuppressWarnings("serial")
 public abstract class AbstractToolPanel extends JPanel {
-    private static final long serialVersionUID = -7755529465856056647L;
-
-    protected final Font BOLD_FONT = App.THEME.getBoldFont();
-    protected final JPanel TOP_PANEL = new JPanel();
     protected final JPanel MIDDLE_PANEL = new JPanel();
     protected final JPanel BOTTOM_PANEL = new JPanel();
 
     protected final JButton LAUNCH_BUTTON = new JButton(GetText.tr("Launch"));
 
-    public AbstractToolPanel() {
+    public AbstractToolPanel(String TITLE) {
         setLayout(new BorderLayout());
-        add(TOP_PANEL, BorderLayout.NORTH);
         add(MIDDLE_PANEL, BorderLayout.CENTER);
         add(BOTTOM_PANEL, BorderLayout.SOUTH);
+
+        if (TITLE != null) {
+            setBorder(BorderFactory.createTitledBorder(null, TITLE, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                    App.THEME.getBoldFont()));
+        }
     }
 }

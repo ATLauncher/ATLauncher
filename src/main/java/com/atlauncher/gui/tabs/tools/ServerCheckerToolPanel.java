@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.components;
+package com.atlauncher.gui.tabs.tools;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.border.BevelBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
@@ -35,19 +33,16 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
-    private final JLabel TITLE_LABEL = new JLabel(GetText.tr("Server Checker"));
-
-    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(60).text(GetText.tr(
+    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
             "This tool checks specified Minecraft servers to see if they are up or not and how many players are logged in. Settings can be configured in the Settings tab under the Tools sub tab."))
             .build());
 
     public ServerCheckerToolPanel() {
-        TITLE_LABEL.setFont(BOLD_FONT);
-        TOP_PANEL.add(TITLE_LABEL);
+        super(GetText.tr("Server Checker"));
+
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         SettingsManager.addListener(this);
         this.checkLaunchButtonEnabled();
     }
