@@ -18,6 +18,7 @@
 package com.atlauncher.gui;
 
 import java.awt.Graphics;
+import java.awt.SystemTray;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -26,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
 
+import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -79,7 +81,16 @@ public class SplashScreen extends JWindow {
             setLightWeightPopupEnabled(false);
 
             JMenuItem forceQuit = new JMenuItem(GetText.tr("Force quit"));
-            forceQuit.addActionListener(e -> System.exit(0));
+            forceQuit.addActionListener(e -> {
+                try {
+                    if (SystemTray.isSupported()) {
+                        SystemTray.getSystemTray().remove(App.trayIcon);
+                    }
+                } catch (Exception ignored) {
+                }
+
+                System.exit(0);
+            });
             add(forceQuit);
         }
     }

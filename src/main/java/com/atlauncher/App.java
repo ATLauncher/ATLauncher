@@ -199,6 +199,8 @@ public class App {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
 
+    public static TrayIcon trayIcon;
+
     /**
      * Where the magic happens.
      *
@@ -535,7 +537,7 @@ public class App {
     private static void trySystemTrayIntegration() throws Exception {
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
-            TrayIcon trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
+            trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
 
             trayIcon.addMouseListener(new MouseAdapter() {
                 @Override
@@ -551,16 +553,6 @@ public class App {
             trayIcon.setImageAutoSize(true);
 
             tray.add(trayIcon);
-
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                    try {
-                        SystemTray.getSystemTray().remove(trayIcon);
-                    } catch (Exception e) {
-                        LogManager.logStackTrace(e);
-                    }
-                }
-            });
         }
     }
 

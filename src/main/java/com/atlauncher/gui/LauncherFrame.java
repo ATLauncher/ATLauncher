@@ -19,6 +19,9 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.SystemTray;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,6 +95,18 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         if (show) {
             LogManager.info("Showing Launcher");
             setVisible(true);
+
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent windowEvent) {
+                    try {
+                        if (SystemTray.isSupported()) {
+                            SystemTray.getSystemTray().remove(App.trayIcon);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
         }
 
         RelocalizationManager.addListener(this);

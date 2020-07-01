@@ -17,6 +17,8 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.SystemTray;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -73,7 +75,16 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
             }
         }));
         this.tcButton.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
-        this.quitButton.addActionListener(e -> System.exit(0));
+        this.quitButton.addActionListener(e -> {
+            try {
+                if (SystemTray.isSupported()) {
+                    SystemTray.getSystemTray().remove(App.trayIcon);
+                }
+            } catch (Exception ignored) {
+            }
+
+            System.exit(0);
+        });
     }
 
     public void setMinecraftLaunched(boolean l) {
