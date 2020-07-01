@@ -27,3 +27,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Move Clone button on instance to right click menu
 - Remove the fabric api install button after it's installed
 - Show current installed version when updating Curse mod
+- Fix system tray icon not being removed on shutdown

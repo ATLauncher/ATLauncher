@@ -551,6 +551,16 @@ public class App {
             trayIcon.setImageAutoSize(true);
 
             tray.add(trayIcon);
+
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    try {
+                        SystemTray.getSystemTray().remove(trayIcon);
+                    } catch (Exception e) {
+                        LogManager.logStackTrace(e);
+                    }
+                }
+            });
         }
     }
 
