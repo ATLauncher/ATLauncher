@@ -26,3 +26,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove servers button from system instances
 - Move Clone button on instance to right click menu
 - Remove the fabric api install button after it's installed
+- Show current installed version when updating Curse mod

@@ -63,6 +63,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     private JPanel dependenciesPanel = new JPanel(new FlowLayout());
     private JButton addButton;
     private JLabel versionsLabel;
+    private JLabel installedJLabel;
     private JComboBox<CurseFile> filesDropdown;
     private List<CurseFile> files = new ArrayList<>();
 
@@ -124,9 +125,12 @@ public class CurseModFileSelectorDialog extends JDialog {
                 .setBorder(BorderFactory.createTitledBorder(GetText.tr("The below mods need to be installed")));
 
         // Top Panel Stuff
-        JPanel top = new JPanel();
+        JPanel top = new JPanel(new BorderLayout());
         // #. {0} is the name of the mod we're installing
-        top.add(new JLabel(GetText.tr("Installing {0}", mod.name)));
+        top.add(new JLabel(GetText.tr("Installing {0}", mod.name), JLabel.CENTER), BorderLayout.NORTH);
+
+        installedJLabel = new JLabel("", JLabel.CENTER);
+        top.add(installedJLabel, BorderLayout.SOUTH);
 
         // Middle Panel Stuff
         JPanel middle = new JPanel(new BorderLayout());
@@ -312,17 +316,21 @@ public class CurseModFileSelectorDialog extends JDialog {
             }
 
             if (this.installedFileId != null) {
-                filesDropdown.setSelectedItem(
-                        files.stream().filter(f -> f.id == this.installedFileId).findFirst().orElse(files.get(0)));
+                CurseFile installedFile = files.stream().filter(f -> f.id == this.installedFileId).findFirst()
+                        .orElse(null);
+
+                if (installedFile != null) {
+                    filesDropdown.setSelectedItem(installedFile);
+
+                    // #. {0} is the name of the Curse mod that the user already has installed
+                    installedJLabel.setText(GetText.tr("The version currently installed is {0}", installedFile));
+                    installedJLabel.setVisible(true);
+                }
             }
 
-            // ensures that the dropdown is at least 200 px wide
-            filesLength = Math.max(200, filesLength);
-
-            // ensures that there is a maximum width of 350 px to prevent overflow
-            filesLength = Math.min(350, filesLength);
-
-            filesDropdown.setPreferredSize(new Dimension(filesLength, 25));
+            // ensures that the dropdown is at least 200 px wide and has a maximum width of
+            // 350 px to prevent overflow
+            filesDropdown.setPreferredSize(new Dimension(Math.min(350, Math.max(200, filesLength)), 25));
 
             filesDropdown.setEnabled(true);
             versionsLabel.setVisible(true);
