@@ -65,6 +65,10 @@ public final class AddModsDialog extends JDialog {
     // #. Fabric API is the name of a mod, so should be left untranslated
     private JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
 
+    // #. Fabric/Fabric API is the name of a mod, so should be left untranslated
+    private JLabel fabricApiWarningLabel = new JLabel(
+            "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
+
     private JScrollPane jscrollPane;
     private JButton nextButton;
     private JButton prevButton;
@@ -153,6 +157,12 @@ public final class AddModsDialog extends JDialog {
             } else {
                 new CurseModFileSelectorDialog(mod, instance);
             }
+
+            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
+                    .filter(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID).count() != 0) {
+                fabricApiWarningLabel.setVisible(false);
+                installFabricApiButton.setVisible(false);
+            }
         });
 
         LoaderVersion loaderVersion = (this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
@@ -162,9 +172,6 @@ public final class AddModsDialog extends JDialog {
                 && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
                         .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
                         .count() == 0) {
-
-            JLabel fabricApiWarningLabel = new JLabel(
-                    "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
