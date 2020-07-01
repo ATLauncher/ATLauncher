@@ -17,7 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Font;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;

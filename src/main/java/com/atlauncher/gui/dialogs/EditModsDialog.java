@@ -332,17 +332,17 @@ public class EditModsDialog extends JDialog {
             bottomPanel.add(reinstallButton);
         }
 
-        enableButton = new JButton(GetText.tr("Enable Mod"));
+        enableButton = new JButton(GetText.tr("Enable Selected"));
         enableButton.addActionListener(e -> enableMods());
         enableButton.setEnabled(false);
         bottomPanel.add(enableButton);
 
-        disableButton = new JButton(GetText.tr("Disable Mod"));
+        disableButton = new JButton(GetText.tr("Disable Selected"));
         disableButton.addActionListener(e -> disableMods());
         disableButton.setEnabled(false);
         bottomPanel.add(disableButton);
 
-        removeButton = new JButton(GetText.tr("Remove Mod"));
+        removeButton = new JButton(GetText.tr("Remove Selected"));
         removeButton.addActionListener(e -> removeMods());
         removeButton.setEnabled(false);
         bottomPanel.add(removeButton);

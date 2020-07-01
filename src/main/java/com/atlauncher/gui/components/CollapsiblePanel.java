@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -50,7 +49,6 @@ import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**

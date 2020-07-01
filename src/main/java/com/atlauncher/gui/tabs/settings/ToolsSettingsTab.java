@@ -20,13 +20,13 @@ package com.atlauncher.gui.tabs.settings;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JCheckBox;
-import javax.swing.JTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -37,7 +37,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     private JCheckBox enableServerChecker;
 
     private JLabelWithHover serverCheckerWaitLabel;
-    private JTextField serverCheckerWait;
+    private JSpinner serverCheckerWait;
 
     public ToolsSettingsTab() {
         RelocalizationManager.addListener(this);
@@ -80,34 +80,26 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        serverCheckerWait = new JTextField(4);
-        serverCheckerWait.setText(App.settings.getServerCheckerWait() + "");
+
+        SpinnerNumberModel serverCheckerWaitModel = new SpinnerNumberModel(
+                App.settings.getServerCheckerWait(),
+                1, 30, 1);
+
+        serverCheckerWait = new JSpinner(serverCheckerWaitModel);
         if (!App.settings.enableServerChecker()) {
             serverCheckerWait.setEnabled(false);
         }
         add(serverCheckerWait, gbc);
     }
 
-    public boolean isValidServerCheckerWait() {
-        if (Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) < 1
-                || Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")) > 30) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help"))
-                    .setContent(GetText.tr(
-                            "The server checker wait time you specified is invalid. Please check it and try again."))
-                    .setType(DialogManager.ERROR).show();
-            return false;
-        }
-        return true;
-    }
-
     public boolean needToRestartServerChecker() {
         return ((enableServerChecker.isSelected() != App.settings.enableServerChecker()) || (App.settings
-                .getServerCheckerWait() != Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", ""))));
+                .getServerCheckerWait() != (Integer) serverCheckerWait.getValue()));
     }
 
     public void save() {
         App.settings.setEnableServerChecker(enableServerChecker.isSelected());
-        App.settings.setServerCheckerWait(Integer.parseInt(serverCheckerWait.getText().replaceAll("[^0-9]", "")));
+        App.settings.setServerCheckerWait((Integer) serverCheckerWait.getValue());
     }
 
     @Override

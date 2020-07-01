@@ -36,7 +36,6 @@ import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.FlatLaf;
 
 import org.mini2Dx.gettext.GetText;
@@ -80,7 +79,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         saveButton.addActionListener(arg0 -> {
             if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
                     && networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort()
-                    && networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
+                    && networkSettingsTab.canConnectWithProxy()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();

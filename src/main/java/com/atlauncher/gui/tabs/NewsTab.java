@@ -41,13 +41,8 @@ import org.mini2Dx.gettext.GetText;
  * This class extends {@link JPanel} and provides a Panel for displaying the
  * latest news.
  */
+@SuppressWarnings("serial")
 public class NewsTab extends JPanel implements Tab {
-    /**
-     * Auto generated serial.
-     */
-    private static final long serialVersionUID = 4616284541226058793L;
-
-    @SuppressWarnings("serial")
     private final HTMLEditorKit NEWS_KIT = new HTMLEditorKit() {
         {
             this.setStyleSheet(Resources.makeStyleSheet("news"));
@@ -70,7 +65,6 @@ public class NewsTab extends JPanel implements Tab {
     /**
      * {@link JEditorPane} which contains all the news for this panel.
      */
-    @SuppressWarnings("serial")
     private final JEditorPane NEWS_PANE = new JEditorPane("text/html;charset=UTF-8", "") {
         {
             this.setEditable(false);
@@ -107,7 +101,6 @@ public class NewsTab extends JPanel implements Tab {
         return GetText.tr("News");
     }
 
-    @SuppressWarnings("serial")
     private final class ContextMenu extends JPopupMenu {
         private final JMenuItem COPY_ITEM = new JMenuItem(GetText.tr("Copy"));
 

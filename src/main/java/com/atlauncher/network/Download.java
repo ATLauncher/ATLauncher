@@ -368,19 +368,6 @@ public final class Download {
         return true;
     }
 
-    private boolean checksumsMatch() {
-        try {
-            if (!ZipUtil.containsEntry(this.extractedTo.toFile(), "checksums.sha1")) {
-                return true;
-            }
-
-            return !this.checksums.contains(
-                    Hashing.sha1(ZipUtil.unpackEntry(this.extractedTo.toFile(), "checksums.sha1")).toString());
-        } catch (Exception e) {
-            return true;
-        }
-    }
-
     private void downloadDirect() {
         try (FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
                 ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {

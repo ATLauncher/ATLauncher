@@ -93,7 +93,7 @@ public class ModsJCheckBox extends JCheckBox {
         this.dialog = dialog;
 
         if (mod.getDescription() != null && !mod.getDescription().isEmpty()) {
-            this.setToolTipText(mod.getDescription());
+            this.setToolTipText(new HTMLBuilder().text(mod.getDescription()).split(100).build());
         }
 
         if (this.dialog != null) {
