@@ -472,6 +472,9 @@ public class App {
 
         // then grab the instance
         THEME = (ATLauncherLaf) Class.forName(theme).getMethod("getInstance").invoke(null);
+
+        // register the fonts so they can show within HTML
+        THEME.registerFonts();
     }
 
     /**

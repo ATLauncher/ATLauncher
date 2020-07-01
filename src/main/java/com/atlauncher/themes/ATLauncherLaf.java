@@ -18,11 +18,13 @@
 package com.atlauncher.themes;
 
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.plaf.basic.BasicLookAndFeel;
 
+import com.atlauncher.LogManager;
 import com.atlauncher.utils.Resources;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
@@ -34,7 +36,7 @@ public class ATLauncherLaf extends FlatLaf {
 
     private String defaultFontName = "OpenSans-Regular";
     private String defaultBoldFontName = "OpenSans-Bold";
-    private String consoleFontName = "SansSerif";
+    private String consoleFontName = "OpenSans-Regular";
     private String tabFontName = "Oswald-Regular";
 
     public static boolean install() {
@@ -61,6 +63,17 @@ public class ATLauncherLaf extends FlatLaf {
 
     public Font getTabFont() {
         return Resources.makeFont(tabFontName).deriveFont(Font.PLAIN, 32f);
+    }
+
+    public void registerFonts() {
+        try {
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Resources.makeFont(defaultFontName));
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Resources.makeFont(defaultBoldFontName));
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Resources.makeFont(consoleFontName));
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Resources.makeFont(tabFontName));
+        } catch (Throwable t) {
+            LogManager.logStackTrace("Error registering fonts", t);
+        }
     }
 
     @Override
