@@ -108,7 +108,7 @@ public final class LogEvent {
                     return UIManager.getColor("Console.LogType.debug");
                 }
                 default: {
-                    return UIManager.getColor("EditorPane.foreground");
+                    return UIManager.getColor("Console.LogType.default");
                 }
             }
         }

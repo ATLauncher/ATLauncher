@@ -29,6 +29,7 @@ import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
@@ -100,6 +101,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 if (reloadTheme) {
                     App.loadTheme(App.settings.getTheme());
                     FlatLaf.updateUILater();
+                    ThemeManager.post();
                 }
                 App.TOASTER.pop("Settings Saved");
             }
