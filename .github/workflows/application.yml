@@ -14,6 +14,11 @@ jobs:
         with:
           go-version: "1.14"
 
+      - name: Install arm-none-eabi-gcc
+        uses: fiam/arm-none-eabi-gcc@v1
+        with:
+          release: '9-2019-q4'
+
       - name: Install memory dependency
         run: go get github.com/pbnjay/memory
         working-directory: getMemory
@@ -26,6 +31,12 @@ jobs:
           GOOS=windows GOARCH=amd64 go build -o dist/getMemory-x64.exe getMemory.go
           GOOS=linux GOARCH=amd64 go build -o dist/getMemory-x64-linux getMemory.go
           GOOS=darwin GOARCH=amd64 go build -o dist/getMemory-x64-osx getMemory.go
+          CC=arm-none-eabi GOOS=windows GOARCH=arm GOARM=5 go build -o dist/getMemory-arm.exe getMemory.go
+          CC=arm-none-eabi GOOS=linux GOARCH=arm GOARM=5 go build -o dist/getMemory-arm-linux getMemory.go
+          CC=arm-none-eabi GOOS=darwin GOARCH=arm GOARM=5 go build -o dist/getMemory-arm-osx getMemory.go
+          CC=arm-none-eabi GOOS=windows GOARCH=arm64 GOARM=5 go build -o dist/getMemory-arm64.exe getMemory.go
+          CC=arm-none-eabi GOOS=linux GOARCH=arm64 GOARM=5 go build -o dist/getMemory-arm64-linux getMemory.go
+          CC=arm-none-eabi GOOS=darwin GOARCH=arm64 GOARM=5 go build -o dist/getMemory-arm64-osx getMemory.go
         working-directory: getMemory
 
       - name: Upload artifacts

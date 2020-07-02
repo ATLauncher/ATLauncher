@@ -92,13 +92,13 @@ public enum OS {
      */
     public static Path storagePath() {
         switch (getOS()) {
-        case WINDOWS:
-            return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-        case OSX:
-            return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
-                    .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-        default:
-            return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            case WINDOWS:
+                return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            case OSX:
+                return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            default:
+                return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -278,6 +278,13 @@ public enum OS {
     }
 
     /**
+     * Checks if using Arm.
+     */
+    public static boolean isArm() {
+        return System.getProperty("os.arch").startsWith("arm");
+    }
+
+    /**
      * Gets the architecture type of the system.
      */
     public static String getArch() {
@@ -320,13 +327,26 @@ public enum OS {
         long ramm = 0;
         int ram = 0;
 
-        String binaryFile;
+        String binaryFile = "getMemory";
 
-        if (OS.is64Bit()) {
-            binaryFile = (OS.isWindows() ? "getMemory-x64.exe"
-                    : (OS.isLinux() ? "getMemory-x64-linux" : "getMemory-x64-osx"));
+        if (OS.isArm()) {
+            binaryFile += "-arm";
+
+            if (OS.is64Bit()) {
+                binaryFile += "64";
+            }
         } else {
-            binaryFile = (OS.isWindows() ? "getMemory.exe" : (OS.isLinux() ? "getMemory-linux" : "getMemory-osx"));
+            if (OS.is64Bit()) {
+                binaryFile += "-x64";
+            }
+        }
+
+        if (OS.isWindows()) {
+            binaryFile += ".exe";
+        } else if (OS.isMac()) {
+            binaryFile += "-osx";
+        } else if (OS.isLinux()) {
+            binaryFile += "-linux";
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder(

@@ -53,7 +53,10 @@ public class DownloadableFile {
         }
 
         if (arch != null) {
-            return (arch.equalsIgnoreCase("x86") && !OS.is64Bit()) || (arch.equalsIgnoreCase("x64") && OS.is64Bit());
+            return (arch.equalsIgnoreCase("arm64") && (!OS.is64Bit() || !OS.isArm()))
+                    || (arch.equalsIgnoreCase("arm") && (OS.is64Bit() || !OS.isArm()))
+                    || (arch.equalsIgnoreCase("x86") && !OS.is64Bit())
+                    || (arch.equalsIgnoreCase("x64") && OS.is64Bit());
         }
 
         return true;

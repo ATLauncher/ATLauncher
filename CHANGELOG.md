@@ -28,3 +28,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove the fabric api install button after it's installed
 - Show current installed version when updating Curse mod
 - Fix system tray icon not being removed on shutdown
+- Fix crashes on boot for ARM devices [#390]
