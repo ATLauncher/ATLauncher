@@ -122,7 +122,7 @@ public class ATLauncherLaf extends FlatLaf {
         classes.add(ATLauncherLaf.class); // ATLauncher base class
 
         if (getClass().getSuperclass() != ATLauncherLaf.class) {
-            classes.add(getClass().getSuperclass()); // Dark/Light ATlauncher base class
+            classes.add(getClass().getSuperclass()); // Dark/Light ATLauncher base class
         }
 
         classes.add(getClass()); // Theme's class

@@ -107,8 +107,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<>();
-        theme.addItem(new ComboItem("com.atlauncher.themes.Dark", "Dark"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.Light", "Light"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.Light", "ATLauncher Light"));
         theme.addItem(new ComboItem("com.atlauncher.themes.MonokaiPro", "Monokai Pro"));
         theme.addItem(new ComboItem("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
 
