@@ -87,6 +87,48 @@ To check that they're all correct, you can runthe below command:
 This is run during the CI process, and will fail if the license is missing or not up to date, so make sure that you add
 this to all new files you create.
 
+## Create Custom Themes
+
+ATLauncher supports custom themes. The process is fairly straight forward, but may require a lot of trial and error.
+
+First you must create a `MyThemeName.java` in the `src/main/java/com/atlauncher/themes/` directory. Your theme should
+extend one of the base ATLauncher themes depending on what you need:
+
+- `Dark` is the default theme and is a dark theme. It's a good place to start with some defaults for new dark themes.
+- `Light` is a light theme. It's a good place to start with some defaults for new light themes.
+- `ATLauncherLaf` is a base class which every theme MUST at some point extend. It provides some defaults including our
+  brand colours and some defaults. This shouldn't be extended from unless you need absolute power.
+
+Once you've created your class (look at other themes in the directory for an idea on what you can do), you'll need to
+create a properties file in the `src/main/resources/com/atlauncher/themes/` directory. This properties file is how you
+setup and change UI elements. You should use the existing examples in that directory as examples.
+
+Last step is to register the theme in the file `src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java`.
+
+Now you can open the launcher and then switch to your theme.
+
+We use a library called [FlatLaf](https://github.com/JFormDesigner/FlatLaf) to provide theme support. There are some
+good references listed below to see the default values for the themes and see what you can overwrite:
+
+- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLaf.properties>
+  - This file contains all the base properties for all themes
+- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLightLaf.properties>
+  - This file contains all the base properties for light themes
+- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatDarkLaf.properties>
+  - This file contains all the base properties for dark themes
+
+### IntelliJ theme.json Support
+
+You can also take IntelliJ `theme.json` files and convert them to themes for ATLauncher. From within the `theme.json`
+file, take the `UI` object and plug that into [this site](https://tools.fromdev.com/json-to-property-converter.html) to
+convert it from JSON to properties format.
+
+There are also special rules you need to apply as we currently do not support these `theme.json` files out of the box,
+so you need to manually apply the [transformations](https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/java/com/formdev/flatlaf/IntelliJTheme.java)
+in order for the theme to work exactly right.
+
+For an example, see the `DraculaContrast` theme which uses this method.
+
 ## Plugging In Your Data
 
 To get started with the code and plug in your own data, you need to edit the

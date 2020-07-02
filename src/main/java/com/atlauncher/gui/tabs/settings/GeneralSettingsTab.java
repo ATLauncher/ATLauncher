@@ -109,6 +109,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         theme = new JComboBox<>();
         theme.addItem(new ComboItem("com.atlauncher.themes.Dark", "Dark"));
         theme.addItem(new ComboItem("com.atlauncher.themes.Light", "Light"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.MonokaiPro", "Monokai Pro"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
 
         for (int i = 0; i < theme.getItemCount(); i++) {
             ComboItem item = theme.getItemAt(i);

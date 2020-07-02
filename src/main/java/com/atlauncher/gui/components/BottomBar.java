@@ -27,9 +27,11 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import com.atlauncher.LogManager;
+import com.atlauncher.evnt.listener.ThemeListener;
+import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.utils.OS;
 
-public abstract class BottomBar extends JPanel {
+public abstract class BottomBar extends JPanel implements ThemeListener {
     private static final long serialVersionUID = -7488195680365431776L;
 
     protected final JButton nodeCraftIcon = new SMButton("/assets/image/social/nodecraft.png",
@@ -55,6 +57,8 @@ public abstract class BottomBar extends JPanel {
         this.rightSide.add(this.githubIcon);
         this.rightSide.add(this.redditIcon);
         this.rightSide.add(this.twitterIcon);
+
+        ThemeManager.addListener(this);
     }
 
     private void setupSocialButtonListeners() {
@@ -82,5 +86,9 @@ public abstract class BottomBar extends JPanel {
             LogManager.info("Opening Up ATLauncher Twitter Page");
             OS.openWebBrowser("https://atl.pw/twitter");
         });
+    }
+
+    public void onThemeChange() {
+        this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
     }
 }
