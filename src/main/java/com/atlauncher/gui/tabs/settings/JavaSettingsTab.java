@@ -359,7 +359,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         startMinecraftMaximised = new JCheckBox();
         if (App.settings.startMinecraftMaximised()) {
@@ -379,7 +379,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(ignoreJavaOnInstanceLaunchLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         ignoreJavaOnInstanceLaunch = new JCheckBox();
         if (App.settings.ignoreJavaOnInstanceLaunch()) {

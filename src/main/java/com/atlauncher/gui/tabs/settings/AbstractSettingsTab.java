@@ -34,6 +34,10 @@ public abstract class AbstractSettingsTab extends JPanel implements Tab {
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
     final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
 
+    // CheckBoxes has 4 margin on it, so we negate that here so it aligns up without
+    // the need to remove that margin from all CheckBox components
+    final Insets CHECKBOX_FIELD_INSETS = new Insets(5, -3, 5, 0);
+
     final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
     final ImageIcon ERROR_ICON = Utils.getIconImage("/assets/image/Error.png");
     final ImageIcon WARNING_ICON = Utils.getIconImage("/assets/image/Warning.png");

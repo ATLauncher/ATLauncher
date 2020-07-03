@@ -169,7 +169,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(sortPacksAlphabeticallyLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         sortPacksAlphabetically = new JCheckBox();
         if (App.settings.sortPacksAlphabetically()) {
@@ -188,7 +188,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(keepLauncherOpenLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         keepLauncherOpen = new JCheckBox();
         if (App.settings.keepLauncherOpen()) {
@@ -207,7 +207,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableConsole = new JCheckBox();
         if (App.settings.enableConsole()) {
@@ -227,7 +227,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableTrayIcon = new JCheckBox();
         if (App.settings.enableTrayIcon()) {
@@ -246,7 +246,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(enableDiscordIntegrationLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableDiscordIntegration = new JCheckBox();
         if (App.settings.enableDiscordIntegration()) {
@@ -268,7 +268,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             add(enableFeralGamemodeLabel, gbc);
 
             gbc.gridx++;
-            gbc.insets = FIELD_INSETS;
+            gbc.insets = CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             enableFeralGamemode = new JCheckBox();
             if (App.settings.enableFeralGamemode()) {
@@ -297,7 +297,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(enablePackTagsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enablePackTags = new JCheckBox();
         enablePackTags.setSelected(App.settings.enabledPackTags());
@@ -316,7 +316,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(disableAddModRestrictionsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         disableAddModRestrictions = new JCheckBox();
         disableAddModRestrictions.setSelected(App.settings.disabledAddModRestrictions());

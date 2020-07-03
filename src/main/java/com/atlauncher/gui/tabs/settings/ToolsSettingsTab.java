@@ -51,7 +51,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableServerChecker = new JCheckBox();
         if (App.settings.enableServerChecker()) {

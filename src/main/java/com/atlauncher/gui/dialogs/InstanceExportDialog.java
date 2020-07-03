@@ -30,6 +30,8 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -61,7 +63,6 @@ public class InstanceExportDialog extends JDialog {
 
     final GridBagConstraints gbc = new GridBagConstraints();
     final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
-    final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
 
     public InstanceExportDialog(InstanceV2 instance) {
         super(App.settings.getParent(), GetText.tr("Export {0}", instance.launcher.name),
@@ -137,7 +138,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JPanel saveToPanel = new JPanel();
-        saveToPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        saveToPanel.setLayout(new BoxLayout(saveToPanel, BoxLayout.X_AXIS));
 
         final JTextField saveTo = new JTextField(25);
         saveTo.setText(instance.getRoot().toAbsolutePath().toString());
@@ -154,8 +155,11 @@ public class InstanceExportDialog extends JDialog {
                 saveTo.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
+
         saveToPanel.add(saveTo);
+        saveToPanel.add(Box.createHorizontalStrut(5));
         saveToPanel.add(browseButton);
+
         topPanel.add(saveToPanel, gbc);
 
         // Overrides
@@ -174,6 +178,7 @@ public class InstanceExportDialog extends JDialog {
 
         JPanel overridesPanel = new JPanel();
         overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
+        overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
 
         File[] files = instance.getRoot().toFile().listFiles(new FileFilter() {
             @Override

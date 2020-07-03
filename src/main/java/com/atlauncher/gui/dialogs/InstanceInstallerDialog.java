@@ -78,6 +78,13 @@ public class InstanceInstallerDialog extends JDialog {
     private InstanceV2 instanceV2 = null;
     private CurseManifest curseManifest = null;
 
+    private final Insets LABEL_INSETS = new Insets(3, 0, 3, 10);
+    private final Insets FIELD_INSETS = new Insets(3, 0, 3, 0);
+
+    // CheckBoxes has 4 margin on it, so we negate that here so it aligns up without
+    // the need to remove that margin from all CheckBox components
+    private final Insets CHECKBOX_FIELD_INSETS = new Insets(3, -3, 3, 0);
+
     private JPanel top;
     private JPanel middle;
     private JPanel bottom;
@@ -203,13 +210,13 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(2, 0, 2, 10);
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = new Insets(2, 0, 2, 0);
+        gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         nameField = new JTextField(17);
         nameField.setText(((isReinstall) ? (instanceV2 != null ? instanceV2.launcher.name : instance.getName())
@@ -236,7 +243,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = new Insets(2, 0, 2, 10);
+        gbc.insets = LABEL_INSETS;
 
         gbc = this.setupVersionsDropdown(gbc);
         gbc = this.setupLoaderVersionsDropdown(gbc);
@@ -244,13 +251,13 @@ public class InstanceInstallerDialog extends JDialog {
         if (!this.isServer && !isReinstall) {
             gbc.gridx = 0;
             gbc.gridy++;
-            gbc.insets = new Insets(2, 0, 2, 10);
+            gbc.insets = LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
             middle.add(enableUserLockLabel, gbc);
 
             gbc.gridx++;
-            gbc.insets = new Insets(2, 0, 2, 0);
+            gbc.insets = CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             enableUserLock = new JCheckBox();
             enableUserLock.addActionListener(e -> {
@@ -272,13 +279,13 @@ public class InstanceInstallerDialog extends JDialog {
         if (!this.isServer && isReinstall) {
             gbc.gridx = 0;
             gbc.gridy++;
-            gbc.insets = new Insets(2, 0, 2, 10);
+            gbc.insets = LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             saveModsLabel = new JLabel(GetText.tr("Save Mods") + "? ");
             middle.add(saveModsLabel, gbc);
 
             gbc.gridx++;
-            gbc.insets = new Insets(2, 0, 2, 0);
+            gbc.insets = new Insets(5, 0, 5, 0);
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             saveModsCheckbox = new JCheckBox();
             saveModsCheckbox.addActionListener(e -> {
@@ -599,7 +606,7 @@ public class InstanceInstallerDialog extends JDialog {
         middle.add(versionLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = new Insets(2, 0, 2, 0);
+        gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         versionsDropDown = new JComboBox<>();
         if (pack.isTester()) {
@@ -738,7 +745,7 @@ public class InstanceInstallerDialog extends JDialog {
             // ensures that there is a maximum width of 250 px to prevent overflow
             loaderVersionLength = Math.min(250, loaderVersionLength);
 
-            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 25));
+            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
 
             loaderVersionsDropDown.setEnabled(true);
             loaderVersionLabel.setVisible(true);
@@ -753,13 +760,13 @@ public class InstanceInstallerDialog extends JDialog {
     private GridBagConstraints setupLoaderVersionsDropdown(GridBagConstraints gbc) {
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = new Insets(2, 0, 2, 10);
+        gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         loaderVersionLabel = new JLabel(GetText.tr("Loader Version") + ": ");
         middle.add(loaderVersionLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = new Insets(2, 0, 2, 0);
+        gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         loaderVersionsDropDown = new JComboBox<>();
         this.updateLoaderVersions((PackVersion) this.versionsDropDown.getSelectedItem());

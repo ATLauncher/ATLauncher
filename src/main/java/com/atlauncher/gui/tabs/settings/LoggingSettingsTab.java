@@ -78,7 +78,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
         enableLogs.addActionListener(e -> {
@@ -108,7 +108,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableAnalytics = new JCheckBox();
         if (App.settings.enableAnalytics()) {
@@ -129,7 +129,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
         if (!App.settings.enableLogs()) {

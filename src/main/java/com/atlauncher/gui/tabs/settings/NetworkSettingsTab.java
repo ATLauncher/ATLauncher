@@ -82,7 +82,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         add(enableProxyLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableProxy = new JCheckBox();
         if (App.settings.getEnableProxy()) {

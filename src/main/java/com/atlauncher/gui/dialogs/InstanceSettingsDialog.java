@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -27,8 +28,11 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -44,8 +48,10 @@ import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.javafinder.JavaInfo;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -207,7 +213,7 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText
                 .tr("This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
                 + "</html>");
@@ -216,8 +222,16 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridx++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
         JPanel javaPathPanel = new JPanel();
-        javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
+
+        JPanel javaPathPanelTop = new JPanel();
+        javaPathPanelTop.setLayout(new BoxLayout(javaPathPanelTop, BoxLayout.X_AXIS));
+
+        JPanel javaPathPanelBottom = new JPanel();
+        javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
+
         final JTextField javaPath = new JTextField(32);
         javaPath.setText(getIfNotNull(
                 this.instanceV2 != null ? this.instanceV2.launcher.javaPath : instance.getSettings().getJavaPath(),
@@ -236,9 +250,34 @@ public class InstanceSettingsDialog extends JDialog {
                 javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
-        javaPathPanel.add(javaPath);
-        javaPathPanel.add(javaPathResetButton);
-        javaPathPanel.add(javaBrowseButton);
+
+        JComboBox<JavaInfo> installedJavas = new JComboBox<>();
+        installedJavas.setPreferredSize(new Dimension(516, 24));
+        if (Java.getInstalledJavas().size() != 0) {
+            Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
+
+            installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
+                    .orElse(null));
+
+            installedJavas
+                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+        }
+
+        if (installedJavas.getItemCount() != 0) {
+            javaPathPanelTop.add(installedJavas);
+        }
+
+        javaPathPanelBottom.add(javaPath);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+        javaPathPanelBottom.add(javaPathResetButton);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+        javaPathPanelBottom.add(javaBrowseButton);
+
+        javaPathPanel.add(javaPathPanelTop);
+        javaPathPanel.add(Box.createVerticalStrut(5));
+        javaPathPanel.add(javaPathPanelBottom);
+
         topPanel.add(javaPathPanel, gbc);
 
         // Java Paramaters
@@ -256,11 +295,7 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         JPanel javaParametersPanel = new JPanel();
-        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0) {
-            {
-                this.setAlignOnBaseline(true);
-            }
-        });
+        javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
 
         final JTextArea javaParameters = new JTextArea(6, 40);
         javaParameters.setText(getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.javaArguments
@@ -269,8 +304,16 @@ public class InstanceSettingsDialog extends JDialog {
         javaParameters.setWrapStyleWord(true);
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> javaParameters.setText(App.settings.getJavaParameters()));
+
         javaParametersPanel.add(javaParameters);
-        javaParametersPanel.add(javaParametersResetButton);
+        javaParametersPanel.add(Box.createHorizontalStrut(5));
+
+        Box paramsResetBox = Box.createVerticalBox();
+        paramsResetBox.add(javaParametersResetButton);
+        paramsResetBox.add(Box.createVerticalGlue());
+
+        javaParametersPanel.add(paramsResetBox);
+
         topPanel.add(javaParametersPanel, gbc);
 
         bottomPanel.setLayout(new FlowLayout());

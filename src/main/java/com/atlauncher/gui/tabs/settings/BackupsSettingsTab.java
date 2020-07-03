@@ -42,7 +42,7 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         add(enableModsBackupsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableModsBackups = new JCheckBox();
         enableModsBackups.setSelected(App.settings.enableModsBackups());

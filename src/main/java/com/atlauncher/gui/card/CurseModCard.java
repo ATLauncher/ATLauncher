@@ -65,7 +65,7 @@ public final class CurseModCard extends JPanel {
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
         summary.setText(mod.summary);
-        summary.setBorder(BorderFactory.createEmptyBorder());
+        summary.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
         summary.setEditable(false);
         summary.setHighlighter(null);
         summary.setLineWrap(true);
@@ -98,7 +98,7 @@ public final class CurseModCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.ABOVE_TOP, App.THEME.getBoldFont().deriveFont(12f));
+                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
     }
 }

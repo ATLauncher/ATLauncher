@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -62,7 +63,7 @@ public class RenameInstanceDialog extends JDialog {
 
         Analytics.sendScreenView("Rename Instance Dialog");
 
-        setSize(300, 150);
+        setSize(320, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -85,7 +86,7 @@ public class RenameInstanceDialog extends JDialog {
 
         this.instanceV2 = instanceV2;
 
-        setSize(300, 150);
+        setSize(320, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -115,11 +116,13 @@ public class RenameInstanceDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = new Insets(5, 0, 5, 10);
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         instanceNameLabel = new JLabel(GetText.tr("Instance Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = new Insets(5, 0, 5, 0);
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         instanceName = new JTextField(16);
         instanceName.setText(this.instanceV2 != null ? this.instanceV2.launcher.name : this.instance.getName());
