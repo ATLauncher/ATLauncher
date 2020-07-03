@@ -101,7 +101,6 @@ public class ATLauncherLaf extends FlatLaf {
     public List<Class<?>> getLafClassesForDefaultsLoading() {
         List<Class<?>> classes = new ArrayList<>();
 
-        classes.add(BasicLookAndFeel.class); // BasicLookAndFeel class
         classes.add(FlatLaf.class); // FlatLaf class
 
         // Add the themes base dark/light class

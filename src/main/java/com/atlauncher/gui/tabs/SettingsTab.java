@@ -100,6 +100,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 }
                 if (reloadTheme) {
                     App.loadTheme(App.settings.getTheme());
+                    Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
                     FlatLaf.updateUILater();
                     ThemeManager.post();
                 }

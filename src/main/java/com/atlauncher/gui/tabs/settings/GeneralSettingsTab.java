@@ -111,6 +111,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         theme.addItem(new ComboItem("com.atlauncher.themes.Light", "ATLauncher Light"));
         theme.addItem(new ComboItem("com.atlauncher.themes.MonokaiPro", "Monokai Pro"));
         theme.addItem(new ComboItem("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.Vuesion", "Vuesion"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.MaterialPalenightContrast", "Material Palenight Contrast"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.ArcOrange", "Arc Orange"));
+        theme.addItem(new ComboItem("com.atlauncher.themes.CyanLight", "Cyan Light"));
 
         for (int i = 0; i < theme.getItemCount(); i++) {
             ComboItem item = theme.getItemAt(i);
