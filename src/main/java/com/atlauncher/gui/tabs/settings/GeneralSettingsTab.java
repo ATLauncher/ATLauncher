@@ -17,12 +17,13 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -79,11 +80,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+        JPanel languagePanel = new JPanel();
+        languagePanel.setLayout(new BoxLayout(languagePanel, BoxLayout.X_AXIS));
 
         language = new JComboBox<>(Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
         languagePanel.add(language);
+
+        languagePanel.add(Box.createHorizontalStrut(5));
 
         translateButton = new JButton(GetText.tr("Help Translate"));
         translateButton.addActionListener(e -> OS.openWebBrowser(Constants.CROWDIN_URL));

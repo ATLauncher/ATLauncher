@@ -81,9 +81,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
-        SpinnerNumberModel serverCheckerWaitModel = new SpinnerNumberModel(
-                App.settings.getServerCheckerWait(),
-                1, 30, 1);
+        SpinnerNumberModel serverCheckerWaitModel = new SpinnerNumberModel(App.settings.getServerCheckerWait(), 1, 30,
+                1);
 
         serverCheckerWait = new JSpinner(serverCheckerWaitModel);
         if (!App.settings.enableServerChecker()) {
@@ -93,8 +92,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     }
 
     public boolean needToRestartServerChecker() {
-        return ((enableServerChecker.isSelected() != App.settings.enableServerChecker()) || (App.settings
-                .getServerCheckerWait() != (Integer) serverCheckerWait.getValue()));
+        return ((enableServerChecker.isSelected() != App.settings.enableServerChecker())
+                || (App.settings.getServerCheckerWait() != (Integer) serverCheckerWait.getValue()));
     }
 
     public void save() {

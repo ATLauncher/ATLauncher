@@ -42,7 +42,7 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
     protected final JButton twitterIcon = new SMButton("/assets/image/social/twitter.png", "Twitter");
     protected final JButton redditIcon = new SMButton("/assets/image/social/reddit.png", "Reddit");
 
-    protected final JPanel rightSide = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 7));
+    protected final JPanel rightSide = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 8));
 
     public BottomBar() {
         super(new BorderLayout());

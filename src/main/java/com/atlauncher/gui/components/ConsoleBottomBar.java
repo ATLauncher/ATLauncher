@@ -42,7 +42,7 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
 
-    private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
+    private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 13));
 
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton copyLogButton = new JButton(GetText.tr("Copy Log"));

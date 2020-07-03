@@ -17,13 +17,14 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.io.File;
 
-import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -66,8 +67,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     private JPanel windowSizePanel;
     private JLabelWithHover windowSizeLabel;
-    private JTextField widthField;
-    private JTextField heightField;
+    private JSpinner widthField;
+    private JSpinner heightField;
     private JComboBox<String> commonScreenSizes;
     private JPanel javaPathPanel;
     private JLabelWithHover javaPathLabel;
@@ -191,15 +192,24 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
         windowSizePanel = new JPanel();
-        windowSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        widthField = new JTextField(4);
-        widthField.setText(App.settings.getWindowWidth() + "");
-        heightField = new JTextField(4);
-        heightField.setText(App.settings.getWindowHeight() + "");
+        windowSizePanel.setLayout(new BoxLayout(windowSizePanel, BoxLayout.X_AXIS));
+
+        SpinnerNumberModel widthModel = new SpinnerNumberModel(App.settings.getWindowWidth(), 1,
+                OS.getMaximumWindowWidth(), 1);
+        widthField = new JSpinner(widthModel);
+        widthField.setEditor(new JSpinner.NumberEditor(widthField, "#"));
+
+        SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.getWindowHeight(), 1,
+                OS.getMaximumWindowHeight(), 1);
+        heightField = new JSpinner(heightModel);
+        heightField.setEditor(new JSpinner.NumberEditor(heightField, "#"));
+
         commonScreenSizes = new JComboBox<>();
         commonScreenSizes.addItem("Select An Option");
         commonScreenSizes.addItem("854x480");
+
         if (OS.getMaximumWindowWidth() >= 1280 && OS.getMaximumWindowHeight() >= 720) {
             commonScreenSizes.addItem("1280x720");
         }
@@ -213,20 +223,21 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             String selected = (String) commonScreenSizes.getSelectedItem();
             if (selected.contains("x")) {
                 String[] parts = selected.split("x");
-                widthField.setText(parts[0]);
-                heightField.setText(parts[1]);
+                widthField.setValue(Integer.parseInt(parts[0]));
+                heightField.setValue(Integer.parseInt(parts[1]));
             }
         });
         commonScreenSizes.setPreferredSize(new Dimension(commonScreenSizes.getPreferredSize().width + 10,
                 commonScreenSizes.getPreferredSize().height));
+
         windowSizePanel.add(widthField);
-        windowSizePanel.add(new JLabel("x") {
-            {
-                this.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
-            }
-        });
+        windowSizePanel.add(Box.createHorizontalStrut(5));
+        windowSizePanel.add(new JLabel("x"));
+        windowSizePanel.add(Box.createHorizontalStrut(5));
         windowSizePanel.add(heightField);
+        windowSizePanel.add(Box.createHorizontalStrut(5));
         windowSizePanel.add(commonScreenSizes);
+
         add(windowSizePanel, gbc);
 
         // Java Path
@@ -244,10 +255,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        javaPathPanel = new JPanel(new BorderLayout());
+        javaPathPanel = new JPanel();
+        javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
 
-        JPanel javaPathPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JPanel javaPathPanelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JPanel javaPathPanelTop = new JPanel();
+        javaPathPanelTop.setLayout(new BoxLayout(javaPathPanelTop, BoxLayout.X_AXIS));
+
+        JPanel javaPathPanelBottom = new JPanel();
+        javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
 
         installedJavas = new JComboBox<>();
         installedJavas.setPreferredSize(new Dimension(516, 24));
@@ -261,6 +276,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             installedJavas
                     .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
         }
+
         if (installedJavas.getItemCount() != 0) {
             javaPathPanelTop.add(installedJavas);
         }
@@ -281,11 +297,17 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
+
         javaPathPanelBottom.add(javaPath);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
         javaPathPanelBottom.add(javaPathResetButton);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
         javaPathPanelBottom.add(javaBrowseButton);
-        javaPathPanel.add(javaPathPanelTop, BorderLayout.NORTH);
-        javaPathPanel.add(javaPathPanelBottom, BorderLayout.CENTER);
+
+        javaPathPanel.add(javaPathPanelTop);
+        javaPathPanel.add(Box.createVerticalStrut(5));
+        javaPathPanel.add(javaPathPanelBottom);
+
         add(javaPathPanel, gbc);
 
         // Java Paramaters
@@ -302,12 +324,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+
         javaParametersPanel = new JPanel();
-        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0) {
-            {
-                this.setAlignOnBaseline(true);
-            }
-        });
+        javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
+        javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
         javaParameters = new JTextArea(6, 40);
         javaParameters.setText(App.settings.getJavaParameters());
@@ -316,8 +336,15 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
+
         javaParametersPanel.add(javaParameters);
-        javaParametersPanel.add(javaParametersResetButton);
+        javaParametersPanel.add(Box.createHorizontalStrut(5));
+
+        Box paramsResetBox = Box.createVerticalBox();
+        paramsResetBox.add(javaParametersResetButton);
+        paramsResetBox.add(Box.createVerticalGlue());
+        javaParametersPanel.add(paramsResetBox);
+
         add(javaParametersPanel, gbc);
 
         // Start Minecraft Maximised
@@ -388,8 +415,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.setInitialMemory((Integer) initialMemory.getValue());
         App.settings.setMaximumMemory((Integer) maximumMemory.getValue());
         App.settings.setPermGen((Integer) permGen.getValue());
-        App.settings.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
-        App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll("[^0-9]", "")));
+        App.settings.setWindowWidth((Integer) widthField.getValue());
+        App.settings.setWindowHeight((Integer) heightField.getValue());
         App.settings.setJavaPath(javaPath.getText());
         App.settings.setJavaParameters(javaParameters.getText());
         App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
