@@ -1413,7 +1413,8 @@ public class Instance implements Cloneable {
 
                     Process process = MCLauncher.launch(account, Instance.this, session);
 
-                    if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
+                    if ((App.autoLaunch != null && App.closeLauncher)
+                            || (!App.settings.keepLauncherOpen() && !App.settings.enableLogs())) {
                         System.exit(0);
                     }
 

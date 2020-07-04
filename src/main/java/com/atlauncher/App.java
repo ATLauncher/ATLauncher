@@ -155,6 +155,22 @@ public class App {
     public static boolean noLauncherUpdate = false;
 
     /**
+     * This will tell the launcher to not show the console. You can open the console
+     * through the tray menu or the main launcher frame.
+     * <p/>
+     * --no-console
+     */
+    public static boolean noConsole = false;
+
+    /**
+     * This will close the launcher once Minecraft is launcher. This is only
+     * effective when combined with the --launch parameter.
+     * <p/>
+     * --close-launcher
+     */
+    public static boolean closeLauncher = false;
+
+    /**
      * This sets a pack code to be added to the launcher on startup.
      */
     public static String packCodeToAdd = null;
@@ -237,7 +253,7 @@ public class App {
         console = new LauncherConsole();
         LogManager.start();
 
-        if (settings.enableConsole()) {
+        if (!noConsole && settings.enableConsole()) {
             // Show the console if enabled.
             console.setVisible(true);
         }
@@ -248,7 +264,7 @@ public class App {
             LogManager.logStackTrace("Error loading language", e1);
         }
 
-        if (settings.enableConsole()) {
+        if (!noConsole && settings.enableConsole()) {
             // Show the console if enabled.
             SwingUtilities.invokeLater(() -> {
                 console.setVisible(true);
@@ -647,6 +663,8 @@ public class App {
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
         parser.accepts("working-dir").withRequiredArg().ofType(String.class);
         parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("no-console").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("close-launcher").withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug").withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
         parser.accepts("launch").withRequiredArg().ofType(String.class);
@@ -692,6 +710,16 @@ public class App {
         noLauncherUpdate = options.has("no-launcher-update");
         if (noLauncherUpdate) {
             LogManager.debug("Not updating the launcher!");
+        }
+
+        noConsole = options.has("no-console");
+        if (noConsole) {
+            LogManager.debug("Not showing console!");
+        }
+
+        closeLauncher = options.has("close-launcher");
+        if (closeLauncher) {
+            LogManager.debug("Closing launcher once Minecraft is launched!");
         }
 
         skipIntegration = options.has("skip-integration");

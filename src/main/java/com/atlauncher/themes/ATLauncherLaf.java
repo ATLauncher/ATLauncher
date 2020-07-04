@@ -22,8 +22,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicLookAndFeel;
-
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Resources;
 import com.formdev.flatlaf.FlatDarculaLaf;

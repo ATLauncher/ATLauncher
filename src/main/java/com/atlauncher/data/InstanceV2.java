@@ -458,7 +458,12 @@ public class InstanceV2 extends MinecraftVersion {
 
                     Process process = MCLauncher.launch(account, this, session, nativesTempDir);
 
-                    if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
+                    if ((App.autoLaunch != null && App.closeLauncher)
+                            || (!App.settings.keepLauncherOpen() && !App.settings.enableLogs())) {
+                        if (App.settings.enableLogs()) {
+                            addTimePlayed(1, this.launcher.version); // count the stats, just without time played
+                        }
+
                         System.exit(0);
                     }
 

@@ -29,3 +29,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Show current installed version when updating Curse mod
 - Fix system tray icon not being removed on shutdown
 - Fix debug mode not censoring tokens
+- Add in --close-launcher and --no-console command line arguments
