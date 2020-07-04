@@ -379,7 +379,7 @@ public class MCLauncher {
         List<String> arguments = new ArrayList<>();
 
         if (OS.isLinux() && App.settings.enableFeralGamemode() && Utils.executableInPath("gamemoderun")) {
-          arguments.add("gamemoderun");
+            arguments.add("gamemoderun");
         }
 
         String path = javaPath + File.separator + "bin" + File.separator + "java";
@@ -532,10 +532,12 @@ public class MCLauncher {
 
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(account.getUUID(), "REDACTED");
-            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-            argsString = argsString.replace(account.getSession(response), "REDACTED");
-            argsString = argsString.replace(props, "REDACTED");
         }
+
+        // always censor these
+        argsString = argsString.replace(props, "REDACTED");
+        argsString = argsString.replace(account.getSession(response), "REDACTED");
+        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):"
                 + " " + argsString);
