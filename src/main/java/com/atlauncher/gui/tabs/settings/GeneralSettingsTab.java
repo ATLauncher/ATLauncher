@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -70,7 +71,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         // Language
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
 
         languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
@@ -78,7 +79,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(languageLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JPanel languagePanel = new JPanel();
@@ -100,7 +101,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         themeLabel = new JLabelWithHover(GetText.tr("Theme") + ":", HELP_ICON,
@@ -109,7 +110,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(themeLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<>();
         theme.addItem(new ComboItem("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"));
@@ -137,7 +138,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         dateFormatLabel = new JLabelWithHover(GetText.tr("Date Format") + ":", HELP_ICON,
@@ -146,7 +147,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(dateFormatLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         dateFormat = new JComboBox<>();
 
@@ -162,14 +163,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         sortPacksAlphabeticallyLabel = new JLabelWithHover(GetText.tr("Sort Packs Alphabetically") + "?", HELP_ICON,
                 GetText.tr("If you want to sort the packs in the packs panel alphabetically by default or not."));
         add(sortPacksAlphabeticallyLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         sortPacksAlphabetically = new JCheckBox();
         if (App.settings.sortPacksAlphabetically()) {
@@ -181,14 +182,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         keepLauncherOpenLabel = new JLabelWithHover(GetText.tr("Keep Launcher Open") + "?", HELP_ICON,
                 GetText.tr("This determines if ATLauncher should stay open or exit after Minecraft has exited"));
         add(keepLauncherOpenLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         keepLauncherOpen = new JCheckBox();
         if (App.settings.keepLauncherOpen()) {
@@ -200,14 +201,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableConsoleLabel = new JLabelWithHover(GetText.tr("Enable Console") + "?", HELP_ICON,
                 GetText.tr("If you want the console to be visible when opening the Launcher."));
         add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableConsole = new JCheckBox();
         if (App.settings.enableConsole()) {
@@ -219,7 +220,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableTrayIconLabel = new JLabelWithHover(GetText.tr("Enable Tray Menu") + "?", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
@@ -228,7 +229,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableTrayIcon = new JCheckBox();
         if (App.settings.enableTrayIcon()) {
@@ -240,14 +241,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableDiscordIntegrationLabel = new JLabelWithHover(GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
                 GetText.tr("This will enable showing which pack you're playing in Discord."));
         add(enableDiscordIntegrationLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableDiscordIntegration = new JCheckBox();
         if (App.settings.enableDiscordIntegration()) {
@@ -262,14 +263,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
             gbc.gridx = 0;
             gbc.gridy++;
-            gbc.insets = LABEL_INSETS;
+            gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             enableFeralGamemodeLabel = new JLabelWithHover(GetText.tr("Enable Feral Gamemode") + "?", HELP_ICON,
                     GetText.tr("This will enable Feral Gamemode for packs launched."));
             add(enableFeralGamemodeLabel, gbc);
 
             gbc.gridx++;
-            gbc.insets = CHECKBOX_FIELD_INSETS;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             enableFeralGamemode = new JCheckBox();
             if (App.settings.enableFeralGamemode()) {
@@ -291,14 +292,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enablePackTagsLabel = new JLabelWithHover(GetText.tr("Enable Pack Tags?"), HELP_ICON,
                 GetText.tr("Pack tags shows you if a pack is public, semi public or private"));
         add(enablePackTagsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enablePackTags = new JCheckBox();
         enablePackTags.setSelected(App.settings.enabledPackTags());
@@ -308,7 +309,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         disableAddModRestrictionsLabel = new JLabelWithHover(GetText.tr("Disable Add Mod Restrictions?"), HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
@@ -317,7 +318,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(disableAddModRestrictionsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         disableAddModRestrictions = new JCheckBox();
         disableAddModRestrictions.setSelected(App.settings.disabledAddModRestrictions());

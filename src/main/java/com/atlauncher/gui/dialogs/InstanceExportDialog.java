@@ -22,7 +22,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -45,6 +44,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.Utils;
@@ -62,7 +62,6 @@ public class InstanceExportDialog extends JDialog {
     final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
 
     final GridBagConstraints gbc = new GridBagConstraints();
-    final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
 
     public InstanceExportDialog(InstanceV2 instance) {
         super(App.settings.getParent(), GetText.tr("Export {0}", instance.launcher.name),
@@ -92,7 +91,7 @@ public class InstanceExportDialog extends JDialog {
         // Name
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover nameLabel = new JLabelWithHover(GetText.tr("Name") + ":", HELP_ICON,
@@ -100,7 +99,7 @@ public class InstanceExportDialog extends JDialog {
         topPanel.add(nameLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField name = new JTextField(30);
         name.setText(instance.launcher.name);
@@ -109,7 +108,7 @@ public class InstanceExportDialog extends JDialog {
         // Author
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover authorLabel = new JLabelWithHover(GetText.tr("Author") + ":", HELP_ICON,
@@ -117,7 +116,7 @@ public class InstanceExportDialog extends JDialog {
         topPanel.add(authorLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
         author.setText(App.settings.getAccount().getMinecraftUsername());
@@ -127,14 +126,14 @@ public class InstanceExportDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         JLabelWithHover saveToLabel = new JLabelWithHover(GetText.tr("Save To") + ":", HELP_ICON,
                 GetText.tr("Select the folder you wish to export the instance to"));
         topPanel.add(saveToLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JPanel saveToPanel = new JPanel();
@@ -166,14 +165,14 @@ public class InstanceExportDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover overridesLabel = new JLabelWithHover(GetText.tr("Folders To Export") + ":", HELP_ICON,
                 GetText.tr("Select the folders you wish to include for this export"));
         topPanel.add(overridesLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JPanel overridesPanel = new JPanel();

@@ -25,6 +25,7 @@ import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -44,14 +45,14 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         // Enable Server Checker
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableServerCheckerLabel = new JLabelWithHover(GetText.tr("Enable Server Checker") + "?", HELP_ICON, GetText
                 .tr("This setting enables or disables the checking of added servers in the Server Checker Tool."));
         add(enableServerCheckerLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableServerChecker = new JCheckBox();
         if (App.settings.enableServerChecker()) {
@@ -69,7 +70,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         // Server Checker Wait Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         serverCheckerWaitLabel = new JLabelWithHover(GetText.tr("Time Between Checks") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
@@ -78,7 +79,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         add(serverCheckerWaitLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         SpinnerNumberModel serverCheckerWaitModel = new SpinnerNumberModel(App.settings.getServerCheckerWait(), 1, 30,

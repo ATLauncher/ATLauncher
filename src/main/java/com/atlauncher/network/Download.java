@@ -25,7 +25,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -57,7 +56,6 @@ public final class Download {
     public Path copyTo;
     private String hash;
     private Long fingerprint = null;
-    private List<String> checksums;
     public long size = -1L;
     private InstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;

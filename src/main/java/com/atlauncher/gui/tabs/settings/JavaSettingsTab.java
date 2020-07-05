@@ -38,6 +38,7 @@ import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.SettingsListener;
@@ -47,7 +48,6 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
 import org.mini2Dx.gettext.GetText;
@@ -95,7 +95,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
@@ -117,7 +117,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(initialMemoryPanel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.getInitialMemory(), null, null,
                 128);
@@ -131,7 +131,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         // Perm Gen Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100)
@@ -151,7 +151,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(maximumMemoryPanel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.getMaximumMemory(), null, null,
                 512);
@@ -164,14 +164,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         // Perm Gen Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
                 GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
         add(permGenLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.getPermGen(), null, null, 32);
         permGenModel.setMinimum(32);
@@ -184,14 +184,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         windowSizeLabel = new JLabelWithHover(GetText.tr("Window Size") + ":", HELP_ICON,
                 GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
         add(windowSizeLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         windowSizePanel = new JPanel();
@@ -246,7 +246,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
@@ -255,7 +255,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         javaPathPanel = new JPanel();
         javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
@@ -317,14 +317,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_END;
         javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
         javaParametersPanel = new JPanel();
@@ -353,7 +353,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         startMinecraftMaximisedLabel = new JLabelWithHover(GetText.tr("Start Minecraft Maximised") + "?", HELP_ICON,
                 GetText.tr(
@@ -361,7 +361,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         startMinecraftMaximised = new JCheckBox();
         if (App.settings.startMinecraftMaximised()) {
@@ -373,7 +373,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(GetText.tr("Ignore Java checks On Launch") + "?",
                 HELP_ICON, GetText.tr(
@@ -381,7 +381,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(ignoreJavaOnInstanceLaunchLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         ignoreJavaOnInstanceLaunch = new JCheckBox();
         if (App.settings.ignoreJavaOnInstanceLaunch()) {

@@ -45,6 +45,7 @@ import javax.swing.event.HyperlinkEvent;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -61,12 +62,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;
     private final Insets TOP_INSETS = new Insets(0, 0, 20, 0);
     private final Insets BOTTOM_INSETS = new Insets(10, 0, 0, 0);
-    private final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
-    private final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
-
-    // CheckBoxes has 4 margin on it, so we negate that here so it aligns up without
-    // the need to remove that margin from all CheckBox components
-    private final Insets CHECKBOX_FIELD_INSETS = new Insets(5, -3, 5, 0);
 
     private JLabel userSkin;
     private JPanel infoPanel;
@@ -156,13 +151,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         usernameLabel = new JLabel(GetText.tr("Username/Email") + ":");
         bottomPanel.add(usernameLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         usernameField = new JTextField(16);
         usernameField.addKeyListener(new KeyAdapter() {
@@ -177,13 +172,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         passwordLabel = new JLabel(GetText.tr("Password") + ":");
         bottomPanel.add(passwordLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         passwordField = new JPasswordField(16);
         passwordField.addKeyListener(new KeyAdapter() {
@@ -198,13 +193,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         rememberLabel = new JLabel(GetText.tr("Remember Password") + ":");
         bottomPanel.add(rememberLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         rememberField = new JCheckBox();
         bottomPanel.add(rememberField, gbc);

@@ -24,6 +24,7 @@ import javax.swing.JComboBox;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
 
 import org.mini2Dx.gettext.GetText;
@@ -46,14 +47,14 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         // Forge Logging Level
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         forgeLoggingLevelLabel = new JLabelWithHover(GetText.tr("Forge Logging Level") + ":", HELP_ICON, "<html>"
                 + GetText.tr("This determines the type of logging that Forge should report back to you.") + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         forgeLoggingLevel = new JComboBox<>();
         forgeLoggingLevel.addItem("SEVERE");
@@ -70,7 +71,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableLoggingLabel = new JLabelWithHover(GetText.tr("Enable Logging") + "?", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
@@ -79,7 +80,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
         enableLogs.addActionListener(e -> {
@@ -100,7 +101,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "?", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
@@ -109,7 +110,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableAnalytics = new JCheckBox();
         if (App.settings.enableAnalytics()) {
@@ -121,7 +122,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableOpenEyeReportingLabel = new JLabelWithHover(GetText.tr("Enable OpenEye Reporting") + "?", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
@@ -130,7 +131,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
         if (!App.settings.enableLogs()) {

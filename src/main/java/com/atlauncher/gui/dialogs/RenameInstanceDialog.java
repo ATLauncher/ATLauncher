@@ -21,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -34,6 +33,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.managers.DialogManager;
@@ -116,13 +116,13 @@ public class RenameInstanceDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(5, 0, 5, 10);
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         instanceNameLabel = new JLabel(GetText.tr("Instance Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = new Insets(5, 0, 5, 0);
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         instanceName = new JTextField(16);
         instanceName.setText(this.instanceV2 != null ? this.instanceV2.launcher.name : this.instance.getName());
