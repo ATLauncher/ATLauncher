@@ -24,10 +24,10 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -72,9 +72,9 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         serverCheckerWaitLabel = new JLabelWithHover(GetText.tr("Time Between Checks") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(GetText.tr(
-                        "This option controls how long the launcher should wait between checking servers in the server checker. This value is in minutes and should be between 1 and 30, with the default being 5."),
-                        75, "<br/>") + "</html>");
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This option controls how long the launcher should wait between checking servers in the server checker. This value is in minutes and should be between 1 and 30, with the default being 5."))
+                        .build());
         add(serverCheckerWaitLabel, gbc);
 
         gbc.gridx++;
@@ -113,8 +113,8 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
                 .tr("This setting enables or disables the checking of added servers in the Server Checker Tool."));
 
         this.serverCheckerWaitLabel.setText(GetText.tr("Time Between Checks") + ":");
-        this.serverCheckerWaitLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
-                "This option controls how long the launcher should wait between checking servers in the server checker. This value is in minutes and should be between 1 and 30, with the default being 5."),
-                75, "<br/>") + "</html>");
+        this.serverCheckerWaitLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "This option controls how long the launcher should wait between checking servers in the server checker. This value is in minutes and should be between 1 and 30, with the default being 5."))
+                .build());
     }
 }

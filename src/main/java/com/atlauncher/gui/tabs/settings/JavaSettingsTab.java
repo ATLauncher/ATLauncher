@@ -37,6 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.SettingsListener;
@@ -97,14 +98,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(GetText.tr(
-                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
-                80, "<br/>") + "</html>", RESTART_BORDER);
+        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
+                .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
+                .build(), RESTART_BORDER);
 
         initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(GetText.tr(
-                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
-                        80, "<br/>") + "</html>");
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
+                        .build());
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -133,17 +134,17 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(
-                        GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."), 80,
-                        "<br/>") + "</html>");
+                new HTMLBuilder().center().split(100)
+                        .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."))
+                        .build());
         add(maximumMemoryLabel, gbc);
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         if (!OS.is64Bit()) {
-            maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(GetText.tr(
-                    "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
-                    80, "<br/>") + "</html>", RESTART_BORDER));
+            maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
+                    .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
+                    .build(), RESTART_BORDER));
         }
         maximumMemoryPanel.add(maximumMemoryLabel);
 
@@ -247,9 +248,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridwidth = 1;
         gbc.insets = LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText.tr(
-                "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/><br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
-                + "</html>");
+        javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"))
+                        .build());
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
@@ -391,9 +393,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     public boolean isValidJavaPath() {
         File jPath = new File(javaPath.getText(), "bin");
         if (!jPath.exists()) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent("<html>" + GetText.tr(
-                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again.")
-                    + "</html>").setType(DialogManager.ERROR).show();
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."))
+                    .build()).setType(DialogManager.ERROR).show();
             return false;
         }
         return true;
@@ -403,9 +405,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent("<html>" + GetText.tr(
-                    "The entered Java Parameters were incorrect.<br/>Please remove any references to Xmx, Xms or XX:PermSize.")
-                    + "</html>").setType(DialogManager.ERROR).show();
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
+                    .build()).setType(DialogManager.ERROR).show();
             return false;
         }
         return true;
@@ -430,19 +432,18 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     @Override
     public void onRelocalization() {
-        this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
-                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
-                80, "<br/>") + "</html>");
+        this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
+                .build());
 
         this.initialMemoryLabel.setText(GetText.tr("Initial Memory/Ram") + ":");
-        this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
-                "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
-                80, "<br/>") + "</html>");
+        this.initialMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
+                .build());
 
         this.maximumMemoryLabel.setText(GetText.tr("Maximum Memory/Ram") + ":");
-        this.maximumMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(
-                GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."), 80, "<br/>")
-                + "</html>");
+        this.maximumMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100)
+                .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft.")).build());
 
         this.permGenLabel.setText(GetText.tr("PermGen Size") + ":");
         this.permGenLabel
@@ -453,9 +454,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
 
         this.javaPathLabel.setText(GetText.tr("Java Path") + ":");
-        this.javaPathLabel.setToolTipText("<html>" + GetText.tr(
-                "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/><br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
-                + "</html>");
+        this.javaPathLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"))
+                .build());
 
         this.javaPathResetButton.setText(GetText.tr("Reset"));
 
