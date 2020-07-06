@@ -325,9 +325,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         ZipUtil.pack(instance.getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile(),
                                 ZipNameMapper.INSTANCE_BACKUP);
                         dialog.dispose();
-                        App.TOASTER.pop(GetText.tr(
-                                "Backup is complete. Your backup was saved to the following location:<br/><br/>{0}",
-                                filename));
+                        App.TOASTER.pop(GetText.tr("Backup is complete"));
                     });
                     backupThread.start();
                     dialog.addWindowListener(new WindowAdapter() {

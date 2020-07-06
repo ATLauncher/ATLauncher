@@ -184,9 +184,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                             + ".zip";
                     ZipUtil.pack(server.getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile());
                     dialog.dispose();
-                    App.TOASTER.pop(GetText.tr(
-                            "Backup is complete. Your backup was saved to the following location:<br/><br/>{0}",
-                            filename));
+                    App.TOASTER.pop(GetText.tr("Backup is complete"));
                 });
                 backupThread.start();
                 dialog.addWindowListener(new WindowAdapter() {

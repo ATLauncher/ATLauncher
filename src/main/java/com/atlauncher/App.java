@@ -66,6 +66,7 @@ import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.formdev.flatlaf.extras.FlatInspector;
 
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
@@ -488,6 +489,12 @@ public class App {
 
         // then grab the instance
         THEME = (ATLauncherLaf) Class.forName(theme).getMethod("getInstance").invoke(null);
+
+        // add in flat inspector to allow inspecting UI elements for theming purposes on
+        // non release versions
+        if (!Constants.VERSION.isReleaseStream()) {
+            FlatInspector.install("ctrl shift alt X");
+        }
 
         // register the fonts so they can show within HTML
         THEME.registerFonts();

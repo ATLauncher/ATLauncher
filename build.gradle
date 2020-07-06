@@ -56,6 +56,7 @@ dependencies {
     implementation 'com.sangupta:murmur:1.0.0'
     implementation 'org.apache.commons:commons-lang3:3.10'
     implementation 'com.formdev:flatlaf:0.37'
+    implementation 'com.formdev:flatlaf-extras:0.37'
     implementation 'com.github.pack200:pack200:d5fd0807d6'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
