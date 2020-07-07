@@ -91,9 +91,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         infoPanel.setLayout(new BorderLayout());
         infoPanel.setBorder(BorderFactory.createEmptyBorder(60, 250, 0, 250));
 
-        JEditorPane infoTextPane = new JEditorPane("text/html", "<html>" + GetText.tr(
-                "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://my.minecraft.net/en-us/store/minecraft/#register\">by buying Minecraft here</a>. The launcher doesn't work with cracked accounts.")
-                + "</html>");
+        JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
+                "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://atl.pw/create-account\">by buying Minecraft here</a>. ATLauncher doesn't work with cracked accounts."))
+                .build());
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
