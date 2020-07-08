@@ -208,7 +208,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 downloadLoader();
             }
+
             install();
+
+            if (isCancelled()) {
+                return false;
+            }
 
             if (!this.isServer) {
                 saveInstanceJson();

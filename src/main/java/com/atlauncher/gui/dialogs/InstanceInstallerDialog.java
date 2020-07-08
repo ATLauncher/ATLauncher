@@ -63,6 +63,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import org.mini2Dx.gettext.GetText;
@@ -411,6 +412,8 @@ public class InstanceInstallerDialog extends JDialog {
                                 text = GetText.tr(
                                         "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
                                         pack.getName(), version.version);
+
+                                FileUtils.deleteDirectory(this.root);
                             }
                         } else {
                             type = DialogManager.INFO;
