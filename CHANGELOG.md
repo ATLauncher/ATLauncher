@@ -31,3 +31,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix debug mode not censoring tokens
 - Add in --close-launcher and --no-console command line arguments
 - Fix failed installs still showing in instances
+- Fix errors creating directories when copying Downloads

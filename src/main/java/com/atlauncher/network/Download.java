@@ -441,7 +441,7 @@ public final class Download {
                 FileUtils.delete(this.copyTo);
             }
 
-            if (!Files.exists(this.copyTo.getParent())) {
+            if (!Files.isDirectory(this.copyTo.getParent())) {
                 FileUtils.createDirectory(this.copyTo.getParent());
             }
 
