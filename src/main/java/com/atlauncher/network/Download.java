@@ -48,7 +48,7 @@ public final class Download {
     public static final int MAX_ATTEMPTS = 3;
 
     // pre request
-    private String url;
+    String url;
     private String friendlyFileName;
     public Path to;
     public Path unzipTo;

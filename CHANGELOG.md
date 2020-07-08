@@ -32,3 +32,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in --close-launcher and --no-console command line arguments
 - Fix failed installs still showing in instances
 - Fix errors creating directories when copying Downloads
+- Fix old Minecraft versions sounds not all copying over correctly
