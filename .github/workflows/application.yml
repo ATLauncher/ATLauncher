@@ -14,6 +14,14 @@ jobs:
         with:
           go-version: "1.14"
 
+      - name: Cache Go deps
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-getSystemInfo-${{ hashFiles('getSystemInfo/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-getSystemInfo-
+
       - name: Build artifacts
         run: |
           GOOS=windows GOARCH=386 go build -ldflags="-s -w" -o dist/getSystemInfo.exe getSystemInfo.go
@@ -52,6 +60,14 @@ jobs:
       - name: Mark gradle wrapper as executable
         run: chmod a+x gradlew
 
+      - name: Cache Gradle deps
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Test
         run: ./gradlew test
   build:
@@ -68,6 +84,14 @@ jobs:
 
       - name: Mark gradle wrapper as executable
         run: chmod a+x gradlew
+
+      - name: Cache Gradle deps
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Test
         run: ./gradlew test
