@@ -223,7 +223,7 @@ public class Account implements Serializable {
             g.drawImage(helmet, 0, 0, null);
         }
 
-        return new ImageIcon(head.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
+        return new ImageIcon(head.getScaledInstance(20, 20, Image.SCALE_SMOOTH));
     }
 
     /**

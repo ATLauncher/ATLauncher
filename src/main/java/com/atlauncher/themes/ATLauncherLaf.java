@@ -22,11 +22,11 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicLookAndFeel;
-
 import com.atlauncher.LogManager;
 import com.atlauncher.utils.Resources;
+import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
@@ -91,21 +91,37 @@ public class ATLauncherLaf extends FlatLaf {
         return true;
     }
 
+    public boolean isIntelliJTheme() {
+        return false;
+    }
+
     @Override
     public List<Class<?>> getLafClassesForDefaultsLoading() {
         List<Class<?>> classes = new ArrayList<>();
 
-        classes.add(BasicLookAndFeel.class); // BasicLookAndFeel class
         classes.add(FlatLaf.class); // FlatLaf class
 
         // Add the themes base dark/light class
         if (isDark()) {
             classes.add(FlatDarkLaf.class);
+
+            if (isIntelliJTheme()) {
+                classes.add(FlatDarculaLaf.class);
+            }
         } else {
             classes.add(FlatLightLaf.class);
+
+            if (isIntelliJTheme()) {
+                classes.add(FlatIntelliJLaf.class);
+            }
         }
 
         classes.add(ATLauncherLaf.class); // ATLauncher base class
+
+        if (getClass().getSuperclass() != ATLauncherLaf.class) {
+            classes.add(getClass().getSuperclass()); // Dark/Light ATLauncher base class
+        }
+
         classes.add(getClass()); // Theme's class
 
         return classes;

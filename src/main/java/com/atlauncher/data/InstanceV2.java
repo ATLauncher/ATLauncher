@@ -322,12 +322,6 @@ public class InstanceV2 extends MinecraftVersion {
                     .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
                     .withHttpClient(httpClient);
 
-            if (index.mapToResources) {
-                download = download.copyTo(this.getRoot().resolve("resources/" + entry.getKey()));
-            } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                download = download.copyTo(FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()));
-            }
-
             pool.add(download);
         });
 
@@ -336,6 +330,23 @@ public class InstanceV2 extends MinecraftVersion {
         progressDialog.setTotalBytes(smallPool.totalSize());
 
         smallPool.downloadAll();
+
+        // copy resources to instance
+        if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            index.objects.entrySet().stream().forEach(entry -> {
+                AssetObject object = entry.getValue();
+                String filename = object.hash.substring(0, 2) + "/" + object.hash;
+
+                Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+
+                if (index.mapToResources) {
+                    FileUtils.copyFile(downloadedFile, this.getRoot().resolve("resources/" + entry.getKey()), true);
+                } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()),
+                            true);
+                }
+            });
+        }
 
         progressDialog.doneTask();
 
@@ -458,7 +469,12 @@ public class InstanceV2 extends MinecraftVersion {
 
                     Process process = MCLauncher.launch(account, this, session, nativesTempDir);
 
-                    if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
+                    if ((App.autoLaunch != null && App.closeLauncher)
+                            || (!App.settings.keepLauncherOpen() && !App.settings.enableLogs())) {
+                        if (App.settings.enableLogs()) {
+                            addTimePlayed(1, this.launcher.version); // count the stats, just without time played
+                        }
+
                         System.exit(0);
                     }
 

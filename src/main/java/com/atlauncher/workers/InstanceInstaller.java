@@ -208,7 +208,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 downloadLoader();
             }
+
             install();
+
+            if (isCancelled()) {
+                return false;
+            }
 
             if (!this.isServer) {
                 saveInstanceJson();
@@ -722,13 +727,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
                     .withInstanceInstaller(this).withHttpClient(httpClient).withFriendlyFileName(entry.getKey());
 
-            if (index.mapToResources) {
-                download = download
-                        .copyTo(new File(new File(this.root.toFile(), "resources"), entry.getKey()).toPath());
-            } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                download = download.copyTo(FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()));
-            }
-
             pool.add(download);
         });
 
@@ -738,6 +736,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.fireSubProgress(0);
 
         smallPool.downloadAll();
+
+        // copy resources to instance
+        if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            index.objects.entrySet().stream().forEach(entry -> {
+                AssetObject object = entry.getValue();
+                String filename = object.hash.substring(0, 2) + "/" + object.hash;
+
+                Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+
+                if (index.mapToResources) {
+                    FileUtils.copyFile(downloadedFile, this.root.resolve("resources/" + entry.getKey()), true);
+                } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()),
+                            true);
+                }
+            });
+        }
 
         hideSubProgressBar();
     }

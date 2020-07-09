@@ -28,4 +28,9 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove the fabric api install button after it's installed
 - Show current installed version when updating Curse mod
 - Fix system tray icon not being removed on shutdown
+- Fix debug mode not censoring tokens
+- Add in --close-launcher and --no-console command line arguments
+- Fix failed installs still showing in instances
+- Fix errors creating directories when copying Downloads
+- Fix old Minecraft versions sounds not all copying over correctly
 - Fix crashes on boot for ARM devices [#390]

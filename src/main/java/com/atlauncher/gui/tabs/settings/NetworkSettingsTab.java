@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -58,14 +59,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         // Concurrent Connection Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         concurrentConnectionsLabel = new JLabelWithHover(GetText.tr("Concurrent Connections") + ":", HELP_ICON, "<html>"
                 + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         concurrentConnections = new JTextField(4);
         concurrentConnections.setText(App.settings.getConcurrentConnections() + "");
@@ -75,14 +76,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableProxyLabel = new JLabelWithHover(GetText.tr("Enable Proxy") + "?", HELP_ICON,
                 GetText.tr("If you use a proxy to connect to the internet you can enable it here."));
         add(enableProxyLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableProxy = new JCheckBox();
         if (App.settings.getEnableProxy()) {
@@ -104,14 +105,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         // Proxy Host Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyHostLabel = new JLabelWithHover(GetText.tr("Proxy Host") + ":", HELP_ICON,
                 GetText.tr("This is the IP/hostname used to connect to the proxy."));
         add(proxyHostLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyHost = new JTextField(20);
         proxyHost.setText(App.settings.getProxyHost());
@@ -123,14 +124,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         // Proxy Port Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyPortLabel = new JLabelWithHover(GetText.tr("Proxy Port") + ":", HELP_ICON,
                 GetText.tr("This is the port used to connect to the proxy."));
         add(proxyPortLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyPort = new JTextField(4);
         proxyPort.setText((App.settings.getProxyPort() == 0 ? "" : App.settings.getProxyPort()) + "");
@@ -142,14 +143,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         // Proxy Type Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyTypeLabel = new JLabelWithHover(GetText.tr("Proxy Type") + ":", HELP_ICON,
                 GetText.tr("This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."));
         add(proxyTypeLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyType = new JComboBox<>();
         proxyType.addItem("HTTP");

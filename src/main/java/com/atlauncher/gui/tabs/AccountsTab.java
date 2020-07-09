@@ -45,6 +45,7 @@ import javax.swing.event.HyperlinkEvent;
 import com.atlauncher.App;
 import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -61,8 +62,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;
     private final Insets TOP_INSETS = new Insets(0, 0, 20, 0);
     private final Insets BOTTOM_INSETS = new Insets(10, 0, 0, 0);
-    private final Insets LABEL_INSETS = new Insets(3, 0, 3, 10);
-    private final Insets FIELD_INSETS = new Insets(3, 0, 3, 0);
+
     private JLabel userSkin;
     private JPanel infoPanel;
     private JPanel rightPanel;
@@ -91,9 +91,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         infoPanel.setLayout(new BorderLayout());
         infoPanel.setBorder(BorderFactory.createEmptyBorder(60, 250, 0, 250));
 
-        JEditorPane infoTextPane = new JEditorPane("text/html", "<html>" + GetText.tr(
-                "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://my.minecraft.net/en-us/store/minecraft/#register\">by buying Minecraft here</a>. The launcher doesn't work with cracked accounts.")
-                + "</html>");
+        JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
+                "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://atl.pw/create-account\">by buying Minecraft here</a>. ATLauncher doesn't work with cracked accounts."))
+                .build());
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -151,13 +151,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         usernameLabel = new JLabel(GetText.tr("Username/Email") + ":");
         bottomPanel.add(usernameLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         usernameField = new JTextField(16);
         usernameField.addKeyListener(new KeyAdapter() {
@@ -172,13 +172,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         passwordLabel = new JLabel(GetText.tr("Password") + ":");
         bottomPanel.add(passwordLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         passwordField = new JPasswordField(16);
         passwordField.addKeyListener(new KeyAdapter() {
@@ -193,13 +193,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         rememberLabel = new JLabel(GetText.tr("Remember Password") + ":");
         bottomPanel.add(rememberLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         rememberField = new JCheckBox();
         bottomPanel.add(rememberField, gbc);

@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
@@ -72,11 +73,13 @@ public class AddPackDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = UIConstants.LABEL_INSETS;
         packCodeLabel = new JLabel(GetText.tr("Pack Code") + ": ");
         middle.add(packCodeLabel, gbc);
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.insets = UIConstants.FIELD_INSETS;
         packCode = new JTextField(16);
         middle.add(packCode, gbc);
 

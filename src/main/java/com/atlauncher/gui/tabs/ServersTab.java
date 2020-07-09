@@ -21,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
@@ -33,6 +32,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.NilCard;
@@ -106,7 +106,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.weightx = 1.0;
-        gbc.insets = new Insets(2, 0, 2, 0);
+        gbc.insets = UIConstants.FIELD_INSETS_SMALL;
         gbc.fill = GridBagConstraints.BOTH;
 
         App.settings.getServersSorted().stream().forEach(server -> {

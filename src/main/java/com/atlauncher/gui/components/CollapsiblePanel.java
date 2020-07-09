@@ -48,6 +48,8 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
+import com.atlauncher.evnt.listener.ThemeListener;
+import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
@@ -55,7 +57,7 @@ import com.atlauncher.utils.Utils;
  * The user-triggered collapsible panel containing the component (trigger) in
  * the titled border
  */
-public class CollapsiblePanel extends JPanel {
+public class CollapsiblePanel extends JPanel implements ThemeListener {
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type
@@ -202,6 +204,8 @@ public class CollapsiblePanel extends JPanel {
         add(panel, BorderLayout.CENTER);
         setCollapsed(collapsed);
         placeTitleComponent();
+
+        ThemeManager.addListener(this);
     }
 
     /**
@@ -263,8 +267,10 @@ public class CollapsiblePanel extends JPanel {
      */
     private ImageIcon[] createExpandAndCollapseIcon() {
         ImageIcon[] iconArrow = new ImageIcon[2];
-        iconArrow[COLLAPSED] = Utils.getIconImage("/assets/image/icons/collapsed.png");
-        iconArrow[EXPANDED] = Utils.getIconImage("/assets/image/icons/expanded.png");
+        iconArrow[COLLAPSED] = Utils
+                .getIconImage("/assets/image/icons/collapsed" + (App.THEME.isDark() ? "-dark" : "") + ".png");
+        iconArrow[EXPANDED] = Utils
+                .getIconImage("/assets/image/icons/expanded" + (App.THEME.isDark() ? "-dark" : "") + ".png");
         return iconArrow;
     }
 
@@ -478,6 +484,14 @@ public class CollapsiblePanel extends JPanel {
             }
             return compR;
         }
+    }
+
+    @Override
+    public void onThemeChange() {
+        iconArrow = createExpandAndCollapseIcon();
+
+        // force state
+        setCollapsed(collapsed);
     }
 
 }

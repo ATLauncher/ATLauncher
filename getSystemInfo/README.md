@@ -1,8 +1,6 @@
-# getMemory
+# getSystemInfo
 
-![getMemory](https://github.com/ATLauncher/ATLauncher/workflows/getMemory/badge.svg)
-
-This small go program simply prints out the detected system ram in the system.
+This small go program grabs information about the host system for use within ATLauncher.
 
 ## Building
 

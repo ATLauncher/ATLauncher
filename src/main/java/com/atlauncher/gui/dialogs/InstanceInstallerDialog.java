@@ -50,6 +50,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
@@ -62,6 +63,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import org.mini2Dx.gettext.GetText;
@@ -202,11 +204,13 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         nameField = new JTextField(17);
         nameField.setText(((isReinstall) ? (instanceV2 != null ? instanceV2.launcher.name : instance.getName())
@@ -233,6 +237,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
 
         gbc = this.setupVersionsDropdown(gbc);
         gbc = this.setupLoaderVersionsDropdown(gbc);
@@ -240,11 +245,13 @@ public class InstanceInstallerDialog extends JDialog {
         if (!this.isServer && !isReinstall) {
             gbc.gridx = 0;
             gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
             middle.add(enableUserLockLabel, gbc);
 
             gbc.gridx++;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             enableUserLock = new JCheckBox();
             enableUserLock.addActionListener(e -> {
@@ -266,11 +273,13 @@ public class InstanceInstallerDialog extends JDialog {
         if (!this.isServer && isReinstall) {
             gbc.gridx = 0;
             gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             saveModsLabel = new JLabel(GetText.tr("Save Mods") + "? ");
             middle.add(saveModsLabel, gbc);
 
             gbc.gridx++;
+            gbc.insets = UIConstants.FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             saveModsCheckbox = new JCheckBox();
             saveModsCheckbox.addActionListener(e -> {
@@ -403,6 +412,8 @@ public class InstanceInstallerDialog extends JDialog {
                                 text = GetText.tr(
                                         "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
                                         pack.getName(), version.version);
+
+                                FileUtils.deleteDirectory(this.root);
                             }
                         } else {
                             type = DialogManager.INFO;
@@ -591,6 +602,7 @@ public class InstanceInstallerDialog extends JDialog {
         middle.add(versionLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         versionsDropDown = new JComboBox<>();
         if (pack.isTester()) {
@@ -643,7 +655,7 @@ public class InstanceInstallerDialog extends JDialog {
         // ensures that there is a maximum width of 250 px to prevent overflow
         versionLength = Math.min(250, versionLength);
 
-        versionsDropDown.setPreferredSize(new Dimension(versionLength, 25));
+        versionsDropDown.setPreferredSize(new Dimension(versionLength, 23));
         middle.add(versionsDropDown, gbc);
 
         versionsDropDown.addItemListener(e -> {
@@ -729,7 +741,7 @@ public class InstanceInstallerDialog extends JDialog {
             // ensures that there is a maximum width of 250 px to prevent overflow
             loaderVersionLength = Math.min(250, loaderVersionLength);
 
-            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 25));
+            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
 
             loaderVersionsDropDown.setEnabled(true);
             loaderVersionLabel.setVisible(true);
@@ -744,11 +756,13 @@ public class InstanceInstallerDialog extends JDialog {
     private GridBagConstraints setupLoaderVersionsDropdown(GridBagConstraints gbc) {
         gbc.gridx = 0;
         gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         loaderVersionLabel = new JLabel(GetText.tr("Loader Version") + ": ");
         middle.add(loaderVersionLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         loaderVersionsDropDown = new JComboBox<>();
         this.updateLoaderVersions((PackVersion) this.versionsDropDown.getSelectedItem());
