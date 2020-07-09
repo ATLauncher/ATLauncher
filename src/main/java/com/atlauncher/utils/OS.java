@@ -46,11 +46,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
+import com.atlauncher.utils.systeminfo.SystemInfo;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
@@ -321,13 +323,23 @@ public enum OS {
     }
 
     /**
-     * Returns the amount of RAM in the users system via the getMemory tool.
+     * Returns the amount of RAM in the users system via the getSystemInfo tool.
      */
     public static int getSystemRamViaTool() {
-        long ramm = 0;
-        int ram = 0;
+        SystemInfo systemInfo = getSystemInfo();
 
-        String binaryFile = "getMemory";
+        if (systemInfo == null) {
+            return 0;
+        }
+
+        return (int) (systemInfo.memory.totalPhysicalBytes / 1048576);
+    }
+
+    /**
+     * Returns the system information via the getSystemInfo tool.
+     */
+    public static SystemInfo getSystemInfo() {
+        String binaryFile = "getSystemInfo";
 
         if (OS.isArm()) {
             binaryFile += "-arm";
@@ -349,25 +361,33 @@ public enum OS {
             binaryFile += "-linux";
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
-        processBuilder.directory(FileSystem.TOOLS.toFile());
-        processBuilder.redirectErrorStream(true);
+        if (!Files.exists(FileSystem.TOOLS.resolve(binaryFile))) {
+            return null;
+        }
 
         try {
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
+            processBuilder.directory(FileSystem.TOOLS.toFile());
+            processBuilder.redirectErrorStream(true);
+
             Process process = processBuilder.start();
             BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
             try {
-                ramm = Long.parseLong(br.readLine());
-                ram = (int) (ramm / 1048576);
+                SystemInfo systemInfo = Gsons.DEFAULT.fromJson(br, SystemInfo.class);
+
+                System.out.println(systemInfo.memory.totalPhysicalBytes);
+
+                return systemInfo;
+            } catch (Throwable t) {
+                return null;
             } finally {
                 br.close();
             }
         } catch (IOException ignored) {
-            return ram;
+            return null;
         }
-
-        return ram;
     }
 
     /**
