@@ -17,6 +17,7 @@
  */
 package com.atlauncher;
 
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +39,8 @@ public final class Network {
 
     public static final OkHttpClient CLIENT = new OkHttpClient.Builder()
             .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
-            .addNetworkInterceptor(new ErrorReportingInterceptor()).build();
+            .addNetworkInterceptor(new ErrorReportingInterceptor()).connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build();
 
     public static final OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
 

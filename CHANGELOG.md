@@ -35,3 +35,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix old Minecraft versions sounds not all copying over correctly
 - Fix crashes on boot for ARM devices [#390]
 - Add in tests to forge/fabric servers for network checker tool
+- Add in higher timeouts for network calls
