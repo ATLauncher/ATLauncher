@@ -24,7 +24,9 @@ import java.net.Proxy.Type;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
@@ -40,7 +42,7 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover concurrentConnectionsLabel;
-    private JTextField concurrentConnections;
+    private JSpinner concurrentConnections;
 
     private JLabelWithHover enableProxyLabel;
     private JCheckBox enableProxy;
@@ -49,7 +51,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JTextField proxyHost;
 
     private JLabelWithHover proxyPortLabel;
-    private JTextField proxyPort;
+    private JSpinner proxyPort;
 
     private JLabelWithHover proxyTypeLabel;
     private JComboBox<String> proxyType;
@@ -68,8 +70,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        concurrentConnections = new JTextField(4);
-        concurrentConnections.setText(App.settings.getConcurrentConnections() + "");
+        SpinnerNumberModel concurrentConnectionsModel = new SpinnerNumberModel(App.settings.getConcurrentConnections(),
+                null, null, 1);
+        concurrentConnectionsModel.setMinimum(1);
+        concurrentConnections = new JSpinner(concurrentConnectionsModel);
         add(concurrentConnections, gbc);
 
         // Enable Proxy
@@ -133,8 +137,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        proxyPort = new JTextField(4);
-        proxyPort.setText((App.settings.getProxyPort() == 0 ? "" : App.settings.getProxyPort()) + "");
+        SpinnerNumberModel proxyPortModel = new SpinnerNumberModel(App.settings.getProxyPort(), null, null, 1);
+        proxyPortModel.setMinimum(1);
+        proxyPortModel.setMaximum(65535);
+        proxyPort = new JSpinner(proxyPortModel);
+        proxyPort.setEditor(new JSpinner.NumberEditor(proxyPort, "#"));
         if (!enableProxy.isSelected()) {
             proxyPort.setEnabled(false);
         }
@@ -163,31 +170,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         add(proxyType, gbc);
     }
 
-    public boolean isValidConcurrentConnections() {
-        if (Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help"))
-                    .setContent(GetText
-                            .tr("The concurrent connections you specified is invalid. Please check it and try again."))
-                    .setType(DialogManager.ERROR).show();
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isValidProxyPort() {
-        if (!enableProxy.isSelected()) {
-            return true;
-        }
-        if (proxyPort.getText().isEmpty() || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1
-                || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help"))
-                    .setContent(GetText.tr("The port you specified is invalid. Please check it and try again."))
-                    .setType(DialogManager.ERROR).show();
-            return false;
-        }
-        return true;
-    }
-
     public boolean canConnectWithProxy() {
         if (!enableProxy.isSelected()) {
             return true;
@@ -211,8 +193,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking Proxy"), 0,
                 GetText.tr("Checking the proxy entered."), "Cancelled Proxy Test!");
         dialog.addThread(new Thread(() -> {
-            dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost.getText(),
-                    Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", ""))))));
+            dialog.setReturnValue(Utils.testProxy(
+                    new Proxy(theType, new InetSocketAddress(proxyHost.getText(), (Integer) proxyPort.getValue()))));
             dialog.close();
         }));
         dialog.start();
@@ -232,12 +214,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     public void save() {
-        App.settings
-                .setConcurrentConnections(Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")));
+        App.settings.setConcurrentConnections((Integer) concurrentConnections.getValue());
         App.settings.setEnableProxy(enableProxy.isSelected());
         if (enableProxy.isSelected()) {
             App.settings.setProxyHost(proxyHost.getText());
-            App.settings.setProxyPort(Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
+            App.settings.setProxyPort((Integer) proxyPort.getValue());
             App.settings.setProxyType(((String) proxyType.getSelectedItem()));
         }
     }

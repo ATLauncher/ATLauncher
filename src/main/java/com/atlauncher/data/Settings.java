@@ -628,9 +628,10 @@ public class Settings {
             if (this.enableProxy) {
                 this.proxyHost = properties.getProperty("proxyhost", null);
 
-                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", "0"));
+                this.proxyPort = Integer.parseInt(properties.getProperty("proxyport", "8080"));
                 if (this.proxyPort <= 0 || this.proxyPort > 65535) {
                     this.enableProxy = false;
+                    this.proxyPort = 8080;
                 }
 
                 this.proxyType = properties.getProperty("proxytype", "");
@@ -640,7 +641,7 @@ public class Settings {
                 }
             } else {
                 this.proxyHost = "";
-                this.proxyPort = 0;
+                this.proxyPort = 8080;
                 this.proxyType = "";
             }
 
@@ -824,6 +825,7 @@ public class Settings {
                     LogManager.warn("Tried to set proxy port to " + this.proxyPort + " which is not a valid port! "
                             + "Proxy support disabled!");
                     this.enableProxy = false;
+                    this.proxyPort = 8080;
                 }
 
                 this.proxyType = properties.getProperty("proxytype", "");
@@ -833,11 +835,12 @@ public class Settings {
                     LogManager.warn("Tried to set proxy type to " + this.proxyType + " which is not valid! Proxy "
                             + "support disabled!");
                     this.enableProxy = false;
+                    this.proxyType = "HTTP";
                 }
             } else {
                 this.proxyHost = "";
-                this.proxyPort = 0;
-                this.proxyType = "";
+                this.proxyPort = 8080;
+                this.proxyType = "HTTP";
             }
 
             this.serverCheckerWait = Integer.parseInt(properties.getProperty("servercheckerwait", "5"));
