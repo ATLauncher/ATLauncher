@@ -66,6 +66,8 @@ import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.systeminfo.GPUCard;
+import com.atlauncher.utils.systeminfo.SystemInfo;
 import com.formdev.flatlaf.extras.FlatInspector;
 
 import io.github.asyncronous.toast.Toaster;
@@ -314,11 +316,28 @@ public class App {
         int maxRam = OS.getMaximumRam();
         LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
 
+        SystemInfo systemInfo = OS.getSystemInfo();
+        if (systemInfo != null) {
+            if (systemInfo.gpu != null && systemInfo.gpu.cards.size() != 0) {
+                for (GPUCard card : systemInfo.gpu.cards) {
+                    LogManager.info(
+                            "GPU (" + card.index + "): " + card.pci.product.name + " (" + card.pci.vendor.name + ")");
+                }
+            }
+
+            if (systemInfo.cpu != null) {
+                LogManager.info(
+                        "CPU: " + systemInfo.cpu.totalCores + " cores/" + systemInfo.cpu.totalThreads + " threads");
+            }
+        }
+
         LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
 
         // Now for some Mac specific stuff, mainly just setting the name of the
         // application and icon.
-        if (OS.isMac()) {
+        if (OS.isMac())
+
+        {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                     Constants.LAUNCHER_NAME + " " + Constants.VERSION);

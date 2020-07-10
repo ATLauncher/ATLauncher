@@ -17,15 +17,7 @@
  */
 package com.atlauncher.utils.systeminfo;
 
-import com.google.gson.annotations.SerializedName;
-
-public class SystemInfo {
-    @SerializedName("Memory")
-    public Memory memory;
-
-    @SerializedName("CPU")
-    public CPU cpu;
-
-    @SerializedName("GPU")
-    public GPU gpu;
+public class GPUCardPCIProduct {
+    public String id;
+    public String name;
 }

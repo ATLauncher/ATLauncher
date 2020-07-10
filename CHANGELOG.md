@@ -36,3 +36,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix crashes on boot for ARM devices [#390]
 - Add in tests to forge/fabric servers for network checker tool
 - Add in higher timeouts for network calls
+- Add in CPU and GPU logging to console

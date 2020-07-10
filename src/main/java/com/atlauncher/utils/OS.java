@@ -328,7 +328,7 @@ public enum OS {
     public static int getSystemRamViaTool() {
         SystemInfo systemInfo = getSystemInfo();
 
-        if (systemInfo == null) {
+        if (systemInfo == null || systemInfo.memory == null) {
             return 0;
         }
 
