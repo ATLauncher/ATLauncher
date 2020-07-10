@@ -72,7 +72,6 @@ public final class DownloadPool extends LinkedList<Download> {
         for (final Download dl : downloads) {
             executor.submit(() -> {
                 if (dl.needToDownload()) {
-                    System.out.println(dl.url);
                     synchronized (pool) {
                         pool.add(dl);
                     }

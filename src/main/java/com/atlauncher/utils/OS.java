@@ -377,8 +377,6 @@ public enum OS {
             try {
                 SystemInfo systemInfo = Gsons.DEFAULT.fromJson(br, SystemInfo.class);
 
-                System.out.println(systemInfo.memory.totalPhysicalBytes);
-
                 return systemInfo;
             } catch (Throwable t) {
                 return null;
