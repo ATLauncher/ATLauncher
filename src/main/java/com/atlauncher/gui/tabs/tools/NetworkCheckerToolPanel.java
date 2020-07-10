@@ -71,18 +71,36 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 .setType(DialogManager.INFO).show();
 
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Network Checker"), 5,
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Network Checker"), 9,
                     GetText.tr("Network Checker Running. Please Wait!"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
                 StringBuilder results = new StringBuilder();
 
-                // Ping Test
+                // Connection to CDN
                 results.append("Ping results to " + Constants.DOWNLOAD_HOST + " was "
-                        + Utils.pingAddress(Constants.DOWNLOAD_HOST) + "\n\n----------------\n\n");
+                        + Utils.pingAddress(Constants.DOWNLOAD_HOST));
                 dialog.doneTask();
 
+                results.append("Tracert to " + Constants.DOWNLOAD_HOST + " was "
+                        + Utils.traceRoute(Constants.DOWNLOAD_HOST) + "\n\n----------------\n\n");
+                dialog.doneTask();
+
+                // Connection to Forge CDN
+                results.append("Ping results to " + Constants.FABRIC_HOST + " was "
+                        + Utils.pingAddress(Constants.FABRIC_HOST));
+                dialog.doneTask();
+
+                results.append("Tracert to " + Constants.FABRIC_HOST + " was " + Utils.traceRoute(Constants.FABRIC_HOST)
+                        + "\n\n----------------\n\n");
+                dialog.doneTask();
+
+                // Connection to Fabric CDN
                 results.append(
-                        "Tracert to " + Constants.DOWNLOAD_HOST + " was " + Utils.traceRoute(Constants.DOWNLOAD_HOST));
+                        "Ping results to " + Constants.FORGE_HOST + " was " + Utils.pingAddress(Constants.FORGE_HOST));
+                dialog.doneTask();
+
+                results.append("Tracert to " + Constants.FORGE_HOST + " was " + Utils.traceRoute(Constants.FORGE_HOST)
+                        + "\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Response Code Test
