@@ -37,3 +37,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in tests to forge/fabric servers for network checker tool
 - Add in higher timeouts for network calls
 - Add in CPU and GPU logging to console
+- Fetch stylesheets and fonts from the correct module, allowing the launcher
+  to run in Java 9 and above. (GH-395)

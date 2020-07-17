@@ -61,7 +61,7 @@ public final class Resources {
             } else {
                 StyleSheet sheet = new StyleSheet();
 
-                Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + ".css"));
+                Reader reader = new InputStreamReader(Resources.class.getResourceAsStream("/assets/css/" + name + ".css"));
                 sheet.loadRules(reader, null);
                 reader.close();
 
@@ -89,7 +89,7 @@ public final class Resources {
                     resources.put(name, f);
                     return f;
                 } else {
-                    URL url = System.class.getResource("/assets/font/" + name + ".ttf");
+                    URL url = Resources.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
                         LogManager.error("Cannot find font " + name);
                         return new Font("Sans-Serif", Font.PLAIN, 0);
