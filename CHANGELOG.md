@@ -40,3 +40,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fetch stylesheets and fonts from the correct module, allowing the launcher to run in Java 9 and above [#395]
 - Fix issue with instances and renamed folders not launching
 - Remove ability to clone V1 instances and prompt user to reinstall
+- Add warning when Minecraft crashes on new Java versions [#388]

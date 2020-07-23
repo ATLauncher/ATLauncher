@@ -515,6 +515,10 @@ public class InstanceV2 extends MinecraftVersion {
                             detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
                         }
 
+                        if (line.contains("class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
+                            detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
+                        }
+
                         if (!LogManager.showDebug) {
                             line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
                             line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
