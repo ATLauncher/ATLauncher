@@ -2388,21 +2388,6 @@ public class Settings {
                 + Java.getLauncherJavaVersion();
     }
 
-    public void cloneInstance(Instance instance, String clonedName) {
-        Instance clonedInstance = (Instance) instance.clone();
-        if (clonedInstance == null) {
-            LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
-        } else {
-            clonedInstance.setName(clonedName);
-            clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());
-            clonedInstance.getRootDirectory().mkdir();
-            Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
-            this.instances.add(clonedInstance);
-            this.saveInstances();
-            this.reloadInstancesPanel();
-        }
-    }
-
     public void cloneInstance(InstanceV2 instance, String clonedName) {
         InstanceV2 clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), InstanceV2.class);
 

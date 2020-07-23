@@ -41,7 +41,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
@@ -445,49 +444,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     });
 
                     cloneItem.addActionListener(e14 -> {
-                        String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
-                                GetText.tr("Enter a new name for this cloned instance."),
-                                GetText.tr("Cloning Instance"), JOptionPane.INFORMATION_MESSAGE);
-                        if (clonedName != null && clonedName.length() >= 1
-                                && App.settings.getInstanceByName(clonedName) == null
-                                && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                                && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
-
-                            Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Clone",
-                                    "Instance");
-
-                            final String newName = clonedName;
-                            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
-                                    GetText.tr("Cloning Instance. Please wait..."), null);
-                            dialog.addThread(new Thread(() -> {
-                                App.settings.cloneInstance(instance, newName);
-                                dialog.close();
-                                App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
-                            }));
-                            dialog.start();
-                        } else if (clonedName == null || clonedName.equals("")) {
-                            LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
-                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                            .build())
-                                    .setType(DialogManager.ERROR).show();
-                        } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                            LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
-                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                            .build())
-                                    .setType(DialogManager.ERROR).show();
-                        } else {
-                            LogManager.error(
-                                    "Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
-                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                            .build())
-                                    .setType(DialogManager.ERROR).show();
-                        }
+                        DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "This instance cannot be cloned!<br/><br/>Please reinstall the instance to get this feature."))
+                                        .build())
+                                .setType(DialogManager.ERROR).show();
                     });
 
                     updateItem.addActionListener(e12 -> {
