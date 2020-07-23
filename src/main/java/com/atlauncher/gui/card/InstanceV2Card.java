@@ -488,7 +488,8 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         if (clonedName != null && clonedName.length() >= 1
                                 && App.settings.getInstanceByName(clonedName) == null
                                 && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                                && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
+                                && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
+                                        FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
                             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Clone",
                                     "InstanceV2");
 
@@ -510,6 +511,15 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                     .setType(DialogManager.ERROR).show();
                         } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                             LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
+                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                                            .build())
+                                    .setType(DialogManager.ERROR).show();
+                        } else if (Files
+                                .exists(FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
+                            LogManager.error(
+                                    "Error Occurred While Cloning Instance! Folder Already Exists Rename It And Try Again!");
                             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                                             "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))

@@ -524,6 +524,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void saveInstanceJson() {
         InstanceV2 instance = new InstanceV2(this.minecraftVersion);
+        instance.ROOT = this.root;
         InstanceV2Launcher instanceLauncher;
 
         if (!this.isReinstall || this.instance != null) {

@@ -236,6 +236,8 @@ public class Instance implements Cloneable {
 
     private InstanceSettings settings = null;
 
+    public transient Path ROOT;
+
     /**
      * Instantiates a new instance.
      *
@@ -772,7 +774,7 @@ public class Instance implements Cloneable {
      * @return File object for the root directory of this Instance
      */
     public File getRootDirectory() {
-        return FileSystem.INSTANCES.resolve(getSafeName()).toFile();
+        return this.ROOT.toFile();
     }
 
     /**

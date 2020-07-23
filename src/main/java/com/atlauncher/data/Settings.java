@@ -1102,6 +1102,7 @@ public class Settings {
             try {
                 try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                     instanceV2 = Gsons.MINECRAFT.fromJson(fileReader, InstanceV2.class);
+                    instanceV2.ROOT = instanceDir.toPath();
                     LogManager.debug("Loaded V2 instance from " + instanceDir);
 
                     if (instanceV2.launcher == null) {
@@ -1111,6 +1112,7 @@ public class Settings {
                 } catch (JsonIOException | JsonSyntaxException ignored) {
                     try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                         instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
+                        instance.ROOT = instanceDir.toPath();
                         instance.convert();
                         LogManager.debug("Loaded V1 instance from " + instanceDir);
                     } catch (JsonIOException | JsonSyntaxException e) {
@@ -2392,6 +2394,7 @@ public class Settings {
             LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.setName(clonedName);
+            clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());
             clonedInstance.getRootDirectory().mkdir();
             Utils.copyDirectory(instance.getRootDirectory(), clonedInstance.getRootDirectory());
             this.instances.add(clonedInstance);
@@ -2407,6 +2410,7 @@ public class Settings {
             LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.launcher.name = clonedName;
+            clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());
             FileUtils.createDirectory(clonedInstance.getRoot());
             Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());
             clonedInstance.save();

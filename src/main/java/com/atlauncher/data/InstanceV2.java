@@ -81,6 +81,8 @@ public class InstanceV2 extends MinecraftVersion {
     public String inheritsFrom;
     public InstanceV2Launcher launcher;
 
+    public transient Path ROOT;
+
     public InstanceV2(MinecraftVersion version) {
         this.id = version.id;
         this.arguments = version.arguments;
@@ -107,7 +109,7 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public Path getRoot() {
-        return FileSystem.INSTANCES.resolve(this.getSafeName());
+        return this.ROOT;
     }
 
     public Pack getPack() {
