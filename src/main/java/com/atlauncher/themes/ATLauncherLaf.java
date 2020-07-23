@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.atlauncher.LogManager;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Resources;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -50,15 +51,27 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getNormalFont() {
-        return Resources.makeFont(defaultFontName).deriveFont(Font.PLAIN, 12f);
+        if (OS.isLinux()) {
+            return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
+        } else {
+            return Resources.makeFont(defaultFontName).deriveFont(Font.PLAIN, 12f);
+        }
     }
 
     public Font getBoldFont() {
-        return Resources.makeFont(defaultBoldFontName).deriveFont(Font.BOLD, 12f);
+        if (OS.isLinux()) {
+            return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
+        } else {
+            return Resources.makeFont(defaultFontName).deriveFont(Font.BOLD, 12f);
+        }
     }
 
     public Font getConsoleFont() {
-        return Resources.makeFont(consoleFontName).deriveFont(Font.PLAIN, 12f);
+        if (OS.isLinux()) {
+            return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
+        } else {
+            return Resources.makeFont(consoleFontName).deriveFont(Font.PLAIN, 12f);
+        }
     }
 
     public Font getTabFont() {
