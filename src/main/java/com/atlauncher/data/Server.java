@@ -81,6 +81,7 @@ public class Server {
     }
 
     public void launch(String args, boolean close) {
+        LogManager.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 
         try {
@@ -88,7 +89,7 @@ public class Server {
                 arguments.add("cmd");
                 arguments.add("/K");
                 arguments.add("start");
-                arguments.add(name);
+                arguments.add("\"" + name + "\"");
                 arguments.add(getRoot().resolve("LaunchServer.bat").toString());
                 arguments.add(args);
             } else if (OS.isLinux()) {
@@ -98,13 +99,15 @@ public class Server {
                 arguments.add("-e");
                 arguments.add(getRoot().resolve("LaunchServer.sh").toString() + " " + args);
             } else if (OS.isMac()) {
-                // unfortunately OSX doesn't allow us to pass arguments with open and Terminal :(
+                // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
+                // :(
                 arguments.add("open");
                 arguments.add("-a");
                 arguments.add("Terminal");
                 arguments.add(getRoot().resolve("LaunchServer.command").toString());
             }
 
+            LogManager.info("Launching server with the following arguments: " + arguments.toString());
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(getRoot().toFile());
             processBuilder.command(arguments);

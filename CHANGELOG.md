@@ -41,3 +41,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix issue with instances and renamed folders not launching
 - Remove ability to clone V1 instances and prompt user to reinstall
 - Add warning when Minecraft crashes on new Java versions [#388]
+- Fix servers not launching on Windows due to quoting issue [#399]
