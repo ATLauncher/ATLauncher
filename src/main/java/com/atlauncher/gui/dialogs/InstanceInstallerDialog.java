@@ -183,7 +183,7 @@ public class InstanceInstallerDialog extends JDialog {
             // #. {0} is the name of the pack the user is installing
             setTitle(GetText.tr("Reinstalling {0}", instanceV2.launcher.name));
         }
-        setSize(400, 225);
+        setSize(450, 240);
         setLocationRelativeTo(App.settings.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
