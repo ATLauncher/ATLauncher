@@ -1070,9 +1070,9 @@ public class Settings {
         try {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
-            packUsers = com.atlauncher.network.Download.build().cached()
-                    .setUrl(String.format("%s/launcher/json/users.json", Constants.DOWNLOAD_SERVER)).asType(type);
-        } catch (JsonSyntaxException | JsonIOException e) {
+            packUsers = Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()),
+                    type);
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
         if (packUsers == null) {

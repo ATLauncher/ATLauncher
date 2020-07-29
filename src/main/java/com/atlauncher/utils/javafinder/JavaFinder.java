@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.atlauncher.PerformanceManager;
 import com.atlauncher.utils.OS;
 
 public class JavaFinder {
@@ -57,6 +58,7 @@ public class JavaFinder {
 
     // this could probably be written better
     public static List<JavaInfo> findJavas() {
+        PerformanceManager.start();
         List<String> javaExecs = javaPaths.get();
 
         if (javaExecs == null) {
@@ -138,7 +140,9 @@ public class JavaFinder {
             javaPaths = new SoftReference<>(javaExecs);
         }
 
-        return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(JavaInfo::new).collect(Collectors.toList());
+        PerformanceManager.end();
+        return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(JavaInfo::new)
+                .collect(Collectors.toList());
     }
 
     /**

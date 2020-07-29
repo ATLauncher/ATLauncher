@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.LogManager;
+import com.atlauncher.PerformanceManager;
 import com.atlauncher.utils.javafinder.JavaFinder;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
@@ -234,6 +235,7 @@ public class Java {
     }
 
     public static List<JavaInfo> getInstalledJavas() {
+        PerformanceManager.start();
         List<JavaInfo> javas = JavaFinder.findJavas().stream()
                 .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
                 .collect(Collectors.toList());
@@ -256,6 +258,7 @@ public class Java {
             }
         }
 
+        PerformanceManager.end();
         return javas;
     }
 }
