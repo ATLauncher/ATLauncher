@@ -88,8 +88,8 @@ public class AddPackDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(GetText.tr("Add"));
         saveButton.addActionListener(e -> {
-            if (App.settings.semiPublicPackExistsFromCode(packCode.getText())) {
-                if (App.settings.addPack(packCode.getText())) {
+            if (App.launcher.semiPublicPackExistsFromCode(packCode.getText())) {
+                if (App.launcher.addPack(packCode.getText())) {
                     DialogManager.okDialog().setParent(AddPackDialog.this).setTitle(GetText.tr("Pack Added"))
                             .setContent(GetText.tr("The pack has been added!")).setType(DialogManager.INFO).show();
                 } else {

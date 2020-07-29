@@ -77,7 +77,7 @@ public final class AddModsDialog extends JDialog {
 
     public AddModsDialog(Instance instance) {
         // #. {0} is the name of the mod we're installing
-        super(App.settings.getParent(), GetText.tr("Adding Mods For {0}", instance.getName()),
+        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instance.getName()),
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
@@ -101,13 +101,13 @@ public final class AddModsDialog extends JDialog {
         this.loadDefaultMods();
 
         this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
+        this.setLocationRelativeTo(App.launcher.getParent());
         this.setVisible(true);
     }
 
     public AddModsDialog(InstanceV2 instanceV2) {
         // #. {0} is the name of the mod we're installing
-        super(App.settings.getParent(), GetText.tr("Adding Mods For {0}", instanceV2.launcher.name),
+        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instanceV2.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
 
@@ -131,7 +131,7 @@ public final class AddModsDialog extends JDialog {
         this.loadDefaultMods();
 
         this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
+        this.setLocationRelativeTo(App.launcher.getParent());
         this.setVisible(true);
     }
 
@@ -272,7 +272,7 @@ public final class AddModsDialog extends JDialog {
             } else if (((ComboItem) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                 setMods(CurseApi
                         .searchWorlds(
-                                App.settings.disabledAddModRestrictions() ? null
+                                App.settings.disableAddModRestrictions ? null
                                         : (this.instanceV2 != null ? this.instanceV2.id
                                                 : this.instance.getMinecraftVersion()),
                                 query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
@@ -280,13 +280,13 @@ public final class AddModsDialog extends JDialog {
                 if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                         : this.instance.getLoaderVersion()).isFabric()) {
                     setMods(CurseApi.searchModsForFabric(
-                            App.settings.disabledAddModRestrictions() ? null
+                            App.settings.disableAddModRestrictions ? null
                                     : (this.instanceV2 != null ? this.instanceV2.id
                                             : this.instance.getMinecraftVersion()),
                             query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
                 } else {
                     setMods(CurseApi.searchMods(
-                            App.settings.disabledAddModRestrictions() ? null
+                            App.settings.disableAddModRestrictions ? null
                                     : (this.instanceV2 != null ? this.instanceV2.id
                                             : this.instance.getMinecraftVersion()),
                             query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));

@@ -70,7 +70,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.insets = new Insets(0, 0, 0, 5);
         gbc.gridx++;
         leftSide.add(openFolder, gbc);
-        
+
         gbc.gridx++;
         leftSide.add(updateData, gbc);
 
@@ -79,7 +79,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.insets = new Insets(0, 0, 0, 5);
         middle.add(username, gbc);
 
-        username.setVisible(App.settings.getAccounts().size() != 0);
+        username.setVisible(App.launcher.getAccounts().size() != 0);
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
@@ -97,8 +97,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                     GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
                 Analytics.sendEvent("UpdateData", "Launcher");
-                if (App.settings.checkForUpdatedFiles()) {
-                    App.settings.reloadLauncherData();
+                if (App.launcher.checkForUpdatedFiles()) {
+                    App.launcher.reloadLauncherData();
                 }
                 dialog.close();
             }));
@@ -108,7 +108,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 if (!dontSave) {
                     Analytics.sendEvent("Switch", "Account");
-                    App.settings.switchAccount((Account) username.getSelectedItem());
+                    App.launcher.switchAccount((Account) username.getSelectedItem());
                 }
             }
         });
@@ -132,11 +132,11 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
 
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : App.launcher.getAccounts()) {
             username.addItem(account);
         }
 
-        Account active = App.settings.getAccount();
+        Account active = App.launcher.account;
 
         if (active != null) {
             username.setSelectedItem(active);
@@ -147,15 +147,15 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         dontSave = true;
         username.removeAllItems();
 
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : App.launcher.getAccounts()) {
             username.addItem(account);
         }
 
-        if (App.settings.getAccount() != null) {
-            username.setSelectedItem(App.settings.getAccount());
+        if (App.launcher.account != null) {
+            username.setSelectedItem(App.launcher.account);
         }
 
-        username.setVisible(App.settings.getAccounts().size() != 0);
+        username.setVisible(App.launcher.getAccounts().size() != 0);
 
         dontSave = false;
     }

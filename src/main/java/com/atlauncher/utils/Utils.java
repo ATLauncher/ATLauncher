@@ -78,6 +78,7 @@ import javax.swing.ImageIcon;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.ExtractRule;
 import com.atlauncher.data.minecraft.FabricMod;
@@ -759,7 +760,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
         connection.setRequestProperty("Pragma", "no-cache");
@@ -797,7 +798,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -834,7 +835,7 @@ public class Utils {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -1069,7 +1070,7 @@ public class Utils {
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
             connection.setRequestProperty("Accept-Encoding", "gzip");
-            connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+            connection.setRequestProperty("User-Agent", Network.USER_AGENT);
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             connection.setRequestProperty("Expires", "0");
             connection.setRequestProperty("Pragma", "no-cache");

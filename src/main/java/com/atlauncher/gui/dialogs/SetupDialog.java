@@ -123,8 +123,9 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
             Language.setLanguage((String) language.getSelectedItem());
-            App.settings.setEnableAnalytics(enableAnalytics.isSelected());
-            App.settings.saveProperties();
+            App.settings.language = (String) language.getSelectedItem();
+            App.settings.enableAnalytics = enableAnalytics.isSelected();
+            App.settings.save();
 
             if (enableAnalytics.isSelected()) {
                 Analytics.sendEvent("SetupDialogComplete", "Launcher");

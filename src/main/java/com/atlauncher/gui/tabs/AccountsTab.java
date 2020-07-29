@@ -123,7 +123,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         accountsComboBox = new JComboBox<>();
         accountsComboBox.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : App.launcher.getAccounts()) {
             accountsComboBox.addItem(account);
         }
         accountsComboBox.setSelectedIndex(0);
@@ -241,10 +241,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                         .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
                     Analytics.sendEvent("Delete", "Account");
-                    App.settings.removeAccount(account);
+                    App.launcher.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(fillerAccount);
-                    for (Account accountt : App.settings.getAccounts()) {
+                    for (Account accountt : App.launcher.getAccounts()) {
                         accountsComboBox.addItem(accountt);
                     }
                     accountsComboBox.setSelectedIndex(0);
@@ -299,7 +299,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
         boolean remember = rememberField.isSelected();
-        if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
+        if (App.launcher.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
                     .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
             return;
@@ -321,11 +321,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
                         response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken);
                 account.setStore(response.getAuth().saveForStorage());
-                App.settings.addAccount(account);
+                App.launcher.addAccount(account);
                 Analytics.sendEvent("Add", "Account");
                 LogManager.info("Added Account " + account);
 
-                if (App.settings.getAccounts().size() > 1) {
+                if (App.launcher.getAccounts().size() > 1) {
                     // not first account? ask if they want to switch to it
                     int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
                             .setContent(GetText.tr("Account added successfully. Switch to it now?"))
@@ -333,11 +333,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                             .show();
 
                     if (ret == 0) {
-                        App.settings.switchAccount(account);
+                        App.launcher.switchAccount(account);
                     }
                 } else {
                     // first account? switch to it immediately
-                    App.settings.switchAccount(account);
+                    App.launcher.switchAccount(account);
                 }
             } else {
                 account = (Account) accountsComboBox.getSelectedItem();
@@ -355,11 +355,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                         .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
-            App.settings.saveAccounts();
-            App.settings.reloadAccounts();
+            App.launcher.saveAccounts();
+            App.launcher.reloadAccounts();
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(fillerAccount);
-            for (Account accountt : App.settings.getAccounts()) {
+            for (Account accountt : App.launcher.getAccounts()) {
                 accountsComboBox.addItem(accountt);
             }
             accountsComboBox.setSelectedItem(account);

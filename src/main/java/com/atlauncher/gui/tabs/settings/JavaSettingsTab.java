@@ -119,8 +119,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.getInitialMemory(), null, null,
-                128);
+        SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.initialMemory, null, null, 128);
         initialMemoryModel.setMinimum(128);
         initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         initialMemory = new JSpinner(initialMemoryModel);
@@ -153,8 +152,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.getMaximumMemory(), null, null,
-                512);
+        SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.maximumMemory, null, null, 512);
         maximumMemoryModel.setMinimum(512);
         maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         maximumMemory = new JSpinner(maximumMemoryModel);
@@ -173,7 +171,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.getPermGen(), null, null, 32);
+        SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.metaspace, null, null, 32);
         permGenModel.setMinimum(32);
         permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
         permGen = new JSpinner(permGenModel);
@@ -197,12 +195,12 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         windowSizePanel = new JPanel();
         windowSizePanel.setLayout(new BoxLayout(windowSizePanel, BoxLayout.X_AXIS));
 
-        SpinnerNumberModel widthModel = new SpinnerNumberModel(App.settings.getWindowWidth(), 1,
-                OS.getMaximumWindowWidth(), 1);
+        SpinnerNumberModel widthModel = new SpinnerNumberModel(App.settings.windowWidth, 1, OS.getMaximumWindowWidth(),
+                1);
         widthField = new JSpinner(widthModel);
         widthField.setEditor(new JSpinner.NumberEditor(widthField, "#"));
 
-        SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.getWindowHeight(), 1,
+        SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.windowHeight, 1,
                 OS.getMaximumWindowHeight(), 1);
         heightField = new JSpinner(heightModel);
         heightField.setEditor(new JSpinner.NumberEditor(heightField, "#"));
@@ -272,7 +270,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
 
             installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
-                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
                     .orElse(null));
 
             installedJavas
@@ -284,7 +282,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         }
 
         javaPath = new JTextField(32);
-        javaPath.setText(App.settings.getJavaPath());
+        javaPath.setText(App.settings.javaPath);
         javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
         javaBrowseButton = new JButton(GetText.tr("Browse"));
@@ -332,7 +330,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
         javaParameters = new JTextArea(6, 40);
-        javaParameters.setText(App.settings.getJavaParameters());
+        javaParameters.setText(App.settings.javaParameters);
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
 
@@ -364,7 +362,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         startMinecraftMaximised = new JCheckBox();
-        if (App.settings.startMinecraftMaximised()) {
+        if (App.settings.maximiseMinecraft) {
             startMinecraftMaximised.setSelected(true);
         }
         add(startMinecraftMaximised, gbc);
@@ -384,7 +382,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         ignoreJavaOnInstanceLaunch = new JCheckBox();
-        if (App.settings.ignoreJavaOnInstanceLaunch()) {
+        if (App.settings.ignoreJavaOnInstanceLaunch) {
             ignoreJavaOnInstanceLaunch.setSelected(true);
         }
         add(ignoreJavaOnInstanceLaunch, gbc);
@@ -414,15 +412,15 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     public void save() {
-        App.settings.setInitialMemory((Integer) initialMemory.getValue());
-        App.settings.setMaximumMemory((Integer) maximumMemory.getValue());
-        App.settings.setPermGen((Integer) permGen.getValue());
-        App.settings.setWindowWidth((Integer) widthField.getValue());
-        App.settings.setWindowHeight((Integer) heightField.getValue());
-        App.settings.setJavaPath(javaPath.getText());
-        App.settings.setJavaParameters(javaParameters.getText());
-        App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
-        App.settings.setIgnoreJavaOnInstanceLaunch(ignoreJavaOnInstanceLaunch.isSelected());
+        App.settings.initialMemory = (Integer) initialMemory.getValue();
+        App.settings.maximumMemory = (Integer) maximumMemory.getValue();
+        App.settings.metaspace = (Integer) permGen.getValue();
+        App.settings.windowWidth = (Integer) widthField.getValue();
+        App.settings.windowHeight = (Integer) heightField.getValue();
+        App.settings.javaPath = javaPath.getText();
+        App.settings.javaParameters = javaParameters.getText();
+        App.settings.maximiseMinecraft = startMinecraftMaximised.isSelected();
+        App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
     }
 
     @Override
@@ -478,6 +476,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     @Override
     public void onSettingsSaved() {
-        javaPath.setText(App.settings.getJavaPath());
+        javaPath.setText(App.settings.javaPath);
     }
 }

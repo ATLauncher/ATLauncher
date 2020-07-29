@@ -52,7 +52,7 @@ public final class ViewModsDialog extends JDialog {
 
     public ViewModsDialog(Pack pack) {
         // #. {0} is the name of the pack
-        super(App.settings.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.APPLICATION_MODAL);
         this.pack = pack;
 
         Analytics.sendScreenView("View Mods Dialog");
@@ -96,7 +96,7 @@ public final class ViewModsDialog extends JDialog {
         }
 
         this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
+        this.setLocationRelativeTo(App.launcher.getParent());
     }
 
     private void reload() {

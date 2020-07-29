@@ -126,7 +126,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         for (int i = 0; i < theme.getItemCount(); i++) {
             ComboItem item = theme.getItemAt(i);
 
-            if (item.getValue().equalsIgnoreCase(App.settings.getTheme())) {
+            if (item.getValue().equalsIgnoreCase(App.settings.theme)) {
                 theme.setSelectedIndex(i);
                 break;
             }
@@ -155,7 +155,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             dateFormat.addItem(new ComboItem(format, new SimpleDateFormat(format).format(new Date())));
         }
 
-        dateFormat.setSelectedItem(App.settings.getDateFormat());
+        dateFormat.setSelectedItem(App.settings.dateFormat);
 
         add(dateFormat, gbc);
 
@@ -173,7 +173,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         sortPacksAlphabetically = new JCheckBox();
-        if (App.settings.sortPacksAlphabetically()) {
+        if (App.settings.sortPacksAlphabetically) {
             sortPacksAlphabetically.setSelected(true);
         }
         add(sortPacksAlphabetically, gbc);
@@ -192,7 +192,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         keepLauncherOpen = new JCheckBox();
-        if (App.settings.keepLauncherOpen()) {
+        if (App.settings.keepLauncherOpen) {
             keepLauncherOpen.setSelected(true);
         }
         add(keepLauncherOpen, gbc);
@@ -211,7 +211,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableConsole = new JCheckBox();
-        if (App.settings.enableConsole()) {
+        if (App.settings.enableConsole) {
             enableConsole.setSelected(true);
         }
         add(enableConsole, gbc);
@@ -232,7 +232,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableTrayIcon = new JCheckBox();
-        if (App.settings.enableTrayIcon()) {
+        if (App.settings.enableTrayMenu) {
             enableTrayIcon.setSelected(true);
         }
         add(enableTrayIcon, gbc);
@@ -251,7 +251,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableDiscordIntegration = new JCheckBox();
-        if (App.settings.enableDiscordIntegration()) {
+        if (App.settings.enableDiscordIntegration) {
             enableDiscordIntegration.setSelected(true);
         }
         add(enableDiscordIntegration, gbc);
@@ -273,7 +273,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             enableFeralGamemode = new JCheckBox();
-            if (App.settings.enableFeralGamemode()) {
+            if (App.settings.enableFeralGamemode) {
                 enableFeralGamemode.setSelected(true);
             }
 
@@ -302,7 +302,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enablePackTags = new JCheckBox();
-        enablePackTags.setSelected(App.settings.enabledPackTags());
+        enablePackTags.setSelected(App.settings.enablePackTags);
         add(enablePackTags, gbc);
 
         // Disable Curse Minecraft version restrictions
@@ -321,16 +321,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         disableAddModRestrictions = new JCheckBox();
-        disableAddModRestrictions.setSelected(App.settings.disabledAddModRestrictions());
+        disableAddModRestrictions.setSelected(App.settings.disableAddModRestrictions);
         add(disableAddModRestrictions, gbc);
     }
 
     public boolean needToReloadTheme() {
-        return !((ComboItem) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.getTheme());
+        return !((ComboItem) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme);
     }
 
     public boolean needToReloadPacksPanel() {
-        return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically();
+        return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically;
     }
 
     public boolean needToReloadLanguage() {
@@ -339,22 +339,23 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
     public void save() {
         Language.setLanguage((String) language.getSelectedItem());
-        App.settings.setTheme(((ComboItem) theme.getSelectedItem()).getValue());
-        App.settings.setDateFormat(((ComboItem) dateFormat.getSelectedItem()).getValue());
-        App.settings.setSortPacksAlphabetically(sortPacksAlphabetically.isSelected());
-        App.settings.setKeepLauncherOpen(keepLauncherOpen.isSelected());
-        App.settings.setEnableConsole(enableConsole.isSelected());
-        App.settings.setEnableTrayIcon(enableTrayIcon.isSelected());
-        App.settings.setEnableDiscordIntegration(enableDiscordIntegration.isSelected());
+        App.settings.language = (String) language.getSelectedItem();
+        App.settings.theme = ((ComboItem) theme.getSelectedItem()).getValue();
+        App.settings.dateFormat = ((ComboItem) dateFormat.getSelectedItem()).getValue();
+        App.settings.sortPacksAlphabetically = sortPacksAlphabetically.isSelected();
+        App.settings.keepLauncherOpen = keepLauncherOpen.isSelected();
+        App.settings.enableConsole = enableConsole.isSelected();
+        App.settings.enableTrayMenu = enableTrayIcon.isSelected();
+        App.settings.enableDiscordIntegration = enableDiscordIntegration.isSelected();
 
         if (OS.isLinux()) {
-            App.settings.setEnableFeralGameMode(enableFeralGamemode.isSelected());
+            App.settings.enableFeralGamemode = enableFeralGamemode.isSelected();
         } else {
-            App.settings.setEnableFeralGameMode(false);
+            App.settings.enableFeralGamemode = false;
         }
 
-        App.settings.setPackTags(enablePackTags.isSelected());
-        App.settings.setAddModRestrictions(disableAddModRestrictions.isSelected());
+        App.settings.enablePackTags = enablePackTags.isSelected();
+        App.settings.disableAddModRestrictions = disableAddModRestrictions.isSelected();
     }
 
     @Override

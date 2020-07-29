@@ -73,7 +73,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
             boolean usesCoreMods = false;
             try {
-                usesCoreMods = App.settings.getMinecraftVersion(dialog.instanceV2 != null ? dialog.instanceV2.id
+                usesCoreMods = App.launcher.getMinecraftVersion(dialog.instanceV2 != null ? dialog.instanceV2.id
                         : dialog.instance.getMinecraftVersion()).coremods;
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);

@@ -555,7 +555,7 @@ public class Account implements Serializable {
                     } catch (IOException e) {
                         LogManager.logStackTrace(e);
                     }
-                    App.settings.reloadAccounts();
+                    App.launcher.reloadAccounts();
                 }
                 dialog.close();
             }));
@@ -703,14 +703,14 @@ public class Account implements Serializable {
                 if (ret == DialogManager.OK_OPTION) {
                     if (passwordField.getPassword().length == 0) {
                         LogManager.error("Aborting login for " + this.getMinecraftUsername() + ", no password entered");
-                        App.settings.setMinecraftLaunched(false);
+                        App.launcher.setMinecraftLaunched(false);
                         return null;
                     }
 
                     this.setPassword(new String(passwordField.getPassword()));
                 } else {
                     LogManager.error("Aborting login for " + this.getMinecraftUsername());
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     return null;
                 }
             }
@@ -728,7 +728,7 @@ public class Account implements Serializable {
                             + "<br/><br/>" + response.getErrorMessage()).build())
                     .setType(DialogManager.ERROR).show();
 
-            App.settings.setMinecraftLaunched(false);
+            App.launcher.setMinecraftLaunched(false);
             return null;
         }
 
@@ -739,7 +739,7 @@ public class Account implements Serializable {
         if (!response.isOffline()) {
             this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
             this.setStore(response.getAuth().saveForStorage());
-            App.settings.saveAccounts();
+            App.launcher.saveAccounts();
         }
 
         return response;

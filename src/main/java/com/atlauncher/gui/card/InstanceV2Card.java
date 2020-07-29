@@ -211,7 +211,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
 
     private void addActionListeners() {
         this.playButton.addActionListener(e -> {
-            if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.launcher.java != null
+            if (!App.settings.ignoreJavaOnInstanceLaunch && instance.launcher.java != null
                     && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
                     && !instance.launcher.java.conforms()) {
                 DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
@@ -230,7 +230,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                 if (ret == 0) {
-                    if (App.settings.getAccount() == null) {
+                    if (App.launcher.account == null) {
                         DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                 .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                 .setType(DialogManager.ERROR).show();
@@ -244,22 +244,22 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         instance.ignoreUpdate();
                     }
 
-                    if (!App.settings.isMinecraftLaunched()) {
+                    if (!App.launcher.isMinecraftLaunched()) {
                         if (instance.launch()) {
-                            App.settings.setMinecraftLaunched(true);
+                            App.launcher.setMinecraftLaunched(true);
                         }
                     }
                 }
             } else {
-                if (!App.settings.isMinecraftLaunched()) {
+                if (!App.launcher.isMinecraftLaunched()) {
                     if (instance.launch()) {
-                        App.settings.setMinecraftLaunched(true);
+                        App.launcher.setMinecraftLaunched(true);
                     }
                 }
             }
         });
         this.reinstallButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (App.launcher.account == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot reinstall pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -270,7 +270,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             }
         });
         this.updateButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (App.launcher.account == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -292,10 +292,10 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         .setType(DialogManager.INFO).show();
 
                 if (ret == DialogManager.YES_OPTION) {
-                    final JDialog dialog = new JDialog(App.settings.getParent(),
+                    final JDialog dialog = new JDialog(App.launcher.getParent(),
                             GetText.tr("Backing Up {0}", instance.launcher.name), ModalityType.APPLICATION_MODAL);
                     dialog.setSize(300, 100);
-                    dialog.setLocationRelativeTo(App.settings.getParent());
+                    dialog.setLocationRelativeTo(App.launcher.getParent());
                     dialog.setResizable(false);
 
                     JPanel topPanel = new JPanel();
@@ -368,7 +368,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
-                    App.settings.removeInstance(instance);
+                    App.launcher.removeInstance(instance);
                     dialog.close();
                     App.TOASTER.pop(GetText.tr("Deleted Instance Successfully"));
                 }));
@@ -396,7 +396,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                 .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                         if (ret == 0) {
-                            if (App.settings.getAccount() == null) {
+                            if (App.launcher.account == null) {
                                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                         .setType(DialogManager.ERROR).show();
@@ -406,23 +406,23 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                 new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                             }
                         } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                            if (!App.settings.isMinecraftLaunched()) {
+                            if (!App.launcher.isMinecraftLaunched()) {
                                 if (instance.launch()) {
-                                    App.settings.setMinecraftLaunched(true);
+                                    App.launcher.setMinecraftLaunched(true);
                                 }
                             }
                         } else if (ret == 2) {
                             instance.ignoreUpdate();
-                            if (!App.settings.isMinecraftLaunched()) {
+                            if (!App.launcher.isMinecraftLaunched()) {
                                 if (instance.launch()) {
-                                    App.settings.setMinecraftLaunched(true);
+                                    App.launcher.setMinecraftLaunched(true);
                                 }
                             }
                         }
                     } else {
-                        if (!App.settings.isMinecraftLaunched()) {
+                        if (!App.launcher.isMinecraftLaunched()) {
                             if (instance.launch()) {
-                                App.settings.setMinecraftLaunched(true);
+                                App.launcher.setMinecraftLaunched(true);
                             }
                         }
                     }
@@ -464,7 +464,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         chooser.setAcceptAllFileFilterUsed(false);
                         chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                        int ret = chooser.showOpenDialog(App.settings.getParent());
+                        int ret = chooser.showOpenDialog(App.launcher.getParent());
                         if (ret == JFileChooser.APPROVE_OPTION) {
                             File img = chooser.getSelectedFile();
                             if (img.getAbsolutePath().endsWith(".png")) {
@@ -482,12 +482,12 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     });
 
                     cloneItem.addActionListener(e14 -> {
-                        String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
+                        String clonedName = JOptionPane.showInputDialog(App.launcher.getParent(),
                                 GetText.tr("Enter a new name for this cloned instance."),
                                 GetText.tr("Cloning Instance"), JOptionPane.INFORMATION_MESSAGE);
                         if (clonedName != null && clonedName.length() >= 1
-                                && App.settings.getInstanceByName(clonedName) == null
-                                && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
+                                && App.launcher.getInstanceByName(clonedName) == null
+                                && App.launcher.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
                                 && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
                                         FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
                             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Clone",
@@ -497,7 +497,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
                                     GetText.tr("Cloning Instance. Please wait..."), null);
                             dialog.addThread(new Thread(() -> {
-                                App.settings.cloneInstance(instance, newName);
+                                App.launcher.cloneInstance(instance, newName);
                                 dialog.close();
                                 App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
                             }));
@@ -547,7 +547,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                     .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                             if (ret == 0) {
-                                if (App.settings.getAccount() == null) {
+                                if (App.launcher.account == null) {
                                     DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                             .setContent(
                                                     GetText.tr("Cannot update pack as you have no account selected."))
@@ -558,16 +558,16 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                     new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                                 }
                             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                                if (!App.settings.isMinecraftLaunched()) {
+                                if (!App.launcher.isMinecraftLaunched()) {
                                     if (instance.launch()) {
-                                        App.settings.setMinecraftLaunched(true);
+                                        App.launcher.setMinecraftLaunched(true);
                                     }
                                 }
                             } else if (ret == 2) {
                                 instance.ignoreUpdate();
-                                if (!App.settings.isMinecraftLaunched()) {
+                                if (!App.launcher.isMinecraftLaunched()) {
                                     if (instance.launch()) {
-                                        App.settings.setMinecraftLaunched(true);
+                                        App.launcher.setMinecraftLaunched(true);
                                     }
                                 }
                             }

@@ -120,7 +120,7 @@ public class InstanceInstallerDialog extends JDialog {
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
             File manifestFile) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;
@@ -162,7 +162,7 @@ public class InstanceInstallerDialog extends JDialog {
             packVersion.version = curseManifest.version;
 
             try {
-                packVersion.minecraftVersion = App.settings.getMinecraftVersion(curseManifest.minecraft.version);
+                packVersion.minecraftVersion = App.launcher.getMinecraftVersion(curseManifest.minecraft.version);
             } catch (InvalidMinecraftVersion e) {
                 LogManager.error(e.getMessage());
                 return;
@@ -184,7 +184,7 @@ public class InstanceInstallerDialog extends JDialog {
             setTitle(GetText.tr("Reinstalling {0}", instanceV2.launcher.name));
         }
         setSize(450, 240);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -309,7 +309,7 @@ public class InstanceInstallerDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!isReinstall && !isServer && App.settings.isInstance(nameField.getText())) {
+                if (!isReinstall && !isServer && App.launcher.isInstance(nameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText
                                     .tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
@@ -322,7 +322,7 @@ public class InstanceInstallerDialog extends JDialog {
                             .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
                             .build()).setType(DialogManager.ERROR).show();
                     return;
-                } else if (!isReinstall && isServer && App.settings.isServer(nameField.getText())) {
+                } else if (!isReinstall && isServer && App.launcher.isServer(nameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText
                                     .tr("A server already exists with that name.<br/><br/>Rename it and try again."))
@@ -338,7 +338,7 @@ public class InstanceInstallerDialog extends JDialog {
                 }
 
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
-                final JDialog dialog = new JDialog(App.settings.getParent(), isReinstall ? (
+                final JDialog dialog = new JDialog(App.launcher.getParent(), isReinstall ? (
                 // #. {0} is the name of the pack the user is installing
                 isServer ? GetText.tr("Reinstalling {0} Server", pack.getName())
                         // #. {0} is the name of the pack the user is installing
@@ -347,7 +347,7 @@ public class InstanceInstallerDialog extends JDialog {
                 isServer ? GetText.tr("Installing {0} Server", pack.getName())
                         // #. {0} is the name of the pack the user is installing
                         : GetText.tr("Installing {0}", pack.getName())), ModalityType.DOCUMENT_MODAL);
-                dialog.setLocationRelativeTo(App.settings.getParent());
+                dialog.setLocationRelativeTo(App.launcher.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
 
@@ -401,7 +401,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 if (instanceIsCorrupt) {
                                     if (instance != null) {
-                                        App.settings.setInstanceUnplayable(instance);
+                                        App.launcher.setInstanceUnplayable(instance);
                                     }
                                 }
                             } else {
@@ -449,12 +449,12 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
 
                                 if (isServer) {
-                                    App.settings.reloadServersPanel();
+                                    App.launcher.reloadServersPanel();
                                 } else {
-                                    App.settings.reloadInstancesPanel();
+                                    App.launcher.reloadInstancesPanel();
                                 }
 
-                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev) {
+                                if (pack.isLoggingEnabled() && App.settings.enableLogs && !version.isDev) {
                                     if (isServer) {
                                         pack.addServerInstall(version.version);
                                     } else if (isUpdate) {
@@ -476,7 +476,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                                     if (instanceIsCorrupt) {
                                         if (instance != null) {
-                                            App.settings.setInstanceUnplayable(instance);
+                                            App.launcher.setInstanceUnplayable(instance);
                                         }
                                     }
                                 } else {

@@ -89,16 +89,16 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 loggingSettingsTab.save();
                 toolsSettingsTab.save();
                 backupsSettingsTab.save();
-                App.settings.saveProperties();
+                App.settings.save();
                 SettingsManager.post();
                 if (reloadPacksPanel) {
-                    App.settings.reloadPacksPanel();
+                    App.launcher.reloadPacksPanel();
                 }
                 if (restartServerChecker) {
-                    App.settings.startCheckingServers();
+                    App.launcher.startCheckingServers();
                 }
                 if (reloadTheme) {
-                    App.loadTheme(App.settings.getTheme());
+                    App.loadTheme(App.settings.theme);
                     Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
                     FlatLaf.updateUILater();
                     ThemeManager.post();

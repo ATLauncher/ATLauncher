@@ -162,9 +162,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             return;
         }
 
-        List<Pack> packs = App.settings.sortPacksAlphabetically()
-                ? App.settings.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
-                : App.settings.getPacksSortedPositionally(this.isFeatured, this.isSystem);
+        List<Pack> packs = App.settings.sortPacksAlphabetically
+                ? App.launcher.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
+                : App.launcher.getPacksSortedPositionally(this.isFeatured, this.isSystem);
 
         for (Pack pack : packs) {
             if (pack.canInstall()) {

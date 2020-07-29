@@ -74,12 +74,12 @@ public class EditModsDialog extends JDialog {
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
     public EditModsDialog(Instance instance) {
-        super(App.settings.getParent(),
+        super(App.launcher.getParent(),
                 // #. {0} is the name of the instance
                 GetText.tr("Editing Mods For {0}", instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
         setSize(550, 450);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -98,12 +98,12 @@ public class EditModsDialog extends JDialog {
     }
 
     public EditModsDialog(InstanceV2 instanceV2) {
-        super(App.settings.getParent(),
+        super(App.launcher.getParent(),
                 // #. {0} is the name of the instance
                 GetText.tr("Editing Mods For {0}", instanceV2.launcher.name), ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
         setSize(550, 450);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -217,7 +217,7 @@ public class EditModsDialog extends JDialog {
         addButton.addActionListener(e -> {
             boolean usesCoreMods = false;
             try {
-                usesCoreMods = App.settings.getMinecraftVersion(
+                usesCoreMods = App.launcher.getMinecraftVersion(
                         instanceV2 != null ? instanceV2.id : this.instance.getMinecraftVersion()).coremods;
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);
@@ -519,7 +519,7 @@ public class EditModsDialog extends JDialog {
         if (this.instanceV2 != null) {
             this.instanceV2.save();
         } else {
-            App.settings.saveInstances();
+            App.launcher.saveInstances();
         }
 
         enabledModsPanel.removeAll();

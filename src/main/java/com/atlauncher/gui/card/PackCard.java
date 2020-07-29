@@ -135,7 +135,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     private void addActionListeners() {
         this.newInstanceButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (App.launcher.account == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -146,7 +146,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         });
 
         this.createServerButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (App.launcher.account == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -173,7 +173,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         this.removePackButton.addActionListener(e -> {
             Analytics.sendEvent(pack.getName(), "Remove", "Pack");
-            App.settings.removePack(pack.getCode());
+            App.launcher.removePack(pack.getCode());
         });
     }
 

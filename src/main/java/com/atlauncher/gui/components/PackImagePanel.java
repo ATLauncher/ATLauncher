@@ -47,7 +47,7 @@ public final class PackImagePanel extends JPanel {
         int y = (this.getHeight() - 150) / 2;
         g2.drawImage(this.image, 0, y, 300, 150, null);
 
-        if (App.settings.enabledPackTags()) {
+        if (App.settings.enablePackTags) {
             String text;
             Color colour;
 

@@ -55,7 +55,7 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableServerChecker = new JCheckBox();
-        if (App.settings.enableServerChecker()) {
+        if (App.settings.enableServerChecker) {
             enableServerChecker.setSelected(true);
         }
         enableServerChecker.addActionListener(e -> {
@@ -82,24 +82,23 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
-        SpinnerNumberModel serverCheckerWaitModel = new SpinnerNumberModel(App.settings.getServerCheckerWait(), 1, 30,
-                1);
+        SpinnerNumberModel serverCheckerWaitModel = new SpinnerNumberModel(App.settings.serverCheckerWait, 1, 30, 1);
 
         serverCheckerWait = new JSpinner(serverCheckerWaitModel);
-        if (!App.settings.enableServerChecker()) {
+        if (!App.settings.enableServerChecker) {
             serverCheckerWait.setEnabled(false);
         }
         add(serverCheckerWait, gbc);
     }
 
     public boolean needToRestartServerChecker() {
-        return ((enableServerChecker.isSelected() != App.settings.enableServerChecker())
-                || (App.settings.getServerCheckerWait() != (Integer) serverCheckerWait.getValue()));
+        return ((enableServerChecker.isSelected() != App.settings.enableServerChecker)
+                || (App.settings.serverCheckerWait != (Integer) serverCheckerWait.getValue()));
     }
 
     public void save() {
-        App.settings.setEnableServerChecker(enableServerChecker.isSelected());
-        App.settings.setServerCheckerWait((Integer) serverCheckerWait.getValue());
+        App.settings.enableServerChecker = enableServerChecker.isSelected();
+        App.settings.serverCheckerWait = (Integer) serverCheckerWait.getValue();
     }
 
     @Override

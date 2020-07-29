@@ -63,13 +63,13 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.settings.getParent(), GetText.tr("Select Mods To Install"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Select Mods To Install"), ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
 
         Analytics.sendScreenView("Mods Chooser Dialog");
 
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

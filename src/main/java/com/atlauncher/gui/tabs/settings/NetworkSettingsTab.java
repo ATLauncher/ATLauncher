@@ -70,8 +70,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel concurrentConnectionsModel = new SpinnerNumberModel(App.settings.getConcurrentConnections(),
-                null, null, 1);
+        SpinnerNumberModel concurrentConnectionsModel = new SpinnerNumberModel(App.settings.concurrentConnections, null,
+                null, 1);
         concurrentConnectionsModel.setMinimum(1);
         concurrentConnections = new JSpinner(concurrentConnectionsModel);
         add(concurrentConnections, gbc);
@@ -90,7 +90,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableProxy = new JCheckBox();
-        if (App.settings.getEnableProxy()) {
+        if (App.settings.enableProxy) {
             enableProxy.setSelected(true);
         }
         enableProxy.addActionListener(e -> {
@@ -119,7 +119,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyHost = new JTextField(20);
-        proxyHost.setText(App.settings.getProxyHost());
+        proxyHost.setText(App.settings.proxyHost);
         if (!enableProxy.isSelected()) {
             proxyHost.setEnabled(false);
         }
@@ -137,7 +137,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel proxyPortModel = new SpinnerNumberModel(App.settings.getProxyPort(), null, null, 1);
+        SpinnerNumberModel proxyPortModel = new SpinnerNumberModel(App.settings.proxyPort, null, null, 1);
         proxyPortModel.setMinimum(1);
         proxyPortModel.setMaximum(65535);
         proxyPort = new JSpinner(proxyPortModel);
@@ -163,7 +163,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         proxyType.addItem("HTTP");
         proxyType.addItem("SOCKS");
         proxyType.addItem("DIRECT");
-        proxyType.setSelectedItem(App.settings.getProxyType());
+        proxyType.setSelectedItem(App.settings.proxyType);
         if (!enableProxy.isSelected()) {
             proxyType.setEnabled(false);
         }
@@ -214,12 +214,12 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     public void save() {
-        App.settings.setConcurrentConnections((Integer) concurrentConnections.getValue());
-        App.settings.setEnableProxy(enableProxy.isSelected());
+        App.settings.concurrentConnections = (Integer) concurrentConnections.getValue();
+        App.settings.enableProxy = enableProxy.isSelected();
         if (enableProxy.isSelected()) {
-            App.settings.setProxyHost(proxyHost.getText());
-            App.settings.setProxyPort((Integer) proxyPort.getValue());
-            App.settings.setProxyType(((String) proxyType.getSelectedItem()));
+            App.settings.proxyHost = proxyHost.getText();
+            App.settings.proxyPort = (Integer) proxyPort.getValue();
+            App.settings.proxyType = ((String) proxyType.getSelectedItem());
         }
     }
 

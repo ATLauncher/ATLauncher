@@ -92,7 +92,7 @@ public class NewsTab extends JPanel implements Tab {
      */
     public void reload() {
         this.NEWS_PANE.setText("");
-        this.NEWS_PANE.setText(App.settings.getNewsHTML());
+        this.NEWS_PANE.setText(App.launcher.getNewsHTML());
         this.NEWS_PANE.setCaretPosition(0);
     }
 

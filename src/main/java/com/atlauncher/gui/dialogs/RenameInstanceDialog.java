@@ -133,7 +133,7 @@ public class RenameInstanceDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
-            if (App.settings.isInstance(instanceName.getText())) {
+            if (App.launcher.isInstance(instanceName.getText())) {
                 DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
                         .setContent(
                                 GetText.tr("There is already an instance called {0}.<br/><br/>Rename it and try again.",
@@ -150,10 +150,10 @@ public class RenameInstanceDialog extends JDialog {
                         .setType(DialogManager.ERROR).show();
             } else {
                 if (this.instanceV2 != null && instanceV2.rename(instanceName.getText())) {
-                    App.settings.reloadInstancesPanel();
+                    App.launcher.reloadInstancesPanel();
                 } else if (this.instance != null && instance.rename(instanceName.getText())) {
-                    App.settings.saveInstances();
-                    App.settings.reloadInstancesPanel();
+                    App.launcher.saveInstances();
+                    App.launcher.reloadInstancesPanel();
                 } else {
                     LogManager.error("Unknown Error Occurred While Renaming Instance!");
                     DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))

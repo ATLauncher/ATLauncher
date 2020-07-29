@@ -47,7 +47,7 @@ public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
 
         if (rootJsonObject.has("minecraft")) {
             try {
-                packVersion.minecraftVersion = App.settings
+                packVersion.minecraftVersion = App.launcher
                         .getMinecraftVersion(rootJsonObject.get("minecraft").getAsString());
             } catch (InvalidMinecraftVersion e) {
                 LogManager.error(e.getMessage());

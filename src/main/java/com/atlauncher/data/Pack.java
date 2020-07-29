@@ -159,7 +159,7 @@ public class Pack {
     }
 
     public boolean isTester() {
-        Account account = App.settings.getAccount();
+        Account account = App.launcher.account;
         if (account == null) {
             return false;
         }
@@ -185,7 +185,7 @@ public class Pack {
                 return true;
             }
         } else if (this.type == PackType.SEMIPUBLIC && this.code != null) {
-            if (isTester() || (hasVersions() && App.settings.canViewSemiPublicPackByCode(this.code))) {
+            if (isTester() || (hasVersions() && App.launcher.canViewSemiPublicPackByCode(this.code))) {
                 return true;
             }
         } else {
@@ -200,7 +200,7 @@ public class Pack {
         if (this.type != PackType.PRIVATE) {
             return true;
         }
-        Account account = App.settings.getAccount();
+        Account account = App.launcher.account;
         if (account == null) {
             return false;
         }

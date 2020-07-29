@@ -50,7 +50,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     private double downloadedBytes = 0; // Total number of bytes downloaded
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
         this.max = initMax;
         this.closedLogMessage = initClosedLogMessage;
@@ -58,7 +58,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setSize(300, 100);
         setTitle(title);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
 

@@ -32,7 +32,7 @@ public class PackUsers {
     public void addUsers() {
         Pack pack = null;
         try {
-            pack = App.settings.getPackByID(this.pack);
+            pack = App.launcher.getPackByID(this.pack);
         } catch (InvalidPack e) {
             return;
         }

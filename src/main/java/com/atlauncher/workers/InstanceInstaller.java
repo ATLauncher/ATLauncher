@@ -563,16 +563,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instance.save();
 
         if (this.instanceV2 != null) {
-            App.settings.instancesV2.remove(this.instanceV2);
+            App.launcher.instancesV2.remove(this.instanceV2);
         }
 
-        App.settings.instancesV2.add(instance);
+        App.launcher.instancesV2.add(instance);
 
         if (this.instance != null) {
-            App.settings.instances.remove(this.instance);
+            App.launcher.instances.remove(this.instance);
         }
 
-        App.settings.reloadInstancesPanel();
+        App.launcher.reloadInstancesPanel();
     }
 
     private void saveServerJson() {
@@ -591,9 +591,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         server.save();
 
-        App.settings.servers.add(server);
+        App.launcher.servers.add(server);
 
-        App.settings.reloadServersPanel();
+        App.launcher.reloadServersPanel();
     }
 
     private void determineMainClass() {

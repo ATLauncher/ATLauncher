@@ -153,10 +153,10 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                     .setType(DialogManager.INFO).show();
 
             if (ret == DialogManager.YES_OPTION) {
-                final JDialog dialog = new JDialog(App.settings.getParent(), GetText.tr("Backing Up {0}", server.name),
+                final JDialog dialog = new JDialog(App.launcher.getParent(), GetText.tr("Backing Up {0}", server.name),
                         ModalityType.APPLICATION_MODAL);
                 dialog.setSize(300, 100);
-                dialog.setLocationRelativeTo(App.settings.getParent());
+                dialog.setLocationRelativeTo(App.launcher.getParent());
                 dialog.setResizable(false);
 
                 JPanel topPanel = new JPanel();
@@ -206,12 +206,12 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Server"), 0,
                         GetText.tr("Deleting Server. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
-                    App.settings.removeServer(server);
+                    App.launcher.removeServer(server);
                     dialog.close();
                     App.TOASTER.pop(GetText.tr("Deleted Server Successfully"));
                 }));
                 dialog.start();
-                App.settings.reloadServersPanel();
+                App.launcher.reloadServersPanel();
             }
         });
         this.openButton.addActionListener(e -> OS.openFileExplorer(server.getRoot()));
@@ -240,7 +240,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         chooser.setAcceptAllFileFilterUsed(false);
                         chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                        int ret = chooser.showOpenDialog(App.settings.getParent());
+                        int ret = chooser.showOpenDialog(App.launcher.getParent());
                         if (ret == JFileChooser.APPROVE_OPTION) {
                             File img = chooser.getSelectedFile();
                             if (img.getAbsolutePath().endsWith(".png")) {

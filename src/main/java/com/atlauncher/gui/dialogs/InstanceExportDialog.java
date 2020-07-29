@@ -64,7 +64,7 @@ public class InstanceExportDialog extends JDialog {
     final GridBagConstraints gbc = new GridBagConstraints();
 
     public InstanceExportDialog(InstanceV2 instance) {
-        super(App.settings.getParent(), GetText.tr("Export {0}", instance.launcher.name),
+        super(App.launcher.getParent(), GetText.tr("Export {0}", instance.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
@@ -81,7 +81,7 @@ public class InstanceExportDialog extends JDialog {
 
     private void setupComponents() {
         setSize(550, 400);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -119,7 +119,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
-        author.setText(App.settings.getAccount().getMinecraftUsername());
+        author.setText(App.launcher.account.getMinecraftUsername());
         topPanel.add(author, gbc);
 
         // Export File

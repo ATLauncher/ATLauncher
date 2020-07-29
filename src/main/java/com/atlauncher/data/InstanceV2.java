@@ -117,7 +117,7 @@ public class InstanceV2 extends MinecraftVersion {
             return null;
         }
 
-        return App.settings.packs.stream().filter(p -> p.id == this.launcher.packId).findFirst().orElse(null);
+        return App.launcher.packs.stream().filter(p -> p.id == this.launcher.packId).findFirst().orElse(null);
     }
 
     public boolean hasUpdate() {
@@ -375,7 +375,7 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public boolean launch() {
-        final Account account = App.settings.getAccount();
+        final Account account = App.launcher.account;
 
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
@@ -383,10 +383,10 @@ public class InstanceV2 extends MinecraftVersion {
                             .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
                     .setType(DialogManager.ERROR).show();
 
-            App.settings.setMinecraftLaunched(false);
+            App.launcher.setMinecraftLaunched(false);
             return false;
         } else {
-            Integer maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.getMaximumMemory()
+            Integer maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
                     : this.launcher.maximumMemory;
             if ((maximumMemory < this.launcher.requiredMemory)
                     && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
@@ -399,11 +399,11 @@ public class InstanceV2 extends MinecraftVersion {
 
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     return false;
                 }
             }
-            Integer permGen = (this.launcher.permGen == null) ? App.settings.getPermGen() : this.launcher.permGen;
+            Integer permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
             if (permGen < this.launcher.requiredPermGen) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -413,7 +413,7 @@ public class InstanceV2 extends MinecraftVersion {
                         .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     return false;
                 }
             }
@@ -462,8 +462,8 @@ public class InstanceV2 extends MinecraftVersion {
             Thread launcher = new Thread(() -> {
                 try {
                     long start = System.currentTimeMillis();
-                    if (App.settings.getParent() != null) {
-                        App.settings.getParent().setVisible(false);
+                    if (App.launcher.getParent() != null) {
+                        App.launcher.getParent().setVisible(false);
                     }
 
                     LogManager.info("Launching pack " + this.launcher.pack + " " + this.launcher.version + " for "
@@ -472,15 +472,15 @@ public class InstanceV2 extends MinecraftVersion {
                     Process process = MCLauncher.launch(account, this, session, nativesTempDir);
 
                     if ((App.autoLaunch != null && App.closeLauncher)
-                            || (!App.settings.keepLauncherOpen() && !App.settings.enableLogs())) {
-                        if (App.settings.enableLogs()) {
+                            || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
+                        if (App.settings.enableLogs) {
                             addTimePlayed(1, this.launcher.version); // count the stats, just without time played
                         }
 
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration() && this.getPack() != null) {
+                    if (App.settings.enableDiscordIntegration && this.getPack() != null) {
                         String playing = this.getPack().name + " (" + this.launcher.version + ")";
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
@@ -497,7 +497,7 @@ public class InstanceV2 extends MinecraftVersion {
                         DiscordRPC.discordUpdatePresence(presence.build());
                     }
 
-                    App.settings.showKillMinecraft(process);
+                    App.launcher.showKillMinecraft(process);
                     InputStream is = process.getInputStream();
                     InputStreamReader isr = new InputStreamReader(is);
                     BufferedReader br = new BufferedReader(isr);
@@ -515,7 +515,8 @@ public class InstanceV2 extends MinecraftVersion {
                             detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
                         }
 
-                        if (line.contains("class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
+                        if (line.contains(
+                                "class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
                             detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
                         }
 
@@ -531,12 +532,12 @@ public class InstanceV2 extends MinecraftVersion {
                         }
                         LogManager.minecraft(line);
                     }
-                    App.settings.hideKillMinecraft();
-                    if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
-                        App.settings.getParent().setVisible(true);
+                    App.launcher.hideKillMinecraft();
+                    if (App.launcher.getParent() != null && App.settings.keepLauncherOpen) {
+                        App.launcher.getParent().setVisible(true);
                     }
                     long end = System.currentTimeMillis();
-                    if (App.settings.enableDiscordIntegration()) {
+                    if (App.settings.enableDiscordIntegration) {
                         DiscordRPC.discordClearPresence();
                     }
                     int exitValue = 0; // Assume we exited fine
@@ -545,13 +546,13 @@ public class InstanceV2 extends MinecraftVersion {
                     } catch (IllegalThreadStateException e) {
                         process.destroy(); // Kill the process
                     }
-                    if (!App.settings.keepLauncherOpen()) {
+                    if (!App.settings.keepLauncherOpen) {
                         App.console.setVisible(false); // Hide the console to pretend we've closed
                     }
                     if (exitValue != 0) {
                         // Submit any pending crash reports from Open Eye if need to since we
                         // exited abnormally
-                        if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
+                        if (App.settings.enableLogs && App.settings.enableOpenEyeReporting) {
                             App.TASKPOOL.submit(this::sendOpenEyePendingReports);
                         }
                     }
@@ -560,9 +561,9 @@ public class InstanceV2 extends MinecraftVersion {
                         MinecraftError.showInformationPopup(detectedError);
                     }
 
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
-                            && App.settings.enableLogs()) {
+                            && App.settings.enableLogs) {
                         final int timePlayed = (int) (end - start) / 1000;
                         if (timePlayed > 0) {
                             App.TASKPOOL.submit(() -> {
@@ -570,13 +571,13 @@ public class InstanceV2 extends MinecraftVersion {
                             });
                         }
                     }
-                    if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles()) {
-                        App.settings.reloadLauncherData();
+                    if (App.settings.keepLauncherOpen && App.launcher.checkForUpdatedFiles()) {
+                        App.launcher.reloadLauncherData();
                     }
                     if (Files.isDirectory(nativesTempDir)) {
                         FileUtils.deleteDirectory(nativesTempDir);
                     }
-                    if (!App.settings.keepLauncherOpen()) {
+                    if (!App.settings.keepLauncherOpen) {
                         System.exit(0);
                     }
                 } catch (IOException e1) {

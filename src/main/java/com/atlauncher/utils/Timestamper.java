@@ -23,7 +23,7 @@ import java.util.Date;
 import com.atlauncher.App;
 
 public final class Timestamper {
-    private static final SimpleDateFormat format = new SimpleDateFormat(App.settings.getDateFormat() + " HH:mm:ss a");
+    private static final SimpleDateFormat format = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
 
     public static String now() {
         return format.format(new Date());

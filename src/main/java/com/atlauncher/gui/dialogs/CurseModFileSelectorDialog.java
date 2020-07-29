@@ -68,7 +68,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     private List<CurseFile> files = new ArrayList<>();
 
     public CurseModFileSelectorDialog(CurseMod mod, Instance instance) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instance = instance;
@@ -77,7 +77,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     public CurseModFileSelectorDialog(CurseMod mod, Instance instance, int installedFileId) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instance = instance;
@@ -87,7 +87,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instanceV2 = instanceV2;
@@ -96,7 +96,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2, int installedFileId) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instanceV2 = instanceV2;
@@ -112,7 +112,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         setTitle(GetText.tr("Installing {0}", mod.name));
 
         setSize(500, 200);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -240,7 +240,7 @@ public class CurseModFileSelectorDialog extends JDialog {
                             (dependencies.size() / 2) + 1));
 
                     setSize(550, 400);
-                    setLocationRelativeTo(App.settings.getParent());
+                    setLocationRelativeTo(App.launcher.getParent());
 
                     dependenciesPanel.setVisible(true);
 
@@ -272,8 +272,8 @@ public class CurseModFileSelectorDialog extends JDialog {
             Stream<CurseFile> curseFilesStream = CurseApi.getFilesForMod(mod.id).stream()
                     .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
 
-            if (!App.settings.disabledAddModRestrictions()) {
-                curseFilesStream = curseFilesStream.filter(file -> App.settings.disabledAddModRestrictions()
+            if (!App.settings.disableAddModRestrictions) {
+                curseFilesStream = curseFilesStream.filter(file -> App.settings.disableAddModRestrictions
                         || mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
                         || file.gameVersion.contains(
                                 this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
@@ -288,7 +288,7 @@ public class CurseModFileSelectorDialog extends JDialog {
             }
 
             // try to filter out non compatable mods (Forge on Fabric and vice versa)
-            if (App.settings.disabledAddModRestrictions()) {
+            if (App.settings.disableAddModRestrictions) {
                 files.stream().forEach(version -> filesDropdown.addItem(version));
             } else {
                 files.stream().filter(version -> {

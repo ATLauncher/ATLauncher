@@ -31,7 +31,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 public class Authentication {
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
-                App.settings.getProxyForAuth(), clientToken).createUserAuthentication(Agent.MINECRAFT);
+                App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
 
         LoginResponse response = new LoginResponse(username);
 
@@ -52,8 +52,8 @@ public class Authentication {
     }
 
     public static LoginResponse login(Account account, boolean usePassword) {
-        UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.getProxyForAuth(),
-                account.getClientToken()).createUserAuthentication(Agent.MINECRAFT);
+        UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.getClientToken())
+                .createUserAuthentication(Agent.MINECRAFT);
         LoginResponse response = new LoginResponse(account.getUsername());
 
         if (!usePassword && account.hasStore()) {

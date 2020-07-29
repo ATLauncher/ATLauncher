@@ -64,7 +64,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         forgeLoggingLevel.addItem("FINE");
         forgeLoggingLevel.addItem("FINER");
         forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.setSelectedItem(App.settings.getForgeLoggingLevel());
+        forgeLoggingLevel.setSelectedItem(App.settings.forgeLoggingLevel);
         add(forgeLoggingLevel, gbc);
 
         // Enable Logging
@@ -92,7 +92,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
                 enableOpenEyeReporting.setEnabled(true);
             }
         });
-        if (App.settings.enableLogs()) {
+        if (App.settings.enableLogs) {
             enableLogs.setSelected(true);
         }
         add(enableLogs, gbc);
@@ -113,7 +113,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableAnalytics = new JCheckBox();
-        if (App.settings.enableAnalytics()) {
+        if (App.settings.enableAnalytics) {
             enableAnalytics.setSelected(true);
         }
         add(enableAnalytics, gbc);
@@ -134,20 +134,20 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
-        if (!App.settings.enableLogs()) {
+        if (!App.settings.enableLogs) {
             enableOpenEyeReporting.setEnabled(false);
         }
-        if (App.settings.enableOpenEyeReporting()) {
+        if (App.settings.enableOpenEyeReporting) {
             enableOpenEyeReporting.setSelected(true);
         }
         add(enableOpenEyeReporting, gbc);
     }
 
     public void save() {
-        App.settings.setForgeLoggingLevel((String) forgeLoggingLevel.getSelectedItem());
-        App.settings.setEnableLogs(enableLogs.isSelected());
-        App.settings.setEnableAnalytics(enableAnalytics.isSelected());
-        App.settings.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected());
+        App.settings.forgeLoggingLevel = (String) forgeLoggingLevel.getSelectedItem();
+        App.settings.enableLogs = enableLogs.isSelected();
+        App.settings.enableAnalytics = enableAnalytics.isSelected();
+        App.settings.enableOpenEyeReporting = enableOpenEyeReporting.isSelected();
     }
 
     @Override

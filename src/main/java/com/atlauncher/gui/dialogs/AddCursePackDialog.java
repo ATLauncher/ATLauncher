@@ -68,7 +68,7 @@ public class AddCursePackDialog extends JDialog {
     private JButton addButton;
 
     public AddCursePackDialog() {
-        super(App.settings.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
         setSize(450, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

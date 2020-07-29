@@ -286,8 +286,8 @@ public class Instance implements Cloneable {
         this.minecraftArguments = minecraftArguments;
         this.isDev = isDev;
         this.isPlayable = isPlayable;
-        if (enableUserLock && !App.settings.getAccount().isUUIDNull()) {
-            this.userLock = App.settings.getAccount().getUUIDNoDashes();
+        if (enableUserLock && !App.launcher.account.isUUIDNull()) {
+            this.userLock = App.launcher.account.getUUIDNoDashes();
         } else {
             this.userLock = null;
         }
@@ -576,7 +576,7 @@ public class Instance implements Cloneable {
 
         if (!hasUpdateBeenIgnored(version)) {
             this.ignoredUpdates.add(version);
-            App.settings.saveInstances();
+            App.launcher.saveInstances();
         }
     }
 
@@ -731,7 +731,7 @@ public class Instance implements Cloneable {
 
     public MinecraftVersion getActualMinecraftVersion() {
         try {
-            return App.settings.getMinecraftVersion(this.minecraftVersion);
+            return App.launcher.getMinecraftVersion(this.minecraftVersion);
         } catch (InvalidMinecraftVersion e) {
             return null;
         }
@@ -1207,13 +1207,13 @@ public class Instance implements Cloneable {
      */
     public boolean canPlay() {
         // Make sure an account is selected first.
-        if (App.settings.getAccount() == null || !App.settings.getAccount().isReal()) {
+        if (App.launcher.account == null || !App.launcher.account.isReal()) {
             return false;
         }
 
         // Check to see if this was a private Instance belonging to a specific user
         // only.
-        if (this.userLock != null && !App.settings.getAccount().getUUIDNoDashes().equalsIgnoreCase(this.userLock)) {
+        if (this.userLock != null && !App.launcher.account.getUUIDNoDashes().equalsIgnoreCase(this.userLock)) {
             return false;
         }
 
@@ -1344,17 +1344,17 @@ public class Instance implements Cloneable {
      * @return true if the Minecraft process was started
      */
     public boolean launch() {
-        final Account account = App.settings.getAccount();
+        final Account account = App.launcher.account;
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                     .setContent(GetText.tr("Cannot play instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
 
-            App.settings.setMinecraftLaunched(false);
+            App.launcher.setMinecraftLaunched(false);
             return false;
         } else {
             Integer maximumMemory = (this.settings == null || this.settings.getMaximumMemory() == null)
-                    ? App.settings.getMaximumMemory()
+                    ? App.settings.maximumMemory
                     : settings.getMaximumMemory();
             if ((maximumMemory < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficient Ram"))
@@ -1366,11 +1366,11 @@ public class Instance implements Cloneable {
 
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     return false;
                 }
             }
-            Integer permGen = (this.settings == null || this.settings.getPermGen() == null) ? App.settings.getPermGen()
+            Integer permGen = (this.settings == null || this.settings.getPermGen() == null) ? App.settings.metaspace
                     : settings.getPermGen();
             if (permGen < this.permgen) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
@@ -1381,7 +1381,7 @@ public class Instance implements Cloneable {
                         .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     return false;
                 }
             }
@@ -1406,8 +1406,8 @@ public class Instance implements Cloneable {
             Thread launcher = new Thread(() -> {
                 try {
                     long start = System.currentTimeMillis();
-                    if (App.settings.getParent() != null) {
-                        App.settings.getParent().setVisible(false);
+                    if (App.launcher.getParent() != null) {
+                        App.launcher.getParent().setVisible(false);
                     }
 
                     LogManager.info("Launching pack " + getPackName() + " " + getVersion() + " for " + "Minecraft "
@@ -1416,12 +1416,11 @@ public class Instance implements Cloneable {
                     Process process = MCLauncher.launch(account, Instance.this, session);
 
                     if ((App.autoLaunch != null && App.closeLauncher)
-                            || (!App.settings.keepLauncherOpen() && !App.settings.enableLogs())) {
+                            || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration() && App.discordInitialized
-                            && this.getRealPack() != null) {
+                    if (App.settings.enableDiscordIntegration && App.discordInitialized && this.getRealPack() != null) {
                         String playing = this.getRealPack().getName() + " (" + this.getVersion() + ")";
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
@@ -1438,7 +1437,7 @@ public class Instance implements Cloneable {
                         DiscordRPC.discordUpdatePresence(presence.build());
                     }
 
-                    App.settings.showKillMinecraft(process);
+                    App.launcher.showKillMinecraft(process);
                     InputStream is = process.getInputStream();
                     InputStreamReader isr = new InputStreamReader(is);
                     BufferedReader br = new BufferedReader(isr);
@@ -1468,12 +1467,12 @@ public class Instance implements Cloneable {
                         }
                         LogManager.minecraft(line);
                     }
-                    App.settings.hideKillMinecraft();
-                    if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
-                        App.settings.getParent().setVisible(true);
+                    App.launcher.hideKillMinecraft();
+                    if (App.launcher.getParent() != null && App.settings.keepLauncherOpen) {
+                        App.launcher.getParent().setVisible(true);
                     }
                     long end = System.currentTimeMillis();
-                    if (App.settings.enableDiscordIntegration()) {
+                    if (App.settings.enableDiscordIntegration) {
                         DiscordRPC.discordClearPresence();
                     }
                     int exitValue = 0; // Assume we exited fine
@@ -1482,14 +1481,14 @@ public class Instance implements Cloneable {
                     } catch (IllegalThreadStateException e) {
                         process.destroy(); // Kill the process
                     }
-                    if (!App.settings.keepLauncherOpen()) {
+                    if (!App.settings.keepLauncherOpen) {
                         App.console.setVisible(false); // Hide the console to pretend
                                                        // we've closed
                     }
                     if (exitValue != 0) {
                         // Submit any pending crash reports from Open Eye if need to since we
                         // exited abnormally
-                        if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
+                        if (App.settings.enableLogs && App.settings.enableOpenEyeReporting) {
                             App.TASKPOOL.submit(this::sendOpenEyePendingReports);
                         }
                     }
@@ -1498,8 +1497,8 @@ public class Instance implements Cloneable {
                         MinecraftError.showInformationPopup(detectedError);
                     }
 
-                    App.settings.setMinecraftLaunched(false);
-                    if (isLoggingEnabled() && !isDev() && App.settings.enableLogs()) {
+                    App.launcher.setMinecraftLaunched(false);
+                    if (isLoggingEnabled() && !isDev() && App.settings.enableLogs) {
                         final int timePlayed = (int) (end - start) / 1000;
                         if (timePlayed > 0) {
                             App.TASKPOOL.submit(() -> {
@@ -1507,10 +1506,10 @@ public class Instance implements Cloneable {
                             });
                         }
                     }
-                    if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles()) {
-                        App.settings.reloadLauncherData();
+                    if (App.settings.keepLauncherOpen && App.launcher.checkForUpdatedFiles()) {
+                        App.launcher.reloadLauncherData();
                     }
-                    if (!App.settings.keepLauncherOpen()) {
+                    if (!App.settings.keepLauncherOpen) {
                         System.exit(0);
                     }
                 } catch (IOException e1) {

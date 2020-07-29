@@ -73,7 +73,7 @@ public class Server {
     }
 
     public Pack getPack() {
-        return App.settings.packs.stream().filter(p -> p.id == this.packId).findFirst().orElse(null);
+        return App.launcher.packs.stream().filter(p -> p.id == this.packId).findFirst().orElse(null);
     }
 
     public void launch(boolean close) {

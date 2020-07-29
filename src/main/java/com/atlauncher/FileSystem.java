@@ -64,6 +64,7 @@ public final class FileSystem {
     public static final Path CHECKING_SERVERS_JSON = CONFIGS.resolve("checkingservers.json");
     public static final Path USER_DATA = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
+    public static final Path SETTINGS = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".json");
 
     /**
      * This will organise the file system. This will remove old folders, create

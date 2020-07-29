@@ -111,7 +111,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent("KillMinecraft", "Launcher");
-                App.settings.killMinecraft();
+                App.launcher.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }
         });

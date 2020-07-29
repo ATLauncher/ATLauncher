@@ -193,13 +193,13 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                     App.TOASTER.pop(
                             (this.serverEditing == null ? GetText.tr("Server Added") : GetText.tr("Server Edited")));
                     if (this.serverEditing == null) {
-                        App.settings.addCheckingServer(new MinecraftServer(name, host, port, qv));
+                        App.launcher.addCheckingServer(new MinecraftServer(name, host, port, qv));
                     } else {
                         this.serverEditing.setName(name);
                         this.serverEditing.setHost(host);
                         this.serverEditing.setPort(port);
                         this.serverEditing.setQueryVersion(qv);
-                        App.settings.saveCheckingServers();
+                        App.launcher.saveCheckingServers();
                     }
                     close();
                 }

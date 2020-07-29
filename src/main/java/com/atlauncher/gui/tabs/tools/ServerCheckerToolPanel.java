@@ -48,7 +48,7 @@ public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionL
     }
 
     private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(App.settings.enableServerChecker());
+        LAUNCH_BUTTON.setEnabled(App.settings.enableServerChecker);
     }
 
     @Override

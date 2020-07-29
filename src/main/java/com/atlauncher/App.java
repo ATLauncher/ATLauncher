@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -194,13 +195,17 @@ public class App {
     public static String autoLaunch = null;
 
     /**
-     * This is the Settings instance which holds all the users settings and alot of
-     * methods relating to getting things done.
-     *
-     * @TODO This should probably be switched to be less large and have less
-     *       responsibility.
+     * This is the Settings instance which holds all the users settings.
      */
     public static Settings settings;
+
+    /**
+     * This is where a lot of logic and data is held. Used to be known as
+     * `Settings`.
+     *
+     * TODO: This needs to be broken up badly.
+     */
+    public static Launcher launcher;
 
     /**
      * This is the theme used by the launcher. By default it uses the default theme
@@ -242,11 +247,14 @@ public class App {
             LogManager.logStackTrace("Error organising filesystem", e, false);
         }
 
-        // Setup the Settings and wait for it to finish.
-        settings = new Settings();
+        // Load the settings from json, convert old properties config and validate it
+        loadSettings();
+
+        // Setup the Launcher and wait for it to finish.
+        launcher = new Launcher();
 
         // Load the theme and style everything.
-        loadTheme(settings.getTheme());
+        loadTheme(settings.theme);
 
         final SplashScreen ss = new SplashScreen();
 
@@ -256,7 +264,7 @@ public class App {
         console = new LauncherConsole();
         LogManager.start();
 
-        if (!noConsole && settings.enableConsole()) {
+        if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
             console.setVisible(true);
         }
@@ -267,17 +275,17 @@ public class App {
             LogManager.logStackTrace("Error loading language", e1);
         }
 
-        if (!noConsole && settings.enableConsole()) {
+        if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
             SwingUtilities.invokeLater(() -> {
                 console.setVisible(true);
             });
         }
 
-        if (settings.enableTrayIcon() && !skipTrayIntegration) {
+        if (settings.enableTrayMenu && !skipTrayIntegration) {
             try {
                 // Try to enable the tray icon.
-                App.trySystemTrayIntegration();
+                trySystemTrayIntegration();
             } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
@@ -287,29 +295,9 @@ public class App {
 
         LogManager.info("Operating System: " + System.getProperty("os.name"));
 
-        settings.loadJavaPathProperties();
-
-        if (settings.isUsingCustomJavaPath()) {
-            LogManager.warn("Custom Java Path Set!");
-
-            settings.checkForValidJavaPath(false);
-        } else if (OS.isUsingMacApp()) {
-            // If the user is using the Mac Application, then we forcibly set the java path
-            // if they have none set.
-
-            File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-            if (oracleJava.exists() && oracleJava.canExecute()) {
-                settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                LogManager.warn("Launcher Forced Custom Java Path Set!");
-            }
-        }
-
         LogManager.info("Java Version: " + Java.getActualJavaVersion());
 
-        SwingUtilities.invokeLater(() -> Java.getInstalledJavas().stream()
-                .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
-
-        LogManager.info("Java Path: " + settings.getJavaPath());
+        LogManager.info("Java Path: " + settings.javaPath);
 
         LogManager.info("64 Bit Java: " + OS.is64Bit());
 
@@ -335,9 +323,7 @@ public class App {
 
         // Now for some Mac specific stuff, mainly just setting the name of the
         // application and icon.
-        if (OS.isMac())
-
-        {
+        if (OS.isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                     Constants.LAUNCHER_NAME + " " + Constants.VERSION);
@@ -353,13 +339,13 @@ public class App {
         }
 
         // Check to make sure the user can load the launcher
-        settings.checkIfWeCanLoad();
+        launcher.checkIfWeCanLoad();
 
         LogManager.info("Showing splash screen and loading everything");
-        settings.loadEverything(); // Loads everything that needs to be loaded
+        launcher.loadEverything(); // Loads everything that needs to be loaded
         LogManager.info("Launcher finished loading everything");
 
-        if (settings.isFirstTimeRun()) {
+        if (settings.firstTimeRun) {
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
             new SetupDialog();
         }
@@ -367,17 +353,17 @@ public class App {
         boolean open = true;
 
         if (autoLaunch != null) {
-            if (settings.isInstanceBySafeName(autoLaunch)) {
-                Instance instance = settings.getInstanceBySafeName(autoLaunch);
+            if (launcher.isInstanceBySafeName(autoLaunch)) {
+                Instance instance = launcher.getInstanceBySafeName(autoLaunch);
                 LogManager.info("Opening Instance " + instance.getName());
                 if (instance.launch()) {
                     open = false;
                 } else {
                     LogManager.error("Error Opening Instance " + instance.getName());
                 }
-            } else if (settings.instancesV2.stream()
+            } else if (launcher.instancesV2.stream()
                     .anyMatch(instance -> instance.getSafeName().equalsIgnoreCase(autoLaunch))) {
-                Optional<InstanceV2> instance = settings.instancesV2.stream()
+                Optional<InstanceV2> instance = launcher.instancesV2.stream()
                         .filter(instanceV2 -> instanceV2.getSafeName().equalsIgnoreCase(autoLaunch)).findFirst();
 
                 if (instance.isPresent()) {
@@ -391,7 +377,7 @@ public class App {
             }
         }
 
-        if (settings.enableDiscordIntegration()) {
+        if (settings.enableDiscordIntegration) {
             try {
                 DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
                 DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
@@ -410,8 +396,8 @@ public class App {
         }
 
         if (packCodeToAdd != null) {
-            if (settings.addPack(packCodeToAdd)) {
-                Pack packAdded = settings.getSemiPublicPackByCode(packCodeToAdd);
+            if (launcher.addPack(packCodeToAdd)) {
+                Pack packAdded = launcher.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
                     LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
                 } else {
@@ -490,6 +476,40 @@ public class App {
         }
     }
 
+    private static void loadSettings() {
+        // load the users settings or load defaults if settings file doesn't exist
+        if (Files.exists(FileSystem.SETTINGS)) {
+            try (FileReader fileReader = new FileReader(FileSystem.SETTINGS.toFile())) {
+                settings = Gsons.DEFAULT.fromJson(fileReader, Settings.class);
+            } catch (Throwable t) {
+                LogManager.logStackTrace("Error loading settings, using defaults", t, false);
+                settings = new Settings();
+            }
+        } else {
+            settings = new Settings();
+        }
+
+        if (Files.exists(FileSystem.LAUNCHER_CONFIG)) {
+            try (FileReader fileReader = new FileReader(FileSystem.LAUNCHER_CONFIG.toFile())) {
+                Properties properties = new Properties();
+                properties.load(fileReader);
+                settings.convert(properties);
+            } catch (Throwable t) {
+                LogManager.logStackTrace("Error loading settings, using defaults", t, false);
+                settings = new Settings();
+            }
+
+            try {
+                Files.delete(FileSystem.LAUNCHER_CONFIG);
+            } catch (IOException e) {
+                LogManager.warn("Failed to delete old launcher config.");
+            }
+        }
+
+        // validate the settings
+        settings.validate();
+    }
+
     /**
      * Sets the look and feel of the application.
      *
@@ -500,7 +520,7 @@ public class App {
             Class.forName(theme);
         } catch (NoClassDefFoundError | ClassNotFoundException e) {
             theme = Constants.DEFAULT_THEME_CLASS;
-            App.settings.setTheme(theme);
+            settings.theme = theme;
         }
 
         // install the theme
@@ -529,9 +549,9 @@ public class App {
         ToolTipManager.sharedInstance().setInitialDelay(50);
 
         UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
-        UIManager.put("defaultFont", App.THEME.getNormalFont());
-        UIManager.put("Button.font", App.THEME.getNormalFont());
-        UIManager.put("Toaster.font", App.THEME.getNormalFont());
+        UIManager.put("defaultFont", THEME.getNormalFont());
+        UIManager.put("Button.font", THEME.getNormalFont());
+        UIManager.put("Toaster.font", THEME.getNormalFont());
         UIManager.put("Toaster.opacity", 0.75F);
 
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);

@@ -73,7 +73,7 @@ public class InstanceSettingsDialog extends JDialog {
 
     public InstanceSettingsDialog(Instance instance) {
         // #. {0} is the name of the instance
-        super(App.settings.getParent(), GetText.tr("{0} Settings", instance.getName()), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("{0} Settings", instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
         Analytics.sendScreenView("Instance Settings Dialog");
@@ -90,7 +90,7 @@ public class InstanceSettingsDialog extends JDialog {
     }
 
     public InstanceSettingsDialog(InstanceV2 instanceV2) {
-        super(App.settings.getParent(), GetText.tr("{0} Settings", instanceV2.launcher.name),
+        super(App.launcher.getParent(), GetText.tr("{0} Settings", instanceV2.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
 
@@ -108,7 +108,7 @@ public class InstanceSettingsDialog extends JDialog {
     private void setupComponents() {
         int systemRam = OS.getSystemRam();
         setSize(750, 350);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -145,7 +145,7 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(
                 getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.initialMemory
-                        : instance.getSettings().getInitialMemory(), App.settings.getInitialMemory()),
+                        : instance.getSettings().getInitialMemory(), App.settings.initialMemory),
                 null, null, 128);
         initialMemoryModel.setMinimum(128);
         initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
@@ -176,7 +176,7 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(
                 getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.maximumMemory
-                        : instance.getSettings().getMaximumMemory(), App.settings.getMaximumMemory()),
+                        : instance.getSettings().getMaximumMemory(), App.settings.maximumMemory),
                 null, null, 512);
         maximumMemoryModel.setMinimum(512);
         maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
@@ -198,7 +198,7 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel permGenModel = new SpinnerNumberModel(getIfNotNull(
                 this.instanceV2 != null ? this.instanceV2.launcher.permGen : instance.getSettings().getPermGen(),
-                App.settings.getPermGen()), null, null, 32);
+                App.settings.metaspace), null, null, 32);
         permGenModel.setMinimum(32);
         permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
         final JSpinner permGen = new JSpinner(permGenModel);
@@ -233,7 +233,7 @@ public class InstanceSettingsDialog extends JDialog {
         final JTextField javaPath = new JTextField(32);
         javaPath.setText(getIfNotNull(
                 this.instanceV2 != null ? this.instanceV2.launcher.javaPath : instance.getSettings().getJavaPath(),
-                App.settings.getJavaPath()));
+                App.settings.javaPath));
         JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
         JButton javaBrowseButton = new JButton(GetText.tr("Browse"));
@@ -255,7 +255,7 @@ public class InstanceSettingsDialog extends JDialog {
             Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
 
             installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
-                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
                     .orElse(null));
 
             installedJavas
@@ -297,11 +297,11 @@ public class InstanceSettingsDialog extends JDialog {
 
         final JTextArea javaParameters = new JTextArea(6, 40);
         javaParameters.setText(getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.javaArguments
-                : instance.getSettings().getJavaArguments(), App.settings.getJavaParameters()));
+                : instance.getSettings().getJavaArguments(), App.settings.javaParameters));
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> javaParameters.setText(App.settings.getJavaParameters()));
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(App.settings.javaParameters));
 
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(Box.createHorizontalStrut(5));
@@ -352,28 +352,28 @@ public class InstanceSettingsDialog extends JDialog {
     private void saveSettings(Integer initialMemory, Integer maximumMemory, Integer permGen, String javaPath,
             String javaParameters) {
         if (this.instanceV2 != null) {
-            this.instanceV2.launcher.initialMemory = (initialMemory == App.settings.getInitialMemory() ? null
+            this.instanceV2.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null
                     : initialMemory);
-            this.instanceV2.launcher.maximumMemory = (maximumMemory == App.settings.getMaximumMemory() ? null
+            this.instanceV2.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null
                     : maximumMemory);
-            this.instanceV2.launcher.permGen = (permGen == App.settings.getPermGen() ? null : permGen);
-            this.instanceV2.launcher.javaPath = (javaPath.equals(App.settings.getJavaPath()) ? null : javaPath);
-            this.instanceV2.launcher.javaArguments = (javaParameters.equals(App.settings.getJavaParameters()) ? null
+            this.instanceV2.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
+            this.instanceV2.launcher.javaPath = (javaPath.equals(App.settings.javaPath) ? null : javaPath);
+            this.instanceV2.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null
                     : javaParameters);
             this.instanceV2.save();
         } else {
             InstanceSettings instanceSettings = instance.getSettings();
 
-            instanceSettings.setInitialMemory(initialMemory == App.settings.getInitialMemory() ? null : initialMemory);
+            instanceSettings.setInitialMemory(initialMemory == App.settings.initialMemory ? null : initialMemory);
 
-            instanceSettings.setMaximumMemory(maximumMemory == App.settings.getMaximumMemory() ? null : maximumMemory);
+            instanceSettings.setMaximumMemory(maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
 
-            instanceSettings.setPermGen(permGen == App.settings.getPermGen() ? null : permGen);
+            instanceSettings.setPermGen(permGen == App.settings.metaspace ? null : permGen);
 
-            instanceSettings.setJavaPath(javaPath.equals(App.settings.getJavaPath()) ? null : javaPath);
+            instanceSettings.setJavaPath(javaPath.equals(App.settings.javaPath) ? null : javaPath);
 
             instanceSettings
-                    .setJavaArguments(javaParameters.equals(App.settings.getJavaParameters()) ? null : javaParameters);
+                    .setJavaArguments(javaParameters.equals(App.settings.javaParameters) ? null : javaParameters);
 
             this.instance.save();
         }

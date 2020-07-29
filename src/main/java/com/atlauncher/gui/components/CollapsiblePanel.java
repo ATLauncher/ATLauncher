@@ -108,8 +108,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedPacks().contains(pack.getName())) {
+        if (App.launcher.account != null) {
+            if (App.launcher.account.getCollapsedPacks().contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -128,8 +128,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedInstances().contains(instance.getName())) {
+        if (App.launcher.account != null) {
+            if (App.launcher.account.getCollapsedInstances().contains(instance.getName())) {
                 setCollapsed(true);
             }
         }
@@ -149,8 +149,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
+        if (App.launcher.account != null) {
+            if (App.launcher.account.getCollapsedInstances().contains(instanceV2.launcher.name)) {
                 setCollapsed(true);
             }
         }
@@ -163,8 +163,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedServers().contains(server.name)) {
+        if (App.launcher.account != null) {
+            if (App.launcher.account.getCollapsedServers().contains(server.name)) {
                 setCollapsed(true);
             }
         }
@@ -303,31 +303,31 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
             setCollapsed(!isCollapsed());
             if (pack != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, pack.getName(), "Collapse", "Pack");
-                App.settings.setPackVisbility(pack, isCollapsed());
+                App.launcher.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, instance.getPackName() + " - " + instance.getVersion(),
                         "Collapse", "Instance");
-                App.settings.setInstanceVisbility(instance, isCollapsed());
+                App.launcher.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0,
                         instanceV2.launcher.pack + " - " + instanceV2.launcher.version, "Collapse", "InstanceV2");
-                App.settings.setInstanceVisbility(instanceV2, isCollapsed());
+                App.launcher.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
-                App.settings.setServerVisibility(server, isCollapsed());
+                App.launcher.setServerVisibility(server, isCollapsed());
             }
         }
 
         public void itemStateChanged(ItemEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
-                App.settings.setPackVisbility(pack, isCollapsed());
+                App.launcher.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                App.settings.setInstanceVisbility(instance, isCollapsed());
+                App.launcher.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
-                App.settings.setInstanceVisbility(instanceV2, isCollapsed());
+                App.launcher.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
-                App.settings.setServerVisibility(server, isCollapsed());
+                App.launcher.setServerVisibility(server, isCollapsed());
             }
         }
     }

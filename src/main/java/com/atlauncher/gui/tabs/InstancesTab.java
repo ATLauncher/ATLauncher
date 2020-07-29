@@ -133,7 +133,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        App.settings.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
+        App.launcher.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 
@@ -160,7 +160,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
             }
         });
 
-        App.settings.getInstancesV2Sorted().stream().forEach(instance -> {
+        App.launcher.getInstancesV2Sorted().stream().forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 

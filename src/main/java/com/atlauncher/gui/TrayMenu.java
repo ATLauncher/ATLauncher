@@ -62,7 +62,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
 
     private void addActionListeners() {
         this.killMCButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
-            if (App.settings.isMinecraftLaunched()) {
+            if (App.launcher.isMinecraftLaunched()) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"))
@@ -70,7 +70,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
                         .setType(DialogManager.ERROR).show();
 
                 if (ret == DialogManager.YES_OPTION) {
-                    App.settings.killMinecraft();
+                    App.launcher.killMinecraft();
                 }
             }
         }));

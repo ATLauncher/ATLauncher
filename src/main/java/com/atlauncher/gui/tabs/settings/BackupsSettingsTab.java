@@ -46,12 +46,12 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableModsBackups = new JCheckBox();
-        enableModsBackups.setSelected(App.settings.enableModsBackups());
+        enableModsBackups.setSelected(App.settings.enableModsBackups);
         add(enableModsBackups, gbc);
     }
 
     public void save() {
-        App.settings.setEnableModsBackups(enableModsBackups.isSelected());
+        App.settings.enableModsBackups = enableModsBackups.isSelected();
     }
 
     @Override

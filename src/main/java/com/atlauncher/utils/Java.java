@@ -52,8 +52,8 @@ public class Java {
      * @return the Java version used to run Minecraft
      */
     public static String getMinecraftJavaVersion() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
+        if (App.settings.usingCustomJavaPath) {
+            File folder = new File(App.settings.javaPath, "bin/");
 
             ProcessBuilder processBuilder = new ProcessBuilder(getPathToMinecraftJavaExecutable(), "-version");
             processBuilder.directory(folder.getAbsoluteFile());
@@ -221,7 +221,7 @@ public class Java {
     }
 
     public static String getPathToMinecraftJavaExecutable() {
-        String path = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java";
+        String path = App.settings.javaPath + File.separator + "bin" + File.separator + "java";
 
         if (OS.isWindows()) {
             path += "w";

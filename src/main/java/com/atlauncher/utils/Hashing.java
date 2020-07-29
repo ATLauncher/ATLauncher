@@ -57,10 +57,11 @@ public final class Hashing {
     }
 
     public static long murmur(Path to) throws IOException {
-        byte[] bytes = ArrayUtils.removeAllOccurences(
-                ArrayUtils.removeAllOccurences(ArrayUtils.removeAllOccurences(
-                        ArrayUtils.removeAllOccurences(Files.readAllBytes(to), (byte) 9), (byte) 10), (byte) 13),
-                (byte) 32);
+        byte[] bytes = ArrayUtils
+                .removeAllOccurrences(ArrayUtils.removeAllOccurrences(
+                        ArrayUtils.removeAllOccurrences(
+                                ArrayUtils.removeAllOccurrences(Files.readAllBytes(to), (byte) 9), (byte) 10),
+                        (byte) 13), (byte) 32);
 
         return Murmur2.hash(bytes, bytes.length, 1L);
     }

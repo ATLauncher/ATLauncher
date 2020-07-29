@@ -39,7 +39,7 @@ public final class DownloadPool extends LinkedList<Download> {
     }
 
     public void downloadAll() {
-        ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+        ExecutorService executor = Executors.newFixedThreadPool(App.settings.concurrentConnections);
         synchronized (this) {
             for (Download dl : this) {
                 executor.execute(new Downloader(dl));
@@ -68,7 +68,7 @@ public final class DownloadPool extends LinkedList<Download> {
         final DownloadPool pool = new DownloadPool(this.wait);
         final List<Download> downloads = this.stream().distinct().collect(Collectors.toList());
 
-        ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+        ExecutorService executor = Executors.newFixedThreadPool(App.settings.concurrentConnections);
         for (final Download dl : downloads) {
             executor.submit(() -> {
                 if (dl.needToDownload()) {

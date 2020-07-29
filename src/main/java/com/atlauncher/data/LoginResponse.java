@@ -91,7 +91,7 @@ public class LoginResponse {
     }
 
     public void save() {
-        Account account = App.settings.getAccountByName(this.username);
+        Account account = App.launcher.getAccountByName(this.username);
 
         if (account != null) {
             account.setStore(this.auth.saveForStorage());

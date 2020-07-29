@@ -366,9 +366,9 @@ public class DisableableMod implements Serializable {
         Stream<CurseFile> curseFilesStream = curseModFiles.stream()
                 .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
 
-        if (!App.settings.disabledAddModRestrictions()) {
-            curseFilesStream = curseFilesStream.filter(
-                    file -> App.settings.disabledAddModRestrictions() || file.gameVersion.contains(instance.id));
+        if (!App.settings.disableAddModRestrictions) {
+            curseFilesStream = curseFilesStream
+                    .filter(file -> App.settings.disableAddModRestrictions || file.gameVersion.contains(instance.id));
         }
 
         if (!curseFilesStream.anyMatch(mod -> mod.id > curseFileId)) {
@@ -389,8 +389,8 @@ public class DisableableMod implements Serializable {
         Stream<CurseFile> curseFilesStream = curseModFiles.stream()
                 .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
 
-        if (!App.settings.disabledAddModRestrictions()) {
-            curseFilesStream = curseFilesStream.filter(file -> App.settings.disabledAddModRestrictions()
+        if (!App.settings.disableAddModRestrictions) {
+            curseFilesStream = curseFilesStream.filter(file -> App.settings.disableAddModRestrictions
                     || file.gameVersion.contains(instance.getMinecraftVersion()));
         }
 

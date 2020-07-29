@@ -49,7 +49,7 @@ public class News {
 
     private String getFormattedDate() {
         DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX");
-        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.getDateFormat() + " HH:mm:ss a");
+        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
 
         try {
             return formatter.format(iso8601Format.parse(this.createdAt));

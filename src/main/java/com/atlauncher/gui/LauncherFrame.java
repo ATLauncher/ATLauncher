@@ -72,7 +72,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
 
-        App.settings.setParentFrame(this);
+        App.launcher.setParentFrame(this);
         setSize(new Dimension(1200, 700));
         setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
         setLocationRelativeTo(null);
@@ -112,13 +112,13 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         RelocalizationManager.addListener(this);
 
         if (App.packToInstall != null) {
-            Pack pack = App.settings.getPackBySafeName(App.packToInstall);
+            Pack pack = App.launcher.getPackBySafeName(App.packToInstall);
 
-            if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+            if (pack != null && pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(pack.getCode())) {
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
                         + "pack added to the launcher!");
             } else {
-                if (App.settings.getAccount() == null || pack == null) {
+                if (App.launcher.account == null || pack == null) {
                     LogManager
                             .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
                 } else {
@@ -131,9 +131,9 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             if (parts.length != 4) {
                 LogManager.error("Error automatically installing pack from share code!");
             } else {
-                Pack pack = App.settings.getPackBySafeName(parts[0]);
+                Pack pack = App.launcher.getPackBySafeName(parts[0]);
 
-                if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+                if (pack != null && pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(pack.getCode())) {
                     LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
                             + "pack added to the launcher!");
                 } else {
@@ -166,22 +166,22 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         });
 
         newsTab = new NewsTab();
-        App.settings.setNewsPanel(newsTab);
+        App.launcher.setNewsPanel(newsTab);
 
         vanillaPacksTab = new PacksTab(false, true);
-        App.settings.setVanillaPacksPanel(vanillaPacksTab);
+        App.launcher.setVanillaPacksPanel(vanillaPacksTab);
 
         featuredPacksTab = new PacksTab(true, false);
-        App.settings.setFeaturedPacksPanel(featuredPacksTab);
+        App.launcher.setFeaturedPacksPanel(featuredPacksTab);
 
         packsTab = new PacksTab(false, false);
-        App.settings.setPacksPanel(packsTab);
+        App.launcher.setPacksPanel(packsTab);
 
         instancesTab = new InstancesTab();
-        App.settings.setInstancesPanel(instancesTab);
+        App.launcher.setInstancesPanel(instancesTab);
 
         serversTab = new ServersTab();
-        App.settings.setServersPanel(serversTab);
+        App.launcher.setServersPanel(serversTab);
 
         accountsTab = new AccountsTab();
         toolsTab = new ToolsTab();
@@ -202,7 +202,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
      */
     private void setupBottomBar() {
         bottomBar = new LauncherBottomBar();
-        App.settings.setBottomBar(bottomBar);
+        App.launcher.setBottomBar(bottomBar);
     }
 
     @Override

@@ -151,8 +151,8 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
             String path = (String) dialog.getReturnValue();
 
-            App.settings.setJavaPath(path);
-            App.settings.saveProperties();
+            App.settings.javaPath = path;
+            App.settings.save();
 
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
                     .setContent(new HTMLBuilder().center()

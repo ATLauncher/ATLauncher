@@ -23,7 +23,7 @@ import org.zeroturnaround.zip.NameMapper;
 
 public class ZipNameMapper {
     public static final NameMapper INSTANCE_BACKUP = name -> {
-        if (App.settings.enableModsBackups()
+        if (App.settings.enableModsBackups
                 && (name.startsWith("mods") || name.startsWith("jarmods") || name.startsWith("coremods"))) {
             return name;
         }

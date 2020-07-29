@@ -57,7 +57,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     }
 
     private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(App.settings.enableLogs());
+        LAUNCH_BUTTON.setEnabled(App.settings.enableLogs);
     }
 
     @Override
