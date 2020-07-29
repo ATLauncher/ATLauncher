@@ -45,3 +45,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in performance debug logging at level 5
 - Make startup faster by caching memory tool values [#192]
 - Move checking for username changes to account context menu [#192]
+- Remove pack images no longer necessary on boot

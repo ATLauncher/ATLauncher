@@ -42,11 +42,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -212,6 +214,8 @@ public class Settings {
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
         loadProperties(); // Load the users Properties
+
+        removeUnusedImages(); // remove unused pack images
 
         if (this.isUsingCustomJavaPath()) {
             checkForValidJavaPath(true); // Checks for a valid Java path
@@ -546,6 +550,27 @@ public class Settings {
                 }
             }
         }
+        PerformanceManager.end();
+    }
+
+    private void removeUnusedImages() {
+        PerformanceManager.start();
+        File[] files = FileSystem.IMAGES.toFile().listFiles();
+
+        Set<String> packImageFilenames = new HashSet<>();
+        packImageFilenames
+                .addAll(packs.stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
+        packImageFilenames.add("defaultimage.png");
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".png") && !packImageFilenames.contains(file.getName())) {
+                    LogManager.info("Pack image no longer used, deleting file " + file.getName());
+                    file.delete();
+                }
+            }
+        }
+
         PerformanceManager.end();
     }
 
