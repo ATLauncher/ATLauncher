@@ -79,6 +79,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private JButton rightButton;
     private JPanel bottomPanel;
     private JMenuItem updateSkin;
+    private JMenuItem updateUsername;
     private JPopupMenu contextMenu; // Right click menu
     private Account fillerAccount;
 
@@ -267,6 +268,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             userSkin.setIcon(account.getMinecraftSkin());
         });
         contextMenu.add(updateSkin);
+
+        updateUsername = new JMenuItem(GetText.tr("Update Username"));
+        updateUsername.addActionListener(e -> {
+            final Account account = ((Account) accountsComboBox.getSelectedItem());
+            Analytics.sendEvent("UpdateUsername", "Account");
+            account.updateUsername();
+        });
+        contextMenu.add(updateUsername);
 
         userSkin = new JLabel(fillerAccount.getMinecraftSkin());
         userSkin.addMouseListener(new MouseAdapter() {

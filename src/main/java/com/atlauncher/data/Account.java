@@ -745,25 +745,50 @@ public class Account implements Serializable {
         return response;
     }
 
-    public boolean checkForUsernameChange() {
-        if (this.uuid == null) {
-            LogManager.error("The account " + this.minecraftUsername + " has no UUID associated with it !");
-            return false;
+    public void updateUsername() {
+        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Username Change"), 0,
+                GetText.tr("Checking Username Change For {0}", this.minecraftUsername),
+                "Aborting checking for username change for " + this.minecraftUsername);
+
+        dialog.addThread(new Thread(() -> {
+            if (this.uuid == null) {
+                LogManager.error("The account " + this.minecraftUsername + " has no UUID associated with it !");
+                dialog.setReturnValue(false);
+                dialog.close();
+                return;
+            }
+
+            String currentUsername = MojangAPIUtils.getCurrentUsername(this.getUUIDNoDashes());
+
+            if (currentUsername == null) {
+                dialog.setReturnValue(false);
+                dialog.close();
+                return;
+            }
+
+            if (!currentUsername.equals(this.minecraftUsername)) {
+                LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from "
+                        + this.minecraftUsername + " to " + currentUsername);
+                this.minecraftUsername = currentUsername;
+                dialog.setReturnValue(true);
+            }
+
+            dialog.close();
+        }));
+
+        dialog.start();
+
+        if (dialog.getReturnValue() == null) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
+                    .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
+        } else if ((Boolean) dialog.getReturnValue()) {
+            DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))
+                    .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();
+        } else {
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(
+                            GetText.tr("Error checking for username change. Check the error logs and try again later."))
+                    .setType(DialogManager.ERROR).show();
         }
-
-        String currentUsername = MojangAPIUtils.getCurrentUsername(this.getUUIDNoDashes());
-
-        if (currentUsername == null) {
-            return false;
-        }
-
-        if (!currentUsername.equals(this.minecraftUsername)) {
-            LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from "
-                    + this.minecraftUsername + " to " + currentUsername);
-            this.minecraftUsername = currentUsername;
-            return true;
-        }
-
-        return false;
     }
 }

@@ -44,3 +44,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix servers not launching on Windows due to quoting issue [#399]
 - Add in performance debug logging at level 5
 - Make startup faster by caching memory tool values [#192]
+- Move checking for username changes to account context menu [#192]

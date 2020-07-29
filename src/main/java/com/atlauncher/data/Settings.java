@@ -217,8 +217,6 @@ public class Settings {
             checkForValidJavaPath(true); // Checks for a valid Java path
         }
 
-        checkAccountsForNameChanges(); // Check account for username changes
-
         if (OS.isWindows() && !OS.is64Bit() && OS.isWindows64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
@@ -284,26 +282,6 @@ public class Settings {
                 Analytics.startSession();
             }
         }
-        PerformanceManager.end();
-    }
-
-    private void checkAccountsForNameChanges() {
-        PerformanceManager.start();
-        LogManager.info("Checking For Username Changes");
-
-        boolean somethingChanged = false;
-
-        for (Account account : this.accounts) {
-            if (account.checkForUsernameChange()) {
-                somethingChanged = true;
-            }
-        }
-
-        if (somethingChanged) {
-            this.saveAccounts();
-        }
-
-        LogManager.info("Checking For Username Changes Complete");
         PerformanceManager.end();
     }
 
