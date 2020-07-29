@@ -61,6 +61,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
 import com.atlauncher.Network;
+import com.atlauncher.PerformanceManager;
 import com.atlauncher.Update;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -185,6 +186,7 @@ public class Settings {
     }
 
     public void loadEverything() {
+        PerformanceManager.start();
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
@@ -282,9 +284,11 @@ public class Settings {
                 Analytics.startSession();
             }
         }
+        PerformanceManager.end();
     }
 
     private void checkAccountsForNameChanges() {
+        PerformanceManager.start();
         LogManager.info("Checking For Username Changes");
 
         boolean somethingChanged = false;
@@ -300,9 +304,11 @@ public class Settings {
         }
 
         LogManager.info("Checking For Username Changes Complete");
+        PerformanceManager.end();
     }
 
     public void checkForValidJavaPath(boolean save) {
+        PerformanceManager.start();
         File java = new File(App.settings.getJavaPath(),
                 "bin" + File.separator + "java" + (OS.isWindows() ? ".exe" : ""));
 
@@ -314,9 +320,11 @@ public class Settings {
                 this.saveProperties();
             }
         }
+        PerformanceManager.end();
     }
 
     public void startCheckingServers() {
+        PerformanceManager.start();
         if (this.checkingServersTimer != null) {
             // If it's not null, cancel and purge tasks left
             this.checkingServersTimer.cancel();
@@ -334,6 +342,7 @@ public class Settings {
                 }
             }, 0, this.getServerCheckerWaitInMilliseconds());
         }
+        PerformanceManager.end();
     }
 
     public boolean launcherHasUpdate() {
@@ -523,6 +532,7 @@ public class Settings {
     }
 
     private void checkForLauncherUpdate() {
+        PerformanceManager.start();
         if (App.noLauncherUpdate) {
             return;
         }
@@ -544,9 +554,11 @@ public class Settings {
             }
         }
         LogManager.debug("Finished checking for launcher update");
+        PerformanceManager.end();
     }
 
     private void addExecutableBitToTools() {
+        PerformanceManager.start();
         File[] files = FileSystem.TOOLS.toFile().listFiles();
         if (files != null) {
             for (File file : files) {
@@ -556,6 +568,7 @@ public class Settings {
                 }
             }
         }
+        PerformanceManager.end();
     }
 
     /**
@@ -694,6 +707,7 @@ public class Settings {
      * Load the properties from file
      */
     public void loadProperties() {
+        PerformanceManager.start();
         LogManager.debug("Loading properties");
         try {
             this.properties.load(new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()));
@@ -899,6 +913,7 @@ public class Settings {
             this.saveProperties();
         }
         LogManager.debug("Finished loading properties");
+        PerformanceManager.end();
     }
 
     /**
@@ -1002,6 +1017,7 @@ public class Settings {
      * Loads the languages for use in the Launcher
      */
     private void loadNews() {
+        PerformanceManager.start();
         LogManager.debug("Loading news");
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
@@ -1015,12 +1031,14 @@ public class Settings {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading news");
+        PerformanceManager.end();
     }
 
     /**
      * Loads info about the different Minecraft versions
      */
     private void loadMinecraftVersions() {
+        PerformanceManager.start();
         LogManager.debug("Loading Minecraft versions");
 
         this.minecraftVersions = new HashMap<>();
@@ -1043,12 +1061,14 @@ public class Settings {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading Minecraft versions");
+        PerformanceManager.end();
     }
 
     /**
      * Loads the Packs for use in the Launcher
      */
     private void loadPacks() {
+        PerformanceManager.start();
         LogManager.debug("Loading packs");
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
@@ -1059,12 +1079,14 @@ public class Settings {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading packs");
+        PerformanceManager.end();
     }
 
     /**
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
+        PerformanceManager.start();
         LogManager.debug("Loading users");
         List<PackUsers> packUsers = null;
         try {
@@ -1082,12 +1104,14 @@ public class Settings {
             pu.addUsers();
         }
         LogManager.debug("Finished loading users");
+        PerformanceManager.end();
     }
 
     /**
      * Loads the user installed Instances
      */
     private void loadInstances() {
+        PerformanceManager.start();
         LogManager.debug("Loading instances");
         this.instances = new ArrayList<>(); // Reset the instances list
         this.instancesV2 = new ArrayList<>(); // Reset the instancesv2 list
@@ -1148,12 +1172,14 @@ public class Settings {
         }
 
         LogManager.debug("Finished loading instances");
+        PerformanceManager.end();
     }
 
     /**
      * Loads the user installed servers
      */
     private void loadServers() {
+        PerformanceManager.start();
         LogManager.debug("Loading servers");
         this.servers = new ArrayList<>(); // Reset the servers list
 
@@ -1180,6 +1206,7 @@ public class Settings {
         }
 
         LogManager.debug("Finished loading servers");
+        PerformanceManager.end();
     }
 
     public void saveInstances() {
@@ -1219,6 +1246,7 @@ public class Settings {
      * Loads the saved Accounts
      */
     private void loadAccounts() {
+        PerformanceManager.start();
         LogManager.debug("Loading accounts");
         if (Files.exists(FileSystem.USER_DATA)) {
             FileInputStream in = null;
@@ -1253,6 +1281,7 @@ public class Settings {
             }
         }
         LogManager.debug("Finished loading accounts");
+        PerformanceManager.end();
     }
 
     public void saveAccounts() {
@@ -1302,6 +1331,7 @@ public class Settings {
      * Loads the user servers added for checking
      */
     private void loadCheckingServers() {
+        PerformanceManager.start();
         LogManager.debug("Loading servers to check");
         this.checkingServers = new ArrayList<>(); // Reset the list
         if (Files.exists(FileSystem.CHECKING_SERVERS_JSON)) {
@@ -1326,6 +1356,7 @@ public class Settings {
             }
         }
         LogManager.debug("Finished loading servers to check");
+        PerformanceManager.end();
     }
 
     public void saveCheckingServers() {

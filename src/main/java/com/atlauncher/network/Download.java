@@ -212,7 +212,7 @@ public final class Download {
         return this;
     }
 
-    public Download cached() {
+    public Download  cached() {
         return cached(null);
     }
 

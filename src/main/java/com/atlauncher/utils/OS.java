@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.LogManager;
+import com.atlauncher.PerformanceManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
 import com.atlauncher.network.Analytics;
@@ -56,6 +57,9 @@ import com.atlauncher.utils.systeminfo.SystemInfo;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
+
+    private static int memory = 0;
+    private static SystemInfo systemInfo = null;
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
@@ -302,6 +306,7 @@ public enum OS {
      * was removed in Java 9.
      */
     public static int getSystemRamViaBean() {
+        PerformanceManager.start();
         long ramm = 0;
         int ram = 0;
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
@@ -319,6 +324,7 @@ public enum OS {
                 | NoSuchMethodException e) {
             LogManager.logStackTrace(e);
         }
+        PerformanceManager.end();
         return ram;
     }
 
@@ -326,12 +332,15 @@ public enum OS {
      * Returns the amount of RAM in the users system via the getSystemInfo tool.
      */
     public static int getSystemRamViaTool() {
+        PerformanceManager.start();
         SystemInfo systemInfo = getSystemInfo();
 
         if (systemInfo == null || systemInfo.memory == null) {
+            PerformanceManager.end();
             return 0;
         }
 
+        PerformanceManager.end();
         return (int) (systemInfo.memory.totalPhysicalBytes / 1048576);
     }
 
@@ -339,64 +348,71 @@ public enum OS {
      * Returns the system information via the getSystemInfo tool.
      */
     public static SystemInfo getSystemInfo() {
-        String binaryFile = "getSystemInfo";
+        if (systemInfo == null) {
+            PerformanceManager.start();
+            String binaryFile = "getSystemInfo";
 
-        if (OS.isArm()) {
-            binaryFile += "-arm";
+            if (OS.isArm()) {
+                binaryFile += "-arm";
 
-            if (OS.is64Bit()) {
-                binaryFile += "64";
+                if (OS.is64Bit()) {
+                    binaryFile += "64";
+                }
+            } else {
+                if (OS.is64Bit()) {
+                    binaryFile += "-x64";
+                }
             }
-        } else {
-            if (OS.is64Bit()) {
-                binaryFile += "-x64";
+
+            if (OS.isWindows()) {
+                binaryFile += ".exe";
+            } else if (OS.isMac()) {
+                binaryFile += "-osx";
+            } else if (OS.isLinux()) {
+                binaryFile += "-linux";
             }
-        }
 
-        if (OS.isWindows()) {
-            binaryFile += ".exe";
-        } else if (OS.isMac()) {
-            binaryFile += "-osx";
-        } else if (OS.isLinux()) {
-            binaryFile += "-linux";
-        }
+            if (Files.exists(FileSystem.TOOLS.resolve(binaryFile))) {
+                try {
+                    ProcessBuilder processBuilder = new ProcessBuilder(
+                            FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
+                    processBuilder.directory(FileSystem.TOOLS.toFile());
+                    processBuilder.redirectErrorStream(true);
 
-        if (!Files.exists(FileSystem.TOOLS.resolve(binaryFile))) {
-            return null;
-        }
+                    Process process = processBuilder.start();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder(
-                    FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
-            processBuilder.directory(FileSystem.TOOLS.toFile());
-            processBuilder.redirectErrorStream(true);
-
-            Process process = processBuilder.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            try {
-                SystemInfo systemInfo = Gsons.DEFAULT.fromJson(br, SystemInfo.class);
-
-                return systemInfo;
-            } catch (Throwable t) {
-                return null;
-            } finally {
-                br.close();
+                    try {
+                        systemInfo = Gsons.DEFAULT.fromJson(br, SystemInfo.class);
+                    } catch (Throwable t) {
+                        LogManager.logStackTrace(t);
+                    } finally {
+                        br.close();
+                    }
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
             }
-        } catch (IOException ignored) {
-            return null;
+            PerformanceManager.end();
         }
+
+        return systemInfo;
     }
 
     /**
      * Returns the amount of RAM in the users system.
      */
     public static int getSystemRam() {
-        if (!Java.isSystemJavaNewerThanJava8()) {
-            return OS.getSystemRamViaBean();
+        // fetch the memory from the tool/bean if it's 0
+        if (memory == 0) {
+            if (!Java.isSystemJavaNewerThanJava8()) {
+                memory = OS.getSystemRamViaBean();
+            } else {
+                memory = OS.getSystemRamViaTool();
+            }
         }
 
-        return OS.getSystemRamViaTool();
+        return memory;
     }
 
     /**
