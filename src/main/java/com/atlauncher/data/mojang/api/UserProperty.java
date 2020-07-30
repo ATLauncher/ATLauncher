@@ -19,8 +19,8 @@ package com.atlauncher.data.mojang.api;
 
 import java.util.Map;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
 
 @Json
 public class UserProperty {

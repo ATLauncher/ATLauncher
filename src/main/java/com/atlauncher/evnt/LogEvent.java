@@ -23,8 +23,8 @@ import javax.swing.UIManager;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.gui.components.Console;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Timestamper;
 
 import org.apache.logging.log4j.Logger;

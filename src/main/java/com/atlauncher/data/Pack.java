@@ -29,9 +29,10 @@ import javax.swing.ImageIcon;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
@@ -159,7 +160,7 @@ public class Pack {
     }
 
     public boolean isTester() {
-        Account account = App.launcher.account;
+        Account account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }
@@ -200,7 +201,7 @@ public class Pack {
         if (this.type != PackType.PRIVATE) {
             return true;
         }
-        Account account = App.launcher.account;
+        Account account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }

@@ -32,8 +32,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.collection.Caching;
+import com.atlauncher.managers.LogManager;
 import com.sangupta.murmur.Murmur2;
 
 import org.apache.commons.lang3.ArrayUtils;

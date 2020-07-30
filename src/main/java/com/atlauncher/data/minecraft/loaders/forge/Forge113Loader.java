@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;

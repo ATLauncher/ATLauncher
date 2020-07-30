@@ -42,7 +42,6 @@ import javax.swing.ImageIcon;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
@@ -60,7 +59,9 @@ import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -375,7 +376,7 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public boolean launch() {
-        final Account account = App.launcher.account;
+        final Account account = AccountManager.getSelectedAccount();
 
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))

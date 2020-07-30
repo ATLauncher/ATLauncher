@@ -37,10 +37,10 @@ import javax.swing.UIManager;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;

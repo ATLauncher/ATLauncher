@@ -52,7 +52,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
@@ -67,7 +66,9 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -210,7 +211,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                 if (ret == 0) {
-                    if (App.launcher.account == null) {
+                    if (AccountManager.getSelectedAccount() == null) {
                         DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                 .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                 .setType(DialogManager.ERROR).show();
@@ -239,7 +240,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
         });
         this.reinstallButton.addActionListener(e -> {
-            if (App.launcher.account == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot reinstall pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -249,7 +250,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
         });
         this.updateButton.addActionListener(e -> {
-            if (App.launcher.account == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -366,7 +367,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                         if (ret == 0) {
-                            if (App.launcher.account == null) {
+                            if (AccountManager.getSelectedAccount() == null) {
                                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                         .setType(DialogManager.ERROR).show();
@@ -460,7 +461,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                             if (ret == 0) {
-                                if (App.launcher.account == null) {
+                                if (AccountManager.getSelectedAccount() == null) {
                                     DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                             .setContent(
                                                     GetText.tr("Cannot update pack as you have no account selected."))

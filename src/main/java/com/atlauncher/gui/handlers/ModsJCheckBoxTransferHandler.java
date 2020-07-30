@@ -28,7 +28,6 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.minecraft.FabricMod;
@@ -38,6 +37,7 @@ import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.FileTypeDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;

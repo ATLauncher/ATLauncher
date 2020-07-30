@@ -20,8 +20,8 @@ package com.atlauncher.data;
 import java.lang.reflect.Type;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.managers.LogManager;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;

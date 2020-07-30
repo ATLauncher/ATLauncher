@@ -22,8 +22,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 

@@ -23,10 +23,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
 

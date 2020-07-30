@@ -28,8 +28,8 @@ import java.nio.file.Path;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.Network;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
@@ -212,7 +212,7 @@ public final class Download {
         return this;
     }
 
-    public Download  cached() {
+    public Download cached() {
         return cached(null);
     }
 

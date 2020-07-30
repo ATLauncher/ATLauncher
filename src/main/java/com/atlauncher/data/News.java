@@ -22,8 +22,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
 import com.google.gson.annotations.SerializedName;
 
 /**

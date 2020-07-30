@@ -23,7 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.atlauncher.PerformanceManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.OS;
 
 public class JavaFinder {

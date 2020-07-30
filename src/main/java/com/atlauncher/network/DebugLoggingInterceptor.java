@@ -20,7 +20,7 @@ package com.atlauncher.network;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;

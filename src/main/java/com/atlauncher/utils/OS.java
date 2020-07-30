@@ -47,10 +47,10 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
-import com.atlauncher.PerformanceManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
 import com.atlauncher.utils.systeminfo.SystemInfo;

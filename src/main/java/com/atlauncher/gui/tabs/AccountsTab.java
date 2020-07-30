@@ -42,8 +42,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Account;
@@ -51,7 +49,9 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.OS;
@@ -123,7 +123,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         accountsComboBox = new JComboBox<>();
         accountsComboBox.addItem(fillerAccount);
-        for (Account account : App.launcher.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             accountsComboBox.addItem(account);
         }
         accountsComboBox.setSelectedIndex(0);
@@ -241,10 +241,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                         .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
                     Analytics.sendEvent("Delete", "Account");
-                    App.launcher.removeAccount(account);
+                    AccountManager.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(fillerAccount);
-                    for (Account accountt : App.launcher.getAccounts()) {
+                    for (Account accountt : AccountManager.getAccounts()) {
                         accountsComboBox.addItem(accountt);
                     }
                     accountsComboBox.setSelectedIndex(0);
@@ -299,7 +299,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
         boolean remember = rememberField.isSelected();
-        if (App.launcher.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
+        if (AccountManager.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
                     .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
             return;
@@ -321,11 +321,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
                         response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken);
                 account.setStore(response.getAuth().saveForStorage());
-                App.launcher.addAccount(account);
+                AccountManager.addAccount(account);
                 Analytics.sendEvent("Add", "Account");
                 LogManager.info("Added Account " + account);
 
-                if (App.launcher.getAccounts().size() > 1) {
+                if (AccountManager.getAccounts().size() > 1) {
                     // not first account? ask if they want to switch to it
                     int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
                             .setContent(GetText.tr("Account added successfully. Switch to it now?"))
@@ -333,11 +333,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                             .show();
 
                     if (ret == 0) {
-                        App.launcher.switchAccount(account);
+                        AccountManager.switchAccount(account);
                     }
                 } else {
                     // first account? switch to it immediately
-                    App.launcher.switchAccount(account);
+                    AccountManager.switchAccount(account);
                 }
             } else {
                 account = (Account) accountsComboBox.getSelectedItem();
@@ -355,11 +355,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                         .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
-            App.launcher.saveAccounts();
-            App.launcher.reloadAccounts();
+            AccountManager.saveAccounts();
+            com.atlauncher.evnt.manager.AccountManager.post();
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(fillerAccount);
-            for (Account accountt : App.launcher.getAccounts()) {
+            for (Account accountt : AccountManager.getAccounts()) {
                 accountsComboBox.addItem(accountt);
             }
             accountsComboBox.setSelectedItem(account);

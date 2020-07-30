@@ -27,8 +27,8 @@ import java.util.Map;
 
 import javax.swing.text.html.StyleSheet;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
+import com.atlauncher.managers.LogManager;
 
 public final class Resources {
     private static final Map<String, Object> resources = new HashMap<>();
@@ -61,7 +61,8 @@ public final class Resources {
             } else {
                 StyleSheet sheet = new StyleSheet();
 
-                Reader reader = new InputStreamReader(Resources.class.getResourceAsStream("/assets/css/" + name + ".css"));
+                Reader reader = new InputStreamReader(
+                        Resources.class.getResourceAsStream("/assets/css/" + name + ".css"));
                 sheet.loadRules(reader, null);
                 reader.close();
 

@@ -15,13 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher;
+package com.atlauncher.evnt.manager;
 
-import com.atlauncher.managers.LogManager;
+import java.util.LinkedList;
+import java.util.List;
 
-public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        LogManager.logStackTrace(e);
+import javax.swing.SwingUtilities;
+
+import com.atlauncher.evnt.listener.AccountListener;
+
+public final class AccountManager {
+    private static final List<AccountListener> listeners = new LinkedList<>();
+
+    public static synchronized void addListener(AccountListener listener) {
+        listeners.add(listener);
+    }
+
+    public static synchronized void removeListener(AccountListener listener) {
+        listeners.remove(listener);
+    }
+
+    public static synchronized void post() {
+        SwingUtilities.invokeLater(() -> {
+            for (AccountListener listener : listeners) {
+                listener.onAccountsChanged();
+            }
+        });
     }
 }

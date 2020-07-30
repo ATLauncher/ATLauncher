@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
-import com.atlauncher.PerformanceManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.javafinder.JavaFinder;
 import com.atlauncher.utils.javafinder.JavaInfo;
 

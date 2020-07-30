@@ -22,17 +22,13 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -53,7 +49,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.Account;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.Instance;
@@ -67,13 +62,15 @@ import com.atlauncher.data.PackUsers;
 import com.atlauncher.data.Server;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.ATLauncherAPIUtils;
@@ -101,9 +98,7 @@ public class Launcher {
     public List<Instance> instances = new ArrayList<>(); // Users Installed Instances
     public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
     public List<Server> servers = new ArrayList<>(); // Users Installed Servers
-    private List<Account> accounts = new ArrayList<>(); // Accounts in the Launcher
     private List<MinecraftServer> checkingServers = new ArrayList<>();
-    public Account account; // Account using the Launcher
 
     // UI things
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -113,7 +108,6 @@ public class Launcher {
     private PacksTab vanillaPacksPanel; // The vanilla packs panel
     private PacksTab featuredPacksPanel; // The featured packs panel
     private PacksTab packsPanel; // The packs panel
-    private LauncherBottomBar bottomBar; // The bottom bar
 
     // Minecraft tracking variables
     private Process minecraftProcess = null; // The process minecraft is running on
@@ -159,7 +153,7 @@ public class Launcher {
 
         loadServers(); // Load the users installed servers
 
-        loadAccounts(); // Load the saved Accounts
+        AccountManager.loadAccounts(); // Load the saved Accounts
 
         loadCheckingServers(); // Load the saved servers we're checking with the tool
 
@@ -511,10 +505,6 @@ public class Launcher {
         this.parent = parent;
     }
 
-    public void addAccount(Account account) {
-        this.accounts.add(account);
-    }
-
     public void addCheckingServer(MinecraftServer server) {
         this.checkingServers.add(server);
         this.saveCheckingServers();
@@ -524,33 +514,6 @@ public class Launcher {
         this.checkingServers.remove(server);
         this.saveCheckingServers();
         this.startCheckingServers();
-    }
-
-    /**
-     * Switch account currently used and save it
-     *
-     * @param account Account to switch to
-     */
-    public void switchAccount(Account account) {
-        if (account == null) {
-            LogManager.info("Logging out of account");
-            this.account = null;
-        } else {
-            if (account.isReal()) {
-                LogManager.info("Changed account to " + account);
-                this.account = account;
-            } else {
-                LogManager.info("Logging out of account");
-                this.account = null;
-            }
-        }
-        refreshVanillaPacksPanel();
-        refreshFeaturedPacksPanel();
-        refreshPacksPanel();
-        reloadInstancesPanel();
-        reloadServersPanel();
-        reloadAccounts();
-        App.settings.save();
     }
 
     /**
@@ -783,91 +746,6 @@ public class Launcher {
     }
 
     /**
-     * Loads the saved Accounts
-     */
-    private void loadAccounts() {
-        PerformanceManager.start();
-        LogManager.debug("Loading accounts");
-        if (Files.exists(FileSystem.USER_DATA)) {
-            FileInputStream in = null;
-            ObjectInputStream objIn = null;
-            try {
-                in = new FileInputStream(FileSystem.USER_DATA.toFile());
-                objIn = new ObjectInputStream(in);
-                Object obj;
-                while ((obj = objIn.readObject()) != null) {
-                    if (obj instanceof Account) {
-                        accounts.add((Account) obj);
-                    }
-                }
-            } catch (EOFException e) {
-                // Don't log this, it always happens when it gets to the end of the file
-            } catch (IOException | ClassNotFoundException e) {
-                LogManager.logStackTrace("Exception while trying to read accounts in from file.", e);
-            } finally {
-                try {
-                    if (objIn != null) {
-                        objIn.close();
-                    }
-                    if (in != null) {
-                        in.close();
-                    }
-                } catch (IOException e) {
-                    LogManager.logStackTrace(
-                            "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
-                                    + "accounts.",
-                            e);
-                }
-            }
-        }
-        LogManager.debug("Finished loading accounts");
-        PerformanceManager.end();
-    }
-
-    public void saveAccounts() {
-        FileOutputStream out = null;
-        ObjectOutputStream objOut = null;
-        try {
-            out = new FileOutputStream(FileSystem.USER_DATA.toFile());
-            objOut = new ObjectOutputStream(out);
-            for (Account account : accounts) {
-                objOut.writeObject(account);
-            }
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        } finally {
-            try {
-                if (objOut != null) {
-                    objOut.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(
-                        "Exception while trying to close FileOutputStream/ObjectOutputStream when saving "
-                                + "accounts.",
-                        e);
-            }
-        }
-    }
-
-    public void removeAccount(Account account) {
-        if (this.account == account) {
-            if (accounts.size() == 1) {
-                // if this was the only account, don't set an account
-                switchAccount(null);
-            } else {
-                // if they have more accounts, switch to the first one
-                switchAccount(accounts.get(0));
-            }
-        }
-        accounts.remove(account);
-        saveAccounts();
-        reloadAccounts();
-    }
-
-    /**
      * Loads the user servers added for checking
      */
     private void loadCheckingServers() {
@@ -1012,19 +890,19 @@ public class Launcher {
     }
 
     public void setPackVisbility(Pack pack, boolean collapsed) {
-        if (pack != null && account != null && account.isReal()) {
+        if (pack != null && AccountManager.getSelectedAccount() != null && AccountManager.getSelectedAccount().isReal()) {
             if (collapsed) {
                 // Closed It
-                if (!account.getCollapsedPacks().contains(pack.getName())) {
-                    account.getCollapsedPacks().add(pack.getName());
+                if (!AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
+                    AccountManager.getSelectedAccount().getCollapsedPacks().add(pack.getName());
                 }
             } else {
                 // Opened It
-                if (account.getCollapsedPacks().contains(pack.getName())) {
-                    account.getCollapsedPacks().remove(pack.getName());
+                if (AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
+                    AccountManager.getSelectedAccount().getCollapsedPacks().remove(pack.getName());
                 }
             }
-            saveAccounts();
+            AccountManager.saveAccounts();
             reloadVanillaPacksPanel();
             reloadFeaturedPacksPanel();
             reloadPacksPanel();
@@ -1032,55 +910,55 @@ public class Launcher {
     }
 
     public void setInstanceVisbility(Instance instance, boolean collapsed) {
-        if (instance != null && account.isReal()) {
+        if (instance != null && AccountManager.getSelectedAccount().isReal()) {
             if (collapsed) {
                 // Closed It
-                if (!account.getCollapsedInstances().contains(instance.getName())) {
-                    account.getCollapsedInstances().add(instance.getName());
+                if (!AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
+                    AccountManager.getSelectedAccount().getCollapsedInstances().add(instance.getName());
                 }
             } else {
                 // Opened It
-                if (account.getCollapsedInstances().contains(instance.getName())) {
-                    account.getCollapsedInstances().remove(instance.getName());
+                if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
+                    AccountManager.getSelectedAccount().getCollapsedInstances().remove(instance.getName());
                 }
             }
-            saveAccounts();
+            AccountManager.saveAccounts();
             reloadInstancesPanel();
         }
     }
 
     public void setInstanceVisbility(InstanceV2 instanceV2, boolean collapsed) {
-        if (instanceV2 != null && account.isReal()) {
+        if (instanceV2 != null && AccountManager.getSelectedAccount().isReal()) {
             if (collapsed) {
                 // Closed It
-                if (!account.getCollapsedInstances().contains(instanceV2.launcher.name)) {
-                    account.getCollapsedInstances().add(instanceV2.launcher.name);
+                if (!AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
+                    AccountManager.getSelectedAccount().getCollapsedInstances().add(instanceV2.launcher.name);
                 }
             } else {
                 // Opened It
-                if (account.getCollapsedInstances().contains(instanceV2.launcher.name)) {
-                    account.getCollapsedInstances().remove(instanceV2.launcher.name);
+                if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
+                    AccountManager.getSelectedAccount().getCollapsedInstances().remove(instanceV2.launcher.name);
                 }
             }
-            saveAccounts();
+            AccountManager.saveAccounts();
             reloadInstancesPanel();
         }
     }
 
     public void setServerVisibility(Server server, boolean collapsed) {
-        if (server != null && account.isReal()) {
+        if (server != null && AccountManager.getSelectedAccount().isReal()) {
             if (collapsed) {
                 // Closed It
-                if (!account.getCollapsedServers().contains(server.name)) {
-                    account.getCollapsedServers().add(server.name);
+                if (!AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
+                    AccountManager.getSelectedAccount().getCollapsedServers().add(server.name);
                 }
             } else {
                 // Opened It
-                if (account.getCollapsedServers().contains(server.name)) {
-                    account.getCollapsedServers().remove(server.name);
+                if (AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
+                    AccountManager.getSelectedAccount().getCollapsedServers().remove(server.name);
                 }
             }
-            saveAccounts();
+            AccountManager.saveAccounts();
             reloadServersPanel();
         }
     }
@@ -1222,15 +1100,6 @@ public class Launcher {
                 this.refreshPacksPanel();
             }
         }
-    }
-
-    /**
-     * Get the Accounts added to the Launcher
-     *
-     * @return The Accounts added to the Launcher
-     */
-    public List<Account> getAccounts() {
-        return this.accounts;
     }
 
     /**
@@ -1382,25 +1251,6 @@ public class Launcher {
     }
 
     /**
-     * Sets the bottom bar
-     *
-     * @param bottomBar The Bottom Bar
-     */
-    public void setBottomBar(LauncherBottomBar bottomBar) {
-        this.bottomBar = bottomBar;
-    }
-
-    /**
-     * Reloads the bottom bar accounts combobox
-     */
-    public void reloadAccounts() {
-        if (this.bottomBar == null) {
-            return; // Bottom Bar hasn't been made yet, so don't do anything
-        }
-        this.bottomBar.reloadAccounts(); // Reload the Bottom Bar accounts combobox
-    }
-
-    /**
      * Checks to see if there is already an instance with the name provided or not
      *
      * @param name The name of the instance to check for
@@ -1540,36 +1390,6 @@ public class Launcher {
             }
         }
         return null;
-    }
-
-    /**
-     * Finds an Account from the given username
-     *
-     * @param username Username of the Account to find
-     * @return Account if the Account is found from the username
-     */
-    public Account getAccountByName(String username) {
-        for (Account account : accounts) {
-            if (account.getUsername().equalsIgnoreCase(username)) {
-                return account;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds if an Account is available
-     *
-     * @param username The username of the Account
-     * @return true if found, false if not
-     */
-    public boolean isAccountByName(String username) {
-        for (Account account : accounts) {
-            if (account.getUsername().equalsIgnoreCase(username)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void showKillMinecraft(Process minecraft) {

@@ -37,6 +37,7 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
@@ -135,7 +136,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     private void addActionListeners() {
         this.newInstanceButton.addActionListener(e -> {
-            if (App.launcher.account == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -146,7 +147,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         });
 
         this.createServerButton.addActionListener(e -> {
-            if (App.launcher.account == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();

@@ -39,7 +39,6 @@ import javax.swing.ImageIcon;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
@@ -49,7 +48,9 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
@@ -286,8 +287,8 @@ public class Instance implements Cloneable {
         this.minecraftArguments = minecraftArguments;
         this.isDev = isDev;
         this.isPlayable = isPlayable;
-        if (enableUserLock && !App.launcher.account.isUUIDNull()) {
-            this.userLock = App.launcher.account.getUUIDNoDashes();
+        if (enableUserLock && !AccountManager.getSelectedAccount().isUUIDNull()) {
+            this.userLock = AccountManager.getSelectedAccount().getUUIDNoDashes();
         } else {
             this.userLock = null;
         }
@@ -1207,13 +1208,14 @@ public class Instance implements Cloneable {
      */
     public boolean canPlay() {
         // Make sure an account is selected first.
-        if (App.launcher.account == null || !App.launcher.account.isReal()) {
+        if (AccountManager.getSelectedAccount() == null || !AccountManager.getSelectedAccount().isReal()) {
             return false;
         }
 
         // Check to see if this was a private Instance belonging to a specific user
         // only.
-        if (this.userLock != null && !App.launcher.account.getUUIDNoDashes().equalsIgnoreCase(this.userLock)) {
+        if (this.userLock != null
+                && !AccountManager.getSelectedAccount().getUUIDNoDashes().equalsIgnoreCase(this.userLock)) {
             return false;
         }
 
@@ -1344,7 +1346,7 @@ public class Instance implements Cloneable {
      * @return true if the Minecraft process was started
      */
     public boolean launch() {
-        final Account account = App.launcher.account;
+        final Account account = AccountManager.getSelectedAccount();
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                     .setContent(GetText.tr("Cannot play instance as you have no account selected."))

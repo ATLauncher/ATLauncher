@@ -23,9 +23,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.workers.InstanceInstaller;
 
 @Json

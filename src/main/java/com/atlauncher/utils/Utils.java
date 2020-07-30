@@ -77,13 +77,13 @@ import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.ExtractRule;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.managers.LogManager;
 import com.google.gson.reflect.TypeToken;
 
 import org.tukaani.xz.LZMAInputStream;

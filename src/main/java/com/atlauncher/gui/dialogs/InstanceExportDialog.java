@@ -47,6 +47,7 @@ import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -119,7 +120,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
-        author.setText(App.launcher.account.getMinecraftUsername());
+        author.setText(AccountManager.getSelectedAccount().getMinecraftUsername());
         topPanel.add(author, gbc);
 
         // Export File

@@ -31,7 +31,7 @@ import java.util.UUID;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
@@ -93,7 +93,7 @@ public class Settings {
 
     public void convert(Properties properties) {
         String importedDateFormat = properties.getProperty("dateformat");
-        if (importedDateFormat == null) {
+        if (importedDateFormat != null) {
             if (importedDateFormat.equalsIgnoreCase("dd/M/yyy")) {
                 importedDateFormat = "dd/MM/yyyy";
             } else if (importedDateFormat.equalsIgnoreCase("M/dd/yyy")) {

@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 
 @SuppressWarnings("serial")
 public final class DownloadPool extends LinkedList<Download> {

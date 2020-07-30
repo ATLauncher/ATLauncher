@@ -50,6 +50,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
@@ -108,8 +109,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.launcher.account != null) {
-            if (App.launcher.account.getCollapsedPacks().contains(pack.getName())) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -128,8 +129,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.launcher.account != null) {
-            if (App.launcher.account.getCollapsedInstances().contains(instance.getName())) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
                 setCollapsed(true);
             }
         }
@@ -149,8 +150,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.launcher.account != null) {
-            if (App.launcher.account.getCollapsedInstances().contains(instanceV2.launcher.name)) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
                 setCollapsed(true);
             }
         }
@@ -163,8 +164,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.launcher.account != null) {
-            if (App.launcher.account.getCollapsedServers().contains(server.name)) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
                 setCollapsed(true);
             }
         }

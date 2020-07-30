@@ -25,7 +25,6 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 
 import org.mini2Dx.gettext.GetText;
 

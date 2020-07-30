@@ -30,19 +30,21 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
+import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
+public class LauncherBottomBar extends BottomBar implements RelocalizationListener, AccountListener {
     private JPanel leftSide;
     private JPanel middle;
     private boolean dontSave = false;
@@ -79,11 +81,12 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.insets = new Insets(0, 0, 0, 5);
         middle.add(username, gbc);
 
-        username.setVisible(App.launcher.getAccounts().size() != 0);
+        username.setVisible(AccountManager.getAccounts().size() != 0);
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         RelocalizationManager.addListener(this);
+        com.atlauncher.evnt.manager.AccountManager.addListener(this);
     }
 
     /**
@@ -108,7 +111,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 if (!dontSave) {
                     Analytics.sendEvent("Switch", "Account");
-                    App.launcher.switchAccount((Account) username.getSelectedItem());
+                    AccountManager.switchAccount((Account) username.getSelectedItem());
                 }
             }
         });
@@ -132,30 +135,30 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
 
-        for (Account account : App.launcher.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
 
-        Account active = App.launcher.account;
+        Account active = AccountManager.getSelectedAccount();
 
         if (active != null) {
             username.setSelectedItem(active);
         }
     }
 
-    public void reloadAccounts() {
+    private void reloadAccounts() {
         dontSave = true;
         username.removeAllItems();
 
-        for (Account account : App.launcher.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
 
-        if (App.launcher.account != null) {
-            username.setSelectedItem(App.launcher.account);
+        if (AccountManager.getSelectedAccount() != null) {
+            username.setSelectedItem(AccountManager.getSelectedAccount());
         }
 
-        username.setVisible(App.launcher.getAccounts().size() != 0);
+        username.setVisible(AccountManager.getAccounts().size() != 0);
 
         dontSave = false;
     }
@@ -169,5 +172,10 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
         this.updateData.setText(GetText.tr("Update Data"));
         this.openFolder.setText(GetText.tr("Open Folder"));
+    }
+
+    @Override
+    public void onAccountsChanged() {
+        reloadAccounts();
     }
 }

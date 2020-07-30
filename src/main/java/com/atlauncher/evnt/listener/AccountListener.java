@@ -15,13 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher;
+package com.atlauncher.evnt.listener;
 
-import com.atlauncher.managers.LogManager;
-
-public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        LogManager.logStackTrace(e);
-    }
+public interface AccountListener {
+    public void onAccountsChanged();
 }

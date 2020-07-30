@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 
 import io.github.asyncronous.toast.ui.ToastWindow;
 

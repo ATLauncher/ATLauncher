@@ -43,14 +43,15 @@ import javax.swing.JPasswordField;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
@@ -555,7 +556,7 @@ public class Account implements Serializable {
                     } catch (IOException e) {
                         LogManager.logStackTrace(e);
                     }
-                    App.launcher.reloadAccounts();
+                    com.atlauncher.evnt.manager.AccountManager.post();
                 }
                 dialog.close();
             }));
@@ -739,7 +740,7 @@ public class Account implements Serializable {
         if (!response.isOffline()) {
             this.setUUID(response.getAuth().getSelectedProfile().getId().toString());
             this.setStore(response.getAuth().saveForStorage());
-            App.launcher.saveAccounts();
+            AccountManager.saveAccounts();
         }
 
         return response;

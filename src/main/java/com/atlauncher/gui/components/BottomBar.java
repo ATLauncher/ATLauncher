@@ -26,9 +26,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 
 public abstract class BottomBar extends JPanel implements ThemeListener {

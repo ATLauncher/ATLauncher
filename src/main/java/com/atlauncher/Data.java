@@ -17,11 +17,12 @@
  */
 package com.atlauncher;
 
-import com.atlauncher.managers.LogManager;
+import java.util.LinkedList;
+import java.util.List;
 
-public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        LogManager.logStackTrace(e);
-    }
+import com.atlauncher.data.Account;
+
+public final class Data {
+    public static final List<Account> ACCOUNTS = new LinkedList<>();
+    public static Account SELECTED_ACCOUNT; // Account using the Launcher
 }

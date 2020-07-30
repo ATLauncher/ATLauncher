@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
@@ -39,6 +38,7 @@ import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;

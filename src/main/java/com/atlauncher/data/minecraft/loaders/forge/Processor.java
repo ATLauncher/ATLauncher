@@ -30,8 +30,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;

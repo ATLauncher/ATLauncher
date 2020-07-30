@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
 
 /**
  * This class contains information about a pack's version. This is a singular
