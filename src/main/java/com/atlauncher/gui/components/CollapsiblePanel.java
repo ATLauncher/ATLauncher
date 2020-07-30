@@ -53,6 +53,7 @@ import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
@@ -317,7 +318,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
                 InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
-                App.launcher.setServerVisibility(server, isCollapsed());
+                ServerManager.setServerVisibility(server, isCollapsed());
             }
         }
 
@@ -330,7 +331,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
             } else if (instanceV2 != null) {
                 InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
-                App.launcher.setServerVisibility(server, isCollapsed());
+                ServerManager.setServerVisibility(server, isCollapsed());
             }
         }
     }

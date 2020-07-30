@@ -62,6 +62,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.FileUtils;
@@ -323,7 +324,7 @@ public class InstanceInstallerDialog extends JDialog {
                             .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
                             .build()).setType(DialogManager.ERROR).show();
                     return;
-                } else if (!isReinstall && isServer && App.launcher.isServer(nameField.getText())) {
+                } else if (!isReinstall && isServer && ServerManager.isServer(nameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText
                                     .tr("A server already exists with that name.<br/><br/>Rename it and try again."))

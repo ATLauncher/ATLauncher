@@ -77,6 +77,7 @@ import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
@@ -592,7 +593,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         server.save();
 
-        App.launcher.servers.add(server);
+        ServerManager.addServer(server);
 
         App.launcher.reloadServersPanel();
     }

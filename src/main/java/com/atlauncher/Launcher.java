@@ -21,26 +21,19 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 import javax.swing.JDialog;
@@ -51,11 +44,9 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.LauncherVersion;
-import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.News;
 import com.atlauncher.data.PackUsers;
-import com.atlauncher.data.Server;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -63,19 +54,19 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.ATLauncherAPIUtils;
-import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -91,8 +82,6 @@ public class Launcher {
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news = new ArrayList<>(); // News
     private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
-    public List<Server> servers = new ArrayList<>(); // Users Installed Servers
-    private List<MinecraftServer> checkingServers = new ArrayList<>();
 
     // UI things
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -106,9 +95,6 @@ public class Launcher {
     // Minecraft tracking variables
     private Process minecraftProcess = null; // The process minecraft is running on
     private boolean minecraftLaunched = false; // If Minecraft has been Launched
-
-    // timer for server checking tool
-    private Timer checkingServersTimer = null; // Timer used for checking servers
 
     public void checkIfWeCanLoad() {
         if (!Java.isUsingJavaSupportingLetsEncrypt()) {
@@ -145,11 +131,11 @@ public class Launcher {
 
         InstanceManager.loadInstances(); // Load the users installed Instances
 
-        loadServers(); // Load the users installed servers
+        ServerManager.loadServers(); // Load the users installed servers
 
         AccountManager.loadAccounts(); // Load the saved Accounts
 
-        loadCheckingServers(); // Load the saved servers we're checking with the tool
+        CheckingServersManager.loadCheckingServers(); // Load the saved servers we're checking with the tool
 
         removeUnusedImages(); // remove unused pack images
 
@@ -208,7 +194,7 @@ public class Launcher {
         }
 
         if (App.settings.enableServerChecker) {
-            this.startCheckingServers();
+            CheckingServersManager.startCheckingServers();
         }
 
         if (App.settings.enableLogs) {
@@ -217,28 +203,6 @@ public class Launcher {
             if (App.settings.enableAnalytics) {
                 Analytics.startSession();
             }
-        }
-        PerformanceManager.end();
-    }
-
-    public void startCheckingServers() {
-        PerformanceManager.start();
-        if (this.checkingServersTimer != null) {
-            // If it's not null, cancel and purge tasks left
-            this.checkingServersTimer.cancel();
-            this.checkingServersTimer.purge(); // not sure if needed or not
-        }
-
-        if (App.settings.enableServerChecker) {
-            this.checkingServersTimer = new Timer();
-            this.checkingServersTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    for (MinecraftServer server : checkingServers) {
-                        server.checkServer();
-                    }
-                }
-            }, 0, App.settings.serverCheckerWait * 1000);
         }
         PerformanceManager.end();
     }
@@ -499,17 +463,6 @@ public class Launcher {
         this.parent = parent;
     }
 
-    public void addCheckingServer(MinecraftServer server) {
-        this.checkingServers.add(server);
-        this.saveCheckingServers();
-    }
-
-    public void removeCheckingServer(MinecraftServer server) {
-        this.checkingServers.remove(server);
-        this.saveCheckingServers();
-        this.startCheckingServers();
-    }
-
     /**
      * Loads the languages for use in the Launcher
      */
@@ -586,106 +539,6 @@ public class Launcher {
         PerformanceManager.end();
     }
 
-    /**
-     * Loads the user installed servers
-     */
-    private void loadServers() {
-        PerformanceManager.start();
-        LogManager.debug("Loading servers");
-        this.servers = new ArrayList<>(); // Reset the servers list
-
-        for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
-                .orElse(new String[0])) {
-            File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
-
-            Server server = null;
-
-            try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
-                server = Gsons.MINECRAFT.fromJson(fileReader, Server.class);
-                LogManager.debug("Loaded server from " + serverDir);
-            } catch (Exception e) {
-                LogManager.logStackTrace("Failed to load server in the folder " + serverDir, e);
-                continue;
-            }
-
-            if (server == null) {
-                LogManager.error("Failed to load server in the folder " + serverDir);
-                continue;
-            }
-
-            this.servers.add(server);
-        }
-
-        LogManager.debug("Finished loading servers");
-        PerformanceManager.end();
-    }
-
-    /**
-     * Loads the user servers added for checking
-     */
-    private void loadCheckingServers() {
-        PerformanceManager.start();
-        LogManager.debug("Loading servers to check");
-        this.checkingServers = new ArrayList<>(); // Reset the list
-        if (Files.exists(FileSystem.CHECKING_SERVERS_JSON)) {
-            FileReader fileReader = null;
-            try {
-                fileReader = new FileReader(FileSystem.CHECKING_SERVERS_JSON.toFile());
-            } catch (FileNotFoundException e) {
-                LogManager.logStackTrace(e);
-                return;
-            }
-
-            this.checkingServers = Gsons.DEFAULT.fromJson(fileReader, MinecraftServer.LIST_TYPE);
-
-            if (fileReader != null) {
-                try {
-                    fileReader.close();
-                } catch (IOException e) {
-                    LogManager
-                            .logStackTrace("Exception while trying to close FileReader when loading servers for server "
-                                    + "checker" + " tool.", e);
-                }
-            }
-        }
-        LogManager.debug("Finished loading servers to check");
-        PerformanceManager.end();
-    }
-
-    public void saveCheckingServers() {
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-        try {
-            if (!Files.exists(FileSystem.CHECKING_SERVERS_JSON)) {
-                Files.createFile(FileSystem.CHECKING_SERVERS_JSON);
-            }
-
-            fw = new FileWriter(FileSystem.CHECKING_SERVERS_JSON.toFile());
-            bw = new BufferedWriter(fw);
-            bw.write(Gsons.DEFAULT.toJson(this.checkingServers));
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-                if (fw != null) {
-                    fw.close();
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(
-                        "Exception while trying to close FileWriter/BufferedWriter when saving servers for "
-                                + "server checker tool.",
-                        e);
-            }
-        }
-    }
-
-    public List<MinecraftServer> getCheckingServers() {
-        return this.checkingServers;
-    }
-
     public boolean isMinecraftLaunched() {
         return this.minecraftLaunched;
     }
@@ -693,37 +546,6 @@ public class Launcher {
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
         App.TRAY_MENU.setMinecraftLaunched(launched);
-    }
-
-    public void setServerVisibility(Server server, boolean collapsed) {
-        if (server != null && AccountManager.getSelectedAccount().isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedServers().add(server.name);
-                }
-            } else {
-                // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedServers().remove(server.name);
-                }
-            }
-            AccountManager.saveAccounts();
-            reloadServersPanel();
-        }
-    }
-
-    public ArrayList<Server> getServersSorted() {
-        ArrayList<Server> servers = new ArrayList<>(this.servers);
-        servers.sort(Comparator.comparing(s -> s.name));
-        return servers;
-    }
-
-    public void removeServer(Server server) {
-        if (this.servers.remove(server)) {
-            FileUtils.deleteDirectory(server.getRoot());
-            reloadServersPanel();
-        }
     }
 
     public boolean canViewSemiPublicPackByCode(String packCode) {
@@ -892,11 +714,6 @@ public class Launcher {
      */
     public void refreshPacksPanel() {
         this.packsPanel.refresh(); // Refresh the instances panel
-    }
-
-    public boolean isServer(String name) {
-        return this.servers.stream()
-                .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     public void showKillMinecraft(Process minecraft) {

@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.data.MinecraftServer;
+import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.MCQuery;
@@ -193,13 +194,13 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                     App.TOASTER.pop(
                             (this.serverEditing == null ? GetText.tr("Server Added") : GetText.tr("Server Edited")));
                     if (this.serverEditing == null) {
-                        App.launcher.addCheckingServer(new MinecraftServer(name, host, port, qv));
+                        CheckingServersManager.addCheckingServer(new MinecraftServer(name, host, port, qv));
                     } else {
                         this.serverEditing.setName(name);
                         this.serverEditing.setHost(host);
                         this.serverEditing.setPort(port);
                         this.serverEditing.setQueryVersion(qv);
-                        App.launcher.saveCheckingServers();
+                        CheckingServersManager.saveCheckingServers();
                     }
                     close();
                 }

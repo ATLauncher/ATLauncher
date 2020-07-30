@@ -23,7 +23,9 @@ import java.util.List;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
+import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.Server;
 
 public final class Data {
     public static final List<Account> ACCOUNTS = new LinkedList<>();
@@ -33,4 +35,9 @@ public final class Data {
 
     public static final List<Instance> INSTANCES_OLD = new LinkedList<>();
     public static final List<InstanceV2> INSTANCES = new LinkedList<>();
+
+    public static final List<Server> SERVERS = new LinkedList<>();
+
+    // Tools related things
+    public static final List<MinecraftServer> CHECKING_SERVERS = new LinkedList<>();
 }

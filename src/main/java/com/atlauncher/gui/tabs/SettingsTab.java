@@ -36,6 +36,7 @@ import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
+import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.FlatLaf;
 
@@ -95,7 +96,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     App.launcher.reloadPacksPanel();
                 }
                 if (restartServerChecker) {
-                    App.launcher.startCheckingServers();
+                    CheckingServersManager.startCheckingServers();
                 }
                 if (reloadTheme) {
                     App.loadTheme(App.settings.theme);
