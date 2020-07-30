@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,11 +56,9 @@ import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.News;
-import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackUsers;
 import com.atlauncher.data.Server;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -70,6 +67,7 @@ import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -94,7 +92,6 @@ public class Launcher {
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news = new ArrayList<>(); // News
     private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
-    public List<Pack> packs = new ArrayList<>(); // Packs in the Launcher
     public List<Instance> instances = new ArrayList<>(); // Users Installed Instances
     public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
     public List<Server> servers = new ArrayList<>(); // Users Installed Servers
@@ -145,7 +142,7 @@ public class Launcher {
 
         loadMinecraftVersions(); // Load info about the different Minecraft versions
 
-        loadPacks(); // Load the Packs available in the Launcher
+        PackManager.loadPacks(); // Load the Packs available in the Launcher
 
         loadUsers(); // Load the Testers and Allowed Players for the packs
 
@@ -421,7 +418,7 @@ public class Launcher {
             addExecutableBitToTools();
             loadNews(); // Load the news
             reloadNewsPanel(); // Reload news panel
-            loadPacks(); // Load the Packs available in the Launcher
+            PackManager.loadPacks(); // Load the Packs available in the Launcher
             reloadVanillaPacksPanel(); // Reload packs panel
             reloadFeaturedPacksPanel(); // Reload packs panel
             reloadPacksPanel(); // Reload packs panel
@@ -481,7 +478,7 @@ public class Launcher {
 
         Set<String> packImageFilenames = new HashSet<>();
         packImageFilenames
-                .addAll(packs.stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
+                .addAll(PackManager.getPacks().stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
         packImageFilenames.add("defaultimage.png");
 
         if (files != null) {
@@ -568,24 +565,6 @@ public class Launcher {
     }
 
     /**
-     * Loads the Packs for use in the Launcher
-     */
-    private void loadPacks() {
-        PerformanceManager.start();
-        LogManager.debug("Loading packs");
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
-            }.getType();
-            this.packs = Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()),
-                    type);
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
-            LogManager.logStackTrace(e);
-        }
-        LogManager.debug("Finished loading packs");
-        PerformanceManager.end();
-    }
-
-    /**
      * Loads the Testers and Allowed Players for the packs in the Launcher
      */
     private void loadUsers() {
@@ -662,8 +641,8 @@ public class Launcher {
                     instance.getDisabledModsDirectory().mkdir();
                 }
 
-                if (isPackByName(instance.getPackName())) {
-                    instance.setRealPack(getPackByName(instance.getPackName()));
+                if (PackManager.isPackByName(instance.getPackName())) {
+                    instance.setRealPack(PackManager.getPackByName(instance.getPackName()));
                 }
 
                 this.instances.add(instance);
@@ -820,95 +799,6 @@ public class Launcher {
         App.TRAY_MENU.setMinecraftLaunched(launched);
     }
 
-    /**
-     * Get the Packs available in the Launcher
-     *
-     * @return The Packs available in the Launcher
-     */
-    public List<Pack> getPacks() {
-        return this.packs;
-    }
-
-    /**
-     * Get the Packs available in the Launcher sorted alphabetically
-     *
-     * @return The Packs available in the Launcher sorted alphabetically
-     */
-    public List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean isSystem) {
-        List<Pack> packs = new LinkedList<>();
-
-        for (Pack pack : this.packs) {
-            if (isFeatured) {
-                if (!pack.isFeatured()) {
-                    continue;
-                }
-            }
-
-            if (isSystem) {
-                if (pack.isSystem()) {
-                    packs.add(pack);
-                }
-            } else {
-                if (!pack.isSystem()) {
-                    packs.add(pack);
-                }
-            }
-        }
-
-        packs.sort(Comparator.comparing(Pack::getName));
-        return packs;
-    }
-
-    /**
-     * Get the Packs available in the Launcher sorted by position
-     *
-     * @return The Packs available in the Launcher sorted by position
-     */
-    public List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean isSystem) {
-        List<Pack> packs = new LinkedList<>();
-
-        for (Pack pack : this.packs) {
-            if (isFeatured) {
-                if (!pack.isFeatured()) {
-                    continue;
-                }
-            }
-
-            if (isSystem) {
-                if (pack.isSystem()) {
-                    packs.add(pack);
-                }
-            } else {
-                if (!pack.isSystem()) {
-                    packs.add(pack);
-                }
-            }
-        }
-
-        packs.sort(Comparator.comparingInt(Pack::getPosition));
-        return packs;
-    }
-
-    public void setPackVisbility(Pack pack, boolean collapsed) {
-        if (pack != null && AccountManager.getSelectedAccount() != null && AccountManager.getSelectedAccount().isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedPacks().add(pack.getName());
-                }
-            } else {
-                // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedPacks().remove(pack.getName());
-                }
-            }
-            AccountManager.saveAccounts();
-            reloadVanillaPacksPanel();
-            reloadFeaturedPacksPanel();
-            reloadPacksPanel();
-        }
-    }
-
     public void setInstanceVisbility(Instance instance, boolean collapsed) {
         if (instance != null && AccountManager.getSelectedAccount().isReal()) {
             if (collapsed) {
@@ -1046,60 +936,6 @@ public class Launcher {
             return this.minecraftVersions.get(version);
         }
         throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
-    }
-
-    public boolean semiPublicPackExistsFromCode(String packCode) {
-        for (Pack pack : this.packs) {
-            if (pack.isSemiPublic()) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public Pack getSemiPublicPackByCode(String packCode) {
-        for (Pack pack : this.packs) {
-            if (pack.isSemiPublic()) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
-                    return pack;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public boolean addPack(String packCode) {
-        for (Pack pack : this.packs) {
-            if (pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(Hashing.md5(packCode).toString())) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
-                    if (pack.isTester()) {
-                        return false;
-                    }
-                    App.settings.addedPacks.add(packCode);
-                    App.settings.save();
-                    this.refreshVanillaPacksPanel();
-                    this.refreshFeaturedPacksPanel();
-                    this.refreshPacksPanel();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void removePack(String packCode) {
-        for (String code : App.settings.addedPacks) {
-            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
-                App.settings.addedPacks.remove(packCode);
-                App.settings.save();
-                this.refreshVanillaPacksPanel();
-                this.refreshFeaturedPacksPanel();
-                this.refreshPacksPanel();
-            }
-        }
     }
 
     /**
@@ -1272,67 +1108,6 @@ public class Launcher {
     }
 
     /**
-     * Finds a Pack from the given ID number
-     *
-     * @param id ID of the Pack to find
-     * @return Pack if the pack is found from the ID
-     * @throws InvalidPack If ID is not found
-     */
-    public Pack getPackByID(int id) throws InvalidPack {
-        for (Pack pack : packs) {
-            if (pack.getID() == id) {
-                return pack;
-            }
-        }
-        throw new InvalidPack("No pack exists with ID " + id);
-    }
-
-    /**
-     * Checks if there is a pack by the given name
-     *
-     * @param name name of the Pack to find
-     * @return True if the pack is found from the name
-     */
-    public boolean isPackByName(String name) {
-        for (Pack pack : packs) {
-            if (pack.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Finds a Pack from the given name
-     *
-     * @param name name of the Pack to find
-     * @return Pack if the pack is found from the name
-     */
-    public Pack getPackByName(String name) {
-        for (Pack pack : packs) {
-            if (pack.getName().equalsIgnoreCase(name)) {
-                return pack;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds a Pack from the given safe name
-     *
-     * @param name name of the Pack to find
-     * @return Pack if the pack is found from the safe name
-     */
-    public Pack getPackBySafeName(String name) {
-        for (Pack pack : packs) {
-            if (pack.getSafeName().equalsIgnoreCase(name)) {
-                return pack;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Checks if there is an instance by the given name
      *
      * @param name name of the Instance to find
@@ -1430,15 +1205,5 @@ public class Launcher {
             this.instancesV2.add(clonedInstance);
             this.reloadInstancesPanel();
         }
-    }
-
-    public String getPackInstallableCount() {
-        int count = 0;
-        for (Pack pack : this.getPacks()) {
-            if (pack.canInstall()) {
-                count++;
-            }
-        }
-        return count + "";
     }
 }

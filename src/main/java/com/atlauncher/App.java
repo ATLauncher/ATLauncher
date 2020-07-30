@@ -63,6 +63,7 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
@@ -397,8 +398,8 @@ public class App {
         }
 
         if (packCodeToAdd != null) {
-            if (launcher.addPack(packCodeToAdd)) {
-                Pack packAdded = launcher.getSemiPublicPackByCode(packCodeToAdd);
+            if (PackManager.addPack(packCodeToAdd)) {
+                Pack packAdded = PackManager.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
                     LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
                 } else {

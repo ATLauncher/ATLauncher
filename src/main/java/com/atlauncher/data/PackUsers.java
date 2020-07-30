@@ -19,9 +19,9 @@ package com.atlauncher.data;
 
 import java.util.List;
 
-import com.atlauncher.App;
 import com.atlauncher.annot.Json;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.managers.PackManager;
 
 @Json
 public class PackUsers {
@@ -32,7 +32,7 @@ public class PackUsers {
     public void addUsers() {
         Pack pack = null;
         try {
-            pack = App.launcher.getPackByID(this.pack);
+            pack = PackManager.getPackByID(this.pack);
         } catch (InvalidPack e) {
             return;
         }

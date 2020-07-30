@@ -58,10 +58,12 @@ import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -118,7 +120,11 @@ public class InstanceV2 extends MinecraftVersion {
             return null;
         }
 
-        return App.launcher.packs.stream().filter(p -> p.id == this.launcher.packId).findFirst().orElse(null);
+        try {
+            return PackManager.getPackByID(this.launcher.packId);
+        } catch (InvalidPack e) {
+            return null;
+        }
     }
 
     public boolean hasUpdate() {

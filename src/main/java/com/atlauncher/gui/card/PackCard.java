@@ -28,7 +28,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
-import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -39,6 +38,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
@@ -174,7 +174,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         this.removePackButton.addActionListener(e -> {
             Analytics.sendEvent(pack.getName(), "Remove", "Pack");
-            App.launcher.removePack(pack.getCode());
+            PackManager.removePack(pack.getCode());
         });
     }
 

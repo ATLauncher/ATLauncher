@@ -48,6 +48,7 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
@@ -114,7 +115,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         RelocalizationManager.addListener(this);
 
         if (App.packToInstall != null) {
-            Pack pack = App.launcher.getPackBySafeName(App.packToInstall);
+            Pack pack = PackManager.getPackBySafeName(App.packToInstall);
 
             if (pack != null && pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(pack.getCode())) {
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
@@ -133,7 +134,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             if (parts.length != 4) {
                 LogManager.error("Error automatically installing pack from share code!");
             } else {
-                Pack pack = App.launcher.getPackBySafeName(parts[0]);
+                Pack pack = PackManager.getPackBySafeName(parts[0]);
 
                 if (pack != null && pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(pack.getCode())) {
                     LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "

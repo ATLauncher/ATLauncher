@@ -44,6 +44,7 @@ import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddCursePackDialog;
 import com.atlauncher.gui.dialogs.AddPackDialog;
 import com.atlauncher.gui.panels.LoadingPanel;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 
 import org.mini2Dx.gettext.GetText;
@@ -163,8 +164,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         }
 
         List<Pack> packs = App.settings.sortPacksAlphabetically
-                ? App.launcher.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
-                : App.launcher.getPacksSortedPositionally(this.isFeatured, this.isSystem);
+                ? PackManager.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
+                : PackManager.getPacksSortedPositionally(this.isFeatured, this.isSystem);
 
         for (Pack pack : packs) {
             if (pack.canInstall()) {

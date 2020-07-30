@@ -29,13 +29,14 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -73,7 +74,11 @@ public class Server {
     }
 
     public Pack getPack() {
-        return App.launcher.packs.stream().filter(p -> p.id == this.packId).findFirst().orElse(null);
+        try {
+            return PackManager.getPackByID(this.packId);
+        } catch (InvalidPack e) {
+            return null;
+        }
     }
 
     public void launch(boolean close) {

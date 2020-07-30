@@ -31,9 +31,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
@@ -88,8 +88,8 @@ public class AddPackDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(GetText.tr("Add"));
         saveButton.addActionListener(e -> {
-            if (App.launcher.semiPublicPackExistsFromCode(packCode.getText())) {
-                if (App.launcher.addPack(packCode.getText())) {
+            if (PackManager.semiPublicPackExistsFromCode(packCode.getText())) {
+                if (PackManager.addPack(packCode.getText())) {
                     DialogManager.okDialog().setParent(AddPackDialog.this).setTitle(GetText.tr("Pack Added"))
                             .setContent(GetText.tr("The pack has been added!")).setType(DialogManager.INFO).show();
                 } else {
