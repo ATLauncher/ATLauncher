@@ -51,6 +51,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
@@ -309,11 +310,11 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
             } else if (instance != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, instance.getPackName() + " - " + instance.getVersion(),
                         "Collapse", "Instance");
-                App.launcher.setInstanceVisbility(instance, isCollapsed());
+                InstanceManager.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0,
                         instanceV2.launcher.pack + " - " + instanceV2.launcher.version, "Collapse", "InstanceV2");
-                App.launcher.setInstanceVisbility(instanceV2, isCollapsed());
+                InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
                 App.launcher.setServerVisibility(server, isCollapsed());
@@ -325,9 +326,9 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
             if (pack != null) {
                 PackManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                App.launcher.setInstanceVisbility(instance, isCollapsed());
+                InstanceManager.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
-                App.launcher.setInstanceVisbility(instanceV2, isCollapsed());
+                InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
                 App.launcher.setServerVisibility(server, isCollapsed());
             }

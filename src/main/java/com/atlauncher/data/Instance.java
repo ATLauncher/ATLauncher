@@ -50,6 +50,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
@@ -577,7 +578,7 @@ public class Instance implements Cloneable {
 
         if (!hasUpdateBeenIgnored(version)) {
             this.ignoredUpdates.add(version);
-            App.launcher.saveInstances();
+            InstanceManager.saveInstances();
         }
     }
 

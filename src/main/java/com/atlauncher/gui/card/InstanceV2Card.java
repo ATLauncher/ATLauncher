@@ -71,6 +71,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Java;
@@ -369,7 +370,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
-                    App.launcher.removeInstance(instance);
+                    InstanceManager.removeInstance(instance);
                     dialog.close();
                     App.TOASTER.pop(GetText.tr("Deleted Instance Successfully"));
                 }));
@@ -487,8 +488,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                 GetText.tr("Enter a new name for this cloned instance."),
                                 GetText.tr("Cloning Instance"), JOptionPane.INFORMATION_MESSAGE);
                         if (clonedName != null && clonedName.length() >= 1
-                                && App.launcher.getInstanceByName(clonedName) == null
-                                && App.launcher.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
+                                && InstanceManager.getInstanceByName(clonedName) == null
+                                && InstanceManager
+                                        .getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
                                 && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
                                         FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
                             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Clone",
@@ -498,7 +500,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
                                     GetText.tr("Cloning Instance. Please wait..."), null);
                             dialog.addThread(new Thread(() -> {
-                                App.launcher.cloneInstance(instance, newName);
+                                InstanceManager.cloneInstance(instance, newName);
                                 dialog.close();
                                 App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
                             }));

@@ -36,6 +36,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
@@ -133,7 +134,7 @@ public class RenameInstanceDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
-            if (App.launcher.isInstance(instanceName.getText())) {
+            if (InstanceManager.isInstance(instanceName.getText())) {
                 DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
                         .setContent(
                                 GetText.tr("There is already an instance called {0}.<br/><br/>Rename it and try again.",
@@ -152,7 +153,7 @@ public class RenameInstanceDialog extends JDialog {
                 if (this.instanceV2 != null && instanceV2.rename(instanceName.getText())) {
                     App.launcher.reloadInstancesPanel();
                 } else if (this.instance != null && instance.rename(instanceName.getText())) {
-                    App.launcher.saveInstances();
+                    InstanceManager.saveInstances();
                     App.launcher.reloadInstancesPanel();
                 } else {
                     LogManager.error("Unknown Error Occurred While Renaming Instance!");

@@ -75,6 +75,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ATLauncherApiForgeVersion;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -563,13 +564,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instance.save();
 
         if (this.instanceV2 != null) {
-            App.launcher.instancesV2.remove(this.instanceV2);
+            InstanceManager.getInstances().remove(this.instanceV2);
         }
 
-        App.launcher.instancesV2.add(instance);
+        InstanceManager.getInstances().add(instance);
 
         if (this.instance != null) {
-            App.launcher.instances.remove(this.instance);
+            InstanceManager.getOldInstances().remove(this.instance);
         }
 
         App.launcher.reloadInstancesPanel();

@@ -33,7 +33,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -42,6 +41,7 @@ import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.dialogs.AddCursePackDialog;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 
 import org.mini2Dx.gettext.GetText;
@@ -133,7 +133,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        App.launcher.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
+        InstanceManager.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 
@@ -160,7 +160,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
             }
         });
 
-        App.launcher.getInstancesV2Sorted().stream().forEach(instance -> {
+        InstanceManager.getInstances().stream().forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 

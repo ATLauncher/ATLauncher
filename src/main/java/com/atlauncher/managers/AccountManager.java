@@ -55,7 +55,13 @@ public class AccountManager {
                 Object obj;
                 while ((obj = objIn.readObject()) != null) {
                     if (obj instanceof Account) {
-                        Data.ACCOUNTS.add((Account) obj);
+                        Account account = (Account) obj;
+
+                        Data.ACCOUNTS.add(account);
+
+                        if (account.getUsername().equalsIgnoreCase(App.settings.lastAccount)) {
+                            Data.SELECTED_ACCOUNT = account;
+                        }
                     }
                 }
             } catch (EOFException e) {

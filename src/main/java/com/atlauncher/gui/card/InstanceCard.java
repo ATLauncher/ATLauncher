@@ -68,6 +68,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Java;
@@ -344,7 +345,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
-                    App.launcher.removeInstance(instance);
+                    InstanceManager.removeInstance(instance);
                     dialog.close();
                     App.TOASTER.pop(GetText.tr("Deleted Instance Successfully"));
                 }));

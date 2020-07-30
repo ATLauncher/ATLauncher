@@ -50,8 +50,6 @@ import javax.swing.JLabel;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.DownloadableFile;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.data.MinecraftVersion;
@@ -66,6 +64,7 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -92,8 +91,6 @@ public class Launcher {
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
     private List<News> news = new ArrayList<>(); // News
     private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
-    public List<Instance> instances = new ArrayList<>(); // Users Installed Instances
-    public List<InstanceV2> instancesV2 = new ArrayList<>(); // Users Installed Instances (new format)
     public List<Server> servers = new ArrayList<>(); // Users Installed Servers
     private List<MinecraftServer> checkingServers = new ArrayList<>();
 
@@ -146,7 +143,7 @@ public class Launcher {
 
         loadUsers(); // Load the Testers and Allowed Players for the packs
 
-        loadInstances(); // Load the users installed Instances
+        InstanceManager.loadInstances(); // Load the users installed Instances
 
         loadServers(); // Load the users installed servers
 
@@ -423,7 +420,7 @@ public class Launcher {
             reloadFeaturedPacksPanel(); // Reload packs panel
             reloadPacksPanel(); // Reload packs panel
             loadUsers(); // Load the Testers and Allowed Players for the packs
-            loadInstances(); // Load the users installed Instances
+            InstanceManager.loadInstances(); // Load the users installed Instances
             reloadInstancesPanel(); // Reload instances panel
             reloadServersPanel(); // Reload instances panel
             dialog.setVisible(false); // Remove the dialog
@@ -590,74 +587,6 @@ public class Launcher {
     }
 
     /**
-     * Loads the user installed Instances
-     */
-    private void loadInstances() {
-        PerformanceManager.start();
-        LogManager.debug("Loading instances");
-        this.instances = new ArrayList<>(); // Reset the instances list
-        this.instancesV2 = new ArrayList<>(); // Reset the instancesv2 list
-
-        for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
-                .orElse(new String[0])) {
-            File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
-
-            Instance instance = null;
-            InstanceV2 instanceV2 = null;
-
-            try {
-                try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
-                    instanceV2 = Gsons.MINECRAFT.fromJson(fileReader, InstanceV2.class);
-                    instanceV2.ROOT = instanceDir.toPath();
-                    LogManager.debug("Loaded V2 instance from " + instanceDir);
-
-                    if (instanceV2.launcher == null) {
-                        instanceV2 = null;
-                        throw new JsonSyntaxException("Error parsing instance.json as InstanceV2");
-                    }
-                } catch (JsonIOException | JsonSyntaxException ignored) {
-                    try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
-                        instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
-                        instance.ROOT = instanceDir.toPath();
-                        instance.convert();
-                        LogManager.debug("Loaded V1 instance from " + instanceDir);
-                    } catch (JsonIOException | JsonSyntaxException e) {
-                        LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
-                        continue;
-                    }
-                }
-            } catch (Exception e2) {
-                LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
-                continue;
-            }
-
-            if (instance == null && instanceV2 == null) {
-                LogManager.error("Failed to load instance in the folder " + instanceDir);
-                continue;
-            }
-
-            if (instance != null) {
-                if (!instance.getDisabledModsDirectory().exists()) {
-                    instance.getDisabledModsDirectory().mkdir();
-                }
-
-                if (PackManager.isPackByName(instance.getPackName())) {
-                    instance.setRealPack(PackManager.getPackByName(instance.getPackName()));
-                }
-
-                this.instances.add(instance);
-            }
-
-            if (instanceV2 != null) {
-                this.instancesV2.add(instanceV2);
-            }
-        }
-
-        LogManager.debug("Finished loading instances");
-        PerformanceManager.end();
-    }
-
-    /**
      * Loads the user installed servers
      */
     private void loadServers() {
@@ -689,39 +618,6 @@ public class Launcher {
 
         LogManager.debug("Finished loading servers");
         PerformanceManager.end();
-    }
-
-    public void saveInstances() {
-        for (Instance instance : this.instances) {
-            File instanceFile = new File(instance.getRootDirectory(), "instance.json");
-            FileWriter fw = null;
-            BufferedWriter bw = null;
-            try {
-                if (!instanceFile.exists()) {
-                    instanceFile.createNewFile();
-                }
-
-                fw = new FileWriter(instanceFile);
-                bw = new BufferedWriter(fw);
-                bw.write(Gsons.DEFAULT.toJson(instance));
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            } finally {
-                try {
-                    if (bw != null) {
-                        bw.close();
-                    }
-                    if (fw != null) {
-                        fw.close();
-                    }
-                } catch (IOException e) {
-                    LogManager.logStackTrace(
-                            "Exception while trying to close FileWriter/BufferedWriter for saving instances "
-                                    + "json file.",
-                            e);
-                }
-            }
-        }
     }
 
     /**
@@ -799,42 +695,6 @@ public class Launcher {
         App.TRAY_MENU.setMinecraftLaunched(launched);
     }
 
-    public void setInstanceVisbility(Instance instance, boolean collapsed) {
-        if (instance != null && AccountManager.getSelectedAccount().isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().add(instance.getName());
-                }
-            } else {
-                // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().remove(instance.getName());
-                }
-            }
-            AccountManager.saveAccounts();
-            reloadInstancesPanel();
-        }
-    }
-
-    public void setInstanceVisbility(InstanceV2 instanceV2, boolean collapsed) {
-        if (instanceV2 != null && AccountManager.getSelectedAccount().isReal()) {
-            if (collapsed) {
-                // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().add(instanceV2.launcher.name);
-                }
-            } else {
-                // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().remove(instanceV2.launcher.name);
-                }
-            }
-            AccountManager.saveAccounts();
-            reloadInstancesPanel();
-        }
-    }
-
     public void setServerVisibility(Server server, boolean collapsed) {
         if (server != null && AccountManager.getSelectedAccount().isReal()) {
             if (collapsed) {
@@ -853,62 +713,10 @@ public class Launcher {
         }
     }
 
-    /**
-     * Get the Instances available in the Launcher
-     *
-     * @return The Instances available in the Launcher
-     */
-    public List<Instance> getInstances() {
-        return this.instances;
-    }
-
-    /**
-     * Get the Instances available in the Launcher sorted alphabetically
-     *
-     * @return The Instances available in the Launcher sorted alphabetically
-     */
-    public ArrayList<Instance> getInstancesSorted() {
-        ArrayList<Instance> instances = new ArrayList<>(this.instances);
-        instances.sort(Comparator.comparing(Instance::getName));
-        return instances;
-    }
-
-    public ArrayList<InstanceV2> getInstancesV2Sorted() {
-        ArrayList<InstanceV2> instances = new ArrayList<>(this.instancesV2);
-        instances.sort(Comparator.comparing(i -> i.launcher.name));
-        return instances;
-    }
-
     public ArrayList<Server> getServersSorted() {
         ArrayList<Server> servers = new ArrayList<>(this.servers);
         servers.sort(Comparator.comparing(s -> s.name));
         return servers;
-    }
-
-    public void setInstanceUnplayable(Instance instance) {
-        instance.setUnplayable();
-        saveInstances();
-        reloadInstancesPanel();
-    }
-
-    /**
-     * Removes an instance from the Launcher
-     *
-     * @param instance The Instance to remove from the launcher.
-     */
-    public void removeInstance(Instance instance) {
-        if (this.instances.remove(instance)) {
-            Utils.delete(instance.getRootDirectory());
-            saveInstances();
-            reloadInstancesPanel();
-        }
-    }
-
-    public void removeInstance(InstanceV2 instance) {
-        if (this.instancesV2.remove(instance)) {
-            FileUtils.deleteDirectory(instance.getRoot());
-            reloadInstancesPanel();
-        }
     }
 
     public void removeServer(Server server) {
@@ -1086,85 +894,9 @@ public class Launcher {
         this.packsPanel.refresh(); // Refresh the instances panel
     }
 
-    /**
-     * Checks to see if there is already an instance with the name provided or not
-     *
-     * @param name The name of the instance to check for
-     * @return True if there is an instance with the same name already
-     */
-    public boolean isInstance(String name) {
-        for (Instance instance : instances) {
-            if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
-                return true;
-            }
-        }
-        return this.instancesV2.stream()
-                .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
-    }
-
     public boolean isServer(String name) {
         return this.servers.stream()
                 .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
-    }
-
-    /**
-     * Checks if there is an instance by the given name
-     *
-     * @param name name of the Instance to find
-     * @return True if the instance is found from the name
-     */
-    public boolean isInstanceByName(String name) {
-        for (Instance instance : instances) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if there is an instance by the given name
-     *
-     * @param name name of the Instance to find
-     * @return True if the instance is found from the name
-     */
-    public boolean isInstanceBySafeName(String name) {
-        for (Instance instance : instances) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Finds a Instance from the given name
-     *
-     * @param name name of the Instance to find
-     * @return Instance if the instance is found from the name
-     */
-    public Instance getInstanceByName(String name) {
-        for (Instance instance : instances) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds a Instance from the given name
-     *
-     * @param name name of the Instance to find
-     * @return Instance if the instance is found from the name
-     */
-    public Instance getInstanceBySafeName(String name) {
-        for (Instance instance : instances) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
     }
 
     public void showKillMinecraft(Process minecraft) {
@@ -1188,22 +920,6 @@ public class Launcher {
             this.minecraftProcess = null;
         } else {
             LogManager.error("Cannot kill Minecraft as there is no instance open!");
-        }
-    }
-
-    public void cloneInstance(InstanceV2 instance, String clonedName) {
-        InstanceV2 clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), InstanceV2.class);
-
-        if (clonedInstance == null) {
-            LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
-        } else {
-            clonedInstance.launcher.name = clonedName;
-            clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());
-            FileUtils.createDirectory(clonedInstance.getRoot());
-            Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());
-            clonedInstance.save();
-            this.instancesV2.add(clonedInstance);
-            this.reloadInstancesPanel();
         }
     }
 }

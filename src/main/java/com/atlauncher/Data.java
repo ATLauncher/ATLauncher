@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.atlauncher.data.Account;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 
 public final class Data {
@@ -28,4 +30,7 @@ public final class Data {
     public static Account SELECTED_ACCOUNT; // Account using the Launcher
 
     public static final List<Pack> PACKS = new LinkedList<>();
+
+    public static final List<Instance> INSTANCES_OLD = new LinkedList<>();
+    public static final List<InstanceV2> INSTANCES = new LinkedList<>();
 }

@@ -62,6 +62,7 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.ErrorReporting;
@@ -355,17 +356,17 @@ public class App {
         boolean open = true;
 
         if (autoLaunch != null) {
-            if (launcher.isInstanceBySafeName(autoLaunch)) {
-                Instance instance = launcher.getInstanceBySafeName(autoLaunch);
+            if (InstanceManager.isInstanceBySafeName(autoLaunch)) {
+                Instance instance = InstanceManager.getInstanceBySafeName(autoLaunch);
                 LogManager.info("Opening Instance " + instance.getName());
                 if (instance.launch()) {
                     open = false;
                 } else {
                     LogManager.error("Error Opening Instance " + instance.getName());
                 }
-            } else if (launcher.instancesV2.stream()
+            } else if (InstanceManager.getInstances().stream()
                     .anyMatch(instance -> instance.getSafeName().equalsIgnoreCase(autoLaunch))) {
-                Optional<InstanceV2> instance = launcher.instancesV2.stream()
+                Optional<InstanceV2> instance = InstanceManager.getInstances().stream()
                         .filter(instanceV2 -> instanceV2.getSafeName().equalsIgnoreCase(autoLaunch)).findFirst();
 
                 if (instance.isPresent()) {

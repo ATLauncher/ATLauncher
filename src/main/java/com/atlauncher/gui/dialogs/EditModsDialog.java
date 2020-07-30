@@ -51,6 +51,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
@@ -519,7 +520,7 @@ public class EditModsDialog extends JDialog {
         if (this.instanceV2 != null) {
             this.instanceV2.save();
         } else {
-            App.launcher.saveInstances();
+            InstanceManager.saveInstances();
         }
 
         enabledModsPanel.removeAll();

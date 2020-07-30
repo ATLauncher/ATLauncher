@@ -60,6 +60,7 @@ import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
@@ -309,7 +310,7 @@ public class InstanceInstallerDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!isReinstall && !isServer && App.launcher.isInstance(nameField.getText())) {
+                if (!isReinstall && !isServer && InstanceManager.isInstance(nameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText
                                     .tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
@@ -401,7 +402,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 if (instanceIsCorrupt) {
                                     if (instance != null) {
-                                        App.launcher.setInstanceUnplayable(instance);
+                                        InstanceManager.setInstanceUnplayable(instance);
                                     }
                                 }
                             } else {
@@ -476,7 +477,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                                     if (instanceIsCorrupt) {
                                         if (instance != null) {
-                                            App.launcher.setInstanceUnplayable(instance);
+                                            InstanceManager.setInstanceUnplayable(instance);
                                         }
                                     }
                                 } else {
