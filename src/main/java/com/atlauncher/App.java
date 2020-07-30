@@ -203,10 +203,8 @@ public class App {
     public static Settings settings;
 
     /**
-     * This is where a lot of logic and data is held. Used to be known as
-     * `Settings`.
-     *
-     * TODO: This needs to be broken up badly.
+     * This is where a majority of the UI components are held and refreshed through,
+     * as well as where misc launcher actions and updater logic is held.
      */
     public static Launcher launcher;
 

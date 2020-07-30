@@ -17,17 +17,23 @@
  */
 package com.atlauncher.managers;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.PackUsers;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.utils.Hashing;
 import com.google.gson.JsonIOException;
@@ -261,5 +267,51 @@ public class PackManager {
                 App.launcher.refreshPacksPanel();
             }
         }
+    }
+
+    /**
+     * Loads the Testers and Allowed Players for the packs in the Launcher
+     */
+    public static void loadUsers() {
+        PerformanceManager.start();
+        LogManager.debug("Loading users");
+        List<PackUsers> packUsers = new ArrayList<>();
+
+        try {
+            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
+            }.getType();
+            packUsers.addAll(
+                    Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        for (PackUsers pu : packUsers) {
+            pu.addUsers();
+        }
+
+        LogManager.debug("Finished loading users");
+        PerformanceManager.end();
+    }
+
+    public static void removeUnusedImages() {
+        PerformanceManager.start();
+        File[] files = FileSystem.IMAGES.toFile().listFiles();
+
+        Set<String> packImageFilenames = new HashSet<>();
+        packImageFilenames.addAll(
+                Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
+        packImageFilenames.add("defaultimage.png");
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().endsWith(".png") && !packImageFilenames.contains(file.getName())) {
+                    LogManager.info("Pack image no longer used, deleting file " + file.getName());
+                    file.delete();
+                }
+            }
+        }
+
+        PerformanceManager.end();
     }
 }

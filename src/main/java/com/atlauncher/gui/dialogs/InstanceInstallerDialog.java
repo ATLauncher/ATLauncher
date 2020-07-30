@@ -62,6 +62,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
@@ -164,7 +165,7 @@ public class InstanceInstallerDialog extends JDialog {
             packVersion.version = curseManifest.version;
 
             try {
-                packVersion.minecraftVersion = App.launcher.getMinecraftVersion(curseManifest.minecraft.version);
+                packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseManifest.minecraft.version);
             } catch (InvalidMinecraftVersion e) {
                 LogManager.error(e.getMessage());
                 return;

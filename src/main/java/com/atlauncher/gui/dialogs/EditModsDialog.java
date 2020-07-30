@@ -53,6 +53,7 @@ import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
@@ -218,7 +219,7 @@ public class EditModsDialog extends JDialog {
         addButton.addActionListener(e -> {
             boolean usesCoreMods = false;
             try {
-                usesCoreMods = App.launcher.getMinecraftVersion(
+                usesCoreMods = MinecraftManager.getMinecraftVersion(
                         instanceV2 != null ? instanceV2.id : this.instance.getMinecraftVersion()).coremods;
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);

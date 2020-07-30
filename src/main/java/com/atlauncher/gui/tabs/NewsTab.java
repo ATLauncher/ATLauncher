@@ -31,7 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 
-import com.atlauncher.App;
+import com.atlauncher.managers.NewsManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Resources;
 
@@ -92,7 +92,7 @@ public class NewsTab extends JPanel implements Tab {
      */
     public void reload() {
         this.NEWS_PANE.setText("");
-        this.NEWS_PANE.setText(App.launcher.getNewsHTML());
+        this.NEWS_PANE.setText(NewsManager.getNewsHTML());
         this.NEWS_PANE.setCaretPosition(0);
     }
 

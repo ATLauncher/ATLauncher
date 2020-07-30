@@ -19,9 +19,9 @@ package com.atlauncher.data;
 
 import java.lang.reflect.Type;
 
-import com.atlauncher.App;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -47,7 +47,7 @@ public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
 
         if (rootJsonObject.has("minecraft")) {
             try {
-                packVersion.minecraftVersion = App.launcher
+                packVersion.minecraftVersion = MinecraftManager
                         .getMinecraftVersion(rootJsonObject.get("minecraft").getAsString());
             } catch (InvalidMinecraftVersion e) {
                 LogManager.error(e.getMessage());

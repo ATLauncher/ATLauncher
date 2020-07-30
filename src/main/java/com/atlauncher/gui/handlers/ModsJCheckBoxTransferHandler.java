@@ -27,7 +27,6 @@ import java.util.Optional;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.minecraft.FabricMod;
@@ -38,6 +37,7 @@ import com.atlauncher.gui.dialogs.FileTypeDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -73,7 +73,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
             boolean usesCoreMods = false;
             try {
-                usesCoreMods = App.launcher.getMinecraftVersion(dialog.instanceV2 != null ? dialog.instanceV2.id
+                usesCoreMods = MinecraftManager.getMinecraftVersion(dialog.instanceV2 != null ? dialog.instanceV2.id
                         : dialog.instance.getMinecraftVersion()).coremods;
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);

@@ -20,20 +20,13 @@ package com.atlauncher;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.JDialog;
@@ -44,10 +37,6 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.LauncherVersion;
-import com.atlauncher.data.MinecraftVersion;
-import com.atlauncher.data.News;
-import com.atlauncher.data.PackUsers;
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -58,6 +47,8 @@ import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.NewsManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.ServerManager;
@@ -77,11 +68,9 @@ import net.arikia.dev.drpc.DiscordRPC;
 import okhttp3.OkHttpClient;
 
 public class Launcher {
-    // Holding all the data
+    // Holding update data
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
-    private List<News> news = new ArrayList<>(); // News
-    private Map<String, MinecraftVersion> minecraftVersions; // Minecraft versions
 
     // UI things
     private JFrame parent; // Parent JFrame of the actual Launcher
@@ -121,13 +110,13 @@ public class Launcher {
 
         addExecutableBitToTools();
 
-        loadNews(); // Load the news
+        NewsManager.loadNews(); // Load the news
 
-        loadMinecraftVersions(); // Load info about the different Minecraft versions
+        MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
 
         PackManager.loadPacks(); // Load the Packs available in the Launcher
 
-        loadUsers(); // Load the Testers and Allowed Players for the packs
+        PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
 
         InstanceManager.loadInstances(); // Load the users installed Instances
 
@@ -137,7 +126,7 @@ public class Launcher {
 
         CheckingServersManager.loadCheckingServers(); // Load the saved servers we're checking with the tool
 
-        removeUnusedImages(); // remove unused pack images
+        PackManager.removeUnusedImages(); // remove unused pack images
 
         if (OS.isWindows() && !OS.is64Bit() && OS.isWindows64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
@@ -377,13 +366,13 @@ public class Launcher {
             }
             checkForLauncherUpdate();
             addExecutableBitToTools();
-            loadNews(); // Load the news
+            NewsManager.loadNews(); // Load the news
             reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher
             reloadVanillaPacksPanel(); // Reload packs panel
             reloadFeaturedPacksPanel(); // Reload packs panel
             reloadPacksPanel(); // Reload packs panel
-            loadUsers(); // Load the Testers and Allowed Players for the packs
+            PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
             InstanceManager.loadInstances(); // Load the users installed Instances
             reloadInstancesPanel(); // Reload instances panel
             reloadServersPanel(); // Reload instances panel
@@ -433,27 +422,6 @@ public class Launcher {
         PerformanceManager.end();
     }
 
-    private void removeUnusedImages() {
-        PerformanceManager.start();
-        File[] files = FileSystem.IMAGES.toFile().listFiles();
-
-        Set<String> packImageFilenames = new HashSet<>();
-        packImageFilenames
-                .addAll(PackManager.getPacks().stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
-        packImageFilenames.add("defaultimage.png");
-
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".png") && !packImageFilenames.contains(file.getName())) {
-                    LogManager.info("Pack image no longer used, deleting file " + file.getName());
-                    file.delete();
-                }
-            }
-        }
-
-        PerformanceManager.end();
-    }
-
     /**
      * Sets the main parent JFrame reference for the Launcher
      *
@@ -461,82 +429,6 @@ public class Launcher {
      */
     public void setParentFrame(JFrame parent) {
         this.parent = parent;
-    }
-
-    /**
-     * Loads the languages for use in the Launcher
-     */
-    private void loadNews() {
-        PerformanceManager.start();
-        LogManager.debug("Loading news");
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<News>>() {
-            }.getType();
-            File fileDir = FileSystem.JSON.resolve("newnews.json").toFile();
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
-
-            this.news = Gsons.DEFAULT.fromJson(in, type);
-            in.close();
-        } catch (JsonIOException | JsonSyntaxException | IOException e) {
-            LogManager.logStackTrace(e);
-        }
-        LogManager.debug("Finished loading news");
-        PerformanceManager.end();
-    }
-
-    /**
-     * Loads info about the different Minecraft versions
-     */
-    private void loadMinecraftVersions() {
-        PerformanceManager.start();
-        LogManager.debug("Loading Minecraft versions");
-
-        this.minecraftVersions = new HashMap<>();
-
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
-            }.getType();
-            List<MinecraftVersion> list = Gsons.DEFAULT_ALT
-                    .fromJson(new FileReader(FileSystem.JSON.resolve("minecraft.json").toFile()), type);
-
-            if (list == null) {
-                LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
-                System.exit(1); // Cannot recover from this so exit
-            }
-
-            for (MinecraftVersion mv : list) {
-                this.minecraftVersions.put(mv.version, mv);
-            }
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
-            LogManager.logStackTrace(e);
-        }
-        LogManager.debug("Finished loading Minecraft versions");
-        PerformanceManager.end();
-    }
-
-    /**
-     * Loads the Testers and Allowed Players for the packs in the Launcher
-     */
-    private void loadUsers() {
-        PerformanceManager.start();
-        LogManager.debug("Loading users");
-        List<PackUsers> packUsers = null;
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
-            }.getType();
-            packUsers = Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()),
-                    type);
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
-            LogManager.logStackTrace(e);
-        }
-        if (packUsers == null) {
-            return;
-        }
-        for (PackUsers pu : packUsers) {
-            pu.addUsers();
-        }
-        LogManager.debug("Finished loading users");
-        PerformanceManager.end();
     }
 
     public boolean isMinecraftLaunched() {
@@ -555,43 +447,6 @@ public class Launcher {
             }
         }
         return false;
-    }
-
-    public boolean isMinecraftVersion(String version) {
-        return this.minecraftVersions.containsKey(version);
-    }
-
-    public MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
-        if (this.minecraftVersions.containsKey(version)) {
-            return this.minecraftVersions.get(version);
-        }
-        throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
-    }
-
-    /**
-     * Get the News for the Launcher
-     *
-     * @return The News items
-     */
-    public List<News> getNews() {
-        return this.news;
-    }
-
-    /**
-     * Get the News for the Launcher in HTML for display on the news panel.
-     *
-     * @return The HTML for displaying on the News Panel
-     */
-    public String getNewsHTML() {
-        String news = "<html>";
-        for (News newsItem : App.launcher.getNews()) {
-            news += newsItem.getHTML();
-            if (App.launcher.getNews().get(App.launcher.getNews().size() - 1) != newsItem) {
-                news += "<hr/>";
-            }
-        }
-        news += "</html>";
-        return news;
     }
 
     /**

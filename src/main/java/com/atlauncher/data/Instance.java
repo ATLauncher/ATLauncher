@@ -52,6 +52,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
@@ -733,7 +734,7 @@ public class Instance implements Cloneable {
 
     public MinecraftVersion getActualMinecraftVersion() {
         try {
-            return App.launcher.getMinecraftVersion(this.minecraftVersion);
+            return MinecraftManager.getMinecraftVersion(this.minecraftVersion);
         } catch (InvalidMinecraftVersion e) {
             return null;
         }
