@@ -83,7 +83,7 @@ public class Launcher {
 
     // Minecraft tracking variables
     private Process minecraftProcess = null; // The process minecraft is running on
-    private boolean minecraftLaunched = false; // If Minecraft has been Launched
+    public boolean minecraftLaunched = false; // If Minecraft has been Launched
 
     public void checkIfWeCanLoad() {
         if (!Java.isUsingJavaSupportingLetsEncrypt()) {
@@ -138,7 +138,7 @@ public class Launcher {
                     .setType(DialogManager.ERROR).show();
 
             if (ret == 0) {
-                OS.openWebBrowser("https://www.atlauncher.com/help/32bit/");
+                OS.openWebBrowser("https://atlauncher.com/help/32bit/");
                 System.exit(0);
             }
         }
@@ -400,7 +400,7 @@ public class Launcher {
                                         + "the update and replace the old " + Constants.LAUNCHER_NAME + " file."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
-                OS.openWebBrowser("https://www.atlauncher.com/downloads/");
+                OS.openWebBrowser("https://atlauncher.com/downloads");
                 System.exit(0);
             }
         }
@@ -431,22 +431,9 @@ public class Launcher {
         this.parent = parent;
     }
 
-    public boolean isMinecraftLaunched() {
-        return this.minecraftLaunched;
-    }
-
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
         App.TRAY_MENU.setMinecraftLaunched(launched);
-    }
-
-    public boolean canViewSemiPublicPackByCode(String packCode) {
-        for (String code : App.settings.addedPacks) {
-            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

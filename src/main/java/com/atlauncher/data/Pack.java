@@ -33,6 +33,7 @@ import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
@@ -186,7 +187,7 @@ public class Pack {
                 return true;
             }
         } else if (this.type == PackType.SEMIPUBLIC && this.code != null) {
-            if (isTester() || (hasVersions() && App.launcher.canViewSemiPublicPackByCode(this.code))) {
+            if (isTester() || (hasVersions() && PackManager.canViewSemiPublicPackByCode(this.code))) {
                 return true;
             }
         } else {

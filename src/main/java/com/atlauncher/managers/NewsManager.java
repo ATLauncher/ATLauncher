@@ -72,13 +72,14 @@ public class NewsManager {
      */
     public static String getNewsHTML() {
         String news = "<html>";
+
         for (News newsItem : Data.NEWS) {
-            news += newsItem.getHTML();
-            if (Data.NEWS.get(Data.NEWS.size() - 1) != newsItem) {
-                news += "<hr/>";
-            }
+            news += newsItem.getHTML() + "<hr/>";
         }
+
         news += "</html>";
-        return news;
+
+        // remove the last <hr/>
+        return news.substring(0, news.length() - 5);
     }
 }

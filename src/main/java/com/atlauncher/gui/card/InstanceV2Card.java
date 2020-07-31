@@ -246,14 +246,14 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                         instance.ignoreUpdate();
                     }
 
-                    if (!App.launcher.isMinecraftLaunched()) {
+                    if (!App.launcher.minecraftLaunched) {
                         if (instance.launch()) {
                             App.launcher.setMinecraftLaunched(true);
                         }
                     }
                 }
             } else {
-                if (!App.launcher.isMinecraftLaunched()) {
+                if (!App.launcher.minecraftLaunched) {
                     if (instance.launch()) {
                         App.launcher.setMinecraftLaunched(true);
                     }
@@ -408,21 +408,21 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                 new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                             }
                         } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                            if (!App.launcher.isMinecraftLaunched()) {
+                            if (!App.launcher.minecraftLaunched) {
                                 if (instance.launch()) {
                                     App.launcher.setMinecraftLaunched(true);
                                 }
                             }
                         } else if (ret == 2) {
                             instance.ignoreUpdate();
-                            if (!App.launcher.isMinecraftLaunched()) {
+                            if (!App.launcher.minecraftLaunched) {
                                 if (instance.launch()) {
                                     App.launcher.setMinecraftLaunched(true);
                                 }
                             }
                         }
                     } else {
-                        if (!App.launcher.isMinecraftLaunched()) {
+                        if (!App.launcher.minecraftLaunched) {
                             if (instance.launch()) {
                                 App.launcher.setMinecraftLaunched(true);
                             }
@@ -561,14 +561,14 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                                     new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                                 }
                             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                                if (!App.launcher.isMinecraftLaunched()) {
+                                if (!App.launcher.minecraftLaunched) {
                                     if (instance.launch()) {
                                         App.launcher.setMinecraftLaunched(true);
                                     }
                                 }
                             } else if (ret == 2) {
                                 instance.ignoreUpdate();
-                                if (!App.launcher.isMinecraftLaunched()) {
+                                if (!App.launcher.minecraftLaunched) {
                                     if (instance.launch()) {
                                         App.launcher.setMinecraftLaunched(true);
                                     }

@@ -240,7 +240,7 @@ public class PackManager {
 
     public static boolean addPack(String packCode) {
         for (Pack pack : Data.PACKS) {
-            if (pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(Hashing.md5(packCode).toString())) {
+            if (pack.isSemiPublic() && !canViewSemiPublicPackByCode(Hashing.md5(packCode).toString())) {
                 if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
                     if (pack.isTester()) {
                         return false;
@@ -313,5 +313,14 @@ public class PackManager {
         }
 
         PerformanceManager.end();
+    }
+
+    public static boolean canViewSemiPublicPackByCode(String packCode) {
+        for (String code : App.settings.addedPacks) {
+            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

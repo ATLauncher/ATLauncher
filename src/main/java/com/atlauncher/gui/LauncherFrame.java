@@ -117,7 +117,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         if (App.packToInstall != null) {
             Pack pack = PackManager.getPackBySafeName(App.packToInstall);
 
-            if (pack != null && pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(pack.getCode())) {
+            if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
                         + "pack added to the launcher!");
             } else {
@@ -136,7 +136,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             } else {
                 Pack pack = PackManager.getPackBySafeName(parts[0]);
 
-                if (pack != null && pack.isSemiPublic() && !App.launcher.canViewSemiPublicPackByCode(pack.getCode())) {
+                if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                     LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
                             + "pack added to the launcher!");
                 } else {
