@@ -137,6 +137,11 @@ public class Version {
     public List<Action> actions;
 
     /**
+     * Information about the configs for this pack.
+     */
+    public Configs configs;
+
+    /**
      * Sets the default empty objects which are later overwritten by GSON if they
      * exist. If they don't exist, having these here will ensure no NPE's.
      */

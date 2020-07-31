@@ -1166,6 +1166,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             com.atlauncher.network.Download configsDownload = com.atlauncher.network.Download.build()
                     .setUrl(String.format("%s/%s", Constants.DOWNLOAD_SERVER, path)).downloadTo(configs.toPath())
+                    .size(this.packVersion.configs.filesize).hash(this.packVersion.configs.sha1)
                     .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
             this.setTotalBytes(configsDownload.getFilesize());

@@ -50,3 +50,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in import button for CurseForge/Twitch export files
 - Allow editing non ATLauncher instances descriptions
 - Add in Get Help button to instances
+- Add configs download hashing
