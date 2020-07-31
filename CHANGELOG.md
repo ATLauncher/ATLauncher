@@ -3,7 +3,7 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.3.6.0
+## 3.4.0.0
 
 - Switch to using system property for Vanilla tab
 - Fix debug logging not logging if request was cached or not correctly
