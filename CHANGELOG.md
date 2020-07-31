@@ -47,3 +47,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Move checking for username changes to account context menu [#192]
 - Remove pack images no longer necessary on boot
 - Switch to settings json file instead of a properties file
+- Add in import button for CurseForge/Twitch export files

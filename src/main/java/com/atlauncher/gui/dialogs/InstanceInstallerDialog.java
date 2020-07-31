@@ -177,8 +177,8 @@ public class InstanceInstallerDialog extends JDialog {
 
             isReinstall = false;
 
-            // #. {0} is the name of the pack the user is installing from Curse
-            setTitle(GetText.tr("Installing {0} From Curse", curseManifest.name));
+            // #. {0} is the name of the pack the user is installing
+            setTitle(GetText.tr("Installing {0}", curseManifest.name));
         } else {
             instanceV2 = (InstanceV2) object;
             pack = instanceV2.getPack();
