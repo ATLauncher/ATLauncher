@@ -184,7 +184,6 @@ public class InstanceV2 extends MinecraftVersion {
 
     public ImageIcon getImage() {
         File customImage = this.getRoot().resolve("instance.png").toFile();
-        File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
 
         if (customImage.exists()) {
             try {
@@ -208,11 +207,15 @@ public class InstanceV2 extends MinecraftVersion {
             }
         }
 
-        if (instancesImage.exists()) {
-            return Utils.getIconImage(instancesImage);
-        } else {
-            return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
+        if (getPack() != null) {
+            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
+
+            if (instancesImage.exists()) {
+                return Utils.getIconImage(instancesImage);
+            }
         }
+
+        return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
     }
 
     public void ignoreUpdate() {

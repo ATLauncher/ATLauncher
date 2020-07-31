@@ -484,7 +484,6 @@ public class Instance implements Cloneable {
      */
     public ImageIcon getImage() {
         File customImage = new File(this.getRootDirectory(), "instance.png");
-        File instancesImage = FileSystem.IMAGES.resolve(getSafePackName().toLowerCase() + ".png").toFile();
 
         if (customImage.exists()) {
             try {
@@ -497,12 +496,15 @@ public class Instance implements Cloneable {
             }
         }
 
-        if (instancesImage.exists()) {
-            return Utils.getIconImage(instancesImage);
+        if (this.realPack != null) {
+            File instancesImage = FileSystem.IMAGES.resolve(getSafePackName().toLowerCase() + ".png").toFile();
 
-        } else {
-            return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
+            if (instancesImage.exists()) {
+                return Utils.getIconImage(instancesImage);
+            }
         }
+
+        return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
     }
 
     /**
