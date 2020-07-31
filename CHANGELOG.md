@@ -49,3 +49,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Switch to settings json file instead of a properties file
 - Add in import button for CurseForge/Twitch export files
 - Allow editing non ATLauncher instances descriptions
+- Add in Get Help button to instances

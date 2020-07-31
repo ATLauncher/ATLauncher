@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -61,6 +62,7 @@ import com.atlauncher.data.InstanceV2;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
@@ -108,6 +110,12 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
+    private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
+    private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
+    private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
+    private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
+    private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
+
     public InstanceV2Card(InstanceV2 instance) {
         super(instance);
         this.instance = instance;
@@ -139,12 +147,22 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         top.add(this.renameButton);
         top.add(this.backupButton);
         top.add(this.settingsButton);
+
         bottom.add(this.deleteButton);
         bottom.add(this.exportButton);
+        bottom.add(this.getHelpButton);
+
+        setupLinksButtonPopupMenu();
 
         // check it can be exported
         if (!instance.canBeExported()) {
             this.exportButton.setVisible(false);
+        }
+
+        // if not an ATLauncher pack or has no urls, don't show the links button
+        if (instance.getPack() == null || (instance.getPack().discordInviteURL == null
+                && instance.getPack().supportURL == null && instance.getPack().websiteURL == null)) {
+            this.getHelpButton.setVisible(false);
         }
 
         if (instance.launcher.curseManifest != null) {
@@ -190,6 +208,37 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.addActionListeners();
         this.addMouseListeners();
         this.validatePlayable();
+    }
+
+    private void setupLinksButtonPopupMenu() {
+        if (instance.getPack() != null) {
+            if (instance.getPack().discordInviteURL != null) {
+                discordLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getPack().discordInviteURL);
+                    }
+                });
+                getHelpPopupMenu.add(discordLinkMenuItem);
+            }
+
+            if (instance.getPack().supportURL != null) {
+                supportLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getPack().supportURL);
+                    }
+                });
+                getHelpPopupMenu.add(supportLinkMenuItem);
+            }
+
+            if (instance.getPack().websiteURL != null) {
+                websiteLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getPack().websiteURL);
+                    }
+                });
+                getHelpPopupMenu.add(websiteLinkMenuItem);
+            }
+        }
     }
 
     private void validatePlayable() {
@@ -660,5 +709,10 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.openCurseForgeButton.setText(GetText.tr("Open CurseForge"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
+
+        this.discordLinkMenuItem.setText(GetText.tr("Discord"));
+        this.supportLinkMenuItem.setText(GetText.tr("Support"));
+        this.websiteLinkMenuItem.setText(GetText.tr("Website"));
+        this.getHelpButton.setText(GetText.tr("Get Help"));
     }
 }

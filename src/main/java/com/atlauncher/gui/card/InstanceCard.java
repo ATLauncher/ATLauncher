@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -59,6 +60,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
@@ -103,6 +105,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
+    private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
+    private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
+    private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
+    private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
+    private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
+
     public InstanceCard(Instance instance) {
         super(instance);
         this.instance = instance;
@@ -135,6 +143,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         top.add(this.backupButton);
         top.add(this.settingsButton);
         bottom.add(this.deleteButton);
+        bottom.add(this.getHelpButton);
+
+        setupLinksButtonPopupMenu();
+
+        // if not an ATLauncher pack or has no urls, don't show the links button
+        if (instance.getRealPack() == null || (instance.getRealPack().discordInviteURL == null
+                && instance.getRealPack().supportURL == null && instance.getRealPack().websiteURL == null)) {
+            this.getHelpButton.setVisible(false);
+        }
 
         if (instance.hasEnabledCurseIntegration()) {
             bottom.add(this.addButton);
@@ -169,6 +186,37 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.addActionListeners();
         this.addMouseListeners();
         this.validatePlayable();
+    }
+
+    private void setupLinksButtonPopupMenu() {
+        if (instance.getRealPack() != null) {
+            if (instance.getRealPack().discordInviteURL != null) {
+                discordLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getRealPack().discordInviteURL);
+                    }
+                });
+                getHelpPopupMenu.add(discordLinkMenuItem);
+            }
+
+            if (instance.getRealPack().supportURL != null) {
+                supportLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getRealPack().supportURL);
+                    }
+                });
+                getHelpPopupMenu.add(supportLinkMenuItem);
+            }
+
+            if (instance.getRealPack().websiteURL != null) {
+                websiteLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getRealPack().websiteURL);
+                    }
+                });
+                getHelpPopupMenu.add(websiteLinkMenuItem);
+            }
+        }
     }
 
     private void validatePlayable() {
@@ -548,5 +596,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.serversButton.setText(GetText.tr("Servers"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
+
+        this.discordLinkMenuItem.setText(GetText.tr("Discord"));
+        this.supportLinkMenuItem.setText(GetText.tr("Support"));
+        this.websiteLinkMenuItem.setText(GetText.tr("Website"));
+        this.getHelpButton.setText(GetText.tr("Get Help"));
     }
 }
