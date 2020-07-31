@@ -48,32 +48,6 @@ public final class Resources {
         return false;
     }
 
-    public static StyleSheet makeStyleSheet(String name) {
-        try {
-            if (resources.containsKey(name)) {
-                Object obj = resources.get(name);
-                if (!(obj instanceof StyleSheet)) {
-                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " + "suggested="
-                            + StyleSheet.class.getName() + "; got=" + obj.getClass().getName());
-                } else {
-                    return (StyleSheet) obj;
-                }
-            } else {
-                StyleSheet sheet = new StyleSheet();
-
-                Reader reader = new InputStreamReader(
-                        Resources.class.getResourceAsStream("/assets/css/" + name + ".css"));
-                sheet.loadRules(reader, null);
-                reader.close();
-
-                resources.put(name, sheet);
-                return sheet;
-            }
-        } catch (Exception ex) {
-            throw new ChunkyException(ex);
-        }
-    }
-
     public static Font makeFont(String name) {
         try {
             if (resources.containsKey(name)) {

@@ -28,12 +28,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Resources;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -45,7 +46,19 @@ import org.mini2Dx.gettext.GetText;
 public class NewsTab extends JPanel implements Tab {
     private final HTMLEditorKit NEWS_KIT = new HTMLEditorKit() {
         {
-            this.setStyleSheet(Resources.makeStyleSheet("news"));
+            StyleSheet styleSheet = new StyleSheet();
+
+            styleSheet.addRule(String.format("a { color: %s; }",
+                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
+
+            styleSheet.addRule(String.format(
+                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
+                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
+
+            styleSheet.addRule(
+                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
+
+            this.setStyleSheet(styleSheet);
         }
     };
 

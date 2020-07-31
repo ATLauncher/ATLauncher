@@ -63,7 +63,6 @@ public class News {
      * Gets the HTML of this object.
      */
     public String getHTML() {
-        return "<p id=\"newsHeader\">- " + this.title + " (" + this.getFormattedDate() + ")</p>" + "<p id=\"newsBody\">"
-                + this.content + "</p><br/>";
+        return "<h2>" + this.title + " (" + this.getFormattedDate() + ")</h2>" + "<p>" + this.content + "</p>";
     }
 }

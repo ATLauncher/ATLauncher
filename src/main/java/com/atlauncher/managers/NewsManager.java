@@ -77,9 +77,10 @@ public class NewsManager {
             news += newsItem.getHTML() + "<hr/>";
         }
 
+        // remove the last <hr/>
+        news = news.substring(0, news.length() - 5);
         news += "</html>";
 
-        // remove the last <hr/>
-        return news.substring(0, news.length() - 5);
+        return news;
     }
 }
