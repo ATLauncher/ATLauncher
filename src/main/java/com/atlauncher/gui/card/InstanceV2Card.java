@@ -431,6 +431,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
+                    JMenuItem changeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
+                    rightClickMenu.add(changeDescriptionItem);
+
                     JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
 
@@ -442,6 +445,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
 
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     rightClickMenu.add(updateItem);
+
+                    changeDescriptionItem.setVisible(instance.launcher.curseManifest != null
+                            || (instance.getPack() != null && instance.getPack().system));
 
                     if (!instance.launcher.mods.stream().anyMatch(mod -> mod.optional)) {
                         shareCodeItem.setVisible(false);
@@ -460,6 +466,26 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     }
 
                     rightClickMenu.show(image, e.getX(), e.getY());
+
+                    changeDescriptionItem.addActionListener(e13 -> {
+                        JTextArea textArea = new JTextArea(instance.launcher.description);
+                        textArea.setColumns(30);
+                        textArea.setRows(10);
+                        textArea.setLineWrap(true);
+                        textArea.setWrapStyleWord(true);
+                        textArea.setSize(300, 150);
+
+                        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
+                                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE);
+
+                        if (ret == 0) {
+                            instance.launcher.description = textArea.getText();
+                            instance.save();
+
+                            descArea.setText(textArea.getText());
+                        }
+                    });
 
                     changeImageItem.addActionListener(e13 -> {
                         JFileChooser chooser = new JFileChooser();

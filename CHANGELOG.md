@@ -48,3 +48,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove pack images no longer necessary on boot
 - Switch to settings json file instead of a properties file
 - Add in import button for CurseForge/Twitch export files
+- Allow editing non ATLauncher instances descriptions
