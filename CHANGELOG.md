@@ -51,3 +51,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow editing non ATLauncher instances descriptions
 - Add in Get Help button to instances
 - Add configs download hashing
+- Add host to ip resolution to Network Checker Tool

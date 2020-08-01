@@ -20,6 +20,9 @@ package com.atlauncher.gui.tabs.tools;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.swing.JLabel;
 
@@ -46,6 +49,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                             + "connecting to our file servers and to other servers."))
             .build());
 
+    private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
+            "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
+            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.CURSE_HOST };
+
     public NetworkCheckerToolPanel() {
         super(GetText.tr("Network Checker"));
 
@@ -71,7 +78,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 .setType(DialogManager.INFO).show();
 
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Network Checker"), 9,
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Network Checker"), 13 + HOSTS.length,
                     GetText.tr("Network Checker Running. Please Wait!"), "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
                 StringBuilder results = new StringBuilder();
@@ -85,7 +92,25 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         + Utils.traceRoute(Constants.DOWNLOAD_HOST) + "\n\n----------------\n\n");
                 dialog.doneTask();
 
-                // Connection to Forge CDN
+                // Connection to ATLauncher API
+                results.append(
+                        "Ping results to " + Constants.API_HOST + " was " + Utils.pingAddress(Constants.API_HOST));
+                dialog.doneTask();
+
+                results.append("Tracert to " + Constants.API_HOST + " was " + Utils.traceRoute(Constants.API_HOST)
+                        + "\n\n----------------\n\n");
+                dialog.doneTask();
+
+                // Connection to Curse API
+                results.append(
+                        "Ping results to " + Constants.CURSE_HOST + " was " + Utils.pingAddress(Constants.CURSE_HOST));
+                dialog.doneTask();
+
+                results.append("Tracert to " + Constants.CURSE_HOST + " was " + Utils.traceRoute(Constants.CURSE_HOST)
+                        + "\n\n----------------\n\n");
+                dialog.doneTask();
+
+                // Connection to Fabric CDN
                 results.append("Ping results to " + Constants.FABRIC_HOST + " was "
                         + Utils.pingAddress(Constants.FABRIC_HOST));
                 dialog.doneTask();
@@ -94,7 +119,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         + "\n\n----------------\n\n");
                 dialog.doneTask();
 
-                // Connection to Fabric CDN
+                // Connection to Forge CDN
                 results.append(
                         "Ping results to " + Constants.FORGE_HOST + " was " + Utils.pingAddress(Constants.FORGE_HOST));
                 dialog.doneTask();
@@ -102,6 +127,21 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 results.append("Tracert to " + Constants.FORGE_HOST + " was " + Utils.traceRoute(Constants.FORGE_HOST)
                         + "\n\n----------------\n\n");
                 dialog.doneTask();
+
+                // Resolution of key services
+                for (String host : HOSTS) {
+                    try {
+                        String resolvedHosts = Arrays.asList(InetAddress.getAllByName(host)).stream()
+                                .map(InetAddress::getHostAddress).collect(Collectors.joining(", "));
+                        results.append("Resolution of " + host + " was " + resolvedHosts + "\n\n");
+                    } catch (Exception e1) {
+                        results.append("Resolution of " + host + " failed: " + e1.toString() + "\n\n");
+                    }
+
+                    dialog.doneTask();
+                }
+
+                results.append("----------------\n\n");
 
                 // Response Code Test
                 try {
@@ -146,10 +186,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 String speed = (mbps < 1
                         ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f " + "KB/s", kbps))
                         : String.format("%.2f MB/s", mbps));
-                results.append(String.format(
-                        "Download speed to %s was %s, " + ""
-                                + "taking %.2f seconds to download 100MB\n\n----------------\n\n",
-                        Constants.DOWNLOAD_SERVER, speed, (timeTaken / 1000.0)));
+                results.append(
+                        String.format("Download speed to %s was %s, " + "" + "taking %.2f seconds to download 100MB",
+                                Constants.DOWNLOAD_SERVER, speed, (timeTaken / 1000.0)));
                 dialog.doneTask();
 
                 String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString());
