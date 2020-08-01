@@ -133,7 +133,7 @@ public class JavaFinder {
             if (line.contains("REG_SZ")) {
                 String javaPath = line.substring(line.indexOf("REG_SZ") + 6).trim() + "\\bin\\java.exe";
 
-                if (Files.exists(Path.of(javaPath))) {
+                if (Files.exists(Paths.get(javaPath))) {
                     versions.add(javaPath);
                 }
             }
