@@ -1549,4 +1549,31 @@ public class Utils {
             return false;
         }
     }
+
+    public static String runProcess(String... command) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+
+            try {
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+            } finally {
+                br.close();
+            }
+
+            return sb.toString().trim();
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return "";
+    }
 }
