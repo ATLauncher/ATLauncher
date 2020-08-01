@@ -5,6 +5,17 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ## 3.4.0.0
 
+As a summary of the below changes, ATLauncher now has a new look, including multiple different themes. While the look
+and feel is very similar, it's now more rounded, modern and consistent, with extra attention to detail put in to make
+sure screens are laid out correctly.
+
+As well as a bunch of bug fixes and improvements under the hood, ATLauncher also now starts up quicker. We've removed a
+bunch of bloat which means you can now get playing even quicker.
+
+Also included is now the ability to import and export instances. This now makes it even easier to create a pack on
+ATLauncher using the Forge or Fabric base packs, add a bunch of mods using CurseForge integration, then export that
+instance you've created and share it around with friends to simply import into their own launcher.
+
 - Switch to using system property for Vanilla tab
 - Fix debug logging not logging if request was cached or not correctly
 - Add in SetupDialogComplete tracking event
