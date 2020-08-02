@@ -37,12 +37,13 @@ import okhttp3.Response;
 public final class Network {
     public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
-    public static final OkHttpClient CLIENT = new OkHttpClient.Builder()
-            .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
-            .addNetworkInterceptor(new ErrorReportingInterceptor()).connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build();
+    public static OkHttpClient CLIENT = new OkHttpClient.Builder().addNetworkInterceptor(new UserAgentInterceptor())
+            .addInterceptor(new DebugLoggingInterceptor()).addNetworkInterceptor(new ErrorReportingInterceptor())
+            .connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+            .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
 
-    public static final OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
+    public static OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
 
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like "
             + "Gecko) Chrome/28.0.1500.72 Safari/537.36 " + Constants.LAUNCHER_NAME + "/" + Constants.VERSION + " Java/"
@@ -50,6 +51,16 @@ public final class Network {
 
     static {
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
+    }
+
+    public static void setConnectionTimeouts() {
+        CLIENT = CLIENT.newBuilder().connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
+
+        CACHED_CLIENT = CACHED_CLIENT.newBuilder().connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
     }
 
     public static OkHttpClient createProgressClient(final NetworkProgressable progressable) {

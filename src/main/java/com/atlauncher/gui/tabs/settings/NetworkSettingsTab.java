@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
+import com.atlauncher.Network;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -44,6 +45,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JLabelWithHover concurrentConnectionsLabel;
     private JSpinner concurrentConnections;
 
+    private JLabelWithHover connectionTimeoutLabel;
+    private JSpinner connectionTimeout;
+
     private JLabelWithHover enableProxyLabel;
     private JCheckBox enableProxy;
 
@@ -58,6 +62,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     public NetworkSettingsTab() {
         RelocalizationManager.addListener(this);
+
         // Concurrent Connection Settings
         gbc.gridx = 0;
         gbc.gridy++;
@@ -76,8 +81,25 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         concurrentConnections = new JSpinner(concurrentConnectionsModel);
         add(concurrentConnections, gbc);
 
-        // Enable Proxy
+        // Connection Timeout Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        connectionTimeoutLabel = new JLabelWithHover(GetText.tr("Connection Timeout") + ":", HELP_ICON,
+                "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
+        add(connectionTimeoutLabel, gbc);
 
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        SpinnerNumberModel connectionTimeoutModel = new SpinnerNumberModel(App.settings.connectionTimeout, null, null,
+                1);
+        connectionTimeoutModel.setMinimum(1);
+        connectionTimeout = new JSpinner(connectionTimeoutModel);
+        add(connectionTimeout, gbc);
+
+        // Enable Proxy
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
@@ -214,12 +236,19 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     public void save() {
+        boolean timeoutChanged = App.settings.connectionTimeout != (Integer) connectionTimeout.getValue();
+
         App.settings.concurrentConnections = (Integer) concurrentConnections.getValue();
+        App.settings.connectionTimeout = (Integer) connectionTimeout.getValue();
         App.settings.enableProxy = enableProxy.isSelected();
         if (enableProxy.isSelected()) {
             App.settings.proxyHost = proxyHost.getText();
             App.settings.proxyPort = (Integer) proxyPort.getValue();
             App.settings.proxyType = ((String) proxyType.getSelectedItem());
+        }
+
+        if (timeoutChanged) {
+            Network.setConnectionTimeouts();
         }
     }
 
@@ -233,6 +262,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.concurrentConnectionsLabel.setText(GetText.tr("Concurrent Connections") + ":");
         this.concurrentConnectionsLabel.setToolTipText("<html>"
                 + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
+
+        this.connectionTimeoutLabel.setText(GetText.tr("Connection Timeout") + ":");
+        this.connectionTimeoutLabel.setToolTipText(
+                "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
 
         this.enableProxyLabel.setText(GetText.tr("Enable Proxy") + "?");
         this.enableProxyLabel

@@ -63,3 +63,4 @@ instance you've created and share it around with friends to simply import into t
 - Add in Get Help button to instances
 - Add configs download hashing
 - Add host to ip resolution to Network Checker Tool
+- Allow setting network connection timeouts

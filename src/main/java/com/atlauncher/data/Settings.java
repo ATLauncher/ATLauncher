@@ -69,26 +69,27 @@ public class Settings {
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
 
-    // network
+    // Network
     public int concurrentConnections = 8;
+    public int connectionTimeout = 30;
     public boolean enableProxy = false;
     public String proxyHost = "";
     public int proxyPort = 8080;
     public String proxyType = "HTTP";
     public transient Proxy proxy;
 
-    // logging
+    // Logging
     public String forgeLoggingLevel = "INFO";
     public boolean enableLogs = true;
     public boolean enableAnalytics = true;
     public String analyticsClientId = UUID.randomUUID().toString();
     public boolean enableOpenEyeReporting = true;
 
-    // tools
+    // Tools
     public boolean enableServerChecker = false;
     public int serverCheckerWait = 5;
 
-    // backups
+    // Backups
     public boolean enableModsBackups = true;
 
     public void convert(Properties properties) {
