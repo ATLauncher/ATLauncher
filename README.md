@@ -221,7 +221,35 @@ In order to do this, run `./gradlew generatePots` which will scan the source fil
 
 Note that out of the box, this will not generate in the correct format. The file should be opened with
 [POEdit](https://poedit.net/), which will automatically fix the file, which then you can save to `translations.pot` in
-the root directory, which will then get picked up by Crowdin.
+the root directory.
+
+This file can then be uploaded to Crowdin by ATLauncher staff to give access to the translators.
+
+### Adding new languages from Crowdin
+
+Once a language has been translated enough to add support to the launcher (or update support) there's a few steps we
+need to take.
+
+First grab the built project from Crowdin, and then grab out the translation to add/update. For this example, let's take
+German.
+
+Pop this file in the `processTranslations/in` directory and then run the `processTranslations.bat` or
+`processTranslations.sh` file to fix them up and output them into the `processTranslations/out` directory.
+
+Now take the converted files from the `processTranslations/out` directory and put them in the
+`src\main\resources\assets\lang` directory.
+
+Now open `src\main\java\com\atlauncher\data\Language.java` and in the static block at the top, add in the language:
+
+```java
+// add in the languages we have support for
+static {
+    locales.add(Locale.ENGLISH);
+    locales.add(new Locale("de", "DE"));
+}
+```
+
+Now the launcher should have the option to change to the language/s.
 
 ## License
 
