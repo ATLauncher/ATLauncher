@@ -36,6 +36,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -166,6 +167,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         tabbedPane.addChangeListener(e -> {
             String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
             Analytics.sendScreenView(title);
+            TabChangeManager.post();
         });
 
         PerformanceManager.start("newsTab");

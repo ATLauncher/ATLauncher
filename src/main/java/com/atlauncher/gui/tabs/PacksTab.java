@@ -59,12 +59,15 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton expandAllButton = new JButton(GetText.tr("Expand All"));
     private final JButton collapseAllButton = new JButton(GetText.tr("Collapse All"));
+    private final JButton previousPageButton = new JButton(GetText.tr("Previous Page"));
+    private final JButton nextPageButton = new JButton(GetText.tr("Next Page"));
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
     private NilCard nilCard;
     private boolean isSystem;
     private boolean isFeatured;
     private boolean loaded = false;
+    private int page = 1;
 
     private List<PackCard> cards = new LinkedList<>();
 
@@ -111,6 +114,14 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 }
             }
         });
+        this.previousPageButton.addActionListener(e -> {
+            this.page -= 1;
+            this.refresh();
+        });
+        this.nextPageButton.addActionListener(e -> {
+            this.page += 1;
+            this.refresh();
+        });
         this.addButton.addActionListener(e -> {
             new AddPackDialog();
             reload();
@@ -154,8 +165,10 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.topPanel.add(this.searchField);
         this.topPanel.add(this.searchButton);
 
+        this.bottomPanel.add(this.previousPageButton);
         this.bottomPanel.add(this.expandAllButton);
         this.bottomPanel.add(this.collapseAllButton);
+        this.bottomPanel.add(this.nextPageButton);
     }
 
     private void loadPacks(boolean force) {
@@ -167,12 +180,14 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 ? PackManager.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
                 : PackManager.getPacksSortedPositionally(this.isFeatured, this.isSystem);
 
-        for (Pack pack : packs) {
-            if (pack.canInstall()) {
-                PackCard card = new PackCard(pack);
-                this.cards.add(card);
-            }
-        }
+        packs.stream().filter(Pack::canInstall).skip((page - 1) * 20).limit(20).forEach(pack -> {
+            this.cards.add(new PackCard(pack));
+        });
+
+        previousPageButton.setEnabled(page != 1);
+
+        // TODO: when there are multiples of 20 packs, this will break
+        nextPageButton.setEnabled(this.cards.size() == 20);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -236,10 +251,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     public void refresh() {
         this.cards.clear();
         loadPacks(true);
-        this.contentPanel.removeAll();
-        load(true);
-        revalidate();
-        repaint();
+        reload();
     }
 
     @Override
