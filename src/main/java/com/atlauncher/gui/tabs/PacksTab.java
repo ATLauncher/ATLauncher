@@ -116,10 +116,12 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         });
         this.previousPageButton.addActionListener(e -> {
             this.page -= 1;
+            Analytics.sendEvent(page, "Previous", "Navigation", "Pack");
             this.refresh();
         });
         this.nextPageButton.addActionListener(e -> {
             this.page += 1;
+            Analytics.sendEvent(page, "Next", "Navigation", "Pack");
             this.refresh();
         });
         this.addButton.addActionListener(e -> {
@@ -267,6 +269,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         clearButton.setText(GetText.tr("Clear"));
         expandAllButton.setText(GetText.tr("Expand All"));
         collapseAllButton.setText(GetText.tr("Collapse All"));
+        previousPageButton.setText(GetText.tr("Previous Page"));
+        nextPageButton.setText(GetText.tr("Next Page"));
+        searchButton.setText(GetText.tr("Search"));
 
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no packs to display.\n\nPlease check back another time."));
