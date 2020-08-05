@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.curse.CurseMod;

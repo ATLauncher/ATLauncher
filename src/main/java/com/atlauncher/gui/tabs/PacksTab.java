@@ -42,7 +42,6 @@ import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddCursePackDialog;
-import com.atlauncher.gui.dialogs.AddPackDialog;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
@@ -124,10 +123,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             Analytics.sendEvent(page, "Next", "Navigation", "Pack");
             this.refresh();
         });
-        this.addButton.addActionListener(e -> {
-            new AddPackDialog();
-            reload();
-        });
         this.addCurseButton.addActionListener(e -> {
             new AddCursePackDialog();
         });
@@ -161,7 +156,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     }
 
     private void setupTopPanel() {
-        this.topPanel.add(this.addButton);
         this.topPanel.add(this.addCurseButton);
         this.topPanel.add(this.clearButton);
         this.topPanel.add(this.searchField);

@@ -55,7 +55,6 @@ public class Settings {
     public boolean enableTrayMenu = true;
     public boolean enableDiscordIntegration = true;
     public boolean enableFeralGamemode = OS.isLinux() && Utils.executableInPath("gamemoderun");
-    public boolean enablePackTags = false;
     public boolean disableAddModRestrictions = false;
 
     // Java/Minecraft
@@ -104,11 +103,6 @@ public class Settings {
             }
 
             this.dateFormat = importedDateFormat;
-        }
-
-        String importedEnablePackTags = properties.getProperty("enablepacktags");
-        if (importedEnablePackTags != null) {
-            enablePackTags = Boolean.parseBoolean(importedEnablePackTags);
         }
 
         String importedDisableAddModRestrictions = properties.getProperty("disableaddmodrestrictions");

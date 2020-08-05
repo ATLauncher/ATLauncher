@@ -17,7 +17,6 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,18 +24,13 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
-import com.atlauncher.App;
 import com.atlauncher.data.Pack;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class PackImagePanel extends JPanel {
     private final Image image;
-    private final Pack pack;
 
     public PackImagePanel(Pack pack) {
-        this.pack = pack;
         this.image = pack.getImage().getImage();
         this.setPreferredSize(new Dimension(Math.min(image.getWidth(null), 300), Math.min(image.getWidth(null), 150)));
     }
@@ -46,31 +40,5 @@ public final class PackImagePanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         int y = (this.getHeight() - 150) / 2;
         g2.drawImage(this.image, 0, y, 300, 150, null);
-
-        if (App.settings.enablePackTags) {
-            String text;
-            Color colour;
-
-            if (this.pack.getVersionCount() == 0) {
-                text = GetText.tr("Dev");
-                colour = Color.lightGray;
-            } else {
-                if (this.pack.isPrivate()) {
-                    text = GetText.tr("Private");
-                    colour = Color.red;
-                } else if (this.pack.isPublic()) {
-                    text = GetText.tr("Public");
-                    colour = Color.green;
-                } else {
-                    text = GetText.tr("Semi Public");
-                    colour = Color.cyan;
-                }
-            }
-
-            g2.setColor(colour);
-            g2.fillRect(0, y, g2.getFontMetrics().stringWidth(text) + 10, g2.getFontMetrics().getHeight() + 5);
-            g2.setColor(Color.black);
-            g2.drawString(text, 5, y + g2.getFontMetrics().getHeight());
-        }
     }
 }

@@ -62,8 +62,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JCheckBox enableDiscordIntegration;
     private JLabelWithHover enableFeralGamemodeLabel;
     private JCheckBox enableFeralGamemode;
-    private JLabelWithHover enablePackTagsLabel;
-    private JCheckBox enablePackTags;
     private JLabelWithHover disableAddModRestrictionsLabel;
     private JCheckBox disableAddModRestrictions;
 
@@ -288,23 +286,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             add(enableFeralGamemode, gbc);
         }
 
-        // Enable Pack Tags
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enablePackTagsLabel = new JLabelWithHover(GetText.tr("Enable Pack Tags?"), HELP_ICON,
-                GetText.tr("Pack tags shows you if a pack is public, semi public or private"));
-        add(enablePackTagsLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enablePackTags = new JCheckBox();
-        enablePackTags.setSelected(App.settings.enablePackTags);
-        add(enablePackTags, gbc);
-
         // Disable Curse Minecraft version restrictions
 
         gbc.gridx = 0;
@@ -354,7 +335,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             App.settings.enableFeralGamemode = false;
         }
 
-        App.settings.enablePackTags = enablePackTags.isSelected();
         App.settings.disableAddModRestrictions = disableAddModRestrictions.isSelected();
     }
 

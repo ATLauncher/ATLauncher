@@ -346,7 +346,6 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\card\CurseModCard.java:78
 #: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:174
 #: src\main\java\com\atlauncher\gui\dialogs\AddEditServerForCheckerDialog.java:143
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:89
 #: src\main\java\com\atlauncher\gui\dialogs\CurseModFileSelectorDialog.java:120
 #: src\main\java\com\atlauncher\gui\dialogs\EditModsDialog.java:235
 #: src\main\java\com\atlauncher\gui\dialogs\ServerListForCheckerDialog.java:50
@@ -801,8 +800,8 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\tabs\AccountsTab.java:387
 #: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:92
 #: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:227
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:59
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:269
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:58
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:263
 #: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:69
 #: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:161
 msgid "Clear"
@@ -895,8 +894,8 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddCursePackDialog.java:71
 #: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:86
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:58
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:268
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:57
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:262
 msgid "Add Curse Pack"
 msgstr ""
 
@@ -1014,8 +1013,8 @@ msgstr ""
 #: src\main\java\com\atlauncher\gui\dialogs\ViewModsDialog.java:64
 #: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:114
 #: src\main\java\com\atlauncher\gui\tabs\InstancesTab.java:228
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:65
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:274
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:64
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:268
 #: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:90
 #: src\main\java\com\atlauncher\gui\tabs\ServersTab.java:162
 msgid "Search"
@@ -1064,41 +1063,6 @@ msgstr ""
 
 #: src\main\java\com\atlauncher\gui\dialogs\AddModsDialog.java:148
 msgid "Sort"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:54
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:66
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:57
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:267
-msgid "Add Pack"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:77
-msgid "Pack Code"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:93
-msgid "Pack Added"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:94
-msgid "The pack has been added!"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:96
-msgid "Pack Already Added"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:97
-msgid "The pack was already added!"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:102
-msgid "Error Adding Pack"
-msgstr ""
-
-#: src\main\java\com\atlauncher\gui\dialogs\AddPackDialog.java:103
-msgid "A pack with that code doesn't exist!"
 msgstr ""
 
 #. {0} is the name of the mod we're installing
@@ -1757,43 +1721,48 @@ msgstr ""
 msgid "News"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:60
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:270
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:56
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:261
+msgid "Add Pack"
+msgstr ""
+
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:59
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:264
 msgid "Expand All"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:61
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:271
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:60
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:265
 msgid "Collapse All"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:62
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:272
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:61
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:266
 msgid "Previous Page"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:63
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:273
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:62
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:267
 msgid "Next Page"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:241
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:277
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:235
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:271
 msgid ""
 "There are no packs to display.\n"
 "\n"
 "Please check back another time."
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:261
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:255
 msgid "Featured Packs"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:262
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:256
 msgid "Vanilla Packs"
 msgstr ""
 
-#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:262
+#: src\main\java\com\atlauncher\gui\tabs\PacksTab.java:256
 msgid "Packs"
 msgstr ""
 

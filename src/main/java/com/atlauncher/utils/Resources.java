@@ -19,13 +19,9 @@ package com.atlauncher.utils;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.text.html.StyleSheet;
 
 import com.atlauncher.exceptions.ChunkyException;
 import com.atlauncher.managers.LogManager;

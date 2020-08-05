@@ -64,3 +64,4 @@ instance you've created and share it around with friends to simply import into t
 - Add configs download hashing
 - Add host to ip resolution to Network Checker Tool
 - Allow setting network connection timeouts
+- Remove pack tags and add pack for semi public packs
