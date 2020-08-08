@@ -22,6 +22,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.atlauncher.App;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Resources;
@@ -51,7 +52,8 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getNormalFont() {
-        if (OS.isLinux()) {
+        // linux and non English need to use base OS font
+        if (OS.isLinux() || !App.settings.language.equalsIgnoreCase("English")) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(defaultFontName).deriveFont(Font.PLAIN, 12f);
@@ -59,7 +61,8 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getBoldFont() {
-        if (OS.isLinux()) {
+        // linux and non English need to use base OS font
+        if (OS.isLinux() || !App.settings.language.equalsIgnoreCase("English")) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(defaultFontName).deriveFont(Font.BOLD, 12f);
@@ -67,7 +70,8 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getConsoleFont() {
-        if (OS.isLinux()) {
+        // linux and non English need to use base OS font
+        if (OS.isLinux() || !App.settings.language.equalsIgnoreCase("English")) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(consoleFontName).deriveFont(Font.PLAIN, 12f);
@@ -75,7 +79,12 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getTabFont() {
-        return Resources.makeFont(tabFontName).deriveFont(Font.PLAIN, 32f);
+        // non English need to use base OS font
+        if (!App.settings.language.equalsIgnoreCase("English")) {
+            return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 32f);
+        } else {
+            return Resources.makeFont(tabFontName).deriveFont(Font.PLAIN, 32f);
+        }
     }
 
     public void registerFonts() {

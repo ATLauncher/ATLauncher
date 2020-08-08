@@ -307,7 +307,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean needToReloadTheme() {
-        return !((ComboItem) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme);
+        return !((ComboItem) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme)
+                || !((String) language.getSelectedItem()).equalsIgnoreCase(App.settings.language);
     }
 
     public boolean needToReloadPacksPanel() {

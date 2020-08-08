@@ -227,5 +227,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
+
+        tabbedPane.setFont(App.THEME.getTabFont());
     }
 }
