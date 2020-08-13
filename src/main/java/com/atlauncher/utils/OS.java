@@ -60,6 +60,7 @@ public enum OS {
 
     private static int memory = 0;
     private static SystemInfo systemInfo = null;
+    private static Integer memoryFromTool = null;
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
@@ -335,13 +336,66 @@ public enum OS {
         PerformanceManager.start();
         SystemInfo systemInfo = getSystemInfo();
 
-        if (systemInfo == null || systemInfo.memory == null) {
+        if (systemInfo != null && systemInfo.memory != null) {
             PerformanceManager.end();
-            return 0;
+            return (int) (systemInfo.memory.totalPhysicalBytes / 1048576);
         }
 
-        PerformanceManager.end();
-        return (int) (systemInfo.memory.totalPhysicalBytes / 1048576);
+        // getSystemInfo returned null/wrong, so use the old getMemory binary
+        return getMemoryFromTool();
+    }
+
+    /**
+     * Returns the amount of RAM in the users system via the getMemory tool.
+     */
+    public static int getMemoryFromTool() {
+        if (memoryFromTool == null) {
+            PerformanceManager.start();
+
+            String binaryFile = "getMemory";
+
+            if (OS.isArm()) {
+                binaryFile += "-arm";
+
+                if (OS.is64Bit()) {
+                    binaryFile += "64";
+                }
+            } else {
+                if (OS.is64Bit()) {
+                    binaryFile += "-x64";
+                }
+            }
+
+            if (OS.isWindows()) {
+                binaryFile += ".exe";
+            } else if (OS.isMac()) {
+                binaryFile += "-osx";
+            } else if (OS.isLinux()) {
+                binaryFile += "-linux";
+            }
+
+            if (Files.exists(FileSystem.TOOLS.resolve(binaryFile))) {
+                try {
+                    ProcessBuilder processBuilder = new ProcessBuilder(
+                            FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
+                    processBuilder.directory(FileSystem.TOOLS.toFile());
+                    processBuilder.redirectErrorStream(true);
+
+                    Process process = processBuilder.start();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    try {
+                        memoryFromTool = (int) (Long.parseLong(br.readLine()) / 1048576);
+                    } finally {
+                        br.close();
+                    }
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+            PerformanceManager.end();
+        }
+
+        return memoryFromTool;
     }
 
     /**
