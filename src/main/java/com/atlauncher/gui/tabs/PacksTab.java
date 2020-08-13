@@ -91,8 +91,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         this.setupTopPanel();
 
-        addLoadingCard();
-
         refresh();
 
         TabChangeManager.addListener(() -> {
@@ -114,35 +112,38 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             }
         });
         this.previousPageButton.addActionListener(e -> {
-            this.page -= 1;
+            page -= 1;
             Analytics.sendEvent(page, "Previous", "Navigation", "Pack");
-            this.refresh();
+            refresh();
         });
         this.nextPageButton.addActionListener(e -> {
-            this.page += 1;
+            page += 1;
             Analytics.sendEvent(page, "Next", "Navigation", "Pack");
-            this.refresh();
+            refresh();
         });
         this.addCurseButton.addActionListener(e -> {
             new AddCursePackDialog();
         });
         this.clearButton.addActionListener(e -> {
             searchField.setText("");
-            reload();
+            page = 1;
+            refresh();
         });
 
         this.searchField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     Analytics.sendEvent(searchField.getText(), "Search", "Pack");
-                    reload();
+                    page = 1;
+                    refresh();
                 }
             }
         });
 
         this.searchButton.addActionListener(e -> {
             Analytics.sendEvent(searchField.getText(), "Search", "Pack");
-            reload();
+            page = 1;
+            refresh();
         });
     }
 
@@ -176,7 +177,18 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 ? PackManager.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
                 : PackManager.getPacksSortedPositionally(this.isFeatured, this.isSystem);
 
-        packs.stream().filter(Pack::canInstall).skip((page - 1) * 20).limit(20).forEach(pack -> {
+        packs.stream().filter(Pack::canInstall).filter(pack -> {
+            String searchText = this.searchField.getText();
+
+            if (!searchText.isEmpty()) {
+                return Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
+                        .matcher(pack.getDescription()).find()
+                        || Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(pack.getName())
+                                .find();
+            }
+
+            return true;
+        }).skip((page - 1) * 20).limit(20).forEach(pack -> {
             this.cards.add(new PackCard(pack));
         });
 
@@ -202,32 +214,12 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        Pack pack;
-        boolean show;
         int count = 0;
         for (PackCard card : this.cards) {
-            show = true;
-            pack = card.getPack();
             if (keep) {
-                if (!this.searchField.getText().isEmpty()) {
-                    if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
-                            .matcher(pack.getName()).find()
-                            || Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
-                                    .matcher(pack.getDescription()).find()) {
-                        show = false;
-                    }
-
-                    if (Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
-                            .matcher(pack.getDescription()).find()) {
-                        show = true;
-                    }
-                }
-
-                if (show) {
-                    this.contentPanel.add(card, gbc);
-                    gbc.gridy++;
-                    count++;
-                }
+                this.contentPanel.add(card, gbc);
+                gbc.gridy++;
+                count++;
             }
         }
 
@@ -246,6 +238,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     public void refresh() {
         this.cards.clear();
+        addLoadingCard();
         loadPacks(true);
         reload();
     }
