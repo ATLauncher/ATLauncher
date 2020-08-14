@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -70,8 +71,6 @@ import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.systeminfo.GPUCard;
-import com.atlauncher.utils.systeminfo.SystemInfo;
 import com.formdev.flatlaf.extras.FlatInspector;
 
 import io.github.asyncronous.toast.Toaster;
@@ -79,6 +78,10 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.GraphicsCard;
+import oshi.hardware.HardwareAbstractionLayer;
 
 /**
  * Main entry point for the application, Java runs the main method here when the
@@ -309,19 +312,18 @@ public class App {
         LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
 
         SystemInfo systemInfo = OS.getSystemInfo();
-        if (systemInfo != null) {
-            if (systemInfo.gpu != null && systemInfo.gpu.cards.size() != 0) {
-                for (GPUCard card : systemInfo.gpu.cards) {
-                    LogManager.info(
-                            "GPU (" + card.index + "): " + card.pci.product.name + " (" + card.pci.vendor.name + ")");
-                }
-            }
+        HardwareAbstractionLayer hal = systemInfo.getHardware();
 
-            if (systemInfo.cpu != null) {
-                LogManager.info(
-                        "CPU: " + systemInfo.cpu.totalCores + " cores/" + systemInfo.cpu.totalThreads + " threads");
+        List<GraphicsCard> cards = hal.getGraphicsCards();
+        if (cards.size() != 0) {
+            for (GraphicsCard card : cards) {
+                LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo());
             }
         }
+
+        CentralProcessor cpu = hal.getProcessor();
+        LogManager.info(
+                "CPU: " + cpu.getPhysicalPackageCount() + " cores/" + cpu.getLogicalProcessorCount() + " threads");
 
         LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
 

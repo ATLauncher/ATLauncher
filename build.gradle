@@ -40,6 +40,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'net.java.dev.jna:jna:5.6.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.tukaani:xz:1.8'
     implementation 'com.mojang:authlib:1.5.21'
@@ -58,6 +59,7 @@ dependencies {
     implementation 'com.formdev:flatlaf:0.37'
     implementation 'com.formdev:flatlaf-extras:0.37'
     implementation 'com.github.pack200:pack200:d5fd0807d6'
+    implementation 'com.github.oshi:oshi-core:5.2.3'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.0'

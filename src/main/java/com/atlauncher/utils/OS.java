@@ -46,14 +46,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
-import com.atlauncher.utils.systeminfo.SystemInfo;
+
+import oshi.SystemInfo;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HardwareAbstractionLayer;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
@@ -330,19 +332,29 @@ public enum OS {
     }
 
     /**
-     * Returns the amount of RAM in the users system via the getSystemInfo tool.
+     * Returns the amount of RAM in the users system via the oshi (or if that fails the getMemory tool).
      */
     public static int getSystemRamViaTool() {
         PerformanceManager.start();
-        SystemInfo systemInfo = getSystemInfo();
 
-        if (systemInfo != null && systemInfo.memory != null) {
-            PerformanceManager.end();
-            return (int) (systemInfo.memory.totalPhysicalBytes / 1048576);
+        int ram = 0;
+
+        try {
+            SystemInfo systemInfo = getSystemInfo();
+            HardwareAbstractionLayer hal = systemInfo.getHardware();
+            GlobalMemory globalMemory = hal.getMemory();
+
+            ram = (int) (globalMemory.getTotal() / 1048576);
+        } catch (Throwable t) {
+            LogManager.logStackTrace(t);
+
+            // getSystemInfo returned null/wrong, so use the old getMemory binary
+            ram = getMemoryFromTool();
         }
 
-        // getSystemInfo returned null/wrong, so use the old getMemory binary
-        return getMemoryFromTool();
+        PerformanceManager.end();
+
+        return ram;
     }
 
     /**
@@ -404,49 +416,7 @@ public enum OS {
     public static SystemInfo getSystemInfo() {
         if (systemInfo == null) {
             PerformanceManager.start();
-            String binaryFile = "getSystemInfo";
-
-            if (OS.isArm()) {
-                binaryFile += "-arm";
-
-                if (OS.is64Bit()) {
-                    binaryFile += "64";
-                }
-            } else {
-                if (OS.is64Bit()) {
-                    binaryFile += "-x64";
-                }
-            }
-
-            if (OS.isWindows()) {
-                binaryFile += ".exe";
-            } else if (OS.isMac()) {
-                binaryFile += "-osx";
-            } else if (OS.isLinux()) {
-                binaryFile += "-linux";
-            }
-
-            if (Files.exists(FileSystem.TOOLS.resolve(binaryFile))) {
-                try {
-                    ProcessBuilder processBuilder = new ProcessBuilder(
-                            FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
-                    processBuilder.directory(FileSystem.TOOLS.toFile());
-                    processBuilder.redirectErrorStream(true);
-
-                    Process process = processBuilder.start();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-                    try {
-                        systemInfo = Gsons.DEFAULT.fromJson(br, SystemInfo.class);
-                    } catch (Throwable t) {
-                        LogManager.logStackTrace(t);
-                    } finally {
-                        br.close();
-                    }
-                } catch (IOException e) {
-                    LogManager.logStackTrace(e);
-                }
-            }
+            systemInfo = new SystemInfo();
             PerformanceManager.end();
         }
 

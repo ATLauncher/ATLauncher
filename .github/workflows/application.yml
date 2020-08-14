@@ -3,48 +3,6 @@ name: Application
 on: [push]
 
 jobs:
-  getSystemInfo:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup and install Go 1.14
-        uses: actions/setup-go@v2
-        with:
-          go-version: "1.14"
-
-      - name: Cache Go deps
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-getSystemInfo-${{ hashFiles('getSystemInfo/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-getSystemInfo-
-
-      - name: Build artifacts
-        run: |
-          GOOS=windows GOARCH=386 go build -ldflags="-s -w" -o dist/getSystemInfo.exe getSystemInfo.go
-          GOOS=linux GOARCH=386 go build -ldflags="-s -w" -o dist/getSystemInfo-linux getSystemInfo.go
-          GOOS=darwin GOARCH=386 go build -ldflags="-s -w" -o dist/getSystemInfo-osx getSystemInfo.go
-          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o dist/getSystemInfo-x64.exe getSystemInfo.go
-          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/getSystemInfo-x64-linux getSystemInfo.go
-          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o dist/getSystemInfo-x64-osx getSystemInfo.go
-          GOOS=linux GOARCH=arm go build -ldflags="-s -w" -o dist/getSystemInfo-arm-linux getSystemInfo.go
-          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o dist/getSystemInfo-arm64-linux getSystemInfo.go
-        working-directory: getSystemInfo
-
-      - name: Compress binaries
-        uses: gacts/upx@master
-        with:
-          dir: "getSystemInfo/dist/"
-          upx_args: "-9"
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: getSystemInfo
-          path: getSystemInfo/dist/*
   test:
     runs-on: ubuntu-latest
     strategy:
