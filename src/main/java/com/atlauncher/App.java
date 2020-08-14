@@ -82,6 +82,8 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GraphicsCard;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OSFileStore;
+import oshi.software.os.OperatingSystem;
 
 /**
  * Main entry point for the application, Java runs the main method here when the
@@ -295,37 +297,7 @@ public class App {
             }
         }
 
-        LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
-
-        SwingUtilities.invokeLater(() -> Java.getInstalledJavas().stream()
-                .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
-
-        LogManager.info("Operating System: " + System.getProperty("os.name"));
-
-        LogManager.info("Java Version: " + Java.getActualJavaVersion());
-
-        LogManager.info("Java Path: " + settings.javaPath);
-
-        LogManager.info("64 Bit Java: " + OS.is64Bit());
-
-        int maxRam = OS.getMaximumRam();
-        LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
-
-        SystemInfo systemInfo = OS.getSystemInfo();
-        HardwareAbstractionLayer hal = systemInfo.getHardware();
-
-        List<GraphicsCard> cards = hal.getGraphicsCards();
-        if (cards.size() != 0) {
-            for (GraphicsCard card : cards) {
-                LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo());
-            }
-        }
-
-        CentralProcessor cpu = hal.getProcessor();
-        LogManager.info(
-                "CPU: " + cpu.getPhysicalPackageCount() + " cores/" + cpu.getLogicalProcessorCount() + " threads");
-
-        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
+        logSystemInformation();
 
         // Now for some Mac specific stuff, mainly just setting the name of the
         // application and icon.
@@ -420,6 +392,55 @@ public class App {
             new LauncherFrame(openLauncher);
             ss.close();
         });
+    }
+
+    private static void logSystemInformation() {
+
+        LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
+
+        SwingUtilities.invokeLater(() -> Java.getInstalledJavas().stream()
+                .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
+
+        LogManager.info("Java Version: " + Java.getActualJavaVersion());
+
+        LogManager.info("Java Path: " + settings.javaPath);
+
+        LogManager.info("64 Bit Java: " + OS.is64Bit());
+
+        int maxRam = OS.getMaximumRam();
+        LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
+
+        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
+
+        try {
+            SystemInfo systemInfo = OS.getSystemInfo();
+            HardwareAbstractionLayer hal = systemInfo.getHardware();
+
+            List<GraphicsCard> cards = hal.getGraphicsCards();
+            if (cards.size() != 0) {
+                for (GraphicsCard card : cards) {
+                    LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo());
+                }
+            }
+
+            CentralProcessor cpu = hal.getProcessor();
+            LogManager.info(
+                    "CPU: " + cpu.getPhysicalPackageCount() + " cores/" + cpu.getLogicalProcessorCount() + " threads");
+
+            OperatingSystem os = systemInfo.getOperatingSystem();
+
+            LogManager.info("Operating System: " + os.getFamily() + " (" + os.getVersionInfo() + ")");
+            LogManager.info("Bitness: " + os.getBitness());
+            LogManager.info("Uptime: " + os.getSystemUptime());
+            LogManager.info("Manufacturer: " + os.getManufacturer());
+
+            for (OSFileStore fileStore : os.getFileSystem().getFileStores(true)) {
+                LogManager.info(
+                        "Disk: " + fileStore.getLabel() + " (" + fileStore.getFreeSpace() / 1048576 + " MB Free)");
+            }
+        } catch (Throwable t) {
+            LogManager.logStackTrace(t);
+        }
     }
 
     private static void checkInstalledCorrectly() {
