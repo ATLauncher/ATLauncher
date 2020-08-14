@@ -424,8 +424,8 @@ public class App {
             }
 
             CentralProcessor cpu = hal.getProcessor();
-            LogManager.info(
-                    "CPU: " + cpu.getPhysicalPackageCount() + " cores/" + cpu.getLogicalProcessorCount() + " threads");
+            LogManager.info("CPU: " + cpu.getPhysicalProcessorCount() + " cores/" + cpu.getLogicalProcessorCount()
+                    + " threads");
 
             OperatingSystem os = systemInfo.getOperatingSystem();
 
