@@ -61,10 +61,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.addChangeListener(e -> {
-            String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-            Analytics.sendScreenView(title + " Settings");
-        });
 
         tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(17.0F));
         for (Tab tab : this.tabs) {
@@ -107,6 +103,12 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 App.TOASTER.pop("Settings Saved");
             }
         });
+
+        tabbedPane.addChangeListener(e -> {
+            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
+        });
+
+        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
     }
 
     @Override

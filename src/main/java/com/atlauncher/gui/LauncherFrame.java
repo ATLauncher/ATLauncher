@@ -164,12 +164,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
 
-        tabbedPane.addChangeListener(e -> {
-            String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-            Analytics.sendScreenView(title);
-            TabChangeManager.post();
-        });
-
         PerformanceManager.start("newsTab");
         newsTab = new NewsTab();
         App.launcher.setNewsPanel(newsTab);
@@ -220,6 +214,14 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
         tabbedPane.setOpaque(true);
+        tabbedPane.setSelectedIndex(App.settings.selectedTabOnStartup);
+
+        tabbedPane.addChangeListener(e -> {
+            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle());
+            TabChangeManager.post();
+        });
+
+        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle());
     }
 
     @Override
