@@ -18,11 +18,16 @@
 package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
@@ -81,6 +86,29 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                 }
             } else {
                 artifact.url = Constants.MINECRAFT_LIBRARIES + artifact.path;
+            }
+
+            // library is missing this information, so grab it from the url
+            if (artifact.size == -1L || artifact.sha1 == null) {
+                Path downloadedLibrary = FileSystem.LIBRARIES.resolve(artifact.path);
+
+                try {
+                    // if the file exists, assume it's good. This is only needed for older Forge
+                    // versions anyway, so should be okay :finger_crossed:
+                    if (!Files.exists(downloadedLibrary)) {
+                        System.out.println(artifact.path);
+                        System.out.println(artifact.size);
+                        System.out.println(artifact.sha1);
+                        System.out.println("===========");
+                        new com.atlauncher.network.Download().setUrl(artifact.url).downloadTo(downloadedLibrary)
+                                .downloadFile();
+                    }
+
+                    artifact.size = Files.size(downloadedLibrary);
+                    artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
+                } catch (Throwable t) {
+                    LogManager.logStackTrace(t);
+                }
             }
 
             downloads.artifact = artifact;
