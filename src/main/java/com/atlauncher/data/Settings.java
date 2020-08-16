@@ -49,6 +49,7 @@ public class Settings {
     public String language = "English";
     public String theme = Constants.DEFAULT_THEME_CLASS;
     public String dateFormat = "dd/MM/yyyy";
+    public int selectedTabOnStartup = 0;
     public boolean sortPacksAlphabetically = false;
     public boolean keepLauncherOpen = true;
     public boolean enableConsole = true;

@@ -17,16 +17,16 @@
  */
 package com.atlauncher.utils;
 
-public class ComboItem {
-    private String value;
+public class ComboItem<T> {
+    private T value;
     private String label;
 
-    public ComboItem(String value, String label) {
+    public ComboItem(T value, String label) {
         this.value = value;
         this.label = label;
     }
 
-    public String getValue() {
+    public T getValue() {
         return this.value;
     }
 

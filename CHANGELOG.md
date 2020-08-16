@@ -69,3 +69,4 @@ instance you've created and share it around with friends to simply import into t
 - Pretty print all json files written by the launcher
 - Add sha1/size to older Forge version libraries on install
 - Allow Discord integration for non ATLauncher packs [#403]
+- Add setting to allow changing the default tab on startup

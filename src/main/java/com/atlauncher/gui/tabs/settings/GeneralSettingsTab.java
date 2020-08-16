@@ -47,9 +47,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JComboBox<String> language;
     private JButton translateButton;
     private JLabelWithHover themeLabel;
-    private JComboBox<ComboItem> theme;
+    private JComboBox<ComboItem<String>> theme;
     private JLabelWithHover dateFormatLabel;
-    private JComboBox<ComboItem> dateFormat;
+    private JComboBox<ComboItem<String>> dateFormat;
+    private JLabelWithHover selectedTabOnStartupLabel;
+    private JComboBox<ComboItem<Integer>> selectedTabOnStartup;
     private JLabelWithHover sortPacksAlphabeticallyLabel;
     private JCheckBox sortPacksAlphabetically;
     private JLabelWithHover keepLauncherOpenLabel;
@@ -111,18 +113,19 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<>();
-        theme.addItem(new ComboItem("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.Light", "ATLauncher Light"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.MonokaiPro", "Monokai Pro"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.Vuesion", "Vuesion"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.MaterialPalenightContrast", "Material Palenight Contrast"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.ArcOrange", "Arc Orange"));
-        theme.addItem(new ComboItem("com.atlauncher.themes.CyanLight", "Cyan Light"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.Light", "ATLauncher Light"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.MonokaiPro", "Monokai Pro"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.Vuesion", "Vuesion"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.MaterialPalenightContrast",
+                "Material Palenight Contrast"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.ArcOrange", "Arc Orange"));
+        theme.addItem(new ComboItem<String>("com.atlauncher.themes.CyanLight", "Cyan Light"));
 
         for (int i = 0; i < theme.getItemCount(); i++) {
-            ComboItem item = theme.getItemAt(i);
+            ComboItem<String> item = theme.getItemAt(i);
 
             if (item.getValue().equalsIgnoreCase(App.settings.theme)) {
                 theme.setSelectedIndex(i);
@@ -150,12 +153,41 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         dateFormat = new JComboBox<>();
 
         for (String format : Constants.DATE_FORMATS) {
-            dateFormat.addItem(new ComboItem(format, new SimpleDateFormat(format).format(new Date())));
+            dateFormat.addItem(new ComboItem<String>(format, new SimpleDateFormat(format).format(new Date())));
         }
 
         dateFormat.setSelectedItem(App.settings.dateFormat);
 
         add(dateFormat, gbc);
+
+        // Selected tab on startup
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        selectedTabOnStartupLabel = new JLabelWithHover(GetText.tr("Default Tab") + ":", HELP_ICON,
+                GetText.tr("Which tab to have selected by default when opening the launcher."));
+
+        add(selectedTabOnStartupLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        selectedTabOnStartup = new JComboBox<>();
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(0, GetText.tr("News")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(1, GetText.tr("Vanilla Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(2, GetText.tr("Featured Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(3, GetText.tr("Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(4, GetText.tr("Instances")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(5, GetText.tr("Servers")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(6, GetText.tr("Accounts")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(7, GetText.tr("Tools")));
+        selectedTabOnStartup.addItem(new ComboItem<Integer>(8, GetText.tr("Settings")));
+        selectedTabOnStartup.setSelectedItem(App.settings.selectedTabOnStartup);
+
+        add(selectedTabOnStartup, gbc);
 
         // Sort Packs Alphabetically
 
@@ -307,7 +339,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     }
 
     public boolean needToReloadTheme() {
-        return !((ComboItem) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme)
+        return !((ComboItem<String>) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme)
                 || !((String) language.getSelectedItem()).equalsIgnoreCase(App.settings.language);
     }
 
@@ -322,8 +354,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     public void save() {
         Language.setLanguage((String) language.getSelectedItem());
         App.settings.language = (String) language.getSelectedItem();
-        App.settings.theme = ((ComboItem) theme.getSelectedItem()).getValue();
-        App.settings.dateFormat = ((ComboItem) dateFormat.getSelectedItem()).getValue();
+        App.settings.theme = ((ComboItem<String>) theme.getSelectedItem()).getValue();
+        App.settings.dateFormat = ((ComboItem<String>) dateFormat.getSelectedItem()).getValue();
+        App.settings.selectedTabOnStartup = ((ComboItem<Integer>) selectedTabOnStartup.getSelectedItem()).getValue();
         App.settings.sortPacksAlphabetically = sortPacksAlphabetically.isSelected();
         App.settings.keepLauncherOpen = keepLauncherOpen.isSelected();
         App.settings.enableConsole = enableConsole.isSelected();

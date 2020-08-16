@@ -59,8 +59,8 @@ public final class AddModsDialog extends JDialog {
     private JPanel topPanel = new JPanel(new BorderLayout());
     private JTextField searchField = new JTextField(16);
     private JButton searchButton = new JButton(GetText.tr("Search"));
-    private JComboBox<ComboItem> sectionComboBox = new JComboBox<>();
-    private JComboBox<ComboItem> sortComboBox = new JComboBox<>();
+    private JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
+    private JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
 
     // #. Fabric API is the name of a mod, so should be left untranslated
     private JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
@@ -86,15 +86,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instance.installedWithLoaderVersion()) {
-            sectionComboBox.addItem(new ComboItem("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
@@ -116,15 +116,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instanceV2.launcher.loaderVersion != null) {
-            sectionComboBox.addItem(new ComboItem("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
@@ -266,16 +266,16 @@ public final class AddModsDialog extends JDialog {
         String query = searchField.getText();
 
         new Thread(() -> {
-            if (((ComboItem) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                 setMods(CurseApi.searchResourcePacks(query, page,
-                        ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
-            } else if (((ComboItem) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
+                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                 setMods(CurseApi
                         .searchWorlds(
                                 App.settings.disableAddModRestrictions ? null
                                         : (this.instanceV2 != null ? this.instanceV2.id
                                                 : this.instance.getMinecraftVersion()),
-                                query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
+                                query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else {
                 if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                         : this.instance.getLoaderVersion()).isFabric()) {
@@ -283,13 +283,13 @@ public final class AddModsDialog extends JDialog {
                             App.settings.disableAddModRestrictions ? null
                                     : (this.instanceV2 != null ? this.instanceV2.id
                                             : this.instance.getMinecraftVersion()),
-                            query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
+                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
                     setMods(CurseApi.searchMods(
                             App.settings.disableAddModRestrictions ? null
                                     : (this.instanceV2 != null ? this.instanceV2.id
                                             : this.instance.getMinecraftVersion()),
-                            query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
+                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
 
