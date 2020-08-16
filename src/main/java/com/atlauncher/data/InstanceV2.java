@@ -490,14 +490,14 @@ public class InstanceV2 extends MinecraftVersion {
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration && this.getPack() != null) {
-                        String playing = this.getPack().name + " (" + this.launcher.version + ")";
+                    if (App.settings.enableDiscordIntegration) {
+                        String playing = this.launcher.pack + " (" + this.launcher.version + ")";
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
                         presence.setDetails(playing);
                         presence.setStartTimestamps(System.currentTimeMillis());
 
-                        if (this.getPack().hasDiscordImage()) {
+                        if (this.getPack() != null && this.getPack().hasDiscordImage()) {
                             presence.setBigImage(this.getPack().getSafeName().toLowerCase(), playing);
                             presence.setSmallImage("atlauncher", "ATLauncher");
                         } else {

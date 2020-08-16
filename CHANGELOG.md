@@ -68,3 +68,4 @@ instance you've created and share it around with friends to simply import into t
 - Fix main Forge library missing caused packs not able to redownload it
 - Pretty print all json files written by the launcher
 - Add sha1/size to older Forge version libraries on install
+- Allow Discord integration for non ATLauncher packs [#403]
