@@ -34,9 +34,9 @@ public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder().setPrettyPrinting().create();
 
     public static final Gson DEFAULT_ALT = new GsonBuilder()
-            .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).create();
+            .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).setPrettyPrinting().create();
 
-    public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping()
+    public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())

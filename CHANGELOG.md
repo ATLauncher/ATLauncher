@@ -66,3 +66,4 @@ instance you've created and share it around with friends to simply import into t
 - Allow setting network connection timeouts
 - Remove pack tags and add pack for semi public packs
 - Fix main Forge library missing caused packs not able to redownload it
+- Pretty print all json files written by the launcher
