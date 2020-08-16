@@ -64,6 +64,7 @@ public class Constants {
     public static final int CURSE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final int CURSE_WORLDS_SECTION_ID = 17;
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
+    public static final String FORGE_MAVEN_BASE = "https://files.minecraftforge.net/maven/";
     public static final String FORGE_HOST = "files.minecraftforge.net";
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String FABRIC_HOST = "maven.fabricmc.net";

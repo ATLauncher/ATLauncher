@@ -214,12 +214,12 @@ public class App {
     public static Launcher launcher;
 
     /**
-     * This is the theme used by the launcher. By default it uses the default theme
-     * until the theme can be created and loaded.
-     * <p/>
-     * For more information on themeing, please see https://atl.pw/theme
+     * This is the theme used by the launcher. For more information on themeing,
+     * please see the README.
      */
     public static ATLauncherLaf THEME;
+
+    public static TrayIcon trayIcon;
 
     static {
         // Prefer to use IPv4
@@ -228,8 +228,6 @@ public class App {
         // Sets up where all uncaught exceptions go to.
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
-
-    public static TrayIcon trayIcon;
 
     /**
      * Where the magic happens.
@@ -297,6 +295,7 @@ public class App {
             }
         }
 
+        // log out the system information to the console
         logSystemInformation();
 
         // Now for some Mac specific stuff, mainly just setting the name of the
