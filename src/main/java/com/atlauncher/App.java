@@ -418,7 +418,8 @@ public class App {
             List<GraphicsCard> cards = hal.getGraphicsCards();
             if (cards.size() != 0) {
                 for (GraphicsCard card : cards) {
-                    LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo());
+                    LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
+                            + " " + (card.getVRam() / 1048576) + "MB VRAM");
                 }
             }
 
