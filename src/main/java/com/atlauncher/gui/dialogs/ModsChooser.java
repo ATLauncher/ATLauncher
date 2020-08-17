@@ -451,6 +451,8 @@ public class ModsChooser extends JDialog {
             for (Mod mod : linkedMods) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
+                        LogManager.debug("Selected " + a.getMod().getName() + " which is auto selecting "
+                                + check.getMod().getName() + " because it's a linked mod.");
                         check.setEnabled(true);
                     }
                 }
@@ -460,6 +462,8 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : groupMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
+                            LogManager.debug("Selected " + a.getMod().getName() + " which is auto deselecting "
+                                    + check.getMod().getName() + " because it's in the same group.");
                             check.setSelected(false);
                         }
                     }
@@ -470,6 +474,8 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : dependsMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod && !sortedOut.contains(check)) {
+                            LogManager.debug("Selected " + a.getMod().getName() + " which is auto selecting "
+                                    + check.getMod().getName() + " because it's a dependency.");
                             sortedOut.add(check);
                             check.setSelected(true);
                             sortOutMods(check);
@@ -482,6 +488,8 @@ public class ModsChooser extends JDialog {
             for (Mod mod : linkedMods) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
+                        LogManager.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
+                                + check.getMod().getName() + " because it's a linked mod.");
                         check.setEnabled(false);
                         check.setSelected(false);
                     }
@@ -492,6 +500,8 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : dependedMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
+                            LogManager.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
+                                    + check.getMod().getName() + " because it's a dependant mod.");
                             check.setSelected(false);
                         }
                     }
@@ -502,6 +512,8 @@ public class ModsChooser extends JDialog {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
                             if (check.getMod().isLibrary()) {
+                                LogManager.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
+                                        + check.getMod().getName() + " because it's a dependant library mod.");
                                 check.setSelected(false);
                             }
                         }
