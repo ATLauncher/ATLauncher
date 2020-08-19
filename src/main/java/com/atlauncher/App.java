@@ -20,6 +20,7 @@ package com.atlauncher;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -244,6 +245,9 @@ public class App {
         // check the launcher has been 'installed' correctly
         checkInstalledCorrectly();
 
+        // setup OS specific things
+        setupOSSpecificThings();
+
         try {
             LogManager.info("Organising filesystem");
             FileSystem.organise();
@@ -297,23 +301,6 @@ public class App {
 
         // log out the system information to the console
         logSystemInformation();
-
-        // Now for some Mac specific stuff, mainly just setting the name of the
-        // application and icon.
-        if (OS.isMac()) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                    Constants.LAUNCHER_NAME + " " + Constants.VERSION);
-            try {
-                Class<?> util = Class.forName("com.apple.eawt.Application");
-                Method getApplication = util.getMethod("getApplication");
-                Object application = getApplication.invoke(util);
-                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
-                setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
-            } catch (Exception ex) {
-                LogManager.logStackTrace("Failed to set dock icon", ex);
-            }
-        }
 
         // Check to make sure the user can load the launcher
         launcher.checkIfWeCanLoad();
@@ -484,6 +471,35 @@ public class App {
                     .addOption("Yes, I understand", true).addOption("No, exit and I'll put it in a folder")
                     .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
+            }
+        }
+    }
+
+    private static void setupOSSpecificThings() {
+        // do some Mac specific stuff, setting the name of theapplication and icon
+        if (OS.isMac()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                    Constants.LAUNCHER_NAME + " " + Constants.VERSION);
+            try {
+                Class<?> util = Class.forName("com.apple.eawt.Application");
+                Method getApplication = util.getMethod("getApplication");
+                Object application = getApplication.invoke(util);
+                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
+                setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
+            } catch (Exception ex) {
+                LogManager.logStackTrace("Failed to set dock icon", ex);
+            }
+        }
+
+        // do some linux specific stuff, namely set the application title in Gnome
+        if (OS.isLinux()) {
+            try {
+                Toolkit toolkit = Toolkit.getDefaultToolkit();
+                java.lang.reflect.Field awtAppClassNameField = toolkit.getClass().getDeclaredField("awtAppClassName");
+                awtAppClassNameField.setAccessible(true);
+                awtAppClassNameField.set(toolkit, Constants.LAUNCHER_NAME);
+            } catch (Throwable t) {
             }
         }
     }

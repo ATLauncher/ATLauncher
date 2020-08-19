@@ -72,3 +72,4 @@ instance you've created and share it around with friends to simply import into t
 - Add setting to allow changing the default tab on startup
 - Fix screen view analytics not sending correctly
 - Fix cancellation of instance installation causing errors
+- Fix gnome application title not showing
