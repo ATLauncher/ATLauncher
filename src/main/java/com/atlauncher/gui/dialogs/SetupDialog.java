@@ -125,6 +125,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
             Language.setLanguage((String) language.getSelectedItem());
             App.settings.language = (String) language.getSelectedItem();
             App.settings.enableAnalytics = enableAnalytics.isSelected();
+            App.settings.firstTimeRun = false;
             App.settings.save();
 
             if (enableAnalytics.isSelected()) {
