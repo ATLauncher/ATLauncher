@@ -24,7 +24,6 @@ import java.util.List;
 
 import com.atlauncher.App;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Resources;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -52,8 +51,8 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getNormalFont() {
-        // linux and non English need to use base OS font
-        if (OS.isLinux() || !App.settings.language.equalsIgnoreCase("English")) {
+        // non English need to use base OS font
+        if (!App.settings.language.equalsIgnoreCase("English")) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(defaultFontName).deriveFont(Font.PLAIN, 12f);
@@ -61,8 +60,8 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getBoldFont() {
-        // linux and non English need to use base OS font
-        if (OS.isLinux() || !App.settings.language.equalsIgnoreCase("English")) {
+        // non English need to use base OS font
+        if (!App.settings.language.equalsIgnoreCase("English")) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(defaultFontName).deriveFont(Font.BOLD, 12f);
@@ -70,8 +69,8 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getConsoleFont() {
-        // linux and non English need to use base OS font
-        if (OS.isLinux() || !App.settings.language.equalsIgnoreCase("English")) {
+        // non English need to use base OS font
+        if (!App.settings.language.equalsIgnoreCase("English")) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(consoleFontName).deriveFont(Font.PLAIN, 12f);
