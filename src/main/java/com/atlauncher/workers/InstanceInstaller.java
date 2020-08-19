@@ -195,6 +195,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             determineModsToBeInstalled();
 
+            if (isCancelled()) {
+                return false;
+            }
+
             backupSelectFiles();
             addPercent(5);
 
@@ -383,6 +387,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 this.cancel(true);
                 return;
             }
+
             this.selectedMods = modsChooser.getSelectedMods();
             this.unselectedMods = modsChooser.getUnselectedMods();
         }

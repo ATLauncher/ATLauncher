@@ -32,6 +32,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -416,7 +417,9 @@ public class InstanceInstallerDialog extends JDialog {
                                         "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
                                         pack.getName(), version.version);
 
-                                FileUtils.deleteDirectory(this.root);
+                                if (Files.exists(this.root) && Files.isDirectory(this.root)) {
+                                    FileUtils.deleteDirectory(this.root);
+                                }
                             }
                         } else {
                             type = DialogManager.INFO;
