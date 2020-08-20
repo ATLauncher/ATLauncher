@@ -33,7 +33,7 @@ import com.atlauncher.data.Server;
 
 public final class Data {
     public static final List<Account> ACCOUNTS = new LinkedList<>();
-    public static Account SELECTED_ACCOUNT; // Account using the Launcher
+    public static Account SELECTED_ACCOUNT = null; // Account using the Launcher
 
     public static final List<News> NEWS = new LinkedList<>();
 

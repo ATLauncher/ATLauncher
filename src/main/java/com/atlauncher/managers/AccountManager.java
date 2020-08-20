@@ -141,17 +141,14 @@ public class AccountManager {
      * @param account Account to switch to
      */
     public static void switchAccount(Account account) {
-        if (Data.SELECTED_ACCOUNT == null) {
+        if (account == null) {
             LogManager.info("Logging out of account");
             Data.SELECTED_ACCOUNT = null;
+            App.settings.lastAccount = null;
         } else {
-            if (account.isReal()) {
-                LogManager.info("Changed account to " + account);
-                Data.SELECTED_ACCOUNT = account;
-            } else {
-                LogManager.info("Logging out of account");
-                Data.SELECTED_ACCOUNT = null;
-            }
+            LogManager.info("Changed account to " + account);
+            Data.SELECTED_ACCOUNT = account;
+            App.settings.lastAccount = account.getUsername();
         }
         App.launcher.refreshVanillaPacksPanel();
         App.launcher.refreshFeaturedPacksPanel();
