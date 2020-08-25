@@ -29,6 +29,8 @@ import javax.swing.TransferHandler;
 
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Type;
+import com.atlauncher.data.curse.CurseFingerprint;
+import com.atlauncher.data.curse.CurseFingerprintedMod;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -38,6 +40,8 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -166,6 +170,32 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                             mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
                             mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
                         }
+                    }
+
+                    try {
+                        long murmurHash = Hashing.murmur(file.toPath());
+
+                        LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
+
+                        CurseFingerprint fingerprintResponse = CurseApi.checkFingerprint(murmurHash);
+
+                        if (fingerprintResponse.exactMatches.size() == 1) {
+                            CurseFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
+
+                            // add Curse information
+                            mod.curseMod = CurseApi.getModById(foundMod.id);
+                            mod.curseModId = foundMod.id;
+                            mod.curseFile = foundMod.file;
+                            mod.curseFileId = foundMod.file.id;
+
+                            mod.name = mod.curseMod.name;
+                            mod.description = mod.curseMod.summary;
+
+                            LogManager.debug("Found matching mod from CurseForge called " + mod.curseMod.name
+                                    + " with file named " + mod.curseFile.displayName);
+                        }
+                    } catch (IOException e1) {
+                        LogManager.logStackTrace(e1);
                     }
 
                     if (!copyTo.exists()) {

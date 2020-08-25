@@ -74,3 +74,4 @@ instance you've created and share it around with friends to simply import into t
 - Fix cancellation of instance installation causing errors
 - Fix gnome application title not showing
 - Add size of failed downloads to log messages
+- When manually adding mods, check fingerprint with Curse

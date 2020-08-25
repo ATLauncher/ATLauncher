@@ -24,6 +24,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,8 @@ import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
+import com.atlauncher.data.curse.CurseFingerprint;
+import com.atlauncher.data.curse.CurseFingerprintedMod;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -55,6 +58,8 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -239,69 +244,103 @@ public class EditModsDialog extends JDialog {
                 return;
             }
 
-            ArrayList<File> files = fcd.getChosenFiles();
-            if (files != null && !files.isEmpty()) {
-                boolean reload = false;
-                for (File file : files) {
-                    String typeTemp = fcd.getSelectorValue();
-                    com.atlauncher.data.Type type = null;
-                    if (typeTemp.equalsIgnoreCase("Mods Folder")) {
-                        type = com.atlauncher.data.Type.mods;
-                    } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                        type = com.atlauncher.data.Type.jar;
-                    } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
-                        type = com.atlauncher.data.Type.coremods;
-                    } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
-                        type = com.atlauncher.data.Type.texturepack;
-                    } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
-                        type = com.atlauncher.data.Type.resourcepack;
-                    } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
-                        type = com.atlauncher.data.Type.shaderpack;
-                    }
-                    if (type != null) {
-                        DisableableMod mod = new DisableableMod();
-                        mod.disabled = true;
-                        mod.userAdded = true;
-                        mod.wasSelected = true;
-                        mod.file = file.getName();
-                        mod.type = type;
-                        mod.optional = true;
-                        mod.name = file.getName();
-                        mod.version = "Unknown";
-                        mod.description = null;
+            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
+                    GetText.tr("Copying Mods"));
 
-                        MCMod mcMod = Utils.getMCModForFile(file);
-                        if (mcMod != null) {
-                            mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
-                            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-                            mod.description = Optional.ofNullable(mcMod.description).orElse(null);
-                        } else {
-                            FabricMod fabricMod = Utils.getFabricModForFile(file);
-                            if (fabricMod != null) {
-                                mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
-                                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                                mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
-                            }
+            progressDialog.addThread(new Thread(() -> {
+                ArrayList<File> files = fcd.getChosenFiles();
+                if (files != null && !files.isEmpty()) {
+                    boolean reload = false;
+                    for (File file : files) {
+                        String typeTemp = fcd.getSelectorValue();
+                        com.atlauncher.data.Type type = null;
+                        if (typeTemp.equalsIgnoreCase("Mods Folder")) {
+                            type = com.atlauncher.data.Type.mods;
+                        } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
+                            type = com.atlauncher.data.Type.jar;
+                        } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
+                            type = com.atlauncher.data.Type.coremods;
+                        } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
+                            type = com.atlauncher.data.Type.texturepack;
+                        } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
+                            type = com.atlauncher.data.Type.resourcepack;
+                        } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
+                            type = com.atlauncher.data.Type.shaderpack;
                         }
+                        if (type != null) {
+                            DisableableMod mod = new DisableableMod();
+                            mod.disabled = true;
+                            mod.userAdded = true;
+                            mod.wasSelected = true;
+                            mod.file = file.getName();
+                            mod.type = type;
+                            mod.optional = true;
+                            mod.name = file.getName();
+                            mod.version = "Unknown";
+                            mod.description = null;
 
-                        File copyTo = instanceV2 != null ? instanceV2.getRoot().resolve("disabledmods").toFile()
-                                : instance.getDisabledModsDirectory();
-
-                        if (Utils.copyFile(file, copyTo)) {
-                            if (this.instanceV2 != null) {
-                                instanceV2.launcher.mods.add(mod);
+                            MCMod mcMod = Utils.getMCModForFile(file);
+                            if (mcMod != null) {
+                                mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
+                                mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
+                                mod.description = Optional.ofNullable(mcMod.description).orElse(null);
                             } else {
-                                instance.getInstalledMods().add(mod);
-                                disabledMods.add(new ModsJCheckBox(mod, this));
+                                FabricMod fabricMod = Utils.getFabricModForFile(file);
+                                if (fabricMod != null) {
+                                    mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
+                                    mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
+                                    mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+                                }
                             }
-                            reload = true;
+
+                            File copyTo = instanceV2 != null ? instanceV2.getRoot().resolve("disabledmods").toFile()
+                                    : instance.getDisabledModsDirectory();
+
+                            try {
+                                long murmurHash = Hashing.murmur(file.toPath());
+
+                                LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
+
+                                CurseFingerprint fingerprintResponse = CurseApi.checkFingerprint(murmurHash);
+
+                                if (fingerprintResponse.exactMatches.size() == 1) {
+                                    CurseFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
+
+                                    // add Curse information
+                                    mod.curseMod = CurseApi.getModById(foundMod.id);
+                                    mod.curseModId = foundMod.id;
+                                    mod.curseFile = foundMod.file;
+                                    mod.curseFileId = foundMod.file.id;
+
+                                    mod.name = mod.curseMod.name;
+                                    mod.description = mod.curseMod.summary;
+
+                                    LogManager.debug("Found matching mod from CurseForge called " + mod.curseMod.name
+                                            + " with file named " + mod.curseFile.displayName);
+                                }
+                            } catch (IOException e1) {
+                                LogManager.logStackTrace(e1);
+                            }
+
+                            if (Utils.copyFile(file, copyTo)) {
+                                if (this.instanceV2 != null) {
+                                    instanceV2.launcher.mods.add(mod);
+                                } else {
+                                    instance.getInstalledMods().add(mod);
+                                    disabledMods.add(new ModsJCheckBox(mod, this));
+                                }
+                                reload = true;
+                            }
                         }
                     }
+                    if (reload) {
+                        reloadPanels();
+                    }
                 }
-                if (reload) {
-                    reloadPanels();
-                }
-            }
+                progressDialog.close();
+            }));
+
+            progressDialog.start();
         });
         bottomPanel.add(addButton);
 

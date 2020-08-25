@@ -25,12 +25,15 @@ import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseFingerprint;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
 
 import okhttp3.CacheControl;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * Various utility methods for interacting with the Curse API.
@@ -103,5 +106,13 @@ public class CurseApi {
     public static CurseMod getModById(int modId) {
         return Download.build().setUrl(String.format("%s/addon/%d", Constants.CURSE_API_URL, modId))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asClass(CurseMod.class);
+    }
+
+    public static CurseFingerprint checkFingerprint(long murmurHash) {
+        return Download.build()
+                .post(RequestBody.create("[" + murmurHash + "]", MediaType.get("application/json; charset=utf-8")))
+                .setUrl(String.format("%s/fingerprint", Constants.CURSE_API_URL))
+                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                .asClass(CurseFingerprint.class);
     }
 }
