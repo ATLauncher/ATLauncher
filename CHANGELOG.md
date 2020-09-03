@@ -75,3 +75,4 @@ instance you've created and share it around with friends to simply import into t
 - Fix gnome application title not showing
 - Add size of failed downloads to log messages
 - When manually adding mods, check fingerprint with Curse
+- Use real packs description over the instances description
