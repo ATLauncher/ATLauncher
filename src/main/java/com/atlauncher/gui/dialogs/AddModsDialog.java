@@ -86,15 +86,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instance.installedWithLoaderVersion()) {
-            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
@@ -116,15 +116,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instanceV2.launcher.loaderVersion != null) {
-            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 

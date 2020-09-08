@@ -394,11 +394,8 @@ public enum OS {
                     processBuilder.redirectErrorStream(true);
 
                     Process process = processBuilder.start();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    try {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                         memoryFromTool = (int) (Long.parseLong(br.readLine()) / 1048576);
-                    } finally {
-                        br.close();
                     }
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);

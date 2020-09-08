@@ -134,18 +134,10 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
     }
 
     private void addActionListeners() {
-        this.launchButton.addActionListener(e -> {
-            server.launch("nogui", false);
-        });
-        this.launchAndCloseButton.addActionListener(e -> {
-            server.launch("nogui", true);
-        });
-        this.launchWithGui.addActionListener(e -> {
-            server.launch(false);
-        });
-        this.launchWithGuiAndClose.addActionListener(e -> {
-            server.launch(true);
-        });
+        this.launchButton.addActionListener(e -> server.launch("nogui", false));
+        this.launchAndCloseButton.addActionListener(e -> server.launch("nogui", true));
+        this.launchWithGui.addActionListener(e -> server.launch(false));
+        this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
         this.backupButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Backing Up {0}", server.name))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(

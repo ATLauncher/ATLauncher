@@ -179,13 +179,13 @@ public class Processor {
             args.add(FileSystem.LIBRARIES.toFile().getAbsolutePath());
         }
 
-            ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[classpath.size()]),
+            ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[0]),
                 Processor.class.getClassLoader());
         try {
             LogManager.debug("Running processor");
             Class<?> cls = Class.forName(mainClass, true, cl);
             Method main = cls.getDeclaredMethod("main", String[].class);
-            main.invoke(null, (Object) args.toArray(new String[args.size()]));
+            main.invoke(null, (Object) args.toArray(new String[0]));
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
             LogManager.error(

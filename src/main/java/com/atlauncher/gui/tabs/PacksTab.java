@@ -93,9 +93,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         refresh();
 
-        TabChangeManager.addListener(() -> {
-            searchField.setText("");
-        });
+        TabChangeManager.addListener(() -> searchField.setText(""));
 
         this.collapseAllButton.addActionListener(e -> {
             for (Component comp : contentPanel.getComponents()) {
@@ -121,9 +119,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             Analytics.sendEvent(page, "Next", "Navigation", "Pack");
             refresh();
         });
-        this.addCurseButton.addActionListener(e -> {
-            new AddCursePackDialog();
-        });
+        this.addCurseButton.addActionListener(e -> new AddCursePackDialog());
         this.clearButton.addActionListener(e -> {
             searchField.setText("");
             page = 1;
@@ -188,9 +184,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             }
 
             return true;
-        }).skip((page - 1) * 20).limit(20).forEach(pack -> {
-            this.cards.add(new PackCard(pack));
-        });
+        }).skip((page - 1) * 20).limit(20).forEach(pack -> this.cards.add(new PackCard(pack)));
 
         previousPageButton.setEnabled(page != 1);
 

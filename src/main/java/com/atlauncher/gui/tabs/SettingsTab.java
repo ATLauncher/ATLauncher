@@ -104,9 +104,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             }
         });
 
-        tabbedPane.addChangeListener(e -> {
-            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
-        });
+        tabbedPane.addChangeListener(e -> Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings"));
 
         Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
     }

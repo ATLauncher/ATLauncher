@@ -63,8 +63,7 @@ public class Java {
 
             try {
                 Process process = processBuilder.start();
-                BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                try {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line = null;
                     Pattern p = Pattern.compile("(java|openjdk) version \"([^\"]*)\"");
 
@@ -77,8 +76,6 @@ public class Java {
                             break;
                         }
                     }
-                } finally {
-                    br.close();
                 }
             } catch (IOException e) {
                 LogManager.logStackTrace(e);

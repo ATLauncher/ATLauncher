@@ -25,7 +25,6 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -213,29 +212,17 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
     private void setupLinksButtonPopupMenu() {
         if (instance.getPack() != null) {
             if (instance.getPack().discordInviteURL != null) {
-                discordLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getPack().discordInviteURL);
-                    }
-                });
+                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().discordInviteURL));
                 getHelpPopupMenu.add(discordLinkMenuItem);
             }
 
             if (instance.getPack().supportURL != null) {
-                supportLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getPack().supportURL);
-                    }
-                });
+                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().supportURL));
                 getHelpPopupMenu.add(supportLinkMenuItem);
             }
 
             if (instance.getPack().websiteURL != null) {
-                websiteLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getPack().websiteURL);
-                    }
-                });
+                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().websiteURL));
                 getHelpPopupMenu.add(websiteLinkMenuItem);
             }
         }

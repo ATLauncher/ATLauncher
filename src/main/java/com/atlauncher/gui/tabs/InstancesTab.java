@@ -78,15 +78,11 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         importButton = new JButton(GetText.tr("Import"));
-        importButton.addActionListener(e -> {
-            new ImportInstanceDialog();
-        });
+        importButton.addActionListener(e -> new ImportInstanceDialog());
         topPanel.add(importButton);
 
         addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
-        addCurseButton.addActionListener(e -> {
-            new AddCursePackDialog();
-        });
+        addCurseButton.addActionListener(e -> new AddCursePackDialog());
         topPanel.add(addCurseButton);
 
         clearButton = new JButton(GetText.tr("Clear"));

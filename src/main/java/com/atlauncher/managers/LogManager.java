@@ -84,8 +84,7 @@ public final class LogManager {
     public static void logStackTrace(Throwable t, boolean sendRemote) {
         t.printStackTrace();
 
-        CharArrayWriter writer = new CharArrayWriter();
-        try {
+        try (CharArrayWriter writer = new CharArrayWriter()) {
             Analytics.sendException(t.getMessage());
 
             if (!(t instanceof LocalException) && sendRemote) {
@@ -94,8 +93,6 @@ public final class LogManager {
 
             t.printStackTrace(new PrintWriter(writer));
             error(writer.toString());
-        } finally {
-            writer.close();
         }
     }
 

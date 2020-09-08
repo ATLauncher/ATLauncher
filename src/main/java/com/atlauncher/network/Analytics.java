@@ -42,7 +42,7 @@ public final class Analytics implements SettingsListener {
 
         ga.screenView().sessionControl("start").sendAsync();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> endSession()));
+        Runtime.getRuntime().addShutdownHook(new Thread(Analytics::endSession));
     }
 
     public static void sendScreenView(String title) {

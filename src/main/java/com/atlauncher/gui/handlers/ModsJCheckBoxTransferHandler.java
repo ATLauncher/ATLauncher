@@ -217,9 +217,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             dialog.reloadPanels();
             return true;
 
-        } catch (UnsupportedFlavorException e) {
-            return false;
-        } catch (IOException e) {
+        } catch (UnsupportedFlavorException | IOException e) {
             return false;
         }
     }

@@ -160,9 +160,7 @@ public class EditModsDialog extends JDialog {
         selectAllEnabledModsCheckbox.addActionListener(e -> {
             boolean selected = selectAllEnabledModsCheckbox.isSelected();
 
-            enabledMods.stream().forEach(em -> {
-                em.setSelected(selected);
-            });
+            enabledMods.stream().forEach(em -> em.setSelected(selected));
         });
         topLeftPanel.add(selectAllEnabledModsCheckbox);
 
@@ -178,9 +176,7 @@ public class EditModsDialog extends JDialog {
         selectAllDisabledModsCheckbox.addActionListener(e -> {
             boolean selected = selectAllDisabledModsCheckbox.isSelected();
 
-            disabledMods.stream().forEach(dm -> {
-                dm.setSelected(selected);
-            });
+            disabledMods.stream().forEach(dm -> dm.setSelected(selected));
         });
         topRightPanel.add(selectAllDisabledModsCheckbox);
 

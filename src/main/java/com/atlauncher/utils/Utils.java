@@ -312,25 +312,12 @@ public class Utils {
             to.delete();
         }
 
-        InputStream is = null;
-        OutputStream os = null;
-
-        try {
-            is = new FileInputStream(from);
-            os = new FileOutputStream(to);
+        try (InputStream is = new FileInputStream(from); OutputStream os = new FileOutputStream(to)) {
 
             byte[] buff = new byte[1024];
             int len;
             while ((len = is.read(buff)) > 0) {
                 os.write(buff, 0, len);
-            }
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-
-            if (os != null) {
-                os.close();
             }
         }
 
@@ -630,11 +617,8 @@ public class Utils {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private static void copy(File file, OutputStream out) throws IOException {
-        InputStream in = new FileInputStream(file);
-        try {
+        try (InputStream in = new FileInputStream(file)) {
             copy(in, out);
-        } finally {
-            in.close();
         }
     }
 

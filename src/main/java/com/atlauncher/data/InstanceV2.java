@@ -794,7 +794,7 @@ public class InstanceV2 extends MinecraftVersion {
         }
 
         // make sure there's at least one mod from Curse
-        if (!launcher.mods.stream().anyMatch(mod -> mod.isFromCurse())) {
+        if (!launcher.mods.stream().anyMatch(DisableableMod::isFromCurse)) {
             LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No mods from Curse");
             return false;
         }
@@ -808,7 +808,7 @@ public class InstanceV2 extends MinecraftVersion {
 
         CurseMinecraft minecraft = new CurseMinecraft();
 
-        List<CurseModLoader> modLoaders = new ArrayList<CurseModLoader>();
+        List<CurseModLoader> modLoaders = new ArrayList<>();
         CurseModLoader modLoader = new CurseModLoader();
 
         String loaderVersion = launcher.loaderVersion.version;
@@ -833,7 +833,7 @@ public class InstanceV2 extends MinecraftVersion {
         manifest.name = name;
         manifest.version = this.launcher.version;
         manifest.author = author;
-        manifest.files = this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).map(mod -> {
+        manifest.files = this.launcher.mods.stream().filter(DisableableMod::isFromCurse).map(mod -> {
             CurseManifestFile file = new CurseManifestFile();
             file.projectID = mod.curseModId;
             file.fileID = mod.curseFileId;
@@ -860,7 +860,7 @@ public class InstanceV2 extends MinecraftVersion {
 
         // create modlist.html
         StringBuilder sb = new StringBuilder("<ul>");
-        this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+        this.launcher.mods.stream().filter(DisableableMod::isFromCurse).forEach(mod -> {
             if (mod.hasFullCurseInformation()) {
                 sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name).append("</a></li>");
             } else {
@@ -896,7 +896,7 @@ public class InstanceV2 extends MinecraftVersion {
         }
 
         // remove files that come from Curse
-        launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+        launcher.mods.stream().filter(DisableableMod::isFromCurse).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
 
             if (file.exists()) {

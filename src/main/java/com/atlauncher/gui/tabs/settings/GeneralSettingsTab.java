@@ -113,16 +113,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         theme = new JComboBox<>();
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.Light", "ATLauncher Light"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.MonokaiPro", "Monokai Pro"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.Vuesion", "Vuesion"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.MaterialPalenightContrast",
-                "Material Palenight Contrast"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.ArcOrange", "Arc Orange"));
-        theme.addItem(new ComboItem<String>("com.atlauncher.themes.CyanLight", "Cyan Light"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.Light", "ATLauncher Light"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.MonokaiPro", "Monokai Pro"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.Vuesion", "Vuesion"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.MaterialPalenightContrast",
+            "Material Palenight Contrast"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.ArcOrange", "Arc Orange"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.CyanLight", "Cyan Light"));
 
         for (int i = 0; i < theme.getItemCount(); i++) {
             ComboItem<String> item = theme.getItemAt(i);
@@ -153,7 +153,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         dateFormat = new JComboBox<>();
 
         for (String format : Constants.DATE_FORMATS) {
-            dateFormat.addItem(new ComboItem<String>(format, new SimpleDateFormat(format).format(new Date())));
+            dateFormat.addItem(new ComboItem<>(format, new SimpleDateFormat(format).format(new Date())));
         }
 
         dateFormat.setSelectedItem(App.settings.dateFormat);
@@ -176,15 +176,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selectedTabOnStartup = new JComboBox<>();
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(0, GetText.tr("News")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(1, GetText.tr("Vanilla Packs")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(2, GetText.tr("Featured Packs")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(3, GetText.tr("Packs")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(4, GetText.tr("Instances")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(5, GetText.tr("Servers")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(6, GetText.tr("Accounts")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(7, GetText.tr("Tools")));
-        selectedTabOnStartup.addItem(new ComboItem<Integer>(8, GetText.tr("Settings")));
+        selectedTabOnStartup.addItem(new ComboItem<>(0, GetText.tr("News")));
+        selectedTabOnStartup.addItem(new ComboItem<>(1, GetText.tr("Vanilla Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<>(2, GetText.tr("Featured Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<>(3, GetText.tr("Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<>(4, GetText.tr("Instances")));
+        selectedTabOnStartup.addItem(new ComboItem<>(5, GetText.tr("Servers")));
+        selectedTabOnStartup.addItem(new ComboItem<>(6, GetText.tr("Accounts")));
+        selectedTabOnStartup.addItem(new ComboItem<>(7, GetText.tr("Tools")));
+        selectedTabOnStartup.addItem(new ComboItem<>(8, GetText.tr("Settings")));
         selectedTabOnStartup.setSelectedItem(App.settings.selectedTabOnStartup);
 
         add(selectedTabOnStartup, gbc);

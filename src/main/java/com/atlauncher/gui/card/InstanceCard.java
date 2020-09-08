@@ -25,7 +25,6 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -191,29 +190,17 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private void setupLinksButtonPopupMenu() {
         if (instance.getRealPack() != null) {
             if (instance.getRealPack().discordInviteURL != null) {
-                discordLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getRealPack().discordInviteURL);
-                    }
-                });
+                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getRealPack().discordInviteURL));
                 getHelpPopupMenu.add(discordLinkMenuItem);
             }
 
             if (instance.getRealPack().supportURL != null) {
-                supportLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getRealPack().supportURL);
-                    }
-                });
+                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getRealPack().supportURL));
                 getHelpPopupMenu.add(supportLinkMenuItem);
             }
 
             if (instance.getRealPack().websiteURL != null) {
-                websiteLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getRealPack().websiteURL);
-                    }
-                });
+                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getRealPack().websiteURL));
                 getHelpPopupMenu.add(websiteLinkMenuItem);
             }
         }
@@ -493,13 +480,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         }
                     });
 
-                    cloneItem.addActionListener(e14 -> {
-                        DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "This instance cannot be cloned!<br/><br/>Please reinstall the instance to get this feature."))
-                                        .build())
-                                .setType(DialogManager.ERROR).show();
-                    });
+                    cloneItem.addActionListener(e14 -> DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "This instance cannot be cloned!<br/><br/>Please reinstall the instance to get this feature."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show());
 
                     updateItem.addActionListener(e12 -> {
                         if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
