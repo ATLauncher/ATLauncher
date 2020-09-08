@@ -159,7 +159,7 @@ public class Mod {
     public String getPrintableAuthors() {
         StringBuilder sb = new StringBuilder();
         for (String author : this.authors) {
-            sb.append(author + ", ");
+            sb.append(author).append(", ");
         }
         return sb.toString();
     }

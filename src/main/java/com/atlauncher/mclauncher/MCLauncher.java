@@ -58,11 +58,11 @@ public class MCLauncher {
                 1);
 
         InstanceSettings settings = instance.getSettings();
-        Integer initialMemory = settings.getInitialMemory() == null ? App.settings.initialMemory
+        int initialMemory = settings.getInitialMemory() == null ? App.settings.initialMemory
                 : settings.getInitialMemory();
-        Integer maximumMemory = settings.getMaximumMemory() == null ? App.settings.maximumMemory
+        int maximumMemory = settings.getMaximumMemory() == null ? App.settings.maximumMemory
                 : settings.getMaximumMemory();
-        Integer permGen = settings.getPermGen() == null ? App.settings.metaspace : settings.getPermGen();
+        int permGen = settings.getPermGen() == null ? App.settings.metaspace : settings.getPermGen();
         String javaPath = settings.getJavaPath() == null ? App.settings.javaPath : settings.getJavaPath();
         String javaArguments = settings.getJavaArguments() == null ? App.settings.javaParameters
                 : settings.getJavaArguments();
@@ -327,11 +327,11 @@ public class MCLauncher {
         ErrorReporting.recordInstancePlay(instance.launcher.pack, instance.launcher.version,
                 instance.launcher.loaderVersion, 2);
 
-        Integer initialMemory = instance.launcher.initialMemory == null ? App.settings.initialMemory
+        int initialMemory = instance.launcher.initialMemory == null ? App.settings.initialMemory
                 : instance.launcher.initialMemory;
-        Integer maximumMemory = instance.launcher.maximumMemory == null ? App.settings.maximumMemory
+        int maximumMemory = instance.launcher.maximumMemory == null ? App.settings.maximumMemory
                 : instance.launcher.maximumMemory;
-        Integer permGen = instance.launcher.permGen == null ? App.settings.metaspace : instance.launcher.permGen;
+        int permGen = instance.launcher.permGen == null ? App.settings.metaspace : instance.launcher.permGen;
         String javaPath = instance.launcher.javaPath == null ? App.settings.javaPath : instance.launcher.javaPath;
         String javaArguments = instance.launcher.javaArguments == null ? App.settings.javaParameters
                 : instance.launcher.javaArguments;

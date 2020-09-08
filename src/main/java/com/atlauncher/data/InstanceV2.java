@@ -396,7 +396,7 @@ public class InstanceV2 extends MinecraftVersion {
             App.launcher.setMinecraftLaunched(false);
             return false;
         } else {
-            Integer maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
+            int maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
                     : this.launcher.maximumMemory;
             if ((maximumMemory < this.launcher.requiredMemory)
                     && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
@@ -413,7 +413,7 @@ public class InstanceV2 extends MinecraftVersion {
                     return false;
                 }
             }
-            Integer permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
+            int permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
             if (permGen < this.launcher.requiredPermGen) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -862,9 +862,9 @@ public class InstanceV2 extends MinecraftVersion {
         StringBuilder sb = new StringBuilder("<ul>");
         this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
             if (mod.hasFullCurseInformation()) {
-                sb.append("<li><a href=\"" + mod.curseMod.websiteUrl + "\">" + mod.name + "</a></li>");
+                sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name).append("</a></li>");
             } else {
-                sb.append("<li>" + mod.name + "</li>");
+                sb.append("<li>").append(mod.name).append("</li>");
             }
         });
         sb.append("</ul>");

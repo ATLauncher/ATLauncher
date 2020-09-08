@@ -1563,7 +1563,7 @@ public class Utils {
                 String line;
 
                 while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
+                    sb.append(line).append("\n");
                 }
             } finally {
                 br.close();

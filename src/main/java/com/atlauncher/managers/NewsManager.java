@@ -71,16 +71,16 @@ public class NewsManager {
      * @return The HTML for displaying on the News Panel
      */
     public static String getNewsHTML() {
-        String news = "<html>";
+        StringBuilder news = new StringBuilder("<html>");
 
         for (News newsItem : Data.NEWS) {
-            news += newsItem.getHTML() + "<hr/>";
+            news.append(newsItem.getHTML()).append("<hr/>");
         }
 
         // remove the last <hr/>
-        news = news.substring(0, news.length() - 5);
-        news += "</html>";
+        news = new StringBuilder(news.substring(0, news.length() - 5));
+        news.append("</html>");
 
-        return news;
+        return news.toString();
     }
 }

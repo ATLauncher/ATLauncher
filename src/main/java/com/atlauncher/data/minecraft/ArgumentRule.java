@@ -46,7 +46,7 @@ public class ArgumentRule {
         StringBuilder argBuilder = new StringBuilder();
 
         for (String arg : (List<String>) this.value) {
-            argBuilder.append(arg + ' ');
+            argBuilder.append(arg).append(' ');
         }
 
         String arguments = argBuilder.toString();
