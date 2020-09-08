@@ -18,7 +18,7 @@
 package com.atlauncher.interfaces;
 
 public interface NetworkProgressable {
-    public void setTotalBytes(long bytes);
+    void setTotalBytes(long bytes);
 
-    public void addDownloadedBytes(long bytes);
+    void addDownloadedBytes(long bytes);
 }

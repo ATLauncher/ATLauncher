@@ -18,5 +18,5 @@
 package com.atlauncher.evnt.listener;
 
 public interface ThemeListener {
-    public void onThemeChange();
+    void onThemeChange();
 }

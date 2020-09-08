@@ -142,7 +142,7 @@ public class ServerListPing17 {
         byte[] in = new byte[length];
         dataInputStream.readFully(in); // read json string
         String json = new String(in);
-        StatusResponse response = null;
+        StatusResponse response;
         try {
             response = gson.fromJson(json, StatusResponseOld.class);
         } catch (JsonSyntaxException jse) {
@@ -185,17 +185,17 @@ public class ServerListPing17 {
     }
 
     public interface StatusResponse {
-        public String getDescription();
+        String getDescription();
 
-        public Players getPlayers();
+        Players getPlayers();
 
-        public Version getVersion();
+        Version getVersion();
 
-        public String getFavicon();
+        String getFavicon();
 
-        public int getTime();
+        int getTime();
 
-        public void setTime(int time);
+        void setTime(int time);
     }
 
     public static class StatusResponseOld implements StatusResponse {

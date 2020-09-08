@@ -148,8 +148,8 @@ launch4j {
     jreMinVersion = '1.7.111'
     mainClassName = 'com.atlauncher.App'
     icon = "${projectDir}/src/main/resources/assets/image/Icon.ico"
-    initialHeapPercent = 5;
-    maxHeapPercent = 100;
+    initialHeapPercent = 5
+    maxHeapPercent = 100
     jvmOptions = [
         "-Djna.nosys=true"
     ]

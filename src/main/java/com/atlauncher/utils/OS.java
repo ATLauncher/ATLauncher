@@ -264,12 +264,9 @@ public enum OS {
 
         // get newest 64 bit if installed
         Optional<JavaInfo> java64bit = validVersions.stream().filter(javaInfo -> javaInfo.is64bits).findFirst();
-        if (java64bit.isPresent()) {
-            return java64bit.get();
-        }
+        return java64bit.orElseGet(() -> validVersions.get(0));
 
         // default to the first java installed
-        return validVersions.get(0);
     }
 
     /**
@@ -310,7 +307,7 @@ public enum OS {
      */
     public static int getSystemRamViaBean() {
         PerformanceManager.start();
-        long ramm = 0;
+        long ramm;
         int ram = 0;
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         try {
@@ -337,7 +334,7 @@ public enum OS {
     public static int getSystemRamViaTool() {
         PerformanceManager.start();
 
-        int ram = 0;
+        int ram;
 
         try {
             SystemInfo systemInfo = getSystemInfo();

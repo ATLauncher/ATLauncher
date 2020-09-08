@@ -191,7 +191,7 @@ public class Utils {
      * @return the string
      */
     public static String uploadPaste(String title, String log) {
-        String line = "";
+        String line;
         String result = "";
         try {
             String urlParameters = "";
@@ -414,7 +414,7 @@ public class Utils {
      */
     public static void unzip(File in, File out, ExtractRule extractRule) {
         try {
-            ZipFile zipFile = null;
+            ZipFile zipFile;
             if (!out.exists()) {
                 out.mkdirs();
             }
@@ -438,7 +438,7 @@ public class Utils {
                 if (!entry.isDirectory() && !entry.getName().equals(".minecraft")) {
                     BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
                     int b;
-                    byte buffer[] = new byte[1024];
+                    byte[] buffer = new byte[1024];
                     FileOutputStream fos = new FileOutputStream(destinationFilePath);
                     BufferedOutputStream bos = new BufferedOutputStream(fos, 1024);
                     while ((b = bis.read(buffer, 0, 1024)) != -1) {
@@ -489,7 +489,7 @@ public class Utils {
         if (file.getParent() == null) {
             canon = file;
         } else {
-            File canonDir = null;
+            File canonDir;
 
             try {
                 canonDir = file.getParentFile().getCanonicalFile();
@@ -739,7 +739,7 @@ public class Utils {
      */
     public static String sendPostData(String urll, String text, String key) throws IOException {
         String write = URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8");
-        StringBuilder response = null;
+        StringBuilder response;
         URL url = new URL(urll);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -774,7 +774,7 @@ public class Utils {
     }
 
     public static String sendAPICall(String path, Object data) throws IOException {
-        StringBuilder response = null;
+        StringBuilder response;
 
         byte[] contents = Gsons.DEFAULT.toJson(data).getBytes();
 
@@ -813,7 +813,7 @@ public class Utils {
     }
 
     public static String sendGetAPICall(String path) throws IOException {
-        StringBuilder response = null;
+        StringBuilder response;
 
         URL url = new URL(Constants.API_BASE_URL + path);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -921,7 +921,7 @@ public class Utils {
      *         which is of {@link OpenEyeReportResponse} type
      */
     public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
-        StringBuilder response = null;
+        StringBuilder response;
         String request = Utils.getFileContents(report);
         if (request == null) {
             LogManager.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath() + "'. Pending "
@@ -1119,7 +1119,7 @@ public class Utils {
                 traceRoute = Runtime.getRuntime().exec("ping -c 10 " + address.getHostAddress());
             }
 
-            BufferedReader reader = null;
+            BufferedReader reader;
             reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream()));
 
             response = new StringBuilder();
@@ -1151,7 +1151,7 @@ public class Utils {
                 traceRoute = Runtime.getRuntime().exec("traceroute " + address.getHostAddress());
             }
 
-            BufferedReader reader = null;
+            BufferedReader reader;
             reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream()));
 
             response = new StringBuilder();
@@ -1305,7 +1305,7 @@ public class Utils {
             fos = new FileOutputStream(output);
 
             final byte[] buffer = new byte[8192];
-            int n = 0;
+            int n;
             while (-1 != (n = lis.read(buffer))) {
                 fos.write(buffer, 0, n);
             }
@@ -1333,15 +1333,15 @@ public class Utils {
     }
 
     public static void unXZFile(File input, File output) throws IOException {
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        XZInputStream xzis = null;
+        FileInputStream fis;
+        FileOutputStream fos;
+        XZInputStream xzis;
         fis = new FileInputStream(input);
         xzis = new XZInputStream(fis);
         fos = new FileOutputStream(output);
 
         final byte[] buffer = new byte[8192];
-        int n = 0;
+        int n;
         while (-1 != (n = xzis.read(buffer))) {
             fos.write(buffer, 0, n);
         }

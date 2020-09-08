@@ -192,7 +192,7 @@ public class DisableableMod implements Serializable {
                                     continue;
                                 }
                                 output.putNextEntry(entry);
-                                byte buffer[] = new byte[1024];
+                                byte[] buffer = new byte[1024];
                                 int amo;
                                 while ((amo = input.read(buffer, 0, 1024)) != -1) {
                                     output.write(buffer, 0, amo);

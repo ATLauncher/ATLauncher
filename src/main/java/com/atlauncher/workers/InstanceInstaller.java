@@ -111,7 +111,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public boolean isReinstall;
     public boolean isServer;
     public boolean instanceIsCorrupt;
-    public boolean saveMods = false;
+    public boolean saveMods;
 
     public final Path root;
     public final Path temp;

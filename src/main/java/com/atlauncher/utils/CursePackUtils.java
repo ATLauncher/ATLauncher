@@ -74,7 +74,7 @@ public class CursePackUtils {
         }
 
         String packSlug = matcher.group(1);
-        Integer projectId = null;
+        Integer projectId;
         Integer fileId = null;
 
         if (matcher.groupCount() == 2 && matcher.group(2) != null) {

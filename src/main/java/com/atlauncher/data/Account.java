@@ -571,7 +571,7 @@ public class Account implements Serializable {
     }
 
     public String getSkinURL() {
-        StringBuilder response = null;
+        StringBuilder response;
         try {
             URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + this.getUUIDNoDashes());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -588,7 +588,7 @@ public class Account implements Serializable {
                 return null;
             }
 
-            BufferedReader reader = null;
+            BufferedReader reader;
             try {
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             } catch (IOException e) {

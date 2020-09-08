@@ -119,14 +119,14 @@ public class Instance implements Cloneable {
     /**
      * If this version allows Curse mod integration.
      */
-    private Boolean enableCurseIntegration = false;
+    private Boolean enableCurseIntegration;
 
     /**
      * If this version allows editing mods.
      */
-    private Boolean enableEditingMods = true;
+    private Boolean enableEditingMods;
 
-    private Boolean assetsMapToResources = false;
+    private Boolean assetsMapToResources;
 
     /**
      * The loader version chosen to be installed for this instance.
@@ -136,13 +136,13 @@ public class Instance implements Cloneable {
     /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
      */
-    private int memory = 0;
+    private int memory;
 
     /**
      * The minimum PermGen/MetaSpace recommended for this Instance by the pack
      * developer/s.
      */
-    private int permgen = 0;
+    private int permgen;
 
     /**
      * Array of paths for the libraries needed to be loaded.
@@ -166,39 +166,39 @@ public class Instance implements Cloneable {
      * The extra arguments to be added to the command when launching Minecraft.
      * Generally involves things such as the tweakClass/s for Forge.
      */
-    private String extraArguments = null;
+    private String extraArguments;
 
     /**
      * The arguments required by Minecraft to be added to the command when launching
      * Minecraft. Generally involves thing such as handling of authentication,
      * assets paths etc.
      */
-    private String minecraftArguments = null;
+    private String minecraftArguments;
 
     /**
      * The main class to be run when launching Minecraft.
      */
-    private String mainClass = null;
+    private String mainClass;
 
     /**
      * The version of assets used by this Minecraft instance.
      */
-    private String assets = null;
+    private String assets;
 
     /**
      * The logging client used for Minecraft.
      */
-    private LoggingClient logging = null;
+    private LoggingClient logging;
 
     /**
      * If this instance has been converted or not from the old format.
      */
-    private boolean isConverted = false;
+    private boolean isConverted;
 
     /**
      * If this instance uses the new format for libraries.
      */
-    private boolean usesNewLibraries = false;
+    private boolean usesNewLibraries;
 
     /**
      * The data version.

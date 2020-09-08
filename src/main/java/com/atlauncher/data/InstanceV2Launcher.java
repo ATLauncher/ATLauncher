@@ -27,10 +27,8 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
 @Json
 public class InstanceV2Launcher {
-    @SuppressWarnings("unused")
     private String launcher = Constants.LAUNCHER_NAME;
 
-    @SuppressWarnings("unused")
     private String launcherVersion = Constants.VERSION.toString();
 
     public String name;

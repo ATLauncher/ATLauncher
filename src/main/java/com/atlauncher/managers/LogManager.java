@@ -106,8 +106,8 @@ public final class LogManager {
     }
 
     public static Object[] prepareMessageForMinecraftLog(String text) {
-        LogType type = null; // The log message type
-        String message = null; // The log message
+        LogType type; // The log message type
+        String message; // The log message
 
         if (text.contains("[INFO] [STDERR]")) {
             message = text.substring(text.indexOf("[INFO] [STDERR]"));

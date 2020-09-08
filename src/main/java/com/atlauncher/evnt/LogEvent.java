@@ -87,7 +87,7 @@ public final class LogEvent {
         return "[" + Timestamper.now() + "] [" + this.type.name() + "]" + this.body;
     }
 
-    public static enum LogType {
+    public enum LogType {
         INFO, WARN, ERROR, DEBUG;
 
         public Color color() {

@@ -60,7 +60,7 @@ public class Action {
     }
 
     public void convertMods(InstanceInstaller instanceInstaller) {
-        Mod toAdd = null;
+        Mod toAdd;
         for (String name : this.mod) {
             toAdd = instanceInstaller.allMods.stream().filter(mod -> mod.name.equalsIgnoreCase(name)).findFirst()
                     .orElse(null);

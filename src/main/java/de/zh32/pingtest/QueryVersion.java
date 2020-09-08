@@ -7,5 +7,5 @@
 package de.zh32.pingtest;
 
 public enum QueryVersion {
-    mc18b, mc14, mc16, mc17;
+    mc18b, mc14, mc16, mc17
 }

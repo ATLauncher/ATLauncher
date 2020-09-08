@@ -28,12 +28,12 @@ public final class Caching {
     private Caching() {
     }
 
-    public static interface Cache<K, V> extends Iterable<Map.Entry<K, V>> {
-        public V get(K key);
+    public interface Cache<K, V> extends Iterable<Map.Entry<K, V>> {
+        V get(K key);
 
-        public V put(K key, V value);
+        V put(K key, V value);
 
-        public int size();
+        int size();
     }
 
     public static <K, V> Cache<K, V> newLRU() {

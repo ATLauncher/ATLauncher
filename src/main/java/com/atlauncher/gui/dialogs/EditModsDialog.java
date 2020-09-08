@@ -398,7 +398,7 @@ public class EditModsDialog extends JDialog {
         int eCount = 0;
 
         for (DisableableMod mod : mods) {
-            ModsJCheckBox checkBox = null;
+            ModsJCheckBox checkBox;
             int nameSize = getFontMetrics(App.THEME.getNormalFont()).stringWidth(mod.getName());
 
             checkBox = new ModsJCheckBox(mod, this);

@@ -48,7 +48,6 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      * @param cellHasFocus True if the specified cell has the focus
      * @return A component whose paint() method will render the specified value
      */
-    @SuppressWarnings("rawtypes")
     public Component getListCellRendererComponent(JList list, Account account, int index, boolean isSelected,
             boolean cellHasFocus) {
         if (account == null) {

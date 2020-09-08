@@ -194,7 +194,7 @@ public final class Hashing {
     }
 
     private interface Hasher extends Closeable {
-        public HashCode hash();
+        HashCode hash();
     }
 
     private static final class SHA1Hasher implements Hasher {

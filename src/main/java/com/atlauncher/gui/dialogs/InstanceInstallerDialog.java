@@ -78,7 +78,7 @@ public class InstanceInstallerDialog extends JDialog {
     private int loaderVersionLength = 0;
     private boolean isReinstall = false;
     private boolean isServer = false;
-    private Pack pack = null;
+    private Pack pack;
     private Instance instance = null;
     private InstanceV2 instanceV2 = null;
     private CurseManifest curseManifest = null;

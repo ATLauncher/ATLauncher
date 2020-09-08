@@ -30,7 +30,7 @@ public class PackUsers {
     private List<String> allowedPlayers;
 
     public void addUsers() {
-        Pack pack = null;
+        Pack pack;
         try {
             pack = PackManager.getPackByID(this.pack);
         } catch (InvalidPack e) {

@@ -64,7 +64,7 @@ public class Java {
             try {
                 Process process = processBuilder.start();
                 try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    String line = null;
+                    String line;
                     Pattern p = Pattern.compile("(java|openjdk) version \"([^\"]*)\"");
 
                     while ((line = br.readLine()) != null) {
