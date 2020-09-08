@@ -179,7 +179,7 @@ public class Processor {
             args.add(FileSystem.LIBRARIES.toFile().getAbsolutePath());
         }
 
-        ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[classpath.size()]),
+            ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[classpath.size()]),
                 Processor.class.getClassLoader());
         try {
             LogManager.debug("Running processor");
@@ -191,7 +191,6 @@ public class Processor {
             LogManager.error(
                     "Failed to process processor with jar " + this.jar + " as there was an error invoking the jar");
             instanceInstaller.cancel(true);
-            return;
         }
     }
 

@@ -420,11 +420,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             // the installed list
             if (this.saveMods || (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
                     .equalsIgnoreCase(version.minecraftVersion.version)) {
-                for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null
-                        ? instanceV2.getCustomDisableableMods()
-                        : instance.getCustomDisableableMods())) {
-                    modsInstalled.add(mod);
-                }
+                modsInstalled.addAll((instanceV2 != null
+                    ? instanceV2.getCustomDisableableMods()
+                    : instance.getCustomDisableableMods()));
             }
 
             // user choosing to not save mods and Minecraft version changed, so delete
@@ -610,13 +608,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             } else if (this.packVersion.mainClass.depends != null) {
                 String depends = this.packVersion.mainClass.depends;
 
-                if (this.selectedMods.stream().filter(mod -> mod.name.equalsIgnoreCase(depends)).count() != 0) {
+                if (this.selectedMods.stream().anyMatch(mod -> mod.name.equalsIgnoreCase(depends))) {
                     this.mainClass = this.packVersion.mainClass.mainClass;
                 }
             } else if (this.packVersion.getMainClass().hasDependsGroup()) {
                 String dependsGroup = this.packVersion.mainClass.dependsGroup;
 
-                if (this.selectedMods.stream().filter(mod -> mod.group.equalsIgnoreCase(dependsGroup)).count() != 0) {
+                if (this.selectedMods.stream().anyMatch(mod -> mod.group.equalsIgnoreCase(dependsGroup))) {
                     this.mainClass = this.packVersion.mainClass.mainClass;
                 }
             }
@@ -665,13 +663,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             } else if (this.packVersion.extraArguments.depends == null) {
                 String depends = this.packVersion.extraArguments.depends;
 
-                if (this.selectedMods.stream().filter(mod -> mod.name.equalsIgnoreCase(depends)).count() != 0) {
+                if (this.selectedMods.stream().anyMatch(mod -> mod.name.equalsIgnoreCase(depends))) {
                     add = true;
                 }
             } else if (this.packVersion.extraArguments.dependsGroup == null) {
                 String dependsGroup = this.packVersion.extraArguments.dependsGroup;
 
-                if (this.selectedMods.stream().filter(mod -> mod.group.equalsIgnoreCase(dependsGroup)).count() != 0) {
+                if (this.selectedMods.stream().anyMatch(mod -> mod.group.equalsIgnoreCase(dependsGroup))) {
                     add = true;
                 }
             }
@@ -883,12 +881,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             if (library.depends != null) {
-                if (this.selectedMods.stream().filter(mod -> mod.name.equalsIgnoreCase(library.depends)).count() == 0) {
+                if (this.selectedMods.stream().noneMatch(mod -> mod.name.equalsIgnoreCase(library.depends))) {
                     continue;
                 }
             } else if (library.hasDependsGroup()) {
-                if (this.selectedMods.stream().filter(mod -> mod.group.equalsIgnoreCase(library.dependsGroup))
-                        .count() == 0) {
+                if (this.selectedMods.stream().noneMatch(mod -> mod.group.equalsIgnoreCase(library.dependsGroup))) {
                     continue;
                 }
             }

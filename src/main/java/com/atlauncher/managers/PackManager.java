@@ -298,9 +298,7 @@ public class PackManager {
         PerformanceManager.start();
         File[] files = FileSystem.IMAGES.toFile().listFiles();
 
-        Set<String> packImageFilenames = new HashSet<>();
-        packImageFilenames.addAll(
-                Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
+        Set<String> packImageFilenames = new HashSet<>(Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
         packImageFilenames.add("defaultimage.png");
 
         if (files != null) {

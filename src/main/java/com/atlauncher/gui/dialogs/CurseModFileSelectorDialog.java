@@ -215,14 +215,10 @@ public class CurseModFileSelectorDialog extends JDialog {
                 // check to see which required ones we don't already have
                 List<CurseFileDependency> dependencies = selectedFile.dependencies.stream()
                         .filter(dependency -> dependency.isRequired() && (instanceV2 != null
-                                ? instanceV2.launcher.mods.stream()
-                                        .filter(installedMod -> installedMod.isFromCurse()
-                                                && installedMod.getCurseModId() == dependency.addonId)
-                                        .count() == 0
-                                : instance.getInstalledMods().stream()
-                                        .filter(installedMod -> installedMod.isFromCurse()
-                                                && installedMod.getCurseModId() == dependency.addonId)
-                                        .count() == 0))
+                                ? instanceV2.launcher.mods.stream().noneMatch(installedMod -> installedMod.isFromCurse()
+                            && installedMod.getCurseModId() == dependency.addonId)
+                                : instance.getInstalledMods().stream().noneMatch(installedMod -> installedMod.isFromCurse()
+                            && installedMod.getCurseModId() == dependency.addonId)))
                         .collect(Collectors.toList());
 
                 if (dependencies.size() != 0) {

@@ -33,9 +33,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -174,7 +172,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             packVersion.hasLoader = true;
 
-            pack.versions = Arrays.asList(packVersion);
+            pack.versions = Collections.singletonList(packVersion);
 
             isReinstall = false;
 

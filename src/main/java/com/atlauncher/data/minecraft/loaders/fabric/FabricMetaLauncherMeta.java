@@ -45,9 +45,8 @@ public class FabricMetaLauncherMeta {
     }
 
     public List<FabricLibrary> getLibraries(boolean isServer) {
-        List<FabricLibrary> libraries = new ArrayList<>();
 
-        libraries.addAll(this.libraries.get("common"));
+        List<FabricLibrary> libraries = new ArrayList<>(this.libraries.get("common"));
 
         if (isServer) {
             libraries.addAll(this.libraries.get("server"));

@@ -27,10 +27,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -645,9 +642,7 @@ public class Instance implements Cloneable {
             this.libraries = new ArrayList<>();
 
             if (this.librariesNeeded != null) {
-                for (String filePath : this.librariesNeeded.split(",")) {
-                    this.libraries.add(filePath);
-                }
+                this.libraries.addAll(Arrays.asList(this.librariesNeeded.split(",")));
             }
 
             this.dataVersion = 2;

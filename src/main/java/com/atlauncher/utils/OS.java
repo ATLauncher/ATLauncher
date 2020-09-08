@@ -529,9 +529,7 @@ public enum OS {
         }
 
         if (args != null) {
-            for (String arg : args) {
-                arguments.add(arg);
-            }
+            arguments.addAll(args);
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder();

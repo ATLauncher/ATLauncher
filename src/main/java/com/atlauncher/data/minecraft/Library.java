@@ -34,7 +34,7 @@ public class Library {
             return true; // No rules setup so we need it
         }
 
-        if (this.rules.stream().filter(Rule::applies).count() == 0) {
+        if (this.rules.stream().noneMatch(Rule::applies)) {
             return false; // No rules apply to us, so we don't need this
         }
 

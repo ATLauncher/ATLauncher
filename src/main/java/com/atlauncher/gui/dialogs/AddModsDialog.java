@@ -158,8 +158,7 @@ public final class AddModsDialog extends JDialog {
                 new CurseModFileSelectorDialog(mod, instance);
             }
 
-            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
-                    .filter(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID).count() != 0) {
+            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream().anyMatch(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
                 fabricApiWarningLabel.setVisible(false);
                 installFabricApiButton.setVisible(false);
             }
@@ -169,9 +168,7 @@ public final class AddModsDialog extends JDialog {
                 : this.instance.getLoaderVersion());
 
         if (loaderVersion != null && loaderVersion.isFabric()
-                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
-                        .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
-                        .count() == 0) {
+                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream().noneMatch(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
