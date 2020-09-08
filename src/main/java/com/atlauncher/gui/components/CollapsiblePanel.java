@@ -421,23 +421,19 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
 
             switch (titlePosition) {
                 case ABOVE_TOP:
+                case BELOW_TOP:
                     insets.top += compHeight + TEXT_SPACING;
                     break;
                 case TOP:
                 case DEFAULT_POSITION:
                     insets.top += Math.max(compHeight, borderInsets.top) - borderInsets.top;
                     break;
-                case BELOW_TOP:
-                    insets.top += compHeight + TEXT_SPACING;
-                    break;
                 case ABOVE_BOTTOM:
+                case BELOW_BOTTOM:
                     insets.bottom += compHeight + TEXT_SPACING;
                     break;
                 case BOTTOM:
                     insets.bottom += Math.max(compHeight, borderInsets.bottom) - borderInsets.bottom;
-                    break;
-                case BELOW_BOTTOM:
-                    insets.bottom += compHeight + TEXT_SPACING;
                     break;
             }
             return insets;

@@ -174,9 +174,7 @@ public class InstanceManager {
                 }
             } else {
                 // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().remove(instance.getName());
-                }
+                AccountManager.getSelectedAccount().getCollapsedInstances().remove(instance.getName());
             }
             AccountManager.saveAccounts();
             App.launcher.reloadInstancesPanel();
@@ -192,9 +190,7 @@ public class InstanceManager {
                 }
             } else {
                 // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().remove(instanceV2.launcher.name);
-                }
+                AccountManager.getSelectedAccount().getCollapsedInstances().remove(instanceV2.launcher.name);
             }
             AccountManager.saveAccounts();
             App.launcher.reloadInstancesPanel();

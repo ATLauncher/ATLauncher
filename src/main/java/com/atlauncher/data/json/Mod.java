@@ -493,7 +493,7 @@ public class Mod {
         }
         if (hasMD5()) {
             if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
-                return; // MD5 hash matches
+                // MD5 hash matches
             } else {
                 if (attempt < 5) {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
@@ -504,7 +504,7 @@ public class Mod {
                 }
             }
         } else {
-            return; // No MD5, but file is there, can only assume it's fine
+            // No MD5, but file is there, can only assume it's fine
         }
     }
 
@@ -623,7 +623,7 @@ public class Mod {
         }
         if (hasServerMD5()) {
             if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
-                return; // MD5 hash matches
+                // MD5 hash matches
             } else {
                 if (attempt < 5) {
                     Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
@@ -634,7 +634,7 @@ public class Mod {
                 }
             }
         } else {
-            return; // No MD5, but file is there, can only assume it's fine
+            // No MD5, but file is there, can only assume it's fine
         }
     }
 

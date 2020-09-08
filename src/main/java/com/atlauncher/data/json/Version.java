@@ -344,7 +344,7 @@ public class Version {
             return null;
         }
         String colour = this.colours.get(key);
-        if (colour.substring(0, 1).equals("#")) {
+        if (colour.charAt(0) == '#') {
             colour = colour.replace("#", "");
         }
         if (!colour.matches("[0-9A-Fa-f]{6}")) {

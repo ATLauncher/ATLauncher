@@ -133,9 +133,7 @@ public class PackManager {
                 }
             } else {
                 // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedPacks().remove(pack.getName());
-                }
+                AccountManager.getSelectedAccount().getCollapsedPacks().remove(pack.getName());
             }
             AccountManager.saveAccounts();
             App.launcher.reloadVanillaPacksPanel();

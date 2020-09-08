@@ -354,7 +354,6 @@ public class EditModsDialog extends JDialog {
 
                 reloadPanels();
 
-                return;
             });
             bottomPanel.add(addCurseModButton);
 

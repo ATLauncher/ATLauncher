@@ -119,8 +119,8 @@ public class Forge113Loader extends ForgeLoader {
 
         if (forgeLibrary != null) {
             return forgeLibrary.downloads.artifact.path.substring(
-                    forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1,
-                    forgeLibrary.downloads.artifact.path.length());
+                    forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1
+            );
         }
 
         return null;

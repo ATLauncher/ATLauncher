@@ -444,11 +444,7 @@ public enum OS {
     public static int getMaximumRam() {
         int maxRam = getSystemRam();
         if (!is64Bit()) {
-            if (maxRam < 1024) {
-                return maxRam;
-            } else {
-                return 1024;
-            }
+            return Math.min(maxRam, 1024);
         } else {
             return maxRam;
         }

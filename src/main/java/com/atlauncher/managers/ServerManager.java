@@ -80,9 +80,7 @@ public class ServerManager {
                 }
             } else {
                 // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedServers().remove(server.name);
-                }
+                AccountManager.getSelectedAccount().getCollapsedServers().remove(server.name);
             }
             AccountManager.saveAccounts();
             App.launcher.reloadServersPanel();

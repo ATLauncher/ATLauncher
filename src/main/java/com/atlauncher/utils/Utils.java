@@ -1409,10 +1409,10 @@ public class Utils {
                 Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
 
                 while (e.hasMoreElements()) {
-                    NetworkInterface n = (NetworkInterface) e.nextElement();
+                    NetworkInterface n = e.nextElement();
                     Enumeration<InetAddress> ee = n.getInetAddresses();
                     while (ee.hasMoreElements()) {
-                        InetAddress i = (InetAddress) ee.nextElement();
+                        InetAddress i = ee.nextElement();
                         if (!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
                             ip = i;
                         }
@@ -1450,12 +1450,12 @@ public class Utils {
         String classifier = "";
 
         if (version.indexOf('@') != -1) {
-            extension = version.substring(version.indexOf('@') + 1, version.length());
+            extension = version.substring(version.indexOf('@') + 1);
             version = version.substring(0, version.indexOf('@'));
         }
 
         if (version.indexOf(':') != -1) {
-            classifier = "-" + version.substring(version.indexOf(':') + 1, version.length());
+            classifier = "-" + version.substring(version.indexOf(':') + 1);
             version = version.substring(0, version.indexOf(':'));
         }
 

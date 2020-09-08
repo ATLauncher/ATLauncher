@@ -84,9 +84,9 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
                     object.add("rules", Gsons.MINECRAFT.toJsonTree(arg.rules));
 
                     if (arg.value instanceof String) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((String) arg.value));
+                        object.add("value", Gsons.MINECRAFT.toJsonTree(arg.value));
                     } else if (arg.value instanceof List) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((List<String>) arg.value));
+                        object.add("value", Gsons.MINECRAFT.toJsonTree(arg.value));
                     }
 
                     gameArguments.add(object);
@@ -108,9 +108,9 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
                     object.add("rules", Gsons.MINECRAFT.toJsonTree(arg.rules));
 
                     if (arg.value instanceof String) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((String) arg.value));
+                        object.add("value", Gsons.MINECRAFT.toJsonTree(arg.value));
                     } else if (arg.value instanceof List) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((List<String>) arg.value));
+                        object.add("value", Gsons.MINECRAFT.toJsonTree(arg.value));
                     }
 
                     jvmArguments.add(object);
