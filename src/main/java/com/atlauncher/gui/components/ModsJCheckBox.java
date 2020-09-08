@@ -49,9 +49,9 @@ public class ModsJCheckBox extends JCheckBox {
      * The mod this object will use to display it's data. Will be type {@link Mod},
      * {@link com.atlauncher.data.json.Mod} or {@link DisableableMod}.
      */
-    private Object mod;
+    private final Object mod;
 
-    private EditModsDialog dialog;
+    private final EditModsDialog dialog;
 
     /**
      * Constructor for use in the {@link ModsChooser} dialog with new JSON format.

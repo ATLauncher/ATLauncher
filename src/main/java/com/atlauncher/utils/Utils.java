@@ -48,6 +48,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -945,7 +946,7 @@ public class Utils {
             connection.setDoOutput(true);
 
             DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-            writer.write(request.getBytes(Charset.forName("UTF-8")));
+            writer.write(request.getBytes(StandardCharsets.UTF_8));
             writer.flush();
             writer.close();
         } catch (IOException e) {

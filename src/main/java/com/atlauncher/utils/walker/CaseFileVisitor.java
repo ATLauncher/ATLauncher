@@ -30,8 +30,8 @@ import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.FileUtils;
 
 public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
-    private CaseType caseType;
-    private List<Mod> mods;
+    private final CaseType caseType;
+    private final List<Mod> mods;
 
     public CaseFileVisitor(CaseType caseType, List<Mod> mods) {
         this.caseType = caseType;

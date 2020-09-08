@@ -47,19 +47,16 @@ import org.mini2Dx.gettext.GetText;
 
 public class SetupDialog extends JDialog implements RelocalizationListener {
     private static final long serialVersionUID = -2931970914611329658L;
-    private JPanel top;
-    private JPanel middle;
-    private JPanel bottom;
 
-    private JLabel setupLabel;
+    private final JLabel setupLabel;
 
-    private JLabel languageLabel;
-    private JComboBox<String> language;
+    private final JLabel languageLabel;
+    private final JComboBox<String> language;
 
-    private JLabel enableAnalyticsLabel;
-    private JCheckBox enableAnalytics;
+    private final JLabel enableAnalyticsLabel;
+    private final JCheckBox enableAnalytics;
 
-    private JButton saveButton;
+    private final JButton saveButton;
 
     public SetupDialog() {
         // #. {0} is the name of the launcher (ATLauncher)
@@ -73,14 +70,14 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         setResizable(false);
 
         // Top Panel Stuff
-        top = new JPanel();
+        JPanel top = new JPanel();
 
         // #. {0} is the name of the launcher (ATLauncher)
         setupLabel = new JLabel(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
         top.add(setupLabel);
 
         // Middle Panel Stuff
-        middle = new JPanel();
+        JPanel middle = new JPanel();
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -118,7 +115,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         middle.add(enableAnalytics, gbc);
 
         // Bottom Panel Stuff
-        bottom = new JPanel();
+        JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {

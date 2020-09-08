@@ -24,7 +24,7 @@ import java.util.Map;
 
 public final class PerformanceManager {
 
-    private static Map<String, Instant> times = new HashMap<>();
+    private static final Map<String, Instant> times = new HashMap<>();
 
     public static void start() {
         start(new Throwable().getStackTrace()[1].getMethodName());

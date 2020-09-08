@@ -27,9 +27,9 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
 @Json
 public class InstanceV2Launcher {
-    private String launcher = Constants.LAUNCHER_NAME;
+    private final String launcher = Constants.LAUNCHER_NAME;
 
-    private String launcherVersion = Constants.VERSION.toString();
+    private final String launcherVersion = Constants.VERSION.toString();
 
     public String name;
     public String pack;

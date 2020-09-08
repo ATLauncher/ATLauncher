@@ -70,14 +70,13 @@ public class EditModsDialog extends JDialog {
     public Instance instance;
     public InstanceV2 instanceV2;
 
-    private JPanel bottomPanel;
     private JList<ModsJCheckBox> disabledModsPanel, enabledModsPanel;
-    private JSplitPane split, labelsTop, labels, modsInPack;
-    private JScrollPane scroller1, scroller2;
-    private JButton addButton, addCurseModButton, checkForUpdatesButton, reinstallButton, enableButton, disableButton,
-            removeButton, closeButton;
+    private JButton checkForUpdatesButton;
+    private JButton reinstallButton;
+    private JButton enableButton;
+    private JButton disableButton;
+    private JButton removeButton;
     private JCheckBox selectAllEnabledModsCheckbox, selectAllDisabledModsCheckbox;
-    private JLabel topLabelLeft, topLabelRight;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
     public EditModsDialog(Instance instance) {
@@ -131,19 +130,19 @@ public class EditModsDialog extends JDialog {
     private void setupComponents() {
         Analytics.sendScreenView("Edit Mods Dialog");
 
-        split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setDividerSize(0);
         split.setBorder(null);
         split.setEnabled(false);
         add(split, BorderLayout.NORTH);
 
-        labelsTop = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        JSplitPane labelsTop = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         labelsTop.setDividerSize(0);
         labelsTop.setBorder(null);
         labelsTop.setEnabled(false);
         split.setLeftComponent(labelsTop);
 
-        labels = new JSplitPane();
+        JSplitPane labels = new JSplitPane();
         labels.setDividerLocation(275);
         labels.setDividerSize(0);
         labels.setBorder(null);
@@ -152,7 +151,7 @@ public class EditModsDialog extends JDialog {
 
         JPanel topLeftPanel = new JPanel(new FlowLayout());
 
-        topLabelLeft = new JLabel(GetText.tr("Enabled Mods"));
+        JLabel topLabelLeft = new JLabel(GetText.tr("Enabled Mods"));
         topLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
         topLeftPanel.add(topLabelLeft);
 
@@ -168,7 +167,7 @@ public class EditModsDialog extends JDialog {
 
         JPanel topRightPanel = new JPanel(new FlowLayout());
 
-        topLabelRight = new JLabel(GetText.tr("Disabled Mods"));
+        JLabel topLabelRight = new JLabel(GetText.tr("Disabled Mods"));
         topLabelRight.setHorizontalAlignment(SwingConstants.CENTER);
         topRightPanel.add(topLabelRight);
 
@@ -182,7 +181,7 @@ public class EditModsDialog extends JDialog {
 
         labels.setRightComponent(topRightPanel);
 
-        modsInPack = new JSplitPane();
+        JSplitPane modsInPack = new JSplitPane();
         modsInPack.setDividerLocation(275);
         modsInPack.setDividerSize(0);
         modsInPack.setBorder(null);
@@ -195,8 +194,8 @@ public class EditModsDialog extends JDialog {
         disabledModsPanel.setDragEnabled(true);
         disabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, true));
 
-        scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
@@ -207,16 +206,16 @@ public class EditModsDialog extends JDialog {
         enabledModsPanel.setDragEnabled(true);
         enabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, false));
 
-        scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
 
-        bottomPanel = new JPanel(new WrapLayout());
+        JPanel bottomPanel = new JPanel(new WrapLayout());
         add(bottomPanel, BorderLayout.SOUTH);
 
-        addButton = new JButton(GetText.tr("Add Mod"));
+        JButton addButton = new JButton(GetText.tr("Add Mod"));
         addButton.addActionListener(e -> {
             boolean usesCoreMods = false;
             try {
@@ -342,7 +341,7 @@ public class EditModsDialog extends JDialog {
 
         if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
                 : this.instance.hasEnabledCurseIntegration()) {
-            addCurseModButton = new JButton(GetText.tr("Add Curse Mod"));
+            JButton addCurseModButton = new JButton(GetText.tr("Add Curse Mod"));
             addCurseModButton.addActionListener(e -> {
                 if (instanceV2 != null) {
                     new AddModsDialog(instanceV2);
@@ -383,7 +382,7 @@ public class EditModsDialog extends JDialog {
         removeButton.setEnabled(false);
         bottomPanel.add(removeButton);
 
-        closeButton = new JButton(GetText.tr("Close"));
+        JButton closeButton = new JButton(GetText.tr("Close"));
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
     }

@@ -24,8 +24,8 @@ import com.atlauncher.utils.Utils;
 
 @Json
 public class Data {
-    private String client;
-    private String server;
+    private final String client;
+    private final String server;
 
     public Data(String client, String server) {
         this.client = client;

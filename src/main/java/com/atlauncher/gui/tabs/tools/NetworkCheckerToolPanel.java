@@ -43,11 +43,6 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
-    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-            .text(GetText
-                    .tr("This tool does various tests on your network and determines any issues that may pop up with "
-                            + "connecting to our file servers and to other servers."))
-            .build());
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
@@ -56,6 +51,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     public NetworkCheckerToolPanel() {
         super(GetText.tr("Network Checker"));
 
+        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
+            .text(GetText
+                .tr("This tool does various tests on your network and determines any issues that may pop up with "
+                    + "connecting to our file servers and to other servers."))
+            .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);

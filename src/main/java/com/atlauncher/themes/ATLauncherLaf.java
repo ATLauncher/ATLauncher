@@ -35,10 +35,10 @@ import com.formdev.flatlaf.FlatLightLaf;
 public class ATLauncherLaf extends FlatLaf {
     public static ATLauncherLaf instance;
 
-    private String defaultFontName = "OpenSans-Regular";
-    private String defaultBoldFontName = "OpenSans-Bold";
-    private String consoleFontName = "OpenSans-Regular";
-    private String tabFontName = "Oswald-Regular";
+    private final String defaultFontName = "OpenSans-Regular";
+    private final String defaultBoldFontName = "OpenSans-Bold";
+    private final String consoleFontName = "OpenSans-Regular";
+    private final String tabFontName = "Oswald-Regular";
 
     public static boolean install() {
         instance = new ATLauncherLaf();

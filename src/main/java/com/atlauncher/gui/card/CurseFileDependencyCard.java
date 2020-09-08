@@ -41,7 +41,7 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class CurseFileDependencyCard extends JPanel {
-    private CurseFileDependency dependency;
+    private final CurseFileDependency dependency;
     private Instance instance;
     private InstanceV2 instanceV2;
 

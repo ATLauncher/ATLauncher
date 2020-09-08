@@ -55,17 +55,12 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class AddCursePackDialog extends JDialog {
-    private JPanel middle;
-    private JPanel bottom;
 
-    private JLabel urlLabel;
-    private JTextField url;
+    private final JTextField url;
 
-    private JLabel zipLabel;
-    private JTextField zipPath;
-    private JButton zipBrowseButton;
+    private final JTextField zipPath;
 
-    private JButton addButton;
+    private final JButton addButton;
 
     public AddCursePackDialog() {
         super(App.launcher.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
@@ -79,7 +74,7 @@ public class AddCursePackDialog extends JDialog {
         Analytics.sendScreenView("Add Curse Pack Dialog");
 
         // Middle Panel Stuff
-        middle = new JPanel();
+        JPanel middle = new JPanel();
         middle.setLayout(new BorderLayout());
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center()
@@ -93,7 +88,7 @@ public class AddCursePackDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        urlLabel = new JLabel(GetText.tr("CurseForge Url") + ": ");
+        JLabel urlLabel = new JLabel(GetText.tr("CurseForge Url") + ": ");
         mainPanel.add(urlLabel, gbc);
 
         gbc.gridx++;
@@ -123,7 +118,7 @@ public class AddCursePackDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        zipLabel = new JLabel(GetText.tr("CurseForge Zip") + ": ");
+        JLabel zipLabel = new JLabel(GetText.tr("CurseForge Zip") + ": ");
         zipLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(zipLabel, gbc);
 
@@ -134,7 +129,7 @@ public class AddCursePackDialog extends JDialog {
         zipPath.setEnabled(false);
         zipPathPanel.add(zipPath);
 
-        zipBrowseButton = new JButton(GetText.tr("Browse"));
+        JButton zipBrowseButton = new JButton(GetText.tr("Browse"));
         zipBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(FileSystem.USER_DOWNLOADS.toFile());
@@ -169,7 +164,7 @@ public class AddCursePackDialog extends JDialog {
         middle.add(mainPanel, BorderLayout.CENTER);
 
         // Bottom Panel Stuff
-        bottom = new JPanel();
+        JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         addButton = new JButton(GetText.tr("Add"));
         addButton.addActionListener(e -> {

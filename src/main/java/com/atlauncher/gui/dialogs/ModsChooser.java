@@ -52,11 +52,11 @@ import io.github.asyncronous.toast.Toaster;
 
 public class ModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
-    private InstanceInstaller installer;
-    private JButton useShareCode;
-    private JButton selectAllButton;
-    private JButton clearAllButton;
-    private JButton installButton;
+    private final InstanceInstaller installer;
+    private final JButton useShareCode;
+    private final JButton selectAllButton;
+    private final JButton clearAllButton;
+    private final JButton installButton;
     private List<ModsJCheckBox> modCheckboxes;
     private List<ModsJCheckBox> sortedOut;
 

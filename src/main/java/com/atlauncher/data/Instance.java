@@ -78,7 +78,7 @@ public class Instance implements Cloneable {
     /**
      * The name of the Pack this instance is for.
      */
-    private String pack;
+    private final String pack;
 
     /**
      * The username of the user who installed this if it's set to be for that user
@@ -160,7 +160,7 @@ public class Instance implements Cloneable {
      *
      * @deprecated
      */
-    private String librariesNeeded = null;
+    private final String librariesNeeded = null;
 
     /**
      * The extra arguments to be added to the command when launching Minecraft.

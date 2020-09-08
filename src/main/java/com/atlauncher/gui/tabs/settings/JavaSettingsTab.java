@@ -54,37 +54,32 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener, SettingsListener {
-    private JLabelWithHover initialMemoryLabel;
-    private JSpinner initialMemory;
-    private JLabelWithHover initialMemoryLabelWarning;
+    private final JLabelWithHover initialMemoryLabel;
+    private final JSpinner initialMemory;
+    private final JLabelWithHover initialMemoryLabelWarning;
 
-    private JPanel initialMemoryPanel;
-    private JLabelWithHover maximumMemoryLabel;
-    private JSpinner maximumMemory;
-    private JPanel maximumMemoryPanel;
+    private final JLabelWithHover maximumMemoryLabel;
+    private final JSpinner maximumMemory;
 
-    private JLabelWithHover permGenLabel;
-    private JSpinner permGen;
+    private final JLabelWithHover permGenLabel;
+    private final JSpinner permGen;
 
-    private JPanel windowSizePanel;
-    private JLabelWithHover windowSizeLabel;
-    private JSpinner widthField;
-    private JSpinner heightField;
-    private JComboBox<String> commonScreenSizes;
-    private JPanel javaPathPanel;
-    private JLabelWithHover javaPathLabel;
+    private final JLabelWithHover windowSizeLabel;
+    private final JSpinner widthField;
+    private final JSpinner heightField;
+    private final JComboBox<String> commonScreenSizes;
+    private final JLabelWithHover javaPathLabel;
     private JTextField javaPath;
-    private JComboBox<JavaInfo> installedJavas;
-    private JButton javaPathResetButton;
-    private JButton javaBrowseButton;
-    private JPanel javaParametersPanel;
-    private JLabelWithHover javaParametersLabel;
-    private JTextArea javaParameters;
-    private JButton javaParametersResetButton;
-    private JLabelWithHover startMinecraftMaximisedLabel;
-    private JCheckBox startMinecraftMaximised;
-    private JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
-    private JCheckBox ignoreJavaOnInstanceLaunch;
+    private final JComboBox<JavaInfo> installedJavas;
+    private final JButton javaPathResetButton;
+    private final JButton javaBrowseButton;
+    private final JLabelWithHover javaParametersLabel;
+    private final JTextArea javaParameters;
+    private final JButton javaParametersResetButton;
+    private final JLabelWithHover startMinecraftMaximisedLabel;
+    private final JCheckBox startMinecraftMaximised;
+    private final JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
+    private final JCheckBox ignoreJavaOnInstanceLaunch;
 
     public JavaSettingsTab() {
         int systemRam = OS.getSystemRam();
@@ -107,7 +102,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                         "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
                         .build());
 
-        initialMemoryPanel = new JPanel();
+        JPanel initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         if (!OS.is64Bit()) {
             initialMemoryPanel.add(initialMemoryLabelWarning);
@@ -138,7 +133,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                         .build());
         add(maximumMemoryLabel, gbc);
 
-        maximumMemoryPanel = new JPanel();
+        JPanel maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         if (!OS.is64Bit()) {
             maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
@@ -192,7 +187,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
-        windowSizePanel = new JPanel();
+        JPanel windowSizePanel = new JPanel();
         windowSizePanel.setLayout(new BoxLayout(windowSizePanel, BoxLayout.X_AXIS));
 
         SpinnerNumberModel widthModel = new SpinnerNumberModel(App.settings.windowWidth, 1, OS.getMaximumWindowWidth(),
@@ -255,7 +250,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        javaPathPanel = new JPanel();
+        JPanel javaPathPanel = new JPanel();
         javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
 
         JPanel javaPathPanelTop = new JPanel();
@@ -325,7 +320,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
-        javaParametersPanel = new JPanel();
+        JPanel javaParametersPanel = new JPanel();
         javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
         javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 

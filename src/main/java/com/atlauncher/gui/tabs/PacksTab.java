@@ -63,12 +63,12 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
     private NilCard nilCard;
-    private boolean isSystem;
-    private boolean isFeatured;
+    private final boolean isSystem;
+    private final boolean isFeatured;
     private boolean loaded = false;
     private int page = 1;
 
-    private List<PackCard> cards = new LinkedList<>();
+    private final List<PackCard> cards = new LinkedList<>();
 
     public PacksTab(boolean isFeatured, boolean isSystem) {
         super(new BorderLayout());

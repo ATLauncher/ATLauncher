@@ -25,7 +25,7 @@ import javax.swing.border.LineBorder;
 
 @SuppressWarnings("serial")
 public class HoverLineBorder extends LineBorder {
-    private int insets;
+    private final int insets;
 
     public HoverLineBorder() {
         super(UIManager.getColor("HoverLineBorder.borderColor"), (int) UIManager.get("HoverLineBorder.borderWidth"));

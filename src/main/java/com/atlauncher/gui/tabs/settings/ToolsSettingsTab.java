@@ -34,10 +34,10 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ToolsSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
-    private JLabelWithHover enableServerCheckerLabel;
-    private JCheckBox enableServerChecker;
+    private final JLabelWithHover enableServerCheckerLabel;
+    private final JCheckBox enableServerChecker;
 
-    private JLabelWithHover serverCheckerWaitLabel;
+    private final JLabelWithHover serverCheckerWaitLabel;
     private JSpinner serverCheckerWait;
 
     public ToolsSettingsTab() {

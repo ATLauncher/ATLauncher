@@ -44,16 +44,13 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {
-    private final Pack pack;
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
-    private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JTextField searchField = new JTextField(16);
     private final List<ModCard> cards = new LinkedList<>();
 
     public ViewModsDialog(Pack pack) {
         // #. {0} is the name of the pack
         super(App.launcher.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.APPLICATION_MODAL);
-        this.pack = pack;
 
         Analytics.sendScreenView("View Mods Dialog");
 
@@ -61,10 +58,11 @@ public final class ViewModsDialog extends JDialog {
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        this.topPanel.add(new JLabel(GetText.tr("Search") + ": "));
-        this.topPanel.add(this.searchField);
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(new JLabel(GetText.tr("Search") + ": "));
+        topPanel.add(this.searchField);
 
-        this.add(this.topPanel, BorderLayout.NORTH);
+        this.add(topPanel, BorderLayout.NORTH);
         this.add(new JScrollPane(this.contentPanel) {
             {
                 this.getVerticalScrollBar().setUnitIncrement(16);
@@ -85,7 +83,7 @@ public final class ViewModsDialog extends JDialog {
             }
         });
 
-        List<Mod> mods = this.pack.getJsonVersion(this.pack.getLatestVersion().version).getMods();
+        List<Mod> mods = pack.getJsonVersion(pack.getLatestVersion().version).getMods();
         mods.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
         for (Mod mod : mods) {

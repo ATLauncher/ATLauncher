@@ -43,7 +43,6 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ServersTab extends JPanel implements Tab, RelocalizationListener {
-    private JPanel topPanel;
     private JButton clearButton;
     private JTextField searchBox;
     private JButton searchButton;
@@ -63,7 +62,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     }
 
     public void loadContent(boolean keepFilters) {
-        topPanel = new JPanel();
+        JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         clearButton = new JButton(GetText.tr("Clear"));

@@ -34,13 +34,12 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ToolsTab extends JPanel implements Tab {
-    private JPanel mainPanel;
 
     public ToolsTab() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
 
         mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
 

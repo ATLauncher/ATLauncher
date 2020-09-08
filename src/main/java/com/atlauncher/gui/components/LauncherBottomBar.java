@@ -45,8 +45,6 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener, AccountListener {
-    private JPanel leftSide;
-    private JPanel middle;
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
@@ -54,9 +52,9 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private JComboBox<Account> username;
 
     public LauncherBottomBar() {
-        leftSide = new JPanel();
+        JPanel leftSide = new JPanel();
         leftSide.setLayout(new GridBagLayout());
-        middle = new JPanel();
+        JPanel middle = new JPanel();
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 

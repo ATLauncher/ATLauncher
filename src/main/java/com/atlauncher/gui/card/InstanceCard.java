@@ -87,10 +87,7 @@ import org.zeroturnaround.zip.ZipUtil;
  */
 @SuppressWarnings("serial")
 public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
-    private final JSplitPane splitter = new JSplitPane();
     private final Instance instance;
-    private final JPanel rightPanel = new JPanel();
-    private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
     private final JButton playButton = new JButton(GetText.tr("Play"));
     private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
@@ -114,17 +111,20 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         super(instance);
         this.instance = instance;
         this.image = new ImagePanel(instance.getImage().getImage());
-        this.splitter.setLeftComponent(this.image);
-        this.splitter.setRightComponent(this.rightPanel);
-        this.splitter.setEnabled(false);
+        JSplitPane splitter = new JSplitPane();
+        splitter.setLeftComponent(this.image);
+        JPanel rightPanel = new JPanel();
+        splitter.setRightComponent(rightPanel);
+        splitter.setEnabled(false);
 
-        this.descArea.setText(instance.getPackDescription());
-        this.descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        this.descArea.setEditable(false);
-        this.descArea.setHighlighter(null);
-        this.descArea.setLineWrap(true);
-        this.descArea.setWrapStyleWord(true);
-        this.descArea.setEditable(false);
+        JTextArea descArea = new JTextArea();
+        descArea.setText(instance.getPackDescription());
+        descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        descArea.setEditable(false);
+        descArea.setHighlighter(null);
+        descArea.setLineWrap(true);
+        descArea.setWrapStyleWord(true);
+        descArea.setEditable(false);
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
@@ -163,14 +163,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.serversButton);
         bottom.add(this.openButton);
 
-        this.rightPanel.setLayout(new BorderLayout());
-        this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
-        this.rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        rightPanel.setLayout(new BorderLayout());
+        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 180));
+        rightPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        this.rightPanel.add(as, BorderLayout.SOUTH);
+        rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
-        this.getContentPane().add(this.splitter, BorderLayout.CENTER);
+        this.getContentPane().add(splitter, BorderLayout.CENTER);
 
         RelocalizationManager.addListener(this);
 

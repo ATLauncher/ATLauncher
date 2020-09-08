@@ -45,14 +45,8 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class RenameInstanceDialog extends JDialog {
-    private JPanel top;
-    private JPanel middle;
-    private JPanel bottom;
 
-    private JLabel instanceNameLabel;
     private JTextField instanceName;
-
-    private JButton saveButton;
 
     private Instance instance;
     private InstanceV2 instanceV2;
@@ -107,11 +101,11 @@ public class RenameInstanceDialog extends JDialog {
 
     private void setupComponents() {
         // Top Panel Stuff
-        top = new JPanel();
+        JPanel top = new JPanel();
         top.add(new JLabel(GetText.tr("Renaming Instance")));
 
         // Middle Panel Stuff
-        middle = new JPanel();
+        JPanel middle = new JPanel();
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -119,7 +113,7 @@ public class RenameInstanceDialog extends JDialog {
         gbc.gridy = 0;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        instanceNameLabel = new JLabel(GetText.tr("Instance Name") + ": ");
+        JLabel instanceNameLabel = new JLabel(GetText.tr("Instance Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
@@ -130,9 +124,9 @@ public class RenameInstanceDialog extends JDialog {
         middle.add(instanceName, gbc);
 
         // Bottom Panel Stuff
-        bottom = new JPanel();
+        JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        saveButton = new JButton(GetText.tr("Save"));
+        JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
             if (InstanceManager.isInstance(instanceName.getText())) {
                 DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))

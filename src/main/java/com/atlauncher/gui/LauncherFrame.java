@@ -57,19 +57,8 @@ import com.atlauncher.utils.Utils;
 @SuppressWarnings("serial")
 public final class LauncherFrame extends JFrame implements RelocalizationListener {
     private JTabbedPane tabbedPane;
-    private NewsTab newsTab;
-    private PacksTab vanillaPacksTab;
-    private PacksTab featuredPacksTab;
-    private PacksTab packsTab;
-    private InstancesTab instancesTab;
-    private ServersTab serversTab;
-    private AccountsTab accountsTab;
-    private ToolsTab toolsTab;
-    private SettingsTab settingsTab;
 
     private List<Tab> tabs;
-
-    private LauncherBottomBar bottomBar;
 
     public LauncherFrame(boolean show) {
         LogManager.info("Launcher opening");
@@ -86,7 +75,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
 
         LogManager.info("Setting up Bottom Bar");
-        bottomBar = new LauncherBottomBar();
+        LauncherBottomBar bottomBar = new LauncherBottomBar();
         LogManager.info("Finished Setting up Bottom Bar");
 
         LogManager.info("Setting up Tabs");
@@ -165,49 +154,49 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
 
         PerformanceManager.start("newsTab");
-        newsTab = new NewsTab();
+        NewsTab newsTab = new NewsTab();
         App.launcher.setNewsPanel(newsTab);
         PerformanceManager.end("newsTab");
 
         PerformanceManager.start("vanillaPacksTab");
-        vanillaPacksTab = new PacksTab(false, true);
+        PacksTab vanillaPacksTab = new PacksTab(false, true);
         App.launcher.setVanillaPacksPanel(vanillaPacksTab);
         PerformanceManager.end("vanillaPacksTab");
 
         PerformanceManager.start("featuredPacksTab");
-        featuredPacksTab = new PacksTab(true, false);
+        PacksTab featuredPacksTab = new PacksTab(true, false);
         App.launcher.setFeaturedPacksPanel(featuredPacksTab);
         PerformanceManager.end("featuredPacksTab");
 
         PerformanceManager.start("packsTab");
-        packsTab = new PacksTab(false, false);
+        PacksTab packsTab = new PacksTab(false, false);
         App.launcher.setPacksPanel(packsTab);
         PerformanceManager.end("packsTab");
 
         PerformanceManager.start("instancesTab");
-        instancesTab = new InstancesTab();
+        InstancesTab instancesTab = new InstancesTab();
         App.launcher.setInstancesPanel(instancesTab);
         PerformanceManager.end("instancesTab");
 
         PerformanceManager.start("serversTab");
-        serversTab = new ServersTab();
+        ServersTab serversTab = new ServersTab();
         App.launcher.setServersPanel(serversTab);
         PerformanceManager.end("serversTab");
 
         PerformanceManager.start("accountsTab");
-        accountsTab = new AccountsTab();
+        AccountsTab accountsTab = new AccountsTab();
         PerformanceManager.end("accountsTab");
 
         PerformanceManager.start("toolsTab");
-        toolsTab = new ToolsTab();
+        ToolsTab toolsTab = new ToolsTab();
         PerformanceManager.end("toolsTab");
 
         PerformanceManager.start("settingsTab");
-        settingsTab = new SettingsTab();
+        SettingsTab settingsTab = new SettingsTab();
         PerformanceManager.end("settingsTab");
 
-        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
-                serversTab, accountsTab, toolsTab, settingsTab });
+        this.tabs = Arrays.asList(new Tab[] {newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
+            serversTab, accountsTab, toolsTab, settingsTab});
 
         tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs) {

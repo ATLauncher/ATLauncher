@@ -55,24 +55,24 @@ public final class AddModsDialog extends JDialog {
     private Instance instance;
     private InstanceV2 instanceV2;
 
-    private JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
-    private JPanel topPanel = new JPanel(new BorderLayout());
-    private JTextField searchField = new JTextField(16);
-    private JButton searchButton = new JButton(GetText.tr("Search"));
-    private JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
-    private JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
+    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
+    private final JPanel topPanel = new JPanel(new BorderLayout());
+    private final JTextField searchField = new JTextField(16);
+    private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
+    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
 
     // #. Fabric API is the name of a mod, so should be left untranslated
-    private JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
+    private final JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
 
     // #. Fabric/Fabric API is the name of a mod, so should be left untranslated
-    private JLabel fabricApiWarningLabel = new JLabel(
+    private final JLabel fabricApiWarningLabel = new JLabel(
             "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
     private JScrollPane jscrollPane;
     private JButton nextButton;
     private JButton prevButton;
-    private JPanel mainPanel = new JPanel(new BorderLayout());
+    private final JPanel mainPanel = new JPanel(new BorderLayout());
     private int page = 0;
 
     public AddModsDialog(Instance instance) {

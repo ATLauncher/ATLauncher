@@ -44,7 +44,6 @@ public class NilCard extends JPanel implements RelocalizationListener {
             .getImage();
 
     private final JTextArea error = new JTextArea();
-    private final JSplitPane splitter = new JSplitPane();
 
     public NilCard(String message) {
         super(new BorderLayout());
@@ -60,12 +59,13 @@ public class NilCard extends JPanel implements RelocalizationListener {
         this.error.setWrapStyleWord(true);
         this.error.setText(message);
 
-        this.splitter.setEnabled(false);
-        this.splitter.setLeftComponent(new ImagePanel(defaultImage));
-        this.splitter.setRightComponent(this.error);
-        this.splitter.setBorder(BorderFactory.createEmptyBorder());
+        JSplitPane splitter = new JSplitPane();
+        splitter.setEnabled(false);
+        splitter.setLeftComponent(new ImagePanel(defaultImage));
+        splitter.setRightComponent(this.error);
+        splitter.setBorder(BorderFactory.createEmptyBorder());
 
-        this.add(this.splitter, BorderLayout.CENTER);
+        this.add(splitter, BorderLayout.CENTER);
     }
 
     public void setMessage(String message) {

@@ -51,11 +51,11 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class InstanceExportDialog extends JDialog {
-    private InstanceV2 instance;
-    private List<String> overrides = new ArrayList<>();
+    private final InstanceV2 instance;
+    private final List<String> overrides = new ArrayList<>();
 
-    private JPanel topPanel = new JPanel();
-    private JPanel bottomPanel = new JPanel();
+    private final JPanel topPanel = new JPanel();
+    private final JPanel bottomPanel = new JPanel();
 
     final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
 

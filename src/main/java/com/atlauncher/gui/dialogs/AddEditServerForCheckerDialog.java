@@ -48,16 +48,11 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
      * Auto generated serial.
      */
     private static final long serialVersionUID = 3385411077046354453L;
-    private JPanel middle;
-    private JPanel bottom;
 
-    private JLabel serverNameLabel;
     private JTextField serverName;
 
-    private JLabel serverHostLabel;
     private JTextField serverHost;
 
-    private JLabel serverPortLabel;
     private JTextField serverPort;
 
     private JButton addEditButton;
@@ -92,7 +87,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
 
     private void setupComponents() {
         // Middle Panel Stuff
-        middle = new JPanel();
+        JPanel middle = new JPanel();
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -101,7 +96,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverNameLabel = new JLabel(GetText.tr("Name") + ": ");
+        JLabel serverNameLabel = new JLabel(GetText.tr("Name") + ": ");
         middle.add(serverNameLabel, gbc);
 
         gbc.gridx++;
@@ -114,7 +109,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverHostLabel = new JLabel(GetText.tr("Host/IP") + ": ");
+        JLabel serverHostLabel = new JLabel(GetText.tr("Host/IP") + ": ");
         middle.add(serverHostLabel, gbc);
 
         gbc.gridx++;
@@ -127,7 +122,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        serverPortLabel = new JLabel(GetText.tr("Port") + ": ");
+        JLabel serverPortLabel = new JLabel(GetText.tr("Port") + ": ");
         middle.add(serverPortLabel, gbc);
 
         gbc.gridx++;
@@ -137,7 +132,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         middle.add(serverPort, gbc);
 
         // Bottom Panel Stuff
-        bottom = new JPanel();
+        JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
 
         addEditButton = new JButton(GetText.tr("Add"));

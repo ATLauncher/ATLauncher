@@ -49,9 +49,6 @@ import org.mini2Dx.gettext.GetText;
 
 public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = -969812552965390610L;
-    private JPanel topPanel;
-    private JButton importButton;
-    private JButton addCurseButton;
     private JButton clearButton;
     private JTextField searchBox;
     private JButton searchButton;
@@ -74,14 +71,14 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
     }
 
     public void loadContent(boolean keepFilters) {
-        topPanel = new JPanel();
+        JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        importButton = new JButton(GetText.tr("Import"));
+        JButton importButton = new JButton(GetText.tr("Import"));
         importButton.addActionListener(e -> new ImportInstanceDialog());
         topPanel.add(importButton);
 
-        addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
+        JButton addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
         addCurseButton.addActionListener(e -> new AddCursePackDialog());
         topPanel.add(addCurseButton);
 

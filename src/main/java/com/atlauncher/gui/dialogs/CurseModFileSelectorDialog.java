@@ -54,18 +54,17 @@ import org.mini2Dx.gettext.GetText;
 public class CurseModFileSelectorDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
     private int filesLength = 0;
-    private CurseMod mod;
+    private final CurseMod mod;
     private Instance instance;
     private InstanceV2 instanceV2;
     private Integer installedFileId = null;
 
-    private JPanel filesPanel;
-    private JPanel dependenciesPanel = new JPanel(new FlowLayout());
+    private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
     private JButton addButton;
     private JLabel versionsLabel;
     private JLabel installedJLabel;
     private JComboBox<CurseFile> filesDropdown;
-    private List<CurseFile> files = new ArrayList<>();
+    private final List<CurseFile> files = new ArrayList<>();
 
     public CurseModFileSelectorDialog(CurseMod mod, Instance instance) {
         super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
@@ -136,7 +135,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         JPanel middle = new JPanel(new BorderLayout());
 
         // Middle Panel Stuff
-        filesPanel = new JPanel(new FlowLayout());
+        JPanel filesPanel = new JPanel(new FlowLayout());
         filesPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         versionsLabel = new JLabel(GetText.tr("Version To Install") + ": ");
