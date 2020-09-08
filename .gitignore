@@ -1,20 +1,24 @@
 # Directories
 .gradle/
-.idea/
-.settings/
 bin/
 build/
 dist/
 target/
 testLauncher/
 run/
+configs/
+cache/
 
-# Files
+# IDE Config Files
+.idea/
+*.iml
+.settings/
 .classpath
 .project
 
-# OS X things
+# OS X
 .DS_Store
 
-# Other things
+# Other
 java_pid*.hprof
+*.log
