@@ -724,7 +724,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             loaderVersionsDropDown.removeAllItems();
 
-            loaderVersions.stream().forEach(version -> loaderVersionsDropDown.addItem(version));
+            loaderVersions.forEach(version -> loaderVersionsDropDown.addItem(version));
 
             if (isReinstall && (instanceV2 != null ? instanceV2.launcher.loaderVersion != null
                     : instance.installedWithLoaderVersion())) {

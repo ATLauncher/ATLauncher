@@ -285,7 +285,7 @@ public class CurseModFileSelectorDialog extends JDialog {
 
             // try to filter out non compatable mods (Forge on Fabric and vice versa)
             if (App.settings.disableAddModRestrictions) {
-                files.stream().forEach(version -> filesDropdown.addItem(version));
+                files.forEach(version -> filesDropdown.addItem(version));
             } else {
                 files.stream().filter(version -> {
                     String fileName = version.fileName.toLowerCase();

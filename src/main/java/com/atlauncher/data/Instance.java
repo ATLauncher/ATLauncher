@@ -1748,7 +1748,7 @@ public class Instance implements Cloneable {
                 .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
-        sameMods.stream().forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
 
         // remove any mods that are from the same mod on Curse from the master mod list
         this.mods = this.mods.stream()

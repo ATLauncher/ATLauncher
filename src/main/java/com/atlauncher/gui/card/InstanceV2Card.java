@@ -485,7 +485,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     changeDescriptionItem.setVisible(instance.launcher.curseManifest != null
                             || (instance.getPack() != null && instance.getPack().system));
 
-                    if (!instance.launcher.mods.stream().anyMatch(mod -> mod.optional)) {
+                    if (instance.launcher.mods.stream().noneMatch(mod -> mod.optional)) {
                         shareCodeItem.setVisible(false);
                     }
 

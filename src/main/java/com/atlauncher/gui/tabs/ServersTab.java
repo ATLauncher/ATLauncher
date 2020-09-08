@@ -109,7 +109,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         gbc.insets = UIConstants.FIELD_INSETS_SMALL;
         gbc.fill = GridBagConstraints.BOTH;
 
-        ServerManager.getServersSorted().stream().forEach(server -> {
+        ServerManager.getServersSorted().forEach(server -> {
             if (keepFilters) {
                 boolean showServer = true;
 

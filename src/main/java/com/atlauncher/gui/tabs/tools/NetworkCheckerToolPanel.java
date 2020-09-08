@@ -121,7 +121,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 // Resolution of key services
                 for (String host : HOSTS) {
                     try {
-                        String resolvedHosts = Arrays.asList(InetAddress.getAllByName(host)).stream()
+                        String resolvedHosts = Arrays.stream(InetAddress.getAllByName(host))
                                 .map(InetAddress::getHostAddress).collect(Collectors.joining(", "));
                         results.append("Resolution of ").append(host).append(" was ").append(resolvedHosts).append("\n\n");
                     } catch (Exception e1) {

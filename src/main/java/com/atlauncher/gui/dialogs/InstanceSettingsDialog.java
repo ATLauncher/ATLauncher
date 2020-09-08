@@ -252,7 +252,7 @@ public class InstanceSettingsDialog extends JDialog {
         JComboBox<JavaInfo> installedJavas = new JComboBox<>();
         installedJavas.setPreferredSize(new Dimension(516, 24));
         if (Java.getInstalledJavas().size() != 0) {
-            Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
+            Java.getInstalledJavas().forEach(installedJavas::addItem);
 
             installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
                     .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()

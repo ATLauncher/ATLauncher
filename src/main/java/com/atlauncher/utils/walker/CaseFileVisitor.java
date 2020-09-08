@@ -40,7 +40,7 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-        if (!this.mods.stream().anyMatch(m -> m.getFile().equalsIgnoreCase(path.getFileName().toString()))) {
+        if (this.mods.stream().noneMatch(m -> m.getFile().equalsIgnoreCase(path.getFileName().toString()))) {
             return FileVisitResult.CONTINUE;
         }
 

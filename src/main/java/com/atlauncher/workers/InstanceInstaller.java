@@ -59,7 +59,6 @@ import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.AssetIndex;
-import com.atlauncher.data.minecraft.AssetObject;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;
@@ -675,7 +674,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             if (add) {
-                this.arguments.game.addAll(Arrays.asList(this.packVersion.extraArguments.arguments.split(" ")).stream()
+                this.arguments.game.addAll(Arrays.stream(this.packVersion.extraArguments.arguments.split(" "))
                         .map(ArgumentRule::new).collect(Collectors.toList()));
             }
         }
@@ -684,7 +683,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void addMinecraftArguments() {
         // older MC versions
         if (this.minecraftVersion.minecraftArguments != null) {
-            this.arguments.game.addAll(Arrays.asList(this.minecraftVersion.minecraftArguments.split(" ")).stream()
+            this.arguments.game.addAll(Arrays.stream(this.minecraftVersion.minecraftArguments.split(" "))
                     .map(arg -> new ArgumentRule(null, arg)).collect(Collectors.toList()));
         }
 
@@ -724,14 +723,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         OkHttpClient httpClient = Network.createProgressClient(this);
         DownloadPool pool = new DownloadPool();
 
-        index.objects.entrySet().stream().forEach(entry -> {
-            AssetObject object = entry.getValue();
+        index.objects.forEach((key, object) -> {
             String filename = object.hash.substring(0, 2) + "/" + object.hash;
             String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
 
             com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
-                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
-                    .withInstanceInstaller(this).withHttpClient(httpClient).withFriendlyFileName(entry.getKey());
+                .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
+                .withInstanceInstaller(this).withHttpClient(httpClient).withFriendlyFileName(key);
 
             pool.add(download);
         });
@@ -745,17 +743,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         // copy resources to instance
         if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
-            index.objects.entrySet().stream().forEach(entry -> {
-                AssetObject object = entry.getValue();
+            index.objects.forEach((key, object) -> {
                 String filename = object.hash.substring(0, 2) + "/" + object.hash;
 
                 Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
 
                 if (index.mapToResources) {
-                    FileUtils.copyFile(downloadedFile, this.root.resolve("resources/" + entry.getKey()), true);
+                    FileUtils.copyFile(downloadedFile, this.root.resolve("resources/" + key), true);
                 } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()),
-                            true);
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key),
+                        true);
                 }
             });
         }

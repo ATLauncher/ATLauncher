@@ -325,7 +325,7 @@ public final class AddModsDialog extends JDialog {
         } else {
             contentPanel.setLayout(new WrapLayout());
 
-            mods.stream().forEach(curseMod -> {
+            mods.forEach(curseMod -> {
                 if (this.instanceV2 != null) {
                     contentPanel.add(new CurseModCard(curseMod, this.instanceV2), gbc);
                 } else {

@@ -77,7 +77,7 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
         if (arguments.game != null) {
             JsonArray gameArguments = new JsonArray();
 
-            arguments.game.stream().forEach(arg -> {
+            arguments.game.forEach(arg -> {
                 if (arg.rules != null) {
                     JsonObject object = new JsonObject();
 
@@ -101,7 +101,7 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
         if (arguments.jvm != null) {
             JsonArray jvmArguments = new JsonArray();
 
-            arguments.jvm.stream().forEach(arg -> {
+            arguments.jvm.forEach(arg -> {
                 if (arg.rules != null) {
                     JsonObject object = new JsonObject();
 

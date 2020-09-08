@@ -239,7 +239,7 @@ public class Java {
 
         JavaInfo systemJava = new JavaInfo(Java.getPathToSystemJavaExecutable());
         if (javas.size() == 0
-                || !javas.stream().anyMatch(java -> java.rootPath.equalsIgnoreCase(systemJava.rootPath))) {
+                || javas.stream().noneMatch(java -> java.rootPath.equalsIgnoreCase(systemJava.rootPath))) {
             javas.add(systemJava);
         }
 

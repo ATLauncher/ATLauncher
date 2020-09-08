@@ -382,7 +382,7 @@ public class App {
 
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
-        SwingUtilities.invokeLater(() -> Java.getInstalledJavas().stream()
+        SwingUtilities.invokeLater(() -> Java.getInstalledJavas()
                 .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
         LogManager.info("Java Version: " + Java.getActualJavaVersion());
