@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -122,8 +123,15 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
             Language.setLanguage((String) language.getSelectedItem());
-            App.settings.setEnableAnalytics(enableAnalytics.isSelected());
-            App.settings.saveProperties();
+            App.settings.language = (String) language.getSelectedItem();
+            App.settings.enableAnalytics = enableAnalytics.isSelected();
+            App.settings.firstTimeRun = false;
+            App.settings.save();
+
+            if (enableAnalytics.isSelected()) {
+                Analytics.sendEvent("SetupDialogComplete", "Launcher");
+            }
+
             setVisible(false);
             dispose();
         });

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import javax.swing.JCheckBox;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
 
 import org.mini2Dx.gettext.GetText;
@@ -35,22 +36,22 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         // Enable mods backups
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableModsBackupsLabel = new JLabelWithHover(GetText.tr("Enable Mods Backups") + "?", HELP_ICON,
                 GetText.tr("If we should backup mods when creating a backup for an instance."));
         add(enableModsBackupsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableModsBackups = new JCheckBox();
-        enableModsBackups.setSelected(App.settings.enableModsBackups());
+        enableModsBackups.setSelected(App.settings.enableModsBackups);
         add(enableModsBackups, gbc);
     }
 
     public void save() {
-        App.settings.setEnableModsBackups(enableModsBackups.isSelected());
+        App.settings.enableModsBackups = enableModsBackups.isSelected();
     }
 
     @Override

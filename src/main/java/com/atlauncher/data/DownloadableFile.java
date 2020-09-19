@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,10 @@ public class DownloadableFile {
         }
 
         if (arch != null) {
-            return (arch.equalsIgnoreCase("x86") && !OS.is64Bit()) || (arch.equalsIgnoreCase("x64") && OS.is64Bit());
+            return (arch.equalsIgnoreCase("arm64") && (!OS.is64Bit() || !OS.isArm()))
+                    || (arch.equalsIgnoreCase("arm") && (OS.is64Bit() || !OS.isArm()))
+                    || (arch.equalsIgnoreCase("x86") && !OS.is64Bit())
+                    || (arch.equalsIgnoreCase("x64") && OS.is64Bit());
         }
 
         return true;

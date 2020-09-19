@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
-import com.atlauncher.App;
+import com.atlauncher.managers.NewsManager;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Resources;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -41,16 +42,23 @@ import org.mini2Dx.gettext.GetText;
  * This class extends {@link JPanel} and provides a Panel for displaying the
  * latest news.
  */
+@SuppressWarnings("serial")
 public class NewsTab extends JPanel implements Tab {
-    /**
-     * Auto generated serial.
-     */
-    private static final long serialVersionUID = 4616284541226058793L;
-
-    @SuppressWarnings("serial")
     private final HTMLEditorKit NEWS_KIT = new HTMLEditorKit() {
         {
-            this.setStyleSheet(Resources.makeStyleSheet("news"));
+            StyleSheet styleSheet = new StyleSheet();
+
+            styleSheet.addRule(String.format("a { color: %s; }",
+                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
+
+            styleSheet.addRule(String.format(
+                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
+                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
+
+            styleSheet.addRule(
+                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
+
+            this.setStyleSheet(styleSheet);
         }
     };
 
@@ -70,7 +78,6 @@ public class NewsTab extends JPanel implements Tab {
     /**
      * {@link JEditorPane} which contains all the news for this panel.
      */
-    @SuppressWarnings("serial")
     private final JEditorPane NEWS_PANE = new JEditorPane("text/html;charset=UTF-8", "") {
         {
             this.setEditable(false);
@@ -98,7 +105,7 @@ public class NewsTab extends JPanel implements Tab {
      */
     public void reload() {
         this.NEWS_PANE.setText("");
-        this.NEWS_PANE.setText(App.settings.getNewsHTML());
+        this.NEWS_PANE.setText(NewsManager.getNewsHTML());
         this.NEWS_PANE.setCaretPosition(0);
     }
 
@@ -107,7 +114,6 @@ public class NewsTab extends JPanel implements Tab {
         return GetText.tr("News");
     }
 
-    @SuppressWarnings("serial")
     private final class ContextMenu extends JPopupMenu {
         private final JMenuItem COPY_ITEM = new JMenuItem(GetText.tr("Copy"));
 

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ import javax.swing.SwingWorker;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
@@ -74,9 +73,11 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ATLauncherApiForgeVersion;
-import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
@@ -111,6 +112,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public boolean isReinstall;
     public boolean isServer;
     public boolean instanceIsCorrupt;
+    public boolean saveMods = false;
 
     public final Path root;
     public final Path temp;
@@ -137,13 +139,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public Arguments arguments;
 
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
-            boolean isReinstall, boolean isServer, String shareCode, boolean showModsChooser,
+            boolean isReinstall, boolean isServer, boolean saveMods, String shareCode, boolean showModsChooser,
             LoaderVersion loaderVersion, CurseManifest curseManifest, File manifestFile) {
         this.name = name;
         this.pack = pack;
         this.version = version;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
+        this.saveMods = saveMods;
         this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
 
@@ -192,6 +195,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             determineModsToBeInstalled();
 
+            if (isCancelled()) {
+                return false;
+            }
+
             backupSelectFiles();
             addPercent(5);
 
@@ -207,7 +214,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 downloadLoader();
             }
+
             install();
+
+            if (isCancelled()) {
+                return false;
+            }
 
             if (!this.isServer) {
                 saveInstanceJson();
@@ -375,6 +387,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 this.cancel(true);
                 return;
             }
+
             this.selectedMods = modsChooser.getSelectedMods();
             this.unselectedMods = modsChooser.getUnselectedMods();
         }
@@ -402,12 +415,33 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             mod.getCurseModId(), mod.getCurseFileId()));
         }
 
-        if (this.isReinstall && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())
-                && (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
-                        .equalsIgnoreCase(version.minecraftVersion.version)) {
-            for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null ? instanceV2.getCustomDisableableMods()
-                    : instance.getCustomDisableableMods())) {
-                modsInstalled.add(mod);
+        if (this.isReinstall && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())) {
+            // user chose to save mods even though Minecraft version changed, so add them to
+            // the installed list
+            if (this.saveMods || (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
+                    .equalsIgnoreCase(version.minecraftVersion.version)) {
+                for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null
+                        ? instanceV2.getCustomDisableableMods()
+                        : instance.getCustomDisableableMods())) {
+                    modsInstalled.add(mod);
+                }
+            }
+
+            // user choosing to not save mods and Minecraft version changed, so delete
+            // custom mods
+            if (!this.saveMods && !(instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
+                    .equalsIgnoreCase(version.minecraftVersion.version)) {
+                for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null
+                        ? instanceV2.getCustomDisableableMods()
+                        : instance.getCustomDisableableMods())) {
+                    if (this.instanceV2 != null) {
+                        this.instanceV2.launcher.mods.remove(mod);
+                        Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this.instanceV2)
+                                : mod.getFile(this.instanceV2)));
+                    } else {
+                        instance.removeInstalledMod(mod);
+                    }
+                }
             }
         }
     }
@@ -497,6 +531,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void saveInstanceJson() {
         InstanceV2 instance = new InstanceV2(this.minecraftVersion);
+        instance.ROOT = this.root;
         InstanceV2Launcher instanceLauncher;
 
         if (!this.isReinstall || this.instance != null) {
@@ -535,16 +570,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instance.save();
 
         if (this.instanceV2 != null) {
-            App.settings.instancesV2.remove(this.instanceV2);
+            InstanceManager.getInstances().remove(this.instanceV2);
         }
 
-        App.settings.instancesV2.add(instance);
+        InstanceManager.getInstances().add(instance);
 
         if (this.instance != null) {
-            App.settings.instances.remove(this.instance);
+            InstanceManager.getOldInstances().remove(this.instance);
         }
 
-        App.settings.reloadInstancesPanel();
+        App.launcher.reloadInstancesPanel();
     }
 
     private void saveServerJson() {
@@ -563,9 +598,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         server.save();
 
-        App.settings.servers.add(server);
+        ServerManager.addServer(server);
 
-        App.settings.reloadServersPanel();
+        App.launcher.reloadServersPanel();
     }
 
     private void determineMainClass() {
@@ -700,13 +735,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
                     .withInstanceInstaller(this).withHttpClient(httpClient).withFriendlyFileName(entry.getKey());
 
-            if (index.mapToResources) {
-                download = download
-                        .copyTo(new File(new File(this.root.toFile(), "resources"), entry.getKey()).toPath());
-            } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                download = download.copyTo(FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()));
-            }
-
             pool.add(download);
         });
 
@@ -716,6 +744,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.fireSubProgress(0);
 
         smallPool.downloadAll();
+
+        // copy resources to instance
+        if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            index.objects.entrySet().stream().forEach(entry -> {
+                AssetObject object = entry.getValue();
+                String filename = object.hash.substring(0, 2) + "/" + object.hash;
+
+                Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+
+                if (index.mapToResources) {
+                    FileUtils.copyFile(downloadedFile, this.root.resolve("resources/" + entry.getKey()), true);
+                } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()),
+                            true);
+                }
+            });
+        }
 
         hideSubProgressBar();
     }
@@ -1126,6 +1171,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             com.atlauncher.network.Download configsDownload = com.atlauncher.network.Download.build()
                     .setUrl(String.format("%s/%s", Constants.DOWNLOAD_SERVER, path)).downloadTo(configs.toPath())
+                    .size(this.packVersion.configs.filesize).hash(this.packVersion.configs.sha1)
                     .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
             this.setTotalBytes(configsDownload.getFilesize());

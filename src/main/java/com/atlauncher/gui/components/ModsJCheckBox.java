@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,18 @@
  */
 package com.atlauncher.gui.components;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.json.Mod;
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.utils.OS;
@@ -54,12 +52,6 @@ public class ModsJCheckBox extends JCheckBox {
     private Object mod;
 
     private EditModsDialog dialog;
-
-    /**
-     * Static object for the {@link Border} to show around the tooltips for mods
-     * with descriptions.
-     */
-    private static final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
 
     /**
      * Constructor for use in the {@link ModsChooser} dialog with new JSON format.
@@ -101,7 +93,7 @@ public class ModsJCheckBox extends JCheckBox {
         this.dialog = dialog;
 
         if (mod.getDescription() != null && !mod.getDescription().isEmpty()) {
-            this.setToolTipText(mod.getDescription());
+            this.setToolTipText(new HTMLBuilder().text(mod.getDescription()).split(100).build());
         }
 
         if (this.dialog != null) {
@@ -241,7 +233,7 @@ public class ModsJCheckBox extends JCheckBox {
     @Override
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        tip.setBorder(HOVER_BORDER);
+        tip.setBorder(new HoverLineBorder());
         return tip;
     }
 

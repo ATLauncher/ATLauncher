@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
 
 /**
  * This class contains information about a pack's version. This is a singular
@@ -135,6 +135,11 @@ public class Version {
      * A list of actions to perform on this version.
      */
     public List<Action> actions;
+
+    /**
+     * Information about the configs for this pack.
+     */
+    public Configs configs;
 
     /**
      * Sets the default empty objects which are later overwritten by GSON if they

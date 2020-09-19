@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,34 +18,40 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
-import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.javafinder.JavaInfo;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -62,17 +68,12 @@ public class InstanceSettingsDialog extends JDialog {
     final ImageIcon WARNING_ICON = Utils.getIconImage("/assets/image/Warning.png");
 
     final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
-    final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
 
     final GridBagConstraints gbc = new GridBagConstraints();
-    final Insets LABEL_INSETS = new Insets(5, 0, 5, 10);
-    final Insets FIELD_INSETS = new Insets(5, 0, 5, 0);
-    final Insets LABEL_INSETS_SMALL = new Insets(0, 0, 0, 10);
-    final Insets FIELD_INSETS_SMALL = new Insets(0, 0, 0, 0);
 
     public InstanceSettingsDialog(Instance instance) {
         // #. {0} is the name of the instance
-        super(App.settings.getParent(), GetText.tr("{0} Settings", instance.getName()), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("{0} Settings", instance.getName()), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
         Analytics.sendScreenView("Instance Settings Dialog");
@@ -89,7 +90,7 @@ public class InstanceSettingsDialog extends JDialog {
     }
 
     public InstanceSettingsDialog(InstanceV2 instanceV2) {
-        super(App.settings.getParent(), GetText.tr("{0} Settings", instanceV2.launcher.name),
+        super(App.launcher.getParent(), GetText.tr("{0} Settings", instanceV2.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
 
@@ -106,8 +107,8 @@ public class InstanceSettingsDialog extends JDialog {
 
     private void setupComponents() {
         int systemRam = OS.getSystemRam();
-        setSize(700, 300);
-        setLocationRelativeTo(App.settings.getParent());
+        setSize(750, 350);
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -116,7 +117,7 @@ public class InstanceSettingsDialog extends JDialog {
         // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
@@ -140,11 +141,11 @@ public class InstanceSettingsDialog extends JDialog {
         topPanel.add(initialMemoryPanel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(
                 getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.initialMemory
-                        : instance.getSettings().getInitialMemory(), App.settings.getInitialMemory()),
+                        : instance.getSettings().getInitialMemory(), App.settings.initialMemory),
                 null, null, 128);
         initialMemoryModel.setMinimum(128);
         initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
@@ -156,7 +157,7 @@ public class InstanceSettingsDialog extends JDialog {
         // Perm Gen Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
                 "<html>" + Utils.splitMultilinedString(
@@ -171,11 +172,11 @@ public class InstanceSettingsDialog extends JDialog {
         topPanel.add(maximumMemoryPanel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(
                 getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.maximumMemory
-                        : instance.getSettings().getMaximumMemory(), App.settings.getMaximumMemory()),
+                        : instance.getSettings().getMaximumMemory(), App.settings.maximumMemory),
                 null, null, 512);
         maximumMemoryModel.setMinimum(512);
         maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
@@ -186,18 +187,18 @@ public class InstanceSettingsDialog extends JDialog {
         // Perm Gen Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
                 GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
         topPanel.add(permGenLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel permGenModel = new SpinnerNumberModel(getIfNotNull(
                 this.instanceV2 != null ? this.instanceV2.launcher.permGen : instance.getSettings().getPermGen(),
-                App.settings.getPermGen()), null, null, 32);
+                App.settings.metaspace), null, null, 32);
         permGenModel.setMinimum(32);
         permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
         final JSpinner permGen = new JSpinner(permGenModel);
@@ -209,7 +210,7 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText
                 .tr("This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
@@ -217,14 +218,22 @@ public class InstanceSettingsDialog extends JDialog {
         topPanel.add(javaPathLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
         JPanel javaPathPanel = new JPanel();
-        javaPathPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
+
+        JPanel javaPathPanelTop = new JPanel();
+        javaPathPanelTop.setLayout(new BoxLayout(javaPathPanelTop, BoxLayout.X_AXIS));
+
+        JPanel javaPathPanelBottom = new JPanel();
+        javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
+
         final JTextField javaPath = new JTextField(32);
         javaPath.setText(getIfNotNull(
                 this.instanceV2 != null ? this.instanceV2.launcher.javaPath : instance.getSettings().getJavaPath(),
-                App.settings.getJavaPath()));
+                App.settings.javaPath));
         JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
         JButton javaBrowseButton = new JButton(GetText.tr("Browse"));
@@ -239,9 +248,34 @@ public class InstanceSettingsDialog extends JDialog {
                 javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
-        javaPathPanel.add(javaPath);
-        javaPathPanel.add(javaPathResetButton);
-        javaPathPanel.add(javaBrowseButton);
+
+        JComboBox<JavaInfo> installedJavas = new JComboBox<>();
+        installedJavas.setPreferredSize(new Dimension(516, 24));
+        if (Java.getInstalledJavas().size() != 0) {
+            Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
+
+            installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
+                    .orElse(null));
+
+            installedJavas
+                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+        }
+
+        if (installedJavas.getItemCount() != 0) {
+            javaPathPanelTop.add(installedJavas);
+        }
+
+        javaPathPanelBottom.add(javaPath);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+        javaPathPanelBottom.add(javaPathResetButton);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+        javaPathPanelBottom.add(javaBrowseButton);
+
+        javaPathPanel.add(javaPathPanelTop);
+        javaPathPanel.add(Box.createVerticalStrut(5));
+        javaPathPanel.add(javaPathPanelBottom);
+
         topPanel.add(javaPathPanel, gbc);
 
         // Java Paramaters
@@ -249,25 +283,35 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
         JLabelWithHover javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         topPanel.add(javaParametersLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         JPanel javaParametersPanel = new JPanel();
-        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        final JTextField javaParameters = new JTextField(40);
+        javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
+
+        final JTextArea javaParameters = new JTextArea(6, 40);
         javaParameters.setText(getIfNotNull(this.instanceV2 != null ? this.instanceV2.launcher.javaArguments
-                : instance.getSettings().getJavaArguments(), App.settings.getJavaParameters()));
+                : instance.getSettings().getJavaArguments(), App.settings.javaParameters));
+        javaParameters.setLineWrap(true);
+        javaParameters.setWrapStyleWord(true);
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> javaParameters.setText(
-                "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(App.settings.javaParameters));
+
         javaParametersPanel.add(javaParameters);
-        javaParametersPanel.add(javaParametersResetButton);
+        javaParametersPanel.add(Box.createHorizontalStrut(5));
+
+        Box paramsResetBox = Box.createVerticalBox();
+        paramsResetBox.add(javaParametersResetButton);
+        paramsResetBox.add(Box.createVerticalGlue());
+
+        javaParametersPanel.add(paramsResetBox);
+
         topPanel.add(javaParametersPanel, gbc);
 
         bottomPanel.setLayout(new FlowLayout());
@@ -308,28 +352,28 @@ public class InstanceSettingsDialog extends JDialog {
     private void saveSettings(Integer initialMemory, Integer maximumMemory, Integer permGen, String javaPath,
             String javaParameters) {
         if (this.instanceV2 != null) {
-            this.instanceV2.launcher.initialMemory = (initialMemory == App.settings.getInitialMemory() ? null
+            this.instanceV2.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null
                     : initialMemory);
-            this.instanceV2.launcher.maximumMemory = (maximumMemory == App.settings.getMaximumMemory() ? null
+            this.instanceV2.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null
                     : maximumMemory);
-            this.instanceV2.launcher.permGen = (permGen == App.settings.getPermGen() ? null : permGen);
-            this.instanceV2.launcher.javaPath = (javaPath.equals(App.settings.getJavaPath()) ? null : javaPath);
-            this.instanceV2.launcher.javaArguments = (javaParameters.equals(App.settings.getJavaParameters()) ? null
+            this.instanceV2.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
+            this.instanceV2.launcher.javaPath = (javaPath.equals(App.settings.javaPath) ? null : javaPath);
+            this.instanceV2.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null
                     : javaParameters);
             this.instanceV2.save();
         } else {
             InstanceSettings instanceSettings = instance.getSettings();
 
-            instanceSettings.setInitialMemory(initialMemory == App.settings.getInitialMemory() ? null : initialMemory);
+            instanceSettings.setInitialMemory(initialMemory == App.settings.initialMemory ? null : initialMemory);
 
-            instanceSettings.setMaximumMemory(maximumMemory == App.settings.getMaximumMemory() ? null : maximumMemory);
+            instanceSettings.setMaximumMemory(maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
 
-            instanceSettings.setPermGen(permGen == App.settings.getPermGen() ? null : permGen);
+            instanceSettings.setPermGen(permGen == App.settings.metaspace ? null : permGen);
 
-            instanceSettings.setJavaPath(javaPath.equals(App.settings.getJavaPath()) ? null : javaPath);
+            instanceSettings.setJavaPath(javaPath.equals(App.settings.javaPath) ? null : javaPath);
 
             instanceSettings
-                    .setJavaArguments(javaParameters.equals(App.settings.getJavaParameters()) ? null : javaParameters);
+                    .setJavaArguments(javaParameters.equals(App.settings.javaParameters) ? null : javaParameters);
 
             this.instance.save();
         }

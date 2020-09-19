@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.javafinder.JavaFinder;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
@@ -51,8 +52,8 @@ public class Java {
      * @return the Java version used to run Minecraft
      */
     public static String getMinecraftJavaVersion() {
-        if (App.settings.isUsingCustomJavaPath()) {
-            File folder = new File(App.settings.getJavaPath(), "bin/");
+        if (App.settings.usingCustomJavaPath) {
+            File folder = new File(App.settings.javaPath, "bin/");
 
             ProcessBuilder processBuilder = new ProcessBuilder(getPathToMinecraftJavaExecutable(), "-version");
             processBuilder.directory(folder.getAbsoluteFile());
@@ -220,7 +221,7 @@ public class Java {
     }
 
     public static String getPathToMinecraftJavaExecutable() {
-        String path = App.settings.getJavaPath() + File.separator + "bin" + File.separator + "java";
+        String path = App.settings.javaPath + File.separator + "bin" + File.separator + "java";
 
         if (OS.isWindows()) {
             path += "w";
@@ -234,6 +235,7 @@ public class Java {
     }
 
     public static List<JavaInfo> getInstalledJavas() {
+        PerformanceManager.start();
         List<JavaInfo> javas = JavaFinder.findJavas().stream()
                 .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
                 .collect(Collectors.toList());
@@ -256,6 +258,7 @@ public class Java {
             }
         }
 
+        PerformanceManager.end();
         return javas;
     }
 }

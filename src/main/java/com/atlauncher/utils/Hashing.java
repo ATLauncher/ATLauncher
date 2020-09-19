@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import com.atlauncher.LogManager;
 import com.atlauncher.collection.Caching;
+import com.atlauncher.managers.LogManager;
 import com.sangupta.murmur.Murmur2;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -57,10 +57,11 @@ public final class Hashing {
     }
 
     public static long murmur(Path to) throws IOException {
-        byte[] bytes = ArrayUtils.removeAllOccurences(
-                ArrayUtils.removeAllOccurences(ArrayUtils.removeAllOccurences(
-                        ArrayUtils.removeAllOccurences(Files.readAllBytes(to), (byte) 9), (byte) 10), (byte) 13),
-                (byte) 32);
+        byte[] bytes = ArrayUtils
+                .removeAllOccurrences(ArrayUtils.removeAllOccurrences(
+                        ArrayUtils.removeAllOccurrences(
+                                ArrayUtils.removeAllOccurrences(Files.readAllBytes(to), (byte) 9), (byte) 10),
+                        (byte) 13), (byte) 32);
 
         return Murmur2.hash(bytes, bytes.length, 1L);
     }

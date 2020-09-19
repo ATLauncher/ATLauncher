@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,14 +46,23 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.Update;
 import com.atlauncher.data.Constants;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
+import oshi.SystemInfo;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HardwareAbstractionLayer;
+
 public enum OS {
     LINUX, WINDOWS, OSX;
+
+    private static int memory = 0;
+    private static SystemInfo systemInfo = null;
+    private static Integer memoryFromTool = null;
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
@@ -92,13 +101,13 @@ public enum OS {
      */
     public static Path storagePath() {
         switch (getOS()) {
-        case WINDOWS:
-            return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-        case OSX:
-            return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
-                    .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-        default:
-            return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            case WINDOWS:
+                return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            case OSX:
+                return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            default:
+                return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -278,6 +287,13 @@ public enum OS {
     }
 
     /**
+     * Checks if using Arm.
+     */
+    public static boolean isArm() {
+        return System.getProperty("os.arch").startsWith("arm");
+    }
+
+    /**
      * Gets the architecture type of the system.
      */
     public static String getArch() {
@@ -293,6 +309,7 @@ public enum OS {
      * was removed in Java 9.
      */
     public static int getSystemRamViaBean() {
+        PerformanceManager.start();
         long ramm = 0;
         int ram = 0;
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
@@ -310,55 +327,116 @@ public enum OS {
                 | NoSuchMethodException e) {
             LogManager.logStackTrace(e);
         }
+        PerformanceManager.end();
+        return ram;
+    }
+
+    /**
+     * Returns the amount of RAM in the users system via the oshi (or if that fails the getMemory tool).
+     */
+    public static int getSystemRamViaTool() {
+        PerformanceManager.start();
+
+        int ram = 0;
+
+        try {
+            SystemInfo systemInfo = getSystemInfo();
+            HardwareAbstractionLayer hal = systemInfo.getHardware();
+            GlobalMemory globalMemory = hal.getMemory();
+
+            ram = (int) (globalMemory.getTotal() / 1048576);
+        } catch (Throwable t) {
+            LogManager.logStackTrace(t);
+
+            // getSystemInfo returned null/wrong, so use the old getMemory binary
+            ram = getMemoryFromTool();
+        }
+
+        PerformanceManager.end();
+
         return ram;
     }
 
     /**
      * Returns the amount of RAM in the users system via the getMemory tool.
      */
-    public static int getSystemRamViaTool() {
-        long ramm = 0;
-        int ram = 0;
+    public static int getMemoryFromTool() {
+        if (memoryFromTool == null) {
+            PerformanceManager.start();
 
-        String binaryFile;
+            String binaryFile = "getMemory";
 
-        if (OS.is64Bit()) {
-            binaryFile = (OS.isWindows() ? "getMemory-x64.exe"
-                    : (OS.isLinux() ? "getMemory-x64-linux" : "getMemory-x64-osx"));
-        } else {
-            binaryFile = (OS.isWindows() ? "getMemory.exe" : (OS.isLinux() ? "getMemory-linux" : "getMemory-osx"));
-        }
+            if (OS.isArm()) {
+                binaryFile += "-arm";
 
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
-        processBuilder.directory(FileSystem.TOOLS.toFile());
-        processBuilder.redirectErrorStream(true);
-
-        try {
-            Process process = processBuilder.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            try {
-                ramm = Long.parseLong(br.readLine());
-                ram = (int) (ramm / 1048576);
-            } finally {
-                br.close();
+                if (OS.is64Bit()) {
+                    binaryFile += "64";
+                }
+            } else {
+                if (OS.is64Bit()) {
+                    binaryFile += "-x64";
+                }
             }
-        } catch (IOException ignored) {
-            return ram;
+
+            if (OS.isWindows()) {
+                binaryFile += ".exe";
+            } else if (OS.isMac()) {
+                binaryFile += "-osx";
+            } else if (OS.isLinux()) {
+                binaryFile += "-linux";
+            }
+
+            if (Files.exists(FileSystem.TOOLS.resolve(binaryFile))) {
+                try {
+                    ProcessBuilder processBuilder = new ProcessBuilder(
+                            FileSystem.TOOLS.resolve(binaryFile).toAbsolutePath().toString());
+                    processBuilder.directory(FileSystem.TOOLS.toFile());
+                    processBuilder.redirectErrorStream(true);
+
+                    Process process = processBuilder.start();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    try {
+                        memoryFromTool = (int) (Long.parseLong(br.readLine()) / 1048576);
+                    } finally {
+                        br.close();
+                    }
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+            PerformanceManager.end();
         }
 
-        return ram;
+        return memoryFromTool;
+    }
+
+    /**
+     * Returns the system information via the getSystemInfo tool.
+     */
+    public static SystemInfo getSystemInfo() {
+        if (systemInfo == null) {
+            PerformanceManager.start();
+            systemInfo = new SystemInfo();
+            PerformanceManager.end();
+        }
+
+        return systemInfo;
     }
 
     /**
      * Returns the amount of RAM in the users system.
      */
     public static int getSystemRam() {
-        if (!Java.isSystemJavaNewerThanJava8()) {
-            return OS.getSystemRamViaBean();
+        // fetch the memory from the tool/bean if it's 0
+        if (memory == 0) {
+            if (!Java.isSystemJavaNewerThanJava8()) {
+                memory = OS.getSystemRamViaBean();
+            } else {
+                memory = OS.getSystemRamViaTool();
+            }
         }
 
-        return OS.getSystemRamViaTool();
+        return memory;
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,6 +27,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseFileDependency;
@@ -69,7 +69,7 @@ public final class CurseFileDependencyCard extends JPanel {
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
         summary.setText(mod.summary);
-        summary.setBorder(BorderFactory.createEmptyBorder());
+        summary.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
         summary.setEditable(false);
         summary.setHighlighter(null);
         summary.setLineWrap(true);
@@ -102,7 +102,7 @@ public final class CurseFileDependencyCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.ABOVE_TOP, new Font("SansSerif", Font.BOLD, 12));
+                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
     }
 }

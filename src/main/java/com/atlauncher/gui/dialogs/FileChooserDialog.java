@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -38,6 +40,7 @@ import javax.swing.filechooser.FileFilter;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -64,7 +67,7 @@ public class FileChooserDialog extends JDialog {
 
     public FileChooserDialog(String title, String labelName, String bottomText, String selectorText,
             String[] subOptions, String[] options) {
-        super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), title, ModalityType.APPLICATION_MODAL);
         this.fileOptions = options;
         setSize(400, 175);
         setLocationRelativeTo(null);
@@ -85,17 +88,20 @@ public class FileChooserDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = UIConstants.LABEL_INSETS;
         nameLabel = new JLabel(labelName + ": ");
         middle.add(nameLabel, gbc);
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.insets = UIConstants.FIELD_INSETS;
+
+        JPanel filePathPanel = new JPanel();
+        filePathPanel.setLayout(new BoxLayout(filePathPanel, BoxLayout.X_AXIS));
+
         textField = new JTextField(16);
         textField.setEnabled(false);
-        middle.add(textField, gbc);
 
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selectButton = new JButton(GetText.tr("Select"));
         selectButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
@@ -120,7 +126,7 @@ public class FileChooserDialog extends JDialog {
                     return false;
                 }
             });
-            fileChooser.showOpenDialog(App.settings.getParent());
+            fileChooser.showOpenDialog(App.launcher.getParent());
             filesChosen = fileChooser.getSelectedFiles();
             if (filesChosen != null && filesChosen.length >= 1) {
                 if (filesChosen.length == 1) {
@@ -130,16 +136,23 @@ public class FileChooserDialog extends JDialog {
                 }
             }
         });
-        middle.add(selectButton, gbc);
+
+        filePathPanel.add(textField);
+        filePathPanel.add(Box.createHorizontalStrut(5));
+        filePathPanel.add(selectButton);
+
+        middle.add(filePathPanel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = UIConstants.LABEL_INSETS;
         selectorLabel = new JLabel(selectorText + ": ");
         middle.add(selectorLabel, gbc);
 
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.insets = UIConstants.FIELD_INSETS;
         selector = new JComboBox<>();
         for (String item : subOptions) {
             selector.addItem(item);

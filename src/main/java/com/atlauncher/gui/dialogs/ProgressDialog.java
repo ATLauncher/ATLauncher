@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -50,7 +50,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     private double downloadedBytes = 0; // Total number of bytes downloaded
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
         this.max = initMax;
         this.closedLogMessage = initClosedLogMessage;
@@ -58,7 +58,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setSize(300, 100);
         setTitle(title);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
 
@@ -111,8 +111,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     }
 
     public void doneTask() {
-        this.progressBar.setString(
-                ++this.tasksDone + "/" + tasksToDo + " " + GetText.tr("Tasks Done"));
+        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + GetText.tr("Tasks Done"));
         this.progressBar.setValue(this.tasksDone);
         this.clearDownloadedBytes();
         this.label.setText(this.labelText);

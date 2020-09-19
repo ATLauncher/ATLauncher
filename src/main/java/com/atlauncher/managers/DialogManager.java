@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -160,8 +159,8 @@ public final class DialogManager {
             return this.parent;
         }
 
-        if (App.settings != null && App.settings.getParent() != null) {
-            return App.settings.getParent();
+        if (App.settings != null && App.launcher.getParent() != null) {
+            return App.launcher.getParent();
         }
 
         return null;

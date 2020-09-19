@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@ import java.util.regex.Pattern;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.ATLauncherApiCurseModpack;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
 

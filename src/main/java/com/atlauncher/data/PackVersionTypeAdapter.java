@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@ package com.atlauncher.data;
 
 import java.lang.reflect.Type;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -47,7 +47,7 @@ public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
 
         if (rootJsonObject.has("minecraft")) {
             try {
-                packVersion.minecraftVersion = App.settings
+                packVersion.minecraftVersion = MinecraftManager
                         .getMinecraftVersion(rootJsonObject.get("minecraft").getAsString());
             } catch (InvalidMinecraftVersion e) {
                 LogManager.error(e.getMessage());

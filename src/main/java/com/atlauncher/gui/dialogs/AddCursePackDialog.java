@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ public class AddCursePackDialog extends JDialog {
     private JButton addButton;
 
     public AddCursePackDialog() {
-        super(App.settings.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
         setSize(450, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

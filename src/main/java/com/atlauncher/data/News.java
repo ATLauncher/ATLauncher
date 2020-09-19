@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,10 @@ package com.atlauncher.data;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -50,7 +49,7 @@ public class News {
 
     private String getFormattedDate() {
         DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX");
-        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.getDateFormat() + " HH:mm:ss a");
+        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
 
         try {
             return formatter.format(iso8601Format.parse(this.createdAt));
@@ -64,7 +63,6 @@ public class News {
      * Gets the HTML of this object.
      */
     public String getHTML() {
-        return "<p id=\"newsHeader\">- " + this.title + " (" + this.getFormattedDate() + ")</p>" + "<p id=\"newsBody\">"
-                + this.content + "</p><br/>";
+        return "<h2>" + this.title + " (" + this.getFormattedDate() + ")</h2>" + "<p>" + this.content + "</p>";
     }
 }

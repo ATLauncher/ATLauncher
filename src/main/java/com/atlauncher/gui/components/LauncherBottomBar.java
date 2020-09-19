@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,43 +23,35 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Account;
-import com.atlauncher.data.Status;
+import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
-import com.atlauncher.gui.CustomLineBorder;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
+public class LauncherBottomBar extends BottomBar implements RelocalizationListener, AccountListener {
     private JPanel leftSide;
     private JPanel middle;
-    private Account fillerAccount;
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
     private JButton updateData;
     private JComboBox<Account> username;
-
-    private JLabel statusIcon;
 
     public LauncherBottomBar() {
         leftSide = new JPanel();
@@ -73,10 +65,14 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
-        gbc.insets = new Insets(0, 0, 0, 5);
+
+        gbc.insets = new Insets(0, 5, 0, 5);
         leftSide.add(toggleConsole, gbc);
+
+        gbc.insets = new Insets(0, 0, 0, 5);
         gbc.gridx++;
         leftSide.add(openFolder, gbc);
+
         gbc.gridx++;
         leftSide.add(updateData, gbc);
 
@@ -84,12 +80,13 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
         middle.add(username, gbc);
-        gbc.gridx++;
-        middle.add(statusIcon, gbc);
+
+        username.setVisible(AccountManager.getAccounts().size() != 0);
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         RelocalizationManager.addListener(this);
+        com.atlauncher.evnt.manager.AccountManager.addListener(this);
     }
 
     /**
@@ -103,8 +100,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                     GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
                 Analytics.sendEvent("UpdateData", "Launcher");
-                if (App.settings.checkForUpdatedFiles()) {
-                    App.settings.reloadLauncherData();
+                if (App.launcher.checkForUpdatedFiles()) {
+                    App.launcher.reloadLauncherData();
                 }
                 dialog.close();
             }));
@@ -114,7 +111,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 if (!dontSave) {
                     Analytics.sendEvent("Switch", "Account");
-                    App.settings.switchAccount((Account) username.getSelectedItem());
+                    AccountManager.switchAccount((Account) username.getSelectedItem());
                 }
             }
         });
@@ -137,70 +134,32 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
-        fillerAccount = new Account(GetText.tr("Select An Account"));
-        username.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+
+        for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
-        Account active = App.settings.getAccount();
-        if (active == null) {
-            username.setSelectedIndex(0);
-        } else {
+
+        Account active = AccountManager.getSelectedAccount();
+
+        if (active != null) {
             username.setSelectedItem(active);
         }
-
-        statusIcon = new JLabel(Utils.getIconImage("/assets/image/StatusWhite.png")) {
-            public JToolTip createToolTip() {
-                JToolTip tip = super.createToolTip();
-                Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-                tip.setBorder(border);
-                return tip;
-            }
-        };
-        statusIcon.setBorder(BorderFactory.createEmptyBorder());
-        statusIcon.setToolTipText(GetText.tr("Checking Minecraft server status..."));
     }
 
-    /**
-     * Update the status icon to show the current Minecraft server status.
-     *
-     * @param status The status of servers
-     */
-    public void updateStatus(Status status) {
-        switch (status) {
-        case UNKNOWN:
-            statusIcon.setToolTipText(GetText.tr("Checking Minecraft server status..."));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusWhite.png"));
-            break;
-        case ONLINE:
-            statusIcon.setToolTipText(GetText.tr("All Minecraft servers are up!"));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusGreen.png"));
-            break;
-        case OFFLINE:
-            statusIcon.setToolTipText(GetText.tr("Minecraft servers are down!"));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusRed.png"));
-            break;
-        case PARTIAL:
-            statusIcon.setToolTipText(GetText.tr("Some Minecraft servers are down!"));
-            statusIcon.setIcon(Utils.getIconImage("/assets/image/StatusYellow.png"));
-            break;
-        default:
-            break;
-        }
-    }
-
-    public void reloadAccounts() {
+    private void reloadAccounts() {
         dontSave = true;
         username.removeAllItems();
-        username.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+
+        for (Account account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
-        if (App.settings.getAccount() == null) {
-            username.setSelectedIndex(0);
-        } else {
-            username.setSelectedItem(App.settings.getAccount());
+
+        if (AccountManager.getSelectedAccount() != null) {
+            username.setSelectedItem(AccountManager.getSelectedAccount());
         }
+
+        username.setVisible(AccountManager.getAccounts().size() != 0);
+
         dontSave = false;
     }
 
@@ -213,6 +172,10 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
         this.updateData.setText(GetText.tr("Update Data"));
         this.openFolder.setText(GetText.tr("Open Folder"));
-        this.fillerAccount.setMinecraftUsername(GetText.tr("Select An Account"));
+    }
+
+    @Override
+    public void onAccountsChanged() {
+        reloadAccounts();
     }
 }

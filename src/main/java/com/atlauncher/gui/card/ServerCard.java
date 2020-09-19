@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -56,6 +55,8 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -87,19 +88,22 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.splitter.setEnabled(false);
 
         this.descArea.setText(server.getPackDescription());
-        this.descArea.setBorder(BorderFactory.createEmptyBorder());
+        this.descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.descArea.setEditable(false);
         this.descArea.setHighlighter(null);
         this.descArea.setLineWrap(true);
         this.descArea.setWrapStyleWord(true);
         this.descArea.setEditable(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);
         as.setTopComponent(top);
         as.setBottomComponent(bottom);
+        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
         top.add(this.launchButton);
         top.add(this.launchAndCloseButton);
         top.add(this.launchWithGui);
@@ -150,10 +154,10 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                     .setType(DialogManager.INFO).show();
 
             if (ret == DialogManager.YES_OPTION) {
-                final JDialog dialog = new JDialog(App.settings.getParent(), GetText.tr("Backing Up {0}", server.name),
+                final JDialog dialog = new JDialog(App.launcher.getParent(), GetText.tr("Backing Up {0}", server.name),
                         ModalityType.APPLICATION_MODAL);
                 dialog.setSize(300, 100);
-                dialog.setLocationRelativeTo(App.settings.getParent());
+                dialog.setLocationRelativeTo(App.launcher.getParent());
                 dialog.setResizable(false);
 
                 JPanel topPanel = new JPanel();
@@ -181,9 +185,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                             + ".zip";
                     ZipUtil.pack(server.getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile());
                     dialog.dispose();
-                    App.TOASTER.pop(GetText.tr(
-                            "Backup is complete. Your backup was saved to the following location:<br/><br/>{0}",
-                            filename));
+                    App.TOASTER.pop(GetText.tr("Backup is complete"));
                 });
                 backupThread.start();
                 dialog.addWindowListener(new WindowAdapter() {
@@ -205,12 +207,12 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Server"), 0,
                         GetText.tr("Deleting Server. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
-                    App.settings.removeServer(server);
+                    ServerManager.removeServer(server);
                     dialog.close();
                     App.TOASTER.pop(GetText.tr("Deleted Server Successfully"));
                 }));
                 dialog.start();
-                App.settings.reloadServersPanel();
+                App.launcher.reloadServersPanel();
             }
         });
         this.openButton.addActionListener(e -> OS.openFileExplorer(server.getRoot()));
@@ -239,7 +241,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         chooser.setAcceptAllFileFilterUsed(false);
                         chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                        int ret = chooser.showOpenDialog(App.settings.getParent());
+                        int ret = chooser.showOpenDialog(App.launcher.getParent());
                         if (ret == JFileChooser.APPROVE_OPTION) {
                             File img = chooser.getSelectedFile();
                             if (img.getAbsolutePath().endsWith(".png")) {

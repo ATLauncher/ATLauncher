@@ -1,8 +1,13 @@
 package io.github.asyncronous.toast.ui;
 
-import com.atlauncher.utils.Java;
-import io.github.asyncronous.toast.ToasterConstants;
-import io.github.asyncronous.toast.thread.ToastAnimator;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsDevice.WindowTranslucency;
+import java.awt.GraphicsEnvironment;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -11,15 +16,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.UIManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsDevice.WindowTranslucency;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import com.atlauncher.utils.Java;
+
+import io.github.asyncronous.toast.ToasterConstants;
+import io.github.asyncronous.toast.thread.ToastAnimator;
 
 /**
  * Main Toaster Notification class
@@ -35,8 +36,8 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setForeground((Color) UIManager.get(ToasterConstants.MSG_COLOR));
         this.MESSAGE.setLineWrap(true);
         this.MESSAGE.setEditable(false);
-        this.MESSAGE.setMargin(new Insets(2, 2, 2, 2));
         this.MESSAGE.setWrapStyleWord(true);
+        this.MESSAGE.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
         if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Java.isJava7OrAbove(false)
                 && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
@@ -44,13 +45,13 @@ public final class ToastWindow extends JWindow {
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 
-        JPanel CONTENT_PANEL = new JPanel(new BorderLayout(1, 1));
-        CONTENT_PANEL.setBackground((Color) UIManager.get(ToasterConstants.BORDER_COLOR));
-        JPanel WRAPPER_PANEL = new JPanel(new BorderLayout(2, 2));
+        JPanel CONTENT_PANEL = new JPanel(new BorderLayout());
+        JPanel WRAPPER_PANEL = new JPanel(new BorderLayout());
         WRAPPER_PANEL.setBackground((Color) UIManager.get(ToasterConstants.BG_COLOR));
         WRAPPER_PANEL.add(this.ICON, BorderLayout.WEST);
         WRAPPER_PANEL.add(this.MESSAGE, BorderLayout.CENTER);
-        CONTENT_PANEL.setBorder(BorderFactory.createEtchedBorder());
+        WRAPPER_PANEL.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        CONTENT_PANEL.setBorder(BorderFactory.createLineBorder((Color) UIManager.get(ToasterConstants.BORDER_COLOR)));
         CONTENT_PANEL.add(WRAPPER_PANEL);
 
         this.setFocusable(false);

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@ package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.SystemTray;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,12 +31,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -44,6 +47,10 @@ import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
@@ -69,7 +76,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
 
-        App.settings.setParentFrame(this);
+        App.launcher.setParentFrame(this);
         setSize(new Dimension(1200, 700));
         setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
         setLocationRelativeTo(null);
@@ -79,7 +86,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
 
         LogManager.info("Setting up Bottom Bar");
-        setupBottomBar(); // Setup the Bottom Bar
+        bottomBar = new LauncherBottomBar();
         LogManager.info("Finished Setting up Bottom Bar");
 
         LogManager.info("Setting up Tabs");
@@ -92,23 +99,30 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         if (show) {
             LogManager.info("Showing Launcher");
             setVisible(true);
+
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent windowEvent) {
+                    try {
+                        if (SystemTray.isSupported()) {
+                            SystemTray.getSystemTray().remove(App.trayIcon);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
         }
 
         RelocalizationManager.addListener(this);
 
-        App.TASKPOOL.execute(() -> {
-            App.settings.checkMojangStatus(); // Check Minecraft status
-            bottomBar.updateStatus(App.settings.getMojangStatus());
-        });
-
         if (App.packToInstall != null) {
-            Pack pack = App.settings.getPackBySafeName(App.packToInstall);
+            Pack pack = PackManager.getPackBySafeName(App.packToInstall);
 
-            if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+            if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
                         + "pack added to the launcher!");
             } else {
-                if (App.settings.getAccount() == null || pack == null) {
+                if (AccountManager.getSelectedAccount() == null || pack == null) {
                     LogManager
                             .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
                 } else {
@@ -121,9 +135,9 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             if (parts.length != 4) {
                 LogManager.error("Error automatically installing pack from share code!");
             } else {
-                Pack pack = App.settings.getPackBySafeName(parts[0]);
+                Pack pack = PackManager.getPackBySafeName(parts[0]);
 
-                if (pack != null && pack.isSemiPublic() && !App.settings.canViewSemiPublicPackByCode(pack.getCode())) {
+                if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                     LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
                             + "pack added to the launcher!");
                 } else {
@@ -148,53 +162,66 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
      * Setup the individual tabs used in the Launcher sidebar
      */
     private void setupTabs() {
-        tabbedPane = new JTabbedPane((App.THEME.tabsOnRight() ? JTabbedPane.RIGHT : JTabbedPane.LEFT));
-        tabbedPane.setBackground(App.THEME.getBaseColor());
+        tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
 
-        tabbedPane.addChangeListener(e -> {
-            String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-            Analytics.sendScreenView(title);
-        });
-
+        PerformanceManager.start("newsTab");
         newsTab = new NewsTab();
-        App.settings.setNewsPanel(newsTab);
+        App.launcher.setNewsPanel(newsTab);
+        PerformanceManager.end("newsTab");
 
+        PerformanceManager.start("vanillaPacksTab");
         vanillaPacksTab = new PacksTab(false, true);
-        App.settings.setVanillaPacksPanel(vanillaPacksTab);
+        App.launcher.setVanillaPacksPanel(vanillaPacksTab);
+        PerformanceManager.end("vanillaPacksTab");
 
+        PerformanceManager.start("featuredPacksTab");
         featuredPacksTab = new PacksTab(true, false);
-        App.settings.setFeaturedPacksPanel(featuredPacksTab);
+        App.launcher.setFeaturedPacksPanel(featuredPacksTab);
+        PerformanceManager.end("featuredPacksTab");
 
+        PerformanceManager.start("packsTab");
         packsTab = new PacksTab(false, false);
-        App.settings.setPacksPanel(packsTab);
+        App.launcher.setPacksPanel(packsTab);
+        PerformanceManager.end("packsTab");
 
+        PerformanceManager.start("instancesTab");
         instancesTab = new InstancesTab();
-        App.settings.setInstancesPanel(instancesTab);
+        App.launcher.setInstancesPanel(instancesTab);
+        PerformanceManager.end("instancesTab");
 
+        PerformanceManager.start("serversTab");
         serversTab = new ServersTab();
-        App.settings.setServersPanel(serversTab);
+        App.launcher.setServersPanel(serversTab);
+        PerformanceManager.end("serversTab");
 
+        PerformanceManager.start("accountsTab");
         accountsTab = new AccountsTab();
+        PerformanceManager.end("accountsTab");
+
+        PerformanceManager.start("toolsTab");
         toolsTab = new ToolsTab();
+        PerformanceManager.end("toolsTab");
+
+        PerformanceManager.start("settingsTab");
         settingsTab = new SettingsTab();
+        PerformanceManager.end("settingsTab");
 
         this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
                 serversTab, accountsTab, toolsTab, settingsTab });
 
-        tabbedPane.setFont(App.THEME.getTabFont().deriveFont(32.0F));
+        tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
-        tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
-    }
+        tabbedPane.setSelectedIndex(App.settings.selectedTabOnStartup);
 
-    /**
-     * Setup the bottom bar of the Launcher
-     */
-    private void setupBottomBar() {
-        bottomBar = new LauncherBottomBar();
-        App.settings.setBottomBar(bottomBar);
+        tabbedPane.addChangeListener(e -> {
+            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle());
+            TabChangeManager.post();
+        });
+
+        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle());
     }
 
     @Override
@@ -202,5 +229,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }
+
+        tabbedPane.setFont(App.THEME.getTabFont());
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
@@ -62,13 +63,13 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.settings.getParent(), GetText.tr("Select Mods To Install"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Select Mods To Install"), ModalityType.APPLICATION_MODAL);
         this.installer = installerr;
 
         Analytics.sendScreenView("Mods Chooser Dialog");
 
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -115,7 +116,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel1 = new JPanel();
         checkBoxPanel1.setLayout(null);
-        checkBoxPanel1.setBackground(App.THEME.getModSelectionBackgroundColor());
+        checkBoxPanel1.setBackground(UIManager.getColor("Mods.modSelectionColor"));
 
         JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -124,7 +125,7 @@ public class ModsChooser extends JDialog {
 
         JPanel checkBoxPanel2 = new JPanel();
         checkBoxPanel2.setLayout(null);
-        checkBoxPanel2.setBackground(App.THEME.getModSelectionBackgroundColor());
+        checkBoxPanel2.setBackground(UIManager.getColor("Mods.modSelectionColor"));
 
         JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -450,6 +451,8 @@ public class ModsChooser extends JDialog {
             for (Mod mod : linkedMods) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
+                        LogManager.debug("Selected " + a.getMod().getName() + " which is auto selecting "
+                                + check.getMod().getName() + " because it's a linked mod.");
                         check.setEnabled(true);
                     }
                 }
@@ -459,6 +462,8 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : groupMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
+                            LogManager.debug("Selected " + a.getMod().getName() + " which is auto deselecting "
+                                    + check.getMod().getName() + " because it's in the same group.");
                             check.setSelected(false);
                         }
                     }
@@ -469,6 +474,8 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : dependsMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod && !sortedOut.contains(check)) {
+                            LogManager.debug("Selected " + a.getMod().getName() + " which is auto selecting "
+                                    + check.getMod().getName() + " because it's a dependency.");
                             sortedOut.add(check);
                             check.setSelected(true);
                             sortOutMods(check);
@@ -481,6 +488,8 @@ public class ModsChooser extends JDialog {
             for (Mod mod : linkedMods) {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
+                        LogManager.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
+                                + check.getMod().getName() + " because it's a linked mod.");
                         check.setEnabled(false);
                         check.setSelected(false);
                     }
@@ -491,6 +500,8 @@ public class ModsChooser extends JDialog {
                 for (Mod mod : dependedMods) {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
+                            LogManager.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
+                                    + check.getMod().getName() + " because it's a dependant mod.");
                             check.setSelected(false);
                         }
                     }
@@ -501,6 +512,8 @@ public class ModsChooser extends JDialog {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
                             if (check.getMod().isLibrary()) {
+                                LogManager.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
+                                        + check.getMod().getName() + " because it's a dependant library mod.");
                                 check.setSelected(false);
                             }
                         }

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.gui;
+
+import java.awt.SystemTray;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -60,7 +62,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
 
     private void addActionListeners() {
         this.killMCButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
-            if (App.settings.isMinecraftLaunched()) {
+            if (App.launcher.minecraftLaunched) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"))
@@ -68,12 +70,21 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
                         .setType(DialogManager.ERROR).show();
 
                 if (ret == DialogManager.YES_OPTION) {
-                    App.settings.killMinecraft();
+                    App.launcher.killMinecraft();
                 }
             }
         }));
         this.tcButton.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
-        this.quitButton.addActionListener(e -> System.exit(0));
+        this.quitButton.addActionListener(e -> {
+            try {
+                if (SystemTray.isSupported()) {
+                    SystemTray.getSystemTray().remove(App.trayIcon);
+                }
+            } catch (Exception ignored) {
+            }
+
+            System.exit(0);
+        });
     }
 
     public void setMinecraftLaunched(boolean l) {

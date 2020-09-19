@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package com.atlauncher;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -28,22 +29,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
+import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -63,18 +63,28 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
-import com.atlauncher.gui.theme.Theme;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.ErrorReporting;
+import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.formdev.flatlaf.extras.FlatInspector;
 
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.arikia.dev.drpc.DiscordEventHandlers;
 import net.arikia.dev.drpc.DiscordRPC;
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.GraphicsCard;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OSFileStore;
+import oshi.software.os.OperatingSystem;
 
 /**
  * Main entry point for the application, Java runs the main method here when the
@@ -89,7 +99,7 @@ public class App {
     /**
      * The instance of toaster to show popups in the bottom right.
      */
-    public static final Toaster TOASTER = Toaster.instance();
+    public static Toaster TOASTER;
 
     /**
      * The tray menu shown in the notification area or whatever it's called in non
@@ -158,6 +168,22 @@ public class App {
     public static boolean noLauncherUpdate = false;
 
     /**
+     * This will tell the launcher to not show the console. You can open the console
+     * through the tray menu or the main launcher frame.
+     * <p/>
+     * --no-console
+     */
+    public static boolean noConsole = false;
+
+    /**
+     * This will close the launcher once Minecraft is launcher. This is only
+     * effective when combined with the --launch parameter.
+     * <p/>
+     * --close-launcher
+     */
+    public static boolean closeLauncher = false;
+
+    /**
      * This sets a pack code to be added to the launcher on startup.
      */
     public static String packCodeToAdd = null;
@@ -178,21 +204,23 @@ public class App {
     public static String autoLaunch = null;
 
     /**
-     * This is the Settings instance which holds all the users settings and alot of
-     * methods relating to getting things done.
-     *
-     * @TODO This should probably be switched to be less large and have less
-     *       responsibility.
+     * This is the Settings instance which holds all the users settings.
      */
     public static Settings settings;
 
     /**
-     * This is the theme used by the launcher. By default it uses the default theme
-     * until the theme can be created and loaded.
-     * <p/>
-     * For more information on themeing, please see https://atl.pw/theme
+     * This is where a majority of the UI components are held and refreshed through,
+     * as well as where misc launcher actions and updater logic is held.
      */
-    public static Theme THEME = Theme.DEFAULT_THEME;
+    public static Launcher launcher;
+
+    /**
+     * This is the theme used by the launcher. For more information on themeing,
+     * please see the README.
+     */
+    public static ATLauncherLaf THEME;
+
+    public static TrayIcon trayIcon;
 
     static {
         // Prefer to use IPv4
@@ -217,6 +245,9 @@ public class App {
         // check the launcher has been 'installed' correctly
         checkInstalledCorrectly();
 
+        // setup OS specific things
+        setupOSSpecificThings();
+
         try {
             LogManager.info("Organising filesystem");
             FileSystem.organise();
@@ -224,21 +255,24 @@ public class App {
             LogManager.logStackTrace("Error organising filesystem", e, false);
         }
 
-        // Setup the Settings and wait for it to finish.
-        settings = new Settings();
+        // Load the settings from json, convert old properties config and validate it
+        loadSettings();
+
+        // Setup the Launcher and wait for it to finish.
+        launcher = new Launcher();
+
+        // Load the theme and style everything.
+        loadTheme(settings.theme);
 
         final SplashScreen ss = new SplashScreen();
 
         // Load and show the splash screen while we load other things.
         SwingUtilities.invokeLater(() -> ss.setVisible(true));
 
-        // Load the theme and style everything.
-        loadTheme();
-
         console = new LauncherConsole();
         LogManager.start();
 
-        if (settings.enableConsole()) {
+        if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
             console.setVisible(true);
         }
@@ -249,83 +283,33 @@ public class App {
             LogManager.logStackTrace("Error loading language", e1);
         }
 
-        if (settings.enableConsole()) {
+        if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
             SwingUtilities.invokeLater(() -> {
                 console.setVisible(true);
             });
         }
 
-        if (settings.enableTrayIcon() && !skipTrayIntegration) {
+        if (settings.enableTrayMenu && !skipTrayIntegration) {
             try {
                 // Try to enable the tray icon.
-                App.trySystemTrayIntegration();
+                trySystemTrayIntegration();
             } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
         }
 
-        LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
-
-        LogManager.info("Operating System: " + System.getProperty("os.name"));
-
-        settings.loadJavaPathProperties();
-
-        if (settings.isUsingCustomJavaPath()) {
-            LogManager.warn("Custom Java Path Set!");
-
-            settings.checkForValidJavaPath(false);
-        } else if (OS.isUsingMacApp()) {
-            // If the user is using the Mac Application, then we forcibly set the java path
-            // if they have none set.
-
-            File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-            if (oracleJava.exists() && oracleJava.canExecute()) {
-                settings.setJavaPath("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
-                LogManager.warn("Launcher Forced Custom Java Path Set!");
-            }
-        }
-
-        LogManager.info("Java Version: " + Java.getActualJavaVersion());
-
-        SwingUtilities.invokeLater(() -> Java.getInstalledJavas().stream()
-                .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
-
-        LogManager.info("Java Path: " + settings.getJavaPath());
-
-        LogManager.info("64 Bit Java: " + OS.is64Bit());
-
-        int maxRam = OS.getMaximumRam();
-        LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
-
-        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
-        LogManager.info("Using Theme: " + THEME);
-
-        // Now for some Mac specific stuff, mainly just setting the name of the
-        // application and icon.
-        if (OS.isMac()) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                    Constants.LAUNCHER_NAME + " " + Constants.VERSION);
-            try {
-                Class<?> util = Class.forName("com.apple.eawt.Application");
-                Method getApplication = util.getMethod("getApplication");
-                Object application = getApplication.invoke(util);
-                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
-                setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
-            } catch (Exception ex) {
-                LogManager.logStackTrace("Failed to set dock icon", ex);
-            }
-        }
+        // log out the system information to the console
+        logSystemInformation();
 
         // Check to make sure the user can load the launcher
-        settings.checkIfWeCanLoad();
+        launcher.checkIfWeCanLoad();
 
         LogManager.info("Showing splash screen and loading everything");
-        settings.loadEverything(); // Loads everything that needs to be loaded
+        launcher.loadEverything(); // Loads everything that needs to be loaded
         LogManager.info("Launcher finished loading everything");
 
-        if (settings.isFirstTimeRun()) {
+        if (settings.firstTimeRun) {
             LogManager.warn("Launcher not setup. Loading Setup Dialog");
             new SetupDialog();
         }
@@ -333,17 +317,17 @@ public class App {
         boolean open = true;
 
         if (autoLaunch != null) {
-            if (settings.isInstanceBySafeName(autoLaunch)) {
-                Instance instance = settings.getInstanceBySafeName(autoLaunch);
+            if (InstanceManager.isInstanceBySafeName(autoLaunch)) {
+                Instance instance = InstanceManager.getInstanceBySafeName(autoLaunch);
                 LogManager.info("Opening Instance " + instance.getName());
                 if (instance.launch()) {
                     open = false;
                 } else {
                     LogManager.error("Error Opening Instance " + instance.getName());
                 }
-            } else if (settings.instancesV2.stream()
+            } else if (InstanceManager.getInstances().stream()
                     .anyMatch(instance -> instance.getSafeName().equalsIgnoreCase(autoLaunch))) {
-                Optional<InstanceV2> instance = settings.instancesV2.stream()
+                Optional<InstanceV2> instance = InstanceManager.getInstances().stream()
                         .filter(instanceV2 -> instanceV2.getSafeName().equalsIgnoreCase(autoLaunch)).findFirst();
 
                 if (instance.isPresent()) {
@@ -357,7 +341,7 @@ public class App {
             }
         }
 
-        if (settings.enableDiscordIntegration()) {
+        if (settings.enableDiscordIntegration) {
             try {
                 DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
                 DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
@@ -376,8 +360,8 @@ public class App {
         }
 
         if (packCodeToAdd != null) {
-            if (settings.addPack(packCodeToAdd)) {
-                Pack packAdded = settings.getSemiPublicPackByCode(packCodeToAdd);
+            if (PackManager.addPack(packCodeToAdd)) {
+                Pack packAdded = PackManager.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
                     LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
                 } else {
@@ -394,6 +378,56 @@ public class App {
             new LauncherFrame(openLauncher);
             ss.close();
         });
+    }
+
+    private static void logSystemInformation() {
+
+        LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
+
+        SwingUtilities.invokeLater(() -> Java.getInstalledJavas().stream()
+                .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
+
+        LogManager.info("Java Version: " + Java.getActualJavaVersion());
+
+        LogManager.info("Java Path: " + settings.javaPath);
+
+        LogManager.info("64 Bit Java: " + OS.is64Bit());
+
+        int maxRam = OS.getMaximumRam();
+        LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
+
+        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
+
+        try {
+            SystemInfo systemInfo = OS.getSystemInfo();
+            HardwareAbstractionLayer hal = systemInfo.getHardware();
+
+            List<GraphicsCard> cards = hal.getGraphicsCards();
+            if (cards.size() != 0) {
+                for (GraphicsCard card : cards) {
+                    LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
+                            + " " + (card.getVRam() / 1048576) + "MB VRAM");
+                }
+            }
+
+            CentralProcessor cpu = hal.getProcessor();
+            LogManager.info("CPU: " + cpu.getPhysicalProcessorCount() + " cores/" + cpu.getLogicalProcessorCount()
+                    + " threads");
+
+            OperatingSystem os = systemInfo.getOperatingSystem();
+
+            LogManager.info("Operating System: " + os.getFamily() + " (" + os.getVersionInfo() + ")");
+            LogManager.info("Bitness: " + os.getBitness());
+            LogManager.info("Uptime: " + os.getSystemUptime());
+            LogManager.info("Manufacturer: " + os.getManufacturer());
+
+            for (OSFileStore fileStore : os.getFileSystem().getFileStores(true)) {
+                LogManager.info(
+                        "Disk: " + fileStore.getLabel() + " (" + fileStore.getFreeSpace() / 1048576 + " MB Free)");
+            }
+        } catch (Throwable t) {
+            LogManager.logStackTrace(t);
+        }
     }
 
     private static void checkInstalledCorrectly() {
@@ -441,56 +475,111 @@ public class App {
         }
     }
 
-    /**
-     * Loads the theme and applies the theme's settings to the look and feel.
-     */
-    public static void loadTheme() {
-        File themeFile = settings.getThemeFile();
-        if (themeFile != null) {
+    private static void setupOSSpecificThings() {
+        // do some Mac specific stuff, setting the name of theapplication and icon
+        if (OS.isMac()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                    Constants.LAUNCHER_NAME + " " + Constants.VERSION);
             try {
-                InputStream stream = null;
-
-                ZipFile zipFile = new ZipFile(themeFile);
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("theme.json")) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
-                    }
-                }
-
-                if (stream != null) {
-                    THEME = Gsons.THEMES.fromJson(new InputStreamReader(stream), Theme.class);
-                    stream.close();
-                }
-
-                zipFile.close();
+                Class<?> util = Class.forName("com.apple.eawt.Application");
+                Method getApplication = util.getMethod("getApplication");
+                Object application = getApplication.invoke(util);
+                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
+                setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
             } catch (Exception ex) {
-                THEME = Theme.DEFAULT_THEME;
+                LogManager.logStackTrace("Failed to set dock icon", ex);
             }
         }
 
+        // do some linux specific stuff, namely set the application title in Gnome
+        if (OS.isLinux()) {
+            try {
+                Toolkit toolkit = Toolkit.getDefaultToolkit();
+                java.lang.reflect.Field awtAppClassNameField = toolkit.getClass().getDeclaredField("awtAppClassName");
+                awtAppClassNameField.setAccessible(true);
+                awtAppClassNameField.set(toolkit, Constants.LAUNCHER_NAME);
+            } catch (Throwable t) {
+            }
+        }
+    }
+
+    /**
+     * Loads the theme and applies the theme's settings to the look and feel.
+     */
+    public static void loadTheme(String theme) {
         try {
-            setLAF();
+            setLAF(theme);
             modifyLAF();
+
+            // now the theme is loaded, we can intialize the toaster
+            TOASTER = Toaster.instance();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
+    private static void loadSettings() {
+        // load the users settings or load defaults if settings file doesn't exist
+        if (Files.exists(FileSystem.SETTINGS)) {
+            try (FileReader fileReader = new FileReader(FileSystem.SETTINGS.toFile())) {
+                settings = Gsons.DEFAULT.fromJson(fileReader, Settings.class);
+            } catch (Throwable t) {
+                LogManager.logStackTrace("Error loading settings, using defaults", t, false);
+                settings = new Settings();
+            }
+        } else {
+            settings = new Settings();
+        }
+
+        if (Files.exists(FileSystem.LAUNCHER_CONFIG)) {
+            try (FileReader fileReader = new FileReader(FileSystem.LAUNCHER_CONFIG.toFile())) {
+                Properties properties = new Properties();
+                properties.load(fileReader);
+                settings.convert(properties);
+            } catch (Throwable t) {
+                LogManager.logStackTrace("Error loading settings, using defaults", t, false);
+                settings = new Settings();
+            }
+
+            try {
+                Files.delete(FileSystem.LAUNCHER_CONFIG);
+            } catch (IOException e) {
+                LogManager.warn("Failed to delete old launcher config.");
+            }
+        }
+
+        // validate the settings
+        settings.validate();
+    }
+
     /**
-     * Sets the look and feel to be that of nimbus which is the base.
+     * Sets the look and feel of the application.
      *
      * @throws Exception
      */
-    private static void setLAF() throws Exception {
-        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (info.getName().equalsIgnoreCase("nimbus")) {
-                UIManager.setLookAndFeel(info.getClassName());
-            }
+    private static void setLAF(String theme) throws Exception {
+        try {
+            Class.forName(theme);
+        } catch (NoClassDefFoundError | ClassNotFoundException e) {
+            theme = Constants.DEFAULT_THEME_CLASS;
+            settings.theme = theme;
         }
+
+        // install the theme
+        Class.forName(theme).getMethod("install").invoke(null);
+
+        // then grab the instance
+        THEME = (ATLauncherLaf) Class.forName(theme).getMethod("getInstance").invoke(null);
+
+        // add in flat inspector to allow inspecting UI elements for theming purposes on
+        // non release versions
+        if (!Constants.VERSION.isReleaseStream()) {
+            FlatInspector.install("ctrl shift alt X");
+        }
+
+        // register the fonts so they can show within HTML
+        THEME.registerFonts();
     }
 
     /**
@@ -499,11 +588,18 @@ public class App {
      * @throws Exception
      */
     private static void modifyLAF() throws Exception {
-        THEME.apply();
         ToolTipManager.sharedInstance().setDismissDelay(15000);
         ToolTipManager.sharedInstance().setInitialDelay(50);
+
+        UIManager.put("Table.focusCellHighlightBorder", BorderFactory.createEmptyBorder(2, 5, 2, 5));
+        UIManager.put("defaultFont", THEME.getNormalFont());
+        UIManager.put("Button.font", THEME.getNormalFont());
+        UIManager.put("Toaster.font", THEME.getNormalFont());
+        UIManager.put("Toaster.opacity", 0.75F);
+
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         UIManager.put("ScrollBar.minimumThumbSize", new Dimension(50, 50));
+        UIManager.put("ScrollPane.border", BorderFactory.createEmptyBorder());
 
         // for Mac we setup correct copy/cut/paste shortcuts otherwise it just uses Ctrl
         if (OS.isMac()) {
@@ -549,7 +645,7 @@ public class App {
     private static void trySystemTrayIntegration() throws Exception {
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
-            TrayIcon trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
+            trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
 
             trayIcon.addMouseListener(new MouseAdapter() {
                 @Override
@@ -656,6 +752,8 @@ public class App {
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
         parser.accepts("working-dir").withRequiredArg().ofType(String.class);
         parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("no-console").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("close-launcher").withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug").withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
         parser.accepts("launch").withRequiredArg().ofType(String.class);
@@ -701,6 +799,16 @@ public class App {
         noLauncherUpdate = options.has("no-launcher-update");
         if (noLauncherUpdate) {
             LogManager.debug("Not updating the launcher!");
+        }
+
+        noConsole = options.has("no-console");
+        if (noConsole) {
+            LogManager.debug("Not showing console!");
+        }
+
+        closeLauncher = options.has("close-launcher");
+        if (closeLauncher) {
+            LogManager.debug("Closing launcher once Minecraft is launched!");
         }
 
         skipIntegration = options.has("skip-integration");

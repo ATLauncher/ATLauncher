@@ -1,11 +1,13 @@
 # Directories
 .gradle/
+.idea/
 .settings/
 bin/
 build/
 dist/
 target/
 testLauncher/
+run/
 
 # Files
 .classpath

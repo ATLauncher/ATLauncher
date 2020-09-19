@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,13 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
@@ -45,6 +46,7 @@ public class Pack {
     public boolean createServer;
     public boolean logging;
     public boolean featured;
+    public boolean system;
     public boolean hasDiscordImage;
     public String description;
     public CurseMod cursePack;
@@ -133,6 +135,10 @@ public class Pack {
         return this.featured;
     }
 
+    public boolean isSystem() {
+        return this.system;
+    }
+
     public boolean hasDiscordImage() {
         return this.hasDiscordImage;
     }
@@ -154,7 +160,7 @@ public class Pack {
     }
 
     public boolean isTester() {
-        Account account = App.settings.getAccount();
+        Account account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }
@@ -180,7 +186,7 @@ public class Pack {
                 return true;
             }
         } else if (this.type == PackType.SEMIPUBLIC && this.code != null) {
-            if (isTester() || (hasVersions() && App.settings.canViewSemiPublicPackByCode(this.code))) {
+            if (isTester() || (hasVersions() && PackManager.canViewSemiPublicPackByCode(this.code))) {
                 return true;
             }
         } else {
@@ -195,7 +201,7 @@ public class Pack {
         if (this.type != PackType.PRIVATE) {
             return true;
         }
-        Account account = App.settings.getAccount();
+        Account account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }

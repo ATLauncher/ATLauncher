@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.managers.LogManager;
 
 import org.mini2Dx.gettext.GetText;
 import org.mini2Dx.gettext.PoFile;

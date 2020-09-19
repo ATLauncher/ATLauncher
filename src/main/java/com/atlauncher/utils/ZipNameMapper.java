@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import org.zeroturnaround.zip.NameMapper;
 
 public class ZipNameMapper {
     public static final NameMapper INSTANCE_BACKUP = name -> {
-        if (App.settings.enableModsBackups()
+        if (App.settings.enableModsBackups
                 && (name.startsWith("mods") || name.startsWith("jarmods") || name.startsWith("coremods"))) {
             return name;
         }

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -41,6 +41,8 @@ import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.dialogs.AddCursePackDialog;
+import com.atlauncher.gui.dialogs.ImportInstanceDialog;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 
 import org.mini2Dx.gettext.GetText;
@@ -48,6 +50,7 @@ import org.mini2Dx.gettext.GetText;
 public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = -969812552965390610L;
     private JPanel topPanel;
+    private JButton importButton;
     private JButton addCurseButton;
     private JButton clearButton;
     private JTextField searchBox;
@@ -73,6 +76,12 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
     public void loadContent(boolean keepFilters) {
         topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        importButton = new JButton(GetText.tr("Import"));
+        importButton.addActionListener(e -> {
+            new ImportInstanceDialog();
+        });
+        topPanel.add(importButton);
 
         addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
         addCurseButton.addActionListener(e -> {
@@ -129,9 +138,10 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.weightx = 1.0;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        App.settings.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
+        InstanceManager.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 
@@ -158,7 +168,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
             }
         });
 
-        App.settings.getInstancesV2Sorted().stream().forEach(instance -> {
+        InstanceManager.getInstances().stream().forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 

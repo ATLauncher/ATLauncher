@@ -1,9 +1,19 @@
 /*
- * Java Finder by petrucio@stackoverflow(828681) is licensed under a Creative Commons Attribution 3.0 Unported License.
- * Needs WinRegistry.java. Get it at: https://stackoverflow.com/questions/62289/read-write-to-windows-registry-using-java
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
- * JavaFinder - Windows-specific classes to search for all installed versions of java on this system
- * Author: petrucio@stackoverflow (828681)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.utils.javafinder;
 
@@ -23,58 +33,26 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
 
 public class JavaFinder {
     private static SoftReference<List<String>> javaPaths = new SoftReference<>(null);
 
-    /**
-     * @return: A list of javaExec paths found under this registry key (rooted at
-     *          HKEY_LOCAL_MACHINE)
-     * @param wow64     0 for standard registry access (32-bits for 32-bit app,
-     *                  64-bits for 64-bits app) or WinRegistry.KEY_WOW64_32KEY to
-     *                  force access to 32-bit registry view, or
-     *                  WinRegistry.KEY_WOW64_64KEY to force access to 64-bit
-     *                  registry view
-     * @param previous: Insert all entries from this list at the beggining of the
-     *                  results
-     *************************************************************************/
-    private static List<String> searchRegistry(String key, int wow64, List<String> previous) {
-        List<String> result = previous;
-        try {
-            List<String> entries = WinRegistry.readStringSubKeys(WinRegistry.HKEY_LOCAL_MACHINE, key, wow64);
-            for (int i = 0; entries != null && i < entries.size(); i++) {
-                String val = WinRegistry.readString(WinRegistry.HKEY_LOCAL_MACHINE, key + "\\" + entries.get(i),
-                        "JavaHome", wow64);
-                if (!result.contains(val + "\\bin\\java.exe")) {
-                    result.add(val + "\\bin\\java.exe");
-                }
-            }
-        } catch (Throwable ignored) {
-        }
-        return result;
-    }
-
-    // this could probably be written better
     public static List<JavaInfo> findJavas() {
+        PerformanceManager.start();
         List<String> javaExecs = javaPaths.get();
 
         if (javaExecs == null) {
             javaExecs = new ArrayList<>();
 
             if (OS.isWindows()) {
-                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Runtime Environment",
-                        WinRegistry.KEY_WOW64_32KEY, javaExecs);
-                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Runtime Environment",
-                        WinRegistry.KEY_WOW64_64KEY, javaExecs);
-                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Development Kit",
-                        WinRegistry.KEY_WOW64_32KEY, javaExecs);
-                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\Java Development Kit",
-                        WinRegistry.KEY_WOW64_64KEY, javaExecs);
-                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_32KEY,
-                        javaExecs);
-                javaExecs = JavaFinder.searchRegistry("SOFTWARE\\JavaSoft\\JDK", WinRegistry.KEY_WOW64_64KEY,
-                        javaExecs);
+                if (OS.is64Bit()) {
+                    javaExecs.addAll(scanWindowsRegistry(64));
+                } else {
+                    javaExecs.addAll(scanWindowsRegistry(32));
+                }
 
                 PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java.exe");
 
@@ -138,23 +116,29 @@ public class JavaFinder {
             javaPaths = new SoftReference<>(javaExecs);
         }
 
-        return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(JavaInfo::new).collect(Collectors.toList());
+        PerformanceManager.end();
+        return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(JavaInfo::new)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * @return: The path to a java.exe that has the same bitness as the OS (or null
-     *          if no matching java is found)
-     ****************************************************************************/
-    public static String getOSBitnessJava() {
-        String arch = System.getenv("PROCESSOR_ARCHITECTURE");
-        String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
-        boolean isOS64 = arch.endsWith("64") || (wow64Arch != null && wow64Arch.endsWith("64"));
+    // Inspired by
+    // https://github.com/TechnicPack/LauncherV3/blob/a8067879fea995fbb780d3b67c4ce74a17152ea4/src/main/java/net/technicpack/launchercore/launch/java/source/os/WinRegistryJavaSource.java
+    private static List<String> scanWindowsRegistry(int bitness) {
+        List<String> versions = new ArrayList<>();
 
-        List<JavaInfo> javas = JavaFinder.findJavas();
-        for (JavaInfo java : javas) {
-            if (java.is64bits == isOS64)
-                return java.path;
+        String output = Utils.runProcess("reg", "query", "HKEY_LOCAL_MACHINE\\Software\\JavaSoft\\", "/f", "Home", "/t",
+                "REG_SZ", "/s", "/reg:" + bitness);
+
+        for (String line : output.split("\\r?\\n")) {
+            if (line.contains("REG_SZ")) {
+                String javaPath = line.substring(line.indexOf("REG_SZ") + 6).trim() + "\\bin\\java.exe";
+
+                if (Files.exists(Paths.get(javaPath))) {
+                    versions.add(javaPath);
+                }
+            }
         }
-        return null;
+
+        return versions;
     }
 }

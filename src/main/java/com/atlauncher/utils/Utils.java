@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Font;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -66,7 +64,6 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -80,20 +77,20 @@ import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
+import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.ExtractRule;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.managers.LogManager;
 import com.google.gson.reflect.TypeToken;
-
-import io.pack200.Pack200;
 
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 import org.zeroturnaround.zip.ZipUtil;
 
+import io.pack200.Pack200;
 import net.iharder.Base64;
 
 public class Utils {
@@ -123,50 +120,6 @@ public class Utils {
      * @return the icon image
      */
     public static ImageIcon getIconImage(String path) {
-        File themeFile = App.settings == null ? null : App.settings.getThemeFile();
-
-        if (themeFile != null) {
-            ZipFile zipFile;
-            try {
-                zipFile = new ZipFile(themeFile);
-            } catch (ZipException e) {
-                LogManager.logStackTrace("Invalid zip file", e);
-                return null;
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to open theme zip file", e);
-                return null;
-            }
-
-            try {
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                InputStream stream = null;
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + path.substring(path.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
-                    }
-                }
-
-                if (stream != null) {
-                    try {
-                        return new ImageIcon(ImageIO.read(stream));
-                    } finally {
-                        stream.close();
-                    }
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to read icon from theme zip file", e);
-            } finally {
-                try {
-                    zipFile.close();
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to close zip file", e);
-                }
-            }
-        }
-
         URL url = App.class.getResource(path);
 
         if (url == null) {
@@ -179,13 +132,13 @@ public class Utils {
 
     public static File getOSStorageDir() {
         switch (OS.getOS()) {
-        case WINDOWS:
-            return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
-        case OSX:
-            return new File(System.getProperty("user.home"),
-                    "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
-        default:
-            return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+            case WINDOWS:
+                return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+            case OSX:
+                return new File(System.getProperty("user.home"),
+                        "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
+            default:
+                return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -204,19 +157,6 @@ public class Utils {
         return new ImageIcon(file.getAbsolutePath());
     }
 
-    /**
-     * Gets the font.
-     *
-     * @return the font
-     */
-    public static Font getFont() {
-        if (OS.isMac()) {
-            return new Font("SansSerif", Font.PLAIN, 11);
-        } else {
-            return new Font("SansSerif", Font.PLAIN, 12);
-        }
-    }
-
     public static BufferedImage getImage(String img) {
         String name;
         if (!img.startsWith("/assets/image/")) {
@@ -227,51 +167,6 @@ public class Utils {
 
         if (!name.endsWith(".png")) {
             name += ".png";
-        }
-
-        File themeFile = App.settings == null ? null : App.settings.getThemeFile();
-
-        if (themeFile != null) {
-
-            ZipFile zipFile;
-            try {
-                zipFile = new ZipFile(themeFile);
-            } catch (ZipException e) {
-                LogManager.logStackTrace("Invalid zip file", e);
-                return null;
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to open theme zip file", e);
-                return null;
-            }
-
-            try {
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                InputStream stream = null;
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (entry.getName().equals("image/" + name.substring(name.lastIndexOf('/') + 1))) {
-                        stream = zipFile.getInputStream(entry);
-                        break;
-                    }
-                }
-
-                if (stream != null) {
-                    try {
-                        return ImageIO.read(stream);
-                    } finally {
-                        stream.close();
-                    }
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to read image from theme zip file", e);
-            } finally {
-                try {
-                    zipFile.close();
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to close zip file", e);
-                }
-            }
         }
 
         InputStream stream = App.class.getResourceAsStream(name);
@@ -865,7 +760,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
         connection.setRequestProperty("Pragma", "no-cache");
@@ -903,7 +798,7 @@ public class Utils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -940,7 +835,7 @@ public class Utils {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+        connection.setRequestProperty("User-Agent", Network.USER_AGENT);
         connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
         connection.setRequestProperty("Expires", "0");
@@ -1167,14 +1062,6 @@ public class Utils {
         return sb.toString();
     }
 
-    public static Float getBaseFontSize() {
-        if (OS.isMac()) {
-            return (float) 11;
-        } else {
-            return (float) 12;
-        }
-    }
-
     public static boolean testProxy(Proxy proxy) {
         try {
             HttpURLConnection connection;
@@ -1183,7 +1070,7 @@ public class Utils {
             connection.setUseCaches(false);
             connection.setDefaultUseCaches(false);
             connection.setRequestProperty("Accept-Encoding", "gzip");
-            connection.setRequestProperty("User-Agent", App.settings.getUserAgent());
+            connection.setRequestProperty("User-Agent", Network.USER_AGENT);
             connection.setRequestProperty("Cache-Control", "no-store,max-age=0,no-cache");
             connection.setRequestProperty("Expires", "0");
             connection.setRequestProperty("Pragma", "no-cache");
@@ -1209,7 +1096,7 @@ public class Utils {
      * @param image The image to flip
      * @return The flipped image
      */
-    public static Image flipImage(BufferedImage image) {
+    public static BufferedImage flipImage(BufferedImage image) {
         AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
         tx.translate(-image.getWidth(null), 0);
         AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -1226,8 +1113,8 @@ public class Utils {
      */
     public static int nonTransparentPixels(BufferedImage image) {
         int count = 0;
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
                 if (image.getRGB(x, y) == -1) {
                     count++;
                 }
@@ -1661,5 +1548,32 @@ public class Utils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static String runProcess(String... command) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+
+            try {
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+            } finally {
+                br.close();
+            }
+
+            return sb.toString().trim();
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return "";
     }
 }

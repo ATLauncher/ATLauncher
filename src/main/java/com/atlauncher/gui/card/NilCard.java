@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.Image;
 
 import javax.swing.BorderFactory;
@@ -27,11 +26,11 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -51,15 +50,10 @@ public class NilCard extends JPanel implements RelocalizationListener {
         super(new BorderLayout());
         RelocalizationManager.addListener(this);
 
-        if (OS.isMac()) {
-            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 14)));
-        } else {
-            this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 15)));
-        }
+        this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
 
-        this.error.setBorder(BorderFactory.createEmptyBorder());
+        this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.error.setEditable(false);
         this.error.setHighlighter(null);
         this.error.setLineWrap(true);
@@ -69,6 +63,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
         this.splitter.setEnabled(false);
         this.splitter.setLeftComponent(new ImagePanel(defaultImage));
         this.splitter.setRightComponent(this.error);
+        this.splitter.setBorder(BorderFactory.createEmptyBorder());
 
         this.add(this.splitter, BorderLayout.CENTER);
     }

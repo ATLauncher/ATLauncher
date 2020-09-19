@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,10 @@ import javax.swing.JLabel;
 import javax.swing.JToolTip;
 import javax.swing.border.Border;
 
-import com.atlauncher.App;
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.HoverLineBorder;
 
+@SuppressWarnings("serial")
 public class JLabelWithHover extends JLabel {
-    private static final long serialVersionUID = -4371080285355832166L;
-    private static final Border HOVER_BORDER = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-
     public JLabelWithHover(Icon icon, String tooltipText, Border border) {
         super();
         super.setIcon(icon);
@@ -45,7 +42,7 @@ public class JLabelWithHover extends JLabel {
     @Override
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        tip.setBorder(HOVER_BORDER);
+        tip.setBorder(new HoverLineBorder());
         return tip;
     }
 }
