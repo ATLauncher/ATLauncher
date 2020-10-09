@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,12 @@
  */
 package com.atlauncher;
 
-import java.awt.Color;
-
-import com.atlauncher.adapter.ColorTypeAdapter;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.PackVersionTypeAdapter;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.ArgumentsTypeAdapter;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LibraryTypeAdapter;
-import com.atlauncher.data.minecraft.MojangStatus;
-import com.atlauncher.data.minecraft.MojangStatusTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMeta;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
@@ -38,16 +33,12 @@ import com.google.gson.GsonBuilder;
 public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder().setPrettyPrinting().create();
 
-    public static final Gson THEMES = new GsonBuilder().setPrettyPrinting()
-            .registerTypeAdapter(Color.class, new ColorTypeAdapter()).create();
-
     public static final Gson DEFAULT_ALT = new GsonBuilder()
-            .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).create();
+            .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).setPrettyPrinting().create();
 
-    public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping()
+    public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
-            .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())
-            .registerTypeAdapter(MojangStatus.class, new MojangStatusTypeAdapter()).create();
+            .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter()).create();
 }

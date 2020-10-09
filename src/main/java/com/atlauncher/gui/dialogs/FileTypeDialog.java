@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ public class FileTypeDialog extends JDialog {
     private boolean closed = false;
 
     public FileTypeDialog(String title, String labelName, String bottomText, String selectorText, String[] subOptions) {
-        super(App.settings.getParent(), title, ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), title, ModalityType.APPLICATION_MODAL);
         setSize(400, 175);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

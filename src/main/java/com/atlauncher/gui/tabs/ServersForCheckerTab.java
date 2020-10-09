@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 
-import com.atlauncher.App;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.gui.dialogs.AddEditServerForCheckerDialog;
+import com.atlauncher.managers.CheckingServersManager;
 
 import org.mini2Dx.gettext.GetText;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ServersForCheckerTab extends JPanel implements ActionListener {
     private static final long serialVersionUID = 3385411077046354453L;
 
@@ -59,7 +59,7 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
         CONTEXT_MENU.add(DELETE_BUTTON);
 
         listModel = new DefaultListModel<>();
-        for (MinecraftServer server : App.settings.getCheckingServers()) {
+        for (MinecraftServer server : CheckingServersManager.getCheckingServers()) {
             listModel.addElement(server);
         }
         serverList = new JList(listModel);
@@ -121,7 +121,7 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
     public void deleteSelectedElement() {
         if (serverList.getSelectedIndex() != -1) {
             MinecraftServer selectedValue = ((MinecraftServer) serverList.getSelectedValue());
-            App.settings.removeCheckingServer(selectedValue);
+            CheckingServersManager.removeCheckingServer(selectedValue);
             listModel.removeElement(selectedValue);
             reloadServers();
         }
@@ -129,7 +129,7 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
 
     public void reloadServers() {
         listModel.removeAllElements();
-        for (MinecraftServer server : App.settings.getCheckingServers()) {
+        for (MinecraftServer server : CheckingServersManager.getCheckingServers()) {
             listModel.addElement(server);
         }
     }

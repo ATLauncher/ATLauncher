@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,11 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.Network;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
@@ -49,7 +48,7 @@ public final class Download {
     public static final int MAX_ATTEMPTS = 3;
 
     // pre request
-    private String url;
+    String url;
     private String friendlyFileName;
     public Path to;
     public Path unzipTo;
@@ -57,7 +56,6 @@ public final class Download {
     public Path copyTo;
     private String hash;
     private Long fingerprint = null;
-    private List<String> checksums;
     public long size = -1L;
     private InstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
@@ -368,19 +366,6 @@ public final class Download {
         return true;
     }
 
-    private boolean checksumsMatch() {
-        try {
-            if (!ZipUtil.containsEntry(this.extractedTo.toFile(), "checksums.sha1")) {
-                return true;
-            }
-
-            return !this.checksums.contains(
-                    Hashing.sha1(ZipUtil.unpackEntry(this.extractedTo.toFile(), "checksums.sha1")).toString());
-        } catch (Exception e) {
-            return true;
-        }
-    }
-
     private void downloadDirect() {
         try (FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
                 ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
@@ -456,7 +441,7 @@ public final class Download {
                 FileUtils.delete(this.copyTo);
             }
 
-            if (!Files.exists(this.copyTo.getParent())) {
+            if (!Files.isDirectory(this.copyTo.getParent())) {
                 FileUtils.createDirectory(this.copyTo.getParent());
             }
 
@@ -536,12 +521,12 @@ public final class Download {
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " fingerprint of " + fingerprint.toString() + " but got " + Hashing.murmur(this.to)
-                            + " instead. Copied to FailedDownloads folder & cancelling install!");
+                            + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got " + Hashing.murmur(this.to)
+                            + " (with size of " + Files.size(this.to) + ") instead. Copied to FailedDownloads folder & cancelling install!");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " hash of " + expected.toString() + " but got " + Hashing.sha1(this.to)
-                            + " instead. Copied to FailedDownloads folder & cancelling install!");
+                            + " hash of " + expected.toString() + " (with size of " + this.size + ") but got " + Hashing.sha1(this.to)
+                            + " (with size of " + Files.size(this.to) + ") instead. Copied to FailedDownloads folder & cancelling install!");
                 }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);

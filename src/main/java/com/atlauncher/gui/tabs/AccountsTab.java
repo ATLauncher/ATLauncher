@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,15 +42,16 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.OS;
@@ -61,8 +62,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;
     private final Insets TOP_INSETS = new Insets(0, 0, 20, 0);
     private final Insets BOTTOM_INSETS = new Insets(10, 0, 0, 0);
-    private final Insets LABEL_INSETS = new Insets(3, 0, 3, 10);
-    private final Insets FIELD_INSETS = new Insets(3, 0, 3, 0);
+
     private JLabel userSkin;
     private JPanel infoPanel;
     private JPanel rightPanel;
@@ -79,6 +79,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private JButton rightButton;
     private JPanel bottomPanel;
     private JMenuItem updateSkin;
+    private JMenuItem updateUsername;
     private JPopupMenu contextMenu; // Right click menu
     private Account fillerAccount;
 
@@ -91,9 +92,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         infoPanel.setLayout(new BorderLayout());
         infoPanel.setBorder(BorderFactory.createEmptyBorder(60, 250, 0, 250));
 
-        JEditorPane infoTextPane = new JEditorPane("text/html", "<html>" + GetText.tr(
-                "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://my.minecraft.net/en-us/store/minecraft/#register\">by buying Minecraft here</a>. The launcher doesn't work with cracked accounts.")
-                + "</html>");
+        JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
+                "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://atl.pw/create-account\">by buying Minecraft here</a>. ATLauncher doesn't work with cracked accounts."))
+                .build());
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -122,7 +123,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         accountsComboBox = new JComboBox<>();
         accountsComboBox.addItem(fillerAccount);
-        for (Account account : App.settings.getAccounts()) {
+        for (Account account : AccountManager.getAccounts()) {
             accountsComboBox.addItem(account);
         }
         accountsComboBox.setSelectedIndex(0);
@@ -151,13 +152,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         usernameLabel = new JLabel(GetText.tr("Username/Email") + ":");
         bottomPanel.add(usernameLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         usernameField = new JTextField(16);
         usernameField.addKeyListener(new KeyAdapter() {
@@ -172,13 +173,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         passwordLabel = new JLabel(GetText.tr("Password") + ":");
         bottomPanel.add(passwordLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         passwordField = new JPasswordField(16);
         passwordField.addKeyListener(new KeyAdapter() {
@@ -193,13 +194,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         rememberLabel = new JLabel(GetText.tr("Remember Password") + ":");
         bottomPanel.add(rememberLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         rememberField = new JCheckBox();
         bottomPanel.add(rememberField, gbc);
@@ -240,10 +241,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                         .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
                     Analytics.sendEvent("Delete", "Account");
-                    App.settings.removeAccount(account);
+                    AccountManager.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(fillerAccount);
-                    for (Account accountt : App.settings.getAccounts()) {
+                    for (Account accountt : AccountManager.getAccounts()) {
                         accountsComboBox.addItem(accountt);
                     }
                     accountsComboBox.setSelectedIndex(0);
@@ -268,6 +269,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         });
         contextMenu.add(updateSkin);
 
+        updateUsername = new JMenuItem(GetText.tr("Update Username"));
+        updateUsername.addActionListener(e -> {
+            final Account account = ((Account) accountsComboBox.getSelectedItem());
+            Analytics.sendEvent("UpdateUsername", "Account");
+            account.updateUsername();
+        });
+        contextMenu.add(updateUsername);
+
         userSkin = new JLabel(fillerAccount.getMinecraftSkin());
         userSkin.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -290,7 +299,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
         boolean remember = rememberField.isSelected();
-        if (App.settings.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
+        if (AccountManager.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
                     .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
             return;
@@ -312,17 +321,23 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 account = new Account(username, password, response.getAuth().getSelectedProfile().getName(),
                         response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken);
                 account.setStore(response.getAuth().saveForStorage());
-                App.settings.addAccount(account);
+                AccountManager.addAccount(account);
                 Analytics.sendEvent("Add", "Account");
                 LogManager.info("Added Account " + account);
 
-                int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
-                        .setContent(GetText.tr("Account added successfully. Switch to it now?"))
-                        .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
-                        .show();
+                if (AccountManager.getAccounts().size() > 1) {
+                    // not first account? ask if they want to switch to it
+                    int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
+                            .setContent(GetText.tr("Account added successfully. Switch to it now?"))
+                            .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
+                            .show();
 
-                if (ret == 0) {
-                    App.settings.switchAccount(account);
+                    if (ret == 0) {
+                        AccountManager.switchAccount(account);
+                    }
+                } else {
+                    // first account? switch to it immediately
+                    AccountManager.switchAccount(account);
                 }
             } else {
                 account = (Account) accountsComboBox.getSelectedItem();
@@ -340,11 +355,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                         .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
-            App.settings.saveAccounts();
-            App.settings.reloadAccounts();
+            AccountManager.saveAccounts();
+            com.atlauncher.evnt.manager.AccountManager.post();
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(fillerAccount);
-            for (Account accountt : App.settings.getAccounts()) {
+            for (Account accountt : AccountManager.getAccounts()) {
                 accountsComboBox.addItem(accountt);
             }
             accountsComboBox.setSelectedItem(account);

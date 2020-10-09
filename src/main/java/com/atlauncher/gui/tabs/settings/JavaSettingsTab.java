@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.io.File;
-import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -31,10 +32,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -43,7 +48,6 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
 import org.mini2Dx.gettext.GetText;
@@ -64,8 +68,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     private JPanel windowSizePanel;
     private JLabelWithHover windowSizeLabel;
-    private JTextField widthField;
-    private JTextField heightField;
+    private JSpinner widthField;
+    private JSpinner heightField;
     private JComboBox<String> commonScreenSizes;
     private JPanel javaPathPanel;
     private JLabelWithHover javaPathLabel;
@@ -75,12 +79,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private JButton javaBrowseButton;
     private JPanel javaParametersPanel;
     private JLabelWithHover javaParametersLabel;
-    private JTextField javaParameters;
+    private JTextArea javaParameters;
     private JButton javaParametersResetButton;
     private JLabelWithHover startMinecraftMaximisedLabel;
     private JCheckBox startMinecraftMaximised;
-    private JLabelWithHover saveCustomModsLabel;
-    private JCheckBox saveCustomMods;
     private JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
     private JCheckBox ignoreJavaOnInstanceLaunch;
 
@@ -93,17 +95,17 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         // Initial Memory Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(GetText.tr(
-                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
-                80, "<br/>") + "</html>", RESTART_BORDER);
+        initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
+                .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
+                .build(), RESTART_BORDER);
 
         initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(GetText.tr(
-                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
-                        80, "<br/>") + "</html>");
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
+                        .build());
 
         initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -115,10 +117,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(initialMemoryPanel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.getInitialMemory(), null, null,
-                128);
+        SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.initialMemory, null, null, 128);
         initialMemoryModel.setMinimum(128);
         initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         initialMemory = new JSpinner(initialMemoryModel);
@@ -129,30 +130,29 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         // Perm Gen Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(
-                        GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."), 80,
-                        "<br/>") + "</html>");
+                new HTMLBuilder().center().split(100)
+                        .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."))
+                        .build());
         add(maximumMemoryLabel, gbc);
 
         maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         if (!OS.is64Bit()) {
-            maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, "<html>" + Utils.splitMultilinedString(GetText.tr(
-                    "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
-                    80, "<br/>") + "</html>", RESTART_BORDER));
+            maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
+                    .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
+                    .build(), RESTART_BORDER));
         }
         maximumMemoryPanel.add(maximumMemoryLabel);
 
         add(maximumMemoryPanel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.getMaximumMemory(), null, null,
-                512);
+        SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.maximumMemory, null, null, 512);
         maximumMemoryModel.setMinimum(512);
         maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         maximumMemory = new JSpinner(maximumMemoryModel);
@@ -162,16 +162,16 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         // Perm Gen Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
                 GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
         add(permGenLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.getPermGen(), null, null, 32);
+        SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.metaspace, null, null, 32);
         permGenModel.setMinimum(32);
         permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
         permGen = new JSpinner(permGenModel);
@@ -182,24 +182,33 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         windowSizeLabel = new JLabelWithHover(GetText.tr("Window Size") + ":", HELP_ICON,
                 GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
         add(windowSizeLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS_SMALL;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
         windowSizePanel = new JPanel();
-        windowSizePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        widthField = new JTextField(4);
-        widthField.setText(App.settings.getWindowWidth() + "");
-        heightField = new JTextField(4);
-        heightField.setText(App.settings.getWindowHeight() + "");
+        windowSizePanel.setLayout(new BoxLayout(windowSizePanel, BoxLayout.X_AXIS));
+
+        SpinnerNumberModel widthModel = new SpinnerNumberModel(App.settings.windowWidth, 1, OS.getMaximumWindowWidth(),
+                1);
+        widthField = new JSpinner(widthModel);
+        widthField.setEditor(new JSpinner.NumberEditor(widthField, "#"));
+
+        SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.windowHeight, 1,
+                OS.getMaximumWindowHeight(), 1);
+        heightField = new JSpinner(heightModel);
+        heightField.setEditor(new JSpinner.NumberEditor(heightField, "#"));
+
         commonScreenSizes = new JComboBox<>();
         commonScreenSizes.addItem("Select An Option");
         commonScreenSizes.addItem("854x480");
+
         if (OS.getMaximumWindowWidth() >= 1280 && OS.getMaximumWindowHeight() >= 720) {
             commonScreenSizes.addItem("1280x720");
         }
@@ -213,16 +222,21 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             String selected = (String) commonScreenSizes.getSelectedItem();
             if (selected.contains("x")) {
                 String[] parts = selected.split("x");
-                widthField.setText(parts[0]);
-                heightField.setText(parts[1]);
+                widthField.setValue(Integer.parseInt(parts[0]));
+                heightField.setValue(Integer.parseInt(parts[1]));
             }
         });
         commonScreenSizes.setPreferredSize(new Dimension(commonScreenSizes.getPreferredSize().width + 10,
                 commonScreenSizes.getPreferredSize().height));
+
         windowSizePanel.add(widthField);
+        windowSizePanel.add(Box.createHorizontalStrut(5));
         windowSizePanel.add(new JLabel("x"));
+        windowSizePanel.add(Box.createHorizontalStrut(5));
         windowSizePanel.add(heightField);
+        windowSizePanel.add(Box.createHorizontalStrut(5));
         windowSizePanel.add(commonScreenSizes);
+
         add(windowSizePanel, gbc);
 
         // Java Path
@@ -230,29 +244,45 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText.tr(
-                "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/><br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
-                + "</html>");
+        javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"))
+                        .build());
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        javaPathPanel = new JPanel(new BorderLayout());
+        javaPathPanel = new JPanel();
+        javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
 
-        JPanel javaPathPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        JPanel javaPathPanelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JPanel javaPathPanelTop = new JPanel();
+        javaPathPanelTop.setLayout(new BoxLayout(javaPathPanelTop, BoxLayout.X_AXIS));
+
+        JPanel javaPathPanelBottom = new JPanel();
+        javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
 
         installedJavas = new JComboBox<>();
-        addInstalledJavas();
+        installedJavas.setPreferredSize(new Dimension(516, 24));
+        if (Java.getInstalledJavas().size() != 0) {
+            Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
+
+            installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
+                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
+                    .orElse(null));
+
+            installedJavas
+                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+        }
+
         if (installedJavas.getItemCount() != 0) {
             javaPathPanelTop.add(installedJavas);
         }
 
         javaPath = new JTextField(32);
-        javaPath.setText(App.settings.getJavaPath());
+        javaPath.setText(App.settings.javaPath);
         javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
         javaBrowseButton = new JButton(GetText.tr("Browse"));
@@ -267,11 +297,17 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
+
         javaPathPanelBottom.add(javaPath);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
         javaPathPanelBottom.add(javaPathResetButton);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
         javaPathPanelBottom.add(javaBrowseButton);
-        javaPathPanel.add(javaPathPanelTop, BorderLayout.NORTH);
-        javaPathPanel.add(javaPathPanelBottom, BorderLayout.CENTER);
+
+        javaPathPanel.add(javaPathPanelTop);
+        javaPathPanel.add(Box.createVerticalStrut(5));
+        javaPathPanel.add(javaPathPanelBottom);
+
         add(javaPathPanel, gbc);
 
         // Java Paramaters
@@ -279,31 +315,43 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
         javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = LABEL_INSETS_SMALL;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+
         javaParametersPanel = new JPanel();
-        javaParametersPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        javaParameters = new JTextField(40);
-        javaParameters.setText(App.settings.getJavaParameters());
+        javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
+        javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+
+        javaParameters = new JTextArea(6, 40);
+        javaParameters.setText(App.settings.javaParameters);
+        javaParameters.setLineWrap(true);
+        javaParameters.setWrapStyleWord(true);
+
         javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> javaParameters.setText(
-                "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"));
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
+
         javaParametersPanel.add(javaParameters);
-        javaParametersPanel.add(javaParametersResetButton);
+        javaParametersPanel.add(Box.createHorizontalStrut(5));
+
+        Box paramsResetBox = Box.createVerticalBox();
+        paramsResetBox.add(javaParametersResetButton);
+        paramsResetBox.add(Box.createVerticalGlue());
+        javaParametersPanel.add(paramsResetBox);
+
         add(javaParametersPanel, gbc);
 
         // Start Minecraft Maximised
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         startMinecraftMaximisedLabel = new JLabelWithHover(GetText.tr("Start Minecraft Maximised") + "?", HELP_ICON,
                 GetText.tr(
@@ -311,38 +359,19 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         startMinecraftMaximised = new JCheckBox();
-        if (App.settings.startMinecraftMaximised()) {
+        if (App.settings.maximiseMinecraft) {
             startMinecraftMaximised.setSelected(true);
         }
         add(startMinecraftMaximised, gbc);
 
-        // Save Custom Mods
+        // Ignore Java checks On Launch
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        saveCustomModsLabel = new JLabelWithHover(GetText.tr("Save Custom Mods") + "?", HELP_ICON, GetText
-                .tr("This enables the saving of custom mods added to an instance when it's updated or reinstalled."));
-        add(saveCustomModsLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        saveCustomMods = new JCheckBox();
-        if (App.settings.saveCustomMods()) {
-            saveCustomMods.setSelected(true);
-        }
-        add(saveCustomMods, gbc);
-
-        // Save Custom Mods
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(GetText.tr("Ignore Java checks On Launch") + "?",
                 HELP_ICON, GetText.tr(
@@ -350,10 +379,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         add(ignoreJavaOnInstanceLaunchLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         ignoreJavaOnInstanceLaunch = new JCheckBox();
-        if (App.settings.ignoreJavaOnInstanceLaunch()) {
+        if (App.settings.ignoreJavaOnInstanceLaunch) {
             ignoreJavaOnInstanceLaunch.setSelected(true);
         }
         add(ignoreJavaOnInstanceLaunch, gbc);
@@ -362,9 +391,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     public boolean isValidJavaPath() {
         File jPath = new File(javaPath.getText(), "bin");
         if (!jPath.exists()) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent("<html>" + GetText.tr(
-                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again.")
-                    + "</html>").setType(DialogManager.ERROR).show();
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."))
+                    .build()).setType(DialogManager.ERROR).show();
             return false;
         }
         return true;
@@ -374,25 +403,24 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent("<html>" + GetText.tr(
-                    "The entered Java Parameters were incorrect.<br/>Please remove any references to Xmx, Xms or XX:PermSize.")
-                    + "</html>").setType(DialogManager.ERROR).show();
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
+                    .build()).setType(DialogManager.ERROR).show();
             return false;
         }
         return true;
     }
 
     public void save() {
-        App.settings.setInitialMemory((Integer) initialMemory.getValue());
-        App.settings.setMaximumMemory((Integer) maximumMemory.getValue());
-        App.settings.setPermGen((Integer) permGen.getValue());
-        App.settings.setWindowWidth(Integer.parseInt(widthField.getText().replaceAll("[^0-9]", "")));
-        App.settings.setWindowHeight(Integer.parseInt(heightField.getText().replaceAll("[^0-9]", "")));
-        App.settings.setJavaPath(javaPath.getText());
-        App.settings.setJavaParameters(javaParameters.getText());
-        App.settings.setStartMinecraftMaximised(startMinecraftMaximised.isSelected());
-        App.settings.setSaveCustomMods(saveCustomMods.isSelected());
-        App.settings.setIgnoreJavaOnInstanceLaunch(ignoreJavaOnInstanceLaunch.isSelected());
+        App.settings.initialMemory = (Integer) initialMemory.getValue();
+        App.settings.maximumMemory = (Integer) maximumMemory.getValue();
+        App.settings.metaspace = (Integer) permGen.getValue();
+        App.settings.windowWidth = (Integer) widthField.getValue();
+        App.settings.windowHeight = (Integer) heightField.getValue();
+        App.settings.javaPath = javaPath.getText();
+        App.settings.javaParameters = javaParameters.getText();
+        App.settings.maximiseMinecraft = startMinecraftMaximised.isSelected();
+        App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
     }
 
     @Override
@@ -402,19 +430,18 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     @Override
     public void onRelocalization() {
-        this.initialMemoryLabelWarning.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
-                "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
-                80, "<br/>") + "</html>");
+        this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
+                .build());
 
         this.initialMemoryLabel.setText(GetText.tr("Initial Memory/Ram") + ":");
-        this.initialMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
-                "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
-                80, "<br/>") + "</html>");
+        this.initialMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
+                .build());
 
         this.maximumMemoryLabel.setText(GetText.tr("Maximum Memory/Ram") + ":");
-        this.maximumMemoryLabel.setToolTipText("<html>" + Utils.splitMultilinedString(
-                GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."), 80, "<br/>")
-                + "</html>");
+        this.maximumMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100)
+                .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft.")).build());
 
         this.permGenLabel.setText(GetText.tr("PermGen Size") + ":");
         this.permGenLabel
@@ -425,9 +452,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
 
         this.javaPathLabel.setText(GetText.tr("Java Path") + ":");
-        this.javaPathLabel.setToolTipText("<html>" + GetText.tr(
-                "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/><br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
-                + "</html>");
+        this.javaPathLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"))
+                .build());
 
         this.javaPathResetButton.setText(GetText.tr("Reset"));
 
@@ -442,34 +469,13 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.startMinecraftMaximisedLabel.setToolTipText(GetText
                 .tr("Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
 
-        this.saveCustomModsLabel.setText(GetText.tr("Save Custom Mods") + "?");
-        this.saveCustomModsLabel.setToolTipText(GetText
-                .tr("This enables the saving of custom mods added to an instance when it's updated or reinstalled."));
-
         this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java checks On Launch") + "?");
         this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(
                 "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
     }
 
-    public void addInstalledJavas() {
-        installedJavas.removeAll();
-
-        List<JavaInfo> systemJavas = Java.getInstalledJavas();
-
-        if (systemJavas.size() != 0) {
-            systemJavas.stream().forEach(installedJavas::addItem);
-
-            installedJavas.setSelectedItem(systemJavas.stream()
-                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.getJavaPath())).findFirst()
-                    .orElse(null));
-
-            installedJavas
-                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
-        }
-    }
-
     @Override
     public void onSettingsSaved() {
-        javaPath.setText(App.settings.getJavaPath());
+        javaPath.setText(App.settings.javaPath);
     }
 }

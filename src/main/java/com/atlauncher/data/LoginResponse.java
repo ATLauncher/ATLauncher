@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data;
 
-import com.atlauncher.App;
+import com.atlauncher.managers.AccountManager;
 import com.mojang.authlib.UserAuthentication;
 
 public class LoginResponse {
@@ -91,7 +91,7 @@ public class LoginResponse {
     }
 
     public void save() {
-        Account account = App.settings.getAccountByName(this.username);
+        Account account = AccountManager.getAccountByName(this.username);
 
         if (account != null) {
             account.setStore(this.auth.saveForStorage());

@@ -1,9 +1,19 @@
 /*
- * Java Finder by petrucio@stackoverflow(828681) is licensed under a Creative Commons Attribution 3.0 Unported License.
- * Needs WinRegistry.java. Get it at: https://stackoverflow.com/questions/62289/read-write-to-windows-registry-using-java
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
- * JavaFinder - Windows-specific classes to search for all installed versions of java on this system
- * Author: petrucio@stackoverflow (828681)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.atlauncher.utils.javafinder;
 
@@ -16,31 +26,24 @@ import java.util.Map;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.Utils;
 
-/**
- * Helper struct to hold information about one installed java version
- ****************************************************************************/
 public class JavaInfo {
-    public String path; // ! Full path to java.exe executable file
-    public String rootPath; // ! Full path to install directory
-    public String version; // ! Version string. "Unkown" if the java process returned non-standard version
-                           // string
-    public Integer majorVersion; // The major version
-    public Integer minorVersion; // The minor version
-    public boolean is64bits; // ! true for 64-bit javas, false for 32
-    public boolean isRuntime; // if this is a runtime provided by ATLauncher
+    public String path;
+    public String rootPath;
+    public String version;
+    public Integer majorVersion;
+    public Integer minorVersion;
+    public boolean is64bits;
+    public boolean isRuntime;
+
     private static final Map<String, String> versionInfos = new HashMap<>();
 
-    /**
-     * Calls 'javaPath -version' and parses the results
-     *
-     * @param javaPath: path to a java.exe executable
-     ****************************************************************************/
     public JavaInfo(String javaPath) {
         String versionInfo = versionInfos.get(javaPath);
 
         if (versionInfo == null) {
-            versionInfo = RuntimeStreamer.execute(new String[] { javaPath, "-version" });
+            versionInfo = Utils.runProcess(javaPath, "-version");
             JavaInfo.versionInfos.put(javaPath, versionInfo);
         }
 
@@ -96,9 +99,6 @@ public class JavaInfo {
         this.is64bits = is64bits;
     }
 
-    /**
-     * @return Human-readable contents of this JavaInfo instance
-     ****************************************************************************/
     public String toString() {
         return this.path + " (" + (this.is64bits ? "64-bit" : "32-bit") + ")";
     }

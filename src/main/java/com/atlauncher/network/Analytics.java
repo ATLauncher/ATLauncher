@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 package com.atlauncher.network;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
@@ -33,11 +33,10 @@ public final class Analytics implements SettingsListener {
     public static void startSession() {
         ga = GoogleAnalytics.builder()
                 .withConfig(new GoogleAnalyticsConfig().setDiscoverRequestParameters(true)
-                        .setProxyHost(App.settings.getProxyHost()).setProxyPort(App.settings.getProxyPort())
-                        .setEnabled(App.settings.enableAnalytics()))
-                .withDefaultRequest(
-                        new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.getAnalyticsClientId())
-                                .customDimension(1, Java.getLauncherJavaVersion()))
+                        .setProxyHost(App.settings.proxyHost).setProxyPort(App.settings.proxyPort)
+                        .setEnabled(App.settings.enableAnalytics))
+                .withDefaultRequest(new DefaultRequest().userAgent(Network.USER_AGENT)
+                        .clientId(App.settings.analyticsClientId).customDimension(1, Java.getLauncherJavaVersion()))
                 .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
                 .withAppVersion(Constants.VERSION.toString()).build();
 
@@ -101,7 +100,7 @@ public final class Analytics implements SettingsListener {
 
     @Override
     public void onSettingsSaved() {
-        ga.getConfig().setProxyHost(App.settings.getProxyHost()).setProxyPort(App.settings.getProxyPort())
-                .setEnabled(App.settings.enableAnalytics());
+        ga.getConfig().setProxyHost(App.settings.proxyHost).setProxyPort(App.settings.proxyPort)
+                .setEnabled(App.settings.enableAnalytics);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
-import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -36,7 +36,9 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
@@ -59,19 +61,23 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     public PackCard(final Pack pack) {
         super(pack);
-        RelocalizationManager.addListener(this);
         this.pack = pack;
+
+        RelocalizationManager.addListener(this);
 
         this.splitter.setLeftComponent(new PackImagePanel(pack));
         this.splitter.setRightComponent(this.actionsPanel);
         this.splitter.setEnabled(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);
         as.setTopComponent(top);
         as.setBottomComponent(bottom);
+        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
         top.add(this.newInstanceButton);
         top.add(this.createServerButton);
 
@@ -87,9 +93,9 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             bottom.add(this.websiteButton);
         }
 
-        bottom.add(this.serversButton);
+        if (!this.pack.isSystem()) {
+            bottom.add(this.serversButton);
 
-        if (!this.pack.getName().startsWith("Vanilla Minecraft")) {
             bottom.add(this.modsButton);
         }
 
@@ -130,7 +136,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
     private void addActionListeners() {
         this.newInstanceButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -141,7 +147,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         });
 
         this.createServerButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -168,7 +174,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
 
         this.removePackButton.addActionListener(e -> {
             Analytics.sendEvent(pack.getName(), "Remove", "Pack");
-            App.settings.removePack(pack.getCode());
+            PackManager.removePack(pack.getCode());
         });
     }
 

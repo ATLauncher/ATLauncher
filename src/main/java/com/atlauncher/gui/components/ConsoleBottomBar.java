@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
 
@@ -42,7 +42,7 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
 
-    private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 10));
+    private final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 13));
 
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton copyLogButton = new JButton(GetText.tr("Copy Log"));
@@ -111,7 +111,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent("KillMinecraft", "Launcher");
-                App.settings.killMinecraft();
+                App.launcher.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }
         });

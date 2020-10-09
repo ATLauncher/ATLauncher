@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 package com.atlauncher.gui;
 
 import java.awt.Graphics;
+import java.awt.SystemTray;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -26,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JWindow;
 
+import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -72,13 +74,24 @@ public class SplashScreen extends JWindow {
      * giving a force quit option.
      */
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem FORCE_QUIT = new JMenuItem(GetText.tr("Force quit"));
-
         public ContextMenu() {
             super();
 
-            this.FORCE_QUIT.addActionListener(e -> System.exit(0));
-            this.add(this.FORCE_QUIT);
+            // no idea why, but this fixes some weird bottom and right margin
+            setLightWeightPopupEnabled(false);
+
+            JMenuItem forceQuit = new JMenuItem(GetText.tr("Force quit"));
+            forceQuit.addActionListener(e -> {
+                try {
+                    if (SystemTray.isSupported()) {
+                        SystemTray.getSystemTray().remove(App.trayIcon);
+                    }
+                } catch (Exception ignored) {
+                }
+
+                System.exit(0);
+            });
+            add(forceQuit);
         }
     }
 }

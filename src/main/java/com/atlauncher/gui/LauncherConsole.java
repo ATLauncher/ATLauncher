@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
@@ -39,7 +37,7 @@ import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
-import com.atlauncher.gui.theme.Theme;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -58,13 +56,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         this.setTitle(Constants.LAUNCHER_NAME + " Console " + Constants.VERSION);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        this.setMinimumSize(new Dimension(600, 400));
+        this.setMinimumSize(new Dimension(650, 400));
         this.setLayout(new BorderLayout());
 
         console = new Console();
-        console.setFont(Theme.DEFAULT_THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(Theme.DEFAULT_THEME.getConsoleTextColor());
-        console.setSelectionColor(Theme.DEFAULT_THEME.getSelectionColor());
 
         setupContextMenu(); // Setup the right click menu
 
@@ -107,12 +102,6 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                 }
             }
         });
-    }
-
-    public void setupTheme() {
-        console.setFont(App.THEME.getConsoleFont().deriveFont(Utils.getBaseFontSize()));
-        console.setForeground(App.THEME.getConsoleTextColor());
-        console.setSelectionColor(App.THEME.getSelectionColor());
     }
 
     /**

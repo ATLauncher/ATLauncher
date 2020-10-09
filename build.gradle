@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.mini2Dx:gettext-gradle-plugin:1.1.0'
+        classpath 'org.mini2Dx:gettext-gradle-plugin:1.1.1'
     }
 }
 
@@ -17,16 +17,16 @@ plugins {
     id 'edu.sc.seis.macAppBundle' version '2.3.0'
     id 'edu.sc.seis.launch4j' version '2.4.6'
     id 'net.minecrell.licenser' version '0.4.1'
-    id "com.github.ben-manes.versions" version "0.21.0"
+    id 'com.github.ben-manes.versions' version '0.28.0'
 }
 
-apply plugin: "org.mini2Dx.gettext"
+apply plugin: 'org.mini2Dx.gettext'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group = 'com.atlauncher'
-version = '3.3.5.4'
+version = rootProject.file('src/main/resources/version').text.trim().replace('.Beta', '')
 
 repositories {
     mavenCentral()
@@ -40,22 +40,26 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'net.java.dev.jna:jna:5.6.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.tukaani:xz:1.8'
     implementation 'com.mojang:authlib:1.5.21'
     implementation 'net.iharder:base64:2.3.9'
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    implementation 'org.zeroturnaround:zt-zip:1.13'
-    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
-    implementation 'net.mikehardy:google-analytics-java:2.0.8'
-    implementation 'io.sentry:sentry:1.7.24'
-    implementation 'org.mini2Dx:gettext-lib:1.1.0'
-    implementation 'org.apache.logging.log4j:log4j-api:2.12.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.12.0'
+    implementation 'org.zeroturnaround:zt-zip:1.14'
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
+    implementation 'net.mikehardy:google-analytics-java:2.0.11'
+    implementation 'io.sentry:sentry:1.7.30'
+    implementation 'org.mini2Dx:gettext-lib:1.3.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.13.3'
+    implementation 'org.apache.logging.log4j:log4j-core:2.13.3'
     implementation 'com.sangupta:murmur:1.0.0'
-    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.apache.commons:commons-lang3:3.10'
+    implementation 'com.formdev:flatlaf:0.37'
+    implementation 'com.formdev:flatlaf-extras:0.37'
     implementation 'com.github.pack200:pack200:d5fd0807d6'
+    implementation 'com.github.oshi:oshi-core:5.2.3'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.0'
@@ -108,7 +112,6 @@ license {
     exclude 'de/zh32/**/*.java'
     exclude 'io/github/**/*.java'
     exclude 'net/minecraft/**/*.java'
-    exclude 'com/atlauncher/utils/javafinder/*.java'
     exclude 'com/atlauncher/gui/layouts/WrapLayout.java'
     newLine = false
 }
@@ -117,6 +120,7 @@ shadowJar {
     classifier = null
     minimize {
         exclude(dependency('org.apache.logging.log4j:.*:.*'))
+        exclude(dependency('com.formdev:.*:.*'))
     }
     classifier = ''
 }

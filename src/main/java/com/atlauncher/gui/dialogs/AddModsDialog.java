@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,11 +59,15 @@ public final class AddModsDialog extends JDialog {
     private JPanel topPanel = new JPanel(new BorderLayout());
     private JTextField searchField = new JTextField(16);
     private JButton searchButton = new JButton(GetText.tr("Search"));
-    private JComboBox<ComboItem> sectionComboBox = new JComboBox<>();
-    private JComboBox<ComboItem> sortComboBox = new JComboBox<>();
+    private JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
+    private JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
 
     // #. Fabric API is the name of a mod, so should be left untranslated
     private JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
+
+    // #. Fabric/Fabric API is the name of a mod, so should be left untranslated
+    private JLabel fabricApiWarningLabel = new JLabel(
+            "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -73,61 +77,61 @@ public final class AddModsDialog extends JDialog {
 
     public AddModsDialog(Instance instance) {
         // #. {0} is the name of the mod we're installing
-        super(App.settings.getParent(), GetText.tr("Adding Mods For {0}", instance.getName()),
+        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instance.getName()),
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
-        this.setPreferredSize(new Dimension(550, 450));
+        this.setPreferredSize(new Dimension(600, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instance.installedWithLoaderVersion()) {
-            sectionComboBox.addItem(new ComboItem("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
         this.loadDefaultMods();
 
         this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
+        this.setLocationRelativeTo(App.launcher.getParent());
         this.setVisible(true);
     }
 
     public AddModsDialog(InstanceV2 instanceV2) {
         // #. {0} is the name of the mod we're installing
-        super(App.settings.getParent(), GetText.tr("Adding Mods For {0}", instanceV2.launcher.name),
+        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instanceV2.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instanceV2 = instanceV2;
 
-        this.setPreferredSize(new Dimension(550, 450));
+        this.setPreferredSize(new Dimension(600, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instanceV2.launcher.loaderVersion != null) {
-            sectionComboBox.addItem(new ComboItem("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
         this.loadDefaultMods();
 
         this.pack();
-        this.setLocationRelativeTo(App.settings.getParent());
+        this.setLocationRelativeTo(App.launcher.getParent());
         this.setVisible(true);
     }
 
@@ -141,6 +145,7 @@ public final class AddModsDialog extends JDialog {
         searchButtonsPanel.add(this.searchField);
         searchButtonsPanel.add(this.searchButton);
         searchButtonsPanel.add(this.sectionComboBox);
+        searchButtonsPanel.add(new JLabel(GetText.tr("Sort") + ":"));
         searchButtonsPanel.add(this.sortComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
@@ -152,6 +157,12 @@ public final class AddModsDialog extends JDialog {
             } else {
                 new CurseModFileSelectorDialog(mod, instance);
             }
+
+            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
+                    .filter(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID).count() != 0) {
+                fabricApiWarningLabel.setVisible(false);
+                installFabricApiButton.setVisible(false);
+            }
         });
 
         LoaderVersion loaderVersion = (this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
@@ -161,9 +172,6 @@ public final class AddModsDialog extends JDialog {
                 && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
                         .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
                         .count() == 0) {
-
-            JLabel fabricApiWarningLabel = new JLabel(
-                    "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
@@ -258,30 +266,30 @@ public final class AddModsDialog extends JDialog {
         String query = searchField.getText();
 
         new Thread(() -> {
-            if (((ComboItem) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                 setMods(CurseApi.searchResourcePacks(query, page,
-                        ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
-            } else if (((ComboItem) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
+                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                 setMods(CurseApi
                         .searchWorlds(
-                                App.settings.disabledAddModRestrictions() ? null
+                                App.settings.disableAddModRestrictions ? null
                                         : (this.instanceV2 != null ? this.instanceV2.id
                                                 : this.instance.getMinecraftVersion()),
-                                query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
+                                query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else {
                 if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
                         : this.instance.getLoaderVersion()).isFabric()) {
                     setMods(CurseApi.searchModsForFabric(
-                            App.settings.disabledAddModRestrictions() ? null
+                            App.settings.disableAddModRestrictions ? null
                                     : (this.instanceV2 != null ? this.instanceV2.id
                                             : this.instance.getMinecraftVersion()),
-                            query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
+                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
                     setMods(CurseApi.searchMods(
-                            App.settings.disabledAddModRestrictions() ? null
+                            App.settings.disableAddModRestrictions ? null
                                     : (this.instanceV2 != null ? this.instanceV2.id
                                             : this.instance.getMinecraftVersion()),
-                            query, page, ((ComboItem) sortComboBox.getSelectedItem()).getValue()));
+                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
 

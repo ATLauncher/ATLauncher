@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
@@ -62,7 +64,7 @@ public class RenameInstanceDialog extends JDialog {
 
         Analytics.sendScreenView("Rename Instance Dialog");
 
-        setSize(300, 150);
+        setSize(320, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -85,7 +87,7 @@ public class RenameInstanceDialog extends JDialog {
 
         this.instanceV2 = instanceV2;
 
-        setSize(300, 150);
+        setSize(320, 150);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -115,11 +117,13 @@ public class RenameInstanceDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         instanceNameLabel = new JLabel(GetText.tr("Instance Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         instanceName = new JTextField(16);
         instanceName.setText(this.instanceV2 != null ? this.instanceV2.launcher.name : this.instance.getName());
@@ -130,7 +134,7 @@ public class RenameInstanceDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(e -> {
-            if (App.settings.isInstance(instanceName.getText())) {
+            if (InstanceManager.isInstance(instanceName.getText())) {
                 DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
                         .setContent(
                                 GetText.tr("There is already an instance called {0}.<br/><br/>Rename it and try again.",
@@ -147,10 +151,10 @@ public class RenameInstanceDialog extends JDialog {
                         .setType(DialogManager.ERROR).show();
             } else {
                 if (this.instanceV2 != null && instanceV2.rename(instanceName.getText())) {
-                    App.settings.reloadInstancesPanel();
+                    App.launcher.reloadInstancesPanel();
                 } else if (this.instance != null && instance.rename(instanceName.getText())) {
-                    App.settings.saveInstances();
-                    App.settings.reloadInstancesPanel();
+                    InstanceManager.saveInstances();
+                    App.launcher.reloadInstancesPanel();
                 } else {
                     LogManager.error("Unknown Error Occurred While Renaming Instance!");
                     DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))

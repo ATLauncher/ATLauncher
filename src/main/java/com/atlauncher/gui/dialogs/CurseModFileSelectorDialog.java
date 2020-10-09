@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ import com.atlauncher.gui.card.CurseFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -64,11 +63,12 @@ public class CurseModFileSelectorDialog extends JDialog {
     private JPanel dependenciesPanel = new JPanel(new FlowLayout());
     private JButton addButton;
     private JLabel versionsLabel;
+    private JLabel installedJLabel;
     private JComboBox<CurseFile> filesDropdown;
     private List<CurseFile> files = new ArrayList<>();
 
     public CurseModFileSelectorDialog(CurseMod mod, Instance instance) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instance = instance;
@@ -77,7 +77,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     public CurseModFileSelectorDialog(CurseMod mod, Instance instance, int installedFileId) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instance = instance;
@@ -87,7 +87,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instanceV2 = instanceV2;
@@ -96,7 +96,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2, int installedFileId) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instanceV2 = instanceV2;
@@ -112,7 +112,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         setTitle(GetText.tr("Installing {0}", mod.name));
 
         setSize(500, 200);
-        setLocationRelativeTo(App.settings.getParent());
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -125,9 +125,12 @@ public class CurseModFileSelectorDialog extends JDialog {
                 .setBorder(BorderFactory.createTitledBorder(GetText.tr("The below mods need to be installed")));
 
         // Top Panel Stuff
-        JPanel top = new JPanel();
+        JPanel top = new JPanel(new BorderLayout());
         // #. {0} is the name of the mod we're installing
-        top.add(new JLabel(GetText.tr("Installing {0}", mod.name)));
+        top.add(new JLabel(GetText.tr("Installing {0}", mod.name), JLabel.CENTER), BorderLayout.NORTH);
+
+        installedJLabel = new JLabel("", JLabel.CENTER);
+        top.add(installedJLabel, BorderLayout.SOUTH);
 
         // Middle Panel Stuff
         JPanel middle = new JPanel(new BorderLayout());
@@ -237,7 +240,7 @@ public class CurseModFileSelectorDialog extends JDialog {
                             (dependencies.size() / 2) + 1));
 
                     setSize(550, 400);
-                    setLocationRelativeTo(App.settings.getParent());
+                    setLocationRelativeTo(App.launcher.getParent());
 
                     dependenciesPanel.setVisible(true);
 
@@ -269,8 +272,8 @@ public class CurseModFileSelectorDialog extends JDialog {
             Stream<CurseFile> curseFilesStream = CurseApi.getFilesForMod(mod.id).stream()
                     .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
 
-            if (!App.settings.disabledAddModRestrictions()) {
-                curseFilesStream = curseFilesStream.filter(file -> App.settings.disabledAddModRestrictions()
+            if (!App.settings.disableAddModRestrictions) {
+                curseFilesStream = curseFilesStream.filter(file -> App.settings.disableAddModRestrictions
                         || mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
                         || file.gameVersion.contains(
                                 this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
@@ -281,11 +284,11 @@ public class CurseModFileSelectorDialog extends JDialog {
             // ensures that font width is taken into account
             for (CurseFile file : files) {
                 filesLength = Math.max(filesLength,
-                        getFontMetrics(Utils.getFont()).stringWidth(file.displayName) + 100);
+                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
             }
 
             // try to filter out non compatable mods (Forge on Fabric and vice versa)
-            if (App.settings.disabledAddModRestrictions()) {
+            if (App.settings.disableAddModRestrictions) {
                 files.stream().forEach(version -> filesDropdown.addItem(version));
             } else {
                 files.stream().filter(version -> {
@@ -313,17 +316,21 @@ public class CurseModFileSelectorDialog extends JDialog {
             }
 
             if (this.installedFileId != null) {
-                filesDropdown.setSelectedItem(
-                        files.stream().filter(f -> f.id == this.installedFileId).findFirst().orElse(files.get(0)));
+                CurseFile installedFile = files.stream().filter(f -> f.id == this.installedFileId).findFirst()
+                        .orElse(null);
+
+                if (installedFile != null) {
+                    filesDropdown.setSelectedItem(installedFile);
+
+                    // #. {0} is the name of the Curse mod that the user already has installed
+                    installedJLabel.setText(GetText.tr("The version currently installed is {0}", installedFile));
+                    installedJLabel.setVisible(true);
+                }
             }
 
-            // ensures that the dropdown is at least 200 px wide
-            filesLength = Math.max(200, filesLength);
-
-            // ensures that there is a maximum width of 350 px to prevent overflow
-            filesLength = Math.min(350, filesLength);
-
-            filesDropdown.setPreferredSize(new Dimension(filesLength, 25));
+            // ensures that the dropdown is at least 200 px wide and has a maximum width of
+            // 350 px to prevent overflow
+            filesDropdown.setPreferredSize(new Dimension(Math.min(350, Math.max(200, filesLength)), 25));
 
             filesDropdown.setEnabled(true);
             versionsLabel.setVisible(true);

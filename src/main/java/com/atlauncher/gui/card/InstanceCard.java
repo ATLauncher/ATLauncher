@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -41,7 +42,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
@@ -53,7 +53,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
@@ -61,6 +60,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
@@ -68,7 +68,10 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -95,13 +98,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton updateButton = new JButton(GetText.tr("Update"));
     private final JButton renameButton = new JButton(GetText.tr("Rename"));
     private final JButton backupButton = new JButton(GetText.tr("Backup"));
-    private final JButton cloneButton = new JButton(GetText.tr("Clone"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
+
+    private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
+    private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
+    private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
+    private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
+    private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
 
     public InstanceCard(Instance instance) {
         super(instance);
@@ -112,27 +120,38 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.splitter.setEnabled(false);
 
         this.descArea.setText(instance.getPackDescription());
-        this.descArea.setBorder(BorderFactory.createEmptyBorder());
+        this.descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.descArea.setEditable(false);
         this.descArea.setHighlighter(null);
         this.descArea.setLineWrap(true);
         this.descArea.setWrapStyleWord(true);
         this.descArea.setEditable(false);
 
-        JPanel top = new JPanel(new FlowLayout());
-        JPanel bottom = new JPanel(new FlowLayout());
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+
         JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         as.setEnabled(false);
         as.setTopComponent(top);
         as.setBottomComponent(bottom);
+        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+
         top.add(this.playButton);
         top.add(this.reinstallButton);
         top.add(this.updateButton);
         top.add(this.renameButton);
         top.add(this.backupButton);
         top.add(this.settingsButton);
-        bottom.add(this.cloneButton);
         bottom.add(this.deleteButton);
+        bottom.add(this.getHelpButton);
+
+        setupLinksButtonPopupMenu();
+
+        // if not an ATLauncher pack or has no urls, don't show the links button
+        if (instance.getRealPack() == null || (instance.getRealPack().discordInviteURL == null
+                && instance.getRealPack().supportURL == null && instance.getRealPack().websiteURL == null)) {
+            this.getHelpButton.setVisible(false);
+        }
 
         if (instance.hasEnabledCurseIntegration()) {
             bottom.add(this.addButton);
@@ -160,9 +179,44 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             this.updateButton.setVisible(false);
         }
 
+        if (instance.getRealPack() != null && instance.getRealPack().system) {
+            this.serversButton.setVisible(false);
+        }
+
         this.addActionListeners();
         this.addMouseListeners();
         this.validatePlayable();
+    }
+
+    private void setupLinksButtonPopupMenu() {
+        if (instance.getRealPack() != null) {
+            if (instance.getRealPack().discordInviteURL != null) {
+                discordLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getRealPack().discordInviteURL);
+                    }
+                });
+                getHelpPopupMenu.add(discordLinkMenuItem);
+            }
+
+            if (instance.getRealPack().supportURL != null) {
+                supportLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getRealPack().supportURL);
+                    }
+                });
+                getHelpPopupMenu.add(supportLinkMenuItem);
+            }
+
+            if (instance.getRealPack().websiteURL != null) {
+                websiteLinkMenuItem.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        OS.openWebBrowser(instance.getRealPack().websiteURL);
+                    }
+                });
+                getHelpPopupMenu.add(websiteLinkMenuItem);
+            }
+        }
     }
 
     private void validatePlayable() {
@@ -181,19 +235,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     .setContent(GetText
                             .tr("Cannot backup instance as it's corrupted. Please reinstall, update or delete it."))
                     .setType(DialogManager.ERROR).show());
-            for (ActionListener al : cloneButton.getActionListeners()) {
-                cloneButton.removeActionListener(al);
-            }
-            cloneButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
-                    .setContent(GetText
-                            .tr("Cannot clone instance as it's corrupted. Please reinstall, update or delete it."))
-                    .setType(DialogManager.ERROR).show());
         }
     }
 
     private void addActionListeners() {
         this.playButton.addActionListener(e -> {
-            if (!App.settings.ignoreJavaOnInstanceLaunch() && instance.getJava() != null
+            if (!App.settings.ignoreJavaOnInstanceLaunch && instance.getJava() != null
                     && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown") && !instance.getJava().conforms()) {
                 DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -213,7 +260,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                 if (ret == 0) {
-                    if (App.settings.getAccount() == null) {
+                    if (AccountManager.getSelectedAccount() == null) {
                         DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                 .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                 .setType(DialogManager.ERROR).show();
@@ -227,22 +274,22 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         instance.ignoreUpdate();
                     }
 
-                    if (!App.settings.isMinecraftLaunched()) {
+                    if (!App.launcher.minecraftLaunched) {
                         if (instance.launch()) {
-                            App.settings.setMinecraftLaunched(true);
+                            App.launcher.setMinecraftLaunched(true);
                         }
                     }
                 }
             } else {
-                if (!App.settings.isMinecraftLaunched()) {
+                if (!App.launcher.minecraftLaunched) {
                     if (instance.launch()) {
-                        App.settings.setMinecraftLaunched(true);
+                        App.launcher.setMinecraftLaunched(true);
                     }
                 }
             }
         });
         this.reinstallButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot reinstall pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -252,7 +299,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
         });
         this.updateButton.addActionListener(e -> {
-            if (App.settings.getAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -271,10 +318,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .setType(DialogManager.INFO).show();
 
                 if (ret == DialogManager.YES_OPTION) {
-                    final JDialog dialog = new JDialog(App.settings.getParent(),
+                    final JDialog dialog = new JDialog(App.launcher.getParent(),
                             GetText.tr("Backing Up {0}", instance.getName()), ModalityType.APPLICATION_MODAL);
                     dialog.setSize(300, 100);
-                    dialog.setLocationRelativeTo(App.settings.getParent());
+                    dialog.setLocationRelativeTo(App.launcher.getParent());
                     dialog.setResizable(false);
 
                     JPanel topPanel = new JPanel();
@@ -303,9 +350,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         ZipUtil.pack(instance.getRootDirectory(), FileSystem.BACKUPS.resolve(filename).toFile(),
                                 ZipNameMapper.INSTANCE_BACKUP);
                         dialog.dispose();
-                        App.TOASTER.pop(GetText.tr(
-                                "Backup is complete. Your backup was saved to the following location:<br/><br/>{0}",
-                                filename));
+                        App.TOASTER.pop(GetText.tr("Backup is complete"));
                     });
                     backupThread.start();
                     dialog.addWindowListener(new WindowAdapter() {
@@ -338,48 +383,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Settings", "Instance");
             new InstanceSettingsDialog(instance);
         });
-        this.cloneButton.addActionListener(e -> {
-            String clonedName = JOptionPane.showInputDialog(App.settings.getParent(),
-                    GetText.tr("Enter a new name for this cloned instance."), GetText.tr("Cloning Instance"),
-                    JOptionPane.INFORMATION_MESSAGE);
-            if (clonedName != null && clonedName.length() >= 1 && App.settings.getInstanceByName(clonedName) == null
-                    && App.settings.getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                    && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1) {
-
-                Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "Clone", "Instance");
-
-                final String newName = clonedName;
-                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
-                        GetText.tr("Cloning Instance. Please wait..."), null);
-                dialog.addThread(new Thread(() -> {
-                    App.settings.cloneInstance(instance, newName);
-                    dialog.close();
-                    App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
-                }));
-                dialog.start();
-            } else if (clonedName == null || clonedName.equals("")) {
-                LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
-            } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
-            } else {
-                LogManager.error("Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
-                DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
-            }
-        });
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete Instance"))
                     .setContent(GetText.tr("Are you sure you want to delete this instance?"))
@@ -390,7 +393,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null);
                 dialog.addThread(new Thread(() -> {
-                    App.settings.removeInstance(instance);
+                    InstanceManager.removeInstance(instance);
                     dialog.close();
                     App.TOASTER.pop(GetText.tr("Deleted Instance Successfully"));
                 }));
@@ -413,7 +416,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                         if (ret == 0) {
-                            if (App.settings.getAccount() == null) {
+                            if (AccountManager.getSelectedAccount() == null) {
                                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                                         .setType(DialogManager.ERROR).show();
@@ -423,23 +426,23 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                             }
                         } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                            if (!App.settings.isMinecraftLaunched()) {
+                            if (!App.launcher.minecraftLaunched) {
                                 if (instance.launch()) {
-                                    App.settings.setMinecraftLaunched(true);
+                                    App.launcher.setMinecraftLaunched(true);
                                 }
                             }
                         } else if (ret == 2) {
                             instance.ignoreUpdate();
-                            if (!App.settings.isMinecraftLaunched()) {
+                            if (!App.launcher.minecraftLaunched) {
                                 if (instance.launch()) {
-                                    App.settings.setMinecraftLaunched(true);
+                                    App.launcher.setMinecraftLaunched(true);
                                 }
                             }
                         }
                     } else {
-                        if (!App.settings.isMinecraftLaunched()) {
+                        if (!App.launcher.minecraftLaunched) {
                             if (instance.launch()) {
-                                App.settings.setMinecraftLaunched(true);
+                                App.launcher.setMinecraftLaunched(true);
                             }
                         }
                     }
@@ -448,6 +451,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
                     JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
+
+                    JMenuItem cloneItem = new JMenuItem(GetText.tr("Clone"));
+                    rightClickMenu.add(cloneItem);
 
                     JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
                     rightClickMenu.add(shareCodeItem);
@@ -459,6 +465,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         updateItem.setEnabled(false);
                     }
 
+                    if (!instance.isPlayable()) {
+                        cloneItem.setEnabled(false);
+                    }
+
                     rightClickMenu.show(image, e.getX(), e.getY());
 
                     changeImageItem.addActionListener(e13 -> {
@@ -466,7 +476,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         chooser.setAcceptAllFileFilterUsed(false);
                         chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                        int ret = chooser.showOpenDialog(App.settings.getParent());
+                        int ret = chooser.showOpenDialog(App.launcher.getParent());
                         if (ret == JFileChooser.APPROVE_OPTION) {
                             File img = chooser.getSelectedFile();
                             if (img.getAbsolutePath().endsWith(".png")) {
@@ -483,6 +493,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         }
                     });
 
+                    cloneItem.addActionListener(e14 -> {
+                        DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "This instance cannot be cloned!<br/><br/>Please reinstall the instance to get this feature."))
+                                        .build())
+                                .setType(DialogManager.ERROR).show();
+                    });
+
                     updateItem.addActionListener(e12 -> {
                         if (instance.hasUpdate() && !instance.hasUpdateBeenIgnored(instance.getLatestVersion())) {
                             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
@@ -492,7 +510,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
                             if (ret == 0) {
-                                if (App.settings.getAccount() == null) {
+                                if (AccountManager.getSelectedAccount() == null) {
                                     DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                                             .setContent(
                                                     GetText.tr("Cannot update pack as you have no account selected."))
@@ -503,16 +521,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     new InstanceInstallerDialog(instance, true, false, null, null, true, null);
                                 }
                             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                                if (!App.settings.isMinecraftLaunched()) {
+                                if (!App.launcher.minecraftLaunched) {
                                     if (instance.launch()) {
-                                        App.settings.setMinecraftLaunched(true);
+                                        App.launcher.setMinecraftLaunched(true);
                                     }
                                 }
                             } else if (ret == 2) {
                                 instance.ignoreUpdate();
-                                if (!App.settings.isMinecraftLaunched()) {
+                                if (!App.launcher.minecraftLaunched) {
                                     if (instance.launch()) {
-                                        App.settings.setMinecraftLaunched(true);
+                                        App.launcher.setMinecraftLaunched(true);
                                     }
                                 }
                             }
@@ -572,12 +590,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.updateButton.setText(GetText.tr("Update"));
         this.renameButton.setText(GetText.tr("Rename"));
         this.backupButton.setText(GetText.tr("Backup"));
-        this.cloneButton.setText(GetText.tr("Clone"));
         this.deleteButton.setText(GetText.tr("Delete"));
         this.addButton.setText(GetText.tr("Add Mods"));
         this.editButton.setText(GetText.tr("Edit Mods"));
         this.serversButton.setText(GetText.tr("Servers"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
+
+        this.discordLinkMenuItem.setText(GetText.tr("Discord"));
+        this.supportLinkMenuItem.setText(GetText.tr("Support"));
+        this.websiteLinkMenuItem.setText(GetText.tr("Website"));
+        this.getHelpButton.setText(GetText.tr("Get Help"));
     }
 }

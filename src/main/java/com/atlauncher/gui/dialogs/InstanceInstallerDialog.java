@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,8 +49,8 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
@@ -60,9 +61,13 @@ import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import org.mini2Dx.gettext.GetText;
@@ -95,6 +100,8 @@ public class InstanceInstallerDialog extends JDialog {
     private List<LoaderVersion> loaderVersions = new ArrayList<>();
     private JLabel enableUserLockLabel;
     private JCheckBox enableUserLock;
+    private JLabel saveModsLabel;
+    private JCheckBox saveModsCheckbox;
     private boolean isUpdate;
     private PackVersion autoInstallVersion;
 
@@ -117,7 +124,7 @@ public class InstanceInstallerDialog extends JDialog {
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
             File manifestFile) {
-        super(App.settings.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;
@@ -159,7 +166,7 @@ public class InstanceInstallerDialog extends JDialog {
             packVersion.version = curseManifest.version;
 
             try {
-                packVersion.minecraftVersion = App.settings.getMinecraftVersion(curseManifest.minecraft.version);
+                packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseManifest.minecraft.version);
             } catch (InvalidMinecraftVersion e) {
                 LogManager.error(e.getMessage());
                 return;
@@ -171,8 +178,8 @@ public class InstanceInstallerDialog extends JDialog {
 
             isReinstall = false;
 
-            // #. {0} is the name of the pack the user is installing from Curse
-            setTitle(GetText.tr("Installing {0} From Curse", curseManifest.name));
+            // #. {0} is the name of the pack the user is installing
+            setTitle(GetText.tr("Installing {0}", curseManifest.name));
         } else {
             instanceV2 = (InstanceV2) object;
             pack = instanceV2.getPack();
@@ -180,8 +187,8 @@ public class InstanceInstallerDialog extends JDialog {
             // #. {0} is the name of the pack the user is installing
             setTitle(GetText.tr("Reinstalling {0}", instanceV2.launcher.name));
         }
-        setSize(400, 225);
-        setLocationRelativeTo(App.settings.getParent());
+        setSize(450, 240);
+        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -201,11 +208,13 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         nameField = new JTextField(17);
         nameField.setText(((isReinstall) ? (instanceV2 != null ? instanceV2.launcher.name : instance.getName())
@@ -232,6 +241,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
 
         gbc = this.setupVersionsDropdown(gbc);
         gbc = this.setupLoaderVersionsDropdown(gbc);
@@ -239,11 +249,13 @@ public class InstanceInstallerDialog extends JDialog {
         if (!this.isServer && !isReinstall) {
             gbc.gridx = 0;
             gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
             middle.add(enableUserLockLabel, gbc);
 
             gbc.gridx++;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             enableUserLock = new JCheckBox();
             enableUserLock.addActionListener(e -> {
@@ -262,12 +274,46 @@ public class InstanceInstallerDialog extends JDialog {
             middle.add(enableUserLock, gbc);
         }
 
+        if (!this.isServer && isReinstall) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            saveModsLabel = new JLabel(GetText.tr("Save Mods") + "? ");
+            middle.add(saveModsLabel, gbc);
+
+            gbc.gridx++;
+            gbc.insets = UIConstants.FIELD_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            saveModsCheckbox = new JCheckBox();
+            saveModsCheckbox.addActionListener(e -> {
+                if (saveModsCheckbox.isSelected()) {
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Save Mods") + "? ")
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed.<br/><br/>Are you sure you want to do this?"))
+                                    .build())
+                            .setType(DialogManager.INFO).show();
+
+                    if (ret != 0) {
+                        saveModsCheckbox.setSelected(false);
+                    }
+                }
+            });
+
+            saveModsLabel.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
+                    .equalsIgnoreCase(instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+            saveModsCheckbox.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
+                    .equalsIgnoreCase(instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+
+            middle.add(saveModsCheckbox, gbc);
+        }
+
         // Bottom Panel Stuff
         bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (!isReinstall && !isServer && App.settings.isInstance(nameField.getText())) {
+                if (!isReinstall && !isServer && InstanceManager.isInstance(nameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText
                                     .tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
@@ -280,7 +326,7 @@ public class InstanceInstallerDialog extends JDialog {
                             .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
                             .build()).setType(DialogManager.ERROR).show();
                     return;
-                } else if (!isReinstall && isServer && App.settings.isServer(nameField.getText())) {
+                } else if (!isReinstall && isServer && ServerManager.isServer(nameField.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText
                                     .tr("A server already exists with that name.<br/><br/>Rename it and try again."))
@@ -296,7 +342,7 @@ public class InstanceInstallerDialog extends JDialog {
                 }
 
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
-                final JDialog dialog = new JDialog(App.settings.getParent(), isReinstall ? (
+                final JDialog dialog = new JDialog(App.launcher.getParent(), isReinstall ? (
                 // #. {0} is the name of the pack the user is installing
                 isServer ? GetText.tr("Reinstalling {0} Server", pack.getName())
                         // #. {0} is the name of the pack the user is installing
@@ -305,7 +351,7 @@ public class InstanceInstallerDialog extends JDialog {
                 isServer ? GetText.tr("Installing {0} Server", pack.getName())
                         // #. {0} is the name of the pack the user is installing
                         : GetText.tr("Installing {0}", pack.getName())), ModalityType.DOCUMENT_MODAL);
-                dialog.setLocationRelativeTo(App.settings.getParent());
+                dialog.setLocationRelativeTo(App.launcher.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
 
@@ -334,8 +380,11 @@ public class InstanceInstallerDialog extends JDialog {
                         ? (LoaderVersion) loaderVersionsDropDown.getSelectedItem()
                         : null;
 
+                boolean saveMods = !isServer && isReinstall && saveModsCheckbox.isSelected();
+
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
-                        isReinstall, isServer, shareCode, showModsChooser, loaderVersion, curseManifest, manifestFile) {
+                        isReinstall, isServer, saveMods, shareCode, showModsChooser, loaderVersion, curseManifest,
+                        manifestFile) {
 
                     protected void done() {
                         Boolean success = false;
@@ -356,7 +405,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                                 if (instanceIsCorrupt) {
                                     if (instance != null) {
-                                        App.settings.setInstanceUnplayable(instance);
+                                        InstanceManager.setInstanceUnplayable(instance);
                                     }
                                 }
                             } else {
@@ -367,6 +416,10 @@ public class InstanceInstallerDialog extends JDialog {
                                 text = GetText.tr(
                                         "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
                                         pack.getName(), version.version);
+
+                                if (Files.exists(this.root) && Files.isDirectory(this.root)) {
+                                    FileUtils.deleteDirectory(this.root);
+                                }
                             }
                         } else {
                             type = DialogManager.INFO;
@@ -402,12 +455,12 @@ public class InstanceInstallerDialog extends JDialog {
                                 }
 
                                 if (isServer) {
-                                    App.settings.reloadServersPanel();
+                                    App.launcher.reloadServersPanel();
                                 } else {
-                                    App.settings.reloadInstancesPanel();
+                                    App.launcher.reloadInstancesPanel();
                                 }
 
-                                if (pack.isLoggingEnabled() && App.settings.enableLogs() && !version.isDev) {
+                                if (pack.isLoggingEnabled() && App.settings.enableLogs && !version.isDev) {
                                     if (isServer) {
                                         pack.addServerInstall(version.version);
                                     } else if (isUpdate) {
@@ -429,7 +482,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                                     if (instanceIsCorrupt) {
                                         if (instance != null) {
-                                            App.settings.setInstanceUnplayable(instance);
+                                            InstanceManager.setInstanceUnplayable(instance);
                                         }
                                     }
                                 } else {
@@ -555,6 +608,7 @@ public class InstanceInstallerDialog extends JDialog {
         middle.add(versionLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         versionsDropDown = new JComboBox<>();
         if (pack.isTester()) {
@@ -598,7 +652,7 @@ public class InstanceInstallerDialog extends JDialog {
         // ensures that font width is taken into account
         for (PackVersion version : versions) {
             versionLength = Math.max(versionLength,
-                    getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
+                    getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
         }
 
         // ensures that the dropdown is at least 200 px wide
@@ -607,12 +661,21 @@ public class InstanceInstallerDialog extends JDialog {
         // ensures that there is a maximum width of 250 px to prevent overflow
         versionLength = Math.min(250, versionLength);
 
-        versionsDropDown.setPreferredSize(new Dimension(versionLength, 25));
+        versionsDropDown.setPreferredSize(new Dimension(versionLength, 23));
         middle.add(versionsDropDown, gbc);
 
         versionsDropDown.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 updateLoaderVersions((PackVersion) e.getItem());
+
+                if (!isServer && isReinstall) {
+                    this.saveModsLabel
+                            .setVisible(!((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(
+                                    instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                    this.saveModsCheckbox
+                            .setVisible(!((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(
+                                    instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                }
             }
         });
 
@@ -656,7 +719,7 @@ public class InstanceInstallerDialog extends JDialog {
             // ensures that font width is taken into account
             for (LoaderVersion version : loaderVersions) {
                 loaderVersionLength = Math.max(loaderVersionLength,
-                        getFontMetrics(Utils.getFont()).stringWidth(version.toString()) + 25);
+                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
             }
 
             loaderVersionsDropDown.removeAllItems();
@@ -684,7 +747,7 @@ public class InstanceInstallerDialog extends JDialog {
             // ensures that there is a maximum width of 250 px to prevent overflow
             loaderVersionLength = Math.min(250, loaderVersionLength);
 
-            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 25));
+            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
 
             loaderVersionsDropDown.setEnabled(true);
             loaderVersionLabel.setVisible(true);
@@ -699,11 +762,13 @@ public class InstanceInstallerDialog extends JDialog {
     private GridBagConstraints setupLoaderVersionsDropdown(GridBagConstraints gbc) {
         gbc.gridx = 0;
         gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         loaderVersionLabel = new JLabel(GetText.tr("Loader Version") + ": ");
         middle.add(loaderVersionLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         loaderVersionsDropDown = new JComboBox<>();
         this.updateLoaderVersions((PackVersion) this.versionsDropDown.getSelectedItem());

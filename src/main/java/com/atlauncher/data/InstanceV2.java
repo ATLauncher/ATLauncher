@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,21 +42,28 @@ import javax.swing.ImageIcon;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.data.curse.pack.CurseManifestFile;
+import com.atlauncher.data.curse.pack.CurseMinecraft;
+import com.atlauncher.data.curse.pack.CurseModLoader;
 import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.AssetObject;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
-import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -74,6 +83,8 @@ import okhttp3.OkHttpClient;
 public class InstanceV2 extends MinecraftVersion {
     public String inheritsFrom;
     public InstanceV2Launcher launcher;
+
+    public transient Path ROOT;
 
     public InstanceV2(MinecraftVersion version) {
         this.id = version.id;
@@ -101,7 +112,7 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public Path getRoot() {
-        return FileSystem.INSTANCES.resolve(this.getSafeName());
+        return this.ROOT;
     }
 
     public Pack getPack() {
@@ -109,7 +120,11 @@ public class InstanceV2 extends MinecraftVersion {
             return null;
         }
 
-        return App.settings.packs.stream().filter(p -> p.id == this.launcher.packId).findFirst().orElse(null);
+        try {
+            return PackManager.getPackByID(this.launcher.packId);
+        } catch (InvalidPack e) {
+            return null;
+        }
     }
 
     public boolean hasUpdate() {
@@ -154,22 +169,21 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public String getPackDescription() {
-        if (launcher.description != null) {
-            return launcher.description;
-        }
-
         Pack pack = this.getPack();
 
         if (pack != null) {
             return pack.description;
         } else {
+            if (launcher.description != null) {
+                return launcher.description;
+            }
+
             return GetText.tr("No Description");
         }
     }
 
     public ImageIcon getImage() {
         File customImage = this.getRoot().resolve("instance.png").toFile();
-        File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
 
         if (customImage.exists()) {
             try {
@@ -193,11 +207,15 @@ public class InstanceV2 extends MinecraftVersion {
             }
         }
 
-        if (instancesImage.exists()) {
-            return Utils.getIconImage(instancesImage);
-        } else {
-            return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
+        if (getPack() != null) {
+            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
+
+            if (instancesImage.exists()) {
+                return Utils.getIconImage(instancesImage);
+            }
         }
+
+        return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
     }
 
     public void ignoreUpdate() {
@@ -316,12 +334,6 @@ public class InstanceV2 extends MinecraftVersion {
                     .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
                     .withHttpClient(httpClient);
 
-            if (index.mapToResources) {
-                download = download.copyTo(this.getRoot().resolve("resources/" + entry.getKey()));
-            } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                download = download.copyTo(FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()));
-            }
-
             pool.add(download);
         });
 
@@ -330,6 +342,23 @@ public class InstanceV2 extends MinecraftVersion {
         progressDialog.setTotalBytes(smallPool.totalSize());
 
         smallPool.downloadAll();
+
+        // copy resources to instance
+        if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            index.objects.entrySet().stream().forEach(entry -> {
+                AssetObject object = entry.getValue();
+                String filename = object.hash.substring(0, 2) + "/" + object.hash;
+
+                Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+
+                if (index.mapToResources) {
+                    FileUtils.copyFile(downloadedFile, this.getRoot().resolve("resources/" + entry.getKey()), true);
+                } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()),
+                            true);
+                }
+            });
+        }
 
         progressDialog.doneTask();
 
@@ -356,7 +385,7 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public boolean launch() {
-        final Account account = App.settings.getAccount();
+        final Account account = AccountManager.getSelectedAccount();
 
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
@@ -364,10 +393,10 @@ public class InstanceV2 extends MinecraftVersion {
                             .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
                     .setType(DialogManager.ERROR).show();
 
-            App.settings.setMinecraftLaunched(false);
+            App.launcher.setMinecraftLaunched(false);
             return false;
         } else {
-            Integer maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.getMaximumMemory()
+            Integer maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
                     : this.launcher.maximumMemory;
             if ((maximumMemory < this.launcher.requiredMemory)
                     && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
@@ -380,11 +409,11 @@ public class InstanceV2 extends MinecraftVersion {
 
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     return false;
                 }
             }
-            Integer permGen = (this.launcher.permGen == null) ? App.settings.getPermGen() : this.launcher.permGen;
+            Integer permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
             if (permGen < this.launcher.requiredPermGen) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -394,7 +423,7 @@ public class InstanceV2 extends MinecraftVersion {
                         .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
                     LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     return false;
                 }
             }
@@ -443,8 +472,8 @@ public class InstanceV2 extends MinecraftVersion {
             Thread launcher = new Thread(() -> {
                 try {
                     long start = System.currentTimeMillis();
-                    if (App.settings.getParent() != null) {
-                        App.settings.getParent().setVisible(false);
+                    if (App.launcher.getParent() != null) {
+                        App.launcher.getParent().setVisible(false);
                     }
 
                     LogManager.info("Launching pack " + this.launcher.pack + " " + this.launcher.version + " for "
@@ -452,18 +481,23 @@ public class InstanceV2 extends MinecraftVersion {
 
                     Process process = MCLauncher.launch(account, this, session, nativesTempDir);
 
-                    if (!App.settings.keepLauncherOpen() && !App.settings.enableLogs()) {
+                    if ((App.autoLaunch != null && App.closeLauncher)
+                            || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
+                        if (App.settings.enableLogs) {
+                            addTimePlayed(1, this.launcher.version); // count the stats, just without time played
+                        }
+
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration() && this.getPack() != null) {
-                        String playing = this.getPack().name + " (" + this.launcher.version + ")";
+                    if (App.settings.enableDiscordIntegration) {
+                        String playing = this.launcher.pack + " (" + this.launcher.version + ")";
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
                         presence.setDetails(playing);
                         presence.setStartTimestamps(System.currentTimeMillis());
 
-                        if (this.getPack().hasDiscordImage()) {
+                        if (this.getPack() != null && this.getPack().hasDiscordImage()) {
                             presence.setBigImage(this.getPack().getSafeName().toLowerCase(), playing);
                             presence.setSmallImage("atlauncher", "ATLauncher");
                         } else {
@@ -473,7 +507,7 @@ public class InstanceV2 extends MinecraftVersion {
                         DiscordRPC.discordUpdatePresence(presence.build());
                     }
 
-                    App.settings.showKillMinecraft(process);
+                    App.launcher.showKillMinecraft(process);
                     InputStream is = process.getInputStream();
                     InputStreamReader isr = new InputStreamReader(is);
                     BufferedReader br = new BufferedReader(isr);
@@ -491,6 +525,11 @@ public class InstanceV2 extends MinecraftVersion {
                             detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
                         }
 
+                        if (line.contains(
+                                "class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
+                            detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
+                        }
+
                         if (!LogManager.showDebug) {
                             line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
                             line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
@@ -503,12 +542,12 @@ public class InstanceV2 extends MinecraftVersion {
                         }
                         LogManager.minecraft(line);
                     }
-                    App.settings.hideKillMinecraft();
-                    if (App.settings.getParent() != null && App.settings.keepLauncherOpen()) {
-                        App.settings.getParent().setVisible(true);
+                    App.launcher.hideKillMinecraft();
+                    if (App.launcher.getParent() != null && App.settings.keepLauncherOpen) {
+                        App.launcher.getParent().setVisible(true);
                     }
                     long end = System.currentTimeMillis();
-                    if (App.settings.enableDiscordIntegration()) {
+                    if (App.settings.enableDiscordIntegration) {
                         DiscordRPC.discordClearPresence();
                     }
                     int exitValue = 0; // Assume we exited fine
@@ -517,13 +556,13 @@ public class InstanceV2 extends MinecraftVersion {
                     } catch (IllegalThreadStateException e) {
                         process.destroy(); // Kill the process
                     }
-                    if (!App.settings.keepLauncherOpen()) {
+                    if (!App.settings.keepLauncherOpen) {
                         App.console.setVisible(false); // Hide the console to pretend we've closed
                     }
                     if (exitValue != 0) {
                         // Submit any pending crash reports from Open Eye if need to since we
                         // exited abnormally
-                        if (App.settings.enableLogs() && App.settings.enableOpenEyeReporting()) {
+                        if (App.settings.enableLogs && App.settings.enableOpenEyeReporting) {
                             App.TASKPOOL.submit(this::sendOpenEyePendingReports);
                         }
                     }
@@ -532,9 +571,9 @@ public class InstanceV2 extends MinecraftVersion {
                         MinecraftError.showInformationPopup(detectedError);
                     }
 
-                    App.settings.setMinecraftLaunched(false);
+                    App.launcher.setMinecraftLaunched(false);
                     if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
-                            && App.settings.enableLogs()) {
+                            && App.settings.enableLogs) {
                         final int timePlayed = (int) (end - start) / 1000;
                         if (timePlayed > 0) {
                             App.TASKPOOL.submit(() -> {
@@ -542,13 +581,13 @@ public class InstanceV2 extends MinecraftVersion {
                             });
                         }
                     }
-                    if (App.settings.keepLauncherOpen() && App.settings.checkForUpdatedFiles()) {
-                        App.settings.reloadLauncherData();
+                    if (App.settings.keepLauncherOpen && App.launcher.checkForUpdatedFiles()) {
+                        App.launcher.reloadLauncherData();
                     }
                     if (Files.isDirectory(nativesTempDir)) {
                         FileUtils.deleteDirectory(nativesTempDir);
                     }
-                    if (!App.settings.keepLauncherOpen()) {
+                    if (!App.settings.keepLauncherOpen) {
                         System.exit(0);
                     }
                 } catch (IOException e1) {
@@ -721,6 +760,163 @@ public class InstanceV2 extends MinecraftVersion {
             }
         }
         return false;
+    }
+
+    public Map<String, Object> getShareCodeData() {
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> mods = new HashMap<>();
+        List<Map<String, Object>> optional = new ArrayList<>();
+
+        this.launcher.mods.stream().filter(mod -> mod.optional && !mod.userAdded).forEach(mod -> {
+            Map<String, Object> modInfo = new HashMap<>();
+            modInfo.put("name", mod.name);
+            modInfo.put("selected", true);
+            optional.add(modInfo);
+        });
+
+        mods.put("optional", optional);
+        data.put("mods", mods);
+
+        return data;
+    }
+
+    public boolean canBeExported() {
+        if (launcher.loaderVersion == null) {
+            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader");
+            return false;
+        }
+
+        // check pack is a system pack or imported from Curse
+        if ((getPack() != null && !getPack().system) && launcher.curseManifest == null) {
+            LogManager.debug("Instance " + launcher.name
+                    + " cannot be exported due to: Not being a system pack or imported from Curse");
+            return false;
+        }
+
+        // make sure there's at least one mod from Curse
+        if (!launcher.mods.stream().anyMatch(mod -> mod.isFromCurse())) {
+            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No mods from Curse");
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean exportAsCurseZip(String name, String author, String saveTo, List<String> overrides) {
+        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        CurseManifest manifest = new CurseManifest();
+
+        CurseMinecraft minecraft = new CurseMinecraft();
+
+        List<CurseModLoader> modLoaders = new ArrayList<CurseModLoader>();
+        CurseModLoader modLoader = new CurseModLoader();
+
+        String loaderVersion = launcher.loaderVersion.version;
+
+        // Since Curse treats Farbic as a second class citizen :(, we need to force a
+        // forge loader and people need to use Jumploader in order to have Fabric packs
+        // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
+        if (launcher.loaderVersion.type.equals("Fabric")) {
+            loaderVersion = ForgeLoader.getRecommendedVersion(id);
+        }
+
+        modLoader.id = "forge-" + loaderVersion;
+        modLoader.primary = true;
+        modLoaders.add(modLoader);
+
+        minecraft.version = this.id;
+        minecraft.modLoaders = modLoaders;
+
+        manifest.minecraft = minecraft;
+        manifest.manifestType = "minecraftModpack";
+        manifest.manifestVersion = 1;
+        manifest.name = name;
+        manifest.version = this.launcher.version;
+        manifest.author = author;
+        manifest.files = this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).map(mod -> {
+            CurseManifestFile file = new CurseManifestFile();
+            file.projectID = mod.curseModId;
+            file.fileID = mod.curseFileId;
+            file.required = !mod.disabled;
+
+            return file;
+        }).collect(Collectors.toList());
+        manifest.overrides = "overrides";
+
+        // create temp directory to put this in
+        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        FileUtils.createDirectory(tempDir);
+
+        // create manifest.json
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("manifest.json").toFile())) {
+            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save manifest.json", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // create modlist.html
+        StringBuilder sb = new StringBuilder("<ul>");
+        this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+            if (mod.hasFullCurseInformation()) {
+                sb.append("<li><a href=\"" + mod.curseMod.websiteUrl + "\">" + mod.name + "</a></li>");
+            } else {
+                sb.append("<li>" + mod.name + "</li>");
+            }
+        });
+        sb.append("</ul>");
+
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modlist.html").toFile())) {
+            fileWriter.write(sb.toString());
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save modlist.html", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // copy over the overrides folder
+        Path overridesPath = tempDir.resolve("overrides");
+        FileUtils.createDirectory(overridesPath);
+
+        for (String path : overrides) {
+            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+                    && (getRoot().resolve(path).toFile().isFile()
+                            || getRoot().resolve(path).toFile().list().length != 0)) {
+                if (getRoot().resolve(path).toFile().isDirectory()) {
+                    Utils.copyDirectory(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile());
+                } else {
+                    Utils.copyFile(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile(), true);
+                }
+            }
+        }
+
+        // remove files that come from Curse
+        launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+            File file = mod.getFile(this, overridesPath);
+
+            if (file.exists()) {
+                FileUtils.delete(file.toPath());
+            }
+        });
+
+        for (String path : overrides) {
+            // if no files, remove the directory
+            if (overridesPath.resolve(path).toFile().isDirectory()
+                    && overridesPath.resolve(path).toFile().list().length == 0) {
+                FileUtils.deleteDirectory(overridesPath.resolve(path));
+            }
+        }
+
+        ZipUtil.pack(tempDir.toFile(), to.toFile());
+
+        FileUtils.deleteDirectory(tempDir);
+
+        return true;
     }
 
     public boolean rename(String newName) {

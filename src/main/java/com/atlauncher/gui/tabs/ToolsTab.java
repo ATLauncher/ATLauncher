@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,15 @@ package com.atlauncher.gui.tabs;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import com.atlauncher.gui.components.BlankToolPanel;
-import com.atlauncher.gui.components.LogClearerToolPanel;
-import com.atlauncher.gui.components.NetworkCheckerToolPanel;
-import com.atlauncher.gui.components.RelaunchInDebugModePanel;
-import com.atlauncher.gui.components.RuntimeDownloaderToolPanel;
-import com.atlauncher.gui.components.ServerCheckerToolPanel;
+import com.atlauncher.gui.tabs.tools.BlankToolPanel;
+import com.atlauncher.gui.tabs.tools.DebugModePanel;
+import com.atlauncher.gui.tabs.tools.LogClearerToolPanel;
+import com.atlauncher.gui.tabs.tools.NetworkCheckerToolPanel;
+import com.atlauncher.gui.tabs.tools.RuntimeDownloaderToolPanel;
+import com.atlauncher.gui.tabs.tools.ServerCheckerToolPanel;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -37,15 +38,16 @@ public class ToolsTab extends JPanel implements Tab {
 
     public ToolsTab() {
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         mainPanel = new JPanel();
 
-        mainPanel.setLayout(new GridLayout(3, 2));
+        mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
         mainPanel.add(new NetworkCheckerToolPanel());
         mainPanel.add(new ServerCheckerToolPanel());
         mainPanel.add(new LogClearerToolPanel());
-        mainPanel.add(new RelaunchInDebugModePanel());
+        mainPanel.add(new DebugModePanel());
         mainPanel.add(new RuntimeDownloaderToolPanel());
         mainPanel.add(new BlankToolPanel());
 

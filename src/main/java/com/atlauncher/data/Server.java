@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,14 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.LogManager;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -73,7 +74,11 @@ public class Server {
     }
 
     public Pack getPack() {
-        return App.settings.packs.stream().filter(p -> p.id == this.packId).findFirst().orElse(null);
+        try {
+            return PackManager.getPackByID(this.packId);
+        } catch (InvalidPack e) {
+            return null;
+        }
     }
 
     public void launch(boolean close) {
@@ -81,6 +86,7 @@ public class Server {
     }
 
     public void launch(String args, boolean close) {
+        LogManager.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 
         try {
@@ -88,7 +94,7 @@ public class Server {
                 arguments.add("cmd");
                 arguments.add("/K");
                 arguments.add("start");
-                arguments.add(name);
+                arguments.add("\"" + name + "\"");
                 arguments.add(getRoot().resolve("LaunchServer.bat").toString());
                 arguments.add(args);
             } else if (OS.isLinux()) {
@@ -98,13 +104,15 @@ public class Server {
                 arguments.add("-e");
                 arguments.add(getRoot().resolve("LaunchServer.sh").toString() + " " + args);
             } else if (OS.isMac()) {
-                // unfortunately OSX doesn't allow us to pass arguments with open and Terminal :(
+                // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
+                // :(
                 arguments.add("open");
                 arguments.add("-a");
                 arguments.add("Terminal");
                 arguments.add(getRoot().resolve("LaunchServer.command").toString());
             }
 
+            LogManager.info("Launching server with the following arguments: " + arguments.toString());
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(getRoot().toFile());
             processBuilder.command(arguments);

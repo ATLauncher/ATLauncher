@@ -1,3 +1,4 @@
+
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
  * Copyright (C) 2013-2019 ATLauncher
@@ -15,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import com.atlauncher.data.Constants;
 import com.atlauncher.data.LauncherVersion;
 
 import org.junit.jupiter.api.Test;
@@ -24,64 +24,55 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestLauncherVersion {
 
+    private static LauncherVersion testVersion = new LauncherVersion(1, 0, 0, 0, "Release");
+
     @Test
     public void test() {
         // Test same version - no update
-        assertFalse(Constants.VERSION
-                .needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(), Constants.VERSION.getMajor(),
-                        Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), Constants.VERSION.getBuild())));
+        assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
 
         // Test older Reserved - launcher had a big update
-        assertTrue(Constants.VERSION
-                .needsUpdate(new LauncherVersion(Constants.VERSION.getReserved() + 1, Constants.VERSION.getMajor(),
-                        Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), Constants.VERSION.getBuild())));
+        assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved() + 1, testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
 
         // Test older Major - launcher had major update
-        assertTrue(Constants.VERSION
-                .needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(), Constants.VERSION.getMajor() + 1,
-                        Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), Constants.VERSION.getBuild())));
+        assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor() + 1,
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
 
         // Test older Minor - launcher had minor update
-        assertTrue(Constants.VERSION.needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(),
-                Constants.VERSION.getMajor(), Constants.VERSION.getMinor() + 1, Constants.VERSION.getRevision(),
-                Constants.VERSION.getBuild())));
+        assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor() + 1, testVersion.getRevision(), testVersion.getStream())));
 
         // Test older Revision - launcher had a bug fix
-        assertTrue(Constants.VERSION.needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(),
-                Constants.VERSION.getMajor(), Constants.VERSION.getMinor(), Constants.VERSION.getRevision() + 1,
-                Constants.VERSION.getBuild())));
+        assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision() + 1, testVersion.getStream())));
 
-        // Test older Build - launcher had a beta update
-        assertTrue(Constants.VERSION.needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(),
-                Constants.VERSION.getMajor(), Constants.VERSION.getMinor(), Constants.VERSION.getRevision(),
-                Constants.VERSION.getBuild() + 1)));
+        // Test user has a beta stream but the real stream comes out
+        LauncherVersion betaBuild = new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), "Beta");
+        LauncherVersion releaseBuild = new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), "Release");
+        assertTrue(betaBuild.needsUpdate(releaseBuild));
 
-        // Test user has a beta build but the real build comes out
-        LauncherVersion testBuild = new LauncherVersion(Constants.VERSION.getReserved(), Constants.VERSION.getMajor(),
-                Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), Constants.VERSION.getBuild() + 6);
-        LauncherVersion actualBuild = new LauncherVersion(Constants.VERSION.getReserved(), Constants.VERSION.getMajor(),
-                Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), 0);
-        assertTrue(testBuild.needsUpdate(actualBuild));
+        // Test user has a release stream but a beta build comes out
+        assertFalse(releaseBuild.needsUpdate(betaBuild));
 
         // Test newer Reserved - launcher dev version
-        assertFalse(Constants.VERSION
-                .needsUpdate(new LauncherVersion(Constants.VERSION.getReserved() - 1, Constants.VERSION.getMajor(),
-                        Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), Constants.VERSION.getBuild())));
+        assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved() - 1, testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
 
         // Test newer Major - launcher dev version
-        assertFalse(Constants.VERSION
-                .needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(), Constants.VERSION.getMajor() - 1,
-                        Constants.VERSION.getMinor(), Constants.VERSION.getRevision(), Constants.VERSION.getBuild())));
+        assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor() - 1,
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
 
         // Test newer Minor - launcher dev version
-        assertFalse(Constants.VERSION.needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(),
-                Constants.VERSION.getMajor(), Constants.VERSION.getMinor() - 1, Constants.VERSION.getRevision(),
-                Constants.VERSION.getBuild())));
+        assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor() - 1, testVersion.getRevision(), testVersion.getStream())));
 
         // Test newer Revision - launcher dev version
-        assertFalse(Constants.VERSION.needsUpdate(new LauncherVersion(Constants.VERSION.getReserved(),
-                Constants.VERSION.getMajor(), Constants.VERSION.getMinor(), Constants.VERSION.getRevision() - 1,
-                Constants.VERSION.getBuild())));
+        assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision() - 1, testVersion.getStream())));
     }
 
 }

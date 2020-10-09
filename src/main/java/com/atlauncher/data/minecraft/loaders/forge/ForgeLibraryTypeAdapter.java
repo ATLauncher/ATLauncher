@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,16 @@
 package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
@@ -47,7 +52,10 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
             library.downloads = new Gson().fromJson(object.get("downloads").getAsJsonObject(), Downloads.class);
 
             if (library.downloads.artifact.url.isEmpty()) {
-                library.downloads.artifact.url = Constants.FORGE_MAVEN + library.downloads.artifact.path;
+                // forge installer provides this out the zip, but when the file is removed from
+                // shared libraries, we need to change the url to grab the universal jar (same)
+                library.downloads.artifact.url = Constants.FORGE_MAVEN_BASE
+                        + library.downloads.artifact.path.replace(".jar", "-universal.jar");
             }
         } else {
             Downloads downloads = new Downloads();
@@ -78,6 +86,29 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                 }
             } else {
                 artifact.url = Constants.MINECRAFT_LIBRARIES + artifact.path;
+            }
+
+            // library is missing this information, so grab it from the url
+            if (artifact.size == -1L || artifact.sha1 == null) {
+                Path downloadedLibrary = FileSystem.LIBRARIES.resolve(artifact.path);
+
+                try {
+                    // if the file exists, assume it's good. This is only needed for older Forge
+                    // versions anyway, so should be okay :finger_crossed:
+                    if (!Files.exists(downloadedLibrary)) {
+                        System.out.println(artifact.path);
+                        System.out.println(artifact.size);
+                        System.out.println(artifact.sha1);
+                        System.out.println("===========");
+                        new com.atlauncher.network.Download().setUrl(artifact.url).downloadTo(downloadedLibrary)
+                                .downloadFile();
+                    }
+
+                    artifact.size = Files.size(downloadedLibrary);
+                    artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
+                } catch (Throwable t) {
+                    LogManager.logStackTrace(t);
+                }
             }
 
             downloads.artifact = artifact;

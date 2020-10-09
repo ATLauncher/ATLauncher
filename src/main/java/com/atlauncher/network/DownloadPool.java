@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
+import com.atlauncher.managers.LogManager;
 
 @SuppressWarnings("serial")
 public final class DownloadPool extends LinkedList<Download> {
@@ -39,7 +39,7 @@ public final class DownloadPool extends LinkedList<Download> {
     }
 
     public void downloadAll() {
-        ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+        ExecutorService executor = Executors.newFixedThreadPool(App.settings.concurrentConnections);
         synchronized (this) {
             for (Download dl : this) {
                 executor.execute(new Downloader(dl));
@@ -68,7 +68,7 @@ public final class DownloadPool extends LinkedList<Download> {
         final DownloadPool pool = new DownloadPool(this.wait);
         final List<Download> downloads = this.stream().distinct().collect(Collectors.toList());
 
-        ExecutorService executor = Executors.newFixedThreadPool(App.settings.getConcurrentConnections());
+        ExecutorService executor = Executors.newFixedThreadPool(App.settings.concurrentConnections);
         for (final Download dl : downloads) {
             executor.submit(() -> {
                 if (dl.needToDownload()) {

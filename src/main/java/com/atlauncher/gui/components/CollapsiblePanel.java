@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -40,6 +39,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
@@ -48,15 +48,20 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
+import com.atlauncher.evnt.listener.ThemeListener;
+import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in
  * the titled border
  */
-public class CollapsiblePanel extends JPanel {
+public class CollapsiblePanel extends JPanel implements ThemeListener {
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type
@@ -107,8 +112,8 @@ public class CollapsiblePanel extends JPanel {
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedPacks().contains(pack.getName())) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -118,17 +123,17 @@ public class CollapsiblePanel extends JPanel {
         this.instance = instance;
         if (instance.isPlayable()) {
             arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + ")");
-            arrow.setForeground(App.THEME.getNormalInstanceColor());
+            arrow.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
         } else {
             arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + " - "
                     + "Corrupted)");
-            arrow.setForeground(App.THEME.getCorruptedInstanceColor());
+            arrow.setForeground(UIManager.getColor("CollapsiblePanel.error"));
         }
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedInstances().contains(instance.getName())) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
                 setCollapsed(true);
             }
         }
@@ -139,17 +144,17 @@ public class CollapsiblePanel extends JPanel {
         if (instanceV2.launcher.isPlayable) {
             arrow.setText(instanceV2.launcher.name + " (" + instanceV2.launcher.pack + " " + instanceV2.launcher.version
                     + ")");
-            arrow.setForeground(App.THEME.getNormalInstanceColor());
+            arrow.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
         } else {
             arrow.setText(instanceV2.launcher.name + " (" + instanceV2.launcher.pack + " " + instanceV2.launcher.version
                     + " - " + "Corrupted)");
-            arrow.setForeground(App.THEME.getCorruptedInstanceColor());
+            arrow.setForeground(UIManager.getColor("CollapsiblePanel.error"));
         }
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
                 setCollapsed(true);
             }
         }
@@ -158,12 +163,12 @@ public class CollapsiblePanel extends JPanel {
     public CollapsiblePanel(Server server) {
         this.server = server;
         arrow.setText(server.name + " (" + server.pack + " " + server.version + ")");
-        arrow.setForeground(App.THEME.getNormalInstanceColor());
+        arrow.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (App.settings.getAccount() != null) {
-            if (App.settings.getAccount().getCollapsedServers().contains(server.name)) {
+        if (AccountManager.getSelectedAccount() != null) {
+            if (AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
                 setCollapsed(true);
             }
         }
@@ -178,11 +183,7 @@ public class CollapsiblePanel extends JPanel {
      */
     public CollapsiblePanel(String text, JRadioButton component) {
         collapsed = !component.isSelected();
-        // component.addItemListener(new CollapsiblePanel.ExpandAndCollapseAction());
-        // arrow.setText(text);
-        // /if(!collapsed)
         titleComponent = arrow;
-        // else titleComponent=null;
 
         setLayout(new BorderLayout());
         JLabel label = new JLabel(text);
@@ -207,6 +208,8 @@ public class CollapsiblePanel extends JPanel {
         add(panel, BorderLayout.CENTER);
         setCollapsed(collapsed);
         placeTitleComponent();
+
+        ThemeManager.addListener(this);
     }
 
     /**
@@ -268,8 +271,10 @@ public class CollapsiblePanel extends JPanel {
      */
     private ImageIcon[] createExpandAndCollapseIcon() {
         ImageIcon[] iconArrow = new ImageIcon[2];
-        iconArrow[COLLAPSED] = Utils.getIconImage("/assets/image/Collapsed.png");
-        iconArrow[EXPANDED] = Utils.getIconImage("/assets/image/Expanded.png");
+        iconArrow[COLLAPSED] = Utils
+                .getIconImage("/assets/image/icons/collapsed" + (App.THEME.isDark() ? "-dark" : "") + ".png");
+        iconArrow[EXPANDED] = Utils
+                .getIconImage("/assets/image/icons/expanded" + (App.THEME.isDark() ? "-dark" : "") + ".png");
         return iconArrow;
     }
 
@@ -281,16 +286,9 @@ public class CollapsiblePanel extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder(0, 1, 5, 1));
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.LEFT);
-        button.setMargin(new Insets(0, 0, 3, 0));
 
         // Use the same font as that used in the titled border font
-        Font font;
-        if (OS.isMac()) {
-            font = new Font("SansSerif", Font.BOLD, 14);
-        } else {
-            font = new Font("SansSerif", Font.BOLD, 15);
-        }
-        button.setFont(font);
+        button.setFont(App.THEME.getBoldFont().deriveFont(15f));
         button.setFocusable(false);
         button.setContentAreaFilled(false);
         button.addActionListener(new CollapsiblePanel.ExpandAndCollapseAction());
@@ -309,31 +307,31 @@ public class CollapsiblePanel extends JPanel {
             setCollapsed(!isCollapsed());
             if (pack != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, pack.getName(), "Collapse", "Pack");
-                App.settings.setPackVisbility(pack, isCollapsed());
+                PackManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, instance.getPackName() + " - " + instance.getVersion(),
                         "Collapse", "Instance");
-                App.settings.setInstanceVisbility(instance, isCollapsed());
+                InstanceManager.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0,
                         instanceV2.launcher.pack + " - " + instanceV2.launcher.version, "Collapse", "InstanceV2");
-                App.settings.setInstanceVisbility(instanceV2, isCollapsed());
+                InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
-                App.settings.setServerVisibility(server, isCollapsed());
+                ServerManager.setServerVisibility(server, isCollapsed());
             }
         }
 
         public void itemStateChanged(ItemEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
-                App.settings.setPackVisbility(pack, isCollapsed());
+                PackManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                App.settings.setInstanceVisbility(instance, isCollapsed());
+                InstanceManager.setInstanceVisbility(instance, isCollapsed());
             } else if (instanceV2 != null) {
-                App.settings.setInstanceVisbility(instanceV2, isCollapsed());
+                InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
-                App.settings.setServerVisibility(server, isCollapsed());
+                ServerManager.setServerVisibility(server, isCollapsed());
             }
         }
     }
@@ -373,28 +371,28 @@ public class CollapsiblePanel extends JPanel {
             Rectangle compR = getComponentRect(rect, insets);
             int diff;
             switch (titlePosition) {
-            case ABOVE_TOP:
-                diff = compR.height + TEXT_SPACING;
-                borderR.y += diff;
-                borderR.height -= diff;
-                break;
-            case TOP:
-            case DEFAULT_POSITION:
-                diff = insets.top / 2 - borderInsets.top - EDGE_SPACING;
-                borderR.y += diff + 7;
-                borderR.height -= diff;
-                break;
-            case BELOW_TOP:
-            case ABOVE_BOTTOM:
-                break;
-            case BOTTOM:
-                diff = insets.bottom / 2 - borderInsets.bottom - EDGE_SPACING;
-                borderR.height -= diff;
-                break;
-            case BELOW_BOTTOM:
-                diff = compR.height + TEXT_SPACING;
-                borderR.height -= diff;
-                break;
+                case ABOVE_TOP:
+                    diff = compR.height + TEXT_SPACING;
+                    borderR.y += diff;
+                    borderR.height -= diff;
+                    break;
+                case TOP:
+                case DEFAULT_POSITION:
+                    diff = insets.top / 2 - borderInsets.top - EDGE_SPACING;
+                    borderR.y += diff - 1;
+                    borderR.height -= diff + 1;
+                    break;
+                case BELOW_TOP:
+                case ABOVE_BOTTOM:
+                    break;
+                case BOTTOM:
+                    diff = insets.bottom / 2 - borderInsets.bottom - EDGE_SPACING;
+                    borderR.height -= diff;
+                    break;
+                case BELOW_BOTTOM:
+                    diff = compR.height + TEXT_SPACING;
+                    borderR.height -= diff;
+                    break;
             }
             border.paintBorder(c, g, borderR.x, borderR.y, borderR.width, borderR.height);
             Color col = g.getColor();
@@ -422,25 +420,25 @@ public class CollapsiblePanel extends JPanel {
             int compHeight = component.getPreferredSize().height;
 
             switch (titlePosition) {
-            case ABOVE_TOP:
-                insets.top += compHeight + TEXT_SPACING;
-                break;
-            case TOP:
-            case DEFAULT_POSITION:
-                insets.top += Math.max(compHeight, borderInsets.top) - borderInsets.top;
-                break;
-            case BELOW_TOP:
-                insets.top += compHeight + TEXT_SPACING;
-                break;
-            case ABOVE_BOTTOM:
-                insets.bottom += compHeight + TEXT_SPACING;
-                break;
-            case BOTTOM:
-                insets.bottom += Math.max(compHeight, borderInsets.bottom) - borderInsets.bottom;
-                break;
-            case BELOW_BOTTOM:
-                insets.bottom += compHeight + TEXT_SPACING;
-                break;
+                case ABOVE_TOP:
+                    insets.top += compHeight + TEXT_SPACING;
+                    break;
+                case TOP:
+                case DEFAULT_POSITION:
+                    insets.top += Math.max(compHeight, borderInsets.top) - borderInsets.top;
+                    break;
+                case BELOW_TOP:
+                    insets.top += compHeight + TEXT_SPACING;
+                    break;
+                case ABOVE_BOTTOM:
+                    insets.bottom += compHeight + TEXT_SPACING;
+                    break;
+                case BOTTOM:
+                    insets.bottom += Math.max(compHeight, borderInsets.bottom) - borderInsets.bottom;
+                    break;
+                case BELOW_BOTTOM:
+                    insets.bottom += compHeight + TEXT_SPACING;
+                    break;
             }
             return insets;
         }
@@ -450,46 +448,54 @@ public class CollapsiblePanel extends JPanel {
 
             Rectangle compR = new Rectangle(0, 0, compD.width, compD.height);
             switch (titlePosition) {
-            case ABOVE_TOP:
-                compR.y = EDGE_SPACING;
-                break;
-            case TOP:
-            case DEFAULT_POSITION:
-                if (titleComponent instanceof JButton) {
-                    compR.y = EDGE_SPACING + (borderInsets.top - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
-                } else if (titleComponent instanceof JRadioButton) {
-                    compR.y = (borderInsets.top - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
-                }
-                break;
-            case BELOW_TOP:
-                compR.y = borderInsets.top - compD.height - TEXT_SPACING;
-                break;
-            case ABOVE_BOTTOM:
-                compR.y = rect.height - borderInsets.bottom + TEXT_SPACING;
-                break;
-            case BOTTOM:
-                compR.y = rect.height - borderInsets.bottom + TEXT_SPACING
-                        + (borderInsets.bottom - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
-                break;
-            case BELOW_BOTTOM:
-                compR.y = rect.height - compD.height - EDGE_SPACING;
-                break;
+                case ABOVE_TOP:
+                    compR.y = EDGE_SPACING;
+                    break;
+                case TOP:
+                case DEFAULT_POSITION:
+                    if (titleComponent instanceof JButton) {
+                        compR.y = EDGE_SPACING + (borderInsets.top - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
+                    } else if (titleComponent instanceof JRadioButton) {
+                        compR.y = (borderInsets.top - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
+                    }
+                    break;
+                case BELOW_TOP:
+                    compR.y = borderInsets.top - compD.height - TEXT_SPACING;
+                    break;
+                case ABOVE_BOTTOM:
+                    compR.y = rect.height - borderInsets.bottom + TEXT_SPACING;
+                    break;
+                case BOTTOM:
+                    compR.y = rect.height - borderInsets.bottom + TEXT_SPACING
+                            + (borderInsets.bottom - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
+                    break;
+                case BELOW_BOTTOM:
+                    compR.y = rect.height - compD.height - EDGE_SPACING;
+                    break;
             }
             switch (titleJustification) {
-            case LEFT:
-            case DEFAULT_JUSTIFICATION:
-                // compR.x = TEXT_INSET_H + borderInsets.left;
-                compR.x = TEXT_INSET_H + borderInsets.left - EDGE_SPACING;
-                break;
-            case RIGHT:
-                compR.x = rect.width - borderInsets.right - TEXT_INSET_H - compR.width;
-                break;
-            case CENTER:
-                compR.x = (rect.width - compR.width) / 2;
-                break;
+                case LEFT:
+                case DEFAULT_JUSTIFICATION:
+                    // compR.x = TEXT_INSET_H + borderInsets.left;
+                    compR.x = TEXT_INSET_H + borderInsets.left - EDGE_SPACING;
+                    break;
+                case RIGHT:
+                    compR.x = rect.width - borderInsets.right - TEXT_INSET_H - compR.width;
+                    break;
+                case CENTER:
+                    compR.x = (rect.width - compR.width) / 2;
+                    break;
             }
             return compR;
         }
+    }
+
+    @Override
+    public void onThemeChange() {
+        iconArrow = createExpandAndCollapseIcon();
+
+        // force state
+        setCollapsed(collapsed);
     }
 
 }

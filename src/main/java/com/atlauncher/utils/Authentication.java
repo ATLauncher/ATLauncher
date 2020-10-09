@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.managers.LogManager;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.UserAuthentication;
 import com.mojang.authlib.exceptions.AuthenticationException;
@@ -31,7 +31,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 public class Authentication {
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
-                App.settings.getProxyForAuth(), clientToken).createUserAuthentication(Agent.MINECRAFT);
+                App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
 
         LoginResponse response = new LoginResponse(username);
 
@@ -52,8 +52,8 @@ public class Authentication {
     }
 
     public static LoginResponse login(Account account, boolean usePassword) {
-        UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.getProxyForAuth(),
-                account.getClientToken()).createUserAuthentication(Agent.MINECRAFT);
+        UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.getClientToken())
+                .createUserAuthentication(Agent.MINECRAFT);
         LoginResponse response = new LoginResponse(account.getUsername());
 
         if (!usePassword && account.hasStore()) {

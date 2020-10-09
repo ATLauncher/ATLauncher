@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,8 @@ package com.atlauncher.data.curse;
 
 import java.util.List;
 
-import com.atlauncher.data.Constants;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
-import com.atlauncher.data.json.ModType;
 
 public class CurseFile {
     public int id;

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 
 import org.mini2Dx.gettext.GetText;
@@ -105,9 +106,10 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.weightx = 1.0;
+        gbc.insets = UIConstants.FIELD_INSETS_SMALL;
         gbc.fill = GridBagConstraints.BOTH;
 
-        App.settings.getServersSorted().stream().forEach(server -> {
+        ServerManager.getServersSorted().stream().forEach(server -> {
             if (keepFilters) {
                 boolean showServer = true;
 

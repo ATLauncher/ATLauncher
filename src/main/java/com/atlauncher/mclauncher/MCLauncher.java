@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.LogManager;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
@@ -39,6 +38,7 @@ import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -58,13 +58,13 @@ public class MCLauncher {
                 1);
 
         InstanceSettings settings = instance.getSettings();
-        Integer initialMemory = settings.getInitialMemory() == null ? App.settings.getInitialMemory()
+        Integer initialMemory = settings.getInitialMemory() == null ? App.settings.initialMemory
                 : settings.getInitialMemory();
-        Integer maximumMemory = settings.getMaximumMemory() == null ? App.settings.getMaximumMemory()
+        Integer maximumMemory = settings.getMaximumMemory() == null ? App.settings.maximumMemory
                 : settings.getMaximumMemory();
-        Integer permGen = settings.getPermGen() == null ? App.settings.getPermGen() : settings.getPermGen();
-        String javaPath = settings.getJavaPath() == null ? App.settings.getJavaPath() : settings.getJavaPath();
-        String javaArguments = settings.getJavaArguments() == null ? App.settings.getJavaParameters()
+        Integer permGen = settings.getPermGen() == null ? App.settings.metaspace : settings.getPermGen();
+        String javaPath = settings.getJavaPath() == null ? App.settings.javaPath : settings.getJavaPath();
+        String javaArguments = settings.getJavaArguments() == null ? App.settings.javaParameters
                 : settings.getJavaArguments();
 
         File jarMods = instance.getJarModsDirectory();
@@ -157,7 +157,7 @@ public class MCLauncher {
             System.out.println("Okay you can look again, you saw NOTHING!");
         }
 
-        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
+        arguments.add("-Dfml.log.level=" + App.settings.forgeLoggingLevel);
 
         if (OS.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
@@ -273,12 +273,12 @@ public class MCLauncher {
             arguments.add("--assetsDir=" + FileSystem.ASSETS.toAbsolutePath().toString());
         }
 
-        if (App.settings.startMinecraftMaximised()) {
+        if (App.settings.maximiseMinecraft) {
             arguments.add("--width=" + OS.getMaximumWindowWidth());
             arguments.add("--height=" + OS.getMaximumWindowHeight());
         } else {
-            arguments.add("--width=" + App.settings.getWindowWidth());
-            arguments.add("--height=" + App.settings.getWindowHeight());
+            arguments.add("--width=" + App.settings.windowWidth);
+            arguments.add("--height=" + App.settings.windowHeight);
         }
 
         if (instance.hasExtraArguments()) {
@@ -327,13 +327,13 @@ public class MCLauncher {
         ErrorReporting.recordInstancePlay(instance.launcher.pack, instance.launcher.version,
                 instance.launcher.loaderVersion, 2);
 
-        Integer initialMemory = instance.launcher.initialMemory == null ? App.settings.getInitialMemory()
+        Integer initialMemory = instance.launcher.initialMemory == null ? App.settings.initialMemory
                 : instance.launcher.initialMemory;
-        Integer maximumMemory = instance.launcher.maximumMemory == null ? App.settings.getMaximumMemory()
+        Integer maximumMemory = instance.launcher.maximumMemory == null ? App.settings.maximumMemory
                 : instance.launcher.maximumMemory;
-        Integer permGen = instance.launcher.permGen == null ? App.settings.getPermGen() : instance.launcher.permGen;
-        String javaPath = instance.launcher.javaPath == null ? App.settings.getJavaPath() : instance.launcher.javaPath;
-        String javaArguments = instance.launcher.javaArguments == null ? App.settings.getJavaParameters()
+        Integer permGen = instance.launcher.permGen == null ? App.settings.metaspace : instance.launcher.permGen;
+        String javaPath = instance.launcher.javaPath == null ? App.settings.javaPath : instance.launcher.javaPath;
+        String javaArguments = instance.launcher.javaArguments == null ? App.settings.javaParameters
                 : instance.launcher.javaArguments;
 
         // add minecraft client jar
@@ -378,8 +378,8 @@ public class MCLauncher {
 
         List<String> arguments = new ArrayList<>();
 
-        if (OS.isLinux() && App.settings.enableFeralGamemode() && Utils.executableInPath("gamemoderun")) {
-          arguments.add("gamemoderun");
+        if (OS.isLinux() && App.settings.enableFeralGamemode && Utils.executableInPath("gamemoderun")) {
+            arguments.add("gamemoderun");
         }
 
         String path = javaPath + File.separator + "bin" + File.separator + "java";
@@ -431,7 +431,7 @@ public class MCLauncher {
             System.out.println("Okay you can look again, you saw NOTHING!");
         }
 
-        arguments.add("-Dfml.log.level=" + App.settings.getForgeLoggingLevel());
+        arguments.add("-Dfml.log.level=" + App.settings.forgeLoggingLevel);
 
         if (OS.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
@@ -515,12 +515,12 @@ public class MCLauncher {
             }
         }
 
-        if (App.settings.startMinecraftMaximised()) {
+        if (App.settings.maximiseMinecraft) {
             arguments.add("--width=" + OS.getMaximumWindowWidth());
             arguments.add("--height=" + OS.getMaximumWindowHeight());
         } else {
-            arguments.add("--width=" + App.settings.getWindowWidth());
-            arguments.add("--height=" + App.settings.getWindowHeight());
+            arguments.add("--width=" + App.settings.windowWidth);
+            arguments.add("--height=" + App.settings.windowHeight);
         }
 
         String argsString = arguments.toString();
@@ -532,10 +532,12 @@ public class MCLauncher {
 
             argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
             argsString = argsString.replace(account.getUUID(), "REDACTED");
-            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-            argsString = argsString.replace(account.getSession(response), "REDACTED");
-            argsString = argsString.replace(props, "REDACTED");
         }
+
+        // always censor these
+        argsString = argsString.replace(props, "REDACTED");
+        argsString = argsString.replace(account.getSession(response), "REDACTED");
+        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
 
         LogManager.info("Launching Minecraft with the following arguments " + "(user related stuff has been removed):"
                 + " " + argsString);

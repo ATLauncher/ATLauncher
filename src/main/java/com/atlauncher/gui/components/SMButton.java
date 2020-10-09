@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,8 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolTip;
-import javax.swing.border.Border;
 
-import com.atlauncher.App;
-import com.atlauncher.gui.CustomLineBorder;
+import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -47,8 +45,7 @@ public class SMButton extends JButton {
 
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
-        Border border = new CustomLineBorder(5, App.THEME.getHoverBorderColor(), 2);
-        tip.setBorder(border);
+        tip.setBorder(new HoverLineBorder());
         return tip;
     }
 }

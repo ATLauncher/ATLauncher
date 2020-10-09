@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package com.atlauncher.gui.components;
 import java.awt.Color;
 
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
@@ -34,6 +35,8 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
+import com.atlauncher.App;
+
 @SuppressWarnings("serial")
 public final class Console extends JTextPane {
     private final SimpleAttributeSet attrs = new SimpleAttributeSet();
@@ -41,6 +44,7 @@ public final class Console extends JTextPane {
     public Console() {
         this.setEditable(false);
         this.setEditorKit(new WrapEditorKit());
+        this.setFont(App.THEME.getConsoleFont().deriveFont((float) UIManager.get("Console.fontSize")));
     }
 
     public Console setColor(Color c) {
@@ -108,12 +112,12 @@ class WrapLabelView extends LabelView {
 
     public float getMinimumSpan(int axis) {
         switch (axis) {
-        case View.X_AXIS:
-            return 0;
-        case View.Y_AXIS:
-            return super.getMinimumSpan(axis);
-        default:
-            throw new IllegalArgumentException("Invalid axis: " + axis);
+            case View.X_AXIS:
+                return 0;
+            case View.Y_AXIS:
+                return super.getMinimumSpan(axis);
+            default:
+                throw new IllegalArgumentException("Invalid axis: " + axis);
         }
     }
 

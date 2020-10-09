@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,16 @@ import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
+import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
+import com.formdev.flatlaf.FlatLaf;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -59,17 +61,11 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBackground(App.THEME.getBaseColor());
-        tabbedPane.addChangeListener(e -> {
-            String title = ((Tab) tabbedPane.getSelectedComponent()).getTitle();
-            Analytics.sendScreenView(title + " Settings");
-        });
 
-        tabbedPane.setFont(App.THEME.getDefaultFont().deriveFont(17.0F));
+        tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(17.0F));
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
-        tabbedPane.setBackground(App.THEME.getTabBackgroundColor());
         tabbedPane.setOpaque(true);
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -80,8 +76,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         add(bottomPanel, BorderLayout.SOUTH);
         saveButton.addActionListener(arg0 -> {
             if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
-                    && networkSettingsTab.isValidConcurrentConnections() && networkSettingsTab.isValidProxyPort()
-                    && networkSettingsTab.canConnectWithProxy() && toolsSettingsTab.isValidServerCheckerWait()) {
+                    && networkSettingsTab.canConnectWithProxy()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
@@ -91,20 +86,29 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 loggingSettingsTab.save();
                 toolsSettingsTab.save();
                 backupsSettingsTab.save();
-                App.settings.saveProperties();
+                App.settings.save();
                 SettingsManager.post();
                 if (reloadPacksPanel) {
-                    App.settings.reloadPacksPanel();
+                    App.launcher.reloadPacksPanel();
                 }
                 if (restartServerChecker) {
-                    App.settings.startCheckingServers();
+                    CheckingServersManager.startCheckingServers();
                 }
                 if (reloadTheme) {
-                    OS.restartLauncher();
+                    App.loadTheme(App.settings.theme);
+                    Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
+                    FlatLaf.updateUILater();
+                    ThemeManager.post();
                 }
                 App.TOASTER.pop("Settings Saved");
             }
         });
+
+        tabbedPane.addChangeListener(e -> {
+            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
+        });
+
+        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
     }
 
     @Override

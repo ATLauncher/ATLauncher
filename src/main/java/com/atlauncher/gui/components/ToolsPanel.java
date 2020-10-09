@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,8 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public final class ToolsPanel extends JPanel {
-    /**
-     * Auto generated serial.
-     */
-    private static final long serialVersionUID = 4409533883142880167L;
-
     public ToolsPanel() {
         super(new FlowLayout(FlowLayout.CENTER));
     }

@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,12 @@ package com.atlauncher.utils;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import javax.swing.text.html.StyleSheet;
-
-import com.atlauncher.App;
-import com.atlauncher.LogManager;
 import com.atlauncher.exceptions.ChunkyException;
+import com.atlauncher.managers.LogManager;
 
 public final class Resources {
     private static final Map<String, Object> resources = new HashMap<>();
@@ -54,69 +44,13 @@ public final class Resources {
         return false;
     }
 
-    public static StyleSheet makeStyleSheet(String name) {
-        try {
-            if (resources.containsKey(name)) {
-                Object obj = resources.get(name);
-                if (!(obj instanceof StyleSheet)) {
-                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " +
-                            "suggested=" + StyleSheet.class.getName() + "; got=" + obj.getClass().getName());
-                } else {
-                    return (StyleSheet) obj;
-                }
-            } else {
-                StyleSheet sheet = new StyleSheet();
-
-                File themeFile = App.settings.getThemeFile();
-
-                if (themeFile != null) {
-                    InputStream stream = null;
-
-                    ZipFile zipFile = new ZipFile(themeFile);
-                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                    while (entries.hasMoreElements()) {
-                        ZipEntry entry = entries.nextElement();
-                        if (entry.getName().equals("css/" + name + ".css")) {
-                            stream = zipFile.getInputStream(entry);
-                            break;
-                        }
-                    }
-
-                    if (stream != null) {
-                        Reader reader = new InputStreamReader(stream);
-                        sheet.loadRules(reader, null);
-                        reader.close();
-
-                        stream.close();
-                        zipFile.close();
-
-                        resources.put(name, sheet);
-                        return sheet;
-                    }
-
-                    zipFile.close();
-                }
-
-                Reader reader = new InputStreamReader(System.class.getResourceAsStream("/assets/css/" + name + ".css"));
-                sheet.loadRules(reader, null);
-                reader.close();
-
-                resources.put(name, sheet);
-                return sheet;
-            }
-        } catch (Exception ex) {
-            throw new ChunkyException(ex);
-        }
-    }
-
     public static Font makeFont(String name) {
         try {
             if (resources.containsKey(name)) {
                 Object obj = resources.get(name);
                 if (!(obj instanceof Font)) {
-                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " +
-                            "suggested=" + Font.class.getName() + "; got=" + obj.getClass().getName());
+                    throw new ChunkyException("Reference for " + name + " ended up with a bad value, " + "suggested="
+                            + Font.class.getName() + "; got=" + obj.getClass().getName());
                 } else {
                     return (Font) obj;
                 }
@@ -126,38 +60,8 @@ public final class Resources {
                     resources.put(name, f);
                     return f;
                 } else {
-                    URL url = System.class.getResource("/assets/font/" + name + ".ttf");
+                    URL url = Resources.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
-                        File themeFile = App.settings.getThemeFile();
-
-                        if (themeFile != null) {
-                            InputStream stream = null;
-
-                            ZipFile zipFile = new ZipFile(themeFile);
-                            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                            while (entries.hasMoreElements()) {
-                                ZipEntry entry = entries.nextElement();
-                                if (entry.getName().equals("font/" + name + ".ttf")) {
-                                    stream = zipFile.getInputStream(entry);
-                                    break;
-                                }
-                            }
-
-                            if (stream != null) {
-                                Font f = Font.createFont(Font.TRUETYPE_FONT, stream);
-                                resources.put(name, f);
-
-                                stream.close();
-                                zipFile.close();
-
-                                resources.put(name, f);
-                                return f;
-                            }
-
-                            zipFile.close();
-                        }
-
                         LogManager.error("Cannot find font " + name);
                         return new Font("Sans-Serif", Font.PLAIN, 0);
                     } else {

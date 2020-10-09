@@ -1,6 +1,6 @@
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2019 ATLauncher
+ * Copyright (C) 2013-2020 ATLauncher
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,13 @@ import java.net.Proxy.Type;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
+import com.atlauncher.Network;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -39,7 +43,10 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private JLabelWithHover concurrentConnectionsLabel;
-    private JTextField concurrentConnections;
+    private JSpinner concurrentConnections;
+
+    private JLabelWithHover connectionTimeoutLabel;
+    private JSpinner connectionTimeout;
 
     private JLabelWithHover enableProxyLabel;
     private JCheckBox enableProxy;
@@ -48,44 +55,64 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JTextField proxyHost;
 
     private JLabelWithHover proxyPortLabel;
-    private JTextField proxyPort;
+    private JSpinner proxyPort;
 
     private JLabelWithHover proxyTypeLabel;
     private JComboBox<String> proxyType;
 
     public NetworkSettingsTab() {
         RelocalizationManager.addListener(this);
+
         // Concurrent Connection Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         concurrentConnectionsLabel = new JLabelWithHover(GetText.tr("Concurrent Connections") + ":", HELP_ICON, "<html>"
                 + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        concurrentConnections = new JTextField(4);
-        concurrentConnections.setText(App.settings.getConcurrentConnections() + "");
+        SpinnerNumberModel concurrentConnectionsModel = new SpinnerNumberModel(App.settings.concurrentConnections, null,
+                null, 1);
+        concurrentConnectionsModel.setMinimum(1);
+        concurrentConnections = new JSpinner(concurrentConnectionsModel);
         add(concurrentConnections, gbc);
 
-        // Enable Proxy
-
+        // Connection Timeout Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        connectionTimeoutLabel = new JLabelWithHover(GetText.tr("Connection Timeout") + ":", HELP_ICON,
+                "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
+        add(connectionTimeoutLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        SpinnerNumberModel connectionTimeoutModel = new SpinnerNumberModel(App.settings.connectionTimeout, null, null,
+                1);
+        connectionTimeoutModel.setMinimum(1);
+        connectionTimeout = new JSpinner(connectionTimeoutModel);
+        add(connectionTimeout, gbc);
+
+        // Enable Proxy
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableProxyLabel = new JLabelWithHover(GetText.tr("Enable Proxy") + "?", HELP_ICON,
                 GetText.tr("If you use a proxy to connect to the internet you can enable it here."));
         add(enableProxyLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableProxy = new JCheckBox();
-        if (App.settings.getEnableProxy()) {
+        if (App.settings.enableProxy) {
             enableProxy.setSelected(true);
         }
         enableProxy.addActionListener(e -> {
@@ -104,17 +131,17 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         // Proxy Host Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyHostLabel = new JLabelWithHover(GetText.tr("Proxy Host") + ":", HELP_ICON,
                 GetText.tr("This is the IP/hostname used to connect to the proxy."));
         add(proxyHostLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyHost = new JTextField(20);
-        proxyHost.setText(App.settings.getProxyHost());
+        proxyHost.setText(App.settings.proxyHost);
         if (!enableProxy.isSelected()) {
             proxyHost.setEnabled(false);
         }
@@ -123,17 +150,20 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         // Proxy Port Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyPortLabel = new JLabelWithHover(GetText.tr("Proxy Port") + ":", HELP_ICON,
                 GetText.tr("This is the port used to connect to the proxy."));
         add(proxyPortLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        proxyPort = new JTextField(4);
-        proxyPort.setText((App.settings.getProxyPort() == 0 ? "" : App.settings.getProxyPort()) + "");
+        SpinnerNumberModel proxyPortModel = new SpinnerNumberModel(App.settings.proxyPort, null, null, 1);
+        proxyPortModel.setMinimum(1);
+        proxyPortModel.setMaximum(65535);
+        proxyPort = new JSpinner(proxyPortModel);
+        proxyPort.setEditor(new JSpinner.NumberEditor(proxyPort, "#"));
         if (!enableProxy.isSelected()) {
             proxyPort.setEnabled(false);
         }
@@ -142,49 +172,24 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         // Proxy Type Settings
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.insets = LABEL_INSETS;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyTypeLabel = new JLabelWithHover(GetText.tr("Proxy Type") + ":", HELP_ICON,
                 GetText.tr("This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."));
         add(proxyTypeLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         proxyType = new JComboBox<>();
         proxyType.addItem("HTTP");
         proxyType.addItem("SOCKS");
         proxyType.addItem("DIRECT");
-        proxyType.setSelectedItem(App.settings.getProxyType());
+        proxyType.setSelectedItem(App.settings.proxyType);
         if (!enableProxy.isSelected()) {
             proxyType.setEnabled(false);
         }
         add(proxyType, gbc);
-    }
-
-    public boolean isValidConcurrentConnections() {
-        if (Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")) < 1) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help"))
-                    .setContent(GetText
-                            .tr("The concurrent connections you specified is invalid. Please check it and try again."))
-                    .setType(DialogManager.ERROR).show();
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isValidProxyPort() {
-        if (!enableProxy.isSelected()) {
-            return true;
-        }
-        if (proxyPort.getText().isEmpty() || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) < 1
-                || Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")) > 65535) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help"))
-                    .setContent(GetText.tr("The port you specified is invalid. Please check it and try again."))
-                    .setType(DialogManager.ERROR).show();
-            return false;
-        }
-        return true;
     }
 
     public boolean canConnectWithProxy() {
@@ -210,8 +215,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking Proxy"), 0,
                 GetText.tr("Checking the proxy entered."), "Cancelled Proxy Test!");
         dialog.addThread(new Thread(() -> {
-            dialog.setReturnValue(Utils.testProxy(new Proxy(theType, new InetSocketAddress(proxyHost.getText(),
-                    Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", ""))))));
+            dialog.setReturnValue(Utils.testProxy(
+                    new Proxy(theType, new InetSocketAddress(proxyHost.getText(), (Integer) proxyPort.getValue()))));
             dialog.close();
         }));
         dialog.start();
@@ -231,13 +236,19 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     public void save() {
-        App.settings
-                .setConcurrentConnections(Integer.parseInt(concurrentConnections.getText().replaceAll("[^0-9]", "")));
-        App.settings.setEnableProxy(enableProxy.isSelected());
+        boolean timeoutChanged = App.settings.connectionTimeout != (Integer) connectionTimeout.getValue();
+
+        App.settings.concurrentConnections = (Integer) concurrentConnections.getValue();
+        App.settings.connectionTimeout = (Integer) connectionTimeout.getValue();
+        App.settings.enableProxy = enableProxy.isSelected();
         if (enableProxy.isSelected()) {
-            App.settings.setProxyHost(proxyHost.getText());
-            App.settings.setProxyPort(Integer.parseInt(proxyPort.getText().replaceAll("[^0-9]", "")));
-            App.settings.setProxyType(((String) proxyType.getSelectedItem()));
+            App.settings.proxyHost = proxyHost.getText();
+            App.settings.proxyPort = (Integer) proxyPort.getValue();
+            App.settings.proxyType = ((String) proxyType.getSelectedItem());
+        }
+
+        if (timeoutChanged) {
+            Network.setConnectionTimeouts();
         }
     }
 
@@ -251,6 +262,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.concurrentConnectionsLabel.setText(GetText.tr("Concurrent Connections") + ":");
         this.concurrentConnectionsLabel.setToolTipText("<html>"
                 + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
+
+        this.connectionTimeoutLabel.setText(GetText.tr("Connection Timeout") + ":");
+        this.connectionTimeoutLabel.setToolTipText(
+                "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
 
         this.enableProxyLabel.setText(GetText.tr("Enable Proxy") + "?");
         this.enableProxyLabel
