@@ -1,5 +1,5 @@
 # Changelog
 
-## 3.3.5.3
+# 3.3.5.4
 
-- Search description automatically on Packs tab
+- Add in serverArguments property to add arguments to server scripts

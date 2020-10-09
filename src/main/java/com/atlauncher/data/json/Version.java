@@ -84,6 +84,12 @@ public class Version {
     public ExtraArguments extraArguments;
 
     /**
+     * Details about any server arguments this version uses when creating the server
+     * scripts
+     */
+    public String serverArguments = "";
+
+    /**
      * The java options for this version (if any).
      */
     public Java java;

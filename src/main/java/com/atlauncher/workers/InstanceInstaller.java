@@ -18,6 +18,7 @@
 package com.atlauncher.workers;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1467,12 +1468,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         File batFile = new File(this.root.toFile(), "LaunchServer.bat");
         File shFile = new File(this.root.toFile(), "LaunchServer.sh");
         File commandFile = new File(this.root.toFile(), "LaunchServer.command");
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), batFile, "%%SERVERJAR%%",
-                getServerJar());
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), shFile, "%%SERVERJAR%%",
-                getServerJar());
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.command"), commandFile,
+        File tmpBatFile = new File(this.temp.toFile(), "LaunchServer.bat");
+        File tmpShFile = new File(this.temp.toFile(), "LaunchServer.sh");
+        File tmpCommandFile = new File(this.temp.toFile(), "LaunchServer.command");
+
+        // write out the server jar filename
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), tmpBatFile,
                 "%%SERVERJAR%%", getServerJar());
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), tmpShFile, "%%SERVERJAR%%",
+                getServerJar());
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.command"), tmpCommandFile,
+                "%%SERVERJAR%%", getServerJar());
+
+        // replace/remove the server arguments (if any)
+        Utils.replaceText(new FileInputStream(tmpBatFile), batFile, "%%ARGUMENTS%%", this.packVersion.serverArguments);
+        Utils.replaceText(new FileInputStream(tmpShFile), shFile, "%%ARGUMENTS%%", this.packVersion.serverArguments);
+        Utils.replaceText(new FileInputStream(tmpCommandFile), commandFile, "%%ARGUMENTS%%",
+                this.packVersion.serverArguments);
+
         batFile.setExecutable(true);
         shFile.setExecutable(true);
         commandFile.setExecutable(true);

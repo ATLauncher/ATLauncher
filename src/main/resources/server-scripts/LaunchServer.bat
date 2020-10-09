@@ -21,5 +21,5 @@ if $SYSTEM_os_arch==x86 (
 echo Launching %%SERVERJAR%% with arguments '%*' and '%mem%' max memory
 
 :: add nogui to the end of this line to disable the gui ::
-java -Xmx%mem% -XX:MaxPermSize=256M -jar %%SERVERJAR%% %*
+java -Xmx%mem% -XX:MaxPermSize=256M %%ARGUMENTS%% -jar %%SERVERJAR%% %*
 PAUSE
