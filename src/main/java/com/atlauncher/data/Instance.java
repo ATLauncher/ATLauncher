@@ -119,14 +119,14 @@ public class Instance implements Cloneable {
     /**
      * If this version allows Curse mod integration.
      */
-    private Boolean enableCurseIntegration;
+    private boolean enableCurseIntegration = false;
 
     /**
      * If this version allows editing mods.
      */
-    private Boolean enableEditingMods;
+    private boolean enableEditingMods = true;
 
-    private Boolean assetsMapToResources;
+    private boolean assetsMapToResources = false;
 
     /**
      * The loader version chosen to be installed for this instance.
@@ -136,13 +136,13 @@ public class Instance implements Cloneable {
     /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
      */
-    private int memory;
+    private int memory = 0;
 
     /**
      * The minimum PermGen/MetaSpace recommended for this Instance by the pack
      * developer/s.
      */
-    private int permgen;
+    private int permgen = 0;
 
     /**
      * Array of paths for the libraries needed to be loaded.
@@ -166,39 +166,39 @@ public class Instance implements Cloneable {
      * The extra arguments to be added to the command when launching Minecraft.
      * Generally involves things such as the tweakClass/s for Forge.
      */
-    private String extraArguments;
+    private String extraArguments = null;
 
     /**
      * The arguments required by Minecraft to be added to the command when launching
      * Minecraft. Generally involves thing such as handling of authentication,
      * assets paths etc.
      */
-    private String minecraftArguments;
+    private String minecraftArguments = null;
 
     /**
      * The main class to be run when launching Minecraft.
      */
-    private String mainClass;
+    private String mainClass = null;
 
     /**
      * The version of assets used by this Minecraft instance.
      */
-    private String assets;
+    private String assets = null;
 
     /**
      * The logging client used for Minecraft.
      */
-    private LoggingClient logging;
+    private LoggingClient logging = null;
 
     /**
      * If this instance has been converted or not from the old format.
      */
-    private boolean isConverted;
+    private boolean isConverted = false;
 
     /**
      * If this instance uses the new format for libraries.
      */
-    private boolean usesNewLibraries;
+    private boolean usesNewLibraries = false;
 
     /**
      * The data version.
@@ -679,7 +679,7 @@ public class Instance implements Cloneable {
     }
 
     public boolean hasEnabledCurseIntegration() {
-        return this.enableCurseIntegration != null && this.enableCurseIntegration;
+        return this.enableCurseIntegration;
     }
 
     public void setEnableCurseIntegration(boolean enableCurseIntegration) {
@@ -687,7 +687,7 @@ public class Instance implements Cloneable {
     }
 
     public boolean hasEnabledEditingMods() {
-        return this.enableEditingMods == null || this.enableEditingMods;
+        return this.enableEditingMods;
     }
 
     public void setEnableEditingMods(boolean enableEditingMods) {
