@@ -788,7 +788,7 @@ public class Instance implements Cloneable {
      * @return File object for the assets directory used by Minecraft
      */
     public File getAssetsDir() {
-        if (this.assetsMapToResources != null && this.assetsMapToResources) {
+        if (this.assetsMapToResources) {
             return new File(getRootDirectory(), "resources");
         }
 
