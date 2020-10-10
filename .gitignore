@@ -1,13 +1,20 @@
-# Directories
+# Binaries
 .gradle/
-bin/
 build/
-dist/
-target/
-testLauncher/
-run/
-configs/
+
+# Runtime
+assets/
+backups/
 cache/
+configs/
+downloads/
+faileddownloads/
+instances/
+libraries/
+loaders/
+runtimes/
+servers/
+temp/
 
 # IDE Config Files
 .idea/
