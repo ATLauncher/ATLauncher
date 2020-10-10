@@ -51,7 +51,6 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
         super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
-        // The maximum the progress bar should get to
         this.closedLogMessage = initClosedLogMessage;
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
