@@ -73,6 +73,7 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.extras.FlatInspector;
+import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
@@ -574,6 +575,7 @@ public class App {
         // non release versions
         if (!Constants.VERSION.isReleaseStream()) {
             FlatInspector.install("ctrl shift alt X");
+            FlatUIDefaultsInspector.install("ctrl shift alt Y");
         }
 
         // register the fonts so they can show within HTML

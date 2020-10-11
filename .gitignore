@@ -3,6 +3,7 @@
 build/
 
 # Runtime
+bin/
 dist/
 testLauncher/
 run/

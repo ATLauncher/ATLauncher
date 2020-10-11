@@ -49,7 +49,7 @@ If you want to run the launcher while developing with it, you can use your IDE (
 Alternatively you can run:
 
 ```sh
-./gradlew run --args="--debug --debug-level 3 --working-dir=test"
+./gradlew run --args="--debug --debug-level 3 --working-dir=testLauncher"
 ```
 
 ## Using VSCode
@@ -126,6 +126,13 @@ so you need to manually apply the [transformations](https://github.com/JFormDesi
 in order for the theme to work exactly right.
 
 For an example, see the `DraculaContrast` theme which uses this method.
+
+### Tools To Help Theme Development
+
+To help with theme development, with the launcher running (not in the release version, only in development), you can
+press `Ctrl + Shift + Alt + X` to bring up a tool to highlight UI components to see their properties. You can also press
+`Ctrl + Shift + Alt + Y` to bring up a list of all the default properties in the UIManager. These values can be modified
+in your `.properties` file.
 
 ## Plugging In Your Data
 
