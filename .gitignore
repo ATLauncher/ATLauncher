@@ -3,20 +3,13 @@
 build/
 
 # Runtime
-assets/
-backups/
-cache/
+dist/
+testLauncher/
+run/
 configs/
-downloads/
-faileddownloads/
-instances/
-libraries/
-loaders/
-runtimes/
-servers/
-temp/
+cache/
 
-# IDE Config Files
+# IDE Config
 .idea/
 *.iml
 .settings/
