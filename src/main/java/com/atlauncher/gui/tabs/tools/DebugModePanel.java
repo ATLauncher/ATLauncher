@@ -31,13 +31,13 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class DebugModePanel extends AbstractToolPanel implements ActionListener {
-    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
-            "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."))
-            .build());
 
     public DebugModePanel() {
         super(GetText.tr("Debug Mode"));
 
+        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
+            "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."))
+            .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);

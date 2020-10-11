@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.atlauncher.Data;
@@ -54,7 +55,7 @@ public class NewsManager {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
             File fileDir = FileSystem.JSON.resolve("newnews.json").toFile();
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
 
             Data.NEWS.addAll(Gsons.DEFAULT.fromJson(in, type));
             in.close();
@@ -71,16 +72,16 @@ public class NewsManager {
      * @return The HTML for displaying on the News Panel
      */
     public static String getNewsHTML() {
-        String news = "<html>";
+        StringBuilder news = new StringBuilder("<html>");
 
         for (News newsItem : Data.NEWS) {
-            news += newsItem.getHTML() + "<hr/>";
+            news.append(newsItem.getHTML()).append("<hr/>");
         }
 
         // remove the last <hr/>
-        news = news.substring(0, news.length() - 5);
-        news += "</html>";
+        news = new StringBuilder(news.substring(0, news.length() - 5));
+        news.append("</html>");
 
-        return news;
+        return news.toString();
     }
 }

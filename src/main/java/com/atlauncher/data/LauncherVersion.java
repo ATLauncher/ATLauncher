@@ -21,11 +21,11 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class LauncherVersion {
-    private int reserved;
-    private int major;
-    private int minor;
-    private int revision;
-    private String stream;
+    private final int reserved;
+    private final int major;
+    private final int minor;
+    private final int revision;
+    private final String stream;
 
     public LauncherVersion(int reserved, int major, int minor, int revision) {
         this(reserved, major, minor, revision, "Release");

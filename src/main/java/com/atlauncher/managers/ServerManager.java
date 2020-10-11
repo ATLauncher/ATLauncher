@@ -49,7 +49,7 @@ public class ServerManager {
                 .orElse(new String[0])) {
             File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
 
-            Server server = null;
+            Server server;
 
             try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
                 server = Gsons.MINECRAFT.fromJson(fileReader, Server.class);
@@ -80,9 +80,7 @@ public class ServerManager {
                 }
             } else {
                 // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedServers().remove(server.name);
-                }
+                AccountManager.getSelectedAccount().getCollapsedServers().remove(server.name);
             }
             AccountManager.saveAccounts();
             App.launcher.reloadServersPanel();

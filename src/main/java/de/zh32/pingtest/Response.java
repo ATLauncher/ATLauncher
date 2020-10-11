@@ -52,7 +52,7 @@ public class Response {
         this.time = time;
     }
 
-    public class Players {
+    public static class Players {
         private int max;
         private int online;
         private List<Player> sample;
@@ -82,7 +82,7 @@ public class Response {
         }
     }
 
-    public class Player {
+    public static class Player {
         private String name;
         private String id;
 
@@ -103,7 +103,7 @@ public class Response {
         }
     }
 
-    public class Version {
+    public static class Version {
         private String name;
         private String protocol;
 

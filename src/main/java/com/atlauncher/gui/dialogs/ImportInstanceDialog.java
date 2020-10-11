@@ -49,14 +49,10 @@ import org.zeroturnaround.zip.ZipUtil;
 
 @SuppressWarnings("serial")
 public class ImportInstanceDialog extends JDialog {
-    private JPanel middle;
-    private JPanel bottom;
 
-    private JLabel fileLabel;
-    private JTextField filePath;
-    private JButton browseButton;
+    private final JTextField filePath;
 
-    private JButton addButton;
+    private final JButton addButton;
 
     public ImportInstanceDialog() {
         super(App.launcher.getParent(), GetText.tr("Import Instance"), ModalityType.APPLICATION_MODAL);
@@ -70,7 +66,7 @@ public class ImportInstanceDialog extends JDialog {
         Analytics.sendScreenView("Import Instance Dialog");
 
         // Middle Panel Stuff
-        middle = new JPanel();
+        JPanel middle = new JPanel();
         middle.setLayout(new BorderLayout());
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
@@ -84,7 +80,7 @@ public class ImportInstanceDialog extends JDialog {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        fileLabel = new JLabel(GetText.tr("File") + ": ");
+        JLabel fileLabel = new JLabel(GetText.tr("File") + ": ");
         fileLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(fileLabel, gbc);
 
@@ -95,7 +91,7 @@ public class ImportInstanceDialog extends JDialog {
         filePath.setEnabled(false);
         filePathPanel.add(filePath);
 
-        browseButton = new JButton(GetText.tr("Browse"));
+        JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(FileSystem.USER_DOWNLOADS.toFile());
@@ -133,7 +129,7 @@ public class ImportInstanceDialog extends JDialog {
         middle.add(mainPanel, BorderLayout.CENTER);
 
         // Bottom Panel Stuff
-        bottom = new JPanel();
+        JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         addButton = new JButton(GetText.tr("Import"));
         addButton.addActionListener(e -> {

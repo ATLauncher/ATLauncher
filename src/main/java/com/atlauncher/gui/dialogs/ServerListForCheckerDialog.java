@@ -46,15 +46,12 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
      */
     private static final long serialVersionUID = -1462218261978353036L;
 
-    private final JTabbedPane TABBED_PANE = new JTabbedPane(JTabbedPane.TOP);
     private final JButton ADD_BUTTON = new JButton(GetText.tr("Add"));
     private final JButton CLOSE_BUTTON = new JButton(GetText.tr("Close"));
     private final JButton DELETE_BUTTON = new JButton(GetText.tr("Delete"));
     private final JButton EDIT_BUTTON = new JButton(GetText.tr("Edit"));
 
     private final ServersForCheckerTab SERVERS_TAB = new ServersForCheckerTab();
-
-    private final JPanel BOTTOM_PANEL = new JPanel();
 
     public ServerListForCheckerDialog() {
         super(null, GetText.tr("Server Checker"), ModalityType.APPLICATION_MODAL);
@@ -64,6 +61,7 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
+        JTabbedPane TABBED_PANE = new JTabbedPane(JTabbedPane.TOP);
         TABBED_PANE.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
         TABBED_PANE.addTab(GetText.tr("Servers"), SERVERS_TAB);
@@ -80,6 +78,7 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
 
         CLOSE_BUTTON.addActionListener(this);
 
+        JPanel BOTTOM_PANEL = new JPanel();
         BOTTOM_PANEL.setLayout(new FlowLayout());
 
         BOTTOM_PANEL.add(ADD_BUTTON);

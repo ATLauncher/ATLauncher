@@ -70,23 +70,20 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public JsonElement serialize(Arguments arguments, Type type, JsonSerializationContext context) {
         JsonObject root = new JsonObject();
 
         if (arguments.game != null) {
             JsonArray gameArguments = new JsonArray();
 
-            arguments.game.stream().forEach(arg -> {
+            arguments.game.forEach(arg -> {
                 if (arg.rules != null) {
                     JsonObject object = new JsonObject();
 
                     object.add("rules", Gsons.MINECRAFT.toJsonTree(arg.rules));
 
-                    if (arg.value instanceof String) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((String) arg.value));
-                    } else if (arg.value instanceof List) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((List<String>) arg.value));
+                    if (arg.value instanceof String || arg.value instanceof List) {
+                        object.add("value", Gsons.MINECRAFT.toJsonTree(arg.value));
                     }
 
                     gameArguments.add(object);
@@ -101,16 +98,14 @@ public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSe
         if (arguments.jvm != null) {
             JsonArray jvmArguments = new JsonArray();
 
-            arguments.jvm.stream().forEach(arg -> {
+            arguments.jvm.forEach(arg -> {
                 if (arg.rules != null) {
                     JsonObject object = new JsonObject();
 
                     object.add("rules", Gsons.MINECRAFT.toJsonTree(arg.rules));
 
-                    if (arg.value instanceof String) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((String) arg.value));
-                    } else if (arg.value instanceof List) {
-                        object.add("value", Gsons.MINECRAFT.toJsonTree((List<String>) arg.value));
+                    if (arg.value instanceof String || arg.value instanceof List) {
+                        object.add("value", Gsons.MINECRAFT.toJsonTree(arg.value));
                     }
 
                     jvmArguments.add(object);

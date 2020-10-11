@@ -100,7 +100,7 @@ public final class DownloadPool extends LinkedList<Download> {
         return false;
     }
 
-    private final class Downloader implements Runnable {
+    private static final class Downloader implements Runnable {
         private final Download dl;
 
         private Downloader(Download dl) {

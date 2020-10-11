@@ -159,7 +159,7 @@ public class Mod {
     public String getPrintableAuthors() {
         StringBuilder sb = new StringBuilder();
         for (String author : this.authors) {
-            sb.append(author + ", ");
+            sb.append(author).append(", ");
         }
         return sb.toString();
     }
@@ -491,20 +491,19 @@ public class Mod {
             case server:
                 break;
         }
-        if (hasMD5()) {
-            if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
-                return; // MD5 hash matches
+
+        if (!hasMD5()) {
+            return;
+        }
+
+        if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
+            if (attempt < 5) {
+                Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
+                downloadClient(installer, ++attempt); // download again
             } else {
-                if (attempt < 5) {
-                    Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
-                    downloadClient(installer, ++attempt); // download again
-                } else {
-                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
-                    installer.cancel(true);
-                }
+                LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
+                installer.cancel(true);
             }
-        } else {
-            return; // No MD5, but file is there, can only assume it's fine
         }
     }
 
@@ -621,20 +620,19 @@ public class Mod {
                 }
             }
         }
-        if (hasServerMD5()) {
-            if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
-                return; // MD5 hash matches
+
+        if (!hasServerMD5()) {
+            return;
+        }
+
+        if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
+            if (attempt < 5) {
+                Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
+                downloadServer(installer, ++attempt); // download again
             } else {
-                if (attempt < 5) {
-                    Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
-                    downloadServer(installer, ++attempt); // download again
-                } else {
-                    LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
-                    installer.cancel(true);
-                }
+                LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
+                installer.cancel(true);
             }
-        } else {
-            return; // No MD5, but file is there, can only assume it's fine
         }
     }
 

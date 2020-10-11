@@ -25,7 +25,6 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -91,9 +90,7 @@ import org.zeroturnaround.zip.ZipUtil;
  */
 @SuppressWarnings("serial")
 public class InstanceV2Card extends CollapsiblePanel implements RelocalizationListener {
-    private final JSplitPane splitter = new JSplitPane();
     private final InstanceV2 instance;
-    private final JPanel rightPanel = new JPanel();
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
     private final JButton playButton = new JButton(GetText.tr("Play"));
@@ -120,9 +117,11 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         super(instance);
         this.instance = instance;
         this.image = new ImagePanel(instance.getImage().getImage());
-        this.splitter.setLeftComponent(this.image);
-        this.splitter.setRightComponent(this.rightPanel);
-        this.splitter.setEnabled(false);
+        JSplitPane splitter = new JSplitPane();
+        splitter.setLeftComponent(this.image);
+        JPanel rightPanel = new JPanel();
+        splitter.setRightComponent(rightPanel);
+        splitter.setEnabled(false);
 
         this.descArea.setText(instance.getPackDescription());
         this.descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
@@ -190,14 +189,14 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         bottom.add(this.openCurseForgeButton);
         bottom.add(this.openButton);
 
-        this.rightPanel.setLayout(new BorderLayout());
-        this.rightPanel.setPreferredSize(new Dimension(this.rightPanel.getPreferredSize().width, 180));
-        this.rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        rightPanel.setLayout(new BorderLayout());
+        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 180));
+        rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        this.rightPanel.add(as, BorderLayout.SOUTH);
+        rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
-        this.getContentPane().add(this.splitter, BorderLayout.CENTER);
+        this.getContentPane().add(splitter, BorderLayout.CENTER);
 
         RelocalizationManager.addListener(this);
 
@@ -213,29 +212,17 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
     private void setupLinksButtonPopupMenu() {
         if (instance.getPack() != null) {
             if (instance.getPack().discordInviteURL != null) {
-                discordLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getPack().discordInviteURL);
-                    }
-                });
+                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().discordInviteURL));
                 getHelpPopupMenu.add(discordLinkMenuItem);
             }
 
             if (instance.getPack().supportURL != null) {
-                supportLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getPack().supportURL);
-                    }
-                });
+                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().supportURL));
                 getHelpPopupMenu.add(supportLinkMenuItem);
             }
 
             if (instance.getPack().websiteURL != null) {
-                websiteLinkMenuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OS.openWebBrowser(instance.getPack().websiteURL);
-                    }
-                });
+                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().websiteURL));
                 getHelpPopupMenu.add(websiteLinkMenuItem);
             }
         }
@@ -498,7 +485,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
                     changeDescriptionItem.setVisible(instance.launcher.curseManifest != null
                             || (instance.getPack() != null && instance.getPack().system));
 
-                    if (!instance.launcher.mods.stream().anyMatch(mod -> mod.optional)) {
+                    if (instance.launcher.mods.stream().noneMatch(mod -> mod.optional)) {
                         shareCodeItem.setVisible(false);
                     }
 

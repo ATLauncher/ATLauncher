@@ -142,7 +142,7 @@ public class ServerListPing17 {
         byte[] in = new byte[length];
         dataInputStream.readFully(in); // read json string
         String json = new String(in);
-        StatusResponse response = null;
+        StatusResponse response;
         try {
             response = gson.fromJson(json, StatusResponseOld.class);
         } catch (JsonSyntaxException jse) {
@@ -185,20 +185,20 @@ public class ServerListPing17 {
     }
 
     public interface StatusResponse {
-        public String getDescription();
+        String getDescription();
 
-        public Players getPlayers();
+        Players getPlayers();
 
-        public Version getVersion();
+        Version getVersion();
 
-        public String getFavicon();
+        String getFavicon();
 
-        public int getTime();
+        int getTime();
 
-        public void setTime(int time);
+        void setTime(int time);
     }
 
-    public class StatusResponseOld implements StatusResponse {
+    public static class StatusResponseOld implements StatusResponse {
         private String description;
         private Players players;
         private Version version;
@@ -231,7 +231,7 @@ public class ServerListPing17 {
 
     }
 
-    public class StatusResponseNew implements StatusResponse {
+    public static class StatusResponseNew implements StatusResponse {
         private Description description;
         private Players players;
         private Version version;
@@ -264,7 +264,7 @@ public class ServerListPing17 {
 
     }
 
-    public class Description {
+    public static class Description {
         private String text;
 
         public String getText() {
@@ -272,7 +272,7 @@ public class ServerListPing17 {
         }
     }
 
-    public class Players {
+    public static class Players {
         private int max;
         private int online;
         private List<Player> sample;
@@ -290,7 +290,7 @@ public class ServerListPing17 {
         }
     }
 
-    public class Player {
+    public static class Player {
         private String name;
         private String id;
 
@@ -304,7 +304,7 @@ public class ServerListPing17 {
 
     }
 
-    public class Version {
+    public static class Version {
         private String name;
         private String protocol;
 

@@ -47,21 +47,13 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class FileChooserDialog extends JDialog {
-    private JPanel top;
-    private JPanel middle;
-    private JPanel bottom;
 
-    private JLabel nameLabel;
-    private JTextField textField;
+    private final JTextField textField;
 
-    private JLabel selectorLabel;
-    private JComboBox<String> selector;
+    private final JComboBox<String> selector;
 
     private File[] filesChosen;
-    private String[] fileOptions;
-
-    private JButton bottomButton;
-    private JButton selectButton;
+    private final String[] fileOptions;
 
     private boolean closed = false;
 
@@ -77,11 +69,11 @@ public class FileChooserDialog extends JDialog {
         setResizable(false);
 
         // Top Panel Stuff
-        top = new JPanel();
+        JPanel top = new JPanel();
         top.add(new JLabel(title));
 
         // Middle Panel Stuff
-        middle = new JPanel();
+        JPanel middle = new JPanel();
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -89,7 +81,7 @@ public class FileChooserDialog extends JDialog {
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.insets = UIConstants.LABEL_INSETS;
-        nameLabel = new JLabel(labelName + ": ");
+        JLabel nameLabel = new JLabel(labelName + ": ");
         middle.add(nameLabel, gbc);
 
         gbc.gridx++;
@@ -102,7 +94,7 @@ public class FileChooserDialog extends JDialog {
         textField = new JTextField(16);
         textField.setEnabled(false);
 
-        selectButton = new JButton(GetText.tr("Select"));
+        JButton selectButton = new JButton(GetText.tr("Select"));
         selectButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
             fileChooser.setMultiSelectionEnabled(true);
@@ -147,7 +139,7 @@ public class FileChooserDialog extends JDialog {
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         gbc.insets = UIConstants.LABEL_INSETS;
-        selectorLabel = new JLabel(selectorText + ": ");
+        JLabel selectorLabel = new JLabel(selectorText + ": ");
         middle.add(selectorLabel, gbc);
 
         gbc.gridx++;
@@ -160,9 +152,9 @@ public class FileChooserDialog extends JDialog {
         middle.add(selector, gbc);
 
         // Bottom Panel Stuff
-        bottom = new JPanel();
+        JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        bottomButton = new JButton(bottomText);
+        JButton bottomButton = new JButton(bottomText);
         bottomButton.addActionListener(e -> close());
         bottom.add(bottomButton);
 

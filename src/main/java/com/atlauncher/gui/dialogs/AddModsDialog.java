@@ -55,24 +55,24 @@ public final class AddModsDialog extends JDialog {
     private Instance instance;
     private InstanceV2 instanceV2;
 
-    private JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
-    private JPanel topPanel = new JPanel(new BorderLayout());
-    private JTextField searchField = new JTextField(16);
-    private JButton searchButton = new JButton(GetText.tr("Search"));
-    private JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
-    private JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
+    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
+    private final JPanel topPanel = new JPanel(new BorderLayout());
+    private final JTextField searchField = new JTextField(16);
+    private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
+    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
 
     // #. Fabric API is the name of a mod, so should be left untranslated
-    private JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
+    private final JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
 
     // #. Fabric/Fabric API is the name of a mod, so should be left untranslated
-    private JLabel fabricApiWarningLabel = new JLabel(
+    private final JLabel fabricApiWarningLabel = new JLabel(
             "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
     private JScrollPane jscrollPane;
     private JButton nextButton;
     private JButton prevButton;
-    private JPanel mainPanel = new JPanel(new BorderLayout());
+    private final JPanel mainPanel = new JPanel(new BorderLayout());
     private int page = 0;
 
     public AddModsDialog(Instance instance) {
@@ -86,15 +86,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instance.installedWithLoaderVersion()) {
-            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
@@ -116,15 +116,15 @@ public final class AddModsDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         if (instanceV2.launcher.loaderVersion != null) {
-            sectionComboBox.addItem(new ComboItem<String>("Mods", GetText.tr("Mods")));
+            sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
 
-        sectionComboBox.addItem(new ComboItem<String>("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem<String>("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
 
-        sortComboBox.addItem(new ComboItem<String>("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem<String>("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem<String>("Total Downloads", GetText.tr("Total Downloads")));
+        sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
+        sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
+        sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
 
         setupComponents();
 
@@ -158,8 +158,7 @@ public final class AddModsDialog extends JDialog {
                 new CurseModFileSelectorDialog(mod, instance);
             }
 
-            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
-                    .filter(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID).count() != 0) {
+            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream().anyMatch(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
                 fabricApiWarningLabel.setVisible(false);
                 installFabricApiButton.setVisible(false);
             }
@@ -169,9 +168,7 @@ public final class AddModsDialog extends JDialog {
                 : this.instance.getLoaderVersion());
 
         if (loaderVersion != null && loaderVersion.isFabric()
-                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
-                        .filter(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)
-                        .count() == 0) {
+                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream().noneMatch(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
@@ -328,7 +325,7 @@ public final class AddModsDialog extends JDialog {
         } else {
             contentPanel.setLayout(new WrapLayout());
 
-            mods.stream().forEach(curseMod -> {
+            mods.forEach(curseMod -> {
                 if (this.instanceV2 != null) {
                     contentPanel.add(new CurseModCard(curseMod, this.instanceV2), gbc);
                 } else {

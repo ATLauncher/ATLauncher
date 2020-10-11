@@ -46,8 +46,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
-    private JScrollPane scrollPane;
-    private ConsoleBottomBar bottomBar;
+    private final ConsoleBottomBar bottomBar;
     private JPopupMenu contextMenu; // Right click menu
 
     private JMenuItem copy;
@@ -65,8 +64,8 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
         bottomBar = new ConsoleBottomBar();
 
-        scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);

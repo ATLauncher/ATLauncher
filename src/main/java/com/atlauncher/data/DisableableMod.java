@@ -192,7 +192,7 @@ public class DisableableMod implements Serializable {
                                     continue;
                                 }
                                 output.putNextEntry(entry);
-                                byte buffer[] = new byte[1024];
+                                byte[] buffer = new byte[1024];
                                 int amo;
                                 while ((amo = input.read(buffer, 0, 1024)) != -1) {
                                     output.write(buffer, 0, amo);
@@ -371,7 +371,7 @@ public class DisableableMod implements Serializable {
                     .filter(file -> App.settings.disableAddModRestrictions || file.gameVersion.contains(instance.id));
         }
 
-        if (!curseFilesStream.anyMatch(mod -> mod.id > curseFileId)) {
+        if (curseFilesStream.noneMatch(mod -> mod.id > curseFileId)) {
             DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
                     .setContent(GetText.tr("No updates were found for {0}.", name)).show();
             return false;
@@ -394,7 +394,7 @@ public class DisableableMod implements Serializable {
                     || file.gameVersion.contains(instance.getMinecraftVersion()));
         }
 
-        if (!curseFilesStream.anyMatch(mod -> mod.id > curseFileId)) {
+        if (curseFilesStream.noneMatch(mod -> mod.id > curseFileId)) {
             DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
                     .setContent(GetText.tr("No updates were found for {0}.", name)).show();
             return false;

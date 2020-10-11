@@ -34,7 +34,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -78,32 +78,26 @@ public class InstanceInstallerDialog extends JDialog {
     private int loaderVersionLength = 0;
     private boolean isReinstall = false;
     private boolean isServer = false;
-    private Pack pack = null;
+    private final Pack pack;
     private Instance instance = null;
     private InstanceV2 instanceV2 = null;
     private CurseManifest curseManifest = null;
 
-    private JPanel top;
     private JPanel middle;
-    private JPanel bottom;
     private JButton install;
-    private JButton cancel;
     private JProgressBar progressBar;
     private JProgressBar subProgressBar;
-    private JLabel instanceNameLabel;
     private JTextField nameField;
-    private JLabel versionLabel;
     private JComboBox<PackVersion> versionsDropDown;
-    private List<PackVersion> versions = new ArrayList<>();
+    private final List<PackVersion> versions = new ArrayList<>();
     private JLabel loaderVersionLabel;
     private JComboBox<LoaderVersion> loaderVersionsDropDown;
-    private List<LoaderVersion> loaderVersions = new ArrayList<>();
-    private JLabel enableUserLockLabel;
+    private final List<LoaderVersion> loaderVersions = new ArrayList<>();
     private JCheckBox enableUserLock;
     private JLabel saveModsLabel;
     private JCheckBox saveModsCheckbox;
-    private boolean isUpdate;
-    private PackVersion autoInstallVersion;
+    private final boolean isUpdate;
+    private final PackVersion autoInstallVersion;
 
     public InstanceInstallerDialog(CurseManifest manifest, File manifestFile) {
         this(manifest, false, false, null, null, false, manifestFile);
@@ -118,7 +112,7 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this((Object) pack, false, true, null, null, true, null);
+        this(pack, false, true, null, null, true, null);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
@@ -174,7 +168,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             packVersion.hasLoader = true;
 
-            pack.versions = Arrays.asList(packVersion);
+            pack.versions = Collections.singletonList(packVersion);
 
             isReinstall = false;
 
@@ -197,7 +191,7 @@ public class InstanceInstallerDialog extends JDialog {
                 ((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("Reinstall")) : GetText.tr("Install")));
 
         // Top Panel Stuff
-        top = new JPanel();
+        JPanel top = new JPanel();
         top.add(new JLabel(
                 ((isReinstall) ? GetText.tr("Reinstalling") : GetText.tr("Installing")) + " " + pack.getName()));
 
@@ -210,7 +204,7 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.gridy = 0;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
+        JLabel instanceNameLabel = new JLabel(GetText.tr("Name") + ": ");
         middle.add(instanceNameLabel, gbc);
 
         gbc.gridx++;
@@ -251,7 +245,7 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.gridy++;
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
+            JLabel enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
             middle.add(enableUserLockLabel, gbc);
 
             gbc.gridx++;
@@ -309,7 +303,7 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         // Bottom Panel Stuff
-        bottom = new JPanel();
+        JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         install.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -591,7 +585,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             }
         });
-        cancel = new JButton(GetText.tr("Cancel"));
+        JButton cancel = new JButton(GetText.tr("Cancel"));
         cancel.addActionListener(e -> dispose());
         bottom.add(install);
         bottom.add(cancel);
@@ -604,7 +598,7 @@ public class InstanceInstallerDialog extends JDialog {
 
     private GridBagConstraints setupVersionsDropdown(GridBagConstraints gbc) {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        versionLabel = new JLabel(GetText.tr("Version To Install") + ": ");
+        JLabel versionLabel = new JLabel(GetText.tr("Version To Install") + ": ");
         middle.add(versionLabel, gbc);
 
         gbc.gridx++;
@@ -724,7 +718,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             loaderVersionsDropDown.removeAllItems();
 
-            loaderVersions.stream().forEach(version -> loaderVersionsDropDown.addItem(version));
+            loaderVersions.forEach(version -> loaderVersionsDropDown.addItem(version));
 
             if (isReinstall && (instanceV2 != null ? instanceV2.launcher.loaderVersion != null
                     : instance.installedWithLoaderVersion())) {

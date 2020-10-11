@@ -50,7 +50,7 @@ public class CheckingServersManager {
         Data.CHECKING_SERVERS.clear();
 
         if (Files.exists(FileSystem.CHECKING_SERVERS_JSON)) {
-            FileReader fileReader = null;
+            FileReader fileReader;
             try {
                 fileReader = new FileReader(FileSystem.CHECKING_SERVERS_JSON.toFile());
             } catch (FileNotFoundException e) {

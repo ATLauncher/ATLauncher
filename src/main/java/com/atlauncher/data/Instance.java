@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class Instance implements Cloneable {
     /**
      * The name of the Pack this instance is for.
      */
-    private String pack;
+    private final String pack;
 
     /**
      * The username of the user who installed this if it's set to be for that user
@@ -118,14 +119,14 @@ public class Instance implements Cloneable {
     /**
      * If this version allows Curse mod integration.
      */
-    private Boolean enableCurseIntegration = false;
+    private boolean enableCurseIntegration = false;
 
     /**
      * If this version allows editing mods.
      */
-    private Boolean enableEditingMods = true;
+    private boolean enableEditingMods = true;
 
-    private Boolean assetsMapToResources = false;
+    private boolean assetsMapToResources = false;
 
     /**
      * The loader version chosen to be installed for this instance.
@@ -159,7 +160,7 @@ public class Instance implements Cloneable {
      *
      * @deprecated
      */
-    private String librariesNeeded = null;
+    private final String librariesNeeded = null;
 
     /**
      * The extra arguments to be added to the command when launching Minecraft.
@@ -645,9 +646,7 @@ public class Instance implements Cloneable {
             this.libraries = new ArrayList<>();
 
             if (this.librariesNeeded != null) {
-                for (String filePath : this.librariesNeeded.split(",")) {
-                    this.libraries.add(filePath);
-                }
+                this.libraries.addAll(Arrays.asList(this.librariesNeeded.split(",")));
             }
 
             this.dataVersion = 2;
@@ -680,7 +679,7 @@ public class Instance implements Cloneable {
     }
 
     public boolean hasEnabledCurseIntegration() {
-        return this.enableCurseIntegration != null && this.enableCurseIntegration;
+        return this.enableCurseIntegration;
     }
 
     public void setEnableCurseIntegration(boolean enableCurseIntegration) {
@@ -688,7 +687,7 @@ public class Instance implements Cloneable {
     }
 
     public boolean hasEnabledEditingMods() {
-        return this.enableEditingMods == null || this.enableEditingMods;
+        return this.enableEditingMods;
     }
 
     public void setEnableEditingMods(boolean enableEditingMods) {
@@ -789,7 +788,7 @@ public class Instance implements Cloneable {
      * @return File object for the assets directory used by Minecraft
      */
     public File getAssetsDir() {
-        if (this.assetsMapToResources != null && this.assetsMapToResources) {
+        if (this.assetsMapToResources) {
             return new File(getRootDirectory(), "resources");
         }
 
@@ -1359,7 +1358,7 @@ public class Instance implements Cloneable {
             App.launcher.setMinecraftLaunched(false);
             return false;
         } else {
-            Integer maximumMemory = (this.settings == null || this.settings.getMaximumMemory() == null)
+            int maximumMemory = (this.settings == null || this.settings.getMaximumMemory() == null)
                     ? App.settings.maximumMemory
                     : settings.getMaximumMemory();
             if ((maximumMemory < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
@@ -1376,7 +1375,7 @@ public class Instance implements Cloneable {
                     return false;
                 }
             }
-            Integer permGen = (this.settings == null || this.settings.getPermGen() == null) ? App.settings.metaspace
+            int permGen = (this.settings == null || this.settings.getPermGen() == null) ? App.settings.metaspace
                     : settings.getPermGen();
             if (permGen < this.permgen) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
@@ -1749,7 +1748,7 @@ public class Instance implements Cloneable {
                 .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
-        sameMods.stream().forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
 
         // remove any mods that are from the same mod on Curse from the master mod list
         this.mods = this.mods.stream()

@@ -31,16 +31,12 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class LoggingSettingsTab extends AbstractSettingsTab {
-    private JLabelWithHover forgeLoggingLevelLabel;
-    private JComboBox<String> forgeLoggingLevel;
+    private final JComboBox<String> forgeLoggingLevel;
 
-    private JLabelWithHover enableLoggingLabel;
-    private JCheckBox enableLogs;
+    private final JCheckBox enableLogs;
 
-    private JLabelWithHover enableAnalyticsLabel;
-    private JCheckBox enableAnalytics;
+    private final JCheckBox enableAnalytics;
 
-    private JLabelWithHover enableOpenEyeReportingLabel;
     private JCheckBox enableOpenEyeReporting;
 
     public LoggingSettingsTab() {
@@ -49,8 +45,8 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        forgeLoggingLevelLabel = new JLabelWithHover(GetText.tr("Forge Logging Level") + ":", HELP_ICON, "<html>"
-                + GetText.tr("This determines the type of logging that Forge should report back to you.") + "</html>");
+        JLabelWithHover forgeLoggingLevelLabel = new JLabelWithHover(GetText.tr("Forge Logging Level") + ":", HELP_ICON, "<html>"
+            + GetText.tr("This determines the type of logging that Forge should report back to you.") + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -73,10 +69,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableLoggingLabel = new JLabelWithHover(GetText.tr("Enable Logging") + "?", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."))
-                        .build());
+        JLabelWithHover enableLoggingLabel = new JLabelWithHover(GetText.tr("Enable Logging") + "?", HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."))
+                .build());
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
@@ -103,10 +99,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "?", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."))
-                        .build());
+        JLabelWithHover enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "?", HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."))
+                .build());
         add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
@@ -124,10 +120,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableOpenEyeReportingLabel = new JLabelWithHover(GetText.tr("Enable OpenEye Reporting") + "?", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "OpenEye is a mod/project created by the OpenMods team which aims to help gather statistics and crash logs from Minecraft in order to help users and modders discover and fix issues with mods. With the OpenEye mod installed (each ModPack chooses if they wish to install it or not, it's not installed by default to all packs by the Launcher) everytime Minecraft crashes the OpenEye report is sent to OpenEye for analysis and if a note from the modder has been added on the cause/fix it will be displayed to you. For more information please see http://openeye.openblocks.info"))
-                        .build());
+        JLabelWithHover enableOpenEyeReportingLabel = new JLabelWithHover(GetText.tr("Enable OpenEye Reporting") + "?", HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                "OpenEye is a mod/project created by the OpenMods team which aims to help gather statistics and crash logs from Minecraft in order to help users and modders discover and fix issues with mods. With the OpenEye mod installed (each ModPack chooses if they wish to install it or not, it's not installed by default to all packs by the Launcher) everytime Minecraft crashes the OpenEye report is sent to OpenEye for analysis and if a note from the modder has been added on the cause/fix it will be displayed to you. For more information please see http://openeye.openblocks.info"))
+                .build());
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;

@@ -52,9 +52,8 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
     private final List<Tab> tabs = Arrays.asList(new Tab[] { this.generalSettingsTab, this.javaSettingsTab,
             this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab });
-    private JTabbedPane tabbedPane;
-    private JPanel bottomPanel;
-    private JButton saveButton = new JButton(GetText.tr("Save"));
+    private final JTabbedPane tabbedPane;
+    private final JButton saveButton = new JButton(GetText.tr("Save"));
 
     public SettingsTab() {
         RelocalizationManager.addListener(this);
@@ -70,7 +69,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
 
         add(tabbedPane, BorderLayout.CENTER);
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.add(saveButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
@@ -104,9 +103,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             }
         });
 
-        tabbedPane.addChangeListener(e -> {
-            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
-        });
+        tabbedPane.addChangeListener(e -> Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings"));
 
         Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
     }

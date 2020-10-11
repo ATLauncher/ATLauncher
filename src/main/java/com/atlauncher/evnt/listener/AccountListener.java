@@ -18,5 +18,5 @@
 package com.atlauncher.evnt.listener;
 
 public interface AccountListener {
-    public void onAccountsChanged();
+    void onAccountsChanged();
 }

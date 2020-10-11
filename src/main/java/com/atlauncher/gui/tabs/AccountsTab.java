@@ -60,35 +60,27 @@ import org.mini2Dx.gettext.GetText;
 
 public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;
-    private final Insets TOP_INSETS = new Insets(0, 0, 20, 0);
-    private final Insets BOTTOM_INSETS = new Insets(10, 0, 0, 0);
 
     private JLabel userSkin;
-    private JPanel infoPanel;
-    private JPanel rightPanel;
-    private JPanel topPanel;
-    private JComboBox<Account> accountsComboBox;
-    private JLabel usernameLabel;
+    private final JComboBox<Account> accountsComboBox;
+    private final JLabel usernameLabel;
     private JTextField usernameField;
-    private JLabel passwordLabel;
+    private final JLabel passwordLabel;
     private JPasswordField passwordField;
-    private JLabel rememberLabel;
+    private final JLabel rememberLabel;
     private JCheckBox rememberField;
-    private JPanel buttons;
     private JButton leftButton;
     private JButton rightButton;
-    private JPanel bottomPanel;
-    private JMenuItem updateSkin;
-    private JMenuItem updateUsername;
-    private JPopupMenu contextMenu; // Right click menu
-    private Account fillerAccount;
+    private final JMenuItem updateSkin;
+    private final JPopupMenu contextMenu; // Right click menu
+    private final Account fillerAccount;
 
     public AccountsTab() {
         setLayout(new BorderLayout());
 
         RelocalizationManager.addListener(this);
 
-        infoPanel = new JPanel();
+        JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BorderLayout());
         infoPanel.setBorder(BorderFactory.createEmptyBorder(60, 250, 0, 250));
 
@@ -104,18 +96,19 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         infoPanel.add(infoTextPane);
 
-        rightPanel = new JPanel();
+        JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
 
-        topPanel = new JPanel();
+        JPanel topPanel = new JPanel();
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
+        Insets TOP_INSETS = new Insets(0, 0, 20, 0);
         gbc.insets = TOP_INSETS;
         gbc.anchor = GridBagConstraints.CENTER;
 
@@ -222,9 +215,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
+        Insets BOTTOM_INSETS = new Insets(10, 0, 0, 0);
         gbc.insets = BOTTOM_INSETS;
         gbc.anchor = GridBagConstraints.CENTER;
-        buttons = new JPanel();
+        JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout());
         leftButton = new JButton(GetText.tr("Add"));
         leftButton.addActionListener(e -> leftButtonActions());
@@ -269,7 +263,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         });
         contextMenu.add(updateSkin);
 
-        updateUsername = new JMenuItem(GetText.tr("Update Username"));
+        JMenuItem updateUsername = new JMenuItem(GetText.tr("Update Username"));
         updateUsername.addActionListener(e -> {
             final Account account = ((Account) accountsComboBox.getSelectedItem());
             Analytics.sendEvent("UpdateUsername", "Account");

@@ -29,8 +29,7 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class BackupsSettingsTab extends AbstractSettingsTab {
-    private JLabelWithHover enableModsBackupsLabel;
-    private JCheckBox enableModsBackups;
+    private final JCheckBox enableModsBackups;
 
     public BackupsSettingsTab() {
         // Enable mods backups
@@ -38,8 +37,8 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        enableModsBackupsLabel = new JLabelWithHover(GetText.tr("Enable Mods Backups") + "?", HELP_ICON,
-                GetText.tr("If we should backup mods when creating a backup for an instance."));
+        JLabelWithHover enableModsBackupsLabel = new JLabelWithHover(GetText.tr("Enable Mods Backups") + "?", HELP_ICON,
+            GetText.tr("If we should backup mods when creating a backup for an instance."));
         add(enableModsBackupsLabel, gbc);
 
         gbc.gridx++;

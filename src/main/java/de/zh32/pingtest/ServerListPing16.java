@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public final class ServerListPing16 {
     private InetSocketAddress address;
@@ -98,15 +99,15 @@ public final class ServerListPing16 {
         dataOutputStream = new DataOutputStream(outputStream);
 
         inputStream = socket.getInputStream();
-        inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-16BE"));
+        inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_16BE);
         dataOutputStream.write(new byte[]{(byte) 0xFE, (byte) 0x01, (byte) 0xFA
 
         });
-        dataOutputStream.write("MC|PingHost".getBytes("UTF-16BE"));
+        dataOutputStream.write("MC|PingHost".getBytes(StandardCharsets.UTF_16BE));
         dataOutputStream.writeShort((address.getAddress().getHostAddress().length() * 2) + 7);
         dataOutputStream.write(74);
         dataOutputStream.writeShort(address.getAddress().getHostAddress().length());
-        dataOutputStream.write(address.getAddress().getHostAddress().getBytes("UTF-16BE"));
+        dataOutputStream.write(address.getAddress().getHostAddress().getBytes(StandardCharsets.UTF_16BE));
         dataOutputStream.writeInt(address.getPort());
 
         int packetId = inputStream.read();

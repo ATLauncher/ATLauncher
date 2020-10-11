@@ -19,6 +19,7 @@ package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class ForgeLoader implements Loader {
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion versionOverride) {
+                    LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
@@ -135,7 +136,7 @@ public class ForgeLoader implements Loader {
         ForgeInstallProfile installProfile = getInstallProfile();
 
         if (installProfile.spec != null) {
-            getLibraries().stream().forEach(library -> {
+            getLibraries().forEach(library -> {
                 // copy over any local files from the loader zip file
                 if (library.name.equalsIgnoreCase(installProfile.path)) {
                     FileUtils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path).toPath(),
@@ -143,7 +144,7 @@ public class ForgeLoader implements Loader {
                 }
             });
         } else {
-            this.getLibraries().stream().forEach(library -> {
+            this.getLibraries().forEach(library -> {
                 // copy over any local files from the loader zip file
                 if (installProfile.install != null && installProfile.install.filePath != null
                         && library.name.equalsIgnoreCase(installProfile.install.path)) {
@@ -201,12 +202,12 @@ public class ForgeLoader implements Loader {
             libraries = installProfile.getLibraries();
         }
 
-        return libraries.stream().collect(Collectors.toList());
+        return new ArrayList<>(libraries);
     }
 
     @Override
     public Arguments getArguments() {
-        return new Arguments(Arrays.asList(this.getVersionInfo().minecraftArguments.split(" ")).stream()
+        return new Arguments(Arrays.stream(this.getVersionInfo().minecraftArguments.split(" "))
                 .map(arg -> new ArgumentRule(null, arg)).collect(Collectors.toList()));
     }
 

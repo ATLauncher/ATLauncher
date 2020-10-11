@@ -133,9 +133,7 @@ public class PackManager {
                 }
             } else {
                 // Opened It
-                if (AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedPacks().remove(pack.getName());
-                }
+                AccountManager.getSelectedAccount().getCollapsedPacks().remove(pack.getName());
             }
             AccountManager.saveAccounts();
             App.launcher.reloadVanillaPacksPanel();
@@ -298,9 +296,7 @@ public class PackManager {
         PerformanceManager.start();
         File[] files = FileSystem.IMAGES.toFile().listFiles();
 
-        Set<String> packImageFilenames = new HashSet<>();
-        packImageFilenames.addAll(
-                Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toList()));
+        Set<String> packImageFilenames = Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png").collect(Collectors.toSet());
         packImageFilenames.add("defaultimage.png");
 
         if (files != null) {

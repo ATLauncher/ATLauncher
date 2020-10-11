@@ -46,7 +46,7 @@ public class ArgumentRule {
         StringBuilder argBuilder = new StringBuilder();
 
         for (String arg : (List<String>) this.value) {
-            argBuilder.append(arg + ' ');
+            argBuilder.append(arg).append(' ');
         }
 
         String arguments = argBuilder.toString();
@@ -75,7 +75,7 @@ public class ArgumentRule {
             return true; // No rules setup so we need it
         }
 
-        return this.rules.stream().filter(Rule::applies).count() != 0
+        return this.rules.stream().anyMatch(Rule::applies)
                 && this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action.equalsIgnoreCase("allow"));
     }
 }

@@ -25,7 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +39,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
@@ -54,11 +51,11 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class InstanceExportDialog extends JDialog {
-    private InstanceV2 instance;
-    private List<String> overrides = new ArrayList<>();
+    private final InstanceV2 instance;
+    private final List<String> overrides = new ArrayList<>();
 
-    private JPanel topPanel = new JPanel();
-    private JPanel bottomPanel = new JPanel();
+    private final JPanel topPanel = new JPanel();
+    private final JPanel bottomPanel = new JPanel();
 
     final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
 
@@ -180,29 +177,21 @@ public class InstanceExportDialog extends JDialog {
         overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
         overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
 
-        File[] files = instance.getRoot().toFile().listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return !pathname.getName().equalsIgnoreCase(".fabric")
-                        && !pathname.getName().equalsIgnoreCase(".jumploader")
-                        && !pathname.getName().equalsIgnoreCase(".mixin.out")
-                        && !pathname.getName().equalsIgnoreCase("disabledmods")
-                        && !pathname.getName().equalsIgnoreCase("jarmods")
-                        && !pathname.getName().equalsIgnoreCase("instance.json");
-            }
-        });
+        File[] files = instance.getRoot().toFile().listFiles(pathname -> !pathname.getName().equalsIgnoreCase(".fabric")
+                && !pathname.getName().equalsIgnoreCase(".jumploader")
+                && !pathname.getName().equalsIgnoreCase(".mixin.out")
+                && !pathname.getName().equalsIgnoreCase("disabledmods")
+                && !pathname.getName().equalsIgnoreCase("jarmods")
+                && !pathname.getName().equalsIgnoreCase("instance.json"));
 
         for (File filename : files) {
             JCheckBox checkBox = new JCheckBox(filename.getName());
 
-            checkBox.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    if (checkBox.isSelected()) {
-                        overrides.add(checkBox.getText());
-                    } else {
-                        overrides.remove(checkBox.getText());
-                    }
+            checkBox.addChangeListener(e -> {
+                if (checkBox.isSelected()) {
+                    overrides.add(checkBox.getText());
+                } else {
+                    overrides.remove(checkBox.getText());
                 }
             });
 

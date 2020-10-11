@@ -49,9 +49,9 @@ public class ModsJCheckBox extends JCheckBox {
      * The mod this object will use to display it's data. Will be type {@link Mod},
      * {@link com.atlauncher.data.json.Mod} or {@link DisableableMod}.
      */
-    private Object mod;
+    private final Object mod;
 
-    private EditModsDialog dialog;
+    private final EditModsDialog dialog;
 
     /**
      * Constructor for use in the {@link ModsChooser} dialog with new JSON format.
@@ -128,9 +128,7 @@ public class ModsJCheckBox extends JCheckBox {
 
         if (getDisableableMod().hasFullCurseInformation()) {
             JMenuItem openOnCurse = new JMenuItem(GetText.tr("Open On Curse"));
-            openOnCurse.addActionListener(e -> {
-                OS.openWebBrowser(getDisableableMod().curseMod.websiteUrl);
-            });
+            openOnCurse.addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseMod.websiteUrl));
             contextMenu.add(openOnCurse);
 
             contextMenu.add(new JPopupMenu.Separator());

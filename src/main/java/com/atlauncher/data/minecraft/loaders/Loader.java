@@ -26,26 +26,26 @@ import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.workers.InstanceInstaller;
 
 public interface Loader {
-    public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion versionOverride);
+    void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
+             LoaderVersion versionOverride);
 
-    public void downloadAndExtractInstaller() throws Exception;
+    void downloadAndExtractInstaller() throws Exception;
 
-    public void runProcessors();
+    void runProcessors();
 
-    public List<Library> getInstallLibraries();
+    List<Library> getInstallLibraries();
 
-    public List<Library> getLibraries();
+    List<Library> getLibraries();
 
-    public Arguments getArguments();
+    Arguments getArguments();
 
-    public String getMainClass();
+    String getMainClass();
 
-    public String getServerJar();
+    String getServerJar();
 
-    public boolean useMinecraftLibraries();
+    boolean useMinecraftLibraries();
 
-    public boolean useMinecraftArguments();
+    boolean useMinecraftArguments();
 
-    public LoaderVersion getLoaderVersion();
+    LoaderVersion getLoaderVersion();
 }

@@ -52,7 +52,6 @@ import com.atlauncher.data.curse.pack.CurseManifestFile;
 import com.atlauncher.data.curse.pack.CurseMinecraft;
 import com.atlauncher.data.curse.pack.CurseModLoader;
 import com.atlauncher.data.minecraft.AssetIndex;
-import com.atlauncher.data.minecraft.AssetObject;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
@@ -325,14 +324,13 @@ public class InstanceV2 extends MinecraftVersion {
 
         DownloadPool pool = new DownloadPool();
 
-        index.objects.entrySet().stream().forEach(entry -> {
-            AssetObject object = entry.getValue();
+        index.objects.forEach((key, object) -> {
             String filename = object.hash.substring(0, 2) + "/" + object.hash;
             String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
 
             com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
-                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
-                    .withHttpClient(httpClient);
+                .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
+                .withHttpClient(httpClient);
 
             pool.add(download);
         });
@@ -345,17 +343,16 @@ public class InstanceV2 extends MinecraftVersion {
 
         // copy resources to instance
         if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
-            index.objects.entrySet().stream().forEach(entry -> {
-                AssetObject object = entry.getValue();
+            index.objects.forEach((key, object) -> {
                 String filename = object.hash.substring(0, 2) + "/" + object.hash;
 
                 Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
 
                 if (index.mapToResources) {
-                    FileUtils.copyFile(downloadedFile, this.getRoot().resolve("resources/" + entry.getKey()), true);
+                    FileUtils.copyFile(downloadedFile, this.getRoot().resolve("resources/" + key), true);
                 } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(entry.getKey()),
-                            true);
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key),
+                        true);
                 }
             });
         }
@@ -396,7 +393,7 @@ public class InstanceV2 extends MinecraftVersion {
             App.launcher.setMinecraftLaunched(false);
             return false;
         } else {
-            Integer maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
+            int maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
                     : this.launcher.maximumMemory;
             if ((maximumMemory < this.launcher.requiredMemory)
                     && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
@@ -413,7 +410,7 @@ public class InstanceV2 extends MinecraftVersion {
                     return false;
                 }
             }
-            Integer permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
+            int permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
             if (permGen < this.launcher.requiredPermGen) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -689,7 +686,7 @@ public class InstanceV2 extends MinecraftVersion {
                 .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
-        sameMods.stream().forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
 
         if (download.needToDownload()) {
             try {
@@ -794,7 +791,7 @@ public class InstanceV2 extends MinecraftVersion {
         }
 
         // make sure there's at least one mod from Curse
-        if (!launcher.mods.stream().anyMatch(mod -> mod.isFromCurse())) {
+        if (launcher.mods.stream().noneMatch(DisableableMod::isFromCurse)) {
             LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No mods from Curse");
             return false;
         }
@@ -808,7 +805,7 @@ public class InstanceV2 extends MinecraftVersion {
 
         CurseMinecraft minecraft = new CurseMinecraft();
 
-        List<CurseModLoader> modLoaders = new ArrayList<CurseModLoader>();
+        List<CurseModLoader> modLoaders = new ArrayList<>();
         CurseModLoader modLoader = new CurseModLoader();
 
         String loaderVersion = launcher.loaderVersion.version;
@@ -833,7 +830,7 @@ public class InstanceV2 extends MinecraftVersion {
         manifest.name = name;
         manifest.version = this.launcher.version;
         manifest.author = author;
-        manifest.files = this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).map(mod -> {
+        manifest.files = this.launcher.mods.stream().filter(DisableableMod::isFromCurse).map(mod -> {
             CurseManifestFile file = new CurseManifestFile();
             file.projectID = mod.curseModId;
             file.fileID = mod.curseFileId;
@@ -860,11 +857,11 @@ public class InstanceV2 extends MinecraftVersion {
 
         // create modlist.html
         StringBuilder sb = new StringBuilder("<ul>");
-        this.launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+        this.launcher.mods.stream().filter(DisableableMod::isFromCurse).forEach(mod -> {
             if (mod.hasFullCurseInformation()) {
-                sb.append("<li><a href=\"" + mod.curseMod.websiteUrl + "\">" + mod.name + "</a></li>");
+                sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name).append("</a></li>");
             } else {
-                sb.append("<li>" + mod.name + "</li>");
+                sb.append("<li>").append(mod.name).append("</li>");
             }
         });
         sb.append("</ul>");
@@ -896,7 +893,7 @@ public class InstanceV2 extends MinecraftVersion {
         }
 
         // remove files that come from Curse
-        launcher.mods.stream().filter(mod -> mod.isFromCurse()).forEach(mod -> {
+        launcher.mods.stream().filter(DisableableMod::isFromCurse).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
 
             if (file.exists()) {

@@ -36,14 +36,13 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ProgressDialog extends JDialog implements NetworkProgressable {
-    private String labelText; // The text to add to the JLabel
-    private JProgressBar progressBar; // The Progress Bar
-    private JProgressBar subProgressBar; // The Progress Bar
-    private int max; // The maximum the progress bar should get to
+    private final String labelText; // The text to add to the JLabel
+    private final JProgressBar progressBar; // The Progress Bar
+    private final JProgressBar subProgressBar; // The Progress Bar
     private Thread thread = null; // The Thread were optionally running
-    private String closedLogMessage; // The message to log to the console when dialog closed
+    private final String closedLogMessage; // The message to log to the console when dialog closed
     private Object returnValue = null; // The value returned
-    private JLabel label = new JLabel();
+    private final JLabel label = new JLabel();
     private int tasksToDo;
     private int tasksDone;
     private double totalBytes = 0; // Total number of bytes to download
@@ -52,7 +51,6 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
         super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
         this.labelText = initLabelText;
-        this.max = initMax;
         this.closedLogMessage = initClosedLogMessage;
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -67,7 +65,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         progressBar = new JProgressBar(0, initMax);
-        if (max <= 0) {
+        if (initMax <= 0) {
             progressBar.setIndeterminate(true);
         }
         bottomPanel.add(progressBar, BorderLayout.NORTH);

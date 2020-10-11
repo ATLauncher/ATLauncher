@@ -25,7 +25,7 @@ public class LoginResponse {
     private boolean hasError;
     private String errorMessage;
     private UserAuthentication auth;
-    private String username;
+    private final String username;
 
     public LoginResponse(String username) {
         this.offline = false;

@@ -33,13 +33,13 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ServerCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
-    private final JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
-            "This tool checks specified Minecraft servers to see if they are up or not and how many players are logged in. Settings can be configured in the Settings tab under the Tools sub tab."))
-            .build());
 
     public ServerCheckerToolPanel() {
         super(GetText.tr("Server Checker"));
 
+        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
+            "This tool checks specified Minecraft servers to see if they are up or not and how many players are logged in. Settings can be configured in the Settings tab under the Tools sub tab."))
+            .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);

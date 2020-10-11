@@ -73,7 +73,7 @@ public class SplashScreen extends JWindow {
      * The context menu which is shows on right click for the splash screen image,
      * giving a force quit option.
      */
-    private final class ContextMenu extends JPopupMenu {
+    private static final class ContextMenu extends JPopupMenu {
         public ContextMenu() {
             super();
 

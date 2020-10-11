@@ -63,9 +63,8 @@ public class Java {
 
             try {
                 Process process = processBuilder.start();
-                BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                try {
-                    String line = null;
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
                     Pattern p = Pattern.compile("(java|openjdk) version \"([^\"]*)\"");
 
                     while ((line = br.readLine()) != null) {
@@ -77,8 +76,6 @@ public class Java {
                             break;
                         }
                     }
-                } finally {
-                    br.close();
                 }
             } catch (IOException e) {
                 LogManager.logStackTrace(e);
@@ -242,7 +239,7 @@ public class Java {
 
         JavaInfo systemJava = new JavaInfo(Java.getPathToSystemJavaExecutable());
         if (javas.size() == 0
-                || !javas.stream().anyMatch(java -> java.rootPath.equalsIgnoreCase(systemJava.rootPath))) {
+                || javas.stream().noneMatch(java -> java.rootPath.equalsIgnoreCase(systemJava.rootPath))) {
             javas.add(systemJava);
         }
 

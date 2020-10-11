@@ -48,8 +48,8 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ModsJCheckBoxTransferHandler extends TransferHandler {
-    private EditModsDialog dialog;
-    private boolean disabled;
+    private final EditModsDialog dialog;
+    private final boolean disabled;
 
     public ModsJCheckBoxTransferHandler(EditModsDialog dialog, boolean disabled) {
         this.dialog = dialog;
@@ -217,9 +217,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             dialog.reloadPanels();
             return true;
 
-        } catch (UnsupportedFlavorException e) {
-            return false;
-        } catch (IOException e) {
+        } catch (UnsupportedFlavorException | IOException e) {
             return false;
         }
     }

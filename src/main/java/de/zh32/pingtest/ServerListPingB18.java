@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author zh32 <zh32 at zh32.de>
@@ -74,7 +75,7 @@ public class ServerListPingB18 {
         dataOutputStream = new DataOutputStream(outputStream);
 
         inputStream = socket.getInputStream();
-        inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-16BE"));
+        inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_16BE);
         dataOutputStream.write(new byte[]{(byte) 0xFE});
 
         int packetId = inputStream.read();

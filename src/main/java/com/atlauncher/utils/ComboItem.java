@@ -18,8 +18,8 @@
 package com.atlauncher.utils;
 
 public class ComboItem<T> {
-    private T value;
-    private String label;
+    private final T value;
+    private final String label;
 
     public ComboItem(T value, String label) {
         this.value = value;

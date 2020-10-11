@@ -63,12 +63,12 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
     private NilCard nilCard;
-    private boolean isSystem;
-    private boolean isFeatured;
+    private final boolean isSystem;
+    private final boolean isFeatured;
     private boolean loaded = false;
     private int page = 1;
 
-    private List<PackCard> cards = new LinkedList<>();
+    private final List<PackCard> cards = new LinkedList<>();
 
     public PacksTab(boolean isFeatured, boolean isSystem) {
         super(new BorderLayout());
@@ -93,9 +93,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         refresh();
 
-        TabChangeManager.addListener(() -> {
-            searchField.setText("");
-        });
+        TabChangeManager.addListener(() -> searchField.setText(""));
 
         this.collapseAllButton.addActionListener(e -> {
             for (Component comp : contentPanel.getComponents()) {
@@ -121,9 +119,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             Analytics.sendEvent(page, "Next", "Navigation", "Pack");
             refresh();
         });
-        this.addCurseButton.addActionListener(e -> {
-            new AddCursePackDialog();
-        });
+        this.addCurseButton.addActionListener(e -> new AddCursePackDialog());
         this.clearButton.addActionListener(e -> {
             searchField.setText("");
             page = 1;
@@ -188,9 +184,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             }
 
             return true;
-        }).skip((page - 1) * 20).limit(20).forEach(pack -> {
-            this.cards.add(new PackCard(pack));
-        });
+        }).skip((page - 1) * 20).limit(20).forEach(pack -> this.cards.add(new PackCard(pack)));
 
         previousPageButton.setEnabled(page != 1);
 

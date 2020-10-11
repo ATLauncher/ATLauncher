@@ -24,7 +24,7 @@ public enum MojangConstants {
 
     private final String url;
 
-    private MojangConstants(String url) {
+    MojangConstants(String url) {
         this.url = url;
     }
 

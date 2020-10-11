@@ -31,7 +31,7 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class DropDownButton extends JButton {
-    private JPopupMenu popupMenu;
+    private final JPopupMenu popupMenu;
 
     public DropDownButton(String label, JPopupMenu popupMenu) {
         super(label);

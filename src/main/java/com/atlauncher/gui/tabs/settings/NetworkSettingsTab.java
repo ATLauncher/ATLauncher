@@ -42,22 +42,22 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
-    private JLabelWithHover concurrentConnectionsLabel;
-    private JSpinner concurrentConnections;
+    private final JLabelWithHover concurrentConnectionsLabel;
+    private final JSpinner concurrentConnections;
 
-    private JLabelWithHover connectionTimeoutLabel;
-    private JSpinner connectionTimeout;
+    private final JLabelWithHover connectionTimeoutLabel;
+    private final JSpinner connectionTimeout;
 
-    private JLabelWithHover enableProxyLabel;
-    private JCheckBox enableProxy;
+    private final JLabelWithHover enableProxyLabel;
+    private final JCheckBox enableProxy;
 
-    private JLabelWithHover proxyHostLabel;
+    private final JLabelWithHover proxyHostLabel;
     private JTextField proxyHost;
 
-    private JLabelWithHover proxyPortLabel;
+    private final JLabelWithHover proxyPortLabel;
     private JSpinner proxyPort;
 
-    private JLabelWithHover proxyTypeLabel;
+    private final JLabelWithHover proxyTypeLabel;
     private JComboBox<String> proxyType;
 
     public NetworkSettingsTab() {

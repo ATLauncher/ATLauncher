@@ -48,6 +48,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -191,7 +192,7 @@ public class Utils {
      * @return the string
      */
     public static String uploadPaste(String title, String log) {
-        String line = "";
+        String line;
         String result = "";
         try {
             String urlParameters = "";
@@ -312,25 +313,12 @@ public class Utils {
             to.delete();
         }
 
-        InputStream is = null;
-        OutputStream os = null;
-
-        try {
-            is = new FileInputStream(from);
-            os = new FileOutputStream(to);
+        try (InputStream is = new FileInputStream(from); OutputStream os = new FileOutputStream(to)) {
 
             byte[] buff = new byte[1024];
             int len;
             while ((len = is.read(buff)) > 0) {
                 os.write(buff, 0, len);
-            }
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-
-            if (os != null) {
-                os.close();
             }
         }
 
@@ -427,7 +415,7 @@ public class Utils {
      */
     public static void unzip(File in, File out, ExtractRule extractRule) {
         try {
-            ZipFile zipFile = null;
+            ZipFile zipFile;
             if (!out.exists()) {
                 out.mkdirs();
             }
@@ -451,7 +439,7 @@ public class Utils {
                 if (!entry.isDirectory() && !entry.getName().equals(".minecraft")) {
                     BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
                     int b;
-                    byte buffer[] = new byte[1024];
+                    byte[] buffer = new byte[1024];
                     FileOutputStream fos = new FileOutputStream(destinationFilePath);
                     BufferedOutputStream bos = new BufferedOutputStream(fos, 1024);
                     while ((b = bis.read(buffer, 0, 1024)) != -1) {
@@ -502,7 +490,7 @@ public class Utils {
         if (file.getParent() == null) {
             canon = file;
         } else {
-            File canonDir = null;
+            File canonDir;
 
             try {
                 canonDir = file.getParentFile().getCanonicalFile();
@@ -630,11 +618,8 @@ public class Utils {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private static void copy(File file, OutputStream out) throws IOException {
-        InputStream in = new FileInputStream(file);
-        try {
+        try (InputStream in = new FileInputStream(file)) {
             copy(in, out);
-        } finally {
-            in.close();
         }
     }
 
@@ -755,7 +740,7 @@ public class Utils {
      */
     public static String sendPostData(String urll, String text, String key) throws IOException {
         String write = URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8");
-        StringBuilder response = null;
+        StringBuilder response;
         URL url = new URL(urll);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -790,7 +775,7 @@ public class Utils {
     }
 
     public static String sendAPICall(String path, Object data) throws IOException {
-        StringBuilder response = null;
+        StringBuilder response;
 
         byte[] contents = Gsons.DEFAULT.toJson(data).getBytes();
 
@@ -829,7 +814,7 @@ public class Utils {
     }
 
     public static String sendGetAPICall(String path) throws IOException {
-        StringBuilder response = null;
+        StringBuilder response;
 
         URL url = new URL(Constants.API_BASE_URL + path);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -937,7 +922,7 @@ public class Utils {
      *         which is of {@link OpenEyeReportResponse} type
      */
     public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
-        StringBuilder response = null;
+        StringBuilder response;
         String request = Utils.getFileContents(report);
         if (request == null) {
             LogManager.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath() + "'. Pending "
@@ -961,7 +946,7 @@ public class Utils {
             connection.setDoOutput(true);
 
             DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-            writer.write(request.getBytes(Charset.forName("UTF-8")));
+            writer.write(request.getBytes(StandardCharsets.UTF_8));
             writer.flush();
             writer.close();
         } catch (IOException e) {
@@ -1135,7 +1120,7 @@ public class Utils {
                 traceRoute = Runtime.getRuntime().exec("ping -c 10 " + address.getHostAddress());
             }
 
-            BufferedReader reader = null;
+            BufferedReader reader;
             reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream()));
 
             response = new StringBuilder();
@@ -1167,7 +1152,7 @@ public class Utils {
                 traceRoute = Runtime.getRuntime().exec("traceroute " + address.getHostAddress());
             }
 
-            BufferedReader reader = null;
+            BufferedReader reader;
             reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream()));
 
             response = new StringBuilder();
@@ -1321,7 +1306,7 @@ public class Utils {
             fos = new FileOutputStream(output);
 
             final byte[] buffer = new byte[8192];
-            int n = 0;
+            int n;
             while (-1 != (n = lis.read(buffer))) {
                 fos.write(buffer, 0, n);
             }
@@ -1349,15 +1334,15 @@ public class Utils {
     }
 
     public static void unXZFile(File input, File output) throws IOException {
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        XZInputStream xzis = null;
+        FileInputStream fis;
+        FileOutputStream fos;
+        XZInputStream xzis;
         fis = new FileInputStream(input);
         xzis = new XZInputStream(fis);
         fos = new FileOutputStream(output);
 
         final byte[] buffer = new byte[8192];
-        int n = 0;
+        int n;
         while (-1 != (n = xzis.read(buffer))) {
             fos.write(buffer, 0, n);
         }
@@ -1425,10 +1410,10 @@ public class Utils {
                 Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
 
                 while (e.hasMoreElements()) {
-                    NetworkInterface n = (NetworkInterface) e.nextElement();
+                    NetworkInterface n = e.nextElement();
                     Enumeration<InetAddress> ee = n.getInetAddresses();
                     while (ee.hasMoreElements()) {
-                        InetAddress i = (InetAddress) ee.nextElement();
+                        InetAddress i = ee.nextElement();
                         if (!i.isLoopbackAddress() && !i.isLinkLocalAddress() && i.isSiteLocalAddress()) {
                             ip = i;
                         }
@@ -1466,12 +1451,12 @@ public class Utils {
         String classifier = "";
 
         if (version.indexOf('@') != -1) {
-            extension = version.substring(version.indexOf('@') + 1, version.length());
+            extension = version.substring(version.indexOf('@') + 1);
             version = version.substring(0, version.indexOf('@'));
         }
 
         if (version.indexOf(':') != -1) {
-            classifier = "-" + version.substring(version.indexOf(':') + 1, version.length());
+            classifier = "-" + version.substring(version.indexOf(':') + 1);
             version = version.substring(0, version.indexOf(':'));
         }
 
@@ -1563,7 +1548,7 @@ public class Utils {
                 String line;
 
                 while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
+                    sb.append(line).append("\n");
                 }
             } finally {
                 br.close();

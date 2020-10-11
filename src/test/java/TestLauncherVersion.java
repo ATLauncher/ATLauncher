@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestLauncherVersion {
 
-    private static LauncherVersion testVersion = new LauncherVersion(1, 0, 0, 0, "Release");
+    private static final LauncherVersion testVersion = new LauncherVersion(1, 0, 0, 0, "Release");
 
     @Test
     public void test() {

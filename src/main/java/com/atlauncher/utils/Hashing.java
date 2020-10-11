@@ -41,7 +41,7 @@ import org.apache.commons.lang3.ArrayUtils;
 public final class Hashing {
     private static final char[] hex = "0123456789abcdef".toCharArray();
     private static final SoftReference<Caching.Cache<Object, HashCode>> hashcodes = new SoftReference<>(
-            Caching.<Object, HashCode>newLRU());
+            Caching.newLRU());
 
     public static HashCode md5(Path file) {
         if (!Files.exists(file)) {
@@ -194,7 +194,7 @@ public final class Hashing {
     }
 
     private interface Hasher extends Closeable {
-        public HashCode hash();
+        HashCode hash();
     }
 
     private static final class SHA1Hasher implements Hasher {
@@ -261,7 +261,7 @@ public final class Hashing {
     @SuppressWarnings("serial")
     public static final class HashCode implements Serializable, Cloneable {
         private static final SoftReference<Caching.Cache<String, HashCode>> hashescache = new SoftReference<>(
-                Caching.<String, HashCode>newLRU());
+                Caching.newLRU());
 
         public static final HashCode EMPTY = new HashCode(new byte[0]);
 

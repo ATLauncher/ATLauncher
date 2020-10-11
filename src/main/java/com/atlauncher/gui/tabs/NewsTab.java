@@ -115,11 +115,11 @@ public class NewsTab extends JPanel implements Tab {
     }
 
     private final class ContextMenu extends JPopupMenu {
-        private final JMenuItem COPY_ITEM = new JMenuItem(GetText.tr("Copy"));
 
         public ContextMenu() {
             super();
-            this.COPY_ITEM.addActionListener(e -> {
+            JMenuItem COPY_ITEM = new JMenuItem(GetText.tr("Copy"));
+            COPY_ITEM.addActionListener(e -> {
                 StringSelection text = new StringSelection(NEWS_PANE.getSelectedText());
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, null);
             });

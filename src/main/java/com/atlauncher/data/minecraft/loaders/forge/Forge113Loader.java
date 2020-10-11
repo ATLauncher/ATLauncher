@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -50,7 +50,7 @@ public class Forge113Loader extends ForgeLoader {
     public void copyLocalLibraries() {
         Version version = getVersion();
         ForgeInstallProfile installProfile = getInstallProfile();
-        version.libraries.stream().forEach(library -> {
+        version.libraries.forEach(library -> {
             // copy over any local files from the loader zip file
             if (library.name.equalsIgnoreCase(installProfile.path)) {
                 FileUtils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path).toPath(),
@@ -83,7 +83,7 @@ public class Forge113Loader extends ForgeLoader {
     public void runProcessors() {
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
-        installProfile.processors.stream().forEach(processor -> {
+        installProfile.processors.forEach(processor -> {
             if (!instanceInstaller.isCancelled()) {
                 try {
                     processor.process(installProfile, this.tempDir, instanceInstaller);
@@ -97,11 +97,11 @@ public class Forge113Loader extends ForgeLoader {
     }
 
     public List<Library> getInstallLibraries() {
-        return this.getInstallProfile().getLibraries().stream().collect(Collectors.toList());
+        return new ArrayList<>(this.getInstallProfile().getLibraries());
     }
 
     public List<Library> getLibraries() {
-        return this.getVersion().libraries.stream().collect(Collectors.toList());
+        return new ArrayList<>(this.getVersion().libraries);
     }
 
     public Arguments getArguments() {
@@ -119,8 +119,8 @@ public class Forge113Loader extends ForgeLoader {
 
         if (forgeLibrary != null) {
             return forgeLibrary.downloads.artifact.path.substring(
-                    forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1,
-                    forgeLibrary.downloads.artifact.path.length());
+                    forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1
+            );
         }
 
         return null;

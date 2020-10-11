@@ -48,8 +48,8 @@ public class ServersForCheckerTab extends JPanel implements ActionListener {
     private final JMenuItem EDIT_BUTTON = new JMenuItem(GetText.tr("Edit"));
     private final JMenuItem DELETE_BUTTON = new JMenuItem(GetText.tr("Delete"));
 
-    private DefaultListModel<MinecraftServer> listModel;
-    private JList serverList;
+    private final DefaultListModel<MinecraftServer> listModel;
+    private final JList serverList;
 
     public ServersForCheckerTab() {
         setLayout(new BorderLayout());

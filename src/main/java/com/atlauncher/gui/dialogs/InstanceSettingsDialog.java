@@ -60,8 +60,8 @@ public class InstanceSettingsDialog extends JDialog {
     private Instance instance;
     private InstanceV2 instanceV2;
 
-    private JPanel topPanel = new JPanel();
-    private JPanel bottomPanel = new JPanel();
+    private final JPanel topPanel = new JPanel();
+    private final JPanel bottomPanel = new JPanel();
 
     final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
     final ImageIcon ERROR_ICON = Utils.getIconImage("/assets/image/Error.png");
@@ -252,7 +252,7 @@ public class InstanceSettingsDialog extends JDialog {
         JComboBox<JavaInfo> installedJavas = new JComboBox<>();
         installedJavas.setPreferredSize(new Dimension(516, 24));
         if (Java.getInstalledJavas().size() != 0) {
-            Java.getInstalledJavas().stream().forEach(installedJavas::addItem);
+            Java.getInstalledJavas().forEach(installedJavas::addItem);
 
             installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
                     .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
