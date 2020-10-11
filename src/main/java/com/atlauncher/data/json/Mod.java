@@ -492,8 +492,9 @@ public class Mod {
                 break;
         }
 
-        if (!hasMD5())
+        if (!hasMD5()) {
             return;
+        }
 
         if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
             if (attempt < 5) {
@@ -620,8 +621,9 @@ public class Mod {
             }
         }
 
-        if (!hasServerMD5())
+        if (!hasServerMD5()) {
             return;
+        }
 
         if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
             if (attempt < 5) {
