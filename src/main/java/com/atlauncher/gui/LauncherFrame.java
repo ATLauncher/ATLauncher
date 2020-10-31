@@ -18,8 +18,11 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.SystemTray;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
@@ -66,13 +69,21 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         LogManager.info("*(Not Actually)");
 
         App.launcher.setParentFrame(this);
-        setMinimumSize(new Dimension(1200, 700));
         setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(true);
-        this.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
+
+        setMinimumSize(new Dimension(1200, 700));
+
+        if (App.settings.rememberWindowSizePosition) {
+            setLocation(App.settings.launcherPosition);
+
+            setSize(App.settings.launcherSize);
+        } else {
+            setLocationRelativeTo(null);
+        }
 
         LogManager.info("Setting up Bottom Bar");
         LauncherBottomBar bottomBar = new LauncherBottomBar();
@@ -145,6 +156,26 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
             }
         }
+
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent evt) {
+                Component c = (Component) evt.getSource();
+
+                if (App.settings.rememberWindowSizePosition) {
+                    App.settings.launcherSize = c.getSize();
+                    App.settings.save();
+                }
+            }
+
+            public void componentMoved(ComponentEvent evt) {
+                Component c = (Component) evt.getSource();
+
+                if (App.settings.rememberWindowSizePosition) {
+                    App.settings.launcherPosition = c.getLocation();
+                    App.settings.save();
+                }
+            }
+        });
     }
 
     /**

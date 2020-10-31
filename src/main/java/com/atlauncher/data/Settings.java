@@ -17,6 +17,8 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,6 +46,13 @@ public class Settings {
     public boolean firstTimeRun = true;
     public boolean hideJava9Warning = false;
     public List<String> addedPacks = new ArrayList<>();
+
+    // Window settings
+    public boolean rememberWindowSizePosition = false;
+    public Dimension consoleSize = new Dimension(650, 400);
+    public Point consolePosition = new Point(0, 0);
+    public Dimension launcherSize = new Dimension(1200, 700);
+    public Point launcherPosition = null;
 
     // General
     public String language = "English";
@@ -283,6 +292,8 @@ public class Settings {
     }
 
     public void validate() {
+        validateWindowSettings();
+
         validateJavaPath();
 
         validateMemory();
@@ -295,6 +306,24 @@ public class Settings {
         validateConcurrentConnections();
 
         validateDateFormat();
+    }
+
+    private void validateWindowSettings() {
+        if (consoleSize.width < 650) {
+            consoleSize.setSize(650, consoleSize.height);
+        }
+
+        if (consoleSize.height < 400) {
+            consoleSize.setSize(consoleSize.width, 400);
+        }
+
+        if (launcherSize.width < 1200) {
+            launcherSize.setSize(1200, launcherSize.height);
+        }
+
+        if (launcherSize.height < 700) {
+            launcherSize.setSize(launcherSize.width, 700);
+        }
     }
 
     private void validateJavaPath() {

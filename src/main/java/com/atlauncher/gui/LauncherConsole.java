@@ -18,10 +18,13 @@
 package com.atlauncher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -30,6 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
@@ -52,11 +56,17 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     private JMenuItem copy;
 
     public LauncherConsole() {
-        this.setTitle(Constants.LAUNCHER_NAME + " Console " + Constants.VERSION);
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        this.setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        this.setMinimumSize(new Dimension(650, 400));
-        this.setLayout(new BorderLayout());
+        setTitle(Constants.LAUNCHER_NAME + " Console " + Constants.VERSION);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        setLayout(new BorderLayout());
+
+        setMinimumSize(new Dimension(650, 400));
+
+        if (App.settings.rememberWindowSizePosition) {
+            setBounds(App.settings.consolePosition.x, App.settings.consolePosition.y, App.settings.consoleSize.width,
+                    App.settings.consoleSize.height);
+        }
 
         console = new Console();
 
@@ -65,10 +75,30 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         bottomBar = new ConsoleBottomBar();
 
         JScrollPane scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);
+
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent evt) {
+                Component c = (Component) evt.getSource();
+
+                if (App.settings.rememberWindowSizePosition) {
+                    App.settings.consoleSize = c.getSize();
+                    App.settings.save();
+                }
+            }
+
+            public void componentMoved(ComponentEvent evt) {
+                Component c = (Component) evt.getSource();
+
+                if (App.settings.rememberWindowSizePosition) {
+                    App.settings.consolePosition = c.getLocation();
+                    App.settings.save();
+                }
+            }
+        });
     }
 
     @Override

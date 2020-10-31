@@ -78,3 +78,4 @@ instance you've created and share it around with friends to simply import into t
 - Use real packs description over the instances description
 - Add setting to disable custom fonts for troublesome users [#398]
 - Allow resizing the main launcher window
+- Optionally remember gui sizes and positions on relaunch

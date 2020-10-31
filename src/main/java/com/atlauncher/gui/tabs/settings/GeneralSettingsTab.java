@@ -17,7 +17,9 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -55,6 +57,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private JCheckBox enableFeralGamemode;
     private final JCheckBox disableAddModRestrictions;
     private final JCheckBox disableCustomFonts;
+    private final JCheckBox rememberWindowSizePosition;
 
     public GeneralSettingsTab() {
         // Language
@@ -347,6 +350,26 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         disableCustomFonts = new JCheckBox();
         disableCustomFonts.setSelected(App.settings.disableCustomFonts);
         add(disableCustomFonts, gbc);
+
+        // Remember gui sizes and positions
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover rememberWindowSizePositionLabel = new JLabelWithHover(
+                GetText.tr("Remember Window Size & Positions?"), HELP_ICON,
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This will remember the windows positions and size so they keep the same size and position when you restart the launcher."))
+                        .build());
+        add(rememberWindowSizePositionLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        rememberWindowSizePosition = new JCheckBox();
+        rememberWindowSizePosition.setSelected(App.settings.rememberWindowSizePosition);
+        add(rememberWindowSizePosition, gbc);
     }
 
     public boolean needToReloadTheme() {
@@ -387,6 +410,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         App.settings.disableAddModRestrictions = disableAddModRestrictions.isSelected();
         App.settings.disableCustomFonts = disableCustomFonts.isSelected();
+        App.settings.rememberWindowSizePosition = rememberWindowSizePosition.isSelected();
+
+        if (!rememberWindowSizePosition.isSelected()) {
+            App.settings.consoleSize = new Dimension(650, 400);
+            App.settings.consolePosition = new Point(0, 0);
+
+            App.settings.launcherSize = new Dimension(1200, 700);
+            App.settings.launcherPosition = null;
+        }
     }
 
     @Override
