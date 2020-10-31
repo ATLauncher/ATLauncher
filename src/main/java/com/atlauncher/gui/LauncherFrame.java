@@ -66,11 +66,11 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         LogManager.info("*(Not Actually)");
 
         App.launcher.setParentFrame(this);
-        setSize(new Dimension(1200, 700));
+        setMinimumSize(new Dimension(1200, 700));
         setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         this.setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
 
@@ -195,8 +195,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         SettingsTab settingsTab = new SettingsTab();
         PerformanceManager.end("settingsTab");
 
-        this.tabs = Arrays.asList(new Tab[] {newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
-            serversTab, accountsTab, toolsTab, settingsTab});
+        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
+                serversTab, accountsTab, toolsTab, settingsTab });
 
         tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs) {
