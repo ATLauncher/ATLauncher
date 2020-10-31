@@ -80,3 +80,4 @@ instance you've created and share it around with friends to simply import into t
 - Allow resizing the main launcher window
 - Optionally remember gui sizes and positions on relaunch
 - Add in more screen resolutions to quick picker
+- Remove more things in the Sentry exclusion

@@ -43,7 +43,47 @@ public final class ErrorReporting {
                     return false;
                 }
 
+                if (event.getMessage().contains("Network is unreachable: connect")) {
+                    return false;
+                }
+
                 if (event.getMessage().contains("Permission denied: connect")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("failed to delete")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("failed to rename")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("timeout")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("Read timed out")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("Access is denied")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("request wasn't successful")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("There is not enough space on the disk")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("The system cannot find the file specified")) {
+                    return false;
+                }
+
+                if (event.getMessage().contains("being used by another process")) {
                     return false;
                 }
 
