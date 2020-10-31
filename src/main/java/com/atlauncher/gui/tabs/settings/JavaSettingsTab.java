@@ -202,16 +202,13 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         commonScreenSizes = new JComboBox<>();
         commonScreenSizes.addItem("Select An Option");
-        commonScreenSizes.addItem("854x480");
 
-        if (OS.getMaximumWindowWidth() >= 1280 && OS.getMaximumWindowHeight() >= 720) {
-            commonScreenSizes.addItem("1280x720");
-        }
-        if (OS.getMaximumWindowWidth() >= 1600 && OS.getMaximumWindowHeight() >= 900) {
-            commonScreenSizes.addItem("1600x900");
-        }
-        if (OS.getMaximumWindowWidth() >= 1920 && OS.getMaximumWindowHeight() >= 1080) {
-            commonScreenSizes.addItem("1920x1080");
+        for (String screenSize : Constants.SCREEN_RESOLUTIONS) {
+            String[] size = screenSize.split("x");
+            if (OS.getMaximumWindowWidth() >= Integer.parseInt(size[0])
+                    && OS.getMaximumWindowHeight() >= Integer.parseInt(size[1])) {
+                commonScreenSizes.addItem(screenSize);
+            }
         }
         commonScreenSizes.addActionListener(e -> {
             String selected = (String) commonScreenSizes.getSelectedItem();
