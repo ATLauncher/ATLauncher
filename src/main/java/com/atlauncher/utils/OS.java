@@ -157,12 +157,16 @@ public enum OS {
         }
     }
 
+    public static void openFileExplorer(Path path) {
+        openFileExplorer(path, false);
+    }
+
     /**
      * Opens the system file explorer to the given path.
      */
-    public static void openFileExplorer(Path path) {
+    public static void openFileExplorer(Path path, boolean toFile) {
         try {
-            if (!Files.isDirectory(path) && OS.isWindows()) {
+            if ((toFile || !Files.isDirectory(path)) && OS.isWindows()) {
                 new ProcessBuilder("explorer", "/select," + path.toAbsolutePath()).start();
             } else {
                 Path pathToOpen = path;
@@ -329,7 +333,8 @@ public enum OS {
     }
 
     /**
-     * Returns the amount of RAM in the users system via the oshi (or if that fails the getMemory tool).
+     * Returns the amount of RAM in the users system via the oshi (or if that fails
+     * the getMemory tool).
      */
     public static int getSystemRamViaTool() {
         PerformanceManager.start();
