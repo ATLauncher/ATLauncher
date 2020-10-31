@@ -521,12 +521,16 @@ public final class Download {
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got " + Hashing.murmur(this.to)
-                            + " (with size of " + Files.size(this.to) + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                            + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got "
+                            + Hashing.murmur(this.to) + " (with size of "
+                            + (Files.exists(this.to) ? Files.size(this.to) : 0)
+                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " hash of " + expected.toString() + " (with size of " + this.size + ") but got " + Hashing.sha1(this.to)
-                            + " (with size of " + Files.size(this.to) + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                            + " hash of " + expected.toString() + " (with size of " + this.size + ") but got "
+                            + Hashing.sha1(this.to) + " (with size of "
+                            + (Files.exists(this.to) ? Files.size(this.to) : 0)
+                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
                 }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);
