@@ -77,6 +77,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
                     && networkSettingsTab.canConnectWithProxy()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
+                boolean themeChanged = generalSettingsTab.themeChanged();
                 boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                 generalSettingsTab.save();
@@ -93,9 +94,11 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 if (restartServerChecker) {
                     CheckingServersManager.startCheckingServers();
                 }
+                if (themeChanged) {
+                    Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
+                }
                 if (reloadTheme) {
                     App.loadTheme(App.settings.theme);
-                    Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
                     FlatLaf.updateUILater();
                     ThemeManager.post();
                 }
@@ -103,7 +106,8 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             }
         });
 
-        tabbedPane.addChangeListener(e -> Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings"));
+        tabbedPane.addChangeListener(
+                e -> Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings"));
 
         Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
     }

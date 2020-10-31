@@ -54,6 +54,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JCheckBox enableDiscordIntegration;
     private JCheckBox enableFeralGamemode;
     private final JCheckBox disableAddModRestrictions;
+    private final JCheckBox disableCustomFonts;
 
     public GeneralSettingsTab() {
         // Language
@@ -63,7 +64,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
 
         JLabelWithHover languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
-            GetText.tr("This specifies the language used by the Launcher."));
+                GetText.tr("This specifies the language used by the Launcher."));
         add(languageLabel, gbc);
 
         gbc.gridx++;
@@ -93,7 +94,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover themeLabel = new JLabelWithHover(GetText.tr("Theme") + ":", HELP_ICON,
-            GetText.tr("This sets the theme that the launcher will use."));
+                GetText.tr("This sets the theme that the launcher will use."));
 
         add(themeLabel, gbc);
 
@@ -107,8 +108,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         theme.addItem(new ComboItem<>("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.Vuesion", "Vuesion"));
-        theme.addItem(new ComboItem<>("com.atlauncher.themes.MaterialPalenightContrast",
-            "Material Palenight Contrast"));
+        theme.addItem(
+                new ComboItem<>("com.atlauncher.themes.MaterialPalenightContrast", "Material Palenight Contrast"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.ArcOrange", "Arc Orange"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.CyanLight", "Cyan Light"));
 
@@ -131,7 +132,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover dateFormatLabel = new JLabelWithHover(GetText.tr("Date Format") + ":", HELP_ICON,
-            GetText.tr("This controls the format that dates are displayed in the launcher."));
+                GetText.tr("This controls the format that dates are displayed in the launcher."));
 
         add(dateFormatLabel, gbc);
 
@@ -156,7 +157,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover selectedTabOnStartupLabel = new JLabelWithHover(GetText.tr("Default Tab") + ":", HELP_ICON,
-            GetText.tr("Which tab to have selected by default when opening the launcher."));
+                GetText.tr("Which tab to have selected by default when opening the launcher."));
 
         add(selectedTabOnStartupLabel, gbc);
 
@@ -183,8 +184,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover sortPacksAlphabeticallyLabel = new JLabelWithHover(GetText.tr("Sort Packs Alphabetically") + "?", HELP_ICON,
-            GetText.tr("If you want to sort the packs in the packs panel alphabetically by default or not."));
+        JLabelWithHover sortPacksAlphabeticallyLabel = new JLabelWithHover(
+                GetText.tr("Sort Packs Alphabetically") + "?", HELP_ICON,
+                GetText.tr("If you want to sort the packs in the packs panel alphabetically by default or not."));
         add(sortPacksAlphabeticallyLabel, gbc);
 
         gbc.gridx++;
@@ -203,7 +205,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover keepLauncherOpenLabel = new JLabelWithHover(GetText.tr("Keep Launcher Open") + "?", HELP_ICON,
-            GetText.tr("This determines if ATLauncher should stay open or exit after Minecraft has exited"));
+                GetText.tr("This determines if ATLauncher should stay open or exit after Minecraft has exited"));
         add(keepLauncherOpenLabel, gbc);
 
         gbc.gridx++;
@@ -222,7 +224,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableConsoleLabel = new JLabelWithHover(GetText.tr("Enable Console") + "?", HELP_ICON,
-            GetText.tr("If you want the console to be visible when opening the Launcher."));
+                GetText.tr("If you want the console to be visible when opening the Launcher."));
         add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -241,9 +243,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableTrayIconLabel = new JLabelWithHover(GetText.tr("Enable Tray Menu") + "?", HELP_ICON,
-            new HTMLBuilder().center().split(100).text(GetText.tr(
-                "The Tray Menu is a little icon that shows in your system taskbar which allows you to perform different functions to do various things with the launcher such as hiding or showing the console, killing Minecraft or closing ATLauncher."))
-                .build());
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "The Tray Menu is a little icon that shows in your system taskbar which allows you to perform different functions to do various things with the launcher such as hiding or showing the console, killing Minecraft or closing ATLauncher."))
+                        .build());
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
@@ -261,8 +263,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover enableDiscordIntegrationLabel = new JLabelWithHover(GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
-            GetText.tr("This will enable showing which pack you're playing in Discord."));
+        JLabelWithHover enableDiscordIntegrationLabel = new JLabelWithHover(
+                GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
+                GetText.tr("This will enable showing which pack you're playing in Discord."));
         add(enableDiscordIntegrationLabel, gbc);
 
         gbc.gridx++;
@@ -283,8 +286,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             gbc.gridy++;
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            JLabelWithHover enableFeralGamemodeLabel = new JLabelWithHover(GetText.tr("Enable Feral Gamemode") + "?", HELP_ICON,
-                GetText.tr("This will enable Feral Gamemode for packs launched."));
+            JLabelWithHover enableFeralGamemodeLabel = new JLabelWithHover(GetText.tr("Enable Feral Gamemode") + "?",
+                    HELP_ICON, GetText.tr("This will enable Feral Gamemode for packs launched."));
             add(enableFeralGamemodeLabel, gbc);
 
             gbc.gridx++;
@@ -312,10 +315,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover disableAddModRestrictionsLabel = new JLabelWithHover(GetText.tr("Disable Add Mod Restrictions?"), HELP_ICON,
-            new HTMLBuilder().center().split(100).text(GetText.tr(
-                "This will allow you to disable the restrictions in place to prevent you from installing mods from Curse that are not for your current Minecraft version or loader. By disabling these restrictions, you can install any mod, so be sure that it's compatable with the Minecraft version and loader (if any) that you're on."))
-                .build());
+        JLabelWithHover disableAddModRestrictionsLabel = new JLabelWithHover(
+                GetText.tr("Disable Add Mod Restrictions?"), HELP_ICON,
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This will allow you to disable the restrictions in place to prevent you from installing mods from Curse that are not for your current Minecraft version or loader. By disabling these restrictions, you can install any mod, so be sure that it's compatable with the Minecraft version and loader (if any) that you're on."))
+                        .build());
         add(disableAddModRestrictionsLabel, gbc);
 
         gbc.gridx++;
@@ -324,11 +328,35 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         disableAddModRestrictions = new JCheckBox();
         disableAddModRestrictions.setSelected(App.settings.disableAddModRestrictions);
         add(disableAddModRestrictions, gbc);
+
+        // Disable custom fonts
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover disableCustomFontsLabel = new JLabelWithHover(GetText.tr("Disable Custom Fonts?"), HELP_ICON,
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This will disable custom fonts used by themes. If your system has issues with font display not looking right, you can disable this to switch to a default compatable font."))
+                        .build());
+        add(disableCustomFontsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        disableCustomFonts = new JCheckBox();
+        disableCustomFonts.setSelected(App.settings.disableCustomFonts);
+        add(disableCustomFonts, gbc);
     }
 
     public boolean needToReloadTheme() {
         return !((ComboItem<String>) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme)
+                || App.settings.disableCustomFonts != disableCustomFonts.isSelected()
                 || !((String) language.getSelectedItem()).equalsIgnoreCase(App.settings.language);
+    }
+
+    public boolean themeChanged() {
+        return !((ComboItem<String>) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme);
     }
 
     public boolean needToReloadPacksPanel() {
@@ -358,6 +386,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
 
         App.settings.disableAddModRestrictions = disableAddModRestrictions.isSelected();
+        App.settings.disableCustomFonts = disableCustomFonts.isSelected();
     }
 
     @Override

@@ -76,3 +76,4 @@ instance you've created and share it around with friends to simply import into t
 - Add size of failed downloads to log messages
 - When manually adding mods, check fingerprint with Curse
 - Use real packs description over the instances description
+- Add setting to disable custom fonts for troublesome users [#398]

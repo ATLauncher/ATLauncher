@@ -50,9 +50,16 @@ public class ATLauncherLaf extends FlatLaf {
         return instance;
     }
 
+    /**
+     * If user has disabled custom fonts or is using a non English language, then we
+     * should be using the base "sansserif" font.
+     */
+    private static boolean useBaseFont() {
+        return App.settings.disableCustomFonts || !App.settings.language.equalsIgnoreCase("English");
+    }
+
     public Font getNormalFont() {
-        // non English need to use base OS font
-        if (!App.settings.language.equalsIgnoreCase("English")) {
+        if (useBaseFont()) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(defaultFontName).deriveFont(Font.PLAIN, 12f);
@@ -60,8 +67,7 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getBoldFont() {
-        // non English need to use base OS font
-        if (!App.settings.language.equalsIgnoreCase("English")) {
+        if (useBaseFont()) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(defaultFontName).deriveFont(Font.BOLD, 12f);
@@ -69,8 +75,7 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getConsoleFont() {
-        // non English need to use base OS font
-        if (!App.settings.language.equalsIgnoreCase("English")) {
+        if (useBaseFont()) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
         } else {
             return Resources.makeFont(consoleFontName).deriveFont(Font.PLAIN, 12f);
@@ -78,8 +83,7 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getTabFont() {
-        // non English need to use base OS font
-        if (!App.settings.language.equalsIgnoreCase("English")) {
+        if (useBaseFont()) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 32f);
         } else {
             return Resources.makeFont(tabFontName).deriveFont(Font.PLAIN, 32f);

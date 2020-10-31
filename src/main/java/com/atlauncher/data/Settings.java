@@ -57,6 +57,7 @@ public class Settings {
     public boolean enableDiscordIntegration = true;
     public boolean enableFeralGamemode = OS.isLinux() && Utils.executableInPath("gamemoderun");
     public boolean disableAddModRestrictions = false;
+    public boolean disableCustomFonts = false;
 
     // Java/Minecraft
     public int initialMemory = 512;
