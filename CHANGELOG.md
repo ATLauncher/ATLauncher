@@ -7,3 +7,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 - Fix errors on OSX when files fail to download
 - Fix version showing based on users locale in places it shouldn't
+- Remove more things from error reporting and cleanup

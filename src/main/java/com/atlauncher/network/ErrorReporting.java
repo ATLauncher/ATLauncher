@@ -35,6 +35,24 @@ public final class ErrorReporting {
     public static SentryClient client;
     public static List<String> sentEvents = new ArrayList<>();
 
+    public static List<String> ignoredMessages = new ArrayList<>();
+
+    static {
+        ignoredMessages.add("Network is unreachable: connect");
+        ignoredMessages.add("Permission denied: connect");
+        ignoredMessages.add("failed to delete");
+        ignoredMessages.add("failed to rename");
+        ignoredMessages.add("Failed to connect to");
+        ignoredMessages.add("Connection reset");
+        ignoredMessages.add("timeout");
+        ignoredMessages.add("Read timed out");
+        ignoredMessages.add("Access is denied");
+        ignoredMessages.add("request wasn't successful");
+        ignoredMessages.add("There is not enough space on the disk");
+        ignoredMessages.add("The system cannot find the file specified");
+        ignoredMessages.add("being used by another process");
+    }
+
     public static void init(boolean disable) {
         if (!disable) {
             client = Sentry.init(Constants.SENTRY_DSN);
@@ -43,47 +61,7 @@ public final class ErrorReporting {
                     return false;
                 }
 
-                if (event.getMessage().contains("Network is unreachable: connect")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("Permission denied: connect")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("failed to delete")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("failed to rename")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("timeout")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("Read timed out")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("Access is denied")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("request wasn't successful")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("There is not enough space on the disk")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("The system cannot find the file specified")) {
-                    return false;
-                }
-
-                if (event.getMessage().contains("being used by another process")) {
+                if (ignoredMessages.stream().anyMatch(m -> event.getMessage().contains(m))) {
                     return false;
                 }
 
