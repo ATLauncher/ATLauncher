@@ -31,7 +31,7 @@ public class ATLauncherAPIUtils {
     public static void postSystemInfo() {
         Map<String, Object> request = new HashMap<>();
 
-        request.put("launcher_version", Constants.VERSION.toString());
+        request.put("launcher_version", Constants.VERSION.toStringForLogging());
         request.put("os_name", OS.getOS().toString().toLowerCase());
         request.put("os_version", System.getProperty("os.version"));
         request.put("java_version", System.getProperty("java.version"));

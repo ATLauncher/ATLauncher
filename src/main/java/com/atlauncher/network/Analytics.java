@@ -38,7 +38,7 @@ public final class Analytics implements SettingsListener {
                 .withDefaultRequest(new DefaultRequest().userAgent(Network.USER_AGENT)
                         .clientId(App.settings.analyticsClientId).customDimension(1, Java.getLauncherJavaVersion()))
                 .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
-                .withAppVersion(Constants.VERSION.toString()).build();
+                .withAppVersion(Constants.VERSION.toStringForLogging()).build();
 
         ga.screenView().sessionControl("start").sendAsync();
 

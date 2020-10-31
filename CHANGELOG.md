@@ -6,3 +6,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.0.1
 
 - Fix errors on OSX when files fail to download
+- Fix version showing based on users locale in places it shouldn't

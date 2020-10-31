@@ -45,10 +45,6 @@ import org.mini2Dx.gettext.GetText;
 
 @Json
 public class Server {
-    private final String launcher = Constants.LAUNCHER_NAME;
-
-    private final String launcherVersion = Constants.VERSION.toString();
-
     public String name;
     public String pack;
     public Integer packId;

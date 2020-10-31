@@ -90,7 +90,7 @@ public final class ErrorReporting {
                 sentEvents.add(event.getMessage());
                 return true;
             });
-            client.setRelease(Constants.VERSION.toString());
+            client.setRelease(Constants.VERSION.toStringForLogging());
             client.addTag("java.version", Java.getLauncherJavaVersion());
             client.addTag("os.name", System.getProperty("os.name"));
             client.addTag("os.version", System.getProperty("os.version"));
