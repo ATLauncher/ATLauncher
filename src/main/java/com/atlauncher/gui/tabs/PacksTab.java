@@ -32,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
@@ -62,6 +63,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JButton nextPageButton = new JButton(GetText.tr("Next Page"));
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JScrollPane scrollPane;
     private NilCard nilCard;
     private final boolean isSystem;
     private final boolean isFeatured;
@@ -77,7 +79,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
 
-        final JScrollPane scrollPane = new JScrollPane(this.contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        scrollPane = new JScrollPane(this.contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
@@ -113,6 +115,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             page -= 1;
             Analytics.sendEvent(page, "Previous", "Navigation", "Pack");
             refresh();
+
         });
         this.nextPageButton.addActionListener(e -> {
             page += 1;
@@ -228,6 +231,12 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         load(true);
         revalidate();
         repaint();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                scrollPane.getVerticalScrollBar().setValue(0);
+            }
+        });
     }
 
     public void refresh() {
