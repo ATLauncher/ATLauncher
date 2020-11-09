@@ -75,6 +75,8 @@ import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.extras.FlatInspector;
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 
+import org.mini2Dx.gettext.GetText;
+
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -245,6 +247,7 @@ public class App {
 
         // check the launcher has been 'installed' correctly
         checkInstalledCorrectly();
+        checkForBadFolderInstall();
 
         // setup OS specific things
         setupOSSpecificThings();
@@ -383,8 +386,8 @@ public class App {
 
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
-        SwingUtilities.invokeLater(() -> Java.getInstalledJavas()
-                .forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
+        SwingUtilities.invokeLater(
+                () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
         LogManager.info("Java Version: " + Java.getActualJavaVersion());
 
@@ -469,6 +472,38 @@ public class App {
                             .build())
                     .addOption("Yes, I understand", true).addOption("No, exit and I'll put it in a folder")
                     .setType(DialogManager.ERROR).show() != 0) {
+                System.exit(0);
+            }
+        }
+    }
+
+    private static void checkForBadFolderInstall() {
+        if (FileSystem.BASE_DIR.toString().contains("OneDrive")) {
+            LogManager.warn("ATLauncher installed within OneDrive!");
+
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("ATLauncher installed within OneDrive"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+
+            if (ret == 0) {
+                OS.openFileExplorer(FileSystem.BASE_DIR, true);
+                System.exit(0);
+            }
+        }
+
+        if (OS.isWindows() && FileSystem.BASE_DIR.toString().contains("Program Files")) {
+            LogManager.warn("ATLauncher installed within Program Files!");
+
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("ATLauncher installed within OneDrive"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "We have detected that you're running ATLauncher from within Program Files.<br/><br/>This can cause serious issues and you should move the folder outside of Program Files.<br/><br/>Do you want to close the launcher and do this now?"))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+
+            if (ret == 0) {
+                OS.openFileExplorer(FileSystem.BASE_DIR, true);
                 System.exit(0);
             }
         }

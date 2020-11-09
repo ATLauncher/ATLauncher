@@ -127,21 +127,6 @@ public class Launcher {
 
         PackManager.removeUnusedImages(); // remove unused pack images
 
-        if (FileSystem.BASE_DIR.toString().contains("OneDrive")) {
-            LogManager.warn("ATLauncher installed within OneDrive!");
-
-            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("ATLauncher installed within OneDrive"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
-
-            if (ret == 0) {
-                OS.openFileExplorer(FileSystem.BASE_DIR, true);
-                System.exit(0);
-            }
-        }
-
         if (OS.isWindows() && !OS.is64Bit() && OS.isWindows64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 

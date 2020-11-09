@@ -8,3 +8,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove Get Help button on system packs
 - Open folder after exporting an instance
 - Show export button after adding/editing mods
+- Warn user when running from program files
