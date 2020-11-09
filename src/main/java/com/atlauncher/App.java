@@ -485,7 +485,7 @@ public class App {
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"))
                             .build())
-                    .setType(DialogManager.ERROR).show();
+                    .setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
                 OS.openFileExplorer(FileSystem.BASE_DIR, true);
@@ -500,12 +500,41 @@ public class App {
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "We have detected that you're running ATLauncher from within Program Files.<br/><br/>This can cause serious issues and you should move the folder outside of Program Files.<br/><br/>Do you want to close the launcher and do this now?"))
                             .build())
-                    .setType(DialogManager.ERROR).show();
+                    .setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
                 OS.openFileExplorer(FileSystem.BASE_DIR, true);
                 System.exit(0);
             }
+        }
+
+        File testFile = FileSystem.BASE_DIR.resolve(".test").toFile();
+
+        try {
+            if ((!testFile.exists() && !testFile.createNewFile())
+                    || !FileSystem.BASE_DIR.resolve(".test").toFile().canWrite()) {
+                LogManager.error("ATLauncher cannot write files!");
+
+                DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
+                                .build())
+                        .setType(DialogManager.ERROR).show();
+
+                OS.openFileExplorer(FileSystem.BASE_DIR, true);
+                System.exit(0);
+            }
+        } catch (IOException e) {
+            LogManager.error("ATLauncher cannot write files!");
+
+            DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+
+            OS.openFileExplorer(FileSystem.BASE_DIR, true);
+            System.exit(0);
         }
     }
 
