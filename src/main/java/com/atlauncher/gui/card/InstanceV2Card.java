@@ -154,9 +154,7 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         setupLinksButtonPopupMenu();
 
         // check it can be exported
-        if (!instance.canBeExported()) {
-            this.exportButton.setVisible(false);
-        }
+        this.exportButton.setVisible(instance.canBeExported());
 
         // if not an ATLauncher pack, a system pack or has no urls, don't show the links
         // button
@@ -383,10 +381,12 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
         this.addButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods", "InstanceV2");
             new AddModsDialog(instance);
+            exportButton.setVisible(instance.canBeExported());
         });
         this.editButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditMods", "InstanceV2");
             new EditModsDialog(instance);
+            exportButton.setVisible(instance.canBeExported());
         });
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
