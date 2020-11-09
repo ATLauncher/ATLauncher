@@ -10,3 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Show export button after adding/editing mods
 - Warn user when running from program files
 - Don't start launcher when folder is not writable
+- Fix errors with Discord integration on launch when failed to init

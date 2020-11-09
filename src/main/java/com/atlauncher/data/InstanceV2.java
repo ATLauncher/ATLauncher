@@ -487,7 +487,7 @@ public class InstanceV2 extends MinecraftVersion {
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration) {
+                    if (App.settings.enableDiscordIntegration && App.discordInitialized) {
                         String playing = this.launcher.pack + " (" + this.launcher.version + ")";
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
