@@ -40,6 +40,8 @@ public final class ErrorReporting {
     static {
         ignoredMessages.add("Network is unreachable: connect");
         ignoredMessages.add("Permission denied: connect");
+        ignoredMessages.add("Connection timed out: connect");
+        ignoredMessages.add("Connection refused: connect");
         ignoredMessages.add("failed to delete");
         ignoredMessages.add("failed to rename");
         ignoredMessages.add("Failed to connect to");
@@ -51,6 +53,12 @@ public final class ErrorReporting {
         ignoredMessages.add("There is not enough space on the disk");
         ignoredMessages.add("The system cannot find the file specified");
         ignoredMessages.add("being used by another process");
+        ignoredMessages.add("The cloud file provider is not running");
+        ignoredMessages.add("Name or service not known");
+        ignoredMessages.add("Received fatal alert: handshake_failure");
+        ignoredMessages.add("not verified (no certificates)");
+        ignoredMessages.add("No such host is known");
+        ignoredMessages.add("nodename nor servname provided, or not known");
     }
 
     public static void init(boolean disable) {

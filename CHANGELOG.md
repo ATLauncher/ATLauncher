@@ -11,3 +11,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Warn user when running from program files
 - Don't start launcher when folder is not writable
 - Fix errors with Discord integration on launch when failed to init
+- Ignore more errors from error reporting
