@@ -6,3 +6,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.0.2
 
 - Remove Get Help button on system packs
+- Open folder after exporting an instance

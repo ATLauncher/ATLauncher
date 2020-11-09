@@ -25,6 +25,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -177,12 +179,13 @@ public class InstanceExportDialog extends JDialog {
         overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
         overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
 
-        File[] files = instance.getRoot().toFile().listFiles(pathname -> !pathname.getName().equalsIgnoreCase(".fabric")
-                && !pathname.getName().equalsIgnoreCase(".jumploader")
-                && !pathname.getName().equalsIgnoreCase(".mixin.out")
-                && !pathname.getName().equalsIgnoreCase("disabledmods")
-                && !pathname.getName().equalsIgnoreCase("jarmods")
-                && !pathname.getName().equalsIgnoreCase("instance.json"));
+        File[] files = instance.getRoot().toFile()
+                .listFiles(pathname -> !pathname.getName().equalsIgnoreCase(".fabric")
+                        && !pathname.getName().equalsIgnoreCase(".jumploader")
+                        && !pathname.getName().equalsIgnoreCase(".mixin.out")
+                        && !pathname.getName().equalsIgnoreCase("disabledmods")
+                        && !pathname.getName().equalsIgnoreCase("jarmods")
+                        && !pathname.getName().equalsIgnoreCase("instance.json"));
 
         for (File filename : files) {
             JCheckBox checkBox = new JCheckBox(filename.getName());
@@ -227,6 +230,7 @@ public class InstanceExportDialog extends JDialog {
             dialog.addThread(new Thread(() -> {
                 if (instance.exportAsCurseZip(name.getText(), author.getText(), saveTo.getText(), overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
+                    OS.openFileExplorer(Paths.get(saveTo.getText()).resolve(name.getText() + ".zip"), true);
                 } else {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
                 }
