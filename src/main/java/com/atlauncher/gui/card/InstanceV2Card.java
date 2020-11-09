@@ -158,8 +158,9 @@ public class InstanceV2Card extends CollapsiblePanel implements RelocalizationLi
             this.exportButton.setVisible(false);
         }
 
-        // if not an ATLauncher pack or has no urls, don't show the links button
-        if (instance.getPack() == null || (instance.getPack().discordInviteURL == null
+        // if not an ATLauncher pack, a system pack or has no urls, don't show the links
+        // button
+        if (instance.getPack() == null || instance.getPack().system || (instance.getPack().discordInviteURL == null
                 && instance.getPack().supportURL == null && instance.getPack().websiteURL == null)) {
             this.getHelpButton.setVisible(false);
         }

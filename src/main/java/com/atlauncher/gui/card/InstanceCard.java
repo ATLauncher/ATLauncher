@@ -146,9 +146,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         setupLinksButtonPopupMenu();
 
-        // if not an ATLauncher pack or has no urls, don't show the links button
-        if (instance.getRealPack() == null || (instance.getRealPack().discordInviteURL == null
-                && instance.getRealPack().supportURL == null && instance.getRealPack().websiteURL == null)) {
+        // if not an ATLauncher pack, a system pack or has no urls, don't show the links
+        // button
+        if (instance.getRealPack() == null || instance.getRealPack().system
+                || (instance.getRealPack().discordInviteURL == null && instance.getRealPack().supportURL == null
+                        && instance.getRealPack().websiteURL == null)) {
             this.getHelpButton.setVisible(false);
         }
 
