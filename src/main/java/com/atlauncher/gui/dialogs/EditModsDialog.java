@@ -54,6 +54,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -195,7 +196,7 @@ public class EditModsDialog extends JDialog {
         disabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, true));
 
         JScrollPane scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         scroller1.setPreferredSize(new Dimension(275, 350));
         modsInPack.setRightComponent(scroller1);
@@ -207,7 +208,7 @@ public class EditModsDialog extends JDialog {
         enabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, false));
 
         JScrollPane scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         scroller2.setPreferredSize(new Dimension(275, 350));
         modsInPack.setLeftComponent(scroller2);
@@ -435,9 +436,8 @@ public class EditModsDialog extends JDialog {
     private void checkBoxesChanged() {
         if (instanceV2 != null ? instanceV2.launcher.enableCurseIntegration
                 : this.instance.hasEnabledCurseIntegration()) {
-            boolean hasSelectedAllCurseMods = (enabledMods.stream().anyMatch(AbstractButton::isSelected)
-                    && enabledMods.stream().filter(AbstractButton::isSelected)
-                            .allMatch(cb -> cb.getDisableableMod().isFromCurse()))
+            boolean hasSelectedAllCurseMods = (enabledMods.stream().anyMatch(AbstractButton::isSelected) && enabledMods
+                    .stream().filter(AbstractButton::isSelected).allMatch(cb -> cb.getDisableableMod().isFromCurse()))
                     || (disabledMods.stream().anyMatch(AbstractButton::isSelected) && disabledMods.stream()
                             .filter(AbstractButton::isSelected).allMatch(cb -> cb.getDisableableMod().isFromCurse()));
 
@@ -461,15 +461,27 @@ public class EditModsDialog extends JDialog {
         mods.addAll(enabledMods);
         mods.addAll(disabledMods);
 
-        for (ModsJCheckBox mod : mods) {
-            if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
-                if (this.instanceV2 != null) {
-                    mod.getDisableableMod().checkForUpdate(instanceV2);
-                } else {
-                    mod.getDisableableMod().checkForUpdate(instance);
+        ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Checking For Updates"), mods.size(),
+                GetText.tr("Checking For Updates"));
+        progressDialog.addThread(new Thread(() -> {
+            for (ModsJCheckBox mod : mods) {
+                if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
+                    if (this.instanceV2 != null) {
+                        mod.getDisableableMod().checkForUpdate(instanceV2);
+                    } else {
+                        mod.getDisableableMod().checkForUpdate(instance);
+                    }
                 }
+                progressDialog.doneTask();
             }
-        }
+
+            progressDialog.close();
+        }));
+        progressDialog.start();
+
+        DialogManager.okDialog().setTitle(GetText.tr("Checking For Updates Complete"))
+                .setContent(GetText.tr("The selected mods have been updated (if available).")).show();
+
         reloadPanels();
     }
 

@@ -36,13 +36,10 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
-import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
@@ -372,8 +369,6 @@ public class DisableableMod implements Serializable {
         }
 
         if (curseFilesStream.noneMatch(mod -> mod.id > curseFileId)) {
-            DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
-                    .setContent(GetText.tr("No updates were found for {0}.", name)).show();
             return false;
         }
 
@@ -395,8 +390,6 @@ public class DisableableMod implements Serializable {
         }
 
         if (curseFilesStream.noneMatch(mod -> mod.id > curseFileId)) {
-            DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
-                    .setContent(GetText.tr("No updates were found for {0}.", name)).show();
             return false;
         }
 

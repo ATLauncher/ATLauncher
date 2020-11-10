@@ -31,6 +31,7 @@ import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ModsChooser;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -208,10 +209,17 @@ public class ModsJCheckBox extends JCheckBox {
 
             JMenuItem checkForUpdates = new JMenuItem(GetText.tr("Check For Updates"));
             checkForUpdates.addActionListener(e -> {
+                boolean updated = false;
+
                 if (dialog.instance != null) {
-                    getDisableableMod().checkForUpdate(dialog.instance);
+                    updated = getDisableableMod().checkForUpdate(dialog.instance);
                 } else if (dialog.instanceV2 != null) {
-                    getDisableableMod().checkForUpdate(dialog.instanceV2);
+                    updated = getDisableableMod().checkForUpdate(dialog.instanceV2);
+                }
+
+                if (!updated) {
+                    DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
+                            .setContent(GetText.tr("No updates were found.")).show();
                 }
 
                 dialog.reloadPanels();
