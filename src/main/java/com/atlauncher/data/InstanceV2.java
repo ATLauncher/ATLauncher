@@ -544,7 +544,7 @@ public class InstanceV2 extends MinecraftVersion {
                         App.launcher.getParent().setVisible(true);
                     }
                     long end = System.currentTimeMillis();
-                    if (App.settings.enableDiscordIntegration) {
+                    if (App.settings.enableDiscordIntegration && App.discordInitialized) {
                         DiscordRPC.discordClearPresence();
                     }
                     int exitValue = 0; // Assume we exited fine
