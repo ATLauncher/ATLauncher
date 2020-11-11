@@ -9,3 +9,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Check all selected Curse mods for updates from Edit Mods [#409]
 - Allow ignoring OneDrive/Program Files warnings [#410]
 - Fix uninitialized DiscordRPC still trying to run things on close
+- Remove the version number from title bars

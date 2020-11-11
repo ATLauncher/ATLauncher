@@ -56,7 +56,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     private JMenuItem copy;
 
     public LauncherConsole() {
-        setTitle(Constants.LAUNCHER_NAME + " Console " + Constants.VERSION);
+        setTitle(Constants.LAUNCHER_NAME + " Console");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
         setLayout(new BorderLayout());

@@ -69,7 +69,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         LogManager.info("*(Not Actually)");
 
         App.launcher.setParentFrame(this);
-        setTitle(Constants.LAUNCHER_NAME + " " + Constants.VERSION);
+        setTitle(Constants.LAUNCHER_NAME);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(true);
         setLayout(new BorderLayout());
