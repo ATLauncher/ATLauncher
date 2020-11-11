@@ -159,7 +159,7 @@ public final class DialogManager {
             return this.parent;
         }
 
-        if (App.settings != null && App.launcher.getParent() != null) {
+        if (App.settings != null && App.launcher != null && App.launcher.getParent() != null) {
             return App.launcher.getParent();
         }
 

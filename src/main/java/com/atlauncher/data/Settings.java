@@ -46,6 +46,8 @@ public class Settings {
     public boolean firstTimeRun = true;
     public boolean hideJava9Warning = false;
     public List<String> addedPacks = new ArrayList<>();
+    public boolean ignoreOneDriveWarning = false;
+    public boolean ignoreProgramFilesWarning = false;
 
     // Window settings
     public boolean rememberWindowSizePosition = false;

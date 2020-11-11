@@ -7,3 +7,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 - Add progress dialog when checking for Curse mod updates [#409]
 - Check all selected Curse mods for updates from Edit Mods [#409]
+- Allow ignoring OneDrive/Program Files warnings [#410]
