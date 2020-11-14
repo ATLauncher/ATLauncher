@@ -329,8 +329,8 @@ public class InstanceV2 extends MinecraftVersion {
             String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
 
             com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
-                .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
-                .withHttpClient(httpClient);
+                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
+                    .withHttpClient(httpClient);
 
             pool.add(download);
         });
@@ -351,8 +351,7 @@ public class InstanceV2 extends MinecraftVersion {
                 if (index.mapToResources) {
                     FileUtils.copyFile(downloadedFile, this.getRoot().resolve("resources/" + key), true);
                 } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key),
-                        true);
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key), true);
                 }
             });
         }
@@ -859,7 +858,8 @@ public class InstanceV2 extends MinecraftVersion {
         StringBuilder sb = new StringBuilder("<ul>");
         this.launcher.mods.stream().filter(DisableableMod::isFromCurse).forEach(mod -> {
             if (mod.hasFullCurseInformation()) {
-                sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name).append("</a></li>");
+                sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name)
+                        .append("</a></li>");
             } else {
                 sb.append("<li>").append(mod.name).append("</li>");
             }
@@ -920,6 +920,7 @@ public class InstanceV2 extends MinecraftVersion {
         String oldName = this.launcher.name;
         File oldDir = getRoot().toFile();
         this.launcher.name = newName;
+        this.ROOT = FileSystem.INSTANCES.resolve(this.getSafeName());
         File newDir = getRoot().toFile();
         if (oldDir.renameTo(newDir)) {
             this.save();
