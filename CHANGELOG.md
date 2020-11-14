@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove the version number from title bars
 - Add in High Tech Darkness theme by Mysticpasta1 [#413]
 - Fix reinstalling instances after renaming it using wrong folder [#411]
+- Fix logic in DownloadableFile for arm [#397]
