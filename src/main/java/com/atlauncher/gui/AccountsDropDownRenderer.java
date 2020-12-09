@@ -25,10 +25,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import com.atlauncher.data.Account;
+import com.atlauncher.data.AbstractAccount;
 
 @SuppressWarnings("serial")
-public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<Account> {
+public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<AbstractAccount> {
     public AccountsDropDownRenderer() {
         setOpaque(true);
         setHorizontalAlignment(CENTER);
@@ -48,7 +48,7 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      * @param cellHasFocus True if the specified cell has the focus
      * @return A component whose paint() method will render the specified value
      */
-    public Component getListCellRendererComponent(JList list, Account account, int index, boolean isSelected,
+    public Component getListCellRendererComponent(JList list, AbstractAccount account, int index, boolean isSelected,
             boolean cellHasFocus) {
         if (account == null) {
             return this;
@@ -63,7 +63,7 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
         }
 
         ImageIcon icon = account.getMinecraftHead();
-        String username = account.getMinecraftUsername();
+        String username = account.minecraftUsername;
         setIcon(icon);
         setText(username);
         setFont(list.getFont());

@@ -160,12 +160,12 @@ public class Pack {
     }
 
     public boolean isTester() {
-        Account account = AccountManager.getSelectedAccount();
+        AbstractAccount account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }
         for (String tester : this.testers) {
-            if (tester.equalsIgnoreCase(account.getMinecraftUsername())) {
+            if (tester.equalsIgnoreCase(account.minecraftUsername)) {
                 return true;
             }
         }
@@ -201,12 +201,12 @@ public class Pack {
         if (this.type != PackType.PRIVATE) {
             return true;
         }
-        Account account = AccountManager.getSelectedAccount();
+        AbstractAccount account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }
         for (String player : this.allowedPlayers) {
-            if (player.equalsIgnoreCase(account.getMinecraftUsername())) {
+            if (player.equalsIgnoreCase(account.minecraftUsername)) {
                 return true;
             }
         }

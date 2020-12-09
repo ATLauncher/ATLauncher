@@ -18,8 +18,8 @@
 package com.atlauncher.utils;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.MojangAccount;
 import com.atlauncher.managers.LogManager;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.UserAuthentication;
@@ -51,19 +51,19 @@ public class Authentication {
         return response;
     }
 
-    public static LoginResponse login(Account account, boolean usePassword) {
-        UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.getClientToken())
+    public static LoginResponse login(MojangAccount account, boolean usePassword) {
+        UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.clientToken)
                 .createUserAuthentication(Agent.MINECRAFT);
-        LoginResponse response = new LoginResponse(account.getUsername());
+        LoginResponse response = new LoginResponse(account.username);
 
-        if (!usePassword && account.hasStore()) {
-            auth.loadFromStorage(account.getStore());
+        if (!usePassword && account.store != null) {
+            auth.loadFromStorage(account.store);
         }
 
-        auth.setUsername(account.getUsername());
+        auth.setUsername(account.username);
 
         if (usePassword) {
-            auth.setPassword(account.getPassword());
+            auth.setPassword(account.password);
         }
 
         if (auth.canLogIn()) {

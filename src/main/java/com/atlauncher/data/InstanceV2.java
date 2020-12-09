@@ -381,7 +381,7 @@ public class InstanceV2 extends MinecraftVersion {
     }
 
     public boolean launch() {
-        final Account account = AccountManager.getSelectedAccount();
+        final AbstractAccount account = AccountManager.getSelectedAccount();
 
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
@@ -424,21 +424,6 @@ public class InstanceV2 extends MinecraftVersion {
                 }
             }
 
-            LogManager.info("Logging into Minecraft!");
-            ProgressDialog loginDialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
-                    GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
-            loginDialog.addThread(new Thread(() -> {
-                loginDialog.setReturnValue(account.login());
-                loginDialog.close();
-            }));
-            loginDialog.start();
-
-            final LoginResponse session = (LoginResponse) loginDialog.getReturnValue();
-
-            if (session == null) {
-                return false;
-            }
-
             Path nativesTempDir = FileSystem.TEMP.resolve("natives-" + UUID.randomUUID().toString().replace("-", ""));
 
             try {
@@ -475,7 +460,34 @@ public class InstanceV2 extends MinecraftVersion {
                     LogManager.info("Launching pack " + this.launcher.pack + " " + this.launcher.version + " for "
                             + "Minecraft " + this.id);
 
-                    Process process = MCLauncher.launch(account, this, session, nativesTempDir);
+                    Process process = null;
+
+                    if (account instanceof MojangAccount) {
+                        MojangAccount mojangAccount = (MojangAccount) account;
+                        LogManager.info("Logging into Minecraft!");
+                        ProgressDialog loginDialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+                                GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                        loginDialog.addThread(new Thread(() -> {
+                            loginDialog.setReturnValue(mojangAccount.login());
+                            loginDialog.close();
+                        }));
+                        loginDialog.start();
+
+                        final LoginResponse session = (LoginResponse) loginDialog.getReturnValue();
+
+                        if (session == null) {
+                            return;
+                        }
+
+                        process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir);
+                    } else if (account instanceof MicrosoftAccount) {
+                        MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
+                        process = MCLauncher.launch(microsoftAccount, this, nativesTempDir);
+                    }
+
+                    if (process == null) {
+                        return;
+                    }
 
                     if ((App.autoLaunch != null && App.closeLauncher)
                             || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
@@ -527,13 +539,11 @@ public class InstanceV2 extends MinecraftVersion {
                         }
 
                         if (!LogManager.showDebug) {
-                            line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
-                            line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
-                            if (account.hasAccessToken()) {
+                            line = line.replace(account.minecraftUsername, "**MINECRAFTUSERNAME**");
+                            line = line.replace(account.username, "**MINECRAFTUSERNAME**");
+                            line = line.replace(account.uuid, "**UUID**");
+                            if (account.getAccessToken() != null) {
                                 line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                            }
-                            if (account.hasUUID()) {
-                                line = line.replace(account.getUUID(), "**UUID**");
                             }
                         }
                         LogManager.minecraft(line);

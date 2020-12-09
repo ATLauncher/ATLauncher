@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -124,16 +123,15 @@ public class PackManager {
     }
 
     public static void setPackVisbility(Pack pack, boolean collapsed) {
-        if (pack != null && AccountManager.getSelectedAccount() != null
-                && AccountManager.getSelectedAccount().isReal()) {
+        if (pack != null && AccountManager.getSelectedAccount() != null) {
             if (collapsed) {
                 // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedPacks().add(pack.getName());
+                if (!AccountManager.getSelectedAccount().collapsedPacks.contains(pack.getName())) {
+                    AccountManager.getSelectedAccount().collapsedPacks.add(pack.getName());
                 }
             } else {
                 // Opened It
-                AccountManager.getSelectedAccount().getCollapsedPacks().remove(pack.getName());
+                AccountManager.getSelectedAccount().collapsedPacks.remove(pack.getName());
             }
             AccountManager.saveAccounts();
             App.launcher.reloadVanillaPacksPanel();

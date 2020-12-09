@@ -119,7 +119,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
-        author.setText(AccountManager.getSelectedAccount().getMinecraftUsername());
+        author.setText(AccountManager.getSelectedAccount().minecraftUsername);
         topPanel.add(author, gbc);
 
         // Export File

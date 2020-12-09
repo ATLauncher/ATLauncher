@@ -27,12 +27,13 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.data.Account;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
@@ -50,7 +51,11 @@ import com.mojang.util.UUIDTypeAdapter;
 
 public class MCLauncher {
 
-    public static Process launch(Account account, Instance instance, LoginResponse response) throws IOException {
+    public static Process launch(MicrosoftAccount account, Instance instance) throws IOException {
+        return null;
+    }
+
+    public static Process launch(MojangAccount account, Instance instance, LoginResponse response) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
@@ -236,7 +241,7 @@ public class MCLauncher {
 
         if (launchArguments.size() != 0) {
             for (String argument : launchArguments) {
-                argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
+                argument = argument.replace("${auth_player_name}", account.minecraftUsername);
                 argument = argument.replace("${profile_name}", instance.getName());
                 argument = argument.replace("${user_properties}", props);
                 argument = argument.replace("${version_name}", instance.getMinecraftVersion());
@@ -260,7 +265,7 @@ public class MCLauncher {
                 }
             }
         } else {
-            arguments.add("--username=" + account.getMinecraftUsername());
+            arguments.add("--username=" + account.minecraftUsername);
             arguments.add("--session=" + account.getSession(response));
 
             // This is for 1.7
@@ -303,8 +308,8 @@ public class MCLauncher {
                 argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
             }
 
-            argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
-            argsString = argsString.replace(account.getUUID(), "REDACTED");
+            argsString = argsString.replace(account.minecraftUsername, "REDACTED");
+            argsString = argsString.replace(account.uuid, "REDACTED");
             argsString = argsString.replace(account.getAccessToken(), "REDACTED");
             argsString = argsString.replace(account.getSession(response), "REDACTED");
             argsString = argsString.replace(props, "REDACTED");
@@ -319,8 +324,13 @@ public class MCLauncher {
         return processBuilder.start();
     }
 
-    public static Process launch(Account account, InstanceV2 instance, LoginResponse response, Path nativesTempDir)
+    public static Process launch(MicrosoftAccount account, InstanceV2 instance, Path nativesTempDir)
             throws IOException {
+        return null;
+    }
+
+    public static Process launch(MojangAccount account, InstanceV2 instance, LoginResponse response,
+            Path nativesTempDir) throws IOException {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
@@ -461,7 +471,7 @@ public class MCLauncher {
         }
 
         for (String argument : instance.arguments.jvmAsStringList().stream().distinct().collect(Collectors.toList())) {
-            argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
+            argument = argument.replace("${auth_player_name}", account.minecraftUsername);
             argument = argument.replace("${profile_name}", instance.launcher.name);
             argument = argument.replace("${user_properties}", props);
             argument = argument.replace("${version_name}", instance.id);
@@ -491,7 +501,7 @@ public class MCLauncher {
         arguments.add(instance.mainClass);
 
         for (String argument : instance.arguments.gameAsStringList().stream().distinct().collect(Collectors.toList())) {
-            argument = argument.replace("${auth_player_name}", account.getMinecraftUsername());
+            argument = argument.replace("${auth_player_name}", account.minecraftUsername);
             argument = argument.replace("${profile_name}", instance.launcher.name);
             argument = argument.replace("${user_properties}", props);
             argument = argument.replace("${version_name}", instance.id);
@@ -530,8 +540,8 @@ public class MCLauncher {
                 argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
             }
 
-            argsString = argsString.replace(account.getMinecraftUsername(), "REDACTED");
-            argsString = argsString.replace(account.getUUID(), "REDACTED");
+            argsString = argsString.replace(account.minecraftUsername, "REDACTED");
+            argsString = argsString.replace(account.uuid, "REDACTED");
         }
 
         // always censor these

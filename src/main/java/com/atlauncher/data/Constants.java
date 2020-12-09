@@ -77,7 +77,20 @@ public class Constants {
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
     public static final String[] DATE_FORMATS = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", "dd MMMM yyyy",
             "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
-    public static final String[] SCREEN_RESOLUTIONS = { "854x480", "1280x720", "1366x768", "1600x900", "1920x1080", "2560x1440",
-            "3440x1440", "3840x2160" };
+    public static final String[] SCREEN_RESOLUTIONS = { "854x480", "1280x720", "1366x768", "1600x900", "1920x1080",
+            "2560x1440", "3440x1440", "3840x2160" };
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
+
+    // Microsoft login constants
+    public static final String MICROSOFT_LOGIN_URL = "https://login.live.com/oauth20_authorize.srf"
+            + "?client_id=00000000402b5328" + "&response_type=code"
+            + "&scope=service%3A%3Auser.auth.xboxlive.com%3A%3AMBI_SSL"
+            + "&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf";
+    public static final String MICROSOFT_REDIRECT_URL_SUFFIX = "https://login.live.com/oauth20_desktop.srf?code=";
+    public static final String MICROSOFT_AUTH_TOKEN_URL = "https://login.live.com/oauth20_token.srf";
+    public static final String MICROSOFT_XBL_AUTH_TOKEN_URL = "https://user.auth.xboxlive.com/user/authenticate";
+    public static final String MICROSOFT_XSTS_AUTH_TOKEN_URL = "https://xsts.auth.xboxlive.com/xsts/authorize";
+    public static final String MICROSOFT_MINECRAFT_LOGIN_URL = "https://api.minecraftservices.com/authentication/login_with_xbox";
+    public static final String MICROSOFT_MINECRAFT_STORE_URL = "https://api.minecraftservices.com/entitlements/mcstore";
+    public static final String MICROSOFT_MINECRAFT_PROFILE_URL = "https://api.minecraftservices.com/minecraft/profile";
 }

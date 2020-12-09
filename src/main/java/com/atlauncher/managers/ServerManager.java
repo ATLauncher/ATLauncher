@@ -72,15 +72,15 @@ public class ServerManager {
     }
 
     public static void setServerVisibility(Server server, boolean collapsed) {
-        if (server != null && AccountManager.getSelectedAccount().isReal()) {
+        if (server != null) {
             if (collapsed) {
                 // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedServers().add(server.name);
+                if (!AccountManager.getSelectedAccount().collapsedServers.contains(server.name)) {
+                    AccountManager.getSelectedAccount().collapsedServers.add(server.name);
                 }
             } else {
                 // Opened It
-                AccountManager.getSelectedAccount().getCollapsedServers().remove(server.name);
+                AccountManager.getSelectedAccount().collapsedServers.remove(server.name);
             }
             AccountManager.saveAccounts();
             App.launcher.reloadServersPanel();

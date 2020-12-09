@@ -113,7 +113,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         collapsed = false;
         commonConstructor();
         if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().getCollapsedPacks().contains(pack.getName())) {
+            if (AccountManager.getSelectedAccount().collapsedPacks.contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -133,7 +133,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         collapsed = false;
         commonConstructor();
         if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
+            if (AccountManager.getSelectedAccount().collapsedInstances.contains(instance.getName())) {
                 setCollapsed(true);
             }
         }
@@ -154,7 +154,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         collapsed = false;
         commonConstructor();
         if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
+            if (AccountManager.getSelectedAccount().collapsedInstances.contains(instanceV2.launcher.name)) {
                 setCollapsed(true);
             }
         }
@@ -168,7 +168,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         collapsed = false;
         commonConstructor();
         if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().getCollapsedServers().contains(server.name)) {
+            if (AccountManager.getSelectedAccount().collapsedServers.contains(server.name)) {
                 setCollapsed(true);
             }
         }

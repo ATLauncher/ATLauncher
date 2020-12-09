@@ -166,15 +166,15 @@ public class InstanceManager {
     }
 
     public static void setInstanceVisbility(Instance instance, boolean collapsed) {
-        if (instance != null && AccountManager.getSelectedAccount().isReal()) {
+        if (instance != null) {
             if (collapsed) {
                 // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedInstances().contains(instance.getName())) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().add(instance.getName());
+                if (!AccountManager.getSelectedAccount().collapsedInstances.contains(instance.getName())) {
+                    AccountManager.getSelectedAccount().collapsedInstances.add(instance.getName());
                 }
             } else {
                 // Opened It
-                AccountManager.getSelectedAccount().getCollapsedInstances().remove(instance.getName());
+                AccountManager.getSelectedAccount().collapsedInstances.remove(instance.getName());
             }
             AccountManager.saveAccounts();
             App.launcher.reloadInstancesPanel();
@@ -182,15 +182,15 @@ public class InstanceManager {
     }
 
     public static void setInstanceVisbility(InstanceV2 instanceV2, boolean collapsed) {
-        if (instanceV2 != null && AccountManager.getSelectedAccount().isReal()) {
+        if (instanceV2 != null) {
             if (collapsed) {
                 // Closed It
-                if (!AccountManager.getSelectedAccount().getCollapsedInstances().contains(instanceV2.launcher.name)) {
-                    AccountManager.getSelectedAccount().getCollapsedInstances().add(instanceV2.launcher.name);
+                if (!AccountManager.getSelectedAccount().collapsedInstances.contains(instanceV2.launcher.name)) {
+                    AccountManager.getSelectedAccount().collapsedInstances.add(instanceV2.launcher.name);
                 }
             } else {
                 // Opened It
-                AccountManager.getSelectedAccount().getCollapsedInstances().remove(instanceV2.launcher.name);
+                AccountManager.getSelectedAccount().collapsedInstances.remove(instanceV2.launcher.name);
             }
             AccountManager.saveAccounts();
             App.launcher.reloadInstancesPanel();

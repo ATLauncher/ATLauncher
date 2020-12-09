@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.data.Account;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.MinecraftServer;
@@ -32,8 +32,8 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
 
 public final class Data {
-    public static final List<Account> ACCOUNTS = new LinkedList<>();
-    public static Account SELECTED_ACCOUNT = null; // Account using the Launcher
+    public static final List<AbstractAccount> ACCOUNTS = new LinkedList<>();
+    public static AbstractAccount SELECTED_ACCOUNT = null; // Account using the Launcher
 
     public static final List<News> NEWS = new LinkedList<>();
 

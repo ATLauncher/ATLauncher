@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.data.Account;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
@@ -49,7 +49,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private JButton toggleConsole;
     private JButton openFolder;
     private JButton updateData;
-    private JComboBox<Account> username;
+    private JComboBox<AbstractAccount> username;
 
     public LauncherBottomBar() {
         JPanel leftSide = new JPanel();
@@ -109,7 +109,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 if (!dontSave) {
                     Analytics.sendEvent("Switch", "Account");
-                    AccountManager.switchAccount((Account) username.getSelectedItem());
+                    AccountManager.switchAccount((AbstractAccount) username.getSelectedItem());
                 }
             }
         });
@@ -133,11 +133,11 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
 
-        for (Account account : AccountManager.getAccounts()) {
+        for (AbstractAccount account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
 
-        Account active = AccountManager.getSelectedAccount();
+        AbstractAccount active = AccountManager.getSelectedAccount();
 
         if (active != null) {
             username.setSelectedItem(active);
@@ -148,7 +148,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         dontSave = true;
         username.removeAllItems();
 
-        for (Account account : AccountManager.getAccounts()) {
+        for (AbstractAccount account : AccountManager.getAccounts()) {
             username.addItem(account);
         }
 

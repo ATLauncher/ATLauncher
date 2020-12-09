@@ -1,0 +1,120 @@
+package com.atlauncher.utils;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import com.atlauncher.FileSystem;
+import com.atlauncher.managers.LogManager;
+
+public class SkinUtils {
+    public static ImageIcon getDefaultHead() {
+        return getHead(FileSystem.SKINS.resolve("default.png").toFile());
+    }
+
+    public static ImageIcon getHead(File file) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (image == null) {
+            file = FileSystem.SKINS.resolve("default.png").toFile();
+        }
+
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        BufferedImage main = image.getSubimage(8, 8, 8, 8);
+        BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
+        BufferedImage head = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics g = head.getGraphics();
+        g.drawImage(main, 0, 0, null);
+        if (Utils.nonTransparentPixels(helmet) <= 32) {
+            g.drawImage(helmet, 0, 0, null);
+        }
+
+        return new ImageIcon(head.getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+    }
+
+    public static ImageIcon getDefaultSkin() {
+        return getSkin(FileSystem.SKINS.resolve("default.png").toFile());
+    }
+
+    public static ImageIcon getSkin(File file) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (image == null) {
+            file = FileSystem.SKINS.resolve("default.png").toFile();
+        }
+
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        // new skins are 64x64 and old ones are 64x32
+        boolean isNewImage = image.getWidth() == 64 && image.getHeight() == 64;
+
+        BufferedImage head = image.getSubimage(8, 8, 8, 8);
+        BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
+
+        BufferedImage leftArm = image.getSubimage(44, 20, 4, 12);
+        BufferedImage rightArm;
+
+        if (!isNewImage || Utils.nonTransparentPixels(image.getSubimage(36, 52, 4, 12)) == 48) {
+            rightArm = Utils.flipImage(leftArm);
+        } else {
+            rightArm = image.getSubimage(36, 52, 4, 12);
+        }
+
+        BufferedImage body = image.getSubimage(20, 20, 8, 12);
+
+        BufferedImage leftLeg = image.getSubimage(4, 20, 4, 12);
+        BufferedImage rightLeg;
+
+        if (!isNewImage || Utils.nonTransparentPixels(image.getSubimage(20, 52, 4, 12)) == 48) {
+            rightLeg = Utils.flipImage(leftLeg);
+        } else {
+            rightLeg = image.getSubimage(20, 52, 4, 12);
+        }
+
+        BufferedImage skin = new BufferedImage(16, 32, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics g = skin.getGraphics();
+        g.drawImage(head, 4, 0, null);
+
+        // Draw the helmet on the skin if more than half of the pixels are not
+        // transparent.
+        if (Utils.nonTransparentPixels(helmet) <= 32) {
+            g.drawImage(helmet, 4, 0, null);
+        }
+
+        g.drawImage(leftArm, 0, 8, null);
+        g.drawImage(rightArm, 12, 8, null);
+
+        g.drawImage(body, 4, 8, null);
+
+        g.drawImage(leftLeg, 4, 20, null);
+        g.drawImage(rightLeg, 8, 20, null);
+
+        return new ImageIcon(skin.getScaledInstance(128, 256, Image.SCALE_SMOOTH));
+    }
+}

@@ -290,7 +290,7 @@ public class Instance implements Cloneable {
         this.minecraftArguments = minecraftArguments;
         this.isDev = isDev;
         this.isPlayable = isPlayable;
-        if (enableUserLock && !AccountManager.getSelectedAccount().isUUIDNull()) {
+        if (enableUserLock && AccountManager.getSelectedAccount().uuid != null) {
             this.userLock = AccountManager.getSelectedAccount().getUUIDNoDashes();
         } else {
             this.userLock = null;
@@ -1211,7 +1211,7 @@ public class Instance implements Cloneable {
      */
     public boolean canPlay() {
         // Make sure an account is selected first.
-        if (AccountManager.getSelectedAccount() == null || !AccountManager.getSelectedAccount().isReal()) {
+        if (AccountManager.getSelectedAccount() == null) {
             return false;
         }
 
@@ -1349,7 +1349,7 @@ public class Instance implements Cloneable {
      * @return true if the Minecraft process was started
      */
     public boolean launch() {
-        final Account account = AccountManager.getSelectedAccount();
+        final AbstractAccount account = AccountManager.getSelectedAccount();
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                     .setContent(GetText.tr("Cannot play instance as you have no account selected."))
@@ -1391,21 +1391,6 @@ public class Instance implements Cloneable {
                 }
             }
 
-            LogManager.info("Logging into Minecraft!");
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
-                    GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
-            dialog.addThread(new Thread(() -> {
-                dialog.setReturnValue(account.login());
-                dialog.close();
-            }));
-            dialog.start();
-
-            final LoginResponse session = (LoginResponse) dialog.getReturnValue();
-
-            if (session == null) {
-                return false;
-            }
-
             Analytics.sendEvent(this.getPackName() + " - " + this.getVersion(), "Play", "Instance");
 
             Thread launcher = new Thread(() -> {
@@ -1418,7 +1403,34 @@ public class Instance implements Cloneable {
                     LogManager.info("Launching pack " + getPackName() + " " + getVersion() + " for " + "Minecraft "
                             + getMinecraftVersion());
 
-                    Process process = MCLauncher.launch(account, Instance.this, session);
+                    Process process = null;
+
+                    if (account instanceof MojangAccount) {
+                        MojangAccount mojangAccount = (MojangAccount) account;
+                        LogManager.info("Logging into Minecraft!");
+                        ProgressDialog loginDialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+                                GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                        loginDialog.addThread(new Thread(() -> {
+                            loginDialog.setReturnValue(mojangAccount.login());
+                            loginDialog.close();
+                        }));
+                        loginDialog.start();
+
+                        final LoginResponse session = (LoginResponse) loginDialog.getReturnValue();
+
+                        if (session == null) {
+                            return;
+                        }
+
+                        process = MCLauncher.launch(mojangAccount, this, session);
+                    } else if (account instanceof MicrosoftAccount) {
+                        MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
+                        process = MCLauncher.launch(microsoftAccount, this);
+                    }
+
+                    if (process == null) {
+                        return;
+                    }
 
                     if ((App.autoLaunch != null && App.closeLauncher)
                             || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
@@ -1461,13 +1473,11 @@ public class Instance implements Cloneable {
                         }
 
                         if (!LogManager.showDebug) {
-                            line = line.replace(account.getMinecraftUsername(), "**MINECRAFTUSERNAME**");
-                            line = line.replace(account.getUsername(), "**MINECRAFTUSERNAME**");
-                            if (account.hasAccessToken()) {
+                            line = line.replace(account.minecraftUsername, "**MINECRAFTUSERNAME**");
+                            line = line.replace(account.username, "**MINECRAFTUSERNAME**");
+                            line = line.replace(account.uuid, "**UUID**");
+                            if (account.getAccessToken() != null) {
                                 line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                            }
-                            if (account.hasUUID()) {
-                                line = line.replace(account.getUUID(), "**UUID**");
                             }
                         }
                         LogManager.minecraft(line);

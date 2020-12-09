@@ -26,6 +26,7 @@ import javax.swing.JDialog;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
+import com.atlauncher.data.Constants;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
@@ -49,25 +50,6 @@ import okhttp3.RequestBody;
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
 
-    private static final String loginUrl = "https://login.live.com/oauth20_authorize.srf"
-            + "?client_id=00000000402b5328" + "&response_type=code"
-            + "&scope=service%3A%3Auser.auth.xboxlive.com%3A%3AMBI_SSL"
-            + "&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf";
-
-    private static final String redirectUrlSuffix = "https://login.live.com/oauth20_desktop.srf?code=";
-
-    private static final String authTokenUrl = "https://login.live.com/oauth20_token.srf";
-
-    private static final String xblAuthUrl = "https://user.auth.xboxlive.com/user/authenticate";
-
-    private static final String xstsAuthUrl = "https://xsts.auth.xboxlive.com/xsts/authorize";
-
-    private static final String mcLoginUrl = "https://api.minecraftservices.com/authentication/login_with_xbox";
-
-    private static final String mcStoreUrl = "https://api.minecraftservices.com/entitlements/mcstore";
-
-    private static final String mcProfileUrl = "https://api.minecraftservices.com/minecraft/profile";
-
     public LoginWithMicrosoftDialog() {
         super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.APPLICATION_MODAL);
 
@@ -81,7 +63,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         Platform.runLater(() -> {
             WebView webView = new WebView();
 
-            webView.getEngine().load(loginUrl);
+            webView.getEngine().load(Constants.MICROSOFT_LOGIN_URL);
             webView.getEngine().setJavaScriptEnabled(true);
             webView.setPrefHeight(600);
             webView.setPrefWidth(650);
@@ -90,7 +72,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             webView.getEngine().getHistory().getEntries().addListener((ListChangeListener<WebHistory.Entry>) c -> {
                 if (c.next() && c.wasAdded()) {
                     for (WebHistory.Entry entry : c.getAddedSubList()) {
-                        if (entry.getUrl().startsWith(redirectUrlSuffix)) {
+                        if (entry.getUrl().startsWith(Constants.MICROSOFT_REDIRECT_URL_SUFFIX)) {
                             String authCode = entry.getUrl().substring(entry.getUrl().indexOf("=") + 1,
                                     entry.getUrl().indexOf("&"));
                             add(new LoadingPanel(), BorderLayout.CENTER);
@@ -113,7 +95,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 .add("redirect_uri", "https://login.live.com/oauth20_desktop.srf")
                 .add("scope", "service::user.auth.xboxlive.com::MBI_SSL").build();
 
-        OauthTokenResponse oauthTokenResponse = Download.build().setUrl(authTokenUrl)
+        OauthTokenResponse oauthTokenResponse = Download.build().setUrl(Constants.MICROSOFT_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/x-www-form-urlencoded").post(data)
                 .asClass(OauthTokenResponse.class);
         System.out.println("oauthTokenResponse: " + Gsons.DEFAULT.toJson(oauthTokenResponse));
@@ -126,7 +108,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 Map.of("AuthMethod", "RPS", "SiteName", "user.auth.xboxlive.com", "RpsTicket", accessToken),
                 "RelyingParty", "http://auth.xboxlive.com", "TokenType", "JWT");
 
-        XboxLiveAuthResponse xblAuthResponse = Download.build().setUrl(xblAuthUrl)
+        XboxLiveAuthResponse xblAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XBL_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
                 .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
                 .asClass(XboxLiveAuthResponse.class);
@@ -139,7 +121,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         Map<Object, Object> data = Map.of("Properties", Map.of("SandboxId", "RETAIL", "UserTokens", List.of(xblToken)),
                 "RelyingParty", "rp://api.minecraftservices.com/", "TokenType", "JWT");
 
-        XboxLiveAuthResponse xstsAuthResponse = Download.build().setUrl(xstsAuthUrl)
+        XboxLiveAuthResponse xstsAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XSTS_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
                 .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
                 .asClass(XboxLiveAuthResponse.class);
@@ -149,19 +131,19 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     }
 
     private void acquireMinecraftToken(String xblUhs, String xblXsts) {
-        LoginResponse loginResponse = Download.build().setUrl(mcLoginUrl).header("Content-Type", "application/json")
-                .header("Accept", "application/json")
+        LoginResponse loginResponse = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_LOGIN_URL)
+                .header("Content-Type", "application/json").header("Accept", "application/json")
                 .post(RequestBody.create(
                         Gsons.DEFAULT.toJson(Map.of("identityToken", "XBL3.0 x=" + xblUhs + ";" + xblXsts)),
                         MediaType.get("application/json; charset=utf-8")))
                 .asClass(LoginResponse.class);
         System.out.println("loginResponse: " + Gsons.DEFAULT.toJson(loginResponse));
 
-        Store store = Download.build().setUrl(mcStoreUrl).header("Authorization", "Bearer " + loginResponse.accessToken)
-                .asClass(Store.class);
+        Store store = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_STORE_URL)
+                .header("Authorization", "Bearer " + loginResponse.accessToken).asClass(Store.class);
         System.out.println("store: " + Gsons.DEFAULT.toJson(store));
 
-        Profile profile = Download.build().setUrl(mcProfileUrl)
+        Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
                 .header("Authorization", "Bearer " + loginResponse.accessToken).asClass(Profile.class);
         System.out.println("profile: " + Gsons.DEFAULT.toJson(profile));
     }
