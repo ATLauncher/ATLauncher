@@ -18,9 +18,11 @@ plugins {
     id 'edu.sc.seis.launch4j' version '2.4.8'
     id 'net.minecrell.licenser' version '0.4.1'
     id 'com.github.ben-manes.versions' version '0.33.0'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 apply plugin: 'org.mini2Dx.gettext'
+apply plugin: 'org.openjfx.javafxplugin'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -71,6 +73,11 @@ application {
 
 test {
     useJUnitPlatform()
+}
+
+javafx {
+    version = "13"
+    modules("javafx.swing", "javafx.web")
 }
 
 jar {

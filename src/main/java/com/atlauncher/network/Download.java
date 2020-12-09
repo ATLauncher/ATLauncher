@@ -25,6 +25,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -39,6 +41,7 @@ import com.google.gson.Gson;
 import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.CacheControl;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -61,6 +64,7 @@ public final class Download {
     private OkHttpClient httpClient = Network.CLIENT;
     private RequestBody post = null;
     private CacheControl cacheControl = null;
+    private Map<String, String> headers = new HashMap<String, String>();
 
     // generated on/after request
     private Response response;
@@ -212,6 +216,11 @@ public final class Download {
         return this;
     }
 
+    public Download header(String name, String value) {
+        this.headers.put(name, value);
+        return this;
+    }
+
     public Download cached() {
         return cached(null);
     }
@@ -247,6 +256,10 @@ public final class Download {
 
         if (this.post != null) {
             builder.post(this.post);
+        }
+
+        if (this.headers.size() != 0) {
+            builder.headers(Headers.of(this.headers));
         }
 
         if (this.cacheControl != null) {

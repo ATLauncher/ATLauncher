@@ -48,6 +48,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
@@ -71,6 +72,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private JCheckBox rememberField;
     private JButton leftButton;
     private JButton rightButton;
+    private JButton loginWithMicrosoftButton;
     private final JMenuItem updateSkin;
     private final JPopupMenu contextMenu; // Right click menu
     private final Account fillerAccount;
@@ -245,8 +247,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 }
             }
         });
+        loginWithMicrosoftButton = new JButton(GetText.tr("Login with Microsoft"));
+        loginWithMicrosoftButton.addActionListener(e -> {
+            new LoginWithMicrosoftDialog();
+        });
         buttons.add(leftButton);
         buttons.add(rightButton);
+        buttons.add(loginWithMicrosoftButton);
         bottomPanel.add(buttons, gbc);
 
         rightPanel.add(topPanel, BorderLayout.NORTH);
