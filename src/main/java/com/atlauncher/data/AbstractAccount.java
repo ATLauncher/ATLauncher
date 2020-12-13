@@ -68,6 +68,11 @@ public abstract class AbstractAccount implements Serializable {
     public String uuid;
 
     /**
+     * The type of the account.
+     */
+    public String type;
+
+    /**
      * The pack names this account has collapsed in the {@link PacksTab}, if any.
      */
     public List<String> collapsedPacks = new ArrayList<>();

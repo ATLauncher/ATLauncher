@@ -247,10 +247,10 @@ public class MCLauncher {
                 argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
                 argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
                 argument = argument.replace("${natives_directory}", instance.getNativesDirectory().getAbsolutePath());
+                argument = argument.replace("${user_type}", account.type);
 
                 // TODO: what is this now? Is this legacy? I dunno ¯\_(ツ)_/¯
                 argument = argument.replace("${auth_session}", account.getAccessToken());
-                argument = argument.replace("${user_type}", "microsoft");
 
                 if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
                     arguments.add(argument);
@@ -518,9 +518,7 @@ public class MCLauncher {
                 argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
                 argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
                 argument = argument.replace("${natives_directory}", instance.getNativesDirectory().getAbsolutePath());
-                argument = argument.replace("${user_type}",
-                        response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
-                                : response.getAuth().getUserType().getName());
+                argument = argument.replace("${user_type}", account.type);
 
                 if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
                     arguments.add(argument);
@@ -738,10 +736,10 @@ public class MCLauncher {
             argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
             argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
             argument = argument.replace("${natives_directory}", nativesTempDir.toAbsolutePath().toString());
+            argument = argument.replace("${user_type}", account.type);
 
             // TODO: what is this now? Is this legacy? I dunno ¯\_(ツ)_/¯
             argument = argument.replace("${auth_session}", account.getAccessToken());
-            argument = argument.replace("${user_type}", "microsoft");
 
             if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
                 arguments.add(argument);
@@ -768,10 +766,10 @@ public class MCLauncher {
             argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
             argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
             argument = argument.replace("${natives_directory}", nativesTempDir.toAbsolutePath().toString());
+            argument = argument.replace("${user_type}", account.type);
 
             // TODO: what is this now? Is this legacy? I dunno ¯\_(ツ)_/¯
             argument = argument.replace("${auth_session}", account.getAccessToken());
-            argument = argument.replace("${user_type}", "microsoft");
 
             if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
                 arguments.add(argument);
@@ -967,9 +965,7 @@ public class MCLauncher {
             argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
             argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
             argument = argument.replace("${natives_directory}", nativesTempDir.toAbsolutePath().toString());
-            argument = argument.replace("${user_type}",
-                    response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
-                            : response.getAuth().getUserType().getName());
+            argument = argument.replace("${user_type}", account.type);
 
             if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
                 arguments.add(argument);
@@ -997,9 +993,7 @@ public class MCLauncher {
             argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
             argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
             argument = argument.replace("${natives_directory}", nativesTempDir.toAbsolutePath().toString());
-            argument = argument.replace("${user_type}",
-                    response.isOffline() ? com.mojang.authlib.UserType.MOJANG.getName()
-                            : response.getAuth().getUserType().getName());
+            argument = argument.replace("${user_type}", account.type);
 
             if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
                 arguments.add(argument);

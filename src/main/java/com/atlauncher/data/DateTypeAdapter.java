@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.minecraft;
+package com.atlauncher.data;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -35,7 +36,7 @@ import com.google.gson.JsonSyntaxException;
 
 public class DateTypeAdapter implements JsonDeserializer<Date>, JsonSerializer<Date> {
     private final DateFormat enUsFormat = DateFormat.getDateTimeInstance(2, 2, Locale.US);
-    private final DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    private final DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     @Override
     public Date deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
@@ -47,18 +48,14 @@ public class DateTypeAdapter implements JsonDeserializer<Date>, JsonSerializer<D
         }
         String value = json.getAsString();
         synchronized (enUsFormat) {
+            this.iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
             try {
                 return enUsFormat.parse(value);
             } catch (ParseException e) {
                 try {
                     return iso8601Format.parse(value);
                 } catch (ParseException e2) {
-                    try {
-                        String tmp = value.replace("Z", "+00:00");
-                        return iso8601Format.parse(tmp.substring(0, 22) + tmp.substring(23));
-                    } catch (ParseException e3) {
-                        throw new JsonSyntaxException("Invalid date " + value, e3);
-                    }
+                    throw new JsonSyntaxException("Invalid date " + value, e2);
                 }
             }
         }
@@ -67,8 +64,8 @@ public class DateTypeAdapter implements JsonDeserializer<Date>, JsonSerializer<D
     @Override
     public JsonElement serialize(Date value, Type type, JsonSerializationContext context) {
         synchronized (enUsFormat) {
-            String ret = this.iso8601Format.format(value);
-            return new JsonPrimitive(ret.substring(0, 22) + ":" + ret.substring(22));
+            this.iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return new JsonPrimitive(this.iso8601Format.format(value));
         }
     }
 }

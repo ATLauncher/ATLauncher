@@ -17,8 +17,11 @@
  */
 package com.atlauncher;
 
+import java.util.Date;
+
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.AccountTypeAdapter;
+import com.atlauncher.data.DateTypeAdapter;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.PackVersionTypeAdapter;
 import com.atlauncher.data.minecraft.Arguments;
@@ -34,7 +37,8 @@ import com.google.gson.GsonBuilder;
 
 public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder()
-            .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter()).setPrettyPrinting().create();
+            .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
+            .registerTypeAdapter(Date.class, new DateTypeAdapter()).setPrettyPrinting().create();
 
     public static final Gson DEFAULT_ALT = new GsonBuilder()
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).setPrettyPrinting().create();

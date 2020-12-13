@@ -33,7 +33,7 @@ public class AccountTypeAdapter implements JsonSerializer<AbstractAccount>, Json
             final JsonSerializationContext context) {
         final JsonObject rootJsonObject = context.serialize(object).getAsJsonObject();
 
-        rootJsonObject.addProperty("type", object.getClass().getName());
+        rootJsonObject.addProperty("internalType", object.getClass().getName());
 
         return rootJsonObject;
     }
@@ -43,7 +43,7 @@ public class AccountTypeAdapter implements JsonSerializer<AbstractAccount>, Json
             throws JsonParseException {
         Type actualType;
         try {
-            actualType = Class.forName(json.getAsJsonObject().get("type").getAsString());
+            actualType = Class.forName(json.getAsJsonObject().get("internalType").getAsString());
         } catch (ClassNotFoundException e) {
             throw new JsonParseException(e);
         }

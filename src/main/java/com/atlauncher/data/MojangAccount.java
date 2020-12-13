@@ -95,6 +95,7 @@ public class MojangAccount extends AbstractAccount {
         this.remember = remember;
         this.clientToken = clientToken;
         this.store = store;
+        this.type = "Mojang";
     }
 
     @Override

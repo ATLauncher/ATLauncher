@@ -17,9 +17,11 @@
  */
 package com.atlauncher.data;
 
+import java.util.Date;
 import java.util.Optional;
 
 import com.atlauncher.data.microsoft.LoginResponse;
+import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.network.Download;
 
@@ -34,11 +36,26 @@ public class MicrosoftAccount extends AbstractAccount {
      */
     public String accessToken;
 
-    public MicrosoftAccount(LoginResponse loginResponse, Profile profile) {
+    /**
+     * The Microsoft oauth token.
+     */
+    public OauthTokenResponse oauthToken;
+
+    /**
+     * The date that the accessToken expires at.
+     */
+    public Date accessTokenExpiresAt;
+
+    public MicrosoftAccount(OauthTokenResponse oauthTokenResponse, LoginResponse loginResponse, Profile profile) {
+        this.oauthToken = oauthTokenResponse;
         this.accessToken = loginResponse.accessToken;
         this.minecraftUsername = profile.name;
         this.uuid = profile.id;
         this.username = loginResponse.username;
+        this.type = "Xbox";
+
+        this.accessTokenExpiresAt = new Date();
+        this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
     }
 
     @Override

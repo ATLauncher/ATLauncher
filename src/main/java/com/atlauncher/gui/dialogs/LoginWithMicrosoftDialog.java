@@ -129,8 +129,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         server.start();
     }
 
-    private void addAccount(LoginResponse loginResponse, Profile profile) {
-        MicrosoftAccount account = new MicrosoftAccount(loginResponse, profile);
+    private void addAccount(OauthTokenResponse oauthTokenResponse, LoginResponse loginResponse, Profile profile) {
+        MicrosoftAccount account = new MicrosoftAccount(oauthTokenResponse, loginResponse, profile);
 
         AccountManager.addAccount(account);
     }
@@ -146,12 +146,12 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 .asClass(OauthTokenResponse.class);
         System.out.println("oauthTokenResponse: " + Gsons.DEFAULT.toJson(oauthTokenResponse));
 
-        acquireXBLToken(oauthTokenResponse.accessToken);
+        acquireXBLToken(oauthTokenResponse);
     }
 
-    private void acquireXBLToken(String accessToken) {
+    private void acquireXBLToken(OauthTokenResponse oauthTokenResponse) {
         Map<Object, Object> data = Map.of("Properties",
-                Map.of("AuthMethod", "RPS", "SiteName", "user.auth.xboxlive.com", "RpsTicket", "d=" + accessToken),
+                Map.of("AuthMethod", "RPS", "SiteName", "user.auth.xboxlive.com", "RpsTicket", "d=" + oauthTokenResponse.accessToken),
                 "RelyingParty", "http://auth.xboxlive.com", "TokenType", "JWT");
 
         XboxLiveAuthResponse xblAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XBL_AUTH_TOKEN_URL)
@@ -161,10 +161,10 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 .asClass(XboxLiveAuthResponse.class);
         System.out.println("xblAuthResponse: " + Gsons.DEFAULT.toJson(xblAuthResponse));
 
-        acquireXsts(xblAuthResponse.token);
+        acquireXsts(oauthTokenResponse, xblAuthResponse.token);
     }
 
-    private void acquireXsts(String xblToken) {
+    private void acquireXsts(OauthTokenResponse oauthTokenResponse, String xblToken) {
         Map<Object, Object> data = Map.of("Properties", Map.of("SandboxId", "RETAIL", "UserTokens", List.of(xblToken)),
                 "RelyingParty", "rp://api.minecraftservices.com/", "TokenType", "JWT");
 
@@ -175,10 +175,10 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 .asClass(XboxLiveAuthResponse.class);
         System.out.println("xstsAuthResponse: " + Gsons.DEFAULT.toJson(xstsAuthResponse));
 
-        acquireMinecraftToken(xstsAuthResponse.displayClaims.xui.get(0).uhs, xstsAuthResponse.token);
+        acquireMinecraftToken(oauthTokenResponse, xstsAuthResponse.displayClaims.xui.get(0).uhs, xstsAuthResponse.token);
     }
 
-    private void acquireMinecraftToken(String xblUhs, String xblXsts) {
+    private void acquireMinecraftToken(OauthTokenResponse oauthTokenResponse, String xblUhs, String xblXsts) {
         LoginResponse loginResponse = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_LOGIN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
                 .post(RequestBody.create(
@@ -196,6 +196,6 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         System.out.println("profile: " + Gsons.DEFAULT.toJson(profile));
 
         // add the account
-        addAccount(loginResponse, profile);
+        addAccount(oauthTokenResponse, loginResponse, profile);
     }
 }
