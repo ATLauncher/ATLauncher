@@ -261,6 +261,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         loginWithMicrosoftButton = new JButton(GetText.tr("Login with Microsoft"));
         loginWithMicrosoftButton.addActionListener(e -> {
             new LoginWithMicrosoftDialog();
+            accountsComboBox.removeAllItems();
+            for (AbstractAccount accountt : AccountManager.getAccounts()) {
+                accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
+            }
+            accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
         });
         buttons.add(leftButton);
         buttons.add(rightButton);
@@ -334,23 +339,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             if (accountsComboBox.getSelectedIndex() == 0) {
                 account = new MojangAccount(username, password, response, remember, clientToken);
                 AccountManager.addAccount(account);
-                Analytics.sendEvent("Add", "Account");
-                LogManager.info("Added Account " + account);
-
-                if (AccountManager.getAccounts().size() > 1) {
-                    // not first account? ask if they want to switch to it
-                    int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
-                            .setContent(GetText.tr("Account added successfully. Switch to it now?"))
-                            .setType(DialogManager.INFO).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
-                            .show();
-
-                    if (ret == 0) {
-                        AccountManager.switchAccount(account);
-                    }
-                } else {
-                    // first account? switch to it immediately
-                    AccountManager.switchAccount(account);
-                }
             } else {
                 account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem()).getValue();
 
@@ -375,8 +363,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                         .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
-            AccountManager.saveAccounts();
-            com.atlauncher.evnt.manager.AccountManager.post();
             accountsComboBox.removeAllItems();
             for (AbstractAccount accountt : AccountManager.getAccounts()) {
                 accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));

@@ -34,10 +34,14 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
+
+import org.mini2Dx.gettext.GetText;
 
 public class AccountManager {
     private static final Type abstractAccountListType = new TypeToken<List<AbstractAccount>>() {
@@ -160,7 +164,29 @@ public class AccountManager {
     }
 
     public static void addAccount(AbstractAccount account) {
+        String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
+
+        Analytics.sendEvent(accountType, "Add", "Account");
+        LogManager.info("Added " + accountType + " Account " + account);
+
         Data.ACCOUNTS.add(account);
+
+        if (Data.ACCOUNTS.size() > 1) {
+            // not first account? ask if they want to switch to it
+            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
+                    .setContent(GetText.tr("Account added successfully. Switch to it now?")).setType(DialogManager.INFO)
+                    .addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No")).show();
+
+            if (ret == 0) {
+                switchAccount(account);
+            }
+        } else {
+            // first account? switch to it immediately
+            switchAccount(account);
+        }
+
+        saveAccounts();
+        com.atlauncher.evnt.manager.AccountManager.post();
     }
 
     public static void removeAccount(AbstractAccount account) {

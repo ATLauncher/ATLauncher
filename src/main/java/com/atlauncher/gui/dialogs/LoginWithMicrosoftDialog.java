@@ -27,12 +27,14 @@ import javax.swing.JDialog;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.Store;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.panels.LoadingPanel;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Download;
 
 import org.mini2Dx.gettext.GetText;
@@ -77,6 +79,9 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                                     entry.getUrl().indexOf("&"));
                             add(new LoadingPanel(), BorderLayout.CENTER);
                             acquireAccessToken(authCode);
+
+                            setVisible(false);
+                            dispose();
                         }
                     }
                 }
@@ -89,9 +94,15 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         this.setVisible(true);
     }
 
+    private void addAccount(LoginResponse loginResponse, Profile profile) {
+        MicrosoftAccount account = new MicrosoftAccount(loginResponse, profile);
+
+        AccountManager.addAccount(account);
+    }
+
     private void acquireAccessToken(String authcode) {
-        RequestBody data = new FormBody.Builder().add("client_id", "00000000402b5328").add("code", authcode)
-                .add("grant_type", "authorization_code")
+        RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
+                .add("code", authcode).add("grant_type", "authorization_code")
                 .add("redirect_uri", "https://login.live.com/oauth20_desktop.srf")
                 .add("scope", "service::user.auth.xboxlive.com::MBI_SSL").build();
 
@@ -146,5 +157,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
                 .header("Authorization", "Bearer " + loginResponse.accessToken).asClass(Profile.class);
         System.out.println("profile: " + Gsons.DEFAULT.toJson(profile));
+
+        // add the account
+        addAccount(loginResponse, profile);
     }
 }
