@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,11 +30,18 @@ import java.util.UUID;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.FileSystem;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.Download;
 import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.utils.Utils;
 import com.mojang.util.UUIDTypeAdapter;
+
+import org.mini2Dx.gettext.GetText;
 
 /**
  * This class deals with the Accounts in the launcher.
@@ -82,9 +91,119 @@ public abstract class AbstractAccount implements Serializable {
 
     public abstract String getAccessToken();
 
-    public abstract void updateUsername();
+    public abstract String getCurrentUsername();
 
-    public abstract void updateSkin();
+    public abstract String getSkinUrl();
+
+    public void updateUsername() {
+        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Username Change"), 0,
+                GetText.tr("Checking Username Change For {0}", this.minecraftUsername),
+                "Aborting checking for username change for " + this.minecraftUsername);
+
+        dialog.addThread(new Thread(() -> {
+            String currentUsername = getCurrentUsername();
+
+            if (currentUsername == null) {
+                dialog.setReturnValue(false);
+                dialog.close();
+                return;
+            }
+
+            if (!currentUsername.equals(this.minecraftUsername)) {
+                LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from "
+                        + this.minecraftUsername + " to " + currentUsername);
+                this.minecraftUsername = currentUsername;
+                dialog.setReturnValue(true);
+            }
+
+            dialog.close();
+        }));
+
+        dialog.start();
+
+        if (dialog.getReturnValue() == null) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
+                    .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
+        } else if ((Boolean) dialog.getReturnValue()) {
+            DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))
+                    .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();
+        } else {
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(
+                            GetText.tr("Error checking for username change. Check the error logs and try again later."))
+                    .setType(DialogManager.ERROR).show();
+        }
+    }
+
+    /**
+     * Updates this Account's skin by redownloading the Minecraft skin from Mojang's
+     * skin server.
+     */
+    public void updateSkin() {
+        if (!this.skinUpdating) {
+            this.skinUpdating = true;
+            final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
+            LogManager.info("Downloading skin for " + this.minecraftUsername);
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Downloading Skin"), 0,
+                    GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
+                    "Aborting downloading Minecraft skin for " + this.minecraftUsername);
+            final UUID uid = this.getRealUUID();
+            dialog.addThread(new Thread(() -> {
+                dialog.setReturnValue(false);
+                String skinURL = getSkinUrl();
+                if (skinURL == null) {
+                    LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
+                    if (!file.exists()) {
+                        String skinFilename = "default.png";
+
+                        // even UUID's use the alex skin
+                        if ((uid.hashCode() & 1) != 0) {
+                            skinFilename = "default_alex.png";
+                        }
+
+                        // Only copy over the default skin if there is no skin for the user
+                        Utils.copyFile(FileSystem.SKINS.resolve(skinFilename).toFile(), file, true);
+                        dialog.setReturnValue(true);
+                    }
+                } else {
+                    try {
+                        HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
+                        if (conn.getResponseCode() == 200) {
+                            if (file.exists()) {
+                                Utils.delete(file);
+                            }
+                            Download.build().setUrl(skinURL).downloadTo(file.toPath()).downloadFile();
+                            dialog.setReturnValue(true);
+                        } else {
+                            if (!file.exists()) {
+                                String skinFilename = "default.png";
+
+                                // even UUID's use the alex skin
+                                if ((uid.hashCode() & 1) != 0) {
+                                    skinFilename = "default_alex.png";
+                                }
+
+                                // Only copy over the default skin if there is no skin for the user
+                                Utils.copyFile(FileSystem.SKINS.resolve(skinFilename).toFile(), file, true);
+                                dialog.setReturnValue(true);
+                            }
+                        }
+                    } catch (IOException e) {
+                        LogManager.logStackTrace(e);
+                    }
+                    com.atlauncher.evnt.manager.AccountManager.post();
+                }
+                dialog.close();
+            }));
+            dialog.start();
+            if (!(Boolean) dialog.getReturnValue()) {
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(GetText.tr("Error downloading skin. Please try again later!"))
+                        .setType(DialogManager.ERROR).show();
+            }
+            this.skinUpdating = false;
+        }
+    }
 
     /**
      * Creates an {@link ImageIcon} of the Account's Minecraft skin, getting just

@@ -17,6 +17,8 @@
  */
 package com.atlauncher.data;
 
+import java.util.Optional;
+
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.network.Download;
@@ -45,17 +47,21 @@ public class MicrosoftAccount extends AbstractAccount {
     }
 
     @Override
-    public void updateUsername() {
-        // TODO: Handle failed authorization
+    public String getCurrentUsername() {
+        // TODO: handle auth failures
         Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
                 .header("Authorization", "Bearer " + this.accessToken).asClass(Profile.class);
 
-        this.minecraftUsername = profile.name;
+        return Optional.of(profile.name).orElse(null);
     }
 
     @Override
-    public void updateSkin() {
-        // TODO Auto-generated method stub
+    public String getSkinUrl() {
+        // TODO: handle auth failures
+        Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
+                .header("Authorization", "Bearer " + this.accessToken).asClass(Profile.class);
 
+        return profile.skins.stream().filter(s -> s.state.equalsIgnoreCase("ACTIVE")).findFirst().map(s -> s.url)
+                .orElse(null);
     }
 }
