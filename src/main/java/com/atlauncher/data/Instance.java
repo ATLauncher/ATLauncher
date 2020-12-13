@@ -1429,6 +1429,7 @@ public class Instance implements Cloneable {
                     }
 
                     if (process == null) {
+                        LogManager.error("Failed to get process for Minecraft");
                         return;
                     }
 
