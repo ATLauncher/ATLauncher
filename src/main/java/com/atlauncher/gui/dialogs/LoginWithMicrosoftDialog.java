@@ -74,7 +74,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             webView.getEngine().getHistory().getEntries().addListener((ListChangeListener<WebHistory.Entry>) c -> {
                 if (c.next() && c.wasAdded()) {
                     for (WebHistory.Entry entry : c.getAddedSubList()) {
-                        if (entry.getUrl().startsWith(Constants.MICROSOFT_REDIRECT_URL_SUFFIX)) {
+                        if (entry.getUrl().startsWith(Constants.MICROSOFT_LOGIN_REDIRECT_URL + "?code=")) {
                             String authCode = entry.getUrl().substring(entry.getUrl().indexOf("=") + 1,
                                     entry.getUrl().indexOf("&"));
                             add(new LoadingPanel(), BorderLayout.CENTER);
@@ -103,8 +103,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     private void acquireAccessToken(String authcode) {
         RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
                 .add("code", authcode).add("grant_type", "authorization_code")
-                .add("redirect_uri", "https://login.live.com/oauth20_desktop.srf")
-                .add("scope", "service::user.auth.xboxlive.com::MBI_SSL").build();
+                .add("redirect_uri", Constants.MICROSOFT_LOGIN_REDIRECT_URL)
+                .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();
 
         OauthTokenResponse oauthTokenResponse = Download.build().setUrl(Constants.MICROSOFT_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/x-www-form-urlencoded").post(data)
@@ -116,11 +116,12 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
     private void acquireXBLToken(String accessToken) {
         Map<Object, Object> data = Map.of("Properties",
-                Map.of("AuthMethod", "RPS", "SiteName", "user.auth.xboxlive.com", "RpsTicket", accessToken),
+                Map.of("AuthMethod", "RPS", "SiteName", "user.auth.xboxlive.com", "RpsTicket", "d=" + accessToken),
                 "RelyingParty", "http://auth.xboxlive.com", "TokenType", "JWT");
 
         XboxLiveAuthResponse xblAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XBL_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
+                .header("x-xbl-contract-version", "1")
                 .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
                 .asClass(XboxLiveAuthResponse.class);
         System.out.println("xblAuthResponse: " + Gsons.DEFAULT.toJson(xblAuthResponse));
@@ -134,6 +135,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         XboxLiveAuthResponse xstsAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XSTS_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
+                .header("x-xbl-contract-version", "1")
                 .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
                 .asClass(XboxLiveAuthResponse.class);
         System.out.println("xstsAuthResponse: " + Gsons.DEFAULT.toJson(xstsAuthResponse));

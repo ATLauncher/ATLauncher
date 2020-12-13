@@ -82,12 +82,12 @@ public class Constants {
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
     // Microsoft login constants
-    public static final String MICROSOFT_LOGIN_CLIENT_ID = "00000000402b5328";
+    public static final String MICROSOFT_LOGIN_CLIENT_ID = "711b24b5-422c-4eb7-aedf-f0f382001f77";
+    public static final String[] MICROSOFT_LOGIN_SCOPES = { "XboxLive.signin", "XboxLive.offline_access" };
     public static final String MICROSOFT_LOGIN_URL = "https://login.live.com/oauth20_authorize.srf" + "?client_id="
-            + MICROSOFT_LOGIN_CLIENT_ID + "&response_type=code"
-            + "&scope=service%3A%3Auser.auth.xboxlive.com%3A%3AMBI_SSL"
+            + MICROSOFT_LOGIN_CLIENT_ID + "&response_type=code" + "&scope=" + String.join("%20", MICROSOFT_LOGIN_SCOPES)
             + "&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf";
-    public static final String MICROSOFT_REDIRECT_URL_SUFFIX = "https://login.live.com/oauth20_desktop.srf?code=";
+    public static final String MICROSOFT_LOGIN_REDIRECT_URL = "https://login.live.com/oauth20_desktop.srf";
     public static final String MICROSOFT_AUTH_TOKEN_URL = "https://login.live.com/oauth20_token.srf";
     public static final String MICROSOFT_XBL_AUTH_TOKEN_URL = "https://user.auth.xboxlive.com/user/authenticate";
     public static final String MICROSOFT_XSTS_AUTH_TOKEN_URL = "https://xsts.auth.xboxlive.com/xsts/authorize";
