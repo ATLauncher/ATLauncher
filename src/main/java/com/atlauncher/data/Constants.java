@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
@@ -81,13 +82,17 @@ public class Constants {
             "2560x1440", "3440x1440", "3840x2160" };
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
-    // Microsoft login constants
+    // Custom for ATLauncher Microsoft login constants
     public static final String MICROSOFT_LOGIN_CLIENT_ID = "711b24b5-422c-4eb7-aedf-f0f382001f77";
+    public static final int MICROSOFT_LOGIN_REDIRECT_PORT = 28562;
+    public static final String MICROSOFT_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + MICROSOFT_LOGIN_REDIRECT_PORT;
     public static final String[] MICROSOFT_LOGIN_SCOPES = { "XboxLive.signin", "XboxLive.offline_access" };
+
+    // General Microsoft login constants
     public static final String MICROSOFT_LOGIN_URL = "https://login.live.com/oauth20_authorize.srf" + "?client_id="
-            + MICROSOFT_LOGIN_CLIENT_ID + "&response_type=code" + "&scope=" + String.join("%20", MICROSOFT_LOGIN_SCOPES)
-            + "&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf";
-    public static final String MICROSOFT_LOGIN_REDIRECT_URL = "https://login.live.com/oauth20_desktop.srf";
+            + MICROSOFT_LOGIN_CLIENT_ID + "&prompt=select_account&response_type=code" + "&scope="
+            + String.join("%20", MICROSOFT_LOGIN_SCOPES) + "&redirect_uri="
+            + URLEncoder.encode(MICROSOFT_LOGIN_REDIRECT_URL, StandardCharsets.UTF_8);
     public static final String MICROSOFT_AUTH_TOKEN_URL = "https://login.live.com/oauth20_token.srf";
     public static final String MICROSOFT_XBL_AUTH_TOKEN_URL = "https://user.auth.xboxlive.com/user/authenticate";
     public static final String MICROSOFT_XSTS_AUTH_TOKEN_URL = "https://xsts.auth.xboxlive.com/xsts/authorize";

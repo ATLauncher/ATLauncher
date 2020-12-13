@@ -19,6 +19,9 @@ package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -35,63 +38,95 @@ import com.atlauncher.data.microsoft.Store;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
+import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
-import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.web.WebHistory;
-import javafx.scene.web.WebView;
+import net.freeutils.httpserver.HTTPServer;
+import net.freeutils.httpserver.HTTPServer.VirtualHost;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
+    private static HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
+    private static VirtualHost host = server.getVirtualHost(null);
 
     public LoginWithMicrosoftDialog() {
         super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.APPLICATION_MODAL);
 
-        this.setMinimumSize(new Dimension(600, 650));
-        this.setResizable(true);
+        this.setMinimumSize(new Dimension(400, 400));
+        this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        JFXPanel jfxPanel = new JFXPanel();
-        this.add(jfxPanel, BorderLayout.CENTER);
+        this.add(new LoadingPanel(GetText.tr("Browser opened to complete the login process")), BorderLayout.CENTER);
 
-        Platform.runLater(() -> {
-            WebView webView = new WebView();
+        setVisible(false);
+        dispose();
 
-            webView.getEngine().load(Constants.MICROSOFT_LOGIN_URL);
-            webView.getEngine().setJavaScriptEnabled(true);
-            webView.setPrefHeight(600);
-            webView.setPrefWidth(650);
+        OS.openWebBrowser(Constants.MICROSOFT_LOGIN_URL);
 
-            // listen to end oauth flow
-            webView.getEngine().getHistory().getEntries().addListener((ListChangeListener<WebHistory.Entry>) c -> {
-                if (c.next() && c.wasAdded()) {
-                    for (WebHistory.Entry entry : c.getAddedSubList()) {
-                        if (entry.getUrl().startsWith(Constants.MICROSOFT_LOGIN_REDIRECT_URL + "?code=")) {
-                            String authCode = entry.getUrl().substring(entry.getUrl().indexOf("=") + 1,
-                                    entry.getUrl().indexOf("&"));
-                            add(new LoadingPanel(), BorderLayout.CENTER);
-                            acquireAccessToken(authCode);
+        try {
+            startServer();
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error starting web server for Microsoft login", e);
 
-                            setVisible(false);
-                            dispose();
-                        }
-                    }
-                }
-            });
-
-            jfxPanel.setScene(new Scene(webView));
-        });
+            close();
+        }
 
         this.setLocationRelativeTo(App.launcher.getParent());
         this.setVisible(true);
+    }
+
+    private void close() {
+        server.stop();
+        setVisible(false);
+        dispose();
+    }
+
+    private void startServer() throws IOException {
+        host.addContext("/", (req, res) -> {
+            if (req.getParams().containsKey("error")) {
+                res.getHeaders().add("Content-Type", "text/plain");
+                res.send(500, GetText.tr("Error logging in. Check console for more information"));
+                LogManager.error("Error logging into Microsoft account: "
+                        + URLDecoder.decode(req.getParams().get("error_description"), StandardCharsets.UTF_8));
+                close();
+                return 0;
+            }
+
+            if (!req.getParams().containsKey("code")) {
+                res.getHeaders().add("Content-Type", "text/plain");
+                res.send(400, GetText.tr("Code is missing"));
+                close();
+                return 0;
+            }
+
+            String authCode = req.getParams().get("code");
+            System.out.println("authCode: " + authCode);
+
+            try {
+                acquireAccessToken(authCode);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Error starting web server for Microsoft login", e);
+                res.getHeaders().add("Content-Type", "text/plain");
+                res.send(500, GetText.tr("Error logging in. Check console for more information"));
+                close();
+                return 0;
+            }
+
+            res.getHeaders().add("Content-Type", "text/plain");
+            // #. {0} is the name of the launcher
+            res.send(200, GetText.tr("Login complete. You can now close this window and go back to {0}",
+                    Constants.LAUNCHER_NAME));
+            close();
+            return 0;
+        }, "GET");
+
+        server.start();
     }
 
     private void addAccount(LoginResponse loginResponse, Profile profile) {
