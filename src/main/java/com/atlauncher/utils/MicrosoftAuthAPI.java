@@ -45,7 +45,7 @@ public class MicrosoftAuthAPI {
 
         OauthTokenResponse oauthTokenResponse = Download.build().setUrl(Constants.MICROSOFT_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/x-www-form-urlencoded").post(data)
-                .asClass(OauthTokenResponse.class);
+                .asClass(OauthTokenResponse.class, Gsons.DEFAULT);
 
         return oauthTokenResponse;
     }
@@ -57,7 +57,7 @@ public class MicrosoftAuthAPI {
 
         OauthTokenResponse oauthTokenResponse = Download.build().setUrl(Constants.MICROSOFT_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/x-www-form-urlencoded").post(data)
-                .asClass(OauthTokenResponse.class);
+                .asClass(OauthTokenResponse.class, Gsons.DEFAULT);
 
         return oauthTokenResponse;
     }

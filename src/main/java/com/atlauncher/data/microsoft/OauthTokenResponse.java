@@ -17,6 +17,8 @@
  */
 package com.atlauncher.data.microsoft;
 
+import java.util.Date;
+
 import com.google.gson.annotations.SerializedName;
 
 public class OauthTokenResponse {
@@ -25,6 +27,9 @@ public class OauthTokenResponse {
 
     @SerializedName("expires_in")
     public Integer expiresIn;
+
+    @SerializedName("expires_at")
+    public Date expiresAt;
 
     public String scope;
 
@@ -38,4 +43,5 @@ public class OauthTokenResponse {
     public String userId;
 
     public String foci;
+
 }

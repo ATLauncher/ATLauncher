@@ -155,7 +155,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     rememberLabel.setVisible(account instanceof MojangAccount);
                     rememberField.setVisible(account instanceof MojangAccount);
                     leftButton.setVisible(account instanceof MojangAccount);
-                    rightButton.setVisible(account instanceof MojangAccount);
+                    rightButton.setVisible(true);
                     loginWithMicrosoftButton.setVisible(account instanceof MicrosoftAccount);
                     refreshAccessTokenMenuItem.setVisible(account instanceof MicrosoftAccount);
 
@@ -333,7 +333,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
                     "Aborting refreshing access token for " + account.minecraftUsername);
             dialog.addThread(new Thread(() -> {
-                account.refreshAccessToken();
+                account.refreshAccessToken(true);
                 AccountManager.saveAccounts();
                 DialogManager.okDialog().setTitle(GetText.tr("Access Token Refreshed"))
                         .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)

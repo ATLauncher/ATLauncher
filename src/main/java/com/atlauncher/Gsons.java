@@ -24,6 +24,8 @@ import com.atlauncher.data.AccountTypeAdapter;
 import com.atlauncher.data.DateTypeAdapter;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.PackVersionTypeAdapter;
+import com.atlauncher.data.microsoft.OauthTokenResponse;
+import com.atlauncher.data.microsoft.OauthTokenResponseTypeAdapter;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.ArgumentsTypeAdapter;
 import com.atlauncher.data.minecraft.Library;
@@ -38,7 +40,9 @@ import com.google.gson.GsonBuilder;
 public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder()
             .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
-            .registerTypeAdapter(Date.class, new DateTypeAdapter()).setPrettyPrinting().create();
+            .registerTypeAdapter(Date.class, new DateTypeAdapter())
+            .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter()).setPrettyPrinting()
+            .create();
 
     public static final Gson DEFAULT_ALT = new GsonBuilder()
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).setPrettyPrinting().create();

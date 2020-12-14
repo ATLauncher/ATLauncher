@@ -24,6 +24,7 @@ import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 
@@ -101,26 +102,62 @@ public class MicrosoftAccount extends AbstractAccount {
                 .orElse(null);
     }
 
-    public void refreshAccessToken() {
+    public boolean refreshAccessToken() {
+        return refreshAccessToken(false);
+    }
+
+    public boolean refreshAccessToken(boolean force) {
         // TODO: handle auth failures
 
-        OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.refreshAccessToken(oauthToken.refreshToken);
+        if (force || new Date().after(this.oauthToken.expiresAt)) {
+            LogManager.info("Oauth token expired. Attempting to refresh");
+            OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.refreshAccessToken(oauthToken.refreshToken);
 
-        this.oauthToken = oauthTokenResponse;
+            this.oauthToken = oauthTokenResponse;
 
-        XboxLiveAuthResponse xboxLiveAuthResponse = MicrosoftAuthAPI.getXBLToken(oauthTokenResponse.accessToken);
-        this.xstsAuth = MicrosoftAuthAPI.getXstsToken(xboxLiveAuthResponse.token);
+            com.atlauncher.managers.AccountManager.saveAccounts();
+        }
 
-        LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft(this.getIdentityToken());
+        if (force || new Date().after(this.xstsAuth.notAfter)) {
+            LogManager.info("xsts auth expired. Attempting to get new auth");
+            XboxLiveAuthResponse xboxLiveAuthResponse = MicrosoftAuthAPI.getXBLToken(this.oauthToken.accessToken);
+            this.xstsAuth = MicrosoftAuthAPI.getXstsToken(xboxLiveAuthResponse.token);
 
-        this.accessToken = loginResponse.accessToken;
-        this.username = loginResponse.username;
+            com.atlauncher.managers.AccountManager.saveAccounts();
+        }
 
-        this.accessTokenExpiresAt = new Date();
-        this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
+        if (force || new Date().after(this.accessTokenExpiresAt)) {
+            LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft(this.getIdentityToken());
+
+            this.accessToken = loginResponse.accessToken;
+            this.username = loginResponse.username;
+
+            this.accessTokenExpiresAt = new Date();
+            this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
+
+            com.atlauncher.managers.AccountManager.saveAccounts();
+        }
+
+        return true;
     }
 
     private String getIdentityToken() {
         return "XBL3.0 x=" + xstsAuth.displayClaims.xui.get(0).uhs + ";" + xstsAuth.token;
+    }
+
+    public boolean ensureAccessTokenValid() {
+        if (!new Date().after(accessTokenExpiresAt)) {
+            return true;
+        }
+
+        LogManager.info("Access Token has expired. Attempting to refresh it.");
+
+        try {
+            return refreshAccessToken();
+        } catch (Exception e) {
+            LogManager.logStackTrace("Exception while attempting to refresh access token", e);
+        }
+
+        return false;
     }
 }

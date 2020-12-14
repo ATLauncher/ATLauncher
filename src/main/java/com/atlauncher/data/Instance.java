@@ -1419,17 +1419,38 @@ public class Instance implements Cloneable, Launchable {
                         final LoginResponse session = (LoginResponse) loginDialog.getReturnValue();
 
                         if (session == null) {
+                            App.launcher.setMinecraftLaunched(false);
                             return;
                         }
 
                         process = MCLauncher.launch(mojangAccount, this, session);
                     } else if (account instanceof MicrosoftAccount) {
                         MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
+
+                        LogManager.info("Logging into Minecraft!");
+                        ProgressDialog loginDialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+                                GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                        loginDialog.addThread(new Thread(() -> {
+                            loginDialog.setReturnValue(microsoftAccount.ensureAccessTokenValid());
+                            loginDialog.close();
+                        }));
+                        loginDialog.start();
+
+                        if (!(Boolean) loginDialog.getReturnValue()) {
+                            LogManager.error("Failed to login");
+                            App.launcher.setMinecraftLaunched(false);
+                            DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
+                                    .setContent(GetText.tr("Couldn't login with Microsoft account"))
+                                    .setType(DialogManager.ERROR).show();
+                            return;
+                        }
+
                         process = MCLauncher.launch(microsoftAccount, this);
                     }
 
                     if (process == null) {
                         LogManager.error("Failed to get process for Minecraft");
+                        App.launcher.setMinecraftLaunched(false);
                         return;
                     }
 
