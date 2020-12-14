@@ -22,13 +22,10 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.JDialog;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.microsoft.LoginResponse;
@@ -39,16 +36,13 @@ import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
+import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
 import net.freeutils.httpserver.HTTPServer;
 import net.freeutils.httpserver.HTTPServer.VirtualHost;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
@@ -105,13 +99,10 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 return 0;
             }
 
-            String authCode = req.getParams().get("code");
-            System.out.println("authCode: " + authCode);
-
             try {
-                acquireAccessToken(authCode);
+                acquireAccessToken(req.getParams().get("code"));
             } catch (Exception e) {
-                LogManager.logStackTrace("Error starting web server for Microsoft login", e);
+                LogManager.logStackTrace("Error acquiring accessToken", e);
                 res.getHeaders().add("Content-Type", "text/plain");
                 res.send(500, GetText.tr("Error logging in. Check console for more information"));
                 close();
@@ -129,73 +120,55 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         server.start();
     }
 
-    private void addAccount(OauthTokenResponse oauthTokenResponse, LoginResponse loginResponse, Profile profile) {
-        MicrosoftAccount account = new MicrosoftAccount(oauthTokenResponse, loginResponse, profile);
+    private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
+            LoginResponse loginResponse, Profile profile) throws Exception {
+        if (AccountManager.isAccountByName(loginResponse.username)) {
+            MicrosoftAccount account = (MicrosoftAccount) AccountManager.getAccountByName(loginResponse.username);
+            account.update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
+            AccountManager.saveAccounts();
+        } else {
+            MicrosoftAccount account = new MicrosoftAccount(oauthTokenResponse, xstsAuthResponse, loginResponse,
+                    profile);
 
-        AccountManager.addAccount(account);
+            AccountManager.addAccount(account);
+        }
     }
 
-    private void acquireAccessToken(String authcode) {
-        RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
-                .add("code", authcode).add("grant_type", "authorization_code")
-                .add("redirect_uri", Constants.MICROSOFT_LOGIN_REDIRECT_URL)
-                .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();
-
-        OauthTokenResponse oauthTokenResponse = Download.build().setUrl(Constants.MICROSOFT_AUTH_TOKEN_URL)
-                .header("Content-Type", "application/x-www-form-urlencoded").post(data)
-                .asClass(OauthTokenResponse.class);
-        System.out.println("oauthTokenResponse: " + Gsons.DEFAULT.toJson(oauthTokenResponse));
+    private void acquireAccessToken(String authcode) throws Exception {
+        OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.tradeCodeForAccessToken(authcode);
 
         acquireXBLToken(oauthTokenResponse);
     }
 
-    private void acquireXBLToken(OauthTokenResponse oauthTokenResponse) {
-        Map<Object, Object> data = Map.of("Properties",
-                Map.of("AuthMethod", "RPS", "SiteName", "user.auth.xboxlive.com", "RpsTicket", "d=" + oauthTokenResponse.accessToken),
-                "RelyingParty", "http://auth.xboxlive.com", "TokenType", "JWT");
-
-        XboxLiveAuthResponse xblAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XBL_AUTH_TOKEN_URL)
-                .header("Content-Type", "application/json").header("Accept", "application/json")
-                .header("x-xbl-contract-version", "1")
-                .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
-                .asClass(XboxLiveAuthResponse.class);
-        System.out.println("xblAuthResponse: " + Gsons.DEFAULT.toJson(xblAuthResponse));
+    private void acquireXBLToken(OauthTokenResponse oauthTokenResponse) throws Exception {
+        XboxLiveAuthResponse xblAuthResponse = MicrosoftAuthAPI.getXBLToken(oauthTokenResponse.accessToken);
 
         acquireXsts(oauthTokenResponse, xblAuthResponse.token);
     }
 
-    private void acquireXsts(OauthTokenResponse oauthTokenResponse, String xblToken) {
-        Map<Object, Object> data = Map.of("Properties", Map.of("SandboxId", "RETAIL", "UserTokens", List.of(xblToken)),
-                "RelyingParty", "rp://api.minecraftservices.com/", "TokenType", "JWT");
+    private void acquireXsts(OauthTokenResponse oauthTokenResponse, String xblToken) throws Exception {
+        XboxLiveAuthResponse xstsAuthResponse = MicrosoftAuthAPI.getXstsToken(xblToken);
 
-        XboxLiveAuthResponse xstsAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XSTS_AUTH_TOKEN_URL)
-                .header("Content-Type", "application/json").header("Accept", "application/json")
-                .header("x-xbl-contract-version", "1")
-                .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
-                .asClass(XboxLiveAuthResponse.class);
-        System.out.println("xstsAuthResponse: " + Gsons.DEFAULT.toJson(xstsAuthResponse));
-
-        acquireMinecraftToken(oauthTokenResponse, xstsAuthResponse.displayClaims.xui.get(0).uhs, xstsAuthResponse.token);
+        acquireMinecraftToken(oauthTokenResponse, xstsAuthResponse);
     }
 
-    private void acquireMinecraftToken(OauthTokenResponse oauthTokenResponse, String xblUhs, String xblXsts) {
-        LoginResponse loginResponse = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_LOGIN_URL)
-                .header("Content-Type", "application/json").header("Accept", "application/json")
-                .post(RequestBody.create(
-                        Gsons.DEFAULT.toJson(Map.of("identityToken", "XBL3.0 x=" + xblUhs + ";" + xblXsts)),
-                        MediaType.get("application/json; charset=utf-8")))
-                .asClass(LoginResponse.class);
-        System.out.println("loginResponse: " + Gsons.DEFAULT.toJson(loginResponse));
+    private void acquireMinecraftToken(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse)
+            throws Exception {
+        String xblUhs = xstsAuthResponse.displayClaims.xui.get(0).uhs;
+        String xblXsts = xstsAuthResponse.token;
 
-        Store store = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_STORE_URL)
-                .header("Authorization", "Bearer " + loginResponse.accessToken).asClass(Store.class);
-        System.out.println("store: " + Gsons.DEFAULT.toJson(store));
+        LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft("XBL3.0 x=" + xblUhs + ";" + xblXsts);
 
-        Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
-                .header("Authorization", "Bearer " + loginResponse.accessToken).asClass(Profile.class);
-        System.out.println("profile: " + Gsons.DEFAULT.toJson(profile));
+        Store store = MicrosoftAuthAPI.getMcEntitlements(loginResponse.accessToken);
+
+        if (!(store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
+                && store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
+            throw new Exception("Account does not own Minecraft");
+        }
+
+        Profile profile = MicrosoftAuthAPI.getMcProfile(loginResponse.accessToken);
 
         // add the account
-        addAccount(oauthTokenResponse, loginResponse, profile);
+        addAccount(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
     }
 }

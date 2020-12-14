@@ -23,7 +23,9 @@ import java.util.Optional;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
+import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.network.Download;
+import com.atlauncher.utils.MicrosoftAuthAPI;
 
 public class MicrosoftAccount extends AbstractAccount {
     /**
@@ -42,12 +44,24 @@ public class MicrosoftAccount extends AbstractAccount {
     public OauthTokenResponse oauthToken;
 
     /**
+     * The xsts auth response.
+     */
+    public XboxLiveAuthResponse xstsAuth;
+
+    /**
      * The date that the accessToken expires at.
      */
     public Date accessTokenExpiresAt;
 
-    public MicrosoftAccount(OauthTokenResponse oauthTokenResponse, LoginResponse loginResponse, Profile profile) {
+    public MicrosoftAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
+            LoginResponse loginResponse, Profile profile) {
+        update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
+    }
+
+    public void update(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
+            LoginResponse loginResponse, Profile profile) {
         this.oauthToken = oauthTokenResponse;
+        this.xstsAuth = xstsAuthResponse;
         this.accessToken = loginResponse.accessToken;
         this.minecraftUsername = profile.name;
         this.uuid = profile.id;
@@ -85,5 +99,28 @@ public class MicrosoftAccount extends AbstractAccount {
 
         return profile.skins.stream().filter(s -> s.state.equalsIgnoreCase("ACTIVE")).findFirst().map(s -> s.url)
                 .orElse(null);
+    }
+
+    public void refreshAccessToken() {
+        // TODO: handle auth failures
+
+        OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.refreshAccessToken(oauthToken.refreshToken);
+
+        this.oauthToken = oauthTokenResponse;
+
+        XboxLiveAuthResponse xboxLiveAuthResponse = MicrosoftAuthAPI.getXBLToken(oauthTokenResponse.accessToken);
+        this.xstsAuth = MicrosoftAuthAPI.getXstsToken(xboxLiveAuthResponse.token);
+
+        LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft(this.getIdentityToken());
+
+        this.accessToken = loginResponse.accessToken;
+        this.username = loginResponse.username;
+
+        this.accessTokenExpiresAt = new Date();
+        this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
+    }
+
+    private String getIdentityToken() {
+        return "XBL3.0 x=" + xstsAuth.displayClaims.xui.get(0).uhs + ";" + xstsAuth.token;
     }
 }

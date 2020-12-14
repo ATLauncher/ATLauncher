@@ -19,7 +19,6 @@ package com.atlauncher.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -34,6 +33,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
@@ -132,6 +132,7 @@ public abstract class AbstractAccount implements Serializable {
             DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
                     .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
         } else if ((Boolean) dialog.getReturnValue()) {
+            AccountManager.saveAccounts();
             DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))
                     .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();
         } else {
@@ -275,9 +276,5 @@ public abstract class AbstractAccount implements Serializable {
     @Override
     public String toString() {
         return this.minecraftUsername;
-    }
-
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        System.out.println(1);
     }
 }
