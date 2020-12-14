@@ -40,8 +40,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
-import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
-import com.mojang.util.UUIDTypeAdapter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -95,7 +93,7 @@ public class MojangAccount extends AbstractAccount {
         this.remember = remember;
         this.clientToken = clientToken;
         this.store = store;
-        this.type = "Mojang";
+        this.type = "mojang";
     }
 
     @Override
@@ -197,17 +195,9 @@ public class MojangAccount extends AbstractAccount {
         return texture.getUrl();
     }
 
-    public String getSession(LoginResponse response) {
-        if (!response.isOffline() && response != null && response.getAuth().isLoggedIn()
-                && response.getAuth().canPlayOnline()) {
-            if (response.getAuth() instanceof YggdrasilUserAuthentication) {
-                return String.format("token:%s:%s", response.getAuth().getAuthenticatedToken(),
-                        UUIDTypeAdapter.fromUUID(response.getAuth().getSelectedProfile().getId()));
-            } else {
-                return response.getAuth().getAuthenticatedToken();
-            }
-        }
-        return "token:0:0";
+    @Override
+    public String getSessionToken() {
+        return String.format("token:%s:%s", this.getAccessToken(), this.getUUIDNoDashes());
     }
 
     public LoginResponse login() {

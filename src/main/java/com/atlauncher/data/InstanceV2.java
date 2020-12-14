@@ -55,6 +55,7 @@ import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidPack;
@@ -79,7 +80,7 @@ import net.arikia.dev.drpc.DiscordRichPresence;
 import okhttp3.OkHttpClient;
 
 @Json
-public class InstanceV2 extends MinecraftVersion {
+public class InstanceV2 extends MinecraftVersion implements Launchable {
     public String inheritsFrom;
     public InstanceV2Launcher launcher;
 
@@ -597,7 +598,7 @@ public class InstanceV2 extends MinecraftVersion {
                     if (!App.settings.keepLauncherOpen) {
                         System.exit(0);
                     }
-                } catch (IOException e1) {
+                } catch (Exception e1) {
                     LogManager.logStackTrace(e1);
                 }
             });
@@ -655,14 +656,6 @@ public class InstanceV2 extends MinecraftVersion {
             LogManager.logStackTrace(e);
         }
         return "Leaderboard Time Not Added!";
-    }
-
-    public Path getAssetsDir() {
-        if (this.launcher.assetsMapToResources) {
-            return this.getRoot().resolve("resources");
-        }
-
-        return FileSystem.RESOURCES_VIRTUAL.resolve(this.assets);
     }
 
     public DisableableMod getDisableableModByCurseModId(int curseModId) {
@@ -948,5 +941,101 @@ public class InstanceV2 extends MinecraftVersion {
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
         }
+    }
+
+    @Override
+    public File getAssetsDir() {
+        if (this.launcher.assetsMapToResources) {
+            return this.getRoot().resolve("resources").toFile();
+        }
+
+        return FileSystem.RESOURCES_VIRTUAL.resolve(this.assets).toFile();
+    }
+
+    @Override
+    public File getRootDirectory() {
+        return getRoot().toFile();
+    }
+
+    @Override
+    public File getJarModsDirectory() {
+        return getRoot().resolve("jarmods").toFile();
+    }
+
+    @Override
+    public File getBinDirectory() {
+        return getRoot().resolve("bin").toFile();
+    }
+
+    @Override
+    public File getNativesDirectory() {
+        return getRoot().resolve("bin/natives").toFile();
+    }
+
+    @Override
+    public File getMinecraftJar() {
+        return getMinecraftJarLibraryPath().toFile();
+    }
+
+    @Override
+    public String getName() {
+        return launcher.name;
+    }
+
+    @Override
+    public String getPackName() {
+        return launcher.pack;
+    }
+
+    @Override
+    public String getVersion() {
+        return launcher.version;
+    }
+
+    @Override
+    public LoaderVersion getLoaderVersion() {
+        return launcher.loaderVersion;
+    }
+
+    @Override
+    public InstanceSettings getSettings() {
+        InstanceSettings settings = new InstanceSettings();
+        settings.initialMemory = launcher.initialMemory;
+        settings.maximumMemory = launcher.maximumMemory;
+        settings.permGen = launcher.permGen;
+        settings.javaPath = launcher.javaPath;
+        settings.javaArguments = launcher.javaArguments;
+
+        return settings;
+    }
+
+    @Override
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    @Override
+    public String getMinecraftVersion() {
+        return id;
+    }
+
+    @Override
+    public String getAssets() {
+        return assets;
+    }
+
+    @Override
+    public String getVersionType() {
+        return type;
+    }
+
+    @Override
+    public int getMemory() {
+        return launcher.requiredMemory;
+    }
+
+    @Override
+    public int getPermGen() {
+        return launcher.requiredPermGen;
     }
 }

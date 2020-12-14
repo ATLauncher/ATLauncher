@@ -69,7 +69,7 @@ import net.arikia.dev.drpc.DiscordRichPresence;
  * Launcher. An Instance being an installed version of a ModPack separate to
  * others by file structure.
  */
-public class Instance implements Cloneable {
+public class Instance implements Cloneable, Launchable {
     /**
      * The name of the Instance.
      */
@@ -1528,7 +1528,7 @@ public class Instance implements Cloneable {
                     if (!App.settings.keepLauncherOpen) {
                         System.exit(0);
                     }
-                } catch (IOException e1) {
+                } catch (Exception e1) {
                     LogManager.logStackTrace(e1);
                 }
             });

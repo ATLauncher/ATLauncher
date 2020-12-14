@@ -96,6 +96,8 @@ public abstract class AbstractAccount implements Serializable {
 
     public abstract String getAccessToken();
 
+    public abstract String getSessionToken();
+
     public abstract String getCurrentUsername();
 
     public abstract String getSkinUrl();

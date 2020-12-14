@@ -64,6 +64,11 @@ public class MicrosoftAccount extends AbstractAccount {
     }
 
     @Override
+    public String getSessionToken() {
+        return accessToken;
+    }
+
+    @Override
     public String getCurrentUsername() {
         // TODO: handle auth failures
         Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
