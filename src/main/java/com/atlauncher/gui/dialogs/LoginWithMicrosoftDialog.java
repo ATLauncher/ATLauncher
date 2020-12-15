@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import javax.swing.JDialog;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.microsoft.LoginResponse;
@@ -111,7 +112,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 acquireAccessToken(req.getParams().get("code"));
             } catch (Exception e) {
                 LogManager.logStackTrace("Error acquiring accessToken", e);
-                res.getHeaders().add("Content-Type", "text/plain");
+                res.getHeaders().add("Content-Type", "text/html");
                 res.send(500, GetText.tr("Error logging in. Check console for more information"));
                 close();
                 return 0;
@@ -185,6 +186,11 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         if (!(store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
                 && store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
+            DialogManager.okDialog().setTitle(GetText.tr("Minecraft Has Not Been Purchased"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
             throw new Exception("Account does not own Minecraft");
         }
 
