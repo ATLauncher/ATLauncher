@@ -17,6 +17,8 @@
  */
 package com.atlauncher.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,9 +65,15 @@ public class MicrosoftAuthAPI {
     }
 
     public static XboxLiveAuthResponse getXBLToken(String accessToken) {
-        Map<Object, Object> data = Map.of("Properties",
-                Map.of("AuthMethod", "RPS", "SiteName", "user.auth.xboxlive.com", "RpsTicket", "d=" + accessToken),
-                "RelyingParty", "http://auth.xboxlive.com", "TokenType", "JWT");
+        Map<Object, Object> properties = new HashMap<Object, Object>();
+        properties.put("AuthMethod", "RPS");
+        properties.put("SiteName", "user.auth.xboxlive.com");
+        properties.put("RpsTicket", "d=" + accessToken);
+
+        Map<Object, Object> data = new HashMap<Object, Object>();
+        data.put("Properties", properties);
+        data.put("RelyingParty", "http://auth.xboxlive.com");
+        data.put("TokenType", "JWT");
 
         XboxLiveAuthResponse xblAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XBL_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
@@ -77,8 +85,17 @@ public class MicrosoftAuthAPI {
     }
 
     public static XboxLiveAuthResponse getXstsToken(String xblToken) {
-        Map<Object, Object> data = Map.of("Properties", Map.of("SandboxId", "RETAIL", "UserTokens", List.of(xblToken)),
-                "RelyingParty", "rp://api.minecraftservices.com/", "TokenType", "JWT");
+        Map<Object, Object> properties = new HashMap<Object, Object>();
+        properties.put("SandboxId", "RETAIL");
+
+        List<String> userTokens = new ArrayList<String>();
+        userTokens.add(xblToken);
+        properties.put("UserTokens", userTokens);
+
+        Map<Object, Object> data = new HashMap<Object, Object>();
+        data.put("Properties", properties);
+        data.put("RelyingParty", "rp://api.minecraftservices.com/");
+        data.put("TokenType", "JWT");
 
         XboxLiveAuthResponse xstsAuthResponse = Download.build().setUrl(Constants.MICROSOFT_XSTS_AUTH_TOKEN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
@@ -90,10 +107,12 @@ public class MicrosoftAuthAPI {
     }
 
     public static LoginResponse loginToMinecraft(String xstsToken) {
+        Map<Object, Object> data = new HashMap<Object, Object>();
+        data.put("identityToken", xstsToken);
+
         LoginResponse loginResponse = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_LOGIN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
-                .post(RequestBody.create(Gsons.DEFAULT.toJson(Map.of("identityToken", xstsToken)),
-                        MediaType.get("application/json; charset=utf-8")))
+                .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
                 .asClass(LoginResponse.class);
 
         return loginResponse;

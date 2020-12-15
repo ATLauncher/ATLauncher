@@ -19,7 +19,6 @@ package com.atlauncher.data;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
@@ -86,13 +85,14 @@ public class Constants {
     public static final String MICROSOFT_LOGIN_CLIENT_ID = "90890812-00d1-48a8-8d3f-38465ef43b58";
     public static final int MICROSOFT_LOGIN_REDIRECT_PORT = 28562;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + MICROSOFT_LOGIN_REDIRECT_PORT;
+    public static final String MICROSOFT_LOGIN_REDIRECT_URL_ENCODED = "http%3A%2F%2F127.0.0.1%3A"
+            + MICROSOFT_LOGIN_REDIRECT_PORT;
     public static final String[] MICROSOFT_LOGIN_SCOPES = { "XboxLive.signin", "XboxLive.offline_access" };
 
     // General Microsoft login constants
     public static final String MICROSOFT_LOGIN_URL = "https://login.live.com/oauth20_authorize.srf" + "?client_id="
             + MICROSOFT_LOGIN_CLIENT_ID + "&prompt=select_account&response_type=code" + "&scope="
-            + String.join("%20", MICROSOFT_LOGIN_SCOPES) + "&redirect_uri="
-            + URLEncoder.encode(MICROSOFT_LOGIN_REDIRECT_URL, StandardCharsets.UTF_8);
+            + String.join("%20", MICROSOFT_LOGIN_SCOPES) + "&redirect_uri=" + MICROSOFT_LOGIN_REDIRECT_URL_ENCODED;
     public static final String MICROSOFT_AUTH_TOKEN_URL = "https://login.live.com/oauth20_token.srf";
     public static final String MICROSOFT_XBL_AUTH_TOKEN_URL = "https://user.auth.xboxlive.com/user/authenticate";
     public static final String MICROSOFT_XSTS_AUTH_TOKEN_URL = "https://xsts.auth.xboxlive.com/xsts/authorize";

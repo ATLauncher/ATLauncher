@@ -95,8 +95,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             if (req.getParams().containsKey("error")) {
                 res.getHeaders().add("Content-Type", "text/plain");
                 res.send(500, GetText.tr("Error logging in. Check console for more information"));
-                LogManager.error("Error logging into Microsoft account: "
-                        + URLDecoder.decode(req.getParams().get("error_description"), StandardCharsets.UTF_8));
+                LogManager.error("Error logging into Microsoft account: " + URLDecoder
+                        .decode(req.getParams().get("error_description"), StandardCharsets.UTF_8.toString()));
                 close();
                 return 0;
             }
