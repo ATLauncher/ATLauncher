@@ -83,7 +83,7 @@ public class Constants {
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
     // Custom for ATLauncher Microsoft login constants
-    public static final String MICROSOFT_LOGIN_CLIENT_ID = "711b24b5-422c-4eb7-aedf-f0f382001f77";
+    public static final String MICROSOFT_LOGIN_CLIENT_ID = "90890812-00d1-48a8-8d3f-38465ef43b58";
     public static final int MICROSOFT_LOGIN_REDIRECT_PORT = 28562;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + MICROSOFT_LOGIN_REDIRECT_PORT;
     public static final String[] MICROSOFT_LOGIN_SCOPES = { "XboxLive.signin", "XboxLive.offline_access" };

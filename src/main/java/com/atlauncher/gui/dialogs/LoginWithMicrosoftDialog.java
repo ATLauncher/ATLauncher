@@ -196,6 +196,10 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         Profile profile = MicrosoftAuthAPI.getMcProfile(loginResponse.accessToken);
 
+        if (profile == null) {
+            throw new Exception("Failed to get Minecraft profile");
+        }
+
         // add the account
         addAccount(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
     }
