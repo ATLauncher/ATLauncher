@@ -333,11 +333,23 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
                     "Aborting refreshing access token for " + account.minecraftUsername);
             dialog.addThread(new Thread(() -> {
-                account.refreshAccessToken(true);
+                boolean success = account.refreshAccessToken(true);
                 AccountManager.saveAccounts();
-                DialogManager.okDialog().setTitle(GetText.tr("Access Token Refreshed"))
-                        .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)
-                        .show();
+
+                if (success) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Access Token Refreshed"))
+                            .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)
+                            .show();
+                } else {
+                    account.mustLogin = true;
+                    AccountManager.saveAccounts();
+
+                    DialogManager.okDialog().setTitle(GetText.tr("Failed To Refresh Access Token"))
+                            .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
+                            .setType(DialogManager.ERROR).show();
+
+                    new LoginWithMicrosoftDialog(account);
+                }
 
                 dialog.close();
             }));

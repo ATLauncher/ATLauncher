@@ -478,6 +478,9 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
 
                         if (session == null) {
                             App.launcher.setMinecraftLaunched(false);
+                            if (App.launcher.getParent() != null) {
+                                App.launcher.getParent().setVisible(true);
+                            }
                             return;
                         }
 
@@ -497,6 +500,9 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
                         if (!(Boolean) loginDialog.getReturnValue()) {
                             LogManager.error("Failed to login");
                             App.launcher.setMinecraftLaunched(false);
+                            if (App.launcher.getParent() != null) {
+                                App.launcher.getParent().setVisible(true);
+                            }
                             DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
                                     .setContent(GetText.tr("Couldn't login with Microsoft account"))
                                     .setType(DialogManager.ERROR).show();
@@ -509,6 +515,9 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
                     if (process == null) {
                         LogManager.error("Failed to get process for Minecraft");
                         App.launcher.setMinecraftLaunched(false);
+                        if (App.launcher.getParent() != null) {
+                            App.launcher.getParent().setVisible(true);
+                        }
                         return;
                     }
 

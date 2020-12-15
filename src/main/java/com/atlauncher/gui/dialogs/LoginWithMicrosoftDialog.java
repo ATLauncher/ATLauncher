@@ -35,6 +35,7 @@ import com.atlauncher.data.microsoft.Store;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
@@ -49,9 +50,16 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     private static HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
     private static VirtualHost host = server.getVirtualHost(null);
 
+    private MicrosoftAccount account = null;
+
     public LoginWithMicrosoftDialog() {
+        this(null);
+    }
+
+    public LoginWithMicrosoftDialog(MicrosoftAccount account) {
         super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.APPLICATION_MODAL);
 
+        this.account = account;
         this.setMinimumSize(new Dimension(400, 400));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -122,8 +130,22 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
             LoginResponse loginResponse, Profile profile) throws Exception {
-        if (AccountManager.isAccountByName(loginResponse.username)) {
+        if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
             MicrosoftAccount account = (MicrosoftAccount) AccountManager.getAccountByName(loginResponse.username);
+
+            if (account == null) {
+                return;
+            }
+
+            // if forced to relogin, then make sure they logged into correct account
+            if (account != null && this.account != null && account.username != this.account.username) {
+                DialogManager.okDialog().setTitle(GetText.tr("Incorrect account"))
+                        .setContent(
+                                GetText.tr("Logged into incorrect account. Please login again on the Accounts tab."))
+                        .setType(DialogManager.ERROR).show();
+                return;
+            }
+
             account.update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
             AccountManager.saveAccounts();
         } else {

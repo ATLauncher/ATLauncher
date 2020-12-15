@@ -24,9 +24,14 @@ import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
+import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.MicrosoftAuthAPI;
+
+import org.mini2Dx.gettext.GetText;
 
 public class MicrosoftAccount extends AbstractAccount {
     /**
@@ -54,6 +59,12 @@ public class MicrosoftAccount extends AbstractAccount {
      */
     public Date accessTokenExpiresAt;
 
+    /**
+     * If the user must login again. This is usually the result of a failed
+     * accessToken refresh.
+     */
+    public boolean mustLogin;
+
     public MicrosoftAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
             LoginResponse loginResponse, Profile profile) {
         update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
@@ -68,6 +79,7 @@ public class MicrosoftAccount extends AbstractAccount {
         this.uuid = profile.id;
         this.username = loginResponse.username;
         this.type = "Xbox";
+        this.mustLogin = false;
 
         this.accessTokenExpiresAt = new Date();
         this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
@@ -109,33 +121,63 @@ public class MicrosoftAccount extends AbstractAccount {
     public boolean refreshAccessToken(boolean force) {
         // TODO: handle auth failures
 
-        if (force || new Date().after(this.oauthToken.expiresAt)) {
-            LogManager.info("Oauth token expired. Attempting to refresh");
-            OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.refreshAccessToken(oauthToken.refreshToken);
+        try {
+            if (force || new Date().after(this.oauthToken.expiresAt)) {
+                LogManager.info("Oauth token expired. Attempting to refresh");
+                OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.refreshAccessToken(oauthToken.refreshToken);
 
-            this.oauthToken = oauthTokenResponse;
+                if (oauthTokenResponse == null) {
+                    mustLogin = true;
+                    AccountManager.saveAccounts();
+                    LogManager.error("Failed to refresh accessToken");
+                    return false;
+                }
 
-            com.atlauncher.managers.AccountManager.saveAccounts();
-        }
+                this.oauthToken = oauthTokenResponse;
 
-        if (force || new Date().after(this.xstsAuth.notAfter)) {
-            LogManager.info("xsts auth expired. Attempting to get new auth");
-            XboxLiveAuthResponse xboxLiveAuthResponse = MicrosoftAuthAPI.getXBLToken(this.oauthToken.accessToken);
-            this.xstsAuth = MicrosoftAuthAPI.getXstsToken(xboxLiveAuthResponse.token);
+                AccountManager.saveAccounts();
+            }
 
-            com.atlauncher.managers.AccountManager.saveAccounts();
-        }
+            if (force || new Date().after(this.xstsAuth.notAfter)) {
+                LogManager.info("xsts auth expired. Attempting to get new auth");
+                XboxLiveAuthResponse xboxLiveAuthResponse = MicrosoftAuthAPI.getXBLToken(this.oauthToken.accessToken);
+                this.xstsAuth = MicrosoftAuthAPI.getXstsToken(xboxLiveAuthResponse.token);
 
-        if (force || new Date().after(this.accessTokenExpiresAt)) {
-            LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft(this.getIdentityToken());
+                if (xstsAuth == null) {
+                    mustLogin = true;
+                    AccountManager.saveAccounts();
+                    LogManager.error("Failed to get XBLToken");
+                    return false;
+                }
 
-            this.accessToken = loginResponse.accessToken;
-            this.username = loginResponse.username;
+                AccountManager.saveAccounts();
+            }
 
-            this.accessTokenExpiresAt = new Date();
-            this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
+            if (force || new Date().after(this.accessTokenExpiresAt)) {
+                LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft(this.getIdentityToken());
 
-            com.atlauncher.managers.AccountManager.saveAccounts();
+                if (loginResponse == null) {
+                    mustLogin = true;
+                    AccountManager.saveAccounts();
+                    LogManager.error("Failed to login to Minecraft");
+                    return false;
+                }
+
+                this.accessToken = loginResponse.accessToken;
+                this.username = loginResponse.username;
+
+                this.accessTokenExpiresAt = new Date();
+                this.accessTokenExpiresAt
+                        .setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
+
+                AccountManager.saveAccounts();
+            }
+        } catch (Exception e) {
+            mustLogin = true;
+            AccountManager.saveAccounts();
+
+            LogManager.logStackTrace("Exception refreshing accessToken", e);
+            return false;
         }
 
         return true;
@@ -146,6 +188,24 @@ public class MicrosoftAccount extends AbstractAccount {
     }
 
     public boolean ensureAccessTokenValid() {
+        boolean hasCancelled = false;
+        while (mustLogin) {
+            int ret = DialogManager.okCancelDialog().setTitle(GetText.tr("You Must Login Again"))
+                    .setContent(GetText.tr("You must login again in order to continue.")).setType(DialogManager.INFO)
+                    .show();
+
+            if (ret != 0) {
+                hasCancelled = true;
+                break;
+            }
+
+            new LoginWithMicrosoftDialog(this);
+        }
+
+        if (hasCancelled) {
+            return false;
+        }
+
         if (!new Date().after(accessTokenExpiresAt)) {
             return true;
         }
