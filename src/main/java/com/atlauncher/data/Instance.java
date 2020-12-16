@@ -48,6 +48,7 @@ import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
@@ -1349,6 +1350,25 @@ public class Instance implements Cloneable, Launchable {
      * @return true if the Minecraft process was started
      */
     public boolean launch() {
+        int retInstSupport = DialogManager.optionDialog().setTitle(GetText.tr("Instance Not Longer Supported"))
+                .setContent(new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This instance is no longer supported. It's using an old instance type that will be removed soon. To prevent losing access, please reinstall this instance"))
+                        .build())
+                .addOption(GetText.tr("Ok"), true).addOption(GetText.tr("Reinstall")).setType(DialogManager.WARNING)
+                .show();
+
+        if (retInstSupport == -1) {
+            App.launcher.setMinecraftLaunched(false);
+            return false;
+        } else if (retInstSupport == 1) {
+            App.launcher.setMinecraftLaunched(false);
+
+            Analytics.sendEvent(this.getPackName() + " - " + this.getVersion(), "Reinstall", "Instance");
+            new InstanceInstallerDialog(this);
+
+            return false;
+        }
+
         final AbstractAccount account = AccountManager.getSelectedAccount();
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))

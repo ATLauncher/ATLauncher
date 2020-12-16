@@ -44,6 +44,7 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
@@ -56,6 +57,8 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in
@@ -122,8 +125,12 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
     public CollapsiblePanel(Instance instance) {
         this.instance = instance;
         if (instance.isPlayable()) {
-            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + ")");
-            arrow.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
+            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion()
+                    + ") (Unsupported, Please Reinstall)");
+            arrow.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "This instance is no longer supported. It's using an old instance type that will be removed soon. To prevent losing access, please reinstall this instance"))
+                    .build());
+            arrow.setForeground(UIManager.getColor("CollapsiblePanel.warning"));
         } else {
             arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + " - "
                     + "Corrupted)");

@@ -14,3 +14,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix reinstalling instances after renaming it using wrong folder [#411]
 - Fix logic in DownloadableFile for arm [#397]
 - Add support for Microsoft accounts [#415]
+- Add in warnings for old Instance types
