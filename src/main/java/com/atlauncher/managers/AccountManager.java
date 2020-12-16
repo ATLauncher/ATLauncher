@@ -71,8 +71,8 @@ public class AccountManager {
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (FileReader fileReader = new FileReader(FileSystem.ACCOUNTS.toFile())) {
                 Data.ACCOUNTS.addAll(Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType));
-            } catch (JsonIOException | IOException e) {
-                LogManager.logStackTrace(e);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Exception loading accounts", e);
             }
         }
 
