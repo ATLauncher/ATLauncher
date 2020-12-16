@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix logic in DownloadableFile for arm [#397]
 - Add support for Microsoft accounts [#415]
 - Add in warnings for old Instance types
+- Add in disabled/added mods to logs on crash [#417]

@@ -597,7 +597,30 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
                     if (!App.settings.keepLauncherOpen) {
                         App.console.setVisible(false); // Hide the console to pretend we've closed
                     }
+
                     if (exitValue != 0) {
+                        LogManager.error(
+                                "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
+
+                        if (this.getPack() != null && !this.getPack().system) {
+                            LogManager.info("Checking for modifications to the pack since installation.");
+                            this.launcher.mods.forEach(mod -> {
+                                if (!mod.userAdded && mod.wasSelected && mod.disabled) {
+                                    LogManager.warn("The mod " + mod.name + " (" + mod.file + ") has been disabled.");
+                                }
+                            });
+
+                            Files.list(this.ROOT.resolve("mods"))
+                                    .filter(file -> Files.isRegularFile(file)
+                                            && this.launcher.mods.stream()
+                                                    .noneMatch(m -> m.type == Type.mods && !m.userAdded
+                                                            && m.getFile(this).toPath().equals(file)))
+                                    .forEach(newMod -> {
+                                        LogManager.warn(
+                                                "The mod " + newMod.getFileName().toString() + " has been added.");
+                                    });
+                        }
+
                         // Submit any pending crash reports from Open Eye if need to since we
                         // exited abnormally
                         if (App.settings.enableLogs && App.settings.enableOpenEyeReporting) {
