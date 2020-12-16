@@ -81,6 +81,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private final JMenuItem updateSkin;
     private final JPopupMenu contextMenu; // Right click menu
 
+    @SuppressWarnings("unchecked")
     public AccountsTab() {
         setLayout(new BorderLayout());
 
@@ -373,6 +374,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         add(rightPanel, BorderLayout.CENTER);
     }
 
+    @SuppressWarnings("unchecked")
     private void leftButtonActions() {
         AbstractAccount account;
         String clientToken = UUID.randomUUID().toString().replace("-", "");
@@ -415,8 +417,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     mojangAccount.remember = remember;
                     mojangAccount.clientToken = clientToken;
                     mojangAccount.store = response.getAuth().saveForStorage();
-                } else if (account instanceof MicrosoftAccount) {
-                    // TODO: handle this
                 }
 
                 Analytics.sendEvent("Edit", "Account");

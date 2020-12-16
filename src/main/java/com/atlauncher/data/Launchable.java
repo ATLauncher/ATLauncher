@@ -18,7 +18,6 @@
 package com.atlauncher.data;
 
 import java.io.File;
-import java.util.List;
 
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 

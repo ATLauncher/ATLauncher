@@ -59,8 +59,8 @@ public final class AddModsDialog extends JDialog {
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
-    private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
-    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
+    private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
+    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
 
     // #. Fabric API is the name of a mod, so should be left untranslated
     private final JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
@@ -158,7 +158,8 @@ public final class AddModsDialog extends JDialog {
                 new CurseModFileSelectorDialog(mod, instance);
             }
 
-            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream().anyMatch(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
+            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
+                    .anyMatch(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
                 fabricApiWarningLabel.setVisible(false);
                 installFabricApiButton.setVisible(false);
             }
@@ -168,7 +169,8 @@ public final class AddModsDialog extends JDialog {
                 : this.instance.getLoaderVersion());
 
         if (loaderVersion != null && loaderVersion.isFabric()
-                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream().noneMatch(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
+                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
+                        .noneMatch(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
@@ -255,6 +257,7 @@ public final class AddModsDialog extends JDialog {
         getMods();
     }
 
+    @SuppressWarnings("unchecked")
     private void getMods() {
         setLoading(true);
         prevButton.setEnabled(false);

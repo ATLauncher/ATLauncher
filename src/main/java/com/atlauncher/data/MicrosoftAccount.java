@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
@@ -28,7 +29,6 @@ import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 
 import org.mini2Dx.gettext.GetText;
@@ -97,21 +97,27 @@ public class MicrosoftAccount extends AbstractAccount {
 
     @Override
     public String getCurrentUsername() {
-        // TODO: handle auth failures
-        Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
-                .header("Authorization", "Bearer " + this.accessToken).asClass(Profile.class);
+        Profile profile = MicrosoftAuthAPI.getMcProfile(accessToken);
+
+        if (profile == null) {
+            LogManager.error("Error getting Minecraft profile");
+            return null;
+        }
 
         return Optional.of(profile.name).orElse(null);
     }
 
     @Override
     public String getSkinUrl() {
-        // TODO: handle auth failures
-        Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
-                .header("Authorization", "Bearer " + this.accessToken).asClass(Profile.class);
+        Profile profile = MicrosoftAuthAPI.getMcProfile(accessToken);
 
-        return profile.skins.stream().filter(s -> s.state.equalsIgnoreCase("ACTIVE")).findFirst().map(s -> s.url)
-                .orElse(null);
+        if (profile == null) {
+            LogManager.error("Error getting Minecraft profile");
+            return null;
+        }
+
+        return Optional.of(profile.skins).orElse(new ArrayList<>()).stream()
+                .filter(s -> s.state.equalsIgnoreCase("ACTIVE")).findFirst().map(s -> s.url).orElse(null);
     }
 
     public boolean refreshAccessToken() {
@@ -119,8 +125,6 @@ public class MicrosoftAccount extends AbstractAccount {
     }
 
     public boolean refreshAccessToken(boolean force) {
-        // TODO: handle auth failures
-
         try {
             if (force || new Date().after(this.oauthToken.expiresAt)) {
                 LogManager.info("Oauth token expired. Attempting to refresh");

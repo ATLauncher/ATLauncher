@@ -43,6 +43,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.mini2Dx.gettext.GetText;
 
+@SuppressWarnings("deprecation")
 public class AccountManager {
     private static final Type abstractAccountListType = new TypeToken<List<AbstractAccount>>() {
     }.getType();

@@ -373,12 +373,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         add(rememberWindowSizePosition, gbc);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean needToReloadTheme() {
         return !((ComboItem<String>) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme)
                 || App.settings.disableCustomFonts != disableCustomFonts.isSelected()
                 || !((String) language.getSelectedItem()).equalsIgnoreCase(App.settings.language);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean themeChanged() {
         return !((ComboItem<String>) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme);
     }
@@ -391,6 +393,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.selected);
     }
 
+    @SuppressWarnings("unchecked")
     public void save() {
         Language.setLanguage((String) language.getSelectedItem());
         App.settings.language = (String) language.getSelectedItem();

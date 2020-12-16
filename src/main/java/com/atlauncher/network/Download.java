@@ -118,7 +118,9 @@ public final class Download {
                     this.downloadFile();
                 }
 
-                return gson.fromJson(new InputStreamReader(Files.newInputStream(this.to)), tClass);
+                try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to))) {
+                    return gson.fromJson(isr, tClass);
+                }
             }
 
             this.execute();
@@ -147,7 +149,9 @@ public final class Download {
                     this.downloadFile();
                 }
 
-                return gson.fromJson(new InputStreamReader(Files.newInputStream(this.to)), tClass);
+                try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to))) {
+                    return gson.fromJson(isr, tClass);
+                }
             }
 
             this.execute();

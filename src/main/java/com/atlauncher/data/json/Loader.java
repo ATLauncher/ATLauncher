@@ -62,10 +62,10 @@ public class Loader {
     }
 
     public com.atlauncher.data.minecraft.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion loaderVersion) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+            LoaderVersion loaderVersion) throws Exception {
         com.atlauncher.data.minecraft.loaders.Loader instance = (com.atlauncher.data.minecraft.loaders.Loader) Class
                 .forName(this.className.replace("com.atlauncher.data.loaders", "com.atlauncher.data.minecraft.loaders"))
-                .newInstance();
+                .getDeclaredConstructor().newInstance();
 
         instance.set(this.metadata, tempDir, instanceInstaller, loaderVersion);
 
