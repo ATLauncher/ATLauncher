@@ -6,3 +6,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.1.1
 
 - Add shift modifier to debug tool panel to log even more
+- Add responses to failed downloads at debug level 5

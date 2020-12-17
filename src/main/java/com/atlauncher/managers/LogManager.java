@@ -27,6 +27,7 @@ import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.DownloadException;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.thread.LoggingThread;
 
@@ -93,6 +94,20 @@ public final class LogManager {
 
             t.printStackTrace(new PrintWriter(writer));
             error(writer.toString());
+        }
+
+        if (t instanceof DownloadException) {
+            DownloadException exception = ((DownloadException) t);
+
+            if (exception.download.response != null
+                    && (exception.download.response.header("Content-Type").equalsIgnoreCase("application/json")
+                            || exception.download.response.header("Content-Type").equalsIgnoreCase("application/xml")
+                            || exception.download.response.header("Content-Type").startsWith("text/"))) {
+                try {
+                    debug(exception.download.response.body().string(), 5);
+                } catch (Exception e) {
+                }
+            }
         }
     }
 

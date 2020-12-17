@@ -67,7 +67,7 @@ public final class Download {
     private Map<String, String> headers = new HashMap<String, String>();
 
     // generated on/after request
-    private Response response;
+    public Response response;
 
     public Download() {
 
@@ -83,12 +83,12 @@ public final class Download {
 
             return this.response.isSuccessful();
         } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
             }
-
-            LogManager.logStackTrace(e);
         }
 
         return false;
@@ -100,12 +100,12 @@ public final class Download {
 
             return this.response.body().string();
         } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
             }
-
-            LogManager.logStackTrace(e);
         }
 
         return null;
@@ -127,12 +127,12 @@ public final class Download {
 
             return gson.fromJson(this.response.body().charStream(), tClass);
         } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
             }
-
-            LogManager.logStackTrace(e);
         }
 
         return null;
@@ -158,12 +158,12 @@ public final class Download {
 
             return gson.fromJson(this.response.body().charStream(), tClass);
         } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
             }
-
-            LogManager.logStackTrace(e);
         }
 
         return null;
@@ -273,7 +273,7 @@ public final class Download {
         this.response = httpClient.newCall(builder.build()).execute();
 
         if (this.response == null || !this.response.isSuccessful()) {
-            throw new IOException(this.url + " request wasn't successful: " + this.response);
+            throw new DownloadException(this);
         }
     }
 
@@ -282,12 +282,13 @@ public final class Download {
             this.execute();
             return this.response.code();
         } catch (Exception e) {
+            LogManager.logStackTrace(e);
+
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
             }
 
-            LogManager.logStackTrace(e);
             return -1;
         }
     }
@@ -425,12 +426,12 @@ public final class Download {
             // open the connection
             this.execute();
         } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
             }
-
-            LogManager.logStackTrace(e);
 
             return false;
         }
