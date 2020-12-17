@@ -17,8 +17,8 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 
@@ -30,25 +30,28 @@ import com.atlauncher.utils.OS;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class DebugModePanel extends AbstractToolPanel implements ActionListener {
+public class DebugModePanel extends AbstractToolPanel {
 
     public DebugModePanel() {
         super(GetText.tr("Debug Mode"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
-            "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."))
-            .build());
+                "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."))
+                .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.addActionListener(this);
         LAUNCH_BUTTON.setEnabled(!LogManager.showDebug);
-    }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == LAUNCH_BUTTON) {
-            Analytics.sendEvent("DebugMode", "Run", "Tool");
-            OS.relaunchInDebugMode();
-        }
+        LAUNCH_BUTTON.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    // Handle left-click
+                    Analytics.sendEvent("DebugMode", "Run", "Tool");
+
+                    OS.relaunchInDebugMode(e.isShiftDown() ? 5 : 3);
+                }
+            }
+        });
     }
 }

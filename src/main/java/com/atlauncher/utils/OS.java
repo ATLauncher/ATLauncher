@@ -548,7 +548,14 @@ public enum OS {
      * This restarts the launcher in debug mode.
      */
     public static void relaunchInDebugMode() {
-        restartLauncher(new ArrayList<>(Arrays.asList("--debug", "--debug-level=3")));
+        relaunchInDebugMode(3);
+    }
+
+    /**
+     * This restarts the launcher in debug mode.
+     */
+    public static void relaunchInDebugMode(int level) {
+        restartLauncher(new ArrayList<>(Arrays.asList("--debug", "--debug-level=" + level)));
     }
 
     /**
