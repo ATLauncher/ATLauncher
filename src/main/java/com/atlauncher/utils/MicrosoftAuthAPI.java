@@ -17,6 +17,7 @@
  */
 package com.atlauncher.utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +85,7 @@ public class MicrosoftAuthAPI {
         return xblAuthResponse;
     }
 
-    public static XboxLiveAuthResponse getXstsToken(String xblToken) {
+    public static XboxLiveAuthResponse getXstsToken(String xblToken) throws IOException {
         Map<Object, Object> properties = new HashMap<Object, Object>();
         properties.put("SandboxId", "RETAIL");
 
@@ -101,7 +102,7 @@ public class MicrosoftAuthAPI {
                 .header("Content-Type", "application/json").header("Accept", "application/json")
                 .header("x-xbl-contract-version", "1")
                 .post(RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")))
-                .asClass(XboxLiveAuthResponse.class);
+                .asClassWithThrow(XboxLiveAuthResponse.class);
 
         return xstsAuthResponse;
     }

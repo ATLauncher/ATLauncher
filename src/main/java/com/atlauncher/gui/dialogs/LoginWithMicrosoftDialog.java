@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import javax.swing.JDialog;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.MicrosoftAccount;
@@ -33,11 +34,13 @@ import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.Store;
+import com.atlauncher.data.microsoft.XboxLiveAuthErrorResponse;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
 
@@ -170,9 +173,36 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     }
 
     private void acquireXsts(OauthTokenResponse oauthTokenResponse, String xblToken) throws Exception {
-        XboxLiveAuthResponse xstsAuthResponse = MicrosoftAuthAPI.getXstsToken(xblToken);
+        XboxLiveAuthResponse xstsAuthResponse = null;
 
-        acquireMinecraftToken(oauthTokenResponse, xstsAuthResponse);
+        try {
+            xstsAuthResponse = MicrosoftAuthAPI.getXstsToken(xblToken);
+        } catch (DownloadException e) {
+            if (e.response != null) {
+                XboxLiveAuthErrorResponse xboxLiveAuthErrorResponse = Gsons.DEFAULT.fromJson(e.response,
+                        XboxLiveAuthErrorResponse.class);
+
+                String error = xboxLiveAuthErrorResponse.getErrorMessageForCode();
+
+                if (error != null) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Error logging into Xbox Live"))
+                            .setContent(new HTMLBuilder().center().text(error).build()).setType(DialogManager.ERROR)
+                            .show();
+
+                    String link = xboxLiveAuthErrorResponse.getBrowserLinkForCode();
+
+                    if (link != null) {
+                        OS.openWebBrowser(link);
+                    }
+                }
+
+                throw e;
+            }
+        }
+
+        if (xstsAuthResponse != null) {
+            acquireMinecraftToken(oauthTokenResponse, xstsAuthResponse);
+        }
     }
 
     private void acquireMinecraftToken(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse)

@@ -96,10 +96,6 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                     // if the file exists, assume it's good. This is only needed for older Forge
                     // versions anyway, so should be okay :finger_crossed:
                     if (!Files.exists(downloadedLibrary)) {
-                        System.out.println(artifact.path);
-                        System.out.println(artifact.size);
-                        System.out.println(artifact.sha1);
-                        System.out.println("===========");
                         new com.atlauncher.network.Download().setUrl(artifact.url).downloadTo(downloadedLibrary)
                                 .downloadFile();
                     }

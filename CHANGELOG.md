@@ -7,3 +7,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 - Add shift modifier to debug tool panel to log even more
 - Add responses to failed downloads at debug level 5
+- Add in warnings when XSTS token fails [#418]
