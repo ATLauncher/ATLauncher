@@ -59,14 +59,12 @@ public class MCLauncher {
     }
 
     // InstanceV2
-    public static Process launch(MicrosoftAccount account, Launchable instance, Path nativesTempDir)
-            throws Exception {
+    public static Process launch(MicrosoftAccount account, Launchable instance, Path nativesTempDir) throws Exception {
         return launch(account, instance, null, nativesTempDir.toFile());
     }
 
     // Instance
-    public static Process launch(MojangAccount account, Launchable instance, LoginResponse response)
-            throws Exception {
+    public static Process launch(MojangAccount account, Launchable instance, LoginResponse response) throws Exception {
         return launch(account, instance, response, instance.getNativesDirectory().toPath());
     }
 
@@ -386,7 +384,7 @@ public class MCLauncher {
 
         argument = argument.replace("${auth_player_name}", account.minecraftUsername);
         argument = argument.replace("${profile_name}", instance.getName());
-        argument = argument.replace("${user_properties}", Optional.ofNullable(props).orElse(""));
+        argument = argument.replace("${user_properties}", Optional.ofNullable(props).orElse("[]"));
         argument = argument.replace("${version_name}", instance.getMinecraftVersion());
         argument = argument.replace("${game_directory}", instance.getRootDirectory().getAbsolutePath());
         argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
