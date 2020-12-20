@@ -855,7 +855,7 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
         return true;
     }
 
-    public boolean exportAsCurseZip(String name, String author, String saveTo, List<String> overrides) {
+    public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides) {
         Path to = Paths.get(saveTo).resolve(name + ".zip");
         CurseManifest manifest = new CurseManifest();
 
@@ -884,7 +884,7 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
         manifest.manifestType = "minecraftModpack";
         manifest.manifestVersion = 1;
         manifest.name = name;
-        manifest.version = this.launcher.version;
+        manifest.version = version;
         manifest.author = author;
         manifest.files = this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).map(mod -> {
             CurseManifestFile file = new CurseManifestFile();

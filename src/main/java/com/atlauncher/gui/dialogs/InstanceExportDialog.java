@@ -80,7 +80,7 @@ public class InstanceExportDialog extends JDialog {
     }
 
     private void setupComponents() {
-        setSize(550, 400);
+        setSize(550, 430);
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -104,6 +104,23 @@ public class InstanceExportDialog extends JDialog {
         final JTextField name = new JTextField(30);
         name.setText(instance.launcher.name);
         topPanel.add(name, gbc);
+
+        // Version
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover versionLabel = new JLabelWithHover(GetText.tr("Version") + ":", HELP_ICON,
+                GetText.tr("The version of this instance"));
+        topPanel.add(versionLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        final JTextField version = new JTextField(30);
+        version.setText(instance.launcher.version);
+        topPanel.add(version, gbc);
 
         // Author
         gbc.gridx = 0;
@@ -228,7 +245,8 @@ public class InstanceExportDialog extends JDialog {
                     GetText.tr("Exporting Instance. Please wait..."), null);
 
             dialog.addThread(new Thread(() -> {
-                if (instance.exportAsCurseZip(name.getText(), author.getText(), saveTo.getText(), overrides)) {
+                if (instance.exportAsCurseZip(name.getText(), version.getText(), author.getText(), saveTo.getText(),
+                        overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                     OS.openFileExplorer(Paths.get(saveTo.getText()).resolve(name.getText() + ".zip"), true);
                 } else {
