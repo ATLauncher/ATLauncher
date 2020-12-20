@@ -886,11 +886,11 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
         manifest.name = name;
         manifest.version = this.launcher.version;
         manifest.author = author;
-        manifest.files = this.launcher.mods.stream().filter(DisableableMod::isFromCurse).map(mod -> {
+        manifest.files = this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).map(mod -> {
             CurseManifestFile file = new CurseManifestFile();
             file.projectID = mod.curseModId;
             file.fileID = mod.curseFileId;
-            file.required = !mod.disabled;
+            file.required = true;
 
             return file;
         }).collect(Collectors.toList());
@@ -913,7 +913,7 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
 
         // create modlist.html
         StringBuilder sb = new StringBuilder("<ul>");
-        this.launcher.mods.stream().filter(DisableableMod::isFromCurse).forEach(mod -> {
+        this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).forEach(mod -> {
             if (mod.hasFullCurseInformation()) {
                 sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name)
                         .append("</a></li>");
@@ -949,8 +949,8 @@ public class InstanceV2 extends MinecraftVersion implements Launchable {
             }
         }
 
-        // remove files that come from Curse
-        launcher.mods.stream().filter(DisableableMod::isFromCurse).forEach(mod -> {
+        // remove files that come from Curse or aren't disabled
+        launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
 
             if (file.exists()) {
