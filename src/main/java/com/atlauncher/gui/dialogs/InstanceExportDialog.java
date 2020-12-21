@@ -43,7 +43,7 @@ import javax.swing.JTextField;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.InstanceV2;
+import com.atlauncher.data.Instance;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.OS;
@@ -53,7 +53,7 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class InstanceExportDialog extends JDialog {
-    private final InstanceV2 instance;
+    private final Instance instance;
     private final List<String> overrides = new ArrayList<>();
 
     private final JPanel topPanel = new JPanel();
@@ -63,7 +63,7 @@ public class InstanceExportDialog extends JDialog {
 
     final GridBagConstraints gbc = new GridBagConstraints();
 
-    public InstanceExportDialog(InstanceV2 instance) {
+    public InstanceExportDialog(Instance instance) {
         super(App.launcher.getParent(), GetText.tr("Export {0}", instance.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;

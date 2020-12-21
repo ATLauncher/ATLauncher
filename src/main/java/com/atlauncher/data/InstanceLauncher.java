@@ -26,7 +26,7 @@ import com.atlauncher.data.json.Java;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
 @Json
-public class InstanceV2Launcher {
+public class InstanceLauncher {
     public String name;
     public String pack;
     public String description;

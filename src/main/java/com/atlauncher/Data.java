@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.News;
@@ -39,8 +38,7 @@ public final class Data {
 
     public static final List<Pack> PACKS = new LinkedList<>();
 
-    public static final List<Instance> INSTANCES_OLD = new LinkedList<>();
-    public static final List<InstanceV2> INSTANCES = new LinkedList<>();
+    public static final List<Instance> INSTANCES = new LinkedList<>();
 
     public static final List<Server> SERVERS = new LinkedList<>();
 

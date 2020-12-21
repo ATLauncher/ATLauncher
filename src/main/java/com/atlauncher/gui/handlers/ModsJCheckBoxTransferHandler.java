@@ -77,8 +77,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
             boolean usesCoreMods = false;
             try {
-                usesCoreMods = MinecraftManager.getMinecraftVersion(dialog.instanceV2 != null ? dialog.instanceV2.id
-                        : dialog.instance.getMinecraftVersion()).coremods;
+                usesCoreMods = MinecraftManager.getMinecraftVersion(dialog.instance.id).coremods;
             } catch (InvalidMinecraftVersion e1) {
                 LogManager.logStackTrace(e1);
             }
@@ -101,28 +100,22 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
             if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
                 type = Type.jar;
-                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("jarmods").toFile()
-                        : dialog.instance.getJarModsDirectory();
+                instanceFile = dialog.instance.getRoot().resolve("jarmods").toFile();
             } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
                 type = Type.coremods;
-                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("coremods").toFile()
-                        : dialog.instance.getCoreModsDirectory();
+                instanceFile = dialog.instance.getRoot().resolve("coremods").toFile();
             } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
                 type = Type.texturepack;
-                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("texturepacks").toFile()
-                        : dialog.instance.getTexturePacksDirectory();
+                instanceFile = dialog.instance.getRoot().resolve("texturepacks").toFile();
             } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
                 type = Type.resourcepack;
-                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("resourcepacks").toFile()
-                        : dialog.instance.getResourcePacksDirectory();
+                instanceFile = dialog.instance.getRoot().resolve("resourcepacks").toFile();
             } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
                 type = Type.shaderpack;
-                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("shaderpacks").toFile()
-                        : dialog.instance.getShaderPacksDirectory();
+                instanceFile = dialog.instance.getRoot().resolve("shaderpacks").toFile();
             } else {
                 type = Type.mods;
-                instanceFile = dialog.instanceV2 != null ? dialog.instanceV2.getRoot().resolve("mods").toFile()
-                        : dialog.instance.getModsDirectory();
+                instanceFile = dialog.instance.getRoot().resolve("mods").toFile();
             }
 
             final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
@@ -142,9 +135,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     }
 
                     if (this.disabled) {
-                        copyTo = dialog.instanceV2 != null
-                                ? dialog.instanceV2.getRoot().resolve("disabledmods").toFile()
-                                : dialog.instance.getDisabledModsDirectory();
+                        copyTo = dialog.instance.getRoot().resolve("disabledmods").toFile();
                     }
 
                     DisableableMod mod = new DisableableMod();
@@ -203,11 +194,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     }
 
                     if (Utils.copyFile(file, copyTo)) {
-                        if (dialog.instanceV2 != null) {
-                            dialog.instanceV2.launcher.mods.add(mod);
-                        } else {
-                            dialog.instance.getInstalledMods().add(mod);
-                        }
+                        dialog.instance.launcher.mods.add(mod);
                     }
                 }
                 progressDialog.close();

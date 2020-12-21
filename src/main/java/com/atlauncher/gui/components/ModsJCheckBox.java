@@ -138,18 +138,10 @@ public class ModsJCheckBox extends JCheckBox {
         JMenuItem enableDisableButton = new JMenuItem(
                 getDisableableMod().disabled ? GetText.tr("Enable") : GetText.tr("Disable"));
         enableDisableButton.addActionListener(e -> {
-            if (dialog.instance != null) {
-                if (getDisableableMod().disabled) {
-                    getDisableableMod().enable(dialog.instance);
-                } else {
-                    getDisableableMod().disable(dialog.instance);
-                }
-            } else if (dialog.instanceV2 != null) {
-                if (getDisableableMod().disabled) {
-                    getDisableableMod().enable(dialog.instanceV2);
-                } else {
-                    getDisableableMod().disable(dialog.instanceV2);
-                }
+            if (getDisableableMod().disabled) {
+                getDisableableMod().enable(dialog.instance);
+            } else {
+                getDisableableMod().disable(dialog.instance);
             }
 
             dialog.reloadPanels();
@@ -160,18 +152,10 @@ public class ModsJCheckBox extends JCheckBox {
 
         JMenuItem showInFileExplorer = new JMenuItem(GetText.tr("Show In File Explorer"));
         showInFileExplorer.addActionListener(e -> {
-            if (dialog.instance != null) {
-                if (getDisableableMod().disabled) {
-                    OS.openFileExplorer(getDisableableMod().getDisabledFile(dialog.instance).toPath());
-                } else {
-                    OS.openFileExplorer(getDisableableMod().getFile(dialog.instance).toPath());
-                }
-            } else if (dialog.instanceV2 != null) {
-                if (getDisableableMod().disabled) {
-                    OS.openFileExplorer(getDisableableMod().getDisabledFile(dialog.instanceV2).toPath());
-                } else {
-                    OS.openFileExplorer(getDisableableMod().getFile(dialog.instanceV2).toPath());
-                }
+            if (getDisableableMod().disabled) {
+                OS.openFileExplorer(getDisableableMod().getDisabledFile(dialog.instance).toPath());
+            } else {
+                OS.openFileExplorer(getDisableableMod().getFile(dialog.instance).toPath());
             }
         });
         contextMenu.add(showInFileExplorer);
@@ -180,13 +164,9 @@ public class ModsJCheckBox extends JCheckBox {
 
         JMenuItem remove = new JMenuItem(GetText.tr("Remove"));
         remove.addActionListener(e -> {
-            if (dialog.instance != null) {
-                dialog.instance.removeInstalledMod(getDisableableMod());
-            } else if (dialog.instanceV2 != null) {
-                dialog.instanceV2.launcher.mods.remove(getDisableableMod());
-                Utils.delete((getDisableableMod().isDisabled() ? getDisableableMod().getDisabledFile(dialog.instanceV2)
-                        : getDisableableMod().getFile(dialog.instanceV2)));
-            }
+            dialog.instance.launcher.mods.remove(getDisableableMod());
+            Utils.delete((getDisableableMod().isDisabled() ? getDisableableMod().getDisabledFile(dialog.instance)
+                    : getDisableableMod().getFile(dialog.instance)));
 
             dialog.reloadPanels();
         });
@@ -197,11 +177,7 @@ public class ModsJCheckBox extends JCheckBox {
 
             JMenuItem reinstall = new JMenuItem(GetText.tr("Reinstall"));
             reinstall.addActionListener(e -> {
-                if (dialog.instance != null) {
-                    getDisableableMod().reinstall(dialog.instance);
-                } else if (dialog.instanceV2 != null) {
-                    getDisableableMod().reinstall(dialog.instanceV2);
-                }
+                getDisableableMod().reinstall(dialog.instance);
 
                 dialog.reloadPanels();
             });
@@ -211,11 +187,7 @@ public class ModsJCheckBox extends JCheckBox {
             checkForUpdates.addActionListener(e -> {
                 boolean updated = false;
 
-                if (dialog.instance != null) {
-                    updated = getDisableableMod().checkForUpdate(dialog.instance);
-                } else if (dialog.instanceV2 != null) {
-                    updated = getDisableableMod().checkForUpdate(dialog.instanceV2);
-                }
+                updated = getDisableableMod().checkForUpdate(dialog.instance);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))

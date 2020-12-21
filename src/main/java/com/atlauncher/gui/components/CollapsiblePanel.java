@@ -43,9 +43,7 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.ThemeListener;
@@ -56,8 +54,6 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in
@@ -77,7 +73,6 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
     Pack pack = null;
     Server server = null;
     Instance instance = null;
-    InstanceV2 instanceV2 = null;
     boolean collapsed; // stores current state of the collapsible panel
 
     /**
@@ -123,36 +118,12 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
 
     public CollapsiblePanel(Instance instance) {
         this.instance = instance;
-        if (instance.isPlayable()) {
-            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion()
-                    + ") (Unsupported, Please Reinstall)");
-            arrow.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
-                    "This instance is no longer supported. It's using an old instance type that will be removed soon. To prevent losing access, please reinstall this instance"))
-                    .build());
-            arrow.setForeground(UIManager.getColor("CollapsiblePanel.warning"));
-        } else {
-            arrow.setText(instance.getName() + " (" + instance.getPackName() + " " + instance.getVersion() + " - "
-                    + "Corrupted)");
-            arrow.setForeground(UIManager.getColor("CollapsiblePanel.error"));
-        }
-        titleComponent = arrow;
-        collapsed = false;
-        commonConstructor();
-        if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().collapsedInstances.contains(instance.getName())) {
-                setCollapsed(true);
-            }
-        }
-    }
-
-    public CollapsiblePanel(InstanceV2 instanceV2) {
-        this.instanceV2 = instanceV2;
-        if (instanceV2.launcher.isPlayable) {
-            arrow.setText(instanceV2.launcher.name + " (" + instanceV2.launcher.pack + " " + instanceV2.launcher.version
-                    + ")");
+        if (instance.launcher.isPlayable) {
+            arrow.setText(
+                    instance.launcher.name + " (" + instance.launcher.pack + " " + instance.launcher.version + ")");
             arrow.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
         } else {
-            arrow.setText(instanceV2.launcher.name + " (" + instanceV2.launcher.pack + " " + instanceV2.launcher.version
+            arrow.setText(instance.launcher.name + " (" + instance.launcher.pack + " " + instance.launcher.version
                     + " - " + "Corrupted)");
             arrow.setForeground(UIManager.getColor("CollapsiblePanel.error"));
         }
@@ -160,7 +131,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         collapsed = false;
         commonConstructor();
         if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().collapsedInstances.contains(instanceV2.launcher.name)) {
+            if (AccountManager.getSelectedAccount().collapsedInstances.contains(instance.launcher.name)) {
                 setCollapsed(true);
             }
         }
@@ -318,10 +289,6 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, instance.getPackName() + " - " + instance.getVersion(),
                         "Collapse", "Instance");
                 InstanceManager.setInstanceVisbility(instance, isCollapsed());
-            } else if (instanceV2 != null) {
-                Analytics.sendEvent(isCollapsed() ? 1 : 0,
-                        instanceV2.launcher.pack + " - " + instanceV2.launcher.version, "Collapse", "InstanceV2");
-                InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
                 ServerManager.setServerVisibility(server, isCollapsed());
@@ -334,8 +301,6 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
                 PackManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
                 InstanceManager.setInstanceVisbility(instance, isCollapsed());
-            } else if (instanceV2 != null) {
-                InstanceManager.setInstanceVisbility(instanceV2, isCollapsed());
             } else if (server != null) {
                 ServerManager.setServerVisibility(server, isCollapsed());
             }

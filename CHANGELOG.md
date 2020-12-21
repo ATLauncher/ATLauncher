@@ -7,3 +7,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 - Fix exported instances including disabled mods [#420]
 - Add in version field when exporting an instance [#419]
+- Clean up old instance format [#422]

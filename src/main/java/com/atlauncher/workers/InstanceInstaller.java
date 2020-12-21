@@ -40,8 +40,7 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
-import com.atlauncher.data.InstanceV2Launcher;
+import com.atlauncher.data.InstanceLauncher;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curse.CurseAttachment;
@@ -99,7 +98,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     protected double downloadedBytes = 0; // Total number of bytes downloaded
 
     public Instance instance = null;
-    public InstanceV2 instanceV2 = null;
     public final String name;
     public final com.atlauncher.data.Pack pack;
     public final com.atlauncher.data.PackVersion version;
@@ -165,10 +163,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public void setInstance(Instance instance) {
         this.instance = instance;
-    }
-
-    public void setInstance(InstanceV2 instanceV2) {
-        this.instanceV2 = instanceV2;
     }
 
     @Override
@@ -415,30 +409,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             mod.getCurseModId(), mod.getCurseFileId()));
         }
 
-        if (this.isReinstall && (instanceV2 != null ? instanceV2.hasCustomMods() : instance.hasCustomMods())) {
+        if (this.isReinstall && instance.hasCustomMods()) {
             // user chose to save mods even though Minecraft version changed, so add them to
             // the installed list
-            if (this.saveMods || (instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
-                    .equalsIgnoreCase(version.minecraftVersion.version)) {
-                modsInstalled.addAll((instanceV2 != null
-                    ? instanceV2.getCustomDisableableMods()
-                    : instance.getCustomDisableableMods()));
+            if (this.saveMods || instance.id.equalsIgnoreCase(version.minecraftVersion.version)) {
+                modsInstalled.addAll(instance.getCustomDisableableMods());
             }
 
             // user choosing to not save mods and Minecraft version changed, so delete
             // custom mods
-            if (!this.saveMods && !(instanceV2 != null ? instanceV2.id : instance.getMinecraftVersion())
-                    .equalsIgnoreCase(version.minecraftVersion.version)) {
-                for (com.atlauncher.data.DisableableMod mod : (instanceV2 != null
-                        ? instanceV2.getCustomDisableableMods()
-                        : instance.getCustomDisableableMods())) {
-                    if (this.instanceV2 != null) {
-                        this.instanceV2.launcher.mods.remove(mod);
-                        Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this.instanceV2)
-                                : mod.getFile(this.instanceV2)));
-                    } else {
-                        instance.removeInstalledMod(mod);
-                    }
+            if (!this.saveMods && !instance.id.equalsIgnoreCase(version.minecraftVersion.version)) {
+                for (com.atlauncher.data.DisableableMod mod : instance.getCustomDisableableMods()) {
+                    this.instance.launcher.mods.remove(mod);
+                    Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this.instance) : mod.getFile(this.instance)));
                 }
             }
         }
@@ -528,14 +511,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void saveInstanceJson() {
-        InstanceV2 instance = new InstanceV2(this.minecraftVersion);
+        Instance instance = new Instance(this.minecraftVersion);
         instance.ROOT = this.root;
-        InstanceV2Launcher instanceLauncher;
+        InstanceLauncher instanceLauncher;
 
-        if (!this.isReinstall || this.instance != null) {
-            instanceLauncher = new InstanceV2Launcher();
+        if (!this.isReinstall) {
+            instanceLauncher = new InstanceLauncher();
         } else {
-            instanceLauncher = this.instanceV2.launcher;
+            instanceLauncher = this.instance.launcher;
         }
 
         instance.libraries = this.getLibraries();
@@ -567,15 +550,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         instance.save();
 
-        if (this.instanceV2 != null) {
-            InstanceManager.getInstances().remove(this.instanceV2);
+        if (this.instance != null) {
+            InstanceManager.getInstances().remove(this.instance);
         }
 
         InstanceManager.getInstances().add(instance);
-
-        if (this.instance != null) {
-            InstanceManager.getOldInstances().remove(this.instance);
-        }
 
         App.launcher.reloadInstancesPanel();
     }
@@ -729,8 +708,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
 
             com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
-                .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
-                .withInstanceInstaller(this).withHttpClient(httpClient).withFriendlyFileName(key);
+                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
+                    .withInstanceInstaller(this).withHttpClient(httpClient).withFriendlyFileName(key);
 
             pool.add(download);
         });
@@ -752,8 +731,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 if (index.mapToResources) {
                     FileUtils.copyFile(downloadedFile, this.root.resolve("resources/" + key), true);
                 } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key),
-                        true);
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key), true);
                 }
             });
         }
@@ -1339,28 +1317,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (isReinstall) {
                 if (Files.isDirectory(this.root.resolve("mods"))) {
                     Utils.deleteWithFilter(this.root.resolve("mods").toFile(),
-                            (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.mods)
-                                    : instance.getPackMods(com.atlauncher.data.Type.mods)),
-                            true);
+                            instance.getPackMods(com.atlauncher.data.Type.mods), true);
                 }
 
                 if (Files.isDirectory(this.root.resolve("coremods"))) {
                     Utils.deleteWithFilter(this.root.resolve("coremods").toFile(),
-                            (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.coremods)
-                                    : instance.getPackMods(com.atlauncher.data.Type.coremods)),
-                            true);
+                            instance.getPackMods(com.atlauncher.data.Type.coremods), true);
                 }
 
                 if (Files.isDirectory(this.root.resolve("jarmods"))) {
                     Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
-                            (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.jar)
-                                    : instance.getPackMods(com.atlauncher.data.Type.jar)),
-                            true);
+                            instance.getPackMods(com.atlauncher.data.Type.jar), true);
 
                     Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
-                            (instanceV2 != null ? instanceV2.getPackMods(com.atlauncher.data.Type.forge)
-                                    : instance.getPackMods(com.atlauncher.data.Type.forge)),
-                            true);
+                            instance.getPackMods(com.atlauncher.data.Type.forge), true);
                 }
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));
@@ -1653,12 +1623,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     public boolean wasModInstalled(String mod) {
-        return instance != null
-                && (instanceV2 != null ? instanceV2.wasModInstalled(mod) : instance.wasModInstalled(mod));
+        return instance.wasModInstalled(mod);
     }
 
     public boolean wasModSelected(String mod) {
-        return instance != null && (instanceV2 != null ? instanceV2.wasModSelected(mod) : instance.wasModSelected(mod));
+        return instance.wasModSelected(mod);
     }
 
     public String getShareCodeData(String code) {

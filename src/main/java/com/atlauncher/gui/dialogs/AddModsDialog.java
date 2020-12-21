@@ -37,7 +37,6 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.gui.card.CurseModCard;
@@ -53,7 +52,6 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
     private Instance instance;
-    private InstanceV2 instanceV2;
 
     private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
     private final JPanel topPanel = new JPanel(new BorderLayout());
@@ -77,7 +75,7 @@ public final class AddModsDialog extends JDialog {
 
     public AddModsDialog(Instance instance) {
         // #. {0} is the name of the mod we're installing
-        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instance.getName()),
+        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instance.launcher.name),
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
@@ -85,37 +83,7 @@ public final class AddModsDialog extends JDialog {
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        if (instance.installedWithLoaderVersion()) {
-            sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
-        }
-
-        sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
-
-        sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
-
-        setupComponents();
-
-        this.loadDefaultMods();
-
-        this.pack();
-        this.setLocationRelativeTo(App.launcher.getParent());
-        this.setVisible(true);
-    }
-
-    public AddModsDialog(InstanceV2 instanceV2) {
-        // #. {0} is the name of the mod we're installing
-        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instanceV2.launcher.name),
-                ModalityType.APPLICATION_MODAL);
-        this.instanceV2 = instanceV2;
-
-        this.setPreferredSize(new Dimension(600, 500));
-        this.setResizable(false);
-        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        if (instanceV2.launcher.loaderVersion != null) {
+        if (instance.launcher.loaderVersion != null) {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
 
@@ -152,25 +120,19 @@ public final class AddModsDialog extends JDialog {
             CurseMod mod = CurseApi.getModById(Constants.CURSE_FABRIC_MOD_ID);
 
             Analytics.sendEvent("AddFabricApi", "CurseMod");
-            if (this.instanceV2 != null) {
-                new CurseModFileSelectorDialog(mod, instanceV2);
-            } else {
-                new CurseModFileSelectorDialog(mod, instance);
-            }
+            new CurseModFileSelectorDialog(mod, instance);
 
-            if ((this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
+            if (instance.launcher.mods.stream()
                     .anyMatch(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
                 fabricApiWarningLabel.setVisible(false);
                 installFabricApiButton.setVisible(false);
             }
         });
 
-        LoaderVersion loaderVersion = (this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
-                : this.instance.getLoaderVersion());
+        LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
-        if (loaderVersion != null && loaderVersion.isFabric()
-                && (this.instanceV2 != null ? instanceV2.launcher.mods : instance.getInstalledMods()).stream()
-                        .noneMatch(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
+        if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
+                .noneMatch(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
@@ -270,26 +232,16 @@ public final class AddModsDialog extends JDialog {
                 setMods(CurseApi.searchResourcePacks(query, page,
                         ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
-                setMods(CurseApi
-                        .searchWorlds(
-                                App.settings.disableAddModRestrictions ? null
-                                        : (this.instanceV2 != null ? this.instanceV2.id
-                                                : this.instance.getMinecraftVersion()),
-                                query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                setMods(CurseApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
+                        page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else {
-                if ((this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
-                        : this.instance.getLoaderVersion()).isFabric()) {
+                if (this.instance.launcher.loaderVersion.isFabric()) {
                     setMods(CurseApi.searchModsForFabric(
-                            App.settings.disableAddModRestrictions ? null
-                                    : (this.instanceV2 != null ? this.instanceV2.id
-                                            : this.instance.getMinecraftVersion()),
-                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
-                    setMods(CurseApi.searchMods(
-                            App.settings.disableAddModRestrictions ? null
-                                    : (this.instanceV2 != null ? this.instanceV2.id
-                                            : this.instance.getMinecraftVersion()),
-                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    setMods(CurseApi.searchMods(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
+                            page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
 
@@ -329,11 +281,7 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new WrapLayout());
 
             mods.forEach(curseMod -> {
-                if (this.instanceV2 != null) {
-                    contentPanel.add(new CurseModCard(curseMod, this.instanceV2), gbc);
-                } else {
-                    contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
-                }
+                contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
                 gbc.gridy++;
             });
         }

@@ -34,7 +34,6 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -49,7 +48,6 @@ public class RenameInstanceDialog extends JDialog {
     private JTextField instanceName;
 
     private Instance instance;
-    private InstanceV2 instanceV2;
 
     public RenameInstanceDialog(Instance instance) {
         super(null, GetText.tr("Renaming Instance"), ModalityType.APPLICATION_MODAL);
@@ -57,29 +55,6 @@ public class RenameInstanceDialog extends JDialog {
         this.instance = instance;
 
         Analytics.sendScreenView("Rename Instance Dialog");
-
-        setSize(320, 150);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setResizable(false);
-
-        setupComponents();
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                close();
-            }
-        });
-
-        setVisible(true);
-    }
-
-    public RenameInstanceDialog(InstanceV2 instanceV2) {
-        super(null, GetText.tr("Renaming Instance"), ModalityType.APPLICATION_MODAL);
-
-        this.instanceV2 = instanceV2;
 
         setSize(320, 150);
         setLocationRelativeTo(null);
@@ -120,7 +95,7 @@ public class RenameInstanceDialog extends JDialog {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         instanceName = new JTextField(16);
-        instanceName.setText(this.instanceV2 != null ? this.instanceV2.launcher.name : this.instance.getName());
+        instanceName.setText(this.instance.launcher.name);
         middle.add(instanceName, gbc);
 
         // Bottom Panel Stuff
@@ -144,10 +119,7 @@ public class RenameInstanceDialog extends JDialog {
                                         .build())
                         .setType(DialogManager.ERROR).show();
             } else {
-                if (this.instanceV2 != null && instanceV2.rename(instanceName.getText())) {
-                    App.launcher.reloadInstancesPanel();
-                } else if (this.instance != null && instance.rename(instanceName.getText())) {
-                    InstanceManager.saveInstances();
+                if (instance.rename(instanceName.getText())) {
                     App.launcher.reloadInstancesPanel();
                 } else {
                     LogManager.error("Unknown Error Occurred While Renaming Instance!");

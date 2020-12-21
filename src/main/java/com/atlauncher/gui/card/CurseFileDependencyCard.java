@@ -29,7 +29,6 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
@@ -43,22 +42,12 @@ import org.mini2Dx.gettext.GetText;
 public final class CurseFileDependencyCard extends JPanel {
     private final CurseFileDependency dependency;
     private Instance instance;
-    private InstanceV2 instanceV2;
 
     public CurseFileDependencyCard(CurseFileDependency dependency, Instance instance) {
         setLayout(new BorderLayout());
 
         this.dependency = dependency;
         this.instance = instance;
-
-        setupComponents();
-    }
-
-    public CurseFileDependencyCard(CurseFileDependency dependency, InstanceV2 instanceV2) {
-        setLayout(new BorderLayout());
-
-        this.dependency = dependency;
-        this.instanceV2 = instanceV2;
 
         setupComponents();
     }
@@ -84,17 +73,10 @@ public final class CurseFileDependencyCard extends JPanel {
         buttonsPanel.add(addButton);
         buttonsPanel.add(viewButton);
 
-        if (this.instanceV2 != null) {
-            addButton.addActionListener(e -> {
-                Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
-                new CurseModFileSelectorDialog(mod, instanceV2);
-            });
-        } else {
-            addButton.addActionListener(e -> {
-                Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
-                new CurseModFileSelectorDialog(mod, instance);
-            });
-        }
+        addButton.addActionListener(e -> {
+            Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
+            new CurseModFileSelectorDialog(mod, instance);
+        });
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
 

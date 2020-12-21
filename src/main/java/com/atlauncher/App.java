@@ -54,7 +54,6 @@ import javax.swing.text.DefaultEditorKit;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
@@ -321,18 +320,10 @@ public class App {
         boolean open = true;
 
         if (autoLaunch != null) {
-            if (InstanceManager.isInstanceBySafeName(autoLaunch)) {
-                Instance instance = InstanceManager.getInstanceBySafeName(autoLaunch);
-                LogManager.info("Opening Instance " + instance.getName());
-                if (instance.launch()) {
-                    open = false;
-                } else {
-                    LogManager.error("Error Opening Instance " + instance.getName());
-                }
-            } else if (InstanceManager.getInstances().stream()
+            if (InstanceManager.getInstances().stream()
                     .anyMatch(instance -> instance.getSafeName().equalsIgnoreCase(autoLaunch))) {
-                Optional<InstanceV2> instance = InstanceManager.getInstances().stream()
-                        .filter(instanceV2 -> instanceV2.getSafeName().equalsIgnoreCase(autoLaunch)).findFirst();
+                Optional<Instance> instance = InstanceManager.getInstances().stream()
+                        .filter(i -> i.getSafeName().equalsIgnoreCase(autoLaunch)).findFirst();
 
                 if (instance.isPresent()) {
                     LogManager.info("Opening Instance " + instance.get().launcher.name);
@@ -386,7 +377,6 @@ public class App {
     }
 
     private static void logSystemInformation() {
-
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
         SwingUtilities.invokeLater(

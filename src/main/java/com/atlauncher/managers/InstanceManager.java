@@ -17,11 +17,8 @@
  */
 package com.atlauncher.managers;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,34 +29,19 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
+import com.atlauncher.data.InstanceV1;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 public class InstanceManager {
-    public static List<Instance> getOldInstances() {
-        return Data.INSTANCES_OLD;
-    }
-
-    public static List<InstanceV2> getInstances() {
+    public static List<Instance> getInstances() {
         return Data.INSTANCES;
     }
 
-    /**
-     * Get the Instances available in the Launcher sorted alphabetically
-     *
-     * @return The Instances available in the Launcher sorted alphabetically
-     */
     public static ArrayList<Instance> getInstancesSorted() {
-        ArrayList<Instance> instances = new ArrayList<>(Data.INSTANCES_OLD);
-        instances.sort(Comparator.comparing(Instance::getName));
-        return instances;
-    }
-
-    public static ArrayList<InstanceV2> getInstancesV2Sorted() {
-        ArrayList<InstanceV2> instances = new ArrayList<>(Data.INSTANCES);
+        ArrayList<Instance> instances = new ArrayList<>(Data.INSTANCES);
         instances.sort(Comparator.comparing(i -> i.launcher.name));
         return instances;
     }
@@ -71,31 +53,33 @@ public class InstanceManager {
         PerformanceManager.start();
         LogManager.debug("Loading instances");
         Data.INSTANCES.clear();
-        Data.INSTANCES_OLD.clear();
 
         for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
                 .orElse(new String[0])) {
             File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
-            InstanceV2 instanceV2 = null;
+            boolean converted = false;
 
             try {
                 try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
-                    instanceV2 = Gsons.MINECRAFT.fromJson(fileReader, InstanceV2.class);
-                    instanceV2.ROOT = instanceDir.toPath();
+                    instance = Gsons.MINECRAFT.fromJson(fileReader, Instance.class);
+                    instance.ROOT = instanceDir.toPath();
                     LogManager.debug("Loaded V2 instance from " + instanceDir);
 
-                    if (instanceV2.launcher == null) {
-                        instanceV2 = null;
-                        throw new JsonSyntaxException("Error parsing instance.json as InstanceV2");
+                    if (instance.launcher == null) {
+                        instance = null;
+                        throw new JsonSyntaxException("Error parsing instance.json as Instance");
                     }
                 } catch (JsonIOException | JsonSyntaxException ignored) {
                     try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
-                        instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
-                        instance.ROOT = instanceDir.toPath();
-                        instance.convert();
-                        LogManager.debug("Loaded V1 instance from " + instanceDir);
+                        InstanceV1 instanceV1 = Gsons.DEFAULT.fromJson(fileReader, InstanceV1.class);
+                        instanceV1.ROOT = instanceDir.toPath();
+                        instanceV1.convert();
+
+                        instance = instanceV1.convertToNewFormat(instanceDir.toPath());
+                        converted = true;
+                        LogManager.debug("Converted V1 instance from " + instanceDir);
                     } catch (JsonIOException | JsonSyntaxException e) {
                         LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                         continue;
@@ -106,25 +90,15 @@ public class InstanceManager {
                 continue;
             }
 
-            if (instance == null && instanceV2 == null) {
+            if (instance == null) {
                 LogManager.error("Failed to load instance in the folder " + instanceDir);
                 continue;
-            }
-
-            if (instance != null) {
-                if (!instance.getDisabledModsDirectory().exists()) {
-                    instance.getDisabledModsDirectory().mkdir();
+            } else {
+                if (converted) {
+                    instance.save();
                 }
 
-                if (PackManager.isPackByName(instance.getPackName())) {
-                    instance.setRealPack(PackManager.getPackByName(instance.getPackName()));
-                }
-
-                Data.INSTANCES_OLD.add(instance);
-            }
-
-            if (instanceV2 != null) {
-                Data.INSTANCES.add(instanceV2);
+                Data.INSTANCES.add(instance);
             }
         }
 
@@ -132,91 +106,21 @@ public class InstanceManager {
         PerformanceManager.end();
     }
 
-    public static void saveInstances() {
-        for (Instance instance : Data.INSTANCES_OLD) {
-            File instanceFile = new File(instance.getRootDirectory(), "instance.json");
-            FileWriter fw = null;
-            BufferedWriter bw = null;
-            try {
-                if (!instanceFile.exists()) {
-                    instanceFile.createNewFile();
-                }
-
-                fw = new FileWriter(instanceFile);
-                bw = new BufferedWriter(fw);
-                bw.write(Gsons.DEFAULT.toJson(instance));
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            } finally {
-                try {
-                    if (bw != null) {
-                        bw.close();
-                    }
-                    if (fw != null) {
-                        fw.close();
-                    }
-                } catch (IOException e) {
-                    LogManager.logStackTrace(
-                            "Exception while trying to close FileWriter/BufferedWriter for saving instances "
-                                    + "json file.",
-                            e);
-                }
-            }
-        }
-    }
-
     public static void setInstanceVisbility(Instance instance, boolean collapsed) {
-        if (instance != null) {
-            if (collapsed) {
-                // Closed It
-                if (!AccountManager.getSelectedAccount().collapsedInstances.contains(instance.getName())) {
-                    AccountManager.getSelectedAccount().collapsedInstances.add(instance.getName());
-                }
-            } else {
-                // Opened It
-                AccountManager.getSelectedAccount().collapsedInstances.remove(instance.getName());
+        if (collapsed) {
+            // Closed It
+            if (!AccountManager.getSelectedAccount().collapsedInstances.contains(instance.launcher.name)) {
+                AccountManager.getSelectedAccount().collapsedInstances.add(instance.launcher.name);
             }
-            AccountManager.saveAccounts();
-            App.launcher.reloadInstancesPanel();
+        } else {
+            // Opened It
+            AccountManager.getSelectedAccount().collapsedInstances.remove(instance.launcher.name);
         }
-    }
-
-    public static void setInstanceVisbility(InstanceV2 instanceV2, boolean collapsed) {
-        if (instanceV2 != null) {
-            if (collapsed) {
-                // Closed It
-                if (!AccountManager.getSelectedAccount().collapsedInstances.contains(instanceV2.launcher.name)) {
-                    AccountManager.getSelectedAccount().collapsedInstances.add(instanceV2.launcher.name);
-                }
-            } else {
-                // Opened It
-                AccountManager.getSelectedAccount().collapsedInstances.remove(instanceV2.launcher.name);
-            }
-            AccountManager.saveAccounts();
-            App.launcher.reloadInstancesPanel();
-        }
-    }
-
-    public static void setInstanceUnplayable(Instance instance) {
-        instance.setUnplayable();
-        saveInstances();
+        AccountManager.saveAccounts();
         App.launcher.reloadInstancesPanel();
     }
 
-    /**
-     * Removes an instance from the Launcher
-     *
-     * @param instance The Instance to remove from the launcher.
-     */
     public static void removeInstance(Instance instance) {
-        if (Data.INSTANCES_OLD.remove(instance)) {
-            Utils.delete(instance.getRootDirectory());
-            saveInstances();
-            App.launcher.reloadInstancesPanel();
-        }
-    }
-
-    public static void removeInstance(InstanceV2 instance) {
         if (Data.INSTANCES.remove(instance)) {
             FileUtils.deleteDirectory(instance.getRoot());
             App.launcher.reloadInstancesPanel();
@@ -230,11 +134,6 @@ public class InstanceManager {
      * @return True if there is an instance with the same name already
      */
     public static boolean isInstance(String name) {
-        for (Instance instance : Data.INSTANCES_OLD) {
-            if (instance.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", ""))) {
-                return true;
-            }
-        }
         return Data.INSTANCES.stream()
                 .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
@@ -246,12 +145,7 @@ public class InstanceManager {
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceByName(String name) {
-        for (Instance instance : Data.INSTANCES_OLD) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
+        return Data.INSTANCES.stream().anyMatch(i -> i.launcher.name.equalsIgnoreCase(name));
     }
 
     /**
@@ -261,12 +155,7 @@ public class InstanceManager {
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceBySafeName(String name) {
-        for (Instance instance : Data.INSTANCES_OLD) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
+        return Data.INSTANCES.stream().anyMatch(i -> i.getSafeName().equalsIgnoreCase(name));
     }
 
     /**
@@ -276,12 +165,7 @@ public class InstanceManager {
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceByName(String name) {
-        for (Instance instance : Data.INSTANCES_OLD) {
-            if (instance.getName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
+        return Data.INSTANCES.stream().filter(i -> i.launcher.name.equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     /**
@@ -291,16 +175,11 @@ public class InstanceManager {
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceBySafeName(String name) {
-        for (Instance instance : Data.INSTANCES_OLD) {
-            if (instance.getSafeName().equalsIgnoreCase(name)) {
-                return instance;
-            }
-        }
-        return null;
+        return Data.INSTANCES.stream().filter(i -> i.getSafeName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public static void cloneInstance(InstanceV2 instance, String clonedName) {
-        InstanceV2 clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), InstanceV2.class);
+    public static void cloneInstance(Instance instance, String clonedName) {
+        Instance clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), Instance.class);
 
         if (clonedInstance == null) {
             LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");

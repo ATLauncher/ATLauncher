@@ -52,7 +52,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.curse.CurseMod;
@@ -80,7 +79,6 @@ public class InstanceInstallerDialog extends JDialog {
     private boolean isServer = false;
     private final Pack pack;
     private Instance instance = null;
-    private InstanceV2 instanceV2 = null;
     private CurseManifest curseManifest = null;
 
     private JPanel middle;
@@ -134,12 +132,6 @@ public class InstanceInstallerDialog extends JDialog {
                 setTitle(GetText.tr("Installing {0} Server", pack.getName()));
                 this.isServer = true;
             }
-        } else if (object instanceof Instance) {
-            instance = (Instance) object;
-            pack = instance.getRealPack();
-            isReinstall = true; // We're reinstalling
-            // #. {0} is the name of the pack the user is reinstalling
-            setTitle(GetText.tr("Reinstalling {0}", instance.getName()));
         } else if (object instanceof CurseManifest) {
             curseManifest = (CurseManifest) object;
 
@@ -175,11 +167,11 @@ public class InstanceInstallerDialog extends JDialog {
             // #. {0} is the name of the pack the user is installing
             setTitle(GetText.tr("Installing {0}", curseManifest.name));
         } else {
-            instanceV2 = (InstanceV2) object;
-            pack = instanceV2.getPack();
+            instance = (Instance) object;
+            pack = instance.getPack();
             isReinstall = true; // We're reinstalling
             // #. {0} is the name of the pack the user is installing
-            setTitle(GetText.tr("Reinstalling {0}", instanceV2.launcher.name));
+            setTitle(GetText.tr("Reinstalling {0}", instance.launcher.name));
         }
         setSize(450, 240);
         setLocationRelativeTo(App.launcher.getParent());
@@ -211,8 +203,7 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         nameField = new JTextField(17);
-        nameField.setText(((isReinstall) ? (instanceV2 != null ? instanceV2.launcher.name : instance.getName())
-                : pack.getName()));
+        nameField.setText(((isReinstall) ? instance.launcher.name : pack.getName()));
         if (isReinstall) {
             nameField.setEnabled(false);
         }
@@ -295,9 +286,9 @@ public class InstanceInstallerDialog extends JDialog {
             });
 
             saveModsLabel.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
-                    .equalsIgnoreCase(instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                    .equalsIgnoreCase(this.instance.id));
             saveModsCheckbox.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
-                    .equalsIgnoreCase(instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                    .equalsIgnoreCase(this.instance.id));
 
             middle.add(saveModsCheckbox, gbc);
         }
@@ -396,12 +387,6 @@ public class InstanceInstallerDialog extends JDialog {
                                 text = GetText.tr(
                                         "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
                                         pack.getName(), version.version);
-
-                                if (instanceIsCorrupt) {
-                                    if (instance != null) {
-                                        InstanceManager.setInstanceUnplayable(instance);
-                                    }
-                                }
                             } else {
                                 // #. {0} is the pack name and {1} is the pack version
                                 title = GetText.tr("{0} {1} Not Installed", pack.getName(), version.version);
@@ -473,12 +458,6 @@ public class InstanceInstallerDialog extends JDialog {
                                     text = GetText.tr(
                                             "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
                                             pack.getName(), version.version);
-
-                                    if (instanceIsCorrupt) {
-                                        if (instance != null) {
-                                            InstanceManager.setInstanceUnplayable(instance);
-                                        }
-                                    }
                                 } else {
                                     // #. {0} is the pack name and {1} is the pack version
                                     title = GetText.tr("{0} {1} Not Installed", pack.getName(), version.version);
@@ -573,11 +552,7 @@ public class InstanceInstallerDialog extends JDialog {
                     }
                 });
                 if (isReinstall) {
-                    if (instanceV2 != null) {
-                        instanceInstaller.setInstance(instanceV2);
-                    } else {
-                        instanceInstaller.setInstance(instance);
-                    }
+                    instanceInstaller.setInstance(instance);
                 }
                 instanceInstaller.execute();
                 dispose();
@@ -628,8 +603,7 @@ public class InstanceInstallerDialog extends JDialog {
             versionsDropDown.setSelectedItem(forUpdate);
         } else if (isReinstall) {
             for (PackVersion version : versions) {
-                if (version
-                        .versionMatches((instanceV2 != null ? instanceV2.launcher.version : instance.getVersion()))) {
+                if (version.versionMatches(instance.launcher.version)) {
                     versionsDropDown.setSelectedItem(version);
                 }
             }
@@ -663,12 +637,10 @@ public class InstanceInstallerDialog extends JDialog {
                 updateLoaderVersions((PackVersion) e.getItem());
 
                 if (!isServer && isReinstall) {
-                    this.saveModsLabel
-                            .setVisible(!((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(
-                                    instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
-                    this.saveModsCheckbox
-                            .setVisible(!((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(
-                                    instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                    this.saveModsLabel.setVisible(
+                            !((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(this.instance.id));
+                    this.saveModsCheckbox.setVisible(
+                            !((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(this.instance.id));
                 }
             }
         });
@@ -720,10 +692,8 @@ public class InstanceInstallerDialog extends JDialog {
 
             loaderVersions.forEach(version -> loaderVersionsDropDown.addItem(version));
 
-            if (isReinstall && (instanceV2 != null ? instanceV2.launcher.loaderVersion != null
-                    : instance.installedWithLoaderVersion())) {
-                String loaderVersionString = (instanceV2 != null ? instanceV2.launcher.loaderVersion.version
-                        : instance.getLoaderVersion().version);
+            if (isReinstall && instance.launcher.loaderVersion != null) {
+                String loaderVersionString = instance.launcher.loaderVersion.version;
 
                 for (int i = 0; i < loaderVersionsDropDown.getItemCount(); i++) {
                     LoaderVersion loaderVersion = loaderVersionsDropDown.getItemAt(i);

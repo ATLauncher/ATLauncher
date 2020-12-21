@@ -19,20 +19,13 @@ package com.atlauncher.data;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
 import java.util.stream.Stream;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
@@ -175,51 +168,6 @@ public class DisableableMod implements Serializable {
                 getFile(instance).getParentFile().mkdir();
             }
             if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
-                if (this.type == Type.jar) {
-                    File inputFile = instance.getMinecraftJar();
-                    File outputTmpFile = FileSystem.TEMP.resolve(instance.getSafeName() + "-minecraft.jar").toFile();
-                    if (Utils.hasMetaInf(inputFile)) {
-                        try {
-                            JarInputStream input = new JarInputStream(new FileInputStream(inputFile));
-                            JarOutputStream output = new JarOutputStream(new FileOutputStream(outputTmpFile));
-                            JarEntry entry;
-
-                            while ((entry = input.getNextJarEntry()) != null) {
-                                if (entry.getName().contains("META-INF")) {
-                                    continue;
-                                }
-                                output.putNextEntry(entry);
-                                byte[] buffer = new byte[1024];
-                                int amo;
-                                while ((amo = input.read(buffer, 0, 1024)) != -1) {
-                                    output.write(buffer, 0, amo);
-                                }
-                                output.closeEntry();
-                            }
-
-                            input.close();
-                            output.close();
-
-                            inputFile.delete();
-                            outputTmpFile.renameTo(inputFile);
-                        } catch (IOException e) {
-                            LogManager.logStackTrace(e);
-                        }
-                    }
-                }
-                this.disabled = false;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean enable(InstanceV2 instance) {
-        if (this.disabled) {
-            if (!getFile(instance).getParentFile().exists()) {
-                getFile(instance).getParentFile().mkdir();
-            }
-            if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
                 this.disabled = false;
             }
         }
@@ -227,16 +175,6 @@ public class DisableableMod implements Serializable {
     }
 
     public boolean disable(Instance instance) {
-        if (!this.disabled) {
-            if (Utils.moveFile(getFile(instance), instance.getDisabledModsDirectory(), false)) {
-                this.disabled = true;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean disable(InstanceV2 instance) {
         if (!this.disabled) {
             if (Utils.moveFile(getFile(instance), getDisabledFile(instance), true)) {
                 this.disabled = true;
@@ -254,66 +192,15 @@ public class DisableableMod implements Serializable {
         return getFile(instance).exists();
     }
 
-    public boolean doesFileExist(InstanceV2 instanceV2) {
-        if (isDisabled()) {
-            return getDisabledFile(instanceV2).exists();
-        }
-
-        return getFile(instanceV2).exists();
-    }
-
     public File getDisabledFile(Instance instance) {
-        return new File(instance.getDisabledModsDirectory(), this.file);
-    }
-
-    public File getDisabledFile(InstanceV2 instance) {
         return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
     }
 
     public File getFile(Instance instance) {
-        File dir = null;
-        switch (type) {
-            case jar:
-            case forge:
-            case mcpc:
-                dir = instance.getJarModsDirectory();
-                break;
-            case texturepack:
-                dir = instance.getTexturePacksDirectory();
-                break;
-            case resourcepack:
-                dir = instance.getResourcePacksDirectory();
-                break;
-            case mods:
-                dir = instance.getModsDirectory();
-                break;
-            case ic2lib:
-                dir = instance.getIC2LibDirectory();
-                break;
-            case denlib:
-                dir = instance.getDenLibDirectory();
-                break;
-            case coremods:
-                dir = instance.getCoreModsDirectory();
-                break;
-            case shaderpack:
-                dir = instance.getShaderPacksDirectory();
-                break;
-            default:
-                LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
-                break;
-        }
-        if (dir == null) {
-            return null;
-        }
-        return new File(dir, file);
-    }
-
-    public File getFile(InstanceV2 instance) {
         return getFile(instance, instance.getRoot());
     }
 
-    public File getFile(InstanceV2 instance, Path base) {
+    public File getFile(Instance instance, Path base) {
         File dir = null;
         switch (type) {
             case jar:
@@ -356,8 +243,8 @@ public class DisableableMod implements Serializable {
         return this.type;
     }
 
-    public boolean checkForUpdate(InstanceV2 instance) {
-        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "InstanceV2");
+    public boolean checkForUpdate(Instance instance) {
+        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
         List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
 
         Stream<CurseFile> curseFilesStream = curseModFiles.stream()
@@ -377,37 +264,8 @@ public class DisableableMod implements Serializable {
         return true;
     }
 
-    public boolean checkForUpdate(Instance instance) {
-        Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "UpdateMods", "Instance");
-        List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
-
-        Stream<CurseFile> curseFilesStream = curseModFiles.stream()
-                .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
-
-        if (!App.settings.disableAddModRestrictions) {
-            curseFilesStream = curseFilesStream.filter(file -> App.settings.disableAddModRestrictions
-                    || file.gameVersion.contains(instance.getMinecraftVersion()));
-        }
-
-        if (curseFilesStream.noneMatch(mod -> mod.id > curseFileId)) {
-            return false;
-        }
-
-        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
-
-        return true;
-    }
-
-    public boolean reinstall(InstanceV2 instance) {
-        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "InstanceV2");
-
-        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
-
-        return true;
-    }
-
     public boolean reinstall(Instance instance) {
-        Analytics.sendEvent(instance.getPackName() + " - " + instance.getVersion(), "ReinstallMods", "Instance");
+        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "Instance");
 
         new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
 

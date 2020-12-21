@@ -19,6 +19,7 @@ package com.atlauncher.network;
 
 import java.io.IOException;
 
+@SuppressWarnings("serial")
 public class DownloadException extends IOException {
     public Download download;
     public String response = null;

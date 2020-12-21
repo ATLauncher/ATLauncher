@@ -34,11 +34,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
-import com.atlauncher.gui.card.InstanceV2Card;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.dialogs.AddCursePackDialog;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
@@ -134,34 +132,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        InstanceManager.getInstancesSorted().stream().filter(Instance::canPlay).forEach(instance -> {
-            if (keepFilters) {
-                boolean showInstance = true;
-
-                if (searchText != null) {
-                    if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                            .matcher(instance.getName()).find()) {
-                        showInstance = false;
-                    }
-                }
-
-                if (isUpdate) {
-                    if (!instance.hasUpdate()) {
-                        showInstance = false;
-                    }
-                }
-
-                if (showInstance) {
-                    panel.add(new InstanceCard(instance), gbc);
-                    gbc.gridy++;
-                }
-            } else {
-                panel.add(new InstanceCard(instance), gbc);
-                gbc.gridy++;
-            }
-        });
-
-        InstanceManager.getInstances().forEach(instance -> {
+        InstanceManager.getInstancesSorted().forEach(instance -> {
             if (keepFilters) {
                 boolean showInstance = true;
 
@@ -179,11 +150,11 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
                 }
 
                 if (showInstance) {
-                    panel.add(new InstanceV2Card(instance), gbc);
+                    panel.add(new InstanceCard(instance), gbc);
                     gbc.gridy++;
                 }
             } else {
-                panel.add(new InstanceV2Card(instance), gbc);
+                panel.add(new InstanceCard(instance), gbc);
                 gbc.gridy++;
             }
         });

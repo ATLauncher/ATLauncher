@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -25,13 +26,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Writer;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -40,466 +42,173 @@ import javax.swing.ImageIcon;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.Network;
+import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
-import com.atlauncher.data.json.Java;
-import com.atlauncher.data.minecraft.LoggingClient;
+import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.data.curse.pack.CurseManifestFile;
+import com.atlauncher.data.curse.pack.CurseMinecraft;
+import com.atlauncher.data.curse.pack.CurseModLoader;
+import com.atlauncher.data.minecraft.AssetIndex;
+import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.data.minecraft.MinecraftVersion;
+import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.DownloadPool;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.google.gson.JsonIOException;
 
 import org.mini2Dx.gettext.GetText;
+import org.zeroturnaround.zip.ZipUtil;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
+import okhttp3.OkHttpClient;
 
-/**
- * This class handles contains information about a single Instance in the
- * Launcher. An Instance being an installed version of a ModPack separate to
- * others by file structure.
- */
-public class Instance implements Cloneable, Launchable {
-    /**
-     * The name of the Instance.
-     */
-    private String name;
-
-    /**
-     * The name of the Pack this instance is for.
-     */
-    private final String pack;
-
-    /**
-     * The username of the user who installed this if it's set to be for that user
-     * only.
-     */
-    private String installedBy;
-
-    /**
-     * The UUID of the user who installed this if it's set to be for that user only.
-     */
-    private String userLock;
-
-    /**
-     * The version installed for this Instance.
-     */
-    private String version;
-
-    /**
-     * The hash of this instance if it's a dev version.
-     */
-    private String hash;
-
-    /**
-     * The version of Minecraft that this Instance uses.
-     */
-    private String minecraftVersion;
-
-    /**
-     * The version type that this instance uses.
-     */
-    private String versionType;
-
-    /**
-     * The java requirements for this instance.
-     */
-    private Java java;
-
-    /**
-     * If this version allows Curse mod integration.
-     */
-    private boolean enableCurseIntegration = false;
-
-    /**
-     * If this version allows editing mods.
-     */
-    private boolean enableEditingMods = true;
-
-    private boolean assetsMapToResources = false;
-
-    /**
-     * The loader version chosen to be installed for this instance.
-     */
-    private LoaderVersion loaderVersion;
-
-    /**
-     * The minimum RAM/memory recommended for this Instance by the pack developer/s.
-     */
-    private int memory = 0;
-
-    /**
-     * The minimum PermGen/MetaSpace recommended for this Instance by the pack
-     * developer/s.
-     */
-    private int permgen = 0;
-
-    /**
-     * Array of paths for the libraries needed to be loaded.
-     */
-    private List<String> libraries;
-
-    /**
-     * Array of paths for the libraries needed to be loaded.
-     */
-    private List<String> arguments;
-
-    /**
-     * Comma seperated list of the libraries needed by Minecraft/Forge to be added
-     * to the class path when launching Minecraft.
-     *
-     * @deprecated
-     */
-    private final String librariesNeeded = null;
-
-    /**
-     * The extra arguments to be added to the command when launching Minecraft.
-     * Generally involves things such as the tweakClass/s for Forge.
-     */
-    private String extraArguments = null;
-
-    /**
-     * The arguments required by Minecraft to be added to the command when launching
-     * Minecraft. Generally involves thing such as handling of authentication,
-     * assets paths etc.
-     */
-    private String minecraftArguments = null;
-
-    /**
-     * The main class to be run when launching Minecraft.
-     */
-    private String mainClass = null;
-
-    /**
-     * The version of assets used by this Minecraft instance.
-     */
-    private String assets = null;
-
-    /**
-     * The logging client used for Minecraft.
-     */
-    private LoggingClient logging = null;
-
-    /**
-     * If this instance has been converted or not from the old format.
-     */
-    private boolean isConverted = false;
-
-    /**
-     * If this instance uses the new format for libraries.
-     */
-    private boolean usesNewLibraries = false;
-
-    /**
-     * The data version.
-     */
-    private int dataVersion = 2;
-
-    /**
-     * The Pack object for the pack this Instance was installed from. This is not
-     * stored in the instances instance.json file as Pack's can be deleted from the
-     * system.
-     *
-     * @see com.atlauncher.data.Pack
-     */
-    private transient Pack realPack;
-
-    /**
-     * If this Instance was installed from a development version of the Pack.
-     */
-    private boolean isDev;
-
-    /**
-     * If this Instance is playable or not. It may become unplayable after a failed
-     * update or if files are found corrupt.
-     */
-    private boolean isPlayable;
-
-    /**
-     * List of DisableableMod objects for the mods in the Instance.
-     *
-     * @see com.atlauncher.data.DisableableMod
-     */
-    private List<DisableableMod> mods;
-
-    /**
-     * List of versions of the Pack this instance comes from that the user has said
-     * to not be reminded about updating to.
-     */
-    private List<String> ignoredUpdates;
-
-    private InstanceSettings settings = null;
+@Json
+public class Instance extends MinecraftVersion {
+    public String inheritsFrom;
+    public InstanceLauncher launcher;
 
     public transient Path ROOT;
 
-    /**
-     * Instantiates a new instance.
-     *
-     * @param name               the name of the Instance
-     * @param pack               the name of the Pack this Instance is of
-     * @param realPack           the Pack object for the Pack this Instance is of
-     * @param enableUserLock     if this instance is only meant to be used by the
-     *                           original installer
-     * @param version            the version of the Pack this Instance is of
-     * @param minecraftVersion   the Minecraft version this Instance runs off
-     * @param versionType        the version type this Instance runs off
-     * @param memory             the minimum RAM/memory as recommended by the pack
-     *                           developer/s
-     * @param permgen            the minimum PermGen/Metaspace as recommended by the
-     *                           pack developer/s
-     * @param mods               the mods installed in this Instance
-     * @param libraries          the libraries needed to launch Minecraft
-     * @param extraArguments     the extra arguments for launching the pack
-     * @param minecraftArguments the arguments needed by Minecraft to run
-     * @param mainClass          the main class to run when launching Minecraft
-     * @param assets             the assets version being used by Minecraft
-     * @param isDev              if this Instance is using a dev version of the pack
-     * @param isPlayable         if this instance is playable
-     * @param java               the java requirements for the instance
-     */
-    public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
-            String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
-            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass, String assets,
-            boolean assetsMapToResources, LoggingClient logging, boolean isDev, boolean isPlayable, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
-        this.name = name;
-        this.pack = pack;
-        this.realPack = realPack;
-        this.version = version;
-        this.minecraftVersion = minecraftVersion;
-        this.versionType = versionType;
-        this.memory = memory;
-        this.permgen = permgen;
-        this.mods = mods;
-        this.libraries = libraries;
-        this.mainClass = mainClass;
-        this.assets = assets;
-        this.assetsMapToResources = assetsMapToResources;
-        this.logging = logging;
-        this.extraArguments = extraArguments;
-        this.minecraftArguments = minecraftArguments;
-        this.isDev = isDev;
-        this.isPlayable = isPlayable;
-        if (enableUserLock && AccountManager.getSelectedAccount().uuid != null) {
-            this.userLock = AccountManager.getSelectedAccount().getUUIDNoDashes();
-        } else {
-            this.userLock = null;
-        }
-        this.isConverted = true;
-        this.usesNewLibraries = true;
-        this.java = java;
-        this.enableCurseIntegration = enableCurseIntegration;
-        this.enableEditingMods = enableEditingMods;
-        this.loaderVersion = loaderVersion;
+    public Instance(MinecraftVersion version) {
+        this.id = version.id;
+        this.arguments = version.arguments;
+        this.minecraftArguments = version.minecraftArguments;
+        this.type = version.type;
+        this.time = version.time;
+        this.releaseTime = version.releaseTime;
+        this.minimumLauncherVersion = version.minimumLauncherVersion;
+        this.assetIndex = version.assetIndex;
+        this.assets = version.assets;
+        this.downloads = version.downloads;
+        this.logging = version.logging;
+        this.libraries = version.libraries;
+        this.rules = version.rules;
+        this.mainClass = version.mainClass;
     }
 
-    /**
-     * Instantiates a new instance with it defaulting to being playable.
-     *
-     * @param name               the name of the Instance
-     * @param pack               the name of the Pack this Instance is of
-     * @param realPack           the Pack object for the Pack this Instance is of
-     * @param enableUserLock     if this instance is only meant to be used by the
-     *                           original installer
-     * @param version            the version of the Pack this Instance is of
-     * @param minecraftVersion   the Minecraft version this Instance runs off
-     * @param versionType        the version type this Instance runs off
-     * @param memory             the minimum RAM/memory as recommended by the pack
-     *                           developer/s
-     * @param permgen            the minimum PermGen/Metaspace as recommended by the
-     *                           pack developer/s
-     * @param mods               the mods installed in this Instance
-     * @param libraries          the libraries needed to launch Minecraft
-     * @param extraArguments     the extra arguments for launching the pack
-     * @param minecraftArguments the arguments needed by Minecraft to run
-     * @param mainClass          the main class to run when launching Minecraft
-     * @param assets             the assets version being used by Minecraft
-     * @param isDev              if this Instance is using a dev version of the pack
-     * @param java               the java requirements for the instance
-     */
-    public Instance(String name, String pack, Pack realPack, boolean enableUserLock, String version,
-            String minecraftVersion, String versionType, int memory, int permgen, List<DisableableMod> mods,
-            List<String> libraries, String extraArguments, String minecraftArguments, String mainClass, String assets,
-            boolean assetsMapToResources, LoggingClient logging, boolean isDev, Java java,
-            boolean enableCurseIntegration, boolean enableEditingMods, LoaderVersion loaderVersion) {
-        this(name, pack, realPack, enableUserLock, version, minecraftVersion, versionType, memory, permgen, mods,
-                libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources, logging, isDev,
-                true, java, enableCurseIntegration, enableEditingMods, loaderVersion);
-    }
-
-    /**
-     * Gets this instances name.
-     *
-     * @return the instances name
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Sets a new name for this Instance. Used primarily when renaming a cloned
-     * instance.
-     *
-     * @param newName the new name for this Instance
-     */
-    public void setName(String newName) {
-        this.name = newName;
-    }
-
-    /**
-     * Gets the safe name of the Instance used in file paths. Removes all non
-     * alphanumeric characters.
-     *
-     * @return the safe name of the Instance.
-     */
     public String getSafeName() {
-        return this.name.replaceAll("[^A-Za-z0-9]", "");
+        return this.launcher.name.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    /**
-     * Gets the name of the Pack this Instance was created from. Pack's can be
-     * deleted/removed in the future.
-     *
-     * @return the name of the Pack the Instance was created from.
-     */
-    public String getPackName() {
-        return pack;
+    public String getSafePackName() {
+        return this.launcher.pack.replaceAll("[^A-Za-z0-9]", "");
     }
 
-    /**
-     * Checks if the Instance has mods installed.
-     *
-     * @return true if there are mods installed in the Instance
-     */
-    public boolean hasInstalledMods() {
-        return (this.mods == null ? false : (this.mods.size() >= 1 ? true : false));
+    public Path getRoot() {
+        return this.ROOT;
     }
 
-    /**
-     * Gets the minimum recommended RAM/memory for this Instance based off what the
-     * Pack specifies. Defaults to 0 if there is none specified by the pack. Value
-     * is in MB.
-     *
-     * @return the minimum RAM/memory recommended for this Instance in MB
-     */
-    public int getMemory() {
-        return this.memory;
+    public Pack getPack() {
+        if (this.launcher.curseManifest != null) {
+            return null;
+        }
+
+        try {
+            return PackManager.getPackByID(this.launcher.packId);
+        } catch (InvalidPack e) {
+            return null;
+        }
     }
 
-    /**
-     * Sets the minimum recommended RAM/memory for this Instance in MB.
-     *
-     * @param memory the minimum recommended RAM/memory for this Instance in MB
-     */
-    public void setMemory(int memory) {
-        this.memory = memory;
-    }
+    public boolean hasUpdate() {
+        Pack pack = this.getPack();
 
-    /**
-     * Gets a List of the installed mods in this Instance. Mods are listed as
-     * DisableableMod objects.
-     *
-     * @return a List of DisableableMod objects of the installed mods in this
-     *         instance or null if none
-     */
-    public List<DisableableMod> getInstalledMods() {
-        return this.mods;
-    }
+        if (pack != null) {
+            if (pack.hasVersions() && !this.launcher.isDev) {
+                // Lastly check if the current version we installed is different than the latest
+                // version of the Pack and that the latest version of the Pack is not restricted
+                // to disallow updates.
+                if (!pack.getLatestVersion().version.equalsIgnoreCase(this.launcher.version)
+                        && !pack.isLatestVersionNoUpdate()) {
+                    return true;
+                }
+            }
 
-    /**
-     * Gets a List of the selected installed mods in this Instance. Mods are listed
-     * as DisableableMod objects.
-     *
-     * @return a List of DisableableMod objects of the selected installed mods in
-     *         this instance or null if none
-     */
-    public List<DisableableMod> getInstalledSelectedMods() {
-        List<DisableableMod> mods = new ArrayList<>();
-
-        for (DisableableMod mod : this.mods) {
-            if (mod.wasSelected()) {
-                mods.add(mod);
+            if (this.launcher.isDev && (this.launcher.hash != null)) {
+                PackVersion devVersion = pack.getDevVersionByName(this.launcher.version);
+                if (devVersion != null && !devVersion.hashMatches(this.launcher.hash)) {
+                    return true;
+                }
             }
         }
 
-        return mods;
+        return false;
     }
 
-    /**
-     * Gets the minimum recommended PermGen/Metaspace size for this Instance based
-     * off what the Pack specifies. Defaults to 0 if there is non specified by the
-     * pack. Value is in MB.
-     *
-     * @return the minimum PermGen/Metaspace recommended for this Instance in MB
-     */
-    public int getPermGen() {
-        return this.permgen;
+    public PackVersion getLatestVersion() {
+        Pack pack = this.getPack();
+
+        if (pack != null) {
+            if (pack.hasVersions() && !this.launcher.isDev) {
+                return pack.getLatestVersion();
+            }
+
+            if (this.launcher.isDev) {
+                return pack.getLatestDevVersion();
+            }
+        }
+
+        return null;
     }
 
-    /**
-     * Renames this instance including renaming the folder in the Instances
-     * directory to the new name provided.
-     *
-     * @param newName the new name of the Instance
-     * @return true if the Instances folder was renamed and false if it failed
-     */
-    public boolean rename(String newName) {
-        String oldName = this.name;
-        File oldDir = getRootDirectory();
-        this.name = newName;
-        File newDir = getRootDirectory();
-        if (oldDir.renameTo(newDir)) {
-            return true;
+    public String getPackDescription() {
+        Pack pack = this.getPack();
+
+        if (pack != null) {
+            return pack.description;
         } else {
-            this.name = oldName;
-            return false;
+            if (launcher.description != null) {
+                return launcher.description;
+            }
+
+            return GetText.tr("No Description");
         }
     }
 
-    /**
-     * Gets the name of the Pack this Instance was created from in a safe manner by
-     * removing all non alphanumeric characters which is then safe for use inside
-     * file paths and URL's.
-     *
-     * @return the safe name of the Pack
-     */
-    public String getSafePackName() {
-        return this.pack.replaceAll("[^A-Za-z0-9]", "");
-    }
-
-    /**
-     * Gets a ImageIcon object for the image file of the Pack for use in displaying
-     * in the Packs and Instances tabs.
-     *
-     * @return ImageIcon for this Instances Pack
-     */
     public ImageIcon getImage() {
-        File customImage = new File(this.getRootDirectory(), "instance.png");
+        File customImage = this.getRoot().resolve("instance.png").toFile();
 
         if (customImage.exists()) {
             try {
                 BufferedImage img = ImageIO.read(customImage);
-                Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
-                return new ImageIcon(dimg);
+
+                // if a square image, then make it 300x150 (without stretching) centered
+                if (img.getHeight(null) == img.getWidth(null)) {
+                    BufferedImage dimg = new BufferedImage(300, 150, BufferedImage.TYPE_INT_ARGB);
+
+                    Graphics2D g2d = dimg.createGraphics();
+                    g2d.drawImage(img, 75, 0, 150, 150, null);
+                    g2d.dispose();
+
+                    return new ImageIcon(dimg);
+                }
+
+                return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
             } catch (IOException e) {
                 LogManager.logStackTrace(
-                        "Error creating scaled image from the custom image of instance " + this.getName(), e);
+                        "Error creating scaled image from the custom image of instance " + this.launcher.name, e);
             }
         }
 
-        if (this.realPack != null) {
-            File instancesImage = FileSystem.IMAGES.resolve(getSafePackName().toLowerCase() + ".png").toFile();
+        if (getPack() != null) {
+            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
 
             if (instancesImage.exists()) {
                 return Utils.getIconImage(instancesImage);
@@ -509,883 +218,189 @@ public class Instance implements Cloneable, Launchable {
         return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
     }
 
-    /**
-     * Gets the description of the Pack this Instance was installed from if it's
-     * still available in the Launcher. If the pack no longer exists then it simply
-     * returns "No Description".
-     *
-     * @return the description of the Pack this Instance was created from
-     */
-    public String getPackDescription() {
-        if (this.realPack != null) {
-            return this.realPack.getDescription();
-        } else {
-            return GetText.tr("No Description");
-        }
-    }
-
-    /**
-     * Checks if this Instance has been converted or not from the old arguments
-     * storage.
-     *
-     * @return true if this Instance has already been converted
-     */
-    public boolean hasBeenConverted() {
-        return this.isConverted;
-    }
-
-    /**
-     * Sets if this instance uses the new libraries format
-     *
-     * @param usesNewLibraries true if the new libraries format should be used
-     */
-    public void setUsesNewLibraries(boolean usesNewLibraries) {
-        this.usesNewLibraries = usesNewLibraries;
-    }
-
-    /**
-     * Checks if this Instance uses the new libraries format or not.
-     *
-     * @return true if this Instance uses new libraries format
-     */
-    public boolean usesNewLibraries() {
-        return this.usesNewLibraries;
-    }
-
-    /**
-     * Checks to see if Logging is enabled for the Pack this Instance was created
-     * from. If the pack no longer exists we don't allow logging.
-     *
-     * @return true if Logging is enabled
-     */
-    public boolean isLoggingEnabled() {
-        return (this.realPack != null && this.realPack.isLoggingEnabled());
-    }
-
-    /**
-     * This stops the popup informing a user that this Instance has an update when
-     * they go to play this Instance. It will simply deny the current version from
-     * showing up again informing the user when their Instance is not using the
-     * latest version.
-     */
     public void ignoreUpdate() {
-        if (this.ignoredUpdates == null) {
-            this.ignoredUpdates = new ArrayList<>();
-        }
-
         String version;
 
-        if (this.isDev) {
-            version = getLatestDevHash();
+        if (this.launcher.isDev) {
+            version = getLatestVersion().hash;
         } else {
-            version = getLatestVersion();
+            version = getLatestVersion().version;
         }
 
         if (!hasUpdateBeenIgnored(version)) {
-            this.ignoredUpdates.add(version);
-            InstanceManager.saveInstances();
+            this.launcher.ignoredUpdates.add(version);
+            this.save();
         }
     }
 
-    /**
-     * Checks to see if a given version has been ignored from showing update prompts
-     * when the Instance is played.
-     *
-     * @param version the version to check if it's been ignored in the past
-     * @return true if the user has chosen to ignore updates for the given version
-     */
+    public boolean hasLatestUpdateBeenIgnored() {
+        String version;
+
+        if (this.launcher.isDev) {
+            version = getLatestVersion().hash;
+        } else {
+            version = getLatestVersion().version;
+        }
+
+        return hasUpdateBeenIgnored(version);
+    }
+
     public boolean hasUpdateBeenIgnored(String version) {
-        if (version == null || ignoredUpdates == null || ignoredUpdates.size() == 0) {
+        if (version == null || this.launcher.ignoredUpdates.size() == 0) {
             return false;
         }
-        for (String ignoredVersion : ignoredUpdates) {
-            if (ignoredVersion.equalsIgnoreCase(version)) {
-                return true;
-            }
-        }
-        return false;
+
+        return this.launcher.ignoredUpdates.stream().anyMatch(v -> v.equalsIgnoreCase(version));
+    }
+
+    public Path getMinecraftJarLibraryPath() {
+        return FileSystem.LIBRARIES.resolve(String.format("net/minecraft/client/%1$s/client-%1$s.jar", this.id));
     }
 
     /**
-     * This converts an old Instance using old Minecraft argument storage to the new
-     * method of storage as well as make sure we're on the same dataVersion.
+     * This will prepare the instance for launch. It will download the assets,
+     * Minecraft jar and libraries, as well as organise the libraries, ready to be
+     * played.
      */
-    public void convert() {
-        if (!this.isConverted) {
-            if (this.minecraftArguments != null) {
-                // Minecraft arguments are now extraArguments if found
-                this.extraArguments = this.minecraftArguments;
-                this.minecraftArguments = null;
+    public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir) {
+        OkHttpClient httpClient = Network.createProgressClient(progressDialog);
+
+        try {
+            progressDialog.setLabel(GetText.tr("Downloading Minecraft"));
+            com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
+                    .setUrl(this.downloads.client.url).hash(this.downloads.client.sha1).size(this.downloads.client.size)
+                    .withHttpClient(httpClient).downloadTo(this.getMinecraftJarLibraryPath());
+
+            if (clientDownload.needToDownload()) {
+                progressDialog.setTotalBytes(this.downloads.client.size);
+                clientDownload.downloadFile();
             }
 
-            this.isConverted = true;
+            progressDialog.doneTask();
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+            return false;
         }
 
-        // this ensures all existing instances have the new format for mods
-        if (this.dataVersion < 1) {
-            if (this.mods != null) {
-                List<DisableableMod> selectedMods = this.getInstalledSelectedMods();
+        // download libraries
+        progressDialog.setLabel(GetText.tr("Downloading Libraries"));
+        DownloadPool librariesPool = new DownloadPool();
 
-                if (selectedMods.size() == 0) {
-                    List<DisableableMod> mods = new ArrayList<>();
+        // get non native libraries otherwise we double up
+        this.libraries.stream().filter(
+                library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
+                .distinct().forEach(library -> {
+                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                            .setUrl(library.downloads.artifact.url)
+                            .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
+                            .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                            .withHttpClient(httpClient);
 
-                    for (DisableableMod mod : this.mods) {
-                        mod.setWasSelected(true);
-                        mods.add(mod);
+                    librariesPool.add(download);
+                });
+
+        this.libraries.stream().filter(Library::hasNativeForOS).forEach(library -> {
+            com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
+
+            librariesPool.add(new com.atlauncher.network.Download().setUrl(download.url)
+                    .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1).size(download.size)
+                    .withHttpClient(httpClient));
+        });
+
+        DownloadPool smallLibrariesPool = librariesPool.downsize();
+
+        progressDialog.setTotalBytes(smallLibrariesPool.totalSize());
+
+        smallLibrariesPool.downloadAll();
+
+        progressDialog.doneTask();
+
+        // organise assets
+        progressDialog.setLabel(GetText.tr("Downloading Resources"));
+        MojangAssetIndex assetIndex = this.assetIndex;
+
+        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
+                .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
+                .withHttpClient(httpClient).asClass(AssetIndex.class);
+
+        DownloadPool pool = new DownloadPool();
+
+        index.objects.forEach((key, object) -> {
+            String filename = object.hash.substring(0, 2) + "/" + object.hash;
+            String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
+
+            com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
+                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
+                    .withHttpClient(httpClient);
+
+            pool.add(download);
+        });
+
+        DownloadPool smallPool = pool.downsize();
+
+        progressDialog.setTotalBytes(smallPool.totalSize());
+
+        smallPool.downloadAll();
+
+        // copy resources to instance
+        if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            index.objects.forEach((key, object) -> {
+                String filename = object.hash.substring(0, 2) + "/" + object.hash;
+
+                Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+
+                if (index.mapToResources) {
+                    FileUtils.copyFile(downloadedFile, this.getRoot().resolve("resources/" + key), true);
+                } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
+                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key), true);
+                }
+            });
+        }
+
+        progressDialog.doneTask();
+
+        progressDialog.setLabel(GetText.tr("Organising Libraries"));
+
+        // extract natives to a temp dir
+        this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
+            if (library.hasNativeForOS()) {
+                File nativeFile = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path).toFile();
+
+                ZipUtil.unpack(nativeFile, nativesTempDir.toFile(), name -> {
+                    if (library.extract != null && library.extract.shouldExclude(name)) {
+                        return null;
                     }
 
-                    this.mods = mods;
-                }
+                    return name;
+                });
             }
+        });
 
-            this.dataVersion = 1;
-            this.save(false);
-        }
+        progressDialog.doneTask();
 
-        // changes to the way libraries are saved and loaded from disk
-        if (this.dataVersion < 2) {
-            this.libraries = new ArrayList<>();
-
-            if (this.librariesNeeded != null) {
-                this.libraries.addAll(Arrays.asList(this.librariesNeeded.split(",")));
-            }
-
-            this.dataVersion = 2;
-            this.save(false);
-        }
-    }
-
-    /**
-     * This removes a given DisableableMod object and removes it from the list of
-     * installed mods as well as deleting the file.
-     *
-     * @param mod the DisableableMod object for the mod to remove
-     */
-    public void removeInstalledMod(DisableableMod mod) {
-        Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this) : mod.getFile(this)));
-        this.mods.remove(mod); // Remove mod from mod List
-    }
-
-    /**
-     * Gets the java requirements for this instance.
-     *
-     * @return the java requirements for this instance
-     */
-    public Java getJava() {
-        return this.java;
-    }
-
-    public void setJava(Java newJava) {
-        this.java = newJava;
-    }
-
-    public boolean hasEnabledCurseIntegration() {
-        return this.enableCurseIntegration;
-    }
-
-    public void setEnableCurseIntegration(boolean enableCurseIntegration) {
-        this.enableCurseIntegration = enableCurseIntegration;
-    }
-
-    public boolean hasEnabledEditingMods() {
-        return this.enableEditingMods;
-    }
-
-    public void setEnableEditingMods(boolean enableEditingMods) {
-        this.enableEditingMods = enableEditingMods;
-    }
-
-    public boolean installedWithLoaderVersion() {
-        return this.loaderVersion != null;
-    }
-
-    public void setLoaderVersion(LoaderVersion loaderVersion) {
-        this.loaderVersion = loaderVersion;
-    }
-
-    public LoaderVersion getLoaderVersion() {
-        return this.loaderVersion;
-    }
-
-    /**
-     * Gets the version of the Pack that this Instance is based off.
-     *
-     * @return the version of the Pack this Instance is based off
-     */
-    public String getVersion() {
-        return this.version;
-    }
-
-    /**
-     * Sets the version of the Pack this Instance was created from.
-     *
-     * @param version the version of the Pack this Instance was created from
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /**
-     * Gets the Minecraft Version that this Instance uses.
-     *
-     * @return the Minecraft Version that this Instance uses
-     */
-    public String getMinecraftVersion() {
-        return this.minecraftVersion;
-    }
-
-    public MinecraftVersion getActualMinecraftVersion() {
-        try {
-            return MinecraftManager.getMinecraftVersion(this.minecraftVersion);
-        } catch (InvalidMinecraftVersion e) {
-            return null;
-        }
-    }
-
-    /**
-     * Sets the Minecraft cersion of the Pack this Instance was created from.
-     *
-     * @param minecraftVersion the new Minecraft cersion
-     */
-    public void setMinecraftVersion(String minecraftVersion) {
-        this.minecraftVersion = minecraftVersion;
-    }
-
-    /**
-     * Gets the version type that this Instance uses.
-     *
-     * @return the version type that this Instance uses
-     */
-    public String getVersionType() {
-        if (this.versionType == null) {
-            return "release";
-        }
-
-        return this.versionType;
-    }
-
-    /**
-     * Sets the version type of the Pack this Instance was created from.
-     *
-     * @param versionType the new version type
-     */
-    public void setVersionType(String versionType) {
-        this.versionType = versionType;
-    }
-
-    /**
-     * Gets a File object for the root directory of this Instance.
-     *
-     * @return File object for the root directory of this Instance
-     */
-    public File getRootDirectory() {
-        return this.ROOT.toFile();
-    }
-
-    /**
-     * Gets a File object for the directory where the assets for this version of
-     * Minecraft are stored.
-     *
-     * @return File object for the assets directory used by Minecraft
-     */
-    public File getAssetsDir() {
-        if (this.assetsMapToResources) {
-            return new File(getRootDirectory(), "resources");
-        }
-
-        return FileSystem.RESOURCES_VIRTUAL.resolve(this.assets).toFile();
-    }
-
-    /**
-     * Gets a File object for the saves directory of this Instance.
-     *
-     * @return File object for the saves directory of this Instance
-     */
-    public File getSavesDirectory() {
-        return new File(getRootDirectory(), "saves");
-    }
-
-    /**
-     * Gets a File object for the reports directory of this Instance where OpenEye
-     * stores it's pending crash reports.
-     *
-     * @return File object for the reports directory of this Instance
-     */
-    public File getReportsDirectory() {
-        return new File(getRootDirectory(), "reports");
-    }
-
-    /**
-     * Gets a File object for the mods directory of this Instance.
-     *
-     * @return File object for the mods directory of this Instance
-     */
-    public File getModsDirectory() {
-        return new File(getRootDirectory(), "mods");
-    }
-
-    /**
-     * Gets a File object for the IC2 library directory of this Instance.
-     *
-     * @return File object for the IC2 library directory of this Instance
-     */
-    public File getIC2LibDirectory() {
-        return new File(getModsDirectory(), "ic2");
-    }
-
-    /**
-     * Gets a File object for the denlib directory of this Instance.
-     *
-     * @return File object for the denlib directory of this Instance
-     */
-    public File getDenLibDirectory() {
-        return new File(getModsDirectory(), "denlib");
-    }
-
-    /**
-     * Gets a File object for the plugins directory of this Instance.
-     *
-     * @return File object for the plugins directory of this Instance
-     */
-    public File getPluginsDirectory() {
-        return new File(getRootDirectory(), "plugins");
-    }
-
-    /**
-     * Gets a File object for the shader packs directory of this Instance.
-     *
-     * @return File object for the shader packs directory of this Instance
-     */
-    public File getShaderPacksDirectory() {
-        return new File(getRootDirectory(), "shaderpacks");
-    }
-
-    /**
-     * Gets a File object for the disabled mods directory of this Instance.
-     *
-     * @return File object for the disabled mods directory of this Instance
-     */
-    public File getDisabledModsDirectory() {
-        return new File(getRootDirectory(), "disabledmods");
-    }
-
-    /**
-     * Gets a File object for the core mods directory of this Instance.
-     *
-     * @return File object for the core mods directory of this Instance
-     */
-    public File getCoreModsDirectory() {
-        return new File(getRootDirectory(), "coremods");
-    }
-
-    /**
-     * Gets a File object for the jar mods directory of this Instance.
-     *
-     * @return File object for the jar mods directory of this Instance
-     */
-    public File getJarModsDirectory() {
-        return new File(getRootDirectory(), "jarmods");
-    }
-
-    /**
-     * Gets a File object for the texture packs directory of this Instance.
-     *
-     * @return File object for the texture packs directory of this Instance
-     */
-    public File getTexturePacksDirectory() {
-        return new File(getRootDirectory(), "texturepacks");
-    }
-
-    /**
-     * Gets a File object for the resource packs directory of this Instance.
-     *
-     * @return File object for the resource packs directory of this Instance
-     */
-    public File getResourcePacksDirectory() {
-        return new File(getRootDirectory(), "resourcepacks");
-    }
-
-    /**
-     * Gets a File object for the bin directory of this Instance.
-     *
-     * @return File object for the bin directory of this Instance
-     */
-    public File getBinDirectory() {
-        return new File(getRootDirectory(), "bin");
-    }
-
-    /**
-     * Gets a File object for the natives directory of this Instance.
-     *
-     * @return File object for the natives directory of this Instance
-     */
-    public File getNativesDirectory() {
-        return new File(getBinDirectory(), "natives");
-    }
-
-    /**
-     * Gets a File object for the minecraft.jar of this Instance.
-     *
-     * @return File object for the minecraft.jar of this Instance
-     */
-    public File getMinecraftJar() {
-        return new File(getBinDirectory(), "minecraft.jar");
-    }
-
-    /**
-     * Checks if the pack associated with this Instance can be installed.
-     *
-     * @return true if the Pack this Instance was made from can be installed
-     * @see com.atlauncher.data.Pack#canInstall
-     */
-    public boolean canInstall() {
-        return (this.realPack != null && this.realPack.canInstall());
-    }
-
-    /**
-     * Gets the Pack object that this Instance was created from. If it doesn't
-     * exist, this will return null
-     *
-     * @return Pack object of the Pack this Instance was created from or null if no
-     *         longer available
-     */
-    public Pack getRealPack() {
-        return this.realPack;
-    }
-
-    /**
-     * Sets the Pack object that this Instance was created from. Defaults to null
-     * when loaded.
-     *
-     * @param realPack the Pack object that this Instance was created from
-     */
-    public void setRealPack(Pack realPack) {
-        this.realPack = realPack;
-    }
-
-    /**
-     * Sets the minimum recommended PermGen/Metaspace size for this Instance in MB.
-     *
-     * @param permgen the minimum recommended PermGen/Metaspace for this Instance in
-     *                MB
-     */
-    public void setPermgen(int permgen) {
-        this.permgen = permgen;
-    }
-
-    /**
-     * Sets this Instance as playable after it is marked unplayable and has been
-     * rectified.
-     */
-    public void setPlayable() {
-        this.isPlayable = true;
-    }
-
-    /**
-     * Sets this Instance as unplayable so the user cannot play the Instance. Used
-     * when installs go bad or files are found that corrupts the Instance
-     */
-    public void setUnplayable() {
-        this.isPlayable = false;
-    }
-
-    /**
-     * Sets this Instance as a dev version.
-     */
-    public void setDevVersion() {
-        this.isDev = true;
-    }
-
-    /**
-     * Sets this Instance as a non dev version.
-     */
-    public void setNotDevVersion() {
-        this.isDev = false;
-        this.hash = null;
-    }
-
-    /**
-     * Sets this Instances hash for dev versions.
-     */
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
-    /**
-     * Checks if the version of the Pack this Instance was created from was a dev
-     * version.
-     *
-     * @return true if the version of the Pack used to create this Instance was a
-     *         dev version
-     */
-    public boolean isDev() {
-        return this.isDev;
-    }
-
-    /**
-     * Checks if the Instance is playable.
-     *
-     * @return true if the Instance is playable
-     */
-    public boolean isPlayable() {
-        return this.isPlayable;
-    }
-
-    /**
-     * Gets the libraries needed to be loaded when launching Minecraft.
-     *
-     * @return a list of paths for the libraries to be loaded when Minecraft is
-     *         started
-     */
-    public List<String> getLibraries() {
-        return this.libraries;
-    }
-
-    /**
-     * Sets the list of libraries needed to be loaded when launching Minecraft.
-     *
-     * @param libraries a list of paths for the libraries to be loaded when
-     *                  Minecraft is started
-     */
-    public void setLibraries(List<String> libraries) {
-        this.libraries = libraries;
-    }
-
-    /**
-     * Gets the arguments needed when launching Minecraft.
-     *
-     * @return a list of paths for the arguments to be used when Minecraft is
-     *         started
-     */
-    public List<String> getArguments() {
-        return this.arguments;
-    }
-
-    /**
-     * Sets the list of arguments needed when launching Minecraft.
-     *
-     * @param arguments a list of paths for the arguments to be used when Minecraft
-     *                  is started
-     */
-    public void setArguments(List<String> arguments) {
-        this.arguments = arguments;
-
-        this.minecraftArguments = null;
-    }
-
-    /**
-     * Checks if there are arguments set for this Instance.
-     *
-     * @return true if there are set arguments for this Instance
-     */
-    public boolean hasArguments() {
-        return this.arguments != null;
-    }
-
-    /**
-     * Checks if there are extra arguments set for this Instance.
-     *
-     * @return true if there are set extra arguments for this Instance
-     */
-    public boolean hasExtraArguments() {
-        return this.extraArguments != null;
-    }
-
-    /**
-     * Gets the extra arguments for the Instance which is added to the command
-     * argument when launching Minecraft.
-     *
-     * @return the extra arguments used by the Instance when launching Minecraft
-     */
-    public String getExtraArguments() {
-        return this.extraArguments;
-    }
-
-    /**
-     * Sets the extra arguments for the Instance which is added to the command
-     * argument when launching Minecraft.
-     *
-     * @param extraArguments the new extra arguments used by the Instance when
-     *                       launching Minecraft
-     */
-    public void setExtraArguments(String extraArguments) {
-        this.extraArguments = extraArguments;
-    }
-
-    /**
-     * Checks if there are Minecraft arguments set for this Instance.
-     *
-     * @return true if there are set Minecraft arguments for this Instance
-     */
-    public boolean hasMinecraftArguments() {
-        return this.minecraftArguments != null;
-    }
-
-    /**
-     * Gets the Minecraft arguments for the Instance which is added to the command
-     * argument when launching Minecraft. These involve things like asset
-     * directories, token input among other things.
-     *
-     * @return the Minecraft arguments used by the Instance when launching Minecraft
-     */
-    public String getMinecraftArguments() {
-        return this.minecraftArguments;
-    }
-
-    /**
-     * Sets the Minecraft arguments for the Instance which is added to the command
-     * argument when launching Minecraft. These involve things like asset
-     * directories, token input among other things.
-     *
-     * @param minecraftArguments the new Minecraft arguments used by the Instance
-     *                           when launching Minecraft
-     */
-    public void setMinecraftArguments(String minecraftArguments) {
-        this.minecraftArguments = minecraftArguments;
-    }
-
-    /**
-     * Gets the main class used to launch Minecraft.
-     *
-     * @return the main class used to launch Minecraft
-     */
-    public String getMainClass() {
-        return this.mainClass;
-    }
-
-    /**
-     * Sets the main class used to launch Minecraft.
-     *
-     * @param mainClass the new main class used to launch Minecraft
-     */
-    public void setMainClass(String mainClass) {
-        this.mainClass = mainClass;
-    }
-
-    /**
-     * Gets the assets value which Minecraft uses to determine how to load assets in
-     * the game.
-     *
-     * @return the assets value
-     */
-    public String getAssets() {
-        return (this.assets == null ? "legacy" : this.assets);
-    }
-
-    /**
-     * Sets the assets value which Minecraft uses to determine how to load assets in
-     * the game.
-     *
-     * @param assets the new assets value
-     */
-    public void setAssets(String assets) {
-        this.assets = assets;
-    }
-
-    public boolean doAssetsMapToResources() {
-        return this.assetsMapToResources;
-    }
-
-    public void setAssetsMapToResources(boolean assetsMapToResources) {
-        this.assetsMapToResources = assetsMapToResources;
-    }
-
-    public boolean hasLogging() {
-        return this.logging != null;
-    }
-
-    public LoggingClient getLogging() {
-        return this.logging;
-    }
-
-    public void setLogging(LoggingClient logging) {
-        this.logging = logging;
-    }
-
-    /**
-     * Checks if this Instance can be played. This refers only to the account and
-     * permission side of things and doesn't reference if the instance is playable
-     * or as determined by the {@link com.atlauncher.data.Instance#isPlayable}
-     * field.
-     *
-     * @return true if the user can play this Instance
-     */
-    public boolean canPlay() {
-        // Make sure an account is selected first.
-        if (AccountManager.getSelectedAccount() == null) {
-            return false;
-        }
-
-        // Check to see if this was a private Instance belonging to a specific user
-        // only.
-        if (this.userLock != null
-                && !AccountManager.getSelectedAccount().getUUIDNoDashes().equalsIgnoreCase(this.userLock)) {
-            return false;
-        }
-
-        // All good, no false returns yet so allow it.
         return true;
     }
 
-    public String getInstalledBy() {
-        return this.installedBy;
-    }
-
-    public void removeInstalledBy() {
-        this.installedBy = null;
-    }
-
-    public String getUserLock() {
-        return this.userLock;
-    }
-
-    public void removeUserLock() {
-        this.userLock = null;
-    }
-
-    public void setUserLock(String lock) {
-        this.userLock = lock;
-    }
-
-    /**
-     * Checks if the Pack this Instance was created from has an update.
-     *
-     * @return true if there is an update to the Pack this Instance was created from
-     */
-    public boolean hasUpdate() {
-        // Check to see if there is a Pack object defined first.
-        if (this.realPack != null) {
-            // Then check if the Pack has any versions associated with it and were NOT
-            // running a dev
-            // version, as dev versions should never be updated.
-            if (this.realPack.hasVersions() && !isDev()) {
-                // Lastly check if the current version we installed is different than the latest
-                // version of the Pack and that the latest version of the Pack is not restricted
-                // to
-                // disallow updates.
-                if (!this.realPack.getLatestVersion().version.equalsIgnoreCase(this.version)
-                        && !this.realPack.isLatestVersionNoUpdate()) {
-                    return true;
-                }
-            }
-            if (isDev() && (this.hash != null)) {
-                PackVersion devVersion = this.realPack.getDevVersionByName(this.version);
-                if (devVersion != null && !devVersion.hashMatches(this.hash)) {
-                    return true;
-                }
-            }
-        }
-
-        // If we triggered nothing then there is no update.
-        return false;
-    }
-
-    /**
-     * Gets the latest version of the Pack this Instance was created from. If the
-     * Pack has been removed or it has no published versions then it will return
-     * null.
-     *
-     * @return the latest version of the Pack this Instance was created from or null
-     *         if the Pack no longer exists or there is no versions of the Pack
-     */
-    public String getLatestVersion() {
-        return (this.realPack != null
-                ? (this.realPack.getLatestVersion() == null ? null : this.realPack.getLatestVersion().version)
-                : null);
-    }
-
-    public String getLatestDevHash() {
-        return (this.realPack != null
-                ? (this.realPack.getLatestDevVersion() == null ? null : this.realPack.getLatestDevVersion().hash)
-                : null);
-    }
-
-    /**
-     * Checks is a mod was installed with this Instance.
-     *
-     * @param name the name of the mod
-     * @return true if the mod was installed with the Instance
-     */
-    public boolean wasModInstalled(String name) {
-        if (this.mods != null) {
-            for (DisableableMod mod : this.mods) {
-                if (mod.getName().equalsIgnoreCase(name)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks is a mod was selected with this Instance.
-     *
-     * @param name the name of the mod
-     * @return true if the mod was selected with the Instance
-     */
-    public boolean wasModSelected(String name) {
-        if (this.mods != null) {
-            for (DisableableMod mod : this.mods) {
-                if (mod.getName().equalsIgnoreCase(name)) {
-                    return mod.wasSelected();
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Sets the mods installed for this Instance.
-     *
-     * @param mods List of {@link com.atlauncher.data.DisableableMod} objects of the
-     *             mods installed with this Instance.
-     */
-    public void setModsInstalled(List<DisableableMod> mods) {
-        this.mods = mods;
-    }
-
-    /**
-     * Starts the process to launch this Instance.
-     *
-     * @return true if the Minecraft process was started
-     */
     public boolean launch() {
-        int retInstSupport = DialogManager.optionDialog().setTitle(GetText.tr("Instance Not Longer Supported"))
-                .setContent(new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This instance is no longer supported. It's using an old instance type that will be removed soon. To prevent losing access, please reinstall this instance"))
-                        .build())
-                .addOption(GetText.tr("Ok"), true).addOption(GetText.tr("Reinstall")).setType(DialogManager.WARNING)
-                .show();
-
-        if (retInstSupport == -1) {
-            App.launcher.setMinecraftLaunched(false);
-            return false;
-        } else if (retInstSupport == 1) {
-            App.launcher.setMinecraftLaunched(false);
-
-            Analytics.sendEvent(this.getPackName() + " - " + this.getVersion(), "Reinstall", "Instance");
-            new InstanceInstallerDialog(this);
-
-            return false;
-        }
-
         final AbstractAccount account = AccountManager.getSelectedAccount();
+
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                    .setContent(GetText.tr("Cannot play instance as you have no account selected."))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
                     .setType(DialogManager.ERROR).show();
 
             App.launcher.setMinecraftLaunched(false);
             return false;
         } else {
-            int maximumMemory = (this.settings == null || this.settings.getMaximumMemory() == null)
-                    ? App.settings.maximumMemory
-                    : settings.getMaximumMemory();
-            if ((maximumMemory < this.memory) && (this.memory <= OS.getSafeMaximumRam())) {
+            int maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
+                    : this.launcher.maximumMemory;
+            if ((maximumMemory < this.launcher.requiredMemory)
+                    && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficient Ram"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?",
-                                this.memory)).build())
+                                this.launcher.requiredMemory)).build())
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
 
@@ -1395,13 +410,12 @@ public class Instance implements Cloneable, Launchable {
                     return false;
                 }
             }
-            int permGen = (this.settings == null || this.settings.getPermGen() == null) ? App.settings.metaspace
-                    : settings.getPermGen();
-            if (permGen < this.permgen) {
+            int permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
+            if (permGen < this.launcher.requiredPermGen) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?",
-                                this.permgen)).build())
+                                this.launcher.requiredPermGen)).build())
                         .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
                         .setDefaultOption(DialogManager.YES_OPTION).show();
                 if (ret != 0) {
@@ -1411,7 +425,31 @@ public class Instance implements Cloneable, Launchable {
                 }
             }
 
-            Analytics.sendEvent(this.getPackName() + " - " + this.getVersion(), "Play", "Instance");
+            Path nativesTempDir = FileSystem.TEMP.resolve("natives-" + UUID.randomUUID().toString().replace("-", ""));
+
+            try {
+                Files.createDirectory(nativesTempDir);
+            } catch (IOException e2) {
+                LogManager.logStackTrace(e2, false);
+            }
+
+            ProgressDialog prepareDialog = new ProgressDialog(GetText.tr("Preparing For Launch"), 4,
+                    GetText.tr("Preparing For Launch"));
+            prepareDialog.addThread(new Thread(() -> {
+                LogManager.info("Preparing for launch!");
+                prepareDialog.setReturnValue(prepareForLaunch(prepareDialog, nativesTempDir));
+                prepareDialog.close();
+            }));
+            prepareDialog.start();
+
+            if (prepareDialog.getReturnValue() == null || !(boolean) prepareDialog.getReturnValue()) {
+                LogManager.error("Failed to prepare instance " + this.launcher.name
+                        + " for launch. Check the logs and try again.");
+                return false;
+            }
+
+            Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play",
+                    (launcher.curseManifest != null ? "CursePack" : "Instance"));
 
             Thread launcher = new Thread(() -> {
                 try {
@@ -1420,8 +458,8 @@ public class Instance implements Cloneable, Launchable {
                         App.launcher.getParent().setVisible(false);
                     }
 
-                    LogManager.info("Launching pack " + getPackName() + " " + getVersion() + " for " + "Minecraft "
-                            + getMinecraftVersion());
+                    LogManager.info("Launching pack " + this.launcher.pack + " " + this.launcher.version + " for "
+                            + "Minecraft " + this.id);
 
                     Process process = null;
 
@@ -1446,7 +484,7 @@ public class Instance implements Cloneable, Launchable {
                             return;
                         }
 
-                        process = MCLauncher.launch(mojangAccount, this, session);
+                        process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir);
                     } else if (account instanceof MicrosoftAccount) {
                         MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
 
@@ -1471,7 +509,7 @@ public class Instance implements Cloneable, Launchable {
                             return;
                         }
 
-                        process = MCLauncher.launch(microsoftAccount, this);
+                        process = MCLauncher.launch(microsoftAccount, this, nativesTempDir);
                     }
 
                     if (process == null) {
@@ -1485,18 +523,22 @@ public class Instance implements Cloneable, Launchable {
 
                     if ((App.autoLaunch != null && App.closeLauncher)
                             || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
+                        if (App.settings.enableLogs) {
+                            addTimePlayed(1, this.launcher.version); // count the stats, just without time played
+                        }
+
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration && App.discordInitialized && this.getRealPack() != null) {
-                        String playing = this.getRealPack().getName() + " (" + this.getVersion() + ")";
+                    if (App.settings.enableDiscordIntegration && App.discordInitialized) {
+                        String playing = this.launcher.pack + " (" + this.launcher.version + ")";
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
                         presence.setDetails(playing);
                         presence.setStartTimestamps(System.currentTimeMillis());
 
-                        if (this.getRealPack().hasDiscordImage()) {
-                            presence.setBigImage(this.getRealPack().getSafeName().toLowerCase(), playing);
+                        if (this.getPack() != null && this.getPack().hasDiscordImage()) {
+                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(), playing);
                             presence.setSmallImage("atlauncher", "ATLauncher");
                         } else {
                             presence.setBigImage("atlauncher", playing);
@@ -1519,8 +561,13 @@ public class Instance implements Cloneable, Launchable {
                         }
 
                         if (line.contains("java.util.ConcurrentModificationException")
-                                && Utils.matchVersion(Instance.this.getMinecraftVersion(), "1.6", true, true)) {
+                                && Utils.matchVersion(this.id, "1.6", true, true)) {
                             detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
+                        }
+
+                        if (line.contains(
+                                "class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
+                            detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
                         }
 
                         if (!LogManager.showDebug) {
@@ -1548,10 +595,32 @@ public class Instance implements Cloneable, Launchable {
                         process.destroy(); // Kill the process
                     }
                     if (!App.settings.keepLauncherOpen) {
-                        App.console.setVisible(false); // Hide the console to pretend
-                                                       // we've closed
+                        App.console.setVisible(false); // Hide the console to pretend we've closed
                     }
+
                     if (exitValue != 0) {
+                        LogManager.error(
+                                "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
+
+                        if (this.getPack() != null && !this.getPack().system) {
+                            LogManager.info("Checking for modifications to the pack since installation.");
+                            this.launcher.mods.forEach(mod -> {
+                                if (!mod.userAdded && mod.wasSelected && mod.disabled) {
+                                    LogManager.warn("The mod " + mod.name + " (" + mod.file + ") has been disabled.");
+                                }
+                            });
+
+                            Files.list(this.ROOT.resolve("mods"))
+                                    .filter(file -> Files.isRegularFile(file)
+                                            && this.launcher.mods.stream()
+                                                    .noneMatch(m -> m.type == Type.mods && !m.userAdded
+                                                            && m.getFile(this).toPath().equals(file)))
+                                    .forEach(newMod -> {
+                                        LogManager.warn(
+                                                "The mod " + newMod.getFileName().toString() + " has been added.");
+                                    });
+                        }
+
                         // Submit any pending crash reports from Open Eye if need to since we
                         // exited abnormally
                         if (App.settings.enableLogs && App.settings.enableOpenEyeReporting) {
@@ -1564,16 +633,20 @@ public class Instance implements Cloneable, Launchable {
                     }
 
                     App.launcher.setMinecraftLaunched(false);
-                    if (isLoggingEnabled() && !isDev() && App.settings.enableLogs) {
+                    if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
+                            && App.settings.enableLogs) {
                         final int timePlayed = (int) (end - start) / 1000;
                         if (timePlayed > 0) {
                             App.TASKPOOL.submit(() -> {
-                                addTimePlayed(timePlayed, (isDev ? "dev" : getVersion()));
+                                addTimePlayed(timePlayed, this.launcher.version);
                             });
                         }
                     }
                     if (App.settings.keepLauncherOpen && App.launcher.checkForUpdatedFiles()) {
                         App.launcher.reloadLauncherData();
+                    }
+                    if (Files.isDirectory(nativesTempDir)) {
+                        FileUtils.deleteDirectory(nativesTempDir);
                     }
                     if (!App.settings.keepLauncherOpen) {
                         System.exit(0);
@@ -1588,11 +661,8 @@ public class Instance implements Cloneable, Launchable {
 
     }
 
-    /**
-     * Send open eye pending reports from the instance.
-     */
     public void sendOpenEyePendingReports() {
-        File reportsDir = this.getReportsDirectory();
+        File reportsDir = this.getRoot().resolve("reports").toFile();
         if (reportsDir.exists()) {
             for (String filename : reportsDir.list(Utils.getOpenEyePendingReportsFileFilter())) {
                 File report = new File(reportsDir, filename);
@@ -1634,161 +704,45 @@ public class Instance implements Cloneable, Launchable {
         request.put("time", time);
 
         try {
-            return Utils.sendAPICall("pack/" + getRealPack().getSafeName() + "/timeplayed/", request);
+            return Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/timeplayed/", request);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
         return "Leaderboard Time Not Added!";
     }
 
-    /**
-     * Clones a given instance of this class.
-     *
-     * @return Instance The cloned instance
-     * @see java.lang.Object#clone()
-     */
-    public Instance clone() {
-        Instance clone;
-        if (this.userLock != null) {
-            clone = new Instance(name, pack, realPack, true, version, minecraftVersion, versionType, memory, permgen,
-                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
-                    logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods, loaderVersion);
-        } else {
-            clone = new Instance(name, pack, realPack, false, version, minecraftVersion, versionType, memory, permgen,
-                    mods, libraries, extraArguments, minecraftArguments, mainClass, assets, assetsMapToResources,
-                    logging, isDev, isPlayable, java, enableCurseIntegration, enableEditingMods, loaderVersion);
-        }
-        return clone;
-    }
-
-    public boolean hasCustomMods() {
-        for (DisableableMod mod : this.mods) {
-            if (mod.isUserAdded()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<String> getCustomMods(Type type) {
-        List<String> customMods = new ArrayList<>();
-        for (DisableableMod mod : this.mods) {
-            if (mod.isUserAdded() && mod.getType() == type) {
-                customMods.add(mod.getFilename());
-            }
-        }
-        return customMods;
-    }
-
-    public List<String> getPackMods(Type type) {
-        return this.mods.stream().filter(dm -> !dm.userAdded && dm.type == type).map(DisableableMod::getFilename)
-                .collect(Collectors.toList());
-    }
-
-    public List<DisableableMod> getCustomDisableableMods() {
-        List<DisableableMod> customMods = new ArrayList<>();
-        for (DisableableMod mod : this.mods) {
-            if (mod.isUserAdded()) {
-                customMods.add(mod);
-            }
-        }
-        return customMods;
-    }
-
-    public void save() {
-        this.save(true);
-    }
-
-    public void save(boolean showToast) {
-        Writer writer;
-        try {
-            writer = new FileWriter(FileSystem.INSTANCES.resolve(this.getSafeName() + "/instance.json").toFile());
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to open instance.json for writing", e);
-            return;
-        }
-
-        try {
-            writer.write(Gsons.DEFAULT.toJson(this));
-            writer.flush();
-
-            if (showToast) {
-                // #. {0} is the name of the instance
-                App.TOASTER.pop(GetText.tr("Instance {0} Saved!", this.getName()));
-            }
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to write instance.json", e);
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to close instance.json writer", e);
-            }
-        }
-    }
-
-    public ArrayList<String> getInstalledOptionalModNames() {
-        ArrayList<String> installedOptionalMods = new ArrayList<>();
-
-        for (DisableableMod mod : this.getInstalledMods()) {
-            if (mod.isOptional() && !mod.isUserAdded()) {
-                installedOptionalMods.add(mod.getName());
-            }
-        }
-
-        return installedOptionalMods;
-    }
-
-    public Map<String, Object> getShareCodeData() {
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> mods = new HashMap<>();
-        List<Map<String, Object>> optional = new ArrayList<>();
-
-        for (String mod : this.getInstalledOptionalModNames()) {
-            Map<String, Object> modInfo = new HashMap<>();
-            modInfo.put("name", mod);
-            modInfo.put("selected", true);
-            optional.add(modInfo);
-        }
-
-        mods.put("optional", optional);
-        data.put("mods", mods);
-
-        return data;
-    }
-
-    public InstanceSettings getSettings() {
-        if (this.settings == null) {
-            this.settings = new InstanceSettings();
-        }
-
-        return this.settings;
-    }
-
-    public void setSettings(InstanceSettings settings) {
-        this.settings = settings;
+    public DisableableMod getDisableableModByCurseModId(int curseModId) {
+        return this.launcher.mods.stream()
+                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == curseModId)
+                .findFirst().orElse(null);
     }
 
     public void addFileFromCurse(CurseMod mod, CurseFile file) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
-        File finalLocation = new File(mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
-                ? this.getResourcePacksDirectory()
+        Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
+                ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
                 : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID
-                        ? FileSystem.DOWNLOADS.toFile()
-                        : this.getModsDirectory()),
-                file.fileName);
+                        ? this.getRoot().resolve("saves").resolve(file.fileName)
+                        : this.getRoot().resolve("mods").resolve(file.fileName));
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
                 .downloadTo(downloadLocation).size(file.fileLength);
 
         if (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID) {
-            download = download.unzipTo(this.getSavesDirectory().toPath());
+            download = download.unzipTo(this.getRoot().resolve("saves"));
         } else {
-            download = download.copyTo(finalLocation.toPath());
-
-            if (finalLocation.exists()) {
-                Utils.delete(finalLocation);
+            download = download.copyTo(finalLocation);
+            if (Files.exists(finalLocation)) {
+                FileUtils.delete(finalLocation);
             }
         }
+
+        // find mods with the same curse mod id
+        List<DisableableMod> sameMods = this.launcher.mods.stream()
+                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == mod.id)
+                .collect(Collectors.toList());
+
+        // delete mod files that are the same mod id
+        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
 
         if (download.needToDownload()) {
             try {
@@ -1803,28 +757,321 @@ public class Instance implements Cloneable, Launchable {
             download.copy();
         }
 
-        // find mods with the same curse mod id
-        List<DisableableMod> sameMods = this.mods.stream()
-                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == mod.id)
-                .collect(Collectors.toList());
-
-        // delete mod files that are the same mod id
-        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
-
         // remove any mods that are from the same mod on Curse from the master mod list
-        this.mods = this.mods.stream()
+        this.launcher.mods = this.launcher.mods.stream()
                 .filter(installedMod -> !installedMod.isFromCurse() || installedMod.getCurseModId() != mod.id)
                 .collect(Collectors.toList());
 
         // add this mod
-        this.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
+        this.launcher.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
                 mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
                         : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID ? Type.worlds
                                 : Type.mods),
                 null, mod.summary, false, true, true, mod, file));
 
-        this.save(false);
+        this.save();
 
-        App.TOASTER.pop(mod.name + " " + GetText.tr("Installed"));
+        // #. {0} is the name of a mod that was installed
+        App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
+    }
+
+    public boolean hasCustomMods() {
+        return this.launcher.mods.stream().anyMatch(DisableableMod::isUserAdded);
+    }
+
+    public List<String> getCustomMods(Type type) {
+        return this.launcher.mods.stream().filter(DisableableMod::isUserAdded).filter(m -> m.getType() == type)
+                .map(DisableableMod::getFilename).collect(Collectors.toList());
+    }
+
+    public List<String> getPackMods(Type type) {
+        return this.launcher.mods.stream().filter(dm -> !dm.userAdded && dm.type == type)
+                .map(DisableableMod::getFilename).collect(Collectors.toList());
+    }
+
+    public List<DisableableMod> getCustomDisableableMods() {
+        return this.launcher.mods.stream().filter(DisableableMod::isUserAdded).collect(Collectors.toList());
+    }
+
+    public boolean wasModInstalled(String name) {
+        if (this.launcher.mods != null) {
+            for (DisableableMod mod : this.launcher.mods) {
+                if (mod.getName().equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean wasModSelected(String name) {
+        if (this.launcher.mods != null) {
+            for (DisableableMod mod : this.launcher.mods) {
+                if (mod.getName().equalsIgnoreCase(name)) {
+                    return mod.wasSelected();
+                }
+            }
+        }
+        return false;
+    }
+
+    public Map<String, Object> getShareCodeData() {
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> mods = new HashMap<>();
+        List<Map<String, Object>> optional = new ArrayList<>();
+
+        this.launcher.mods.stream().filter(mod -> mod.optional && !mod.userAdded).forEach(mod -> {
+            Map<String, Object> modInfo = new HashMap<>();
+            modInfo.put("name", mod.name);
+            modInfo.put("selected", true);
+            optional.add(modInfo);
+        });
+
+        mods.put("optional", optional);
+        data.put("mods", mods);
+
+        return data;
+    }
+
+    public boolean canBeExported() {
+        if (launcher.loaderVersion == null) {
+            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader");
+            return false;
+        }
+
+        // check pack is a system pack or imported from Curse
+        if ((getPack() != null && !getPack().system) && launcher.curseManifest == null) {
+            LogManager.debug("Instance " + launcher.name
+                    + " cannot be exported due to: Not being a system pack or imported from Curse");
+            return false;
+        }
+
+        // make sure there's at least one mod from Curse
+        if (launcher.mods.stream().noneMatch(DisableableMod::isFromCurse)) {
+            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No mods from Curse");
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides) {
+        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        CurseManifest manifest = new CurseManifest();
+
+        CurseMinecraft minecraft = new CurseMinecraft();
+
+        List<CurseModLoader> modLoaders = new ArrayList<>();
+        CurseModLoader modLoader = new CurseModLoader();
+
+        String loaderVersion = launcher.loaderVersion.version;
+
+        // Since Curse treats Farbic as a second class citizen :(, we need to force a
+        // forge loader and people need to use Jumploader in order to have Fabric packs
+        // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
+        if (launcher.loaderVersion.type.equals("Fabric")) {
+            loaderVersion = ForgeLoader.getRecommendedVersion(id);
+        }
+
+        modLoader.id = "forge-" + loaderVersion;
+        modLoader.primary = true;
+        modLoaders.add(modLoader);
+
+        minecraft.version = this.id;
+        minecraft.modLoaders = modLoaders;
+
+        manifest.minecraft = minecraft;
+        manifest.manifestType = "minecraftModpack";
+        manifest.manifestVersion = 1;
+        manifest.name = name;
+        manifest.version = version;
+        manifest.author = author;
+        manifest.files = this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).map(mod -> {
+            CurseManifestFile file = new CurseManifestFile();
+            file.projectID = mod.curseModId;
+            file.fileID = mod.curseFileId;
+            file.required = true;
+
+            return file;
+        }).collect(Collectors.toList());
+        manifest.overrides = "overrides";
+
+        // create temp directory to put this in
+        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        FileUtils.createDirectory(tempDir);
+
+        // create manifest.json
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("manifest.json").toFile())) {
+            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save manifest.json", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // create modlist.html
+        StringBuilder sb = new StringBuilder("<ul>");
+        this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).forEach(mod -> {
+            if (mod.hasFullCurseInformation()) {
+                sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name)
+                        .append("</a></li>");
+            } else {
+                sb.append("<li>").append(mod.name).append("</li>");
+            }
+        });
+        sb.append("</ul>");
+
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modlist.html").toFile())) {
+            fileWriter.write(sb.toString());
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save modlist.html", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // copy over the overrides folder
+        Path overridesPath = tempDir.resolve("overrides");
+        FileUtils.createDirectory(overridesPath);
+
+        for (String path : overrides) {
+            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+                    && (getRoot().resolve(path).toFile().isFile()
+                            || getRoot().resolve(path).toFile().list().length != 0)) {
+                if (getRoot().resolve(path).toFile().isDirectory()) {
+                    Utils.copyDirectory(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile());
+                } else {
+                    Utils.copyFile(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile(), true);
+                }
+            }
+        }
+
+        // remove files that come from Curse or aren't disabled
+        launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).forEach(mod -> {
+            File file = mod.getFile(this, overridesPath);
+
+            if (file.exists()) {
+                FileUtils.delete(file.toPath());
+            }
+        });
+
+        for (String path : overrides) {
+            // if no files, remove the directory
+            if (overridesPath.resolve(path).toFile().isDirectory()
+                    && overridesPath.resolve(path).toFile().list().length == 0) {
+                FileUtils.deleteDirectory(overridesPath.resolve(path));
+            }
+        }
+
+        ZipUtil.pack(tempDir.toFile(), to.toFile());
+
+        FileUtils.deleteDirectory(tempDir);
+
+        return true;
+    }
+
+    public boolean rename(String newName) {
+        String oldName = this.launcher.name;
+        File oldDir = getRoot().toFile();
+        this.launcher.name = newName;
+        this.ROOT = FileSystem.INSTANCES.resolve(this.getSafeName());
+        File newDir = getRoot().toFile();
+        if (oldDir.renameTo(newDir)) {
+            this.save();
+            return true;
+        } else {
+            this.launcher.name = oldName;
+            return false;
+        }
+    }
+
+    public void save() {
+        try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("instance.json").toFile())) {
+            Gsons.MINECRAFT.toJson(this, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace(e);
+        }
+    }
+
+    public File getAssetsDir() {
+        if (this.launcher.assetsMapToResources) {
+            return this.getRoot().resolve("resources").toFile();
+        }
+
+        return FileSystem.RESOURCES_VIRTUAL.resolve(this.assets).toFile();
+    }
+
+    public File getRootDirectory() {
+        return getRoot().toFile();
+    }
+
+    public File getJarModsDirectory() {
+        return getRoot().resolve("jarmods").toFile();
+    }
+
+    public File getBinDirectory() {
+        return getRoot().resolve("bin").toFile();
+    }
+
+    public File getNativesDirectory() {
+        return getRoot().resolve("bin/natives").toFile();
+    }
+
+    public File getMinecraftJar() {
+        return getMinecraftJarLibraryPath().toFile();
+    }
+
+    public String getName() {
+        return launcher.name;
+    }
+
+    public String getPackName() {
+        return launcher.pack;
+    }
+
+    public String getVersion() {
+        return launcher.version;
+    }
+
+    public LoaderVersion getLoaderVersion() {
+        return launcher.loaderVersion;
+    }
+
+    public InstanceSettings getSettings() {
+        InstanceSettings settings = new InstanceSettings();
+        settings.initialMemory = launcher.initialMemory;
+        settings.maximumMemory = launcher.maximumMemory;
+        settings.permGen = launcher.permGen;
+        settings.javaPath = launcher.javaPath;
+        settings.javaArguments = launcher.javaArguments;
+
+        return settings;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public String getMinecraftVersion() {
+        return id;
+    }
+
+    public String getAssets() {
+        return assets;
+    }
+
+    public String getVersionType() {
+        return type;
+    }
+
+    public int getMemory() {
+        return launcher.requiredMemory;
+    }
+
+    public int getPermGen() {
+        return launcher.requiredPermGen;
     }
 }

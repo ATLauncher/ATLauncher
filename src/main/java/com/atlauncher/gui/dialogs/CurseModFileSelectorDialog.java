@@ -39,7 +39,6 @@ import javax.swing.JScrollPane;
 import com.atlauncher.App;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV2;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
 import com.atlauncher.data.curse.CurseMod;
@@ -56,7 +55,6 @@ public class CurseModFileSelectorDialog extends JDialog {
     private int filesLength = 0;
     private final CurseMod mod;
     private Instance instance;
-    private InstanceV2 instanceV2;
     private Integer installedFileId = null;
 
     private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
@@ -80,25 +78,6 @@ public class CurseModFileSelectorDialog extends JDialog {
 
         this.mod = mod;
         this.instance = instance;
-        this.installedFileId = installedFileId;
-
-        setupComponents();
-    }
-
-    public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2) {
-        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
-
-        this.mod = mod;
-        this.instanceV2 = instanceV2;
-
-        setupComponents();
-    }
-
-    public CurseModFileSelectorDialog(CurseMod mod, InstanceV2 instanceV2, int installedFileId) {
-        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
-
-        this.mod = mod;
-        this.instanceV2 = instanceV2;
         this.installedFileId = installedFileId;
 
         setupComponents();
@@ -190,11 +169,7 @@ public class CurseModFileSelectorDialog extends JDialog {
 
             Runnable r = () -> {
                 Analytics.sendEvent(mod.name + " - " + file.displayName, "AddFile", "CurseMod");
-                if (this.instanceV2 != null) {
-                    instanceV2.addFileFromCurse(mod, file);
-                } else {
-                    instance.addFileFromCurse(mod, file);
-                }
+                instance.addFileFromCurse(mod, file);
                 dialog.dispose();
                 dispose();
             };
@@ -213,23 +188,16 @@ public class CurseModFileSelectorDialog extends JDialog {
             if (selectedFile.dependencies.size() != 0) {
                 // check to see which required ones we don't already have
                 List<CurseFileDependency> dependencies = selectedFile.dependencies.stream()
-                        .filter(dependency -> dependency.isRequired() && (instanceV2 != null
-                                ? instanceV2.launcher.mods.stream().noneMatch(installedMod -> installedMod.isFromCurse()
-                            && installedMod.getCurseModId() == dependency.addonId)
-                                : instance.getInstalledMods().stream().noneMatch(installedMod -> installedMod.isFromCurse()
-                            && installedMod.getCurseModId() == dependency.addonId)))
+                        .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
+                                .noneMatch(installedMod -> installedMod.isFromCurse()
+                                        && installedMod.getCurseModId() == dependency.addonId))
                         .collect(Collectors.toList());
 
                 if (dependencies.size() != 0) {
                     dependenciesPanel.removeAll();
 
-                    if (this.instanceV2 != null) {
-                        dependencies.forEach(dependency -> dependenciesPanel
-                                .add(new CurseFileDependencyCard(dependency, instanceV2)));
-                    } else {
-                        dependencies.forEach(
-                                dependency -> dependenciesPanel.add(new CurseFileDependencyCard(dependency, instance)));
-                    }
+                    dependencies.forEach(
+                            dependency -> dependenciesPanel.add(new CurseFileDependencyCard(dependency, instance)));
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                             (dependencies.size() / 2) + 1));
@@ -261,8 +229,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         filesDropdown.setVisible(true);
 
         Runnable r = () -> {
-            LoaderVersion loaderVersion = (this.instanceV2 != null ? this.instanceV2.launcher.loaderVersion
-                    : this.instance.getLoaderVersion());
+            LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
             Stream<CurseFile> curseFilesStream = CurseApi.getFilesForMod(mod.id).stream()
                     .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
@@ -270,8 +237,7 @@ public class CurseModFileSelectorDialog extends JDialog {
             if (!App.settings.disableAddModRestrictions) {
                 curseFilesStream = curseFilesStream.filter(file -> App.settings.disableAddModRestrictions
                         || mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
-                        || file.gameVersion.contains(
-                                this.instanceV2 != null ? this.instanceV2.id : this.instance.getMinecraftVersion()));
+                        || file.gameVersion.contains(this.instance.id));
             }
 
             files.addAll(curseFilesStream.collect(Collectors.toList()));
