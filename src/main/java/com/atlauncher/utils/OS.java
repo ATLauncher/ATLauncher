@@ -19,7 +19,9 @@ package com.atlauncher.utils;
 
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -469,6 +471,17 @@ public enum OS {
         } else {
             return maxRam / 2;
         }
+    }
+
+    public static Rectangle getScreenVirtualBounds() {
+        Rectangle bounds = new Rectangle(0, 0, 0, 0);
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        for (GraphicsDevice gd : ge.getScreenDevices()) {
+            bounds.add(gd.getDefaultConfiguration().getBounds());
+        }
+
+        return bounds;
     }
 
     /**

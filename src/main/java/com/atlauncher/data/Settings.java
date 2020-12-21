@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -325,6 +326,16 @@ public class Settings {
 
         if (launcherSize.height < 700) {
             launcherSize.setSize(launcherSize.width, 700);
+        }
+
+        if (launcherPosition != null
+                && !OS.getScreenVirtualBounds().contains(new Rectangle(launcherPosition, launcherSize))) {
+            launcherPosition = null;
+        }
+
+        if (consolePosition != null
+                && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
+            consolePosition = null;
         }
     }
 

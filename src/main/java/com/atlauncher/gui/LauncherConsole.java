@@ -63,9 +63,14 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
         setMinimumSize(new Dimension(650, 400));
 
-        if (App.settings.rememberWindowSizePosition) {
-            setBounds(App.settings.consolePosition.x, App.settings.consolePosition.y, App.settings.consoleSize.width,
-                    App.settings.consoleSize.height);
+        try {
+            if (App.settings.rememberWindowSizePosition && App.settings.consoleSize != null
+                    && App.settings.consolePosition != null) {
+                setBounds(App.settings.consolePosition.x, App.settings.consolePosition.y,
+                        App.settings.consoleSize.width, App.settings.consoleSize.height);
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error setting custom remembered window size settings", e);
         }
 
         console = new Console();

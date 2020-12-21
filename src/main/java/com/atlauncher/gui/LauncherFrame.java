@@ -76,13 +76,18 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
 
         setMinimumSize(new Dimension(1200, 700));
+        setLocationRelativeTo(null);
 
-        if (App.settings.rememberWindowSizePosition) {
-            setLocation(App.settings.launcherPosition);
+        try {
+            if (App.settings.rememberWindowSizePosition && App.settings.launcherSize != null) {
+                setSize(App.settings.launcherSize);
+            }
 
-            setSize(App.settings.launcherSize);
-        } else {
-            setLocationRelativeTo(null);
+            if (App.settings.rememberWindowSizePosition && App.settings.launcherPosition != null) {
+                setLocation(App.settings.launcherPosition);
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error setting custom remembered window size settings", e);
         }
 
         LogManager.info("Setting up Bottom Bar");
@@ -158,6 +163,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         }
 
         addComponentListener(new ComponentAdapter() {
+
             public void componentResized(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
 
