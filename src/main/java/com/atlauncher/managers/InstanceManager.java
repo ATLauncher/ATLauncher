@@ -78,9 +78,12 @@ public class InstanceManager {
                         instanceV1.convert();
 
                         instance = instanceV1.convertToNewFormat(instanceDir.toPath());
+                        Utils.copyFile(new File(instanceDir, "instance.json"),
+                                new File(instanceDir, "instance-v1-backup.json"), true);
                         converted = true;
                         LogManager.debug("Converted V1 instance from " + instanceDir);
                     } catch (JsonIOException | JsonSyntaxException e) {
+                        converted = false;
                         LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                         continue;
                     }
