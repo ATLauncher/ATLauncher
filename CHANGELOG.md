@@ -16,3 +16,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow importing packs from url [#425]
 - Fix add mods dialog not being wide enough
 - Fix potential NPE in PerformanceManager
+- Fix issue with opening wrong browser in linux [#424]

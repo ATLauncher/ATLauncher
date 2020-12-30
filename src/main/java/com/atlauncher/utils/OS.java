@@ -148,11 +148,10 @@ public enum OS {
      */
     public static void openWebBrowser(URI uri) {
         try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(uri);
-            } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open"))
-                    || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
+            if (getOS() == LINUX && Utils.executableInPath("xdg-open")) {
                 Runtime.getRuntime().exec("xdg-open " + uri);
+            } else if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(uri);
             }
         } catch (Exception e) {
             LogManager.logStackTrace("Error opening web browser!", e);
