@@ -54,7 +54,6 @@ import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
-import com.atlauncher.utils.ATLauncherAPIUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.google.gson.JsonIOException;
@@ -185,12 +184,8 @@ public class Launcher {
             CheckingServersManager.startCheckingServers();
         }
 
-        if (App.settings.enableLogs) {
-            App.TASKPOOL.execute(ATLauncherAPIUtils::postSystemInfo);
-
-            if (App.settings.enableAnalytics) {
-                Analytics.startSession();
-            }
+        if (App.settings.enableLogs && App.settings.enableAnalytics) {
+            Analytics.startSession();
         }
         PerformanceManager.end();
     }

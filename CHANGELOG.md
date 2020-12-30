@@ -10,3 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Clean up old instance format [#422]
 - Fix some issues with remembering window size and position option [#423]
 - Fix instance installation not cancelling on download exceptions
+- Remove system info logging on startup
