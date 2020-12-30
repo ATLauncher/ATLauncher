@@ -79,7 +79,7 @@ public final class AddModsDialog extends JDialog {
                 ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
-        this.setPreferredSize(new Dimension(600, 500));
+        this.setPreferredSize(new Dimension(620, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
