@@ -60,7 +60,7 @@ public final class Download {
     private String hash;
     private Long fingerprint = null;
     public long size = -1L;
-    private InstanceInstaller instanceInstaller;
+    public InstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
     private RequestBody post = null;
     private CacheControl cacheControl = null;
@@ -509,7 +509,15 @@ public final class Download {
             return;
         }
 
-        this.execute();
+        try {
+            this.execute();
+        } catch (IOException e) {
+            if (this.instanceInstaller != null) {
+                this.instanceInstaller.cancel(true);
+            }
+
+            throw e;
+        }
 
         Path oldPath = null;
         if (Files.exists(this.to)) {
