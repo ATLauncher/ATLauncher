@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix instance installation not cancelling on download exceptions
 - Remove system info logging on startup
 - Move previous/next page buttons on packs to edges
+- Remove bottom set of buttons on system pack cards

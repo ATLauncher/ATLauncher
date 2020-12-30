@@ -128,6 +128,11 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         if (!this.pack.isSemiPublic() || this.pack.isTester()) {
             this.removePackButton.setVisible(false);
         }
+
+        if (this.pack.system) {
+            actionsPanel.add(top, BorderLayout.SOUTH);
+            actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        }
     }
 
     public Pack getPack() {
