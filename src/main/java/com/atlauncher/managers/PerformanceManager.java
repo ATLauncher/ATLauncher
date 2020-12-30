@@ -41,7 +41,7 @@ public final class PerformanceManager {
     }
 
     public static void end(String name) {
-        if (LogManager.showDebug) {
+        if (LogManager.showDebug && times.containsKey(name)) {
             long timeElapsed = Duration.between(times.get(name), Instant.now()).toMillis();
 
             times.remove(name);

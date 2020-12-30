@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove bottom set of buttons on system pack cards
 - Allow importing packs from url [#425]
 - Fix add mods dialog not being wide enough
+- Fix potential NPE in PerformanceManager
