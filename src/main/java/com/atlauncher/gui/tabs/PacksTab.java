@@ -28,6 +28,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -53,7 +56,7 @@ import org.mini2Dx.gettext.GetText;
 public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
-    private final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    private final JPanel bottomPanel = new JPanel();
     private final JButton addButton = new JButton(GetText.tr("Add Pack"));
     private final JButton addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
@@ -92,6 +95,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         RelocalizationManager.addListener(this);
 
         this.setupTopPanel();
+        this.setupBottomPanel();
 
         refresh();
 
@@ -160,10 +164,18 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.topPanel.add(this.clearButton);
         this.topPanel.add(this.searchField);
         this.topPanel.add(this.searchButton);
+    }
+
+    private void setupBottomPanel() {
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         this.bottomPanel.add(this.previousPageButton);
+        this.bottomPanel.add(Box.createHorizontalGlue());
         this.bottomPanel.add(this.expandAllButton);
+        this.bottomPanel.add(Box.createHorizontalStrut(5));
         this.bottomPanel.add(this.collapseAllButton);
+        this.bottomPanel.add(Box.createHorizontalGlue());
         this.bottomPanel.add(this.nextPageButton);
     }
 
