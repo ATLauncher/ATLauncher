@@ -53,7 +53,7 @@ public class CursePackTransferHandler extends TransferHandler {
             try {
                 if (ts.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor)) {
                     dialog.setReturnValue(CursePackUtils
-                            .loadFromUrl((String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor)));
+                            .loadFromCurseForgeUrl((String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor)));
                 } else if (ts.getTransferable().isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                     dialog.setReturnValue(CursePackUtils.loadFromFile(
                             ((List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0)));

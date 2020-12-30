@@ -34,11 +34,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CursePackUtils;
@@ -50,13 +53,14 @@ import org.zeroturnaround.zip.ZipUtil;
 @SuppressWarnings("serial")
 public class ImportInstanceDialog extends JDialog {
 
+    private final JTextField url;
     private final JTextField filePath;
 
     private final JButton addButton;
 
     public ImportInstanceDialog() {
         super(App.launcher.getParent(), GetText.tr("Import Instance"), ModalityType.APPLICATION_MODAL);
-        setSize(450, 200);
+        setSize(500, 250);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -70,7 +74,7 @@ public class ImportInstanceDialog extends JDialog {
         middle.setLayout(new BorderLayout());
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
-                "Select an exported instance zip to import it.<br/>We currently support Twitch/CurseForge and ATLauncher exported zip files."))
+                "Select an exported instance zip to import it.<br/>We currently support CurseForge and ATLauncher exported zip files."))
                 .build());
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);
@@ -79,12 +83,46 @@ public class ImportInstanceDialog extends JDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabel urlLabel = new JLabel(GetText.tr("Url") + ": ");
+        mainPanel.add(urlLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        url = new JTextField(25);
+        url.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                emptyZipPathField();
+                changeAddButtonStatus();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                emptyZipPathField();
+                changeAddButtonStatus();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                emptyZipPathField();
+                changeAddButtonStatus();
+            }
+        });
+        mainPanel.add(url, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabel fileLabel = new JLabel(GetText.tr("File") + ": ");
         fileLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(fileLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JPanel filePathPanel = new JPanel(new FlowLayout());
         filePath = new JTextField(17);
@@ -139,7 +177,10 @@ public class ImportInstanceDialog extends JDialog {
                     GetText.tr("Import Instance"));
 
             dialog.addThread(new Thread(() -> {
-                if (!filePath.getText().isEmpty()) {
+                if (!url.getText().isEmpty()) {
+                    Analytics.sendEvent(url.getText(), "AddFromUrl", "ImportPack");
+                    dialog.setReturnValue(CursePackUtils.loadFromUrl(url.getText()));
+                } else if (!filePath.getText().isEmpty()) {
                     Analytics.sendEvent(new File(filePath.getText()).getName(), "AddFromZip", "ImportPack");
                     dialog.setReturnValue(CursePackUtils.loadFromFile(new File(filePath.getText())));
                 } else {
@@ -176,7 +217,13 @@ public class ImportInstanceDialog extends JDialog {
         setVisible(true);
     }
 
+    private void emptyZipPathField() {
+        if (!url.getText().isEmpty()) {
+            filePath.setText("");
+        }
+    }
+
     private void changeAddButtonStatus() {
-        addButton.setEnabled(!filePath.getText().isEmpty());
+        addButton.setEnabled(!url.getText().isEmpty() || !filePath.getText().isEmpty());
     }
 }

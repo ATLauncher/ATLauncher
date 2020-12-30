@@ -13,3 +13,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove system info logging on startup
 - Move previous/next page buttons on packs to edges
 - Remove bottom set of buttons on system pack cards
+- Allow importing packs from url [#425]

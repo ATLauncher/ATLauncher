@@ -46,6 +46,7 @@ import javax.swing.filechooser.FileFilter;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CursePackUtils;
@@ -64,7 +65,7 @@ public class AddCursePackDialog extends JDialog {
 
     public AddCursePackDialog() {
         super(App.launcher.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
-        setSize(450, 200);
+        setSize(450, 250);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
@@ -87,11 +88,13 @@ public class AddCursePackDialog extends JDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabel urlLabel = new JLabel(GetText.tr("CurseForge Url") + ": ");
         mainPanel.add(urlLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         url = new JTextField(25);
         url.getDocument().addDocumentListener(new DocumentListener() {
@@ -117,12 +120,14 @@ public class AddCursePackDialog extends JDialog {
 
         gbc.gridx = 0;
         gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabel zipLabel = new JLabel(GetText.tr("CurseForge Zip") + ": ");
         zipLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(zipLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JPanel zipPathPanel = new JPanel(new FlowLayout());
         zipPath = new JTextField(17);
@@ -176,7 +181,7 @@ public class AddCursePackDialog extends JDialog {
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
                     Analytics.sendEvent(url.getText(), "AddFromUrl", "CursePack");
-                    dialog.setReturnValue(CursePackUtils.loadFromUrl(url.getText()));
+                    dialog.setReturnValue(CursePackUtils.loadFromCurseForgeUrl(url.getText()));
                 } else if (!zipPath.getText().isEmpty()) {
                     Analytics.sendEvent(new File(zipPath.getText()).getName(), "AddFromZip", "CursePack");
                     dialog.setReturnValue(CursePackUtils.loadFromFile(new File(zipPath.getText())));

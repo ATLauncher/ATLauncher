@@ -58,7 +58,7 @@ public class CursePackUtils {
      * https://www.curseforge.com/minecraft/modpacks/madpack-4/download/2719411?client=y
      * https://www.curseforge.com/minecraft/modpacks/madpack-4/files/2719411
      */
-    public static boolean loadFromUrl(String url) {
+    public static boolean loadFromCurseForgeUrl(String url) {
         if (!url.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
             LogManager.error("Cannot install as the url was not a Curse modpack url");
             return false;
@@ -110,15 +110,23 @@ public class CursePackUtils {
         CurseFile curseFile = CurseApi.getFileForMod(projectId, fileId);
         Path tempZip = FileSystem.TEMP.resolve(curseFile.fileName);
 
+        return loadFromUrl(new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip).size(curseFile.fileLength)
+                .fingerprint(curseFile.packageFingerprint), projectId, fileId);
+    }
+
+    public static boolean loadFromUrl(String url) {
+        return loadFromUrl(new Download().setUrl(url).downloadTo(FileSystem.TEMP.resolve("import.zip")), null, null);
+    }
+
+    public static boolean loadFromUrl(Download download, Integer projectId, Integer fileId) {
         try {
-            new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip).size(curseFile.fileLength)
-                    .fingerprint(curseFile.packageFingerprint).downloadFile();
+            download.downloadFile();
         } catch (IOException e) {
-            LogManager.error("Failed to download modpack file from Curse");
+            LogManager.error("Failed to download modpack file");
             return false;
         }
 
-        return loadFromFile(tempZip.toFile(), projectId, fileId);
+        return loadFromFile(download.to.toFile(), projectId, fileId);
     }
 
     public static boolean loadFromFile(File file) {
