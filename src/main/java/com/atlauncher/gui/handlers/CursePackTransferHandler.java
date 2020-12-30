@@ -29,7 +29,7 @@ import javax.swing.TransferHandler;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.utils.CursePackUtils;
+import com.atlauncher.utils.ImportPackUtils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -52,10 +52,10 @@ public class CursePackTransferHandler extends TransferHandler {
         dialog.addThread(new Thread(() -> {
             try {
                 if (ts.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                    dialog.setReturnValue(CursePackUtils
+                    dialog.setReturnValue(ImportPackUtils
                             .loadFromCurseForgeUrl((String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor)));
                 } else if (ts.getTransferable().isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                    dialog.setReturnValue(CursePackUtils.loadFromFile(
+                    dialog.setReturnValue(ImportPackUtils.loadFromFile(
                             ((List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0)));
                 }
             } catch (UnsupportedFlavorException | IOException e) {

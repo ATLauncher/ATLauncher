@@ -44,11 +44,10 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.CursePackUtils;
+import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
-import org.zeroturnaround.zip.ZipUtil;
 
 @SuppressWarnings("serial")
 public class ImportInstanceDialog extends JDialog {
@@ -74,7 +73,7 @@ public class ImportInstanceDialog extends JDialog {
         middle.setLayout(new BorderLayout());
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
-                "Select an exported instance zip to import it.<br/>We currently support CurseForge and ATLauncher exported zip files."))
+                "Select an exported instance zip to import it.<br/>We currently support ATLauncher, CurseForge and MultiMC exported zip files."))
                 .build());
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);
@@ -148,11 +147,7 @@ public class ImportInstanceDialog extends JDialog {
                         return true;
                     }
 
-                    if (!f.getName().endsWith(".zip")) {
-                        return false;
-                    }
-
-                    return ZipUtil.containsEntry(f, "manifest.json");
+                    return f.getName().endsWith(".zip");
                 }
             });
 
@@ -179,10 +174,10 @@ public class ImportInstanceDialog extends JDialog {
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
                     Analytics.sendEvent(url.getText(), "AddFromUrl", "ImportPack");
-                    dialog.setReturnValue(CursePackUtils.loadFromUrl(url.getText()));
+                    dialog.setReturnValue(ImportPackUtils.loadFromUrl(url.getText()));
                 } else if (!filePath.getText().isEmpty()) {
                     Analytics.sendEvent(new File(filePath.getText()).getName(), "AddFromZip", "ImportPack");
-                    dialog.setReturnValue(CursePackUtils.loadFromFile(new File(filePath.getText())));
+                    dialog.setReturnValue(ImportPackUtils.loadFromFile(new File(filePath.getText())));
                 } else {
                     dialog.setReturnValue(false);
                 }

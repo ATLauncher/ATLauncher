@@ -49,7 +49,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.CursePackUtils;
+import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -181,10 +181,10 @@ public class AddCursePackDialog extends JDialog {
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
                     Analytics.sendEvent(url.getText(), "AddFromUrl", "CursePack");
-                    dialog.setReturnValue(CursePackUtils.loadFromCurseForgeUrl(url.getText()));
+                    dialog.setReturnValue(ImportPackUtils.loadFromCurseForgeUrl(url.getText()));
                 } else if (!zipPath.getText().isEmpty()) {
                     Analytics.sendEvent(new File(zipPath.getText()).getName(), "AddFromZip", "CursePack");
-                    dialog.setReturnValue(CursePackUtils.loadFromFile(new File(zipPath.getText())));
+                    dialog.setReturnValue(ImportPackUtils.loadFromFile(new File(zipPath.getText())));
                 } else {
                     dialog.setReturnValue(false);
                 }

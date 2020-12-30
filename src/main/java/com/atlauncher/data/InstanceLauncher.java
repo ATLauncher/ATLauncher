@@ -24,6 +24,7 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.multimc.MultiMCManifest;
 
 @Json
 public class InstanceLauncher {
@@ -55,6 +56,7 @@ public class InstanceLauncher {
     public boolean assetsMapToResources;
 
     public CurseManifest curseManifest;
+    public MultiMCManifest multiMCManifest;
 
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();

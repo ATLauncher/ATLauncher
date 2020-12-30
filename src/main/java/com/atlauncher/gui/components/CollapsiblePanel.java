@@ -119,8 +119,9 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
     public CollapsiblePanel(Instance instance) {
         this.instance = instance;
         if (instance.launcher.isPlayable) {
-            arrow.setText(
-                    instance.launcher.name + " (" + instance.launcher.pack + " " + instance.launcher.version + ")");
+            arrow.setText(instance.launcher.name + (instance.launcher.multiMCManifest == null
+                    ? " (" + instance.launcher.pack + " " + instance.launcher.version + ")"
+                    : ""));
             arrow.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
         } else {
             arrow.setText(instance.launcher.name + " (" + instance.launcher.pack + " " + instance.launcher.version

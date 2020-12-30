@@ -33,6 +33,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,6 +59,7 @@ import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -80,6 +82,7 @@ public class InstanceInstallerDialog extends JDialog {
     private final Pack pack;
     private Instance instance = null;
     private CurseManifest curseManifest = null;
+    private MultiMCManifest multiMCManifest = null;
 
     private JPanel middle;
     private JButton install;
@@ -98,24 +101,28 @@ public class InstanceInstallerDialog extends JDialog {
     private final PackVersion autoInstallVersion;
 
     public InstanceInstallerDialog(CurseManifest manifest, File manifestFile) {
-        this(manifest, false, false, null, null, false, manifestFile);
+        this(manifest, false, false, null, null, false, manifestFile, null);
+    }
+
+    public InstanceInstallerDialog(MultiMCManifest manifest, Path multiMCExtractedPath) {
+        this(manifest, false, false, null, null, false, null, multiMCExtractedPath);
     }
 
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false, null, null, true, null);
+        this(object, false, false, null, null, true, null, null);
     }
 
     public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
-        this(pack, false, false, version, shareCode, showModsChooser, null);
+        this(pack, false, false, version, shareCode, showModsChooser, null, null);
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this(pack, false, true, null, null, true, null);
+        this(pack, false, true, null, null, true, null, null);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
-            File manifestFile) {
+            File manifestFile, Path multiMCExtractedPath) {
         super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.isUpdate = isUpdate;
@@ -166,6 +173,33 @@ public class InstanceInstallerDialog extends JDialog {
 
             // #. {0} is the name of the pack the user is installing
             setTitle(GetText.tr("Installing {0}", curseManifest.name));
+        } else if (object instanceof MultiMCManifest) {
+            multiMCManifest = (MultiMCManifest) object;
+
+            pack = new Pack();
+            pack.name = multiMCManifest.config.name;
+
+            PackVersion packVersion = new PackVersion();
+            packVersion.version = "1";
+
+            try {
+                packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(multiMCManifest.components.stream()
+                        .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst().get().version);
+            } catch (InvalidMinecraftVersion e) {
+                LogManager.error(e.getMessage());
+                return;
+            }
+
+            packVersion.hasLoader = multiMCManifest.components.stream()
+                    .anyMatch(c -> c.uid.equalsIgnoreCase("net.fabricmc.intermediary")
+                            || c.uid.equalsIgnoreCase("net.fabricmc.intermediary"));
+
+            pack.versions = Collections.singletonList(packVersion);
+
+            isReinstall = false;
+
+            // #. {0} is the name of the pack the user is installing
+            setTitle(GetText.tr("Installing {0}", multiMCManifest.config.name));
         } else {
             instance = (Instance) object;
             pack = instance.getPack();
@@ -369,7 +403,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
                         isReinstall, isServer, saveMods, shareCode, showModsChooser, loaderVersion, curseManifest,
-                        manifestFile) {
+                        manifestFile, multiMCManifest, multiMCExtractedPath) {
 
                     protected void done() {
                         Boolean success = false;
@@ -648,6 +682,12 @@ public class InstanceInstallerDialog extends JDialog {
         if (autoInstallVersion != null) {
             versionsDropDown.setSelectedItem(autoInstallVersion);
             versionsDropDown.setEnabled(false);
+        }
+
+        if (multiMCManifest != null) {
+            gbc.gridx--;
+            versionLabel.setVisible(multiMCManifest == null);
+            versionsDropDown.setVisible(multiMCManifest == null);
         }
 
         return gbc;

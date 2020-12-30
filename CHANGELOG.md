@@ -17,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix add mods dialog not being wide enough
 - Fix potential NPE in PerformanceManager
 - Fix issue with opening wrong browser in linux [#424]
+- Add MultiMC instance importing [#426]

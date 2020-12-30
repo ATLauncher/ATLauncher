@@ -274,7 +274,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     } else {
                         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
                                 "UpdateFromPlay", "Instance");
-                        new InstanceInstallerDialog(instance, true, false, null, null, true, null);
+                        new InstanceInstallerDialog(instance, true, false, null, null, true, null, null);
                     }
                 } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
                     if (ret == 2) {
@@ -313,7 +313,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Update", "Instance");
-                new InstanceInstallerDialog(instance, true, false, null, null, true, null);
+                new InstanceInstallerDialog(instance, true, false, null, null, true, null, null);
             }
         });
         this.renameButton.addActionListener(e -> {
@@ -442,7 +442,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             } else {
                                 Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
                                         "UpdateFromPlay", "Instance");
-                                new InstanceInstallerDialog(instance, true, false, null, null, true, null);
+                                new InstanceInstallerDialog(instance, true, false, null, null, true, null, null);
                             }
                         } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
                             if (!App.launcher.minecraftLaunched) {
@@ -621,7 +621,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 } else {
                                     Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
                                             "Update", "Instance");
-                                    new InstanceInstallerDialog(instance, true, false, null, null, true, null);
+                                    new InstanceInstallerDialog(instance, true, false, null, null, true, null, null);
                                 }
                             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
                                 if (!App.launcher.minecraftLaunched) {

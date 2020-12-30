@@ -18,8 +18,12 @@
 package com.atlauncher.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +35,8 @@ import com.atlauncher.data.ATLauncherApiCurseModpack;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.data.multimc.MultiMCInstanceConfig;
+import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
@@ -40,7 +46,7 @@ import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.CacheControl;
 
-public class CursePackUtils {
+public class ImportPackUtils {
     /**
      * Can have multiple formats:
      *
@@ -126,14 +132,30 @@ public class CursePackUtils {
             return false;
         }
 
-        return loadFromFile(download.to.toFile(), projectId, fileId);
+        return loadCurseForgeFormat(download.to.toFile(), projectId, fileId);
     }
 
     public static boolean loadFromFile(File file) {
-        return loadFromFile(file, null, null);
+        if (ZipUtil.containsEntry(file, "manifest.json")) {
+            return loadCurseForgeFormat(file, null, null);
+        }
+
+        Path tmpDir = FileSystem.TEMP.resolve("multimcimport");
+
+        ZipUtil.unpack(file, tmpDir.toFile());
+
+        if (tmpDir.toFile().list().length == 1
+                && ZipUtil.containsEntry(file, tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
+            return loadMultiMCFormat(tmpDir.resolve(tmpDir.toFile().list()[0]));
+        }
+
+        // FileUtils.deleteDirectory(tmpDir);
+        LogManager.error("Unknown format for importing");
+
+        return false;
     }
 
-    public static boolean loadFromFile(File file, Integer projectId, Integer fileId) {
+    public static boolean loadCurseForgeFormat(File file, Integer projectId, Integer fileId) {
         if (!file.getName().endsWith(".zip")) {
             LogManager.error("Cannot install as the file was not a zip file");
             return false;
@@ -164,7 +186,31 @@ public class CursePackUtils {
 
             new InstanceInstallerDialog(manifest, file);
         } catch (Exception e) {
-            LogManager.logStackTrace("Failed to install Curse pack from drag and drop", e);
+            LogManager.logStackTrace("Failed to install CurseForge pack", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean loadMultiMCFormat(Path extractedPath) {
+        try (FileReader fileReader = new FileReader(extractedPath.resolve("mmc-pack.json").toFile());
+                InputStream instanceCfgStream = new FileInputStream(extractedPath.resolve("instance.cfg").toFile())) {
+            MultiMCManifest manifest = Gsons.MINECRAFT.fromJson(fileReader, MultiMCManifest.class);
+
+            Properties props = new Properties();
+            props.load(instanceCfgStream);
+            manifest.config = new MultiMCInstanceConfig(props);
+
+            if (manifest.formatVersion != 1) {
+                LogManager.error("Cannot install as the format is version " + manifest.formatVersion
+                        + " which I cannot install");
+                return false;
+            }
+
+            new InstanceInstallerDialog(manifest, extractedPath);
+        } catch (Exception e) {
+            LogManager.logStackTrace("Failed to install MultiMC pack", e);
             return false;
         }
 
