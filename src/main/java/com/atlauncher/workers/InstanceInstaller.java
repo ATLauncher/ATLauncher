@@ -502,8 +502,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (this.multiMCManifest != null) {
-            if (Files.exists(multiMCExtractedPath.resolve(".minecraft/mods"))) {
-                try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(".minecraft/mods"))) {
+            fireTask(GetText.tr("Checking Mods On CurseForge"));
+            fireSubProgressUnknown();
+
+            String minecraftFolder = Files.exists(multiMCExtractedPath.resolve(".minecraft")) ? ".minecraft"
+                    : "minecraft";
+
+            if (Files.exists(multiMCExtractedPath.resolve(minecraftFolder + "/mods"))) {
+                try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(minecraftFolder + "/mods"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
@@ -513,9 +519,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
             }
 
-            if (Files.exists(multiMCExtractedPath.resolve(".minecraft/mods/" + packVersion.minecraft))) {
+            if (Files.exists(multiMCExtractedPath.resolve(minecraftFolder + "/mods/" + packVersion.minecraft))) {
                 try (Stream<Path> list = Files
-                        .list(multiMCExtractedPath.resolve(".minecraft/mods/" + packVersion.minecraft))) {
+                        .list(multiMCExtractedPath.resolve(minecraftFolder + "/mods/" + packVersion.minecraft))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
@@ -525,8 +531,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
             }
 
-            if (Files.exists(multiMCExtractedPath.resolve(".minecraft/mods/ic2"))) {
-                try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(".minecraft/mods/ic2"))) {
+            if (Files.exists(multiMCExtractedPath.resolve(minecraftFolder + "/mods/ic2"))) {
+                try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(minecraftFolder + "/mods/ic2"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
@@ -539,13 +545,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
             this.modsInstalled.stream().filter(
-                    dm -> dm.getFile(multiMCExtractedPath.resolve(".minecraft"), this.packVersion.minecraft) != null)
+                    dm -> dm.getFile(multiMCExtractedPath.resolve(minecraftFolder), this.packVersion.minecraft) != null)
                     .forEach(dm -> {
                         try {
-                            murmurHashes.put(Hashing.murmur(
-                                    dm.getFile(multiMCExtractedPath.resolve(".minecraft"), this.packVersion.minecraft)
-                                            .toPath()),
-                                    dm);
+                            murmurHashes.put(Hashing.murmur(dm
+                                    .getFile(multiMCExtractedPath.resolve(minecraftFolder), this.packVersion.minecraft)
+                                    .toPath()), dm);
                         } catch (IOException e) {
                             LogManager.logStackTrace(e);
                         }
@@ -1349,8 +1354,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     this.root.toFile(), false);
         } else if (multiMCManifest != null) {
             fireSubProgressUnknown();
-            fireTask(GetText.tr("Copying .minecraft folder"));
-            Utils.copyDirectory(this.multiMCExtractedPath.resolve(".minecraft/").toFile(), this.root.toFile(), false);
+            String minecraftFolder = Files.exists(multiMCExtractedPath.resolve(".minecraft")) ? ".minecraft"
+                    : "minecraft";
+
+            fireTask(GetText.tr("Copying " + minecraftFolder + " folder"));
+            Utils.copyDirectory(this.multiMCExtractedPath.resolve(minecraftFolder + "/").toFile(), this.root.toFile(),
+                    false);
         } else {
             fireTask(GetText.tr("Downloading Configs"));
 
