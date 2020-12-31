@@ -46,6 +46,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curse.CurseAttachment;
 import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseFingerprint;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.curse.pack.CurseModLoader;
@@ -87,6 +88,7 @@ import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
@@ -501,8 +503,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (this.multiMCManifest != null) {
             if (Files.exists(multiMCExtractedPath.resolve(".minecraft/mods"))) {
-                try (Stream<Path> walk = Files.walk(multiMCExtractedPath.resolve(".minecraft/mods"))) {
-                    this.modsInstalled.addAll(walk.filter(p -> !Files.isDirectory(p))
+                try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(".minecraft/mods"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
@@ -512,9 +514,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             if (Files.exists(multiMCExtractedPath.resolve(".minecraft/mods/" + packVersion.minecraft))) {
-                try (Stream<Path> walk = Files
-                        .walk(multiMCExtractedPath.resolve(".minecraft/mods/" + packVersion.minecraft))) {
-                    this.modsInstalled.addAll(walk.filter(p -> !Files.isDirectory(p))
+                try (Stream<Path> list = Files
+                        .list(multiMCExtractedPath.resolve(".minecraft/mods/" + packVersion.minecraft))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
@@ -523,38 +525,59 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
             }
 
-            // try {
-            // long[] murmurHashes = this.modsInstalled.stream().map(m ->
-            // Hashing.murmur(m.getFile(multiMCExtractedPath.resolve(".minecraft")))).toArray(long[]::new);
+            if (Files.exists(multiMCExtractedPath.resolve(".minecraft/mods/ic2"))) {
+                try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(".minecraft/mods/ic2"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
+                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
 
-            // CurseFingerprint fingerprintResponse =
-            // CurseApi.checkFingerprints(murmurHashes);
+            Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
-            // fingerprintResponse.exactMatches.stream().forEach(foundMod -> {
-            // // add Curse information
-            // mod.curseMod = CurseApi.getModById(foundMod.id);
-            // mod.curseModId = foundMod.id;
-            // mod.curseFile = foundMod.file;
-            // mod.curseFileId = foundMod.file.id;
+            this.modsInstalled.stream().filter(
+                    dm -> dm.getFile(multiMCExtractedPath.resolve(".minecraft"), this.packVersion.minecraft) != null)
+                    .forEach(dm -> {
+                        try {
+                            murmurHashes.put(Hashing.murmur(
+                                    dm.getFile(multiMCExtractedPath.resolve(".minecraft"), this.packVersion.minecraft)
+                                            .toPath()),
+                                    dm);
+                        } catch (IOException e) {
+                            LogManager.logStackTrace(e);
+                        }
+                    });
 
-            // mod.name = mod.curseMod.name;
-            // mod.description = mod.curseMod.summary;
+            CurseFingerprint fingerprintResponse = CurseApi
+                    .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
-            // LogManager.debug("Found matching mod from CurseForge called " +
-            // mod.curseMod.name
-            // + " with file named " + mod.curseFile.displayName);
-            // });
-            // } catch (IOException e1) {
-            // LogManager.logStackTrace(e1);
-            // }
+            fingerprintResponse.exactMatches.stream().filter(em -> murmurHashes.containsKey(em.file.packageFingerprint))
+                    .forEach(foundMod -> {
+                        DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
+
+                        // add Curse information
+                        dm.curseMod = CurseApi.getModById(foundMod.id);
+                        dm.curseModId = foundMod.id;
+                        dm.curseFile = foundMod.file;
+                        dm.curseFileId = foundMod.file.id;
+
+                        dm.name = dm.curseMod.name;
+                        dm.description = dm.curseMod.summary;
+
+                        LogManager.debug("Found matching mod from CurseForge called " + dm.curseMod.name
+                                + " with file named " + dm.curseFile.displayName);
+                    });
         }
 
         if (this.curseForgeManifest != null) {
             if (Files.exists(curseForgeExtractedPath
                     .resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides") + "/mods"))) {
-                try (Stream<Path> walk = Files.walk(curseForgeExtractedPath
+                try (Stream<Path> list = Files.list(curseForgeExtractedPath
                         .resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides") + "/mods"))) {
-                    this.modsInstalled.addAll(walk.filter(p -> !Files.isDirectory(p))
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
@@ -566,10 +589,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (Files.exists(
                     curseForgeExtractedPath.resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides")
                             + "/mods/" + packVersion.minecraft))) {
-                try (Stream<Path> walk = Files.walk(
+                try (Stream<Path> list = Files.list(
                         curseForgeExtractedPath.resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides")
                                 + "/mods/" + packVersion.minecraft))) {
-                    this.modsInstalled.addAll(walk.filter(p -> !Files.isDirectory(p))
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));

@@ -110,11 +110,11 @@ public class CurseApi {
     }
 
     public static CurseFingerprint checkFingerprint(long murmurHash) {
-        long[] hashes = { murmurHash };
+        Long[] hashes = { murmurHash };
         return checkFingerprints(hashes);
     }
 
-    public static CurseFingerprint checkFingerprints(long[] murmurHashes) {
+    public static CurseFingerprint checkFingerprints(Long[] murmurHashes) {
         return Download.build()
                 .post(RequestBody.create(Gsons.DEFAULT.toJson(murmurHashes),
                         MediaType.get("application/json; charset=utf-8")))

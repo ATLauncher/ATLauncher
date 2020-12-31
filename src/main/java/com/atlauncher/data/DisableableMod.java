@@ -197,14 +197,18 @@ public class DisableableMod implements Serializable {
     }
 
     public File getFile(Instance instance) {
-        return getFile(instance.getRoot());
+        return getFile(instance.getRoot(), null);
     }
 
     public File getFile(Instance instance, Path base) {
-        return getFile(base);
+        return getFile(base, null);
     }
 
     public File getFile(Path base) {
+        return getFile(base, null);
+    }
+
+    public File getFile(Path base, String mcVersion) {
         File dir = null;
         switch (type) {
             case jar:
@@ -232,6 +236,11 @@ public class DisableableMod implements Serializable {
                 break;
             case shaderpack:
                 dir = base.resolve("shaderpacks").toFile();
+                break;
+            case dependency:
+                if (mcVersion != null) {
+                    dir = base.resolve("mods/" + mcVersion).toFile();
+                }
                 break;
             default:
                 LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
