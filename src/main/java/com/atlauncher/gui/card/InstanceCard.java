@@ -163,7 +163,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             this.getHelpButton.setVisible(false);
         }
 
-        if (instance.launcher.curseManifest != null) {
+        if (instance.launcher.curseManifest != null || instance.launcher.multiMCManifest != null) {
             this.reinstallButton.setVisible(false);
             this.updateButton.setVisible(false);
             this.serversButton.setVisible(false);
@@ -483,14 +483,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     rightClickMenu.add(updateItem);
 
-                    changeDescriptionItem.setVisible(instance.launcher.curseManifest != null
-                            || (instance.getPack() != null && instance.getPack().system));
+                    changeDescriptionItem.setVisible(
+                            instance.launcher.curseManifest != null || instance.launcher.multiMCManifest != null
+                                    || (instance.getPack() != null && instance.getPack().system));
 
                     if (instance.launcher.mods.stream().noneMatch(mod -> mod.optional)) {
                         shareCodeItem.setVisible(false);
                     }
 
-                    if (instance.launcher.curseManifest != null) {
+                    if (instance.launcher.curseManifest != null || instance.launcher.multiMCManifest != null) {
                         updateItem.setVisible(false);
                     }
 

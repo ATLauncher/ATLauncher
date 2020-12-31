@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.atlauncher.Gsons;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFingerprint;
@@ -109,8 +110,14 @@ public class CurseApi {
     }
 
     public static CurseFingerprint checkFingerprint(long murmurHash) {
+        long[] hashes = { murmurHash };
+        return checkFingerprints(hashes);
+    }
+
+    public static CurseFingerprint checkFingerprints(long[] murmurHashes) {
         return Download.build()
-                .post(RequestBody.create("[" + murmurHash + "]", MediaType.get("application/json; charset=utf-8")))
+                .post(RequestBody.create(Gsons.DEFAULT.toJson(murmurHashes),
+                        MediaType.get("application/json; charset=utf-8")))
                 .setUrl(String.format("%s/fingerprint", Constants.CURSE_API_URL))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                 .asClass(CurseFingerprint.class);

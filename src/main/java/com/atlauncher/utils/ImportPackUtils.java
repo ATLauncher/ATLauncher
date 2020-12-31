@@ -140,7 +140,7 @@ public class ImportPackUtils {
             return loadCurseForgeFormat(file, null, null);
         }
 
-        Path tmpDir = FileSystem.TEMP.resolve("multimcimport");
+        Path tmpDir = FileSystem.TEMP.resolve("multimcimport" + file.getName().toString().toLowerCase());
 
         ZipUtil.unpack(file, tmpDir.toFile());
 
@@ -149,7 +149,8 @@ public class ImportPackUtils {
             return loadMultiMCFormat(tmpDir.resolve(tmpDir.toFile().list()[0]));
         }
 
-        // FileUtils.deleteDirectory(tmpDir);
+        FileUtils.deleteDirectory(tmpDir);
+
         LogManager.error("Unknown format for importing");
 
         return false;
@@ -160,6 +161,8 @@ public class ImportPackUtils {
             LogManager.error("Cannot install as the file was not a zip file");
             return false;
         }
+
+        Path tmpDir = FileSystem.TEMP.resolve("curseforgeimport" + file.getName().toString().toLowerCase());
 
         try {
             CurseManifest manifest = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")),
@@ -184,9 +187,12 @@ public class ImportPackUtils {
                 return false;
             }
 
-            new InstanceInstallerDialog(manifest, file);
+            ZipUtil.unpack(file, tmpDir.toFile());
+
+            new InstanceInstallerDialog(manifest, tmpDir);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to install CurseForge pack", e);
+            FileUtils.deleteDirectory(tmpDir);
             return false;
         }
 

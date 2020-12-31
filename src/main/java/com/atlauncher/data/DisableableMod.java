@@ -197,10 +197,14 @@ public class DisableableMod implements Serializable {
     }
 
     public File getFile(Instance instance) {
-        return getFile(instance, instance.getRoot());
+        return getFile(instance.getRoot());
     }
 
     public File getFile(Instance instance, Path base) {
+        return getFile(base);
+    }
+
+    public File getFile(Path base) {
         File dir = null;
         switch (type) {
             case jar:

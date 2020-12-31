@@ -31,7 +31,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -100,8 +99,8 @@ public class InstanceInstallerDialog extends JDialog {
     private final boolean isUpdate;
     private final PackVersion autoInstallVersion;
 
-    public InstanceInstallerDialog(CurseManifest manifest, File manifestFile) {
-        this(manifest, false, false, null, null, false, manifestFile, null);
+    public InstanceInstallerDialog(CurseManifest manifest, Path curseExtractedPath) {
+        this(manifest, false, false, null, null, false, curseExtractedPath, null);
     }
 
     public InstanceInstallerDialog(MultiMCManifest manifest, Path multiMCExtractedPath) {
@@ -122,7 +121,7 @@ public class InstanceInstallerDialog extends JDialog {
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
-            File manifestFile, Path multiMCExtractedPath) {
+            Path curseExtractedPath, Path multiMCExtractedPath) {
         super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
 
         this.isUpdate = isUpdate;
@@ -403,7 +402,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
                         isReinstall, isServer, saveMods, shareCode, showModsChooser, loaderVersion, curseManifest,
-                        manifestFile, multiMCManifest, multiMCExtractedPath) {
+                        curseExtractedPath, multiMCManifest, multiMCExtractedPath) {
 
                     protected void done() {
                         Boolean success = false;
@@ -483,7 +482,6 @@ public class InstanceInstallerDialog extends JDialog {
                                     }
                                 }
                             } else {
-
                                 if (isReinstall) {
                                     // #. {0} is the pack name and {1} is the pack version
                                     title = GetText.tr("{0} {1} Not Reinstalled", pack.getName(), version.version);
@@ -504,13 +502,21 @@ public class InstanceInstallerDialog extends JDialog {
                             }
                         }
 
+                        if (this.curseForgeExtractedPath != null) {
+                            FileUtils.deleteDirectory(this.curseForgeExtractedPath);
+                        }
+
+                        if (this.multiMCExtractedPath != null) {
+                            FileUtils.deleteDirectory(this.multiMCExtractedPath);
+                        }
+
                         dialog.dispose();
 
                         DialogManager.okDialog().setTitle(title)
                                 .setContent(new HTMLBuilder().center().text(text).build()).setType(type).show();
                     }
-
                 };
+
                 instanceInstaller.addPropertyChangeListener(evt -> {
                     if ("progress" == evt.getPropertyName()) {
                         if (progressBar.isIndeterminate()) {
