@@ -224,7 +224,7 @@ public class ForgeLoader implements Loader {
 
         Library library = this.getLibraries().stream()
                 .filter(lib -> lib.name.equalsIgnoreCase(this.getInstallProfile().path)).findFirst()
-                .orElse(this.getLibraries().get(this.getLibraries().size() - 1));
+                .orElseGet(() -> this.getLibraries().get(this.getLibraries().size() - 1));
 
         return library.downloads.artifact.path.substring(library.downloads.artifact.path.lastIndexOf('/') + 1);
     }

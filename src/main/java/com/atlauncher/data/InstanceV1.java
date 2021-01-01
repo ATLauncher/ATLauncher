@@ -508,7 +508,7 @@ public class InstanceV1 implements Cloneable {
         instanceLauncher.assetsMapToResources = this.assetsMapToResources;
         instanceLauncher.ignoredUpdates = ignoredUpdates;
 
-        Pack thePack = Optional.ofNullable(realPack).orElse(PackManager.getPackByName(pack));
+        Pack thePack = Optional.ofNullable(realPack).orElseGet(() -> PackManager.getPackByName(pack));
 
         if (thePack != null) {
             instanceLauncher.pack = thePack.name;
