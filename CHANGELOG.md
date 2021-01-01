@@ -21,3 +21,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Tweak building of artifacts
 - Fix long mod names in Add Mod dropdown not showing correctly [#427]
 - Fix install issues with older Forge versions
+- Make installs from CurseForge quicker

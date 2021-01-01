@@ -21,7 +21,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Constants;
@@ -107,6 +109,21 @@ public class CurseApi {
     public static CurseMod getModById(int modId) {
         return Download.build().setUrl(String.format("%s/addon/%d", Constants.CURSE_API_URL, modId))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asClass(CurseMod.class);
+    }
+
+    public static Map<Integer, CurseMod> getAddonsAsMap(int[] addonIds) {
+        return getAddons(addonIds).stream().collect(Collectors.toMap(cm -> cm.id, cm -> cm));
+    }
+
+    public static List<CurseMod> getAddons(int[] addonIds) {
+        java.lang.reflect.Type type = new TypeToken<List<CurseMod>>() {
+        }.getType();
+
+        return Download.build()
+                .post(RequestBody.create(Gsons.DEFAULT.toJson(addonIds),
+                        MediaType.get("application/json; charset=utf-8")))
+                .setUrl(String.format("%s/addon", Constants.CURSE_API_URL))
+                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asType(type);
     }
 
     public static CurseFingerprint checkFingerprint(long murmurHash) {

@@ -315,8 +315,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
         }
 
+        int[] projectIdsFound = curseForgeManifest.files.stream().mapToInt(file -> file.projectID).toArray();
+
+        Map<Integer, CurseMod> foundProjects = CurseApi.getAddonsAsMap(projectIdsFound);
+
         packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
-            CurseMod curseMod = CurseApi.getModById(file.projectID);
+            CurseMod curseMod = Optional.ofNullable(foundProjects.get(file.projectID))
+                    .orElseGet(() -> CurseApi.getModById(file.projectID));
             CurseFile curseFile = CurseApi.getFileForMod(file.projectID, file.fileID);
 
             Mod mod = curseFile.convertToMod(curseMod);
@@ -559,21 +564,28 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             CurseFingerprint fingerprintResponse = CurseApi
                     .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
+            int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id).toArray();
+
+            Map<Integer, CurseMod> foundProjects = CurseApi.getAddonsAsMap(projectIdsFound);
+
             fingerprintResponse.exactMatches.stream().filter(em -> murmurHashes.containsKey(em.file.packageFingerprint))
                     .forEach(foundMod -> {
                         DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
 
                         // add Curse information
-                        dm.curseMod = CurseApi.getModById(foundMod.id);
                         dm.curseModId = foundMod.id;
                         dm.curseFile = foundMod.file;
                         dm.curseFileId = foundMod.file.id;
 
-                        dm.name = dm.curseMod.name;
-                        dm.description = dm.curseMod.summary;
+                        CurseMod curseMod = foundProjects.get(foundMod.id);
 
-                        LogManager.debug("Found matching mod from CurseForge called " + dm.curseMod.name
-                                + " with file named " + dm.curseFile.displayName);
+                        if (curseMod != null) {
+                            dm.curseMod = curseMod;
+                            dm.name = curseMod.name;
+                            dm.description = curseMod.summary;
+                        }
+
+                        LogManager.debug("Found matching mod from CurseForge called " + dm.curseFile.displayName);
                     });
         }
 
