@@ -24,6 +24,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix issue with opening wrong browser in linux [#424]
 - Fix long mod names in Add Mod dropdown not showing correctly [#427]
 - Fix install issues with older Forge versions
+- Fix share code on instance context menu showing when it shouldn't
 
 ### Misc
 - Tweak building of artifacts

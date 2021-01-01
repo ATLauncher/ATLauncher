@@ -487,9 +487,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             instance.launcher.curseManifest != null || instance.launcher.multiMCManifest != null
                                     || (instance.getPack() != null && instance.getPack().system));
 
-                    if (instance.launcher.mods.stream().noneMatch(mod -> mod.optional)) {
-                        shareCodeItem.setVisible(false);
-                    }
+                    shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
+                            && instance.launcher.multiMCManifest == null && instance.launcher.curseManifest == null
+                            && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
 
                     if (instance.launcher.curseManifest != null || instance.launcher.multiMCManifest != null) {
                         updateItem.setVisible(false);
