@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat
 import java.util.stream.Collectors
 
 buildscript {
@@ -136,6 +137,9 @@ macAppBundle {
     javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
     javaProperties.put('apple.laf.useScreenMenuBar', 'true')
     javaExtras.put("-Djna.nosys", "true")
+    javaExtras.put("-Djava.net.preferIPv4Stack", "true")
+    javaExtras.put("-Dawt.useSystemAAFontSettings", "on")
+    javaExtras.put("-Dswing.aatext", "true")
     bundleExtras.put("JVMVersion", project.targetCompatibility.toString() + "+")
 }
 
@@ -144,15 +148,28 @@ copyToResourcesJava {
     rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
 }
 
+def currentYear() {
+    def df = new SimpleDateFormat("yyyy")
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
+
 launch4j {
     outfile = "ATLauncher-${project.version}.exe"
-    jreMinVersion = '1.7.111'
+    jreMinVersion = "${project.targetCompatibility.toString()}"
     mainClassName = 'com.atlauncher.App'
     icon = "${projectDir}/src/main/resources/assets/image/Icon.ico"
     initialHeapPercent = 5
     maxHeapPercent = 100
+    version = "${project.version}"
+    textVersion = "${project.version}"
+    copyright = "2013-${currentYear()} ${project.name}"
+    companyName = "${project.name}"
     jvmOptions = [
-        "-Djna.nosys=true"
+        "-Djna.nosys=true",
+        "-Djava.net.preferIPv4Stack=true",
+        "-Dawt.useSystemAAFontSettings=on",
+        "-Dswing.aatext=true"
     ]
 }
 
