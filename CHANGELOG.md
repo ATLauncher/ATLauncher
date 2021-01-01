@@ -20,3 +20,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add MultiMC instance importing [#426]
 - Tweak building of artifacts
 - Fix long mod names in Add Mod dropdown not showing correctly [#427]
+- Fix install issues with older Forge versions

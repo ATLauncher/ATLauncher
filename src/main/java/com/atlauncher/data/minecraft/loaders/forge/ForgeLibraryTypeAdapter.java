@@ -58,58 +58,64 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                         + library.downloads.artifact.path.replace(".jar", "-universal.jar");
             }
         } else {
-            Downloads downloads = new Downloads();
-            Download artifact = new Download();
-
             if (object.has("checksums")) {
                 library.checksums = new Gson().fromJson(object.get("checksums").getAsJsonArray(),
                         new TypeToken<List<String>>() {
                         }.getType());
             }
 
-            if (library.checksums != null && library.checksums.size() == 1) {
-                artifact.sha1 = library.checksums.get(0);
-            }
+            Downloads downloads = new Downloads();
+            Download artifact = new Download();
 
-            artifact.path = Utils.convertMavenIdentifierToPath(object.get("name").getAsString());
-
-            if (library.name.startsWith("net.minecraftforge:forge:") && !object.has("clientreq")
-                    && !object.has("serverreq") && !object.has("checksums")) {
-                artifact.path = artifact.path.substring(0, artifact.path.lastIndexOf(".jar")) + "-universal.jar";
-            }
-
-            if (object.has("url")) {
-                if (object.get("url").getAsString().isEmpty()) {
-                    artifact.url = Constants.FORGE_MAVEN + artifact.path;
-                } else {
-                    artifact.url = object.get("url").getAsString() + artifact.path;
-                }
+            // older forge versions dont distinguish between non native and native
+            // libraries, this is defintely hacky but should be fine to just ignore them
+            if (object.has("natives")) {
+                return null;
             } else {
-                artifact.url = Constants.MINECRAFT_LIBRARIES + artifact.path;
-            }
-
-            // library is missing this information, so grab it from the url
-            if (artifact.size == -1L || artifact.sha1 == null) {
-                Path downloadedLibrary = FileSystem.LIBRARIES.resolve(artifact.path);
-
-                try {
-                    // if the file exists, assume it's good. This is only needed for older Forge
-                    // versions anyway, so should be okay :finger_crossed:
-                    if (!Files.exists(downloadedLibrary)) {
-                        new com.atlauncher.network.Download().setUrl(artifact.url).downloadTo(downloadedLibrary)
-                                .downloadFile();
-                    }
-
-                    artifact.size = Files.size(downloadedLibrary);
-                    artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
-                } catch (Throwable t) {
-                    LogManager.logStackTrace(t);
+                if (library.checksums != null && library.checksums.size() == 1) {
+                    artifact.sha1 = library.checksums.get(0);
                 }
+
+                artifact.path = Utils.convertMavenIdentifierToPath(object.get("name").getAsString());
+
+                if (library.name.startsWith("net.minecraftforge:forge:") && !object.has("clientreq")
+                        && !object.has("serverreq") && !object.has("checksums")) {
+                    artifact.path = artifact.path.substring(0, artifact.path.lastIndexOf(".jar")) + "-universal.jar";
+                }
+
+                if (object.has("url")) {
+                    if (object.get("url").getAsString().isEmpty()) {
+                        artifact.url = Constants.FORGE_MAVEN + artifact.path;
+                    } else {
+                        artifact.url = object.get("url").getAsString() + artifact.path;
+                    }
+                } else {
+                    artifact.url = Constants.MINECRAFT_LIBRARIES + artifact.path;
+                }
+
+                // library is missing this information, so grab it from the url
+                if (artifact.size == -1L || artifact.sha1 == null) {
+                    Path downloadedLibrary = FileSystem.LIBRARIES.resolve(artifact.path);
+
+                    try {
+                        // if the file exists, assume it's good. This is only needed for older Forge
+                        // versions anyway, so should be okay :finger_crossed:
+                        if (!Files.exists(downloadedLibrary)) {
+                            new com.atlauncher.network.Download().setUrl(artifact.url).downloadTo(downloadedLibrary)
+                                    .downloadFile();
+                        }
+
+                        artifact.size = Files.size(downloadedLibrary);
+                        artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
+                    } catch (Throwable t) {
+                        LogManager.logStackTrace(t);
+                    }
+                }
+
+                downloads.artifact = artifact;
+
+                library.downloads = downloads;
             }
-
-            downloads.artifact = artifact;
-
-            library.downloads = downloads;
 
             if (object.has("clientreq")) {
                 library.clientreq = object.get("clientreq").getAsBoolean();
