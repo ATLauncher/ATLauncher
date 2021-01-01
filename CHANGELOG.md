@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow importing packs from url [#425]
 - Add MultiMC instance importing [#426]
 - Allow setting which account to use in Instance settings
+- Add setting to hide pack name and version from Instance card
 
 ### Fixes
 - Fix exported instances including disabled mods [#420]

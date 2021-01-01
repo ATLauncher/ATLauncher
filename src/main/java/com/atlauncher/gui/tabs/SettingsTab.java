@@ -79,6 +79,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean themeChanged = generalSettingsTab.themeChanged();
                 boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
+                boolean reloadInstancesPanel = generalSettingsTab.needToReloadInstancesPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                 generalSettingsTab.save();
                 javaSettingsTab.save();
@@ -90,6 +91,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 SettingsManager.post();
                 if (reloadPacksPanel) {
                     App.launcher.reloadPacksPanel();
+                }
+                if (reloadInstancesPanel) {
+                    App.launcher.reloadInstancesPanel();
                 }
                 if (restartServerChecker) {
                     CheckingServersManager.startCheckingServers();

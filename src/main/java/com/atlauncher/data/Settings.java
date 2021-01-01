@@ -63,6 +63,7 @@ public class Settings {
     public String dateFormat = "dd/MM/yyyy";
     public int selectedTabOnStartup = 0;
     public boolean sortPacksAlphabetically = false;
+    public boolean showPackNameAndVersion = true;
     public boolean keepLauncherOpen = true;
     public boolean enableConsole = true;
     public boolean enableTrayMenu = true;

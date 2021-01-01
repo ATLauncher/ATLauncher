@@ -50,6 +50,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<String>> dateFormat;
     private final JComboBox<ComboItem<Integer>> selectedTabOnStartup;
     private final JCheckBox sortPacksAlphabetically;
+    private final JCheckBox showPackNameAndVersion;
     private final JCheckBox keepLauncherOpen;
     private final JCheckBox enableConsole;
     private final JCheckBox enableTrayIcon;
@@ -210,6 +211,25 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             sortPacksAlphabetically.setSelected(true);
         }
         add(sortPacksAlphabetically, gbc);
+
+        // Show Pack Name & Version
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover showPackNameAndVersionLabel = new JLabelWithHover(GetText.tr("Show Pack Name & Version") + "?",
+                HELP_ICON, GetText.tr("If you want to show the packs name and version on your instances."));
+        add(showPackNameAndVersionLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        showPackNameAndVersion = new JCheckBox();
+        if (App.settings.showPackNameAndVersion) {
+            showPackNameAndVersion.setSelected(true);
+        }
+        add(showPackNameAndVersion, gbc);
 
         // Keep Launcher Open
 
@@ -398,6 +418,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically;
     }
 
+    public boolean needToReloadInstancesPanel() {
+        return showPackNameAndVersion.isSelected() != App.settings.showPackNameAndVersion;
+    }
+
     public boolean needToReloadLanguage() {
         return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.selected);
     }
@@ -410,6 +434,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.dateFormat = ((ComboItem<String>) dateFormat.getSelectedItem()).getValue();
         App.settings.selectedTabOnStartup = ((ComboItem<Integer>) selectedTabOnStartup.getSelectedItem()).getValue();
         App.settings.sortPacksAlphabetically = sortPacksAlphabetically.isSelected();
+        App.settings.showPackNameAndVersion = showPackNameAndVersion.isSelected();
         App.settings.keepLauncherOpen = keepLauncherOpen.isSelected();
         App.settings.enableConsole = enableConsole.isSelected();
         App.settings.enableTrayMenu = enableTrayIcon.isSelected();
