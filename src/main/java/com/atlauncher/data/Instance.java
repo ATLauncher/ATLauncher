@@ -531,7 +531,8 @@ public class Instance extends MinecraftVersion {
                     }
 
                     if (App.settings.enableDiscordIntegration && App.discordInitialized) {
-                        String playing = this.launcher.pack + " (" + this.launcher.version + ")";
+                        String playing = this.launcher.pack
+                                + (this.launcher.multiMCManifest != null ? " (" + this.launcher.version + ")" : "");
 
                         DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
                         presence.setDetails(playing);
