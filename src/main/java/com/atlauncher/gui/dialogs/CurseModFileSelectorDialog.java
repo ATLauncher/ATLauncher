@@ -89,7 +89,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.name));
 
-        setSize(500, 200);
+        setSize(550, 200);
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -115,7 +115,7 @@ public class CurseModFileSelectorDialog extends JDialog {
 
         // Middle Panel Stuff
         JPanel filesPanel = new JPanel(new FlowLayout());
-        filesPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        filesPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
         versionsLabel = new JLabel(GetText.tr("Version To Install") + ": ");
         filesPanel.add(versionsLabel);

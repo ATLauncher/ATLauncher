@@ -19,3 +19,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix issue with opening wrong browser in linux [#424]
 - Add MultiMC instance importing [#426]
 - Tweak building of artifacts
+- Fix long mod names in Add Mod dropdown not showing correctly [#427]
