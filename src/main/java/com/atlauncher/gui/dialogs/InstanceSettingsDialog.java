@@ -45,6 +45,8 @@ import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -85,7 +87,7 @@ public class InstanceSettingsDialog extends JDialog {
 
     private void setupComponents() {
         int systemRam = OS.getSystemRam();
-        setSize(750, 350);
+        setSize(750, 400);
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);
@@ -284,11 +286,43 @@ public class InstanceSettingsDialog extends JDialog {
 
         topPanel.add(javaParametersPanel, gbc);
 
+        // Account
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover accountLabel = new JLabelWithHover(GetText.tr("Account Override") + ":", HELP_ICON, GetText.tr(
+                "Which account to use when launching this instnace. Use Launcher Default will use whichever account is selected in the launcher."));
+
+        topPanel.add(accountLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JComboBox<ComboItem<String>> account = new JComboBox<>();
+        account.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+        AccountManager.getAccounts().stream()
+                .forEach(a -> account.addItem(new ComboItem<>(a.username, a.minecraftUsername)));
+
+        for (int i = 0; i < account.getItemCount(); i++) {
+            ComboItem<String> item = account.getItemAt(i);
+
+            if (item.getValue() != null && item.getValue().equalsIgnoreCase(instance.launcher.account)) {
+                account.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        topPanel.add(account, gbc);
+
         bottomPanel.setLayout(new FlowLayout());
         JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
             saveSettings((Integer) initialMemory.getValue(), (Integer) maximumMemory.getValue(),
-                    (Integer) permGen.getValue(), javaPath.getText(), javaParameters.getText());
+                    (Integer) permGen.getValue(), javaPath.getText(), javaParameters.getText(),
+                    ((ComboItem<String>) account.getSelectedItem()).getValue());
             App.TOASTER.pop("Instance Settings Saved");
             close();
         });
@@ -320,13 +354,14 @@ public class InstanceSettingsDialog extends JDialog {
     }
 
     private void saveSettings(Integer initialMemory, Integer maximumMemory, Integer permGen, String javaPath,
-            String javaParameters) {
+            String javaParameters, String account) {
         this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);
         this.instance.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
         this.instance.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
         this.instance.launcher.javaPath = (javaPath.equals(App.settings.javaPath) ? null : javaPath);
         this.instance.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null
                 : javaParameters);
+        this.instance.launcher.account = account;
         this.instance.save();
     }
 

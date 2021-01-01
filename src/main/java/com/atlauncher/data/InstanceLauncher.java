@@ -50,6 +50,7 @@ public class InstanceLauncher {
     public Integer permGen;
     public String javaPath;
     public String javaArguments;
+    public String account;
 
     public boolean isDev;
     public boolean isPlayable;

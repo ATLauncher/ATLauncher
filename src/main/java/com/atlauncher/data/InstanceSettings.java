@@ -17,6 +17,9 @@
  */
 package com.atlauncher.data;
 
+/**
+ * @deprecated
+ */
 public class InstanceSettings {
     public Integer initialMemory = null;
 

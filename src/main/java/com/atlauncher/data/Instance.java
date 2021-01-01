@@ -382,7 +382,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean launch() {
-        final AbstractAccount account = AccountManager.getSelectedAccount();
+        final AbstractAccount account = launcher.account == null ? AccountManager.getSelectedAccount()
+                : AccountManager.getAccountByName(launcher.account);
 
         if (account == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))

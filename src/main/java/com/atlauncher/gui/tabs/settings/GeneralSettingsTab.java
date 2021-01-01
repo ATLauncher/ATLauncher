@@ -180,6 +180,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         selectedTabOnStartup.addItem(new ComboItem<>(8, GetText.tr("Settings")));
         selectedTabOnStartup.setSelectedItem(App.settings.selectedTabOnStartup);
 
+        for (int i = 0; i < selectedTabOnStartup.getItemCount(); i++) {
+            ComboItem<Integer> item = selectedTabOnStartup.getItemAt(i);
+
+            if (item.getValue() == App.settings.selectedTabOnStartup) {
+                selectedTabOnStartup.setSelectedIndex(i);
+                break;
+            }
+        }
+
         add(selectedTabOnStartup, gbc);
 
         // Sort Packs Alphabetically

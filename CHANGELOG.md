@@ -5,20 +5,26 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ## 3.4.2.0
 
-- Fix exported instances including disabled mods [#420]
+### New Features
 - Add in version field when exporting an instance [#419]
+- Allow importing packs from url [#425]
+- Add MultiMC instance importing [#426]
+- Allow setting which account to use in Instance settings
+
+### Fixes
+- Fix exported instances including disabled mods [#420]
 - Clean up old instance format [#422]
 - Fix some issues with remembering window size and position option [#423]
 - Fix instance installation not cancelling on download exceptions
 - Remove system info logging on startup
 - Move previous/next page buttons on packs to edges
 - Remove bottom set of buttons on system pack cards
-- Allow importing packs from url [#425]
 - Fix add mods dialog not being wide enough
 - Fix potential NPE in PerformanceManager
 - Fix issue with opening wrong browser in linux [#424]
-- Add MultiMC instance importing [#426]
-- Tweak building of artifacts
 - Fix long mod names in Add Mod dropdown not showing correctly [#427]
 - Fix install issues with older Forge versions
+
+### Misc
+- Tweak building of artifacts
 - Make installs from CurseForge quicker
