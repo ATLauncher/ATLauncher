@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -146,8 +147,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         dateFormat = new JComboBox<>();
 
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.set(Calendar.DATE, 31);
+        cal.set(Calendar.MONTH, Calendar.DECEMBER);
+        Date exampleDate = cal.getTime();
+
         for (String format : Constants.DATE_FORMATS) {
-            dateFormat.addItem(new ComboItem<>(format, new SimpleDateFormat(format).format(new Date())));
+            dateFormat.addItem(new ComboItem<>(format, new SimpleDateFormat(format).format(exampleDate)));
         }
 
         dateFormat.setSelectedItem(App.settings.dateFormat);
