@@ -71,6 +71,7 @@ public class Settings {
     public boolean enableFeralGamemode = OS.isLinux() && Utils.executableInPath("gamemoderun");
     public boolean disableAddModRestrictions = false;
     public boolean disableCustomFonts = false;
+    public boolean useNativeFilePicker = OS.isMac();
 
     // Java/Minecraft
     public int initialMemory = 512;

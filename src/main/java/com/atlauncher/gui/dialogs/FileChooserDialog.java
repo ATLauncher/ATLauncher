@@ -18,12 +18,14 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -96,30 +98,11 @@ public class FileChooserDialog extends JDialog {
 
         JButton selectButton = new JButton(GetText.tr("Select"));
         selectButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
-            fileChooser.setMultiSelectionEnabled(true);
-            fileChooser.setFileFilter(new FileFilter() {
-                @Override
-                public String getDescription() {
-                    return "Mod Files (.jar; .zip; .litemod)";
-                }
-
-                @Override
-                public boolean accept(File f) {
-                    if (f.isDirectory()) {
-                        return true;
-                    }
-
-                    for (String ext : fileOptions) {
-                        if (f.getName().endsWith(ext)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            });
-            fileChooser.showOpenDialog(App.launcher.getParent());
-            filesChosen = fileChooser.getSelectedFiles();
+            if (App.settings.useNativeFilePicker) {
+                filesChosen = getFilesUsingFileDialog();
+            } else {
+                filesChosen = getFilesUsingJFileChooser();
+            }
             if (filesChosen != null && filesChosen.length >= 1) {
                 if (filesChosen.length == 1) {
                     textField.setText(filesChosen[0].getAbsolutePath());
@@ -170,6 +153,52 @@ public class FileChooserDialog extends JDialog {
         });
 
         setVisible(true);
+    }
+
+    private File[] getFilesUsingJFileChooser() {
+        JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
+        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public String getDescription() {
+                return "Mod Files (.jar; .zip; .litemod)";
+            }
+
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+
+                return shouldAcceptFilename(f.getName());
+            }
+        });
+        fileChooser.showOpenDialog(App.launcher.getParent());
+
+        return fileChooser.getSelectedFiles();
+    }
+
+    private boolean shouldAcceptFilename(String name) {
+        for (String ext : fileOptions) {
+            if (name.endsWith(ext)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private File[] getFilesUsingFileDialog() {
+        FileDialog fd = new FileDialog(this, GetText.tr("Select file/s"), FileDialog.LOAD);
+        fd.setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return shouldAcceptFilename(name);
+            }
+        });
+        fd.setVisible(true);
+
+        return fd.getFiles();
     }
 
     private void close() {

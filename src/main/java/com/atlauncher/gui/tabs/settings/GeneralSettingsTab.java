@@ -60,6 +60,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JCheckBox disableAddModRestrictions;
     private final JCheckBox disableCustomFonts;
     private final JCheckBox rememberWindowSizePosition;
+    private final JCheckBox useNativeFilePicker;
 
     public GeneralSettingsTab() {
         // Language
@@ -407,6 +408,26 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         rememberWindowSizePosition = new JCheckBox();
         rememberWindowSizePosition.setSelected(App.settings.rememberWindowSizePosition);
         add(rememberWindowSizePosition, gbc);
+
+        // Use native file picker
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover useNativeFilePickerLabel = new JLabelWithHover(GetText.tr("Use Native File Picker?"), HELP_ICON,
+                new HTMLBuilder().center().split(100)
+                        .text(GetText
+                                .tr("This will use your operating systems native file picker when selecting files."))
+                        .build());
+        add(useNativeFilePickerLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        useNativeFilePicker = new JCheckBox();
+        useNativeFilePicker.setSelected(App.settings.useNativeFilePicker);
+        add(useNativeFilePicker, gbc);
     }
 
     @SuppressWarnings("unchecked")
@@ -464,6 +485,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             App.settings.launcherSize = new Dimension(1200, 700);
             App.settings.launcherPosition = null;
         }
+
+        App.settings.useNativeFilePicker = useNativeFilePicker.isSelected();
     }
 
     @Override

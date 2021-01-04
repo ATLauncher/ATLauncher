@@ -26,6 +26,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix long mod names in Add Mod dropdown not showing correctly [#427]
 - Fix install issues with older Forge versions
 - Fix share code on instance context menu showing when it shouldn't
+- Use native file picker when enabled (default for OSX) [#430]
 
 ### Misc
 - Tweak building of artifacts
