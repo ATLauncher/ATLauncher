@@ -205,8 +205,8 @@ public class EditModsDialog extends JDialog {
                 modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
             }
 
-            FileChooserDialog fcd = new FileChooserDialog(GetText.tr("Add Mod"), GetText.tr("Mod"), GetText.tr("Add"),
-                    GetText.tr("Type of Mod"), modTypes, new String[] { "jar", "zip", "litemod" });
+            FileChooserDialog fcd = new FileChooserDialog(this, GetText.tr("Add Mod"), GetText.tr("Mod"),
+                    GetText.tr("Add"), GetText.tr("Type of Mod"), modTypes, new String[] { "jar", "zip", "litemod" });
 
             if (fcd.wasClosed()) {
                 return;
@@ -309,7 +309,7 @@ public class EditModsDialog extends JDialog {
         if (instance.launcher.enableCurseIntegration) {
             JButton addCurseModButton = new JButton(GetText.tr("Add Curse Mod"));
             addCurseModButton.addActionListener(e -> {
-                new AddModsDialog(instance);
+                new AddModsDialog(this, instance);
 
                 loadMods();
 
@@ -425,7 +425,7 @@ public class EditModsDialog extends JDialog {
         progressDialog.addThread(new Thread(() -> {
             for (ModsJCheckBox mod : mods) {
                 if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
-                    mod.getDisableableMod().checkForUpdate(instance);
+                    mod.getDisableableMod().checkForUpdate(this, instance);
                 }
                 progressDialog.doneTask();
             }
@@ -447,7 +447,7 @@ public class EditModsDialog extends JDialog {
 
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
-                mod.getDisableableMod().reinstall(instance);
+                mod.getDisableableMod().reinstall(this, instance);
             }
         }
         reloadPanels();

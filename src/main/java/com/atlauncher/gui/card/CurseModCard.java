@@ -20,6 +20,7 @@ package com.atlauncher.gui.card;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,10 +40,12 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class CurseModCard extends JPanel {
+    private Window parent;
     private Instance instance;
     public final CurseMod mod;
 
-    public CurseModCard(final CurseMod mod, Instance instance) {
+    public CurseModCard(Window parent, final CurseMod mod, Instance instance) {
+        this.parent = parent;
         this.mod = mod;
         this.instance = instance;
 
@@ -73,7 +76,7 @@ public final class CurseModCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.sendEvent(mod.name, "Add", "CurseMod");
-            new CurseModFileSelectorDialog(mod, instance);
+            new CurseModFileSelectorDialog(parent, mod, instance);
         });
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));

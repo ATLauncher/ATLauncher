@@ -22,6 +22,7 @@ import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -59,9 +60,9 @@ public class FileChooserDialog extends JDialog {
 
     private boolean closed = false;
 
-    public FileChooserDialog(String title, String labelName, String bottomText, String selectorText,
+    public FileChooserDialog(Window parent, String title, String labelName, String bottomText, String selectorText,
             String[] subOptions, String[] options) {
-        super(App.launcher.getParent(), title, ModalityType.APPLICATION_MODAL);
+        super(parent, title, ModalityType.APPLICATION_MODAL);
         this.fileOptions = options;
         setSize(400, 175);
         setLocationRelativeTo(null);

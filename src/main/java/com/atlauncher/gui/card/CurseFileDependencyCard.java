@@ -19,6 +19,7 @@ package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,10 +41,13 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class CurseFileDependencyCard extends JPanel {
+    private Window parent;
     private final CurseFileDependency dependency;
     private Instance instance;
 
-    public CurseFileDependencyCard(CurseFileDependency dependency, Instance instance) {
+    public CurseFileDependencyCard(Window parent, CurseFileDependency dependency, Instance instance) {
+        this.parent = parent;
+
         setLayout(new BorderLayout());
 
         this.dependency = dependency;
@@ -75,7 +79,7 @@ public final class CurseFileDependencyCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
-            new CurseModFileSelectorDialog(mod, instance);
+            new CurseModFileSelectorDialog(parent, mod, instance);
         });
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));

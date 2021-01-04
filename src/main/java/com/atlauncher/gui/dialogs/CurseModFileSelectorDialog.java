@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -65,7 +66,11 @@ public class CurseModFileSelectorDialog extends JDialog {
     private final List<CurseFile> files = new ArrayList<>();
 
     public CurseModFileSelectorDialog(CurseMod mod, Instance instance) {
-        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
+        this(App.launcher.getParent(), mod, instance);
+    }
+
+    public CurseModFileSelectorDialog(Window parent, CurseMod mod, Instance instance) {
+        super(parent, ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instance = instance;
@@ -73,8 +78,8 @@ public class CurseModFileSelectorDialog extends JDialog {
         setupComponents();
     }
 
-    public CurseModFileSelectorDialog(CurseMod mod, Instance instance, int installedFileId) {
-        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
+    public CurseModFileSelectorDialog(Window parent, CurseMod mod, Instance instance, int installedFileId) {
+        super(parent, ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
         this.instance = instance;
@@ -197,7 +202,7 @@ public class CurseModFileSelectorDialog extends JDialog {
                     dependenciesPanel.removeAll();
 
                     dependencies.forEach(
-                            dependency -> dependenciesPanel.add(new CurseFileDependencyCard(dependency, instance)));
+                            dependency -> dependenciesPanel.add(new CurseFileDependencyCard(this, dependency, instance)));
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                             (dependencies.size() / 2) + 1));

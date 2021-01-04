@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import java.awt.Color;
+import java.awt.Window;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -256,7 +257,7 @@ public class DisableableMod implements Serializable {
         return this.type;
     }
 
-    public boolean checkForUpdate(Instance instance) {
+    public boolean checkForUpdate(Window parent, Instance instance) {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
         List<CurseFile> curseModFiles = CurseApi.getFilesForMod(curseModId);
 
@@ -272,15 +273,15 @@ public class DisableableMod implements Serializable {
             return false;
         }
 
-        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
+        new CurseModFileSelectorDialog(parent, CurseApi.getModById(curseModId), instance, curseFileId);
 
         return true;
     }
 
-    public boolean reinstall(Instance instance) {
+    public boolean reinstall(Window parent, Instance instance) {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "Instance");
 
-        new CurseModFileSelectorDialog(CurseApi.getModById(curseModId), instance, curseFileId);
+        new CurseModFileSelectorDialog(parent, CurseApi.getModById(curseModId), instance, curseFileId);
 
         return true;
     }

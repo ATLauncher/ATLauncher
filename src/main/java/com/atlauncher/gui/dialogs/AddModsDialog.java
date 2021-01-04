@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -74,9 +75,12 @@ public final class AddModsDialog extends JDialog {
     private int page = 0;
 
     public AddModsDialog(Instance instance) {
+        this(App.launcher.getParent(), instance);
+    }
+
+    public AddModsDialog(Window parent, Instance instance) {
         // #. {0} is the name of the mod we're installing
-        super(App.launcher.getParent(), GetText.tr("Adding Mods For {0}", instance.launcher.name),
-                ModalityType.APPLICATION_MODAL);
+        super(parent, GetText.tr("Adding Mods For {0}", instance.launcher.name), ModalityType.APPLICATION_MODAL);
         this.instance = instance;
 
         this.setPreferredSize(new Dimension(620, 500));
@@ -281,7 +285,7 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new WrapLayout());
 
             mods.forEach(curseMod -> {
-                contentPanel.add(new CurseModCard(curseMod, this.instance), gbc);
+                contentPanel.add(new CurseModCard(this, curseMod, this.instance), gbc);
                 gbc.gridy++;
             });
         }

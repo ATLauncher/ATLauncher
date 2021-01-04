@@ -177,7 +177,7 @@ public class ModsJCheckBox extends JCheckBox {
 
             JMenuItem reinstall = new JMenuItem(GetText.tr("Reinstall"));
             reinstall.addActionListener(e -> {
-                getDisableableMod().reinstall(dialog.instance);
+                getDisableableMod().reinstall(dialog, dialog.instance);
 
                 dialog.reloadPanels();
             });
@@ -187,7 +187,7 @@ public class ModsJCheckBox extends JCheckBox {
             checkForUpdates.addActionListener(e -> {
                 boolean updated = false;
 
-                updated = getDisableableMod().checkForUpdate(dialog.instance);
+                updated = getDisableableMod().checkForUpdate(dialog, dialog.instance);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
