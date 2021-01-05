@@ -183,6 +183,10 @@ public class Utils {
         }
     }
 
+    public static InputStream getResourceInputStream(String path) {
+        return App.class.getResourceAsStream(path);
+    }
+
     /**
      * Upload paste.
      *

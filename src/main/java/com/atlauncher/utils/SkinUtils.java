@@ -34,24 +34,7 @@ public class SkinUtils {
         return getHead(FileSystem.SKINS.resolve("default.png").toFile());
     }
 
-    public static ImageIcon getHead(File file) {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(file);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-
-        if (image == null) {
-            file = FileSystem.SKINS.resolve("default.png").toFile();
-        }
-
-        try {
-            image = ImageIO.read(file);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
-
+    public static ImageIcon getHead(BufferedImage image) {
         BufferedImage main = image.getSubimage(8, 8, 8, 8);
         BufferedImage helmet = image.getSubimage(40, 8, 8, 8);
         BufferedImage head = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
@@ -65,11 +48,7 @@ public class SkinUtils {
         return new ImageIcon(head.getScaledInstance(20, 20, Image.SCALE_SMOOTH));
     }
 
-    public static ImageIcon getDefaultSkin() {
-        return getSkin(FileSystem.SKINS.resolve("default.png").toFile());
-    }
-
-    public static ImageIcon getSkin(File file) {
+    public static ImageIcon getHead(File file) {
         BufferedImage image = null;
         try {
             image = ImageIO.read(file);
@@ -78,7 +57,7 @@ public class SkinUtils {
         }
 
         if (image == null) {
-            file = FileSystem.SKINS.resolve("default.png").toFile();
+            return getHead(Utils.getImage("/assets/image/skins/default.png"));
         }
 
         try {
@@ -87,6 +66,14 @@ public class SkinUtils {
             LogManager.logStackTrace(e);
         }
 
+        return getHead(image);
+    }
+
+    public static ImageIcon getDefaultSkin() {
+        return getSkin(Utils.getImage("/assets/image/skins/default.png"));
+    }
+
+    public static ImageIcon getSkin(BufferedImage image) {
         // new skins are 64x64 and old ones are 64x32
         boolean isNewImage = image.getWidth() == 64 && image.getHeight() == 64;
 
@@ -133,5 +120,26 @@ public class SkinUtils {
         g.drawImage(rightLeg, 8, 20, null);
 
         return new ImageIcon(skin.getScaledInstance(128, 256, Image.SCALE_SMOOTH));
+    }
+
+    public static ImageIcon getSkin(File file) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (image == null) {
+            return getSkin(Utils.getImage("/assets/image/skins/default.png"));
+        }
+
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return getSkin(image);
     }
 }

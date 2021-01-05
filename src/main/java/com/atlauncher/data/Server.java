@@ -194,9 +194,9 @@ public class Server {
 
         if (instancesImage.exists()) {
             return Utils.getIconImage(instancesImage);
-        } else {
-            return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
         }
+
+        return Utils.getIconImage("/assets/image/DefaultPackImage.png");
     }
 
     public void save() {

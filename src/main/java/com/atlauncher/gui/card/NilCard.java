@@ -27,7 +27,6 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
@@ -40,7 +39,7 @@ import org.mini2Dx.gettext.GetText;
  */
 @SuppressWarnings("serial")
 public class NilCard extends JPanel implements RelocalizationListener {
-    private static final Image defaultImage = Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile())
+    private static final Image defaultImage = Utils.getIconImage("/assets/image/DefaultPackImage.png")
             .getImage();
 
     private final JTextArea error = new JTextArea();

@@ -215,7 +215,7 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        return Utils.getIconImage(FileSystem.IMAGES.resolve("defaultimage.png").toFile());
+        return Utils.getIconImage("/assets/image/DefaultPackImage.png");
     }
 
     public void ignoreUpdate() {

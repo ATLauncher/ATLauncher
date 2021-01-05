@@ -170,7 +170,13 @@ public abstract class AbstractAccount implements Serializable {
                         }
 
                         // Only copy over the default skin if there is no skin for the user
-                        Utils.copyFile(FileSystem.SKINS.resolve(skinFilename).toFile(), file, true);
+                        try {
+                            java.nio.file.Files.copy(
+                                    Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
+                        } catch (IOException e) {
+                            LogManager.logStackTrace(e);
+                        }
+
                         dialog.setReturnValue(true);
                     }
                 } else {
@@ -192,7 +198,14 @@ public abstract class AbstractAccount implements Serializable {
                                 }
 
                                 // Only copy over the default skin if there is no skin for the user
-                                Utils.copyFile(FileSystem.SKINS.resolve(skinFilename).toFile(), file, true);
+                                try {
+                                    java.nio.file.Files.copy(
+                                            Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
+                                            file.toPath());
+                                } catch (IOException e) {
+                                    LogManager.logStackTrace(e);
+                                }
+
                                 dialog.setReturnValue(true);
                             }
                         }
@@ -229,7 +242,7 @@ public abstract class AbstractAccount implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = FileSystem.SKINS.resolve("default.png").toFile();
+            return SkinUtils.getDefaultHead();
         }
 
         return SkinUtils.getHead(file);
@@ -249,7 +262,7 @@ public abstract class AbstractAccount implements Serializable {
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
-            file = FileSystem.SKINS.resolve("default.png").toFile();
+            return SkinUtils.getDefaultSkin();
         }
 
         return SkinUtils.getSkin(file);

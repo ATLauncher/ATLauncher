@@ -34,3 +34,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Make installs from CurseForge quicker
 - Use 31st December for showing date format options [#429]
 - Make base domain customisable more easily
+- Move default images into the jar
