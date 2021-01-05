@@ -817,6 +817,9 @@ public class App {
         parser.accepts("skip-hash-checking").withOptionalArg().ofType(Boolean.class);
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
         parser.accepts("working-dir").withRequiredArg().ofType(String.class);
+        parser.accepts("base-launcher-domain").withRequiredArg().ofType(String.class);
+        parser.accepts("base-cdn-domain").withRequiredArg().ofType(String.class);
+        parser.accepts("base-cdn-path").withRequiredArg().ofType(String.class);
         parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
         parser.accepts("no-console").withOptionalArg().ofType(Boolean.class);
         parser.accepts("close-launcher").withOptionalArg().ofType(Boolean.class);
@@ -860,6 +863,27 @@ public class App {
             } else {
                 LogManager.error("Cannot set working directory to " + workingDirTemp + " as it doesn't exist!");
             }
+        }
+
+        if (options.has("base-launcher-domain")) {
+            String baseLauncherDomain = String.valueOf(options.valueOf("base-launcher-domain"));
+
+            Constants.setBaseLauncherDomain(baseLauncherDomain);
+            LogManager.warn("Base launcher domain set to " + baseLauncherDomain);
+        }
+
+        if (options.has("base-cdn-domain")) {
+            String baseCdnDomain = String.valueOf(options.valueOf("base-launcher-domain"));
+
+            Constants.setBaseCdnDomain(baseCdnDomain);
+            LogManager.warn("Base cdn domain set to " + baseCdnDomain);
+        }
+
+        if (options.has("base-cdn-path")) {
+            String baseCdnPath = String.valueOf(options.valueOf("base-cdn-path"));
+
+            Constants.setBaseCdnPath(baseCdnPath);
+            LogManager.warn("Base cdn path set to " + baseCdnPath);
         }
 
         noLauncherUpdate = options.has("no-launcher-update");

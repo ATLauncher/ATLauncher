@@ -49,12 +49,13 @@ public class Constants {
     public static final String GA_TRACKING_ID = "UA-88820616-7";
     public static final String CROWDIN_URL = "https://crowdin.com/project/atlauncher";
     public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
-    public static final String API_BASE_URL = "https://api.atlauncher.com/v1/launcher/";
-    public static final String API_HOST = "api.atlauncher.com";
-    public static final String PASTE_CHECK_URL = "https://paste.atlauncher.com";
-    public static final String PASTE_HOST = "paste.atlauncher.com";
-    public static final String SERVERS_LIST_PACK = "https://servers.atlauncher.com/list/pack";
-    public static final String PASTE_API_URL = "https://paste.atlauncher.com/api/create";
+    public static String BASE_LAUNCHER_DOMAIN = "atlauncher.com";
+    public static String API_BASE_URL = "https://api." + BASE_LAUNCHER_DOMAIN + "/v1/launcher/";
+    public static String API_HOST = "api." + BASE_LAUNCHER_DOMAIN;
+    public static String PASTE_CHECK_URL = "https://paste." + BASE_LAUNCHER_DOMAIN;
+    public static String PASTE_HOST = "paste." + BASE_LAUNCHER_DOMAIN;
+    public static String SERVERS_LIST_PACK = "https://" + BASE_LAUNCHER_DOMAIN + "/servers/list/pack";
+    public static String PASTE_API_URL = "https://paste." + BASE_LAUNCHER_DOMAIN + "/api/create";
     public static final String CURSE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
     public static final String CURSE_HOST = "addons-ecs.forgesvc.net";
     public static final int CURSE_FABRIC_CATEGORY_ID = 4780;
@@ -68,8 +69,10 @@ public class Constants {
     public static final String FORGE_HOST = "files.minecraftforge.net";
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String FABRIC_HOST = "maven.fabricmc.net";
-    public static final String DOWNLOAD_SERVER = "https://download.nodecdn.net/containers/atl";
-    public static final String DOWNLOAD_HOST = "download.nodecdn.net";
+    public static String BASE_CDN_DOMAIN = "download.nodecdn.net";
+    public static String BASE_CDN_PATH = "/containers/atl";
+    public static String DOWNLOAD_SERVER = "https://" + BASE_CDN_DOMAIN + BASE_CDN_PATH;
+    public static String DOWNLOAD_HOST = BASE_CDN_DOMAIN;
     public static final String LAUNCHER_META_MINECRAFT = "https://launchermeta.mojang.com";
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
@@ -100,4 +103,25 @@ public class Constants {
     public static final String MICROSOFT_MINECRAFT_LOGIN_URL = "https://api.minecraftservices.com/authentication/login_with_xbox";
     public static final String MICROSOFT_MINECRAFT_STORE_URL = "https://api.minecraftservices.com/entitlements/mcstore";
     public static final String MICROSOFT_MINECRAFT_PROFILE_URL = "https://api.minecraftservices.com/minecraft/profile";
+
+    public static void setBaseLauncherDomain(String baseLauncherDomain) {
+        BASE_LAUNCHER_DOMAIN = baseLauncherDomain;
+        API_BASE_URL = "https://api." + baseLauncherDomain + "/v1/launcher/";
+        API_HOST = "api." + baseLauncherDomain;
+        PASTE_CHECK_URL = "https://paste." + baseLauncherDomain;
+        PASTE_HOST = "paste." + baseLauncherDomain;
+        SERVERS_LIST_PACK = "https://" + baseLauncherDomain + "/servers/list/pack";
+        PASTE_API_URL = "https://paste." + baseLauncherDomain + "/api/create";
+    }
+
+    public static void setBaseCdnDomain(String baseCdnDomain) {
+        BASE_CDN_DOMAIN = baseCdnDomain;
+        DOWNLOAD_SERVER = "https://" + baseCdnDomain + BASE_CDN_PATH;
+        DOWNLOAD_HOST = baseCdnDomain;
+    }
+
+    public static void setBaseCdnPath(String baseCdnPath) {
+        BASE_CDN_PATH = baseCdnPath;
+        DOWNLOAD_SERVER = "https://" + BASE_CDN_DOMAIN + baseCdnPath;
+    }
 }

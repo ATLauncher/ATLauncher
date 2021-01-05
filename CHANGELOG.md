@@ -33,3 +33,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Tweak building of artifacts
 - Make installs from CurseForge quicker
 - Use 31st December for showing date format options [#429]
+- Make base domain customisable more easily
