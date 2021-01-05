@@ -162,6 +162,14 @@ public class App {
     public static Path workingDir = null;
 
     /**
+     * This will tell the launcher to allow all SSL certs regardless of validity.
+     * This is insecure and only intended for development purposes.
+     * <p/>
+     * --allow-all-ssl-certs
+     */
+    public static boolean allowAllSslCerts = false;
+
+    /**
      * This forces the launcher to not check for a launcher update. It can be
      * enabled with the below command line argument.
      * <p/>
@@ -259,6 +267,11 @@ public class App {
 
         // Load the settings from json, convert old properties config and validate it
         loadSettings();
+
+        // after settings have loaded, then allow all ssl certs if required
+        if (allowAllSslCerts) {
+            Network.allowAllSslCerts();
+        }
 
         // check for bad install locations (OneDrive, Program Files)
         checkForBadFolderInstall();
@@ -820,6 +833,7 @@ public class App {
         parser.accepts("base-launcher-domain").withRequiredArg().ofType(String.class);
         parser.accepts("base-cdn-domain").withRequiredArg().ofType(String.class);
         parser.accepts("base-cdn-path").withRequiredArg().ofType(String.class);
+        parser.accepts("allow-all-ssl-certs").withOptionalArg().ofType(Boolean.class);
         parser.accepts("no-launcher-update").withOptionalArg().ofType(Boolean.class);
         parser.accepts("no-console").withOptionalArg().ofType(Boolean.class);
         parser.accepts("close-launcher").withOptionalArg().ofType(Boolean.class);
@@ -873,7 +887,7 @@ public class App {
         }
 
         if (options.has("base-cdn-domain")) {
-            String baseCdnDomain = String.valueOf(options.valueOf("base-launcher-domain"));
+            String baseCdnDomain = String.valueOf(options.valueOf("base-cdn-domain"));
 
             Constants.setBaseCdnDomain(baseCdnDomain);
             LogManager.warn("Base cdn domain set to " + baseCdnDomain);
@@ -884,6 +898,11 @@ public class App {
 
             Constants.setBaseCdnPath(baseCdnPath);
             LogManager.warn("Base cdn path set to " + baseCdnPath);
+        }
+
+        allowAllSslCerts = options.has("allow-all-ssl-certs");
+        if (allowAllSslCerts) {
+            LogManager.warn("Allowing all ssl certs. This is insecure and should only be used for development.");
         }
 
         noLauncherUpdate = options.has("no-launcher-update");
