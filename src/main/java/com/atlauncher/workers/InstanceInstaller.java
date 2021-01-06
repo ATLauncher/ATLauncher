@@ -1322,6 +1322,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 download = download.hash(mod.md5);
             }
 
+            // modpacks.ch api just flat out returns wrong hases/sizes so ignore
+            if (modpacksChPackVersionManifest != null) {
+                download = download.ignoreFailures();
+            }
+
             pool.add(download);
         });
 
@@ -1445,7 +1450,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .parallelStream().filter(
                             f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
                     .map(file -> com.atlauncher.network.Download.build().setUrl(file.url).size((long) file.size)
-                            .hash(file.sha1)
+                            .hash(file.sha1).ignoreFailures()
                             .downloadTo(root
                                     .resolve((file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2)
                                             : file.path) + file.name))
@@ -1542,8 +1547,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 // we can't check the provided hash and size here otherwise download fails as
                 // their api doesn't return the correct info
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build().setUrl(art.url)
-                        .downloadTo(root.resolve("instance.png")).withInstanceInstaller(this)
-                        .withHttpClient(Network.createProgressClient(this));
+                        .size(art.size).hash(art.sha1).downloadTo(root.resolve("instance.png")).ignoreFailures()
+                        .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
                 this.setTotalBytes(art.size);
                 imageDownload.downloadFile();

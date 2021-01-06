@@ -57,6 +57,7 @@ public final class Download {
     public Path unzipTo;
     public Path extractedTo;
     public Path copyTo;
+    private boolean ignoreFailures = false;
     private String hash;
     private Long fingerprint = null;
     public long size = -1L;
@@ -199,6 +200,12 @@ public final class Download {
         return this;
     }
 
+    public Download ignoreFailures() {
+        this.ignoreFailures = true;
+
+        return this;
+    }
+
     public Download hash(String hash) {
         this.hash = hash;
 
@@ -280,7 +287,7 @@ public final class Download {
 
         this.response = httpClient.newCall(builder.build()).execute();
 
-        if (this.response == null || !this.response.isSuccessful()) {
+        if (this.response == null || (!this.ignoreFailures && !this.response.isSuccessful())) {
             throw new DownloadException(this);
         }
     }
@@ -368,6 +375,10 @@ public final class Download {
         }
 
         if (Files.exists(this.to)) {
+            if (this.ignoreFailures) {
+                return false;
+            }
+
             if (this.fingerprint != null) {
                 try {
                     if (Hashing.murmur(this.to) == this.fingerprint) {
@@ -447,8 +458,8 @@ public final class Download {
         // download the file to disk
         this.downloadDirect();
 
-        // check if the hash matches
-        if (hashMatches()) {
+        // check if the hash matches (or they're ignored)
+        if (this.ignoreFailures || hashMatches()) {
             return true;
         }
 
@@ -539,8 +550,10 @@ public final class Download {
             expected = Hashing.HashCode.fromString(this.getHash());
         }
 
-        if (expected != null && expected.equals(Hashing.HashCode.EMPTY)) {
-            this.downloadDirect();
+        if (this.ignoreFailures || (expected != null && expected.equals(Hashing.HashCode.EMPTY))) {
+            if (this.response.isSuccessful()) {
+                this.downloadDirect();
+            }
         } else {
             boolean downloaded = this.downloadRec(1);
 
