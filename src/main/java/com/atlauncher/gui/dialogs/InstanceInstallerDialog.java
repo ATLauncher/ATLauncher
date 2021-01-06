@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -107,29 +108,39 @@ public class InstanceInstallerDialog extends JDialog {
     private final PackVersion autoInstallVersion;
 
     public InstanceInstallerDialog(CurseManifest manifest, Path curseExtractedPath) {
-        this(manifest, false, false, null, null, false, curseExtractedPath, null);
+        this(manifest, false, false, null, null, false, curseExtractedPath, null, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(MultiMCManifest manifest, Path multiMCExtractedPath) {
-        this(manifest, false, false, null, null, false, null, multiMCExtractedPath);
+        this(manifest, false, false, null, null, false, null, multiMCExtractedPath, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false, null, null, true, null, null);
+        this(object, false, false, null, null, true, null, null, App.launcher.getParent());
+    }
+
+    public InstanceInstallerDialog(Window parent, Object object) {
+        this(object, false, false, null, null, true, null, null, parent);
     }
 
     public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
-        this(pack, false, false, version, shareCode, showModsChooser, null, null);
+        this(pack, false, false, version, shareCode, showModsChooser, null, null, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this(pack, false, true, null, null, true, null, null);
+        this(pack, false, true, null, null, true, null, null, App.launcher.getParent());
+    }
+
+    public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
+            String shareCode, boolean showModsChooser, Path curseExtractedPath, Path multiMCExtractedPath) {
+        this(object, isUpdate, isServer, autoInstallVersion, shareCode, showModsChooser, curseExtractedPath,
+                multiMCExtractedPath, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
-            Path curseExtractedPath, Path multiMCExtractedPath) {
-        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
+            Path curseExtractedPath, Path multiMCExtractedPath, Window parent) {
+        super(parent, ModalityType.APPLICATION_MODAL);
 
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;

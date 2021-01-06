@@ -20,6 +20,7 @@ package com.atlauncher.gui.card;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -38,9 +39,11 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class FTBPackCard extends JPanel {
+    private final Window parent;
     public final ModpacksChPackManifest pack;
 
-    public FTBPackCard(final ModpacksChPackManifest pack) {
+    public FTBPackCard(Window parent, final ModpacksChPackManifest pack) {
+        this.parent = parent;
         this.pack = pack;
 
         setupComponents();
@@ -70,7 +73,7 @@ public final class FTBPackCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.sendEvent(pack.name, "Add", "FTBPack");
-            ImportPackUtils.loadModpacksChPack(pack.id);
+            ImportPackUtils.loadModpacksChPack(parent, pack.id);
         });
 
         viewButton.addActionListener(e -> OS.openWebBrowser(String.format("https://feed-the-beast.com/modpack/%s",

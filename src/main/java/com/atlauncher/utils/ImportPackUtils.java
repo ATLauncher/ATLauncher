@@ -17,6 +17,7 @@
  */
 package com.atlauncher.utils;
 
+import java.awt.Window;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -224,14 +225,14 @@ public class ImportPackUtils {
         return true;
     }
 
-    public static boolean loadModpacksChPack(int packId) {
+    public static boolean loadModpacksChPack(Window parent, int packId) {
         try {
             ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                     .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL, packId))
                     .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
                     .asClass(ModpacksChPackManifest.class);
 
-            new InstanceInstallerDialog(packManifest);
+            new InstanceInstallerDialog(parent, packManifest);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to install Modpacks.ch pack", e);
             return false;
