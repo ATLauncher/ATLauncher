@@ -35,6 +35,7 @@ import com.atlauncher.data.ATLauncherApiCurseModpack;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -217,6 +218,22 @@ public class ImportPackUtils {
             new InstanceInstallerDialog(manifest, extractedPath);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to install MultiMC pack", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean loadModpacksChPack(String packId) {
+        try {
+            ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
+                    .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                    .asClass(ModpacksChPackManifest.class);
+
+            new InstanceInstallerDialog(packManifest);
+        } catch (Exception e) {
+            LogManager.logStackTrace("Failed to install Modpacks.ch pack", e);
             return false;
         }
 

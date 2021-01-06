@@ -39,6 +39,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.dialogs.AddCursePackDialog;
+import com.atlauncher.gui.dialogs.AddFTBPackDialog;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
@@ -79,6 +80,10 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         JButton addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
         addCurseButton.addActionListener(e -> new AddCursePackDialog());
         topPanel.add(addCurseButton);
+
+        JButton addFTBPack = new JButton(GetText.tr("Add FTB Pack"));
+        addFTBPack.addActionListener(e -> new AddFTBPackDialog());
+        topPanel.add(addFTBPack);
 
         clearButton = new JButton(GetText.tr("Clear"));
         clearButton.addActionListener(e -> {

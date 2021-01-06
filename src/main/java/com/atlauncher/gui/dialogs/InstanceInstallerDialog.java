@@ -35,8 +35,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -58,6 +60,10 @@ import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.modpacksch.ModpacksChPackLink;
+import com.atlauncher.data.modpacksch.ModpacksChPackLinkType;
+import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
@@ -81,6 +87,7 @@ public class InstanceInstallerDialog extends JDialog {
     private final Pack pack;
     private Instance instance = null;
     private CurseManifest curseManifest = null;
+    private ModpacksChPackManifest modpacksChPackManifest = null;
     private MultiMCManifest multiMCManifest = null;
 
     private JPanel middle;
@@ -172,6 +179,36 @@ public class InstanceInstallerDialog extends JDialog {
 
             // #. {0} is the name of the pack the user is installing
             setTitle(GetText.tr("Installing {0}", curseManifest.name));
+        } else if (object instanceof ModpacksChPackManifest) {
+            modpacksChPackManifest = (ModpacksChPackManifest) object;
+
+            pack = new Pack();
+            pack.name = modpacksChPackManifest.name;
+            pack.description = modpacksChPackManifest.description;
+
+            ModpacksChPackLink link = modpacksChPackManifest.links.stream()
+                    .filter(l -> l.type == ModpacksChPackLinkType.WEBSITE).findFirst().orElse(null);
+
+            if (link != null) {
+                pack.websiteURL = link.link;
+            }
+
+            pack.modpacksChPack = modpacksChPackManifest;
+
+            pack.versions = modpacksChPackManifest.versions.stream()
+                    .sorted(Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
+                    .map(v -> {
+                        PackVersion packVersion = new PackVersion();
+                        packVersion.version = v.name;
+                        packVersion.hasLoader = true;
+                        packVersion._modpacksChId = v.id;
+                        return packVersion;
+                    }).filter(pv -> pv != null).collect(Collectors.toList());
+
+            isReinstall = false;
+
+            // #. {0} is the name of the pack the user is installing
+            setTitle(GetText.tr("Installing {0}", modpacksChPackManifest.name));
         } else if (object instanceof MultiMCManifest) {
             multiMCManifest = (MultiMCManifest) object;
 
@@ -402,7 +439,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
                         isReinstall, isServer, saveMods, shareCode, showModsChooser, loaderVersion, curseManifest,
-                        curseExtractedPath, multiMCManifest, multiMCExtractedPath) {
+                        curseExtractedPath, modpacksChPackManifest, multiMCManifest, multiMCExtractedPath) {
 
                     protected void done() {
                         Boolean success = false;

@@ -24,6 +24,8 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
 
 @Json
@@ -58,7 +60,13 @@ public class InstanceLauncher {
 
     public CurseManifest curseManifest;
     public MultiMCManifest multiMCManifest;
+    public ModpacksChPackManifest modpacksChPackManifest;
+    public ModpacksChPackVersionManifest modpacksChPackVersionManifest;
 
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
+
+    public boolean isExternalPack() {
+        return curseManifest != null || modpacksChPackManifest != null || multiMCManifest != null;
+    }
 }

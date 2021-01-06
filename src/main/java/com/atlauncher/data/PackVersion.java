@@ -26,13 +26,14 @@ public class PackVersion {
     public boolean isDev = false;
     public boolean hasLoader = false;
     public boolean hasChoosableLoader = false;
+    public transient Integer _modpacksChId = null;
 
     public String getSafeVersion() {
         return this.version.replaceAll("[^A-Za-z0-9]", "");
     }
 
     public String toString() {
-        if (this.minecraftVersion.version.equalsIgnoreCase(this.version)) {
+        if (this.minecraftVersion == null || this.minecraftVersion.version.equalsIgnoreCase(this.version)) {
             return this.version;
         }
 

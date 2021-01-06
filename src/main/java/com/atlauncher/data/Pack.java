@@ -30,6 +30,8 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.data.modpacksch.ModpacksChPack;
+import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
@@ -50,6 +52,7 @@ public class Pack {
     public boolean hasDiscordImage;
     public String description;
     public CurseMod cursePack;
+    public ModpacksChPackManifest modpacksChPack;
     public String discordInviteURL = null;
     public String supportURL = null;
     public String websiteURL = null;
