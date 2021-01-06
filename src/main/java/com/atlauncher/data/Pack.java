@@ -30,7 +30,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Version;
-import com.atlauncher.data.modpacksch.ModpacksChPack;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;

@@ -18,143 +18,218 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
-import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.UIConstants;
-import com.atlauncher.managers.DialogManager;
+import com.atlauncher.data.Constants;
+import com.atlauncher.data.modpacksch.ModpacksChPackList;
+import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.gui.card.FTBPackCard;
+import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.gui.panels.LoadingPanel;
+import com.atlauncher.gui.panels.NoFTBPacksPanel;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.ImportPackUtils;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
+import okhttp3.CacheControl;
+
 @SuppressWarnings("serial")
-public class AddFTBPackDialog extends JDialog {
+public final class AddFTBPackDialog extends JDialog {
+    private final JPanel contentPanel = new JPanel();
+    private final JPanel topPanel = new JPanel(new BorderLayout());
+    private final JTextField searchField = new JTextField(16);
+    private final JButton searchButton = new JButton(GetText.tr("Search"));
 
-    private final JTextField packId;
-
-    private final JButton addButton;
+    private JScrollPane jscrollPane;
+    private JButton nextButton;
+    private JButton prevButton;
+    private final JPanel mainPanel = new JPanel(new BorderLayout());
+    private int page = 1;
 
     public AddFTBPackDialog() {
         super(App.launcher.getParent(), GetText.tr("Add FTB Pack"), ModalityType.APPLICATION_MODAL);
-        setSize(450, 200);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setResizable(false);
 
-        Analytics.sendScreenView("Add FTB Pack Dialog");
+        this.setPreferredSize(new Dimension(620, 500));
+        this.setResizable(false);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        // Middle Panel Stuff
-        JPanel middle = new JPanel();
-        middle.setLayout(new BorderLayout());
+        setupComponents();
 
-        JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center()
-                .text(GetText.tr("Put in the ID of the pack and version to install.")).build());
-        infoMessage.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-        infoMessage.setEditable(false);
-        middle.add(infoMessage, BorderLayout.NORTH);
+        this.loadDefaultPacks();
 
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        // pack id
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabel packIdLabel = new JLabel(GetText.tr("Pack ID") + ": ");
-        mainPanel.add(packIdLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        packId = new JTextField(25);
-        packId.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                changeAddButtonStatus();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                changeAddButtonStatus();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                changeAddButtonStatus();
-            }
-        });
-        mainPanel.add(packId, gbc);
-
-        middle.add(mainPanel, BorderLayout.CENTER);
-
-        // Bottom Panel Stuff
-        JPanel bottom = new JPanel();
-        bottom.setLayout(new FlowLayout());
-        addButton = new JButton(GetText.tr("Add"));
-        addButton.addActionListener(e -> {
-            setVisible(false);
-
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Adding FTB Pack"), 0,
-                    GetText.tr("Adding FTB Pack"));
-
-            dialog.addThread(new Thread(() -> {
-                Analytics.sendEvent(packId.getText(), "AddFromId", "FTBPack");
-                dialog.setReturnValue(ImportPackUtils.loadModpacksChPack(packId.getText()));
-                dialog.close();
-            }));
-
-            dialog.start();
-
-            if (!((boolean) dialog.getReturnValue())) {
-                setVisible(true);
-                DialogManager.okDialog().setTitle(GetText.tr("Failed To Add Pack"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occured when trying to add FTB pack.<br/><br/>Check the console for more information."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
-            } else {
-                dispose();
-            }
-        });
-        addButton.setEnabled(false);
-        bottom.add(addButton);
-
-        add(middle, BorderLayout.CENTER);
-        add(bottom, BorderLayout.SOUTH);
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                setVisible(false);
-                dispose();
-            }
-        });
-
-        setVisible(true);
+        this.pack();
+        this.setLocationRelativeTo(App.launcher.getParent());
+        this.setVisible(true);
     }
 
-    private void changeAddButtonStatus() {
-        addButton.setEnabled(!packId.getText().isEmpty());
+    private void setupComponents() {
+        Analytics.sendScreenView("Add FTB Pack Dialog");
+
+        this.topPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+        JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        searchButtonsPanel.add(this.searchField);
+        searchButtonsPanel.add(this.searchButton);
+
+        this.topPanel.add(searchButtonsPanel, BorderLayout.NORTH);
+
+        this.jscrollPane = new JScrollPane(this.contentPanel) {
+            {
+                this.getVerticalScrollBar().setUnitIncrement(16);
+            }
+        };
+
+        this.jscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        mainPanel.add(this.topPanel, BorderLayout.NORTH);
+        mainPanel.add(this.jscrollPane, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout());
+
+        prevButton = new JButton("<<");
+        prevButton.setEnabled(false);
+        prevButton.addActionListener(e -> goToPreviousPage());
+
+        nextButton = new JButton(">>");
+        nextButton.setEnabled(false);
+        nextButton.addActionListener(e -> goToNextPage());
+
+        bottomPanel.add(prevButton);
+        bottomPanel.add(nextButton);
+
+        this.add(mainPanel, BorderLayout.CENTER);
+        this.add(bottomPanel, BorderLayout.SOUTH);
+
+        this.searchField.addActionListener(e -> searchForPacks());
+
+        this.searchButton.addActionListener(e -> searchForPacks());
+    }
+
+    private void setLoading(boolean loading) {
+        if (loading) {
+            contentPanel.removeAll();
+            contentPanel.setLayout(new BorderLayout());
+            contentPanel.add(new LoadingPanel(), BorderLayout.CENTER);
+        }
+
+        revalidate();
+        repaint();
+    }
+
+    private void goToPreviousPage() {
+        if (page > 1) {
+            page -= 1;
+        }
+
+        Analytics.sendEvent(page, "Previous", "Navigation", "FTBPack");
+
+        getPacks();
+    }
+
+    private void goToNextPage() {
+        if (contentPanel.getComponentCount() != 0) {
+            page += 1;
+        }
+
+        Analytics.sendEvent(page, "Next", "Navigation", "FTBPack");
+
+        getPacks();
+    }
+
+    private void getPacks() {
+        setLoading(true);
+        prevButton.setEnabled(false);
+        nextButton.setEnabled(false);
+
+        String query = searchField.getText();
+
+        new Thread(() -> {
+            ModpacksChPackList packList;
+
+            if (query.isEmpty()) {
+                packList = com.atlauncher.network.Download.build()
+                        .setUrl(String.format("%s/modpack/popular/plays/250", Constants.MODPACKS_CH_API_URL))
+                        .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                        .asClass(ModpacksChPackList.class);
+            } else {
+                packList = com.atlauncher.network.Download.build()
+                        .setUrl(String.format("%s/modpack/search/%d?term=%s", Constants.MODPACKS_CH_API_URL,
+                                Constants.FTB_PAGINATION_SIZE, query))
+                        .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                        .asClass(ModpacksChPackList.class);
+            }
+
+            List<Integer> packsToShow = packList.packs.stream().skip((page - 1) * Constants.FTB_PAGINATION_SIZE)
+                    .limit(Constants.FTB_PAGINATION_SIZE).collect(Collectors.toList());
+
+            List<ModpacksChPackManifest> packs = packsToShow.parallelStream()
+                    .map(packId -> com.atlauncher.network.Download.build()
+                            .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
+                            .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                            .asClass(ModpacksChPackManifest.class))
+                    .collect(Collectors.toList());
+
+            setPacks(packs);
+
+            setLoading(false);
+        }).start();
+    }
+
+    private void loadDefaultPacks() {
+        getPacks();
+    }
+
+    private void searchForPacks() {
+        String query = searchField.getText();
+
+        Analytics.sendEvent(query, "Search", "FTBPack");
+
+        getPacks();
+    }
+
+    private void setPacks(List<ModpacksChPackManifest> packs) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets.set(2, 2, 2, 2);
+
+        contentPanel.removeAll();
+
+        prevButton.setEnabled(page > 1);
+        nextButton.setEnabled(packs.size() == Constants.FTB_PAGINATION_SIZE);
+
+        if (packs.size() == 0) {
+            contentPanel.setLayout(new BorderLayout());
+            contentPanel.add(new NoFTBPacksPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
+        } else {
+            contentPanel.setLayout(new WrapLayout());
+
+            packs.forEach(ftbPack -> {
+                contentPanel.add(new FTBPackCard(ftbPack), gbc);
+                gbc.gridy++;
+            });
+        }
+
+        SwingUtilities.invokeLater(() -> jscrollPane.getVerticalScrollBar().setValue(0));
+
+        revalidate();
+        repaint();
     }
 }

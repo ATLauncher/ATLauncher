@@ -224,10 +224,10 @@ public class ImportPackUtils {
         return true;
     }
 
-    public static boolean loadModpacksChPack(String packId) {
+    public static boolean loadModpacksChPack(int packId) {
         try {
             ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
-                    .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
+                    .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL, packId))
                     .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
                     .asClass(ModpacksChPackManifest.class);
 

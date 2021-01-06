@@ -15,14 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.gui.panels;
 
-public class ModpacksChPack {
-    public ModpacksChPackManifest pack;
-    public ModpacksChPackVersionManifest packVersion;
+import java.awt.Component;
 
-    public ModpacksChPack(ModpacksChPackManifest pack, ModpacksChPackVersionManifest packVersion) {
-        this.pack = pack;
-        this.packVersion = packVersion;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.mini2Dx.gettext.GetText;
+
+@SuppressWarnings("serial")
+public class NoFTBPacksPanel extends JPanel {
+    public NoFTBPacksPanel(boolean hasSearch) {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        JLabel label = new JLabel(hasSearch ? GetText.tr("No packs found. Remove your search query and try again.")
+                : GetText.tr("No packs found."));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setAlignmentY(Component.CENTER_ALIGNMENT);
+
+        add(label);
     }
 }

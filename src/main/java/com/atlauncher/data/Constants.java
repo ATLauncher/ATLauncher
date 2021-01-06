@@ -65,6 +65,7 @@ public class Constants {
     public static final int CURSE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final int CURSE_WORLDS_SECTION_ID = 17;
     public static final String MODPACKS_CH_API_URL = "https://api.modpacks.ch/public";
+    public static final int FTB_PAGINATION_SIZE = 20;
     public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
     public static final String FORGE_MAVEN_BASE = "https://files.minecraftforge.net/maven/";
     public static final String FORGE_HOST = "files.minecraftforge.net";

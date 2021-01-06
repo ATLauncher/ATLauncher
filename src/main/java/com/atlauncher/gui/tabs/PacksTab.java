@@ -46,6 +46,7 @@ import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddCursePackDialog;
+import com.atlauncher.gui.dialogs.AddFTBPackDialog;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
@@ -59,6 +60,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JPanel bottomPanel = new JPanel();
     private final JButton addButton = new JButton(GetText.tr("Add Pack"));
     private final JButton addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
+    private final JButton addFTBPackButton = new JButton(GetText.tr("Add FTB Pack"));
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton expandAllButton = new JButton(GetText.tr("Expand All"));
     private final JButton collapseAllButton = new JButton(GetText.tr("Collapse All"));
@@ -127,6 +129,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             refresh();
         });
         this.addCurseButton.addActionListener(e -> new AddCursePackDialog());
+        this.addFTBPackButton.addActionListener(e -> new AddFTBPackDialog());
         this.clearButton.addActionListener(e -> {
             searchField.setText("");
             page = 1;
@@ -161,6 +164,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     private void setupTopPanel() {
         this.topPanel.add(this.addCurseButton);
+        this.topPanel.add(this.addFTBPackButton);
         this.topPanel.add(this.clearButton);
         this.topPanel.add(this.searchField);
         this.topPanel.add(this.searchButton);
@@ -268,6 +272,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     public void onRelocalization() {
         addButton.setText(GetText.tr("Add Pack"));
         addCurseButton.setText(GetText.tr("Add Curse Pack"));
+        addFTBPackButton.setText(GetText.tr("Add FTB Pack"));
         clearButton.setText(GetText.tr("Clear"));
         expandAllButton.setText(GetText.tr("Expand All"));
         collapseAllButton.setText(GetText.tr("Collapse All"));
