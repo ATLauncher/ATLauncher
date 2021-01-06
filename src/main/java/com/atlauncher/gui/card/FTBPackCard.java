@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -76,8 +77,14 @@ public final class FTBPackCard extends JPanel {
             ImportPackUtils.loadModpacksChPack(parent, pack.id);
         });
 
+        // The Feed The Beast website only displays modpacks with the 'FTB'
+        // tag present, so we should disable the view button for packs without.
+        if (pack.tags.stream().map(tag -> tag.name).noneMatch("FTB"::equals)) {
+            viewButton.setEnabled(false);
+        }
+
         viewButton.addActionListener(e -> OS.openWebBrowser(String.format("https://feed-the-beast.com/modpack/%s",
-                pack.name.toLowerCase().replaceAll("[^A-Za-z0-9]", "_"))));
+                getPackSlug(pack))));
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
@@ -85,5 +92,13 @@ public final class FTBPackCard extends JPanel {
         TitledBorder border = new TitledBorder(null, pack.name, TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
+    }
+
+    private static String getPackSlug(final ModpacksChPackManifest pack) {
+        return pack.name
+            .replace("+", " Plus")
+            .toLowerCase(Locale.ROOT)
+            .replaceAll("\\W", "_")
+            .replaceAll("_{2,}", "_");
     }
 }
