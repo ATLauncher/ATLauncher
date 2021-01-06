@@ -27,7 +27,9 @@ import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -42,6 +44,7 @@ import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoFTBPacksPanel;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.ComboItem;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -53,6 +56,7 @@ public final class AddFTBPackDialog extends JDialog {
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
 
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -66,6 +70,11 @@ public final class AddFTBPackDialog extends JDialog {
         this.setPreferredSize(new Dimension(620, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        sortComboBox.addItem(new ComboItem<>("popular/plays", GetText.tr("Most Popular")));
+        sortComboBox.addItem(new ComboItem<>("popular/installs", GetText.tr("Most Installed")));
+        sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Recently Updated")));
+        sortComboBox.addItem(new ComboItem<>("featured", GetText.tr("Featured")));
 
         setupComponents();
 
@@ -85,6 +94,8 @@ public final class AddFTBPackDialog extends JDialog {
 
         searchButtonsPanel.add(this.searchField);
         searchButtonsPanel.add(this.searchButton);
+        searchButtonsPanel.add(new JLabel(GetText.tr("Sort") + ":"));
+        searchButtonsPanel.add(this.sortComboBox);
 
         this.topPanel.add(searchButtonsPanel, BorderLayout.NORTH);
 
@@ -114,6 +125,10 @@ public final class AddFTBPackDialog extends JDialog {
 
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);
+
+        this.sortComboBox.addActionListener(e -> {
+            searchForPacks();
+        });
 
         this.searchField.addActionListener(e -> searchForPacks());
 
@@ -151,6 +166,7 @@ public final class AddFTBPackDialog extends JDialog {
         getPacks();
     }
 
+    @SuppressWarnings("unchecked")
     private void getPacks() {
         setLoading(true);
         prevButton.setEnabled(false);
@@ -163,7 +179,8 @@ public final class AddFTBPackDialog extends JDialog {
 
             if (query.isEmpty()) {
                 packList = com.atlauncher.network.Download.build()
-                        .setUrl(String.format("%s/modpack/popular/plays/250", Constants.MODPACKS_CH_API_URL))
+                        .setUrl(String.format("%s/modpack/%s/250", Constants.MODPACKS_CH_API_URL,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()))
                         .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
                         .asClass(ModpacksChPackList.class);
             } else {
