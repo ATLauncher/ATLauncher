@@ -255,7 +255,7 @@ public class InstanceInstallerDialog extends JDialog {
             setTitle(GetText.tr("Reinstalling {0}", instance.launcher.name));
         }
         setSize(450, 240);
-        setLocationRelativeTo(App.launcher.getParent());
+        setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
         setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -408,7 +408,7 @@ public class InstanceInstallerDialog extends JDialog {
                 }
 
                 final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
-                final JDialog dialog = new JDialog(App.launcher.getParent(), isReinstall ? (
+                final JDialog dialog = new JDialog(parent, isReinstall ? (
                 // #. {0} is the name of the pack the user is installing
                 isServer ? GetText.tr("Reinstalling {0} Server", pack.getName())
                         // #. {0} is the name of the pack the user is installing
@@ -416,7 +416,7 @@ public class InstanceInstallerDialog extends JDialog {
                 // #. {0} is the name of the pack the user is installing
                 isServer ? GetText.tr("Installing {0} Server", pack.getName())
                         // #. {0} is the name of the pack the user is installing
-                        : GetText.tr("Installing {0}", pack.getName())), ModalityType.DOCUMENT_MODAL);
+                        : GetText.tr("Installing {0}", pack.getName())), ModalityType.APPLICATION_MODAL);
                 dialog.setLocationRelativeTo(App.launcher.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);
