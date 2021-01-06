@@ -77,6 +77,12 @@ public final class FTBPackCard extends JPanel {
             ImportPackUtils.loadModpacksChPack(parent, pack.id);
         });
 
+        // The Feed The Beast website only displays modpacks with the 'FTB'
+        // tag present, so we should disable the view button for packs without.
+        if (pack.tags.stream().map(tag -> tag.name).noneMatch("FTB"::equals)) {
+            viewButton.setEnabled(false);
+        }
+
         viewButton.addActionListener(e -> OS.openWebBrowser(String.format("https://feed-the-beast.com/modpack/%s",
                 getPackSlug(pack))));
 
