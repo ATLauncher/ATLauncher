@@ -59,6 +59,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Version;
@@ -591,7 +592,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             curseManifest.websiteUrl = cursePack.websiteUrl;
 
-            pack.id = curseManifest.projectID;
+            pack.externalId = curseManifest.projectID;
             pack.description = cursePack.summary;
             pack.cursePack = cursePack;
         }
@@ -616,10 +617,45 @@ public class InstanceInstallerDialog extends JDialog {
         setTitle(GetText.tr("Installing {0}", curseManifest.name));
     }
 
+    private void handleCurseForgeInstallById(int projectId) {
+        CurseMod project = CurseApi.getModById(projectId);
+
+        pack = new Pack();
+        pack.name = project.name;
+
+        pack.externalId = projectId;
+        pack.description = project.summary;
+        pack.websiteURL = project.websiteUrl;
+        pack.curseForgeProject = project;
+
+        List<CurseFile> files = CurseApi.getFilesForMod(projectId);
+
+        pack.versions = files.stream().sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
+                .map(f -> {
+                    PackVersion packVersion = new PackVersion();
+                    packVersion.version = f.displayName;
+                    packVersion.hasLoader = true;
+                    packVersion._curseForgeFile = f;
+
+                    try {
+                        packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.gameVersion.get(0));
+                    } catch (InvalidMinecraftVersion e) {
+                        LogManager.error(e.getMessage());
+                        return null;
+                    }
+
+                    return packVersion;
+                }).filter(pv -> pv != null).collect(Collectors.toList());
+
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", project.name));
+    }
+
     private void handleModpacksChInstall(Object object) {
         modpacksChPackManifest = (ModpacksChPackManifest) object;
 
         pack = new Pack();
+        pack.externalId = modpacksChPackManifest.id;
         pack.name = modpacksChPackManifest.name;
         pack.description = modpacksChPackManifest.description;
 
@@ -682,6 +718,10 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (instance.isModpacksChPack()) {
             handleModpacksChInstall(instance.launcher.modpacksChPackManifest);
+        } else if (instance.isCurseForgePack()) {
+            handleCurseForgeInstallById(
+                    instance.launcher.curseManifest != null ? instance.launcher.curseManifest.projectID
+                            : instance.launcher.curseForgeProject.id);
         } else {
             pack = instance.getPack();
         }

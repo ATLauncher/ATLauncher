@@ -177,7 +177,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
 
         this.openCurseForgeButton.setVisible(
-                instance.launcher.curseManifest != null && instance.launcher.curseManifest.websiteUrl != null);
+                (instance.launcher.curseManifest != null && instance.launcher.curseManifest.websiteUrl != null)
+                        || instance.launcher.curseForgeProject != null);
 
         if (instance.launcher.enableCurseIntegration) {
             bottom.add(this.addButton);
@@ -399,7 +400,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
-        this.openCurseForgeButton.addActionListener(e -> OS.openWebBrowser(instance.launcher.curseManifest.websiteUrl));
+        this.openCurseForgeButton.addActionListener(e -> OS
+                .openWebBrowser(instance.launcher.curseManifest != null ? instance.launcher.curseManifest.websiteUrl
+                        : instance.launcher.curseForgeProject.websiteUrl));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings",

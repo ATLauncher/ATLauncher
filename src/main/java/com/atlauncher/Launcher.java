@@ -44,6 +44,7 @@ import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.CheckingServersManager;
+import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -350,9 +351,11 @@ public class Launcher {
     }
 
     private void checkForExternalPackUpdates() {
-        if (InstanceManager.getInstances().stream().anyMatch(
-                i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)) {
+        if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModpacksChPack())) {
             ModpacksChUpdateManager.checkForUpdates();
+        }
+        if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
+            CurseForgeUpdateManager.checkForUpdates();
         }
     }
 

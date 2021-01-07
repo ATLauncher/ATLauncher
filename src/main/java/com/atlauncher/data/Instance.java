@@ -64,6 +64,7 @@ import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
@@ -120,7 +121,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public Pack getPack() {
-        if (this.launcher.curseManifest != null) {
+        if (this.isExternalPack()) {
             return null;
         }
 
@@ -236,6 +237,8 @@ public class Instance extends MinecraftVersion {
         if (isExternalPack()) {
             if (isModpacksChPack()) {
                 version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
+            } else if (isCurseForgePack()) {
+                version = Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id);
             }
 
             return;
@@ -257,6 +260,8 @@ public class Instance extends MinecraftVersion {
         if (isExternalPack()) {
             if (isModpacksChPack()) {
                 return hasUpdateBeenIgnored(Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id));
+            } else if (isCurseForgePack()) {
+                return hasUpdateBeenIgnored(Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id));
             }
 
             return false;
@@ -477,8 +482,7 @@ public class Instance extends MinecraftVersion {
                 return false;
             }
 
-            Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play",
-                    (launcher.curseManifest != null ? "CursePack" : "Instance"));
+            Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play", getAnalyticsCategory());
 
             Thread launcher = new Thread(() -> {
                 try {
@@ -869,16 +873,10 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
-        // check pack is a system pack or imported from Curse
-        if ((getPack() != null && !getPack().system) && launcher.curseManifest == null) {
+        // check pack is a system pack or imported from CurseForge
+        if ((getPack() != null && !getPack().system) && isCurseForgePack()) {
             LogManager.debug("Instance " + launcher.name
-                    + " cannot be exported due to: Not being a system pack or imported from Curse");
-            return false;
-        }
-
-        // make sure there's at least one mod from Curse
-        if (launcher.mods.stream().noneMatch(DisableableMod::isFromCurse)) {
-            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No mods from Curse");
+                    + " cannot be exported due to: Not being a system pack or imported from CurseForge");
             return false;
         }
 
@@ -1106,7 +1104,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isCurseForgePack() {
-        return launcher.curseManifest != null;
+        return launcher.curseManifest != null
+                || (launcher.curseForgeProject != null && launcher.curseForgeFile != null);
     }
 
     public boolean isMultiMcImport() {
@@ -1122,7 +1121,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isUpdatableExternalPack() {
-        return isExternalPack() && isModpacksChPack();
+        return isExternalPack() && (isModpacksChPack() || (isCurseForgePack() && hasCurseForgeProjectId()));
     }
 
     public String getAnalyticsCategory() {
@@ -1139,5 +1138,13 @@ public class Instance extends MinecraftVersion {
 
     public void update() {
         new InstanceInstallerDialog(this, true, false, null, null, true, null, null, App.launcher.getParent());
+    }
+
+    public boolean hasCurseForgeProjectId() {
+        if (launcher.curseManifest != null) {
+            return launcher.curseManifest.projectID != null;
+        }
+
+        return launcher.curseForgeProject != null;
     }
 }

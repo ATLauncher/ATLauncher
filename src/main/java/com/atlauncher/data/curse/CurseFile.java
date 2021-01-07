@@ -38,6 +38,7 @@ public class CurseFile {
     public List<CurseFileModule> modules;
     public long packageFingerprint;
     public List<String> gameVersion;
+    public String gameVersionDateReleased;
     public String installMetadata; // unsure of the type of this one, as no public example
     public int serverPackFileId;
     public boolean hasInstallScript;

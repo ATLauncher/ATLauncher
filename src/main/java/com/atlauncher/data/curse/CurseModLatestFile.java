@@ -19,26 +19,9 @@ package com.atlauncher.data.curse;
 
 import java.util.List;
 
-public class CurseModLatestFile {
-    public int id;
-    public String displayName;
-    public String fileName;
-    public String fileDate;
-    public int fileLength;
-    public int releaseType;
-    public int fileStatus;
-    public String downloadUrl;
-    public boolean isAlternate;
-    public int alternateFileId;
-    public List<CurseFileDependency> dependencies;
-    public boolean isAvailable;
-    public List<CurseFileModule> modules;
-    public long packageFingerprint;
-    public List<String> gameVersion;
+public class CurseModLatestFile extends CurseFile {
     public List<CurseSortableGameVersion> sortableGameVersion;
-    public String installMetadata; // unsure of the type of this one, as no public example
     public String changelog;
-    public boolean hasInstallScript;
     public boolean isCompatibleWithClient;
     public int categorySectionPackageType;
     public int restrictProjectFileAccess;
@@ -51,10 +34,8 @@ public class CurseModLatestFile {
     public int fileTypeId; // unsure of the type of this one, as no public example
     public String exposeAsAlternative;
     public int packageFingerprintId;
-    public String gameVersionDateReleased;
     public int gameVersionMappingId;
     public int gameVersionId;
     public int gameId;
     public boolean isServerPack;
-    public int serverPackFileId;
 }

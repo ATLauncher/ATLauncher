@@ -17,6 +17,8 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.data.curse.CurseFile;
+
 public class PackVersion {
     public String version;
     public String hash;
@@ -27,6 +29,7 @@ public class PackVersion {
     public boolean hasLoader = false;
     public boolean hasChoosableLoader = false;
     public transient Integer _modpacksChId = null;
+    public transient CurseFile _curseForgeFile = null;
 
     public String getSafeVersion() {
         return this.version.replaceAll("[^A-Za-z0-9]", "");

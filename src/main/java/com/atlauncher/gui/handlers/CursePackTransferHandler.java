@@ -46,14 +46,14 @@ public class CursePackTransferHandler extends TransferHandler {
 
     @SuppressWarnings("unchecked")
     public boolean importData(TransferSupport ts) {
-        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Adding Curse Pack"), 0,
-                GetText.tr("Adding Curse Pack"));
+        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Adding CurseForge Pack"), 0,
+                GetText.tr("Adding CurseForge Pack"));
 
         dialog.addThread(new Thread(() -> {
             try {
                 if (ts.getTransferable().isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                    dialog.setReturnValue(ImportPackUtils
-                            .loadFromCurseForgeUrl((String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor)));
+                    dialog.setReturnValue(ImportPackUtils.loadFromCurseForgeUrl(
+                            (String) ts.getTransferable().getTransferData(DataFlavor.stringFlavor)));
                 } else if (ts.getTransferable().isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                     dialog.setReturnValue(ImportPackUtils.loadFromFile(
                             ((List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor)).get(0)));
@@ -70,7 +70,7 @@ public class CursePackTransferHandler extends TransferHandler {
         if (!((boolean) dialog.getReturnValue())) {
             DialogManager.okDialog().setTitle(GetText.tr("Failed To Add Pack"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "An error occured when trying to add Curse pack.<br/><br/>Check the console for more information."))
+                            "An error occured when trying to add CurseForge pack.<br/><br/>Check the console for more information."))
                             .build())
                     .setType(DialogManager.ERROR).show();
         }

@@ -64,7 +64,7 @@ public class AddCursePackDialog extends JDialog {
     private final JButton addButton;
 
     public AddCursePackDialog() {
-        super(App.launcher.getParent(), GetText.tr("Add Curse Pack"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Add CurseForge Pack"), ModalityType.APPLICATION_MODAL);
         setSize(450, 250);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -72,7 +72,7 @@ public class AddCursePackDialog extends JDialog {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
-        Analytics.sendScreenView("Add Curse Pack Dialog");
+        Analytics.sendScreenView("Add CurseForge Pack Dialog");
 
         // Middle Panel Stuff
         JPanel middle = new JPanel();
@@ -175,8 +175,8 @@ public class AddCursePackDialog extends JDialog {
         addButton.addActionListener(e -> {
             setVisible(false);
 
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Adding Curse Pack"), 0,
-                    GetText.tr("Adding Curse Pack"));
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Adding CurseForge Pack"), 0,
+                    GetText.tr("Adding CurseForge Pack"));
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
@@ -197,7 +197,7 @@ public class AddCursePackDialog extends JDialog {
                 setVisible(true);
                 DialogManager.okDialog().setTitle(GetText.tr("Failed To Add Pack"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occured when trying to add Curse pack.<br/><br/>Check the console for more information."))
+                                "An error occured when trying to add CurseForge pack.<br/><br/>Check the console for more information."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
             } else {

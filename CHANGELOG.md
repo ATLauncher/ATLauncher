@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow setting which account to use in Instance settings
 - Add setting to hide pack name and version from Instance card
 - Add support for modpacks.ch (FTB) packs [#392]
+- Add suport for updating CurseForge packs [#393]
 
 ### Fixes
 - Fix exported instances including disabled mods [#420]

@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -34,6 +36,7 @@ public class InstanceLauncher {
     public String pack;
     public String description;
     public Integer packId;
+    public Integer externaPackId;
     public String version;
     public String hash;
 
@@ -59,6 +62,8 @@ public class InstanceLauncher {
     public boolean assetsMapToResources;
 
     public CurseManifest curseManifest;
+    public CurseMod curseForgeProject;
+    public CurseFile curseForgeFile;
     public MultiMCManifest multiMCManifest;
     public ModpacksChPackManifest modpacksChPackManifest;
     public ModpacksChPackVersionManifest modpacksChPackVersionManifest;

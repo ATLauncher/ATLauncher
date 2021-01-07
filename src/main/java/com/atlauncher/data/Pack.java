@@ -38,6 +38,7 @@ import com.atlauncher.utils.Utils;
 
 public class Pack {
     public int id;
+    public int externalId;
     public int position;
     public String name;
     public PackType type;
@@ -51,6 +52,7 @@ public class Pack {
     public boolean hasDiscordImage;
     public String description;
     public CurseMod cursePack;
+    public CurseMod curseForgeProject;
     public ModpacksChPackManifest modpacksChPack;
     public String discordInviteURL = null;
     public String supportURL = null;

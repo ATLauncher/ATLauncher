@@ -122,8 +122,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public final String shareCode;
     public final boolean showModsChooser;
     public LoaderVersion loaderVersion;
-    public final CurseManifest curseForgeManifest;
-    public final Path curseForgeExtractedPath;
+    public CurseManifest curseForgeManifest;
+    public Path curseForgeExtractedPath;
     public final ModpacksChPackManifest modpacksChPackManifest;
     public ModpacksChPackVersionManifest modpacksChPackVersionManifest;
     public final MultiMCManifest multiMCManifest;
@@ -202,7 +202,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         try {
             if (curseForgeManifest != null) {
-                generatePackVersionFromCurse();
+                generatePackVersionFromCurseForgeManifest();
+            } else if (pack.curseForgeProject != null) {
+                generatePackVersionFromCurseForge();
             } else if (modpacksChPackManifest != null) {
                 generatePackVersionFromModpacksCh();
             } else if (multiMCManifest != null) {
@@ -293,7 +295,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         hideSubProgressBar();
     }
 
-    private void generatePackVersionFromCurse() throws Exception {
+    private void generatePackVersionFromCurseForgeManifest() throws Exception {
         addPercent(5);
         fireTask(GetText.tr("Generating Pack Version Definition From Curse"));
         fireSubProgressUnknown();
@@ -356,6 +358,37 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             return mod;
         }).collect(Collectors.toList());
+
+        hideSubProgressBar();
+    }
+
+    private void generatePackVersionFromCurseForge() throws Exception {
+        addPercent(5);
+
+        fireTask(GetText.tr("Downloading Manifest From CurseForge"));
+        fireSubProgressUnknown();
+
+        Path manifestFile = this.temp.resolve(version._curseForgeFile.fileName.toLowerCase());
+
+        com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build()
+                .setUrl(version._curseForgeFile.downloadUrl).downloadTo(manifestFile)
+                .size(version._curseForgeFile.fileLength).fingerprint(version._curseForgeFile.packageFingerprint)
+                .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
+
+        this.setTotalBytes(version._curseForgeFile.fileLength);
+        manifestDownload.downloadFile();
+
+        fireTask(GetText.tr("Extracting Manifest"));
+        fireSubProgressUnknown();
+
+        curseForgeManifest = Gsons.MINECRAFT
+                .fromJson(new String(ZipUtil.unpackEntry(manifestFile.toFile(), "manifest.json")), CurseManifest.class);
+        curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
+
+        ZipUtil.unpack(manifestFile.toFile(), this.root.toFile());
+        Files.delete(manifestFile);
+
+        generatePackVersionFromCurseForgeManifest();
 
         hideSubProgressBar();
     }
@@ -816,6 +849,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.pack = this.pack.name;
         instanceLauncher.description = this.pack.description;
         instanceLauncher.packId = this.pack.id;
+        instanceLauncher.externaPackId = this.pack.externalId;
         instanceLauncher.version = this.packVersion.version;
         instanceLauncher.java = this.packVersion.java;
         instanceLauncher.enableCurseIntegration = this.packVersion.enableCurseIntegration;
@@ -827,10 +861,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.requiredMemory = this.packVersion.memory;
         instanceLauncher.requiredPermGen = this.packVersion.permGen;
         instanceLauncher.assetsMapToResources = this.assetsMapToResources;
-        instanceLauncher.curseManifest = curseForgeManifest;
+        instanceLauncher.curseForgeProject = this.pack.curseForgeProject;
+        instanceLauncher.curseForgeFile = this.version._curseForgeFile;
         instanceLauncher.multiMCManifest = multiMCManifest;
         instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
         instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
+
+        if (instanceLauncher.curseManifest != null) {
+            instanceLauncher.curseManifest = null;
+        }
 
         if (this.version.isDev) {
             instanceLauncher.hash = this.version.hash;
@@ -1527,10 +1566,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadInstanceImage() throws Exception {
         addPercent(5);
 
-        if (curseForgeManifest != null || this.pack.cursePack != null) {
+        if (this.pack.curseForgeProject != null) {
             fireTask(GetText.tr("Downloading Instance Image"));
-            CurseAttachment attachment = this.pack.cursePack.attachments.stream().filter(a -> a.isDefault).findFirst()
-                    .orElse(null);
+            CurseAttachment attachment = this.pack.curseForgeProject.attachments.stream().filter(a -> a.isDefault)
+                    .findFirst().orElse(null);
 
             if (attachment != null) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build()

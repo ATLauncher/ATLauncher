@@ -59,7 +59,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JPanel bottomPanel = new JPanel();
     private final JButton addButton = new JButton(GetText.tr("Add Pack"));
-    private final JButton addCurseButton = new JButton(GetText.tr("Add Curse Pack"));
+    private final JButton addCurseButton = new JButton(GetText.tr("Add CurseForge Pack"));
     private final JButton addFTBPackButton = new JButton(GetText.tr("Add FTB Pack"));
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton expandAllButton = new JButton(GetText.tr("Expand All"));
@@ -271,7 +271,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     @Override
     public void onRelocalization() {
         addButton.setText(GetText.tr("Add Pack"));
-        addCurseButton.setText(GetText.tr("Add Curse Pack"));
+        addCurseButton.setText(GetText.tr("Add CurseForge Pack"));
         addFTBPackButton.setText(GetText.tr("Add FTB Pack"));
         clearButton.setText(GetText.tr("Clear"));
         expandAllButton.setText(GetText.tr("Expand All"));
