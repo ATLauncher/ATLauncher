@@ -308,8 +308,8 @@ public class EditModsDialog extends JDialog {
         bottomPanel.add(addButton);
 
         if (instance.launcher.enableCurseIntegration) {
-            JButton addCurseModButton = new JButton(GetText.tr("Add Curse Mod"));
-            addCurseModButton.addActionListener(e -> {
+            JButton browseMods = new JButton(GetText.tr("Browse Mods"));
+            browseMods.addActionListener(e -> {
                 new AddModsDialog(this, instance);
 
                 loadMods();
@@ -317,7 +317,7 @@ public class EditModsDialog extends JDialog {
                 reloadPanels();
 
             });
-            bottomPanel.add(addCurseModButton);
+            bottomPanel.add(browseMods);
 
             checkForUpdatesButton = new JButton(GetText.tr("Check For Updates"));
             checkForUpdatesButton.addActionListener(e -> checkForUpdates());

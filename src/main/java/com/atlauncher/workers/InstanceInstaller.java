@@ -349,11 +349,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         Map<Integer, CurseMod> foundProjects = CurseApi.getAddonsAsMap(projectIdsFound);
 
         packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
-            CurseMod curseMod = Optional.ofNullable(foundProjects.get(file.projectID))
+            CurseMod curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
                     .orElseGet(() -> CurseApi.getModById(file.projectID));
-            CurseFile curseFile = CurseApi.getFileForMod(file.projectID, file.fileID);
+            CurseFile curseForgeFile = CurseApi.getFileForMod(file.projectID, file.fileID);
 
-            Mod mod = curseFile.convertToMod(curseMod);
+            Mod mod = curseForgeFile.convertToMod(curseForgeProject);
             mod.optional = !file.required;
 
             return mod;
@@ -621,7 +621,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
                             com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
                             this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
-                            mod.getCurseModId(), mod.getCurseFileId()));
+                            mod.getCurseModId(), mod.getCurseFileId(), mod.curseForgeProject, mod.curseForgeFile));
         }
 
         if (this.isReinstall && instance.hasCustomMods()) {

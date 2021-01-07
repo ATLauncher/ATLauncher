@@ -128,9 +128,9 @@ public class ModsJCheckBox extends JCheckBox {
         JPopupMenu contextMenu = new JPopupMenu();
 
         if (getDisableableMod().hasFullCurseInformation()) {
-            JMenuItem openOnCurse = new JMenuItem(GetText.tr("Open On Curse"));
-            openOnCurse.addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseMod.websiteUrl));
-            contextMenu.add(openOnCurse);
+            JMenuItem openOnCurseForge = new JMenuItem(GetText.tr("Open On CurseForge"));
+            openOnCurseForge.addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseMod.websiteUrl));
+            contextMenu.add(openOnCurseForge);
 
             contextMenu.add(new JPopupMenu.Separator());
         }

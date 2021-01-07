@@ -26,6 +26,8 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Constants;
+import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
@@ -81,6 +83,8 @@ public class Mod {
     public List<String> depends;
     public String filePrefix;
     public String description;
+    public CurseMod curseForgeProject;
+    public CurseFile curseForgeFile;
 
     @SerializedName("curse_id")
     public Integer curseModId;

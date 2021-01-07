@@ -64,6 +64,8 @@ public class CurseFile {
         mod.url = downloadUrl;
         mod.version = displayName;
         mod.website = curseMod.websiteUrl;
+        mod.curseForgeProject = curseMod;
+        mod.curseForgeFile = this;
 
         return mod;
     }
