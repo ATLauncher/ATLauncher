@@ -385,7 +385,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 .fromJson(new String(ZipUtil.unpackEntry(manifestFile.toFile(), "manifest.json")), CurseManifest.class);
         curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
 
-        ZipUtil.unpack(manifestFile.toFile(), this.root.toFile());
+        ZipUtil.unpack(manifestFile.toFile(), curseForgeExtractedPath.toFile());
         Files.delete(manifestFile);
 
         generatePackVersionFromCurseForgeManifest();
