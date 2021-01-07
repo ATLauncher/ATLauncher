@@ -34,7 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;

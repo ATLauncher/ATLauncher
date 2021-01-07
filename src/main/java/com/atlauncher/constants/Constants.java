@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.constants;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
+import com.atlauncher.data.LauncherVersion;
 
 public class Constants {
     static {

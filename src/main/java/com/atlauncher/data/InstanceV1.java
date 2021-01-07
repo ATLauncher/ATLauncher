@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;

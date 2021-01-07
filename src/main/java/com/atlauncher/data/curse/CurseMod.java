@@ -19,7 +19,7 @@ package com.atlauncher.data.curse;
 
 import java.util.List;
 
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.json.ModType;
 
 public class CurseMod {

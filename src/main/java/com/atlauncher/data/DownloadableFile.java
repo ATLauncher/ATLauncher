@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.FileSystem;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.OS;
 

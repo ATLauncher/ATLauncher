@@ -173,10 +173,10 @@ public class ImportInstanceDialog extends JDialog {
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
-                    Analytics.sendEvent(url.getText(), "AddFromUrl", "ImportPack");
+                    Analytics.sendEvent(url.getText(), "AddFromUrl", "ImportInstance");
                     dialog.setReturnValue(ImportPackUtils.loadFromUrl(url.getText()));
                 } else if (!filePath.getText().isEmpty()) {
-                    Analytics.sendEvent(new File(filePath.getText()).getName(), "AddFromZip", "ImportPack");
+                    Analytics.sendEvent(new File(filePath.getText()).getName(), "AddFromZip", "ImportInstance");
                     dialog.setReturnValue(ImportPackUtils.loadFromFile(new File(filePath.getText())));
                 } else {
                     dialog.setReturnValue(false);
@@ -188,9 +188,9 @@ public class ImportInstanceDialog extends JDialog {
 
             if (!((boolean) dialog.getReturnValue())) {
                 setVisible(true);
-                DialogManager.okDialog().setTitle(GetText.tr("Failed To Add Pack"))
+                DialogManager.okDialog().setTitle(GetText.tr("Failed To Import Instance"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occured when trying to add CurseForge pack.<br/><br/>Check the console for more information."))
+                                "An error occured when trying to import an instance.<br/><br/>Check the console for more information."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
             } else {

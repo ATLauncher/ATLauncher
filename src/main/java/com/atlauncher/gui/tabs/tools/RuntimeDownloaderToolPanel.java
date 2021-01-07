@@ -28,7 +28,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Runtime;
 import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -50,10 +50,9 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
     public RuntimeDownloaderToolPanel() {
         super(GetText.tr("Runtime Downloader"));
 
-        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-            .text(GetText.tr(
-                "Use this to automatically install and use a recommended version of Java to use with ATLauncher."))
-            .build());
+        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText
+                .tr("Use this to automatically install and use a recommended version of Java to use with ATLauncher."))
+                .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);

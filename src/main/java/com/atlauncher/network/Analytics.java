@@ -19,7 +19,7 @@ package com.atlauncher.network;
 
 import com.atlauncher.App;
 import com.atlauncher.Network;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;

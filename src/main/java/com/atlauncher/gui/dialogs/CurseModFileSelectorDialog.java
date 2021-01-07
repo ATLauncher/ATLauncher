@@ -38,7 +38,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFileDependency;
@@ -201,8 +201,8 @@ public class CurseModFileSelectorDialog extends JDialog {
                 if (dependencies.size() != 0) {
                     dependenciesPanel.removeAll();
 
-                    dependencies.forEach(
-                            dependency -> dependenciesPanel.add(new CurseFileDependencyCard(this, dependency, instance)));
+                    dependencies.forEach(dependency -> dependenciesPanel
+                            .add(new CurseFileDependencyCard(this, dependency, instance)));
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                             (dependencies.size() / 2) + 1));

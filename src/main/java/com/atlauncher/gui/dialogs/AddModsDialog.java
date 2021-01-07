@@ -36,7 +36,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;

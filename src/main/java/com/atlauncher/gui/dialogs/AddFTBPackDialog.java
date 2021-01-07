@@ -36,7 +36,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.modpacksch.ModpacksChPackList;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.gui.card.FTBPackCard;

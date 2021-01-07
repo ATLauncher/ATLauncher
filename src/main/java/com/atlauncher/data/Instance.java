@@ -46,6 +46,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.CurseModLatestFile;

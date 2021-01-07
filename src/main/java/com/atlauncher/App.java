@@ -52,7 +52,7 @@ import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;

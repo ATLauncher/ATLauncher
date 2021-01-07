@@ -29,7 +29,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
 
 public final class PasteUpload implements Callable<String> {

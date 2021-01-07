@@ -31,8 +31,8 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
@@ -73,7 +73,8 @@ public final class CurseForgePackCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.sendEvent(project.name, "Add", "CurseForgePack");
-            ImportPackUtils.loadCurseForgePack(parent, project);
+
+            new InstanceInstallerDialog(parent, project);
         });
 
         viewButton.addActionListener(e -> OS.openWebBrowser(project.websiteUrl));
@@ -81,8 +82,7 @@ public final class CurseForgePackCard extends JPanel {
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
 
-        TitledBorder border = new TitledBorder(null,
-                project.name, TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder border = new TitledBorder(null, project.name, TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
     }

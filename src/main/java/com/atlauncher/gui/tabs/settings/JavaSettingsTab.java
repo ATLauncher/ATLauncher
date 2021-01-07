@@ -38,8 +38,8 @@ import javax.swing.SpinnerNumberModel;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;

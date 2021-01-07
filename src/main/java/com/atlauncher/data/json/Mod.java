@@ -25,7 +25,7 @@ import java.util.List;
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.managers.DialogManager;

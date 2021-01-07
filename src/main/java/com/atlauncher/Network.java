@@ -29,7 +29,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.listener.ProgressListener;
 import com.atlauncher.network.DebugLoggingInterceptor;

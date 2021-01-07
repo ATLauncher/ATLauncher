@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -30,12 +31,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
+
+import okhttp3.CacheControl;
 
 @SuppressWarnings("serial")
 public final class FTBPackCard extends JPanel {
@@ -73,7 +77,13 @@ public final class FTBPackCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.sendEvent(pack.name, "Add", "FTBPack");
-            ImportPackUtils.loadModpacksChPack(parent, pack.id);
+
+            ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL, pack.id))
+                    .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                    .asClass(ModpacksChPackManifest.class);
+
+            new InstanceInstallerDialog(parent, packManifest);
         });
 
         // The Feed The Beast website only displays modpacks with the 'FTB'

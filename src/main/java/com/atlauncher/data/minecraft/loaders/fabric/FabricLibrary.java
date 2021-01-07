@@ -22,7 +22,7 @@ import java.nio.file.Path;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;

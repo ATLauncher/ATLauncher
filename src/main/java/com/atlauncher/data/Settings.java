@@ -34,6 +34,7 @@ import java.util.UUID;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;

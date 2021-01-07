@@ -137,7 +137,7 @@ in your `.properties` file.
 ## Plugging In Your Data
 
 To get started with the code and plug in your own data, you need to edit the
-`/src/main/java/com/atlauncher/data/Constants.java` file.
+`/src/main/java/com/atlauncher/constants/Constants.java` file.
 
 By using this source code you don't get permissions to use our CDN/files/assets/modpacks. See the License section at the
 bottom for more.

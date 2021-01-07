@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.LoginResponse;

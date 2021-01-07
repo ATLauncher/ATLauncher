@@ -17,7 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Window;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -25,104 +24,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.data.APIResponse;
-import com.atlauncher.data.ATLauncherApiCurseModpack;
-import com.atlauncher.data.Constants;
-import com.atlauncher.data.curse.CurseFile;
-import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.pack.CurseManifest;
-import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
-import com.google.gson.reflect.TypeToken;
 
 import org.zeroturnaround.zip.ZipUtil;
 
-import okhttp3.CacheControl;
-
 public class ImportPackUtils {
-    /**
-     * Can have multiple formats:
-     *
-     * Simple root url:
-     *
-     * https://www.curseforge.com/minecraft/modpacks/madpack-4
-     *
-     * Main install button on a project:
-     *
-     * https://www.curseforge.com/minecraft/modpacks/madpack-4/download?client=y
-     *
-     * Specific file buttons:
-     *
-     * https://www.curseforge.com/minecraft/modpacks/madpack-4/download/2719411
-     * https://www.curseforge.com/minecraft/modpacks/madpack-4/download/2719411?client=y
-     * https://www.curseforge.com/minecraft/modpacks/madpack-4/files/2719411
-     */
-    public static boolean loadFromCurseForgeUrl(String url) {
-        if (!url.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
-            LogManager.error("Cannot install as the url was not a Curse modpack url");
-            return false;
-        }
-
-        Pattern pattern = Pattern.compile(
-                "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
-        Matcher matcher = pattern.matcher(url);
-
-        if (!matcher.find() || matcher.groupCount() < 2) {
-            LogManager.error("Cannot install as the url was not a valid Curse modpack url");
-            return false;
-        }
-
-        String packSlug = matcher.group(1);
-        Integer projectId;
-        Integer fileId = null;
-
-        if (matcher.groupCount() == 2 && matcher.group(2) != null) {
-            fileId = Integer.parseInt(matcher.group(2));
-        }
-
-        java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiCurseModpack>>() {
-        }.getType();
-
-        APIResponse<ATLauncherApiCurseModpack> curseModpackInfo = com.atlauncher.network.Download.build()
-                .setUrl(String.format("%scurse-modpack/%s", Constants.API_BASE_URL, packSlug))
-                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asType(type);
-
-        if (curseModpackInfo.wasError() || curseModpackInfo.getData() == null
-                || curseModpackInfo.getData().id == null) {
-            LogManager.error(
-                    "Cannot install as we couldn't convert the slug to a project id. Try using a zip file download instead.");
-            return false;
-        }
-
-        projectId = curseModpackInfo.getData().id;
-
-        if (fileId == null) {
-            fileId = CurseApi.getModById(projectId).defaultFileId;
-        }
-
-        if (projectId == null || fileId == null) {
-            LogManager.error(
-                    "Cannot install as the id's couldn't be found. Try using a specific files install link instead.");
-            return false;
-        }
-
-        CurseFile curseFile = CurseApi.getFileForMod(projectId, fileId);
-        Path tempZip = FileSystem.TEMP.resolve(curseFile.fileName);
-
-        return loadFromUrl(new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip).size(curseFile.fileLength)
-                .fingerprint(curseFile.packageFingerprint), projectId, fileId);
-    }
-
     public static boolean loadFromUrl(String url) {
         return loadFromUrl(new Download().setUrl(url).downloadTo(FileSystem.TEMP.resolve("import.zip")), null, null);
     }
@@ -222,28 +136,6 @@ public class ImportPackUtils {
             LogManager.logStackTrace("Failed to install MultiMC pack", e);
             return false;
         }
-
-        return true;
-    }
-
-    public static boolean loadModpacksChPack(Window parent, int packId) {
-        try {
-            ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
-                    .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL, packId))
-                    .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                    .asClass(ModpacksChPackManifest.class);
-
-            new InstanceInstallerDialog(parent, packManifest);
-        } catch (Exception e) {
-            LogManager.logStackTrace("Failed to install Modpacks.ch pack", e);
-            return false;
-        }
-
-        return true;
-    }
-
-    public static boolean loadCurseForgePack(Window parent, CurseMod curseForgeProject) {
-        new InstanceInstallerDialog(parent, curseForgeProject);
 
         return true;
     }

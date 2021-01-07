@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.atlauncher.Gsons;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseFingerprint;
 import com.atlauncher.data.curse.CurseMod;

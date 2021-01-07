@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Update;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;

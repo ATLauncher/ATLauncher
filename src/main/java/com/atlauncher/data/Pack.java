@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;

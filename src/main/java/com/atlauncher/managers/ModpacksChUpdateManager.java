@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;

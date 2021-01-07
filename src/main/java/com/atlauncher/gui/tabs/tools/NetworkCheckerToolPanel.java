@@ -29,7 +29,7 @@ import javax.swing.JLabel;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.Constants;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -52,10 +52,10 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         super(GetText.tr("Network Checker"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-            .text(GetText
-                .tr("This tool does various tests on your network and determines any issues that may pop up with "
-                    + "connecting to our file servers and to other servers."))
-            .build());
+                .text(GetText.tr(
+                        "This tool does various tests on your network and determines any issues that may pop up with "
+                                + "connecting to our file servers and to other servers."))
+                .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
@@ -84,38 +84,48 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 StringBuilder results = new StringBuilder();
 
                 // Connection to CDN
-                results.append("Ping results to " + Constants.DOWNLOAD_HOST + " was ").append(Utils.pingAddress(Constants.DOWNLOAD_HOST));
+                results.append("Ping results to " + Constants.DOWNLOAD_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.DOWNLOAD_HOST));
                 dialog.doneTask();
 
-                results.append("Tracert to " + Constants.DOWNLOAD_HOST + " was ").append(Utils.traceRoute(Constants.DOWNLOAD_HOST)).append("\n\n----------------\n\n");
+                results.append("Tracert to " + Constants.DOWNLOAD_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.DOWNLOAD_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Connection to ATLauncher API
-                results.append("Ping results to " + Constants.API_HOST + " was ").append(Utils.pingAddress(Constants.API_HOST));
+                results.append("Ping results to " + Constants.API_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.API_HOST));
                 dialog.doneTask();
 
-                results.append("Tracert to " + Constants.API_HOST + " was ").append(Utils.traceRoute(Constants.API_HOST)).append("\n\n----------------\n\n");
+                results.append("Tracert to " + Constants.API_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.API_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Connection to Curse API
-                results.append("Ping results to " + Constants.CURSE_HOST + " was ").append(Utils.pingAddress(Constants.CURSE_HOST));
+                results.append("Ping results to " + Constants.CURSE_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.CURSE_HOST));
                 dialog.doneTask();
 
-                results.append("Tracert to " + Constants.CURSE_HOST + " was ").append(Utils.traceRoute(Constants.CURSE_HOST)).append("\n\n----------------\n\n");
+                results.append("Tracert to " + Constants.CURSE_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.CURSE_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Connection to Fabric CDN
-                results.append("Ping results to " + Constants.FABRIC_HOST + " was ").append(Utils.pingAddress(Constants.FABRIC_HOST));
+                results.append("Ping results to " + Constants.FABRIC_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.FABRIC_HOST));
                 dialog.doneTask();
 
-                results.append("Tracert to " + Constants.FABRIC_HOST + " was ").append(Utils.traceRoute(Constants.FABRIC_HOST)).append("\n\n----------------\n\n");
+                results.append("Tracert to " + Constants.FABRIC_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.FABRIC_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Connection to Forge CDN
-                results.append("Ping results to " + Constants.FORGE_HOST + " was ").append(Utils.pingAddress(Constants.FORGE_HOST));
+                results.append("Ping results to " + Constants.FORGE_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.FORGE_HOST));
                 dialog.doneTask();
 
-                results.append("Tracert to " + Constants.FORGE_HOST + " was ").append(Utils.traceRoute(Constants.FORGE_HOST)).append("\n\n----------------\n\n");
+                results.append("Tracert to " + Constants.FORGE_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.FORGE_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Resolution of key services
@@ -123,9 +133,11 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                     try {
                         String resolvedHosts = Arrays.stream(InetAddress.getAllByName(host))
                                 .map(InetAddress::getHostAddress).collect(Collectors.joining(", "));
-                        results.append("Resolution of ").append(host).append(" was ").append(resolvedHosts).append("\n\n");
+                        results.append("Resolution of ").append(host).append(" was ").append(resolvedHosts)
+                                .append("\n\n");
                     } catch (Exception e1) {
-                        results.append("Resolution of ").append(host).append(" failed: ").append(e1.toString()).append("\n\n");
+                        results.append("Resolution of ").append(host).append(" failed: ").append(e1.toString())
+                                .append("\n\n");
                     }
 
                     dialog.doneTask();
