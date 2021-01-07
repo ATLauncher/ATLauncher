@@ -40,6 +40,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -57,12 +58,15 @@ import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
+import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
@@ -128,23 +132,31 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean hasUpdate() {
-        Pack pack = this.getPack();
+        if (this.isExternalPack()) {
+            if (isModpacksChPack()) {
+                ModpacksChPackVersion latestVersion = Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(this);
 
-        if (pack != null) {
-            if (pack.hasVersions() && !this.launcher.isDev) {
-                // Lastly check if the current version we installed is different than the latest
-                // version of the Pack and that the latest version of the Pack is not restricted
-                // to disallow updates.
-                if (!pack.getLatestVersion().version.equalsIgnoreCase(this.launcher.version)
-                        && !pack.isLatestVersionNoUpdate()) {
-                    return true;
-                }
+                return latestVersion != null && latestVersion.id != this.launcher.modpacksChPackVersionManifest.id;
             }
+        } else {
+            Pack pack = this.getPack();
 
-            if (this.launcher.isDev && (this.launcher.hash != null)) {
-                PackVersion devVersion = pack.getDevVersionByName(this.launcher.version);
-                if (devVersion != null && !devVersion.hashMatches(this.launcher.hash)) {
-                    return true;
+            if (pack != null) {
+                if (pack.hasVersions() && !this.launcher.isDev) {
+                    // Lastly check if the current version we installed is different than the latest
+                    // version of the Pack and that the latest version of the Pack is not restricted
+                    // to disallow updates.
+                    if (!pack.getLatestVersion().version.equalsIgnoreCase(this.launcher.version)
+                            && !pack.isLatestVersionNoUpdate()) {
+                        return true;
+                    }
+                }
+
+                if (this.launcher.isDev && (this.launcher.hash != null)) {
+                    PackVersion devVersion = pack.getDevVersionByName(this.launcher.version);
+                    if (devVersion != null && !devVersion.hashMatches(this.launcher.hash)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -221,10 +233,18 @@ public class Instance extends MinecraftVersion {
     public void ignoreUpdate() {
         String version;
 
-        if (this.launcher.isDev) {
-            version = getLatestVersion().hash;
+        if (isExternalPack()) {
+            if (isModpacksChPack()) {
+                version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
+            }
+
+            return;
         } else {
-            version = getLatestVersion().version;
+            if (this.launcher.isDev) {
+                version = getLatestVersion().hash;
+            } else {
+                version = getLatestVersion().version;
+            }
         }
 
         if (!hasUpdateBeenIgnored(version)) {
@@ -234,6 +254,14 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean hasLatestUpdateBeenIgnored() {
+        if (isExternalPack()) {
+            if (isModpacksChPack()) {
+                return hasUpdateBeenIgnored(Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id));
+            }
+
+            return false;
+        }
+
         String version;
 
         if (this.launcher.isDev) {
@@ -245,7 +273,7 @@ public class Instance extends MinecraftVersion {
         return hasUpdateBeenIgnored(version);
     }
 
-    public boolean hasUpdateBeenIgnored(String version) {
+    private boolean hasUpdateBeenIgnored(String version) {
         if (version == null || this.launcher.ignoredUpdates.size() == 0) {
             return false;
         }
@@ -1075,5 +1103,41 @@ public class Instance extends MinecraftVersion {
 
     public int getPermGen() {
         return launcher.requiredPermGen;
+    }
+
+    public boolean isCurseForgePack() {
+        return launcher.curseManifest != null;
+    }
+
+    public boolean isMultiMcImport() {
+        return launcher.multiMCManifest != null;
+    }
+
+    public boolean isModpacksChPack() {
+        return launcher.modpacksChPackManifest != null && launcher.modpacksChPackVersionManifest != null;
+    }
+
+    public boolean isExternalPack() {
+        return isCurseForgePack() || isModpacksChPack() || isMultiMcImport();
+    }
+
+    public boolean isUpdatableExternalPack() {
+        return isExternalPack() && isModpacksChPack();
+    }
+
+    public String getAnalyticsCategory() {
+        if (isCurseForgePack()) {
+            return "CurseForgeInstance";
+        }
+
+        if (isModpacksChPack()) {
+            return "ModpacksChInstance";
+        }
+
+        return "Instance";
+    }
+
+    public void update() {
+        new InstanceInstallerDialog(this, true, false, null, null, true, null, null, App.launcher.getParent());
     }
 }

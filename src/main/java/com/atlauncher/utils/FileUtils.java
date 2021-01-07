@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.stream.Stream;
 
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
@@ -160,5 +161,15 @@ public class FileUtils {
             LogManager.error("Couldn't move file " + from + " to " + to);
             return false;
         }
+    }
+
+    public static boolean directoryIsEmpty(Path path) throws IOException {
+        if (Files.isDirectory(path)) {
+            try (Stream<Path> entries = Files.list(path)) {
+                return !entries.findFirst().isPresent();
+            }
+        }
+
+        return false;
     }
 }

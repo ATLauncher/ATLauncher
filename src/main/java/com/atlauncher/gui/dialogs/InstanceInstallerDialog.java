@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.curse.CurseMod;
@@ -85,7 +87,7 @@ public class InstanceInstallerDialog extends JDialog {
     private int loaderVersionLength = 0;
     private boolean isReinstall = false;
     private boolean isServer = false;
-    private final Pack pack;
+    private Pack pack;
     private Instance instance = null;
     private CurseManifest curseManifest = null;
     private ModpacksChPackManifest modpacksChPackManifest = null;
@@ -148,112 +150,17 @@ public class InstanceInstallerDialog extends JDialog {
         Analytics.sendScreenView("Instance Installer Dialog");
 
         if (object instanceof Pack) {
-            pack = (Pack) object;
-            // #. {0} is the name of the pack the user is installing
-            setTitle(GetText.tr("Installing {0}", pack.getName()));
-            if (isServer) {
-                // #. {0} is the name of the pack the user is installing
-                setTitle(GetText.tr("Installing {0} Server", pack.getName()));
-                this.isServer = true;
-            }
+            handlePackInstall(object, isServer);
         } else if (object instanceof CurseManifest) {
-            curseManifest = (CurseManifest) object;
-
-            pack = new Pack();
-            pack.name = curseManifest.name;
-
-            if (curseManifest.projectID != null) {
-                CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
-
-                curseManifest.websiteUrl = cursePack.websiteUrl;
-
-                pack.id = curseManifest.projectID;
-                pack.description = cursePack.summary;
-                pack.cursePack = cursePack;
-            }
-
-            PackVersion packVersion = new PackVersion();
-            packVersion.version = curseManifest.version;
-
-            try {
-                packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseManifest.minecraft.version);
-            } catch (InvalidMinecraftVersion e) {
-                LogManager.error(e.getMessage());
-                return;
-            }
-
-            packVersion.hasLoader = true;
-
-            pack.versions = Collections.singletonList(packVersion);
-
-            isReinstall = false;
-
-            // #. {0} is the name of the pack the user is installing
-            setTitle(GetText.tr("Installing {0}", curseManifest.name));
+            handleCurseForgeInstall(object);
         } else if (object instanceof ModpacksChPackManifest) {
-            modpacksChPackManifest = (ModpacksChPackManifest) object;
-
-            pack = new Pack();
-            pack.name = modpacksChPackManifest.name;
-            pack.description = modpacksChPackManifest.description;
-
-            ModpacksChPackLink link = modpacksChPackManifest.links.stream()
-                    .filter(l -> l.type == ModpacksChPackLinkType.WEBSITE).findFirst().orElse(null);
-
-            if (link != null) {
-                pack.websiteURL = link.link;
-            }
-
-            pack.modpacksChPack = modpacksChPackManifest;
-
-            pack.versions = modpacksChPackManifest.versions.stream()
-                    .sorted(Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
-                    .map(v -> {
-                        PackVersion packVersion = new PackVersion();
-                        packVersion.version = v.name;
-                        packVersion.hasLoader = true;
-                        packVersion._modpacksChId = v.id;
-                        return packVersion;
-                    }).filter(pv -> pv != null).collect(Collectors.toList());
-
-            isReinstall = false;
-
-            // #. {0} is the name of the pack the user is installing
-            setTitle(GetText.tr("Installing {0}", modpacksChPackManifest.name));
+            handleModpacksChInstall(object);
         } else if (object instanceof MultiMCManifest) {
-            multiMCManifest = (MultiMCManifest) object;
-
-            pack = new Pack();
-            pack.name = multiMCManifest.config.name;
-
-            PackVersion packVersion = new PackVersion();
-            packVersion.version = "1";
-
-            try {
-                packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(multiMCManifest.components.stream()
-                        .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst().get().version);
-            } catch (InvalidMinecraftVersion e) {
-                LogManager.error(e.getMessage());
-                return;
-            }
-
-            packVersion.hasLoader = multiMCManifest.components.stream()
-                    .anyMatch(c -> c.uid.equalsIgnoreCase("net.fabricmc.intermediary")
-                            || c.uid.equalsIgnoreCase("net.fabricmc.intermediary"));
-
-            pack.versions = Collections.singletonList(packVersion);
-
-            isReinstall = false;
-
-            // #. {0} is the name of the pack the user is installing
-            setTitle(GetText.tr("Installing {0}", multiMCManifest.config.name));
+            handleMultiMcInstall(object);
         } else {
-            instance = (Instance) object;
-            pack = instance.getPack();
-            isReinstall = true; // We're reinstalling
-            // #. {0} is the name of the pack the user is installing
-            setTitle(GetText.tr("Reinstalling {0}", instance.launcher.name));
+            handleInstanceInstall(object);
         }
+
         setSize(450, 240);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
@@ -265,8 +172,8 @@ public class InstanceInstallerDialog extends JDialog {
 
         // Top Panel Stuff
         JPanel top = new JPanel();
-        top.add(new JLabel(
-                ((isReinstall) ? GetText.tr("Reinstalling") : GetText.tr("Installing")) + " " + pack.getName()));
+        top.add(new JLabel(((isReinstall) ? (isUpdate ? GetText.tr("Updating") : GetText.tr("Reinstalling"))
+                : GetText.tr("Installing")) + " " + pack.getName()));
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -366,10 +273,13 @@ public class InstanceInstallerDialog extends JDialog {
                 }
             });
 
-            saveModsLabel.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
-                    .equalsIgnoreCase(this.instance.id));
-            saveModsCheckbox.setVisible(!((PackVersion) versionsDropDown.getSelectedItem()).minecraftVersion.version
-                    .equalsIgnoreCase(this.instance.id));
+            PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
+            Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
+
+            saveModsLabel.setVisible(
+                    minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
+            saveModsCheckbox.setVisible(
+                    minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
 
             middle.add(saveModsCheckbox, gbc);
         }
@@ -659,6 +569,133 @@ public class InstanceInstallerDialog extends JDialog {
         setVisible(true);
     }
 
+    private void handlePackInstall(Object object, final boolean isServer) {
+        pack = (Pack) object;
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", pack.getName()));
+        if (isServer) {
+            // #. {0} is the name of the pack the user is installing
+            setTitle(GetText.tr("Installing {0} Server", pack.getName()));
+            this.isServer = true;
+        }
+    }
+
+    private void handleCurseForgeInstall(Object object) {
+        curseManifest = (CurseManifest) object;
+
+        pack = new Pack();
+        pack.name = curseManifest.name;
+
+        if (curseManifest.projectID != null) {
+            CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
+
+            curseManifest.websiteUrl = cursePack.websiteUrl;
+
+            pack.id = curseManifest.projectID;
+            pack.description = cursePack.summary;
+            pack.cursePack = cursePack;
+        }
+
+        PackVersion packVersion = new PackVersion();
+        packVersion.version = curseManifest.version;
+
+        try {
+            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseManifest.minecraft.version);
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.error(e.getMessage());
+            return;
+        }
+
+        packVersion.hasLoader = true;
+
+        pack.versions = Collections.singletonList(packVersion);
+
+        isReinstall = false;
+
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", curseManifest.name));
+    }
+
+    private void handleModpacksChInstall(Object object) {
+        modpacksChPackManifest = (ModpacksChPackManifest) object;
+
+        pack = new Pack();
+        pack.name = modpacksChPackManifest.name;
+        pack.description = modpacksChPackManifest.description;
+
+        ModpacksChPackLink link = modpacksChPackManifest.links.stream()
+                .filter(l -> l.type == ModpacksChPackLinkType.WEBSITE).findFirst().orElse(null);
+
+        if (link != null) {
+            pack.websiteURL = link.link;
+        }
+
+        pack.modpacksChPack = modpacksChPackManifest;
+
+        pack.versions = modpacksChPackManifest.versions.stream()
+                .sorted(Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
+                .map(v -> {
+                    PackVersion packVersion = new PackVersion();
+                    packVersion.version = v.name;
+                    packVersion.hasLoader = true;
+                    packVersion._modpacksChId = v.id;
+                    return packVersion;
+                }).filter(pv -> pv != null).collect(Collectors.toList());
+
+        isReinstall = false;
+
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", modpacksChPackManifest.name));
+    }
+
+    private void handleMultiMcInstall(Object object) {
+        multiMCManifest = (MultiMCManifest) object;
+
+        pack = new Pack();
+        pack.name = multiMCManifest.config.name;
+
+        PackVersion packVersion = new PackVersion();
+        packVersion.version = "1";
+
+        try {
+            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(multiMCManifest.components.stream()
+                    .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst().get().version);
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.error(e.getMessage());
+            return;
+        }
+
+        packVersion.hasLoader = multiMCManifest.components.stream()
+                .anyMatch(c -> c.uid.equalsIgnoreCase("net.fabricmc.intermediary")
+                        || c.uid.equalsIgnoreCase("net.fabricmc.intermediary"));
+
+        pack.versions = Collections.singletonList(packVersion);
+
+        isReinstall = false;
+
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", multiMCManifest.config.name));
+    }
+
+    private void handleInstanceInstall(Object object) {
+        instance = (Instance) object;
+
+        if (instance.isModpacksChPack()) {
+            handleModpacksChInstall(instance.launcher.modpacksChPackManifest);
+        } else {
+            pack = instance.getPack();
+        }
+
+        isReinstall = true; // We're reinstalling
+
+        // #. {0} is the name of the pack the user is installing
+        if (isUpdate) {
+            setTitle(GetText.tr("Updating {0}", instance.launcher.name));
+        } else {
+            setTitle(GetText.tr("Reinstalling {0}", instance.launcher.name));
+        }
+    }
+
     private GridBagConstraints setupVersionsDropdown(GridBagConstraints gbc) {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabel versionLabel = new JLabel(GetText.tr("Version To Install") + ": ");
@@ -725,10 +762,13 @@ public class InstanceInstallerDialog extends JDialog {
                 updateLoaderVersions((PackVersion) e.getItem());
 
                 if (!isServer && isReinstall) {
-                    this.saveModsLabel.setVisible(
-                            !((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(this.instance.id));
-                    this.saveModsCheckbox.setVisible(
-                            !((PackVersion) e.getItem()).minecraftVersion.version.equalsIgnoreCase(this.instance.id));
+                    PackVersion packVersion = ((PackVersion) e.getItem());
+                    Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
+
+                    saveModsLabel.setVisible(minecraftVersion.isPresent()
+                            && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
+                    saveModsCheckbox.setVisible(minecraftVersion.isPresent()
+                            && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
                 }
             }
         });

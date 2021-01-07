@@ -29,6 +29,7 @@ import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.News;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
+import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 
 public final class Data {
     public static final List<AbstractAccount> ACCOUNTS = new LinkedList<>();
@@ -46,4 +47,7 @@ public final class Data {
 
     // Tools related things
     public static final List<MinecraftServer> CHECKING_SERVERS = new LinkedList<>();
+
+    // Modpacks.ch background update checking
+    public static final Map<Instance, ModpacksChPackVersion> MODPACKS_CH_INSTANCE_LATEST_VERSION = new HashMap<>();
 }

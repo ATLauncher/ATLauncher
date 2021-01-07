@@ -37,3 +37,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Make base domain customisable more easily
 - Move default images into the jar
 - Allow accepting all ssl certs
+- Update SUPPORT.md

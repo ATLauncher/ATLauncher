@@ -48,6 +48,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -183,6 +184,8 @@ public class Launcher {
         if (App.settings.enableServerChecker) {
             CheckingServersManager.startCheckingServers();
         }
+
+        checkForExternalPackUpdates();
 
         if (App.settings.enableLogs && App.settings.enableAnalytics) {
             Analytics.startSession();
@@ -346,6 +349,13 @@ public class Launcher {
         return downloads.stream().anyMatch(com.atlauncher.network.Download::needToDownload);
     }
 
+    private void checkForExternalPackUpdates() {
+        if (InstanceManager.getInstances().stream().anyMatch(
+                i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)) {
+            ModpacksChUpdateManager.checkForUpdates();
+        }
+    }
+
     public void reloadLauncherData() {
         final JDialog dialog = new JDialog(this.parent, ModalityType.APPLICATION_MODAL);
         dialog.setSize(300, 100);
@@ -359,6 +369,7 @@ public class Launcher {
                 downloadUpdatedFiles(); // Downloads updated files on the server
             }
             checkForLauncherUpdate();
+            checkForExternalPackUpdates();
             addExecutableBitToTools();
             NewsManager.loadNews(); // Load the news
             reloadNewsPanel(); // Reload news panel

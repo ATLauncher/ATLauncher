@@ -13,8 +13,8 @@ If you're looking for support for:
 * Launcher install issues
 * Pack install issues
 
-Then please visit our [Discord server](https://atl.pw/discord) and post in the `#support` channel, where the community
-and contributors to ATLauncher will be able to help you resolve your issue.
+Then please visit our [Discord server](https://atl.pw/discord) and post in one of the support channels, where the
+community and contributors to ATLauncher will be able to help you resolve your issue.
 
 If we find that it's an issue with the launcher code itself, then we will raise issues (or ask you to raise them) in the
 correct place once triaged.
@@ -33,7 +33,8 @@ make the changes you may be looking for/having.
 Each modpack is developed by a person (or team) and they're responsible for providing support. Your first step should be
 to reach out to the person (or team) who created the modpack.
 
-You can generally find contact information on the launcher or website information pages for the pack.
+You can generally find contact information on the launcher or website information pages for the pack. Use the `Get Help`
+button on the instance within ATLauncher to find places to get help.
 
-If you fail to find support then you can visit our [Discord server](https://atl.pw/discord) and post in the `#support`
-channel.
+If you fail to find support then you can visit our [Discord server](https://atl.pw/discord) and post in one of the
+support channels.

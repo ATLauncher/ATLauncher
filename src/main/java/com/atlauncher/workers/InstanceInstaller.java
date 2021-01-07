@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1460,6 +1461,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireTask(GetText.tr("Creating Config Directories"));
 
             modpacksChPackVersionManifest.files.stream()
+                    .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
                     .map(file -> root.resolve(
                             file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path))
                     .forEach(path -> {
@@ -1524,9 +1526,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadInstanceImage() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Downloading Instance Image"));
 
         if (curseForgeManifest != null || this.pack.cursePack != null) {
+            fireTask(GetText.tr("Downloading Instance Image"));
             CurseAttachment attachment = this.pack.cursePack.attachments.stream().filter(a -> a.isDefault).findFirst()
                     .orElse(null);
 
@@ -1539,7 +1541,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 imageDownload.downloadFile();
             }
         } else if (modpacksChPackManifest != null) {
-
+            fireTask(GetText.tr("Downloading Instance Image"));
             ModpacksChPackArt art = this.modpacksChPackManifest.art.stream()
                     .filter(a -> a.type == ModpacksChPackArtType.SQUARE).findFirst().orElse(null);
 
@@ -1785,6 +1787,39 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         }
                     }
                 }
+            }
+
+            // delete all files downloaded previously if modpacks.ch pack
+            if (isReinstall && instance != null && instance.isModpacksChPack()) {
+                instance.launcher.modpacksChPackVersionManifest.files.stream()
+                        .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
+                        .map(file -> instance.ROOT.resolve(
+                                (file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path)
+                                        + file.name))
+                        .forEach(path -> {
+                            if (Files.exists(path) && !Files.isDirectory(path)) {
+                                try {
+                                    Files.delete(path);
+                                } catch (IOException e) {
+                                    LogManager.logStackTrace(e);
+                                }
+                            }
+                        });
+
+                // now delete all the empty directories left over to cleanup
+                instance.launcher.modpacksChPackVersionManifest.files.stream()
+                        .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
+                        .map(file -> instance.ROOT.resolve(
+                                file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path))
+                        .distinct().sorted(Comparator.comparingInt(Path::getNameCount).reversed()).forEach(path -> {
+                            try {
+                                if (Files.exists(path) && FileUtils.directoryIsEmpty(path)) {
+                                    Files.delete(path);
+                                }
+                            } catch (IOException e) {
+                                LogManager.logStackTrace(e);
+                            }
+                        });
             }
         }
 
