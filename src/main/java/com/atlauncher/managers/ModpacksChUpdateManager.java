@@ -37,9 +37,12 @@ public class ModpacksChUpdateManager {
     public static void checkForUpdates() {
         PerformanceManager.start();
         LogManager.info("Checking for updates to modpacks.ch instances");
-        Data.INSTANCES.parallelStream().filter(
+
+        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream().filter(
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)
-                .forEach(i -> {
+                .map(i -> {
+                    boolean wasUpdated = false;
+
                     ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                             .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                     i.launcher.modpacksChPackManifest.id))
@@ -50,10 +53,22 @@ public class ModpacksChUpdateManager {
                             Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
                             .findFirst().orElse(null);
 
-                    Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
-                });
+                    // if there is a change to the latestversion for an instance (but not a first
+                    // time write), then refresh instances panel
+                    if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
+                            && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                        wasUpdated = true;
+                    }
 
-        App.launcher.reloadInstancesPanel();
+                    Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
+
+                    return wasUpdated;
+                }).anyMatch(b -> b);
+
+        if (refreshInstancesPanel) {
+            App.launcher.reloadInstancesPanel();
+        }
+
         PerformanceManager.end();
     }
 }

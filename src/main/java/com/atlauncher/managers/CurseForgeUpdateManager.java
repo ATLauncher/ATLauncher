@@ -34,19 +34,35 @@ public class CurseForgeUpdateManager {
     public static void checkForUpdates() {
         PerformanceManager.start();
         LogManager.info("Checking for updates to CurseForge instances");
-        Data.INSTANCES.parallelStream().filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).forEach(i -> {
-            CurseMod curseForgeMod = CurseApi
-                    .getModById(i.launcher.curseManifest != null ? i.launcher.curseManifest.projectID
-                            : i.launcher.curseForgeProject.id);
 
-            CurseModLatestFile latestVersion = curseForgeMod.latestFiles.stream()
-                    .sorted(Comparator.comparingInt((CurseModLatestFile file) -> file.id).reversed()).findFirst()
-                    .orElse(null);
+        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
+                .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
+                    boolean wasUpdated = false;
 
-            Data.CURSEFORGE_INSTANCE_LATEST_VERSION.put(i, latestVersion);
-        });
+                    CurseMod curseForgeMod = CurseApi
+                            .getModById(i.launcher.curseManifest != null ? i.launcher.curseManifest.projectID
+                                    : i.launcher.curseForgeProject.id);
 
-        App.launcher.reloadInstancesPanel();
+                    CurseModLatestFile latestVersion = curseForgeMod.latestFiles.stream()
+                            .sorted(Comparator.comparingInt((CurseModLatestFile file) -> file.id).reversed())
+                            .findFirst().orElse(null);
+
+                    // if there is a change to the latestversion for an instance (but not a first
+                    // time write), then refresh instances panel
+                    if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
+                            && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                        wasUpdated = true;
+                    }
+
+                    Data.CURSEFORGE_INSTANCE_LATEST_VERSION.put(i, latestVersion);
+
+                    return wasUpdated;
+                }).anyMatch(b -> b);
+
+        if (refreshInstancesPanel) {
+            App.launcher.reloadInstancesPanel();
+        }
+
         PerformanceManager.end();
     }
 }

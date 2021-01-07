@@ -332,6 +332,10 @@ public class Launcher {
     public boolean checkForUpdatedFiles() {
         this.launcherFiles = null;
 
+        App.TASKPOOL.execute(() -> {
+            checkForExternalPackUpdates();
+        });
+
         return hasUpdatedFiles();
     }
 
