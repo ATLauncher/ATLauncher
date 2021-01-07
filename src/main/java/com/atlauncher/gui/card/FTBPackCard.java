@@ -88,7 +88,7 @@ public final class FTBPackCard extends JPanel {
 
         // The Feed The Beast website only displays modpacks with the 'FTB'
         // tag present, so we should disable the view button for packs without.
-        if (pack.hasTag("FTB")) {
+        if (!pack.hasTag("FTB")) {
             viewButton.setEnabled(false);
         }
 
