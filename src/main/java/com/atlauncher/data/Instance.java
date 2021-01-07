@@ -1155,4 +1155,12 @@ public class Instance extends MinecraftVersion {
 
         return launcher.curseForgeProject != null;
     }
+
+    public boolean isUpdatable() {
+        if (isExternalPack()) {
+            return isUpdatableExternalPack();
+        }
+
+        return launcher.packId != 0 && getPack() != null;
+    }
 }

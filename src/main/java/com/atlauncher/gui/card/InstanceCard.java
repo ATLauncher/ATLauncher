@@ -163,9 +163,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             this.getHelpButton.setVisible(false);
         }
 
-        if (instance.isExternalPack() && !instance.isUpdatableExternalPack()) {
-            this.reinstallButton.setVisible(false);
-            this.updateButton.setVisible(false);
+        if (!instance.isUpdatable()) {
+            this.reinstallButton.setVisible(instance.isUpdatable());
+            this.updateButton.setVisible(instance.isUpdatable());
         }
 
         if (instance.isExternalPack()) {
@@ -399,8 +399,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
-        this.openWebsite.addActionListener(e -> OS
-                .openWebBrowser(instance.isCurseForgePack() ? instance.launcher.curseForgeProject.websiteUrl : instance.launcher.modpacksChPackManifest.getWebsiteUrl()));
+        this.openWebsite.addActionListener(
+                e -> OS.openWebBrowser(instance.isCurseForgePack() ? instance.launcher.curseForgeProject.websiteUrl
+                        : instance.launcher.modpacksChPackManifest.getWebsiteUrl()));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings",
@@ -500,17 +501,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             (instance.getPack() != null && !instance.getPack().system) && !instance.isExternalPack()
                                     && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
 
-                    if (instance.isUpdatableExternalPack()) {
-                        updateItem.setVisible(false);
-                    }
-
-                    if (!instance.hasUpdate()) {
-                        updateItem.setEnabled(false);
-                    }
-
-                    if (!instance.launcher.isPlayable) {
-                        updateItem.setEnabled(false);
-                    }
+                    updateItem.setVisible(instance.isUpdatable());
+                    updateItem.setEnabled(instance.hasUpdate());
+                    updateItem.setEnabled(instance.launcher.isPlayable);
 
                     rightClickMenu.show(image, e.getX(), e.getY());
 
