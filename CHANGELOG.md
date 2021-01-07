@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add support for modpacks.ch (FTB) packs [#392]
 - Add suport for updating CurseForge packs [#393]
 - Add in pack browser for CurseForge packs [#394]
+- Sort mods in edit mods dialog in alphabetical order
 
 ### Fixes
 - Fix exported instances including disabled mods [#420]

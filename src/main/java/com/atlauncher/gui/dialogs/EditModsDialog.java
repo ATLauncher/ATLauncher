@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -351,7 +352,7 @@ public class EditModsDialog extends JDialog {
 
     private void loadMods() {
         List<DisableableMod> mods = instance.launcher.mods.stream().filter(DisableableMod::wasSelected)
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparing(m -> m.name)).collect(Collectors.toList());
         enabledMods = new ArrayList<>();
         disabledMods = new ArrayList<>();
         int dCount = 0;
