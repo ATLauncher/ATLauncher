@@ -30,6 +30,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceV1;
+import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -65,7 +66,7 @@ public class InstanceManager {
                 try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                     instance = Gsons.MINECRAFT.fromJson(fileReader, Instance.class);
                     instance.ROOT = instanceDir.toPath();
-                    LogManager.debug("Loaded V2 instance from " + instanceDir);
+                    LogManager.debug("Loaded instance from " + instanceDir);
 
                     if (instance.launcher == null) {
                         instance = null;
@@ -99,6 +100,21 @@ public class InstanceManager {
             } else {
                 if (converted) {
                     instance.save();
+                }
+
+                if (instance.launcher.curseManifest != null) {
+                    if (instance.launcher.curseManifest.projectID != null
+                            && instance.launcher.curseManifest.fileID != null) {
+                        LogManager.info(String.format("Converting instance \"%s\" CurseForge information",
+                                instance.launcher.name));
+                        instance.launcher.curseManifest = null;
+                        instance.launcher.curseForgeProject = CurseApi
+                                .getModById(instance.launcher.curseManifest.projectID);
+                        instance.launcher.curseForgeFile = CurseApi.getFileForMod(
+                                instance.launcher.curseManifest.projectID, instance.launcher.curseManifest.fileID);
+
+                        instance.save();
+                    }
                 }
 
                 Data.INSTANCES.add(instance);

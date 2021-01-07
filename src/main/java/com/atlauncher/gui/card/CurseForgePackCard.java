@@ -30,7 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
@@ -38,13 +38,13 @@ import com.atlauncher.utils.OS;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class FTBPackCard extends JPanel {
+public final class CurseForgePackCard extends JPanel {
     private final Window parent;
-    public final ModpacksChPackManifest pack;
+    public final CurseMod project;
 
-    public FTBPackCard(Window parent, final ModpacksChPackManifest pack) {
+    public CurseForgePackCard(Window parent, final CurseMod project) {
         this.parent = parent;
-        this.pack = pack;
+        this.project = project;
 
         setupComponents();
     }
@@ -55,7 +55,7 @@ public final class FTBPackCard extends JPanel {
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
-        summary.setText(pack.synopsis);
+        summary.setText(project.summary);
         summary.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
         summary.setEditable(false);
         summary.setHighlighter(null);
@@ -72,22 +72,17 @@ public final class FTBPackCard extends JPanel {
         buttonsPanel.add(viewButton);
 
         addButton.addActionListener(e -> {
-            Analytics.sendEvent(pack.name, "Add", "FTBPack");
-            ImportPackUtils.loadModpacksChPack(parent, pack.id);
+            Analytics.sendEvent(project.name, "Add", "CurseForgePack");
+            ImportPackUtils.loadCurseForgePack(parent, project);
         });
 
-        // The Feed The Beast website only displays modpacks with the 'FTB'
-        // tag present, so we should disable the view button for packs without.
-        if (pack.hasTag("FTB")) {
-            viewButton.setEnabled(false);
-        }
-
-        viewButton.addActionListener(e -> OS.openWebBrowser(this.pack.getWebsiteUrl()));
+        viewButton.addActionListener(e -> OS.openWebBrowser(project.websiteUrl));
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
 
-        TitledBorder border = new TitledBorder(null, pack.name, TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder border = new TitledBorder(null,
+                project.name, TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
     }

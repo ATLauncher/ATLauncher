@@ -103,7 +103,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
-    private final JButton openCurseForgeButton = new JButton(GetText.tr("Open CurseForge"));
+    private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
@@ -176,9 +176,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             this.serversButton.setVisible(false);
         }
 
-        this.openCurseForgeButton.setVisible(
-                (instance.launcher.curseManifest != null && instance.launcher.curseManifest.websiteUrl != null)
-                        || instance.launcher.curseForgeProject != null);
+        this.openWebsite.setVisible(instance.isCurseForgePack()
+                || (instance.isModpacksChPack() && instance.launcher.modpacksChPackManifest.hasTag("FTB")));
 
         if (instance.launcher.enableCurseIntegration) {
             bottom.add(this.addButton);
@@ -189,7 +188,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
 
         bottom.add(this.serversButton);
-        bottom.add(this.openCurseForgeButton);
+        bottom.add(this.openWebsite);
         bottom.add(this.openButton);
 
         rightPanel.setLayout(new BorderLayout());
@@ -400,9 +399,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
-        this.openCurseForgeButton.addActionListener(e -> OS
-                .openWebBrowser(instance.launcher.curseManifest != null ? instance.launcher.curseManifest.websiteUrl
-                        : instance.launcher.curseForgeProject.websiteUrl));
+        this.openWebsite.addActionListener(e -> OS
+                .openWebBrowser(instance.isCurseForgePack() ? instance.launcher.curseForgeProject.websiteUrl : instance.launcher.modpacksChPackManifest.getWebsiteUrl()));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings",
@@ -704,7 +702,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.addButton.setText(GetText.tr("Add Mods"));
         this.editButton.setText(GetText.tr("Edit Mods"));
         this.serversButton.setText(GetText.tr("Servers"));
-        this.openCurseForgeButton.setText(GetText.tr("Open CurseForge"));
+        this.openWebsite.setText(GetText.tr("Open Website"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
 

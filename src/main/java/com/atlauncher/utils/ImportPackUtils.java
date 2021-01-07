@@ -35,6 +35,7 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.ATLauncherApiCurseModpack;
 import com.atlauncher.data.Constants;
 import com.atlauncher.data.curse.CurseFile;
+import com.atlauncher.data.curse.CurseMod;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
@@ -237,6 +238,12 @@ public class ImportPackUtils {
             LogManager.logStackTrace("Failed to install Modpacks.ch pack", e);
             return false;
         }
+
+        return true;
+    }
+
+    public static boolean loadCurseForgePack(Window parent, CurseMod curseForgeProject) {
+        new InstanceInstallerDialog(parent, curseForgeProject);
 
         return true;
     }

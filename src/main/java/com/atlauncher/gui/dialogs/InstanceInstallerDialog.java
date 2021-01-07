@@ -91,6 +91,7 @@ public class InstanceInstallerDialog extends JDialog {
     private Pack pack;
     private Instance instance = null;
     private CurseManifest curseManifest = null;
+    private CurseMod curseForgeProject = null;
     private ModpacksChPackManifest modpacksChPackManifest = null;
     private MultiMCManifest multiMCManifest = null;
 
@@ -152,12 +153,14 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (object instanceof Pack) {
             handlePackInstall(object, isServer);
-        } else if (object instanceof CurseManifest) {
+        } else if (object instanceof CurseMod) {
             handleCurseForgeInstall(object);
         } else if (object instanceof ModpacksChPackManifest) {
             handleModpacksChInstall(object);
+        } else if (object instanceof CurseManifest) {
+            handleCurseForgeImport(object);
         } else if (object instanceof MultiMCManifest) {
-            handleMultiMcInstall(object);
+            handleMultiMcImport(object);
         } else {
             handleInstanceInstall(object);
         }
@@ -582,53 +585,17 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     private void handleCurseForgeInstall(Object object) {
-        curseManifest = (CurseManifest) object;
+        curseForgeProject = (CurseMod) object;
 
         pack = new Pack();
-        pack.name = curseManifest.name;
+        pack.name = curseForgeProject.name;
 
-        if (curseManifest.projectID != null) {
-            CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
+        pack.externalId = curseForgeProject.id;
+        pack.description = curseForgeProject.summary;
+        pack.websiteURL = curseForgeProject.websiteUrl;
+        pack.curseForgeProject = curseForgeProject;
 
-            curseManifest.websiteUrl = cursePack.websiteUrl;
-
-            pack.externalId = curseManifest.projectID;
-            pack.description = cursePack.summary;
-            pack.cursePack = cursePack;
-        }
-
-        PackVersion packVersion = new PackVersion();
-        packVersion.version = curseManifest.version;
-
-        try {
-            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseManifest.minecraft.version);
-        } catch (InvalidMinecraftVersion e) {
-            LogManager.error(e.getMessage());
-            return;
-        }
-
-        packVersion.hasLoader = true;
-
-        pack.versions = Collections.singletonList(packVersion);
-
-        isReinstall = false;
-
-        // #. {0} is the name of the pack the user is installing
-        setTitle(GetText.tr("Installing {0}", curseManifest.name));
-    }
-
-    private void handleCurseForgeInstallById(int projectId) {
-        CurseMod project = CurseApi.getModById(projectId);
-
-        pack = new Pack();
-        pack.name = project.name;
-
-        pack.externalId = projectId;
-        pack.description = project.summary;
-        pack.websiteURL = project.websiteUrl;
-        pack.curseForgeProject = project;
-
-        List<CurseFile> files = CurseApi.getFilesForMod(projectId);
+        List<CurseFile> files = CurseApi.getFilesForMod(curseForgeProject.id);
 
         pack.versions = files.stream().sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
                 .map(f -> {
@@ -648,7 +615,7 @@ public class InstanceInstallerDialog extends JDialog {
                 }).filter(pv -> pv != null).collect(Collectors.toList());
 
         // #. {0} is the name of the pack the user is installing
-        setTitle(GetText.tr("Installing {0}", project.name));
+        setTitle(GetText.tr("Installing {0}", curseForgeProject.name));
     }
 
     private void handleModpacksChInstall(Object object) {
@@ -684,7 +651,43 @@ public class InstanceInstallerDialog extends JDialog {
         setTitle(GetText.tr("Installing {0}", modpacksChPackManifest.name));
     }
 
-    private void handleMultiMcInstall(Object object) {
+    private void handleCurseForgeImport(Object object) {
+        curseManifest = (CurseManifest) object;
+
+        pack = new Pack();
+        pack.name = curseManifest.name;
+
+        if (curseManifest.projectID != null) {
+            CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
+
+            curseManifest.websiteUrl = cursePack.websiteUrl;
+
+            pack.externalId = curseManifest.projectID;
+            pack.description = cursePack.summary;
+            pack.cursePack = cursePack;
+        }
+
+        PackVersion packVersion = new PackVersion();
+        packVersion.version = curseManifest.version;
+
+        try {
+            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseManifest.minecraft.version);
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.error(e.getMessage());
+            return;
+        }
+
+        packVersion.hasLoader = true;
+
+        pack.versions = Collections.singletonList(packVersion);
+
+        isReinstall = false;
+
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", curseManifest.name));
+    }
+
+    private void handleMultiMcImport(Object object) {
         multiMCManifest = (MultiMCManifest) object;
 
         pack = new Pack();
@@ -719,9 +722,7 @@ public class InstanceInstallerDialog extends JDialog {
         if (instance.isModpacksChPack()) {
             handleModpacksChInstall(instance.launcher.modpacksChPackManifest);
         } else if (instance.isCurseForgePack()) {
-            handleCurseForgeInstallById(
-                    instance.launcher.curseManifest != null ? instance.launcher.curseManifest.projectID
-                            : instance.launcher.curseForgeProject.id);
+            handleCurseForgeInstall(instance.launcher.curseForgeProject);
         } else {
             pack = instance.getPack();
         }
@@ -768,7 +769,7 @@ public class InstanceInstallerDialog extends JDialog {
             versionsDropDown.setSelectedItem(forUpdate);
         } else if (isReinstall) {
             for (PackVersion version : versions) {
-                if (version.versionMatches(instance.launcher.version)) {
+                if (version.versionMatches(instance)) {
                     versionsDropDown.setSelectedItem(version);
                 }
             }

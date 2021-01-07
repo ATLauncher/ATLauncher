@@ -18,6 +18,7 @@
 package com.atlauncher.data.modpacksch;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ModpacksChPackManifest {
     public String synopsis;
@@ -38,4 +39,16 @@ public class ModpacksChPackManifest {
     public String type;
     public int updated;
     public List<ModpacksChPackTag> tags;
+
+    public boolean hasTag(String tag) {
+        return tags.stream().map(t -> t.name).anyMatch(tag::equals);
+    }
+
+    public String getWebsiteUrl() {
+        return String.format("https://feed-the-beast.com/modpack/%s", getSlug());
+    }
+
+    public String getSlug() {
+        return name.replace("+", " Plus").toLowerCase(Locale.ROOT).replaceAll("\\W", "_").replaceAll("_{2,}", "_");
+    }
 }

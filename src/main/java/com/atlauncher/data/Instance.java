@@ -48,6 +48,7 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.curse.CurseFile;
 import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curse.CurseModLatestFile;
 import com.atlauncher.data.curse.pack.CurseManifest;
 import com.atlauncher.data.curse.pack.CurseManifestFile;
 import com.atlauncher.data.curse.pack.CurseMinecraft;
@@ -138,6 +139,10 @@ public class Instance extends MinecraftVersion {
                 ModpacksChPackVersion latestVersion = Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(this);
 
                 return latestVersion != null && latestVersion.id != this.launcher.modpacksChPackVersionManifest.id;
+            } else if (isCurseForgePack()) {
+                CurseModLatestFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(this);
+
+                return latestVersion != null && latestVersion.id != this.launcher.curseForgeProject.id;
             }
         } else {
             Pack pack = this.getPack();
@@ -1103,9 +1108,12 @@ public class Instance extends MinecraftVersion {
         return launcher.requiredPermGen;
     }
 
+    public boolean isOldCurseForgePack() {
+        return launcher.curseManifest != null;
+    }
+
     public boolean isCurseForgePack() {
-        return launcher.curseManifest != null
-                || (launcher.curseForgeProject != null && launcher.curseForgeFile != null);
+        return launcher.curseForgeProject != null && launcher.curseForgeFile != null;
     }
 
     public boolean isMultiMcImport() {
@@ -1117,11 +1125,11 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isExternalPack() {
-        return isCurseForgePack() || isModpacksChPack() || isMultiMcImport();
+        return isOldCurseForgePack() || isCurseForgePack() || isModpacksChPack() || isMultiMcImport();
     }
 
     public boolean isUpdatableExternalPack() {
-        return isExternalPack() && (isModpacksChPack() || (isCurseForgePack() && hasCurseForgeProjectId()));
+        return isExternalPack() && (isModpacksChPack() || isCurseForgePack());
     }
 
     public String getAnalyticsCategory() {

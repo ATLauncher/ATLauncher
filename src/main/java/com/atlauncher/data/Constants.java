@@ -62,6 +62,7 @@ public class Constants {
     public static final int CURSE_PAGINATION_SIZE = 40;
     public static final int CURSE_FABRIC_MOD_ID = 306612;
     public static final int CURSE_MODS_SECTION_ID = 6;
+    public static final int CURSE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final int CURSE_WORLDS_SECTION_ID = 17;
     public static final String MODPACKS_CH_API_URL = "https://api.modpacks.ch/public";

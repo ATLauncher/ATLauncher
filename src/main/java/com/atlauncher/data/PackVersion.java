@@ -47,6 +47,14 @@ public class PackVersion {
         return this.version.equalsIgnoreCase(version);
     }
 
+    public boolean versionMatches(Instance instance) {
+        if (instance.isCurseForgePack()) {
+            return versionMatches(instance.launcher.curseForgeFile.displayName);
+        }
+
+        return versionMatches(instance.launcher.version);
+    }
+
     public boolean hashMatches(String hash) {
         if (this.hash == null || !this.isDev) {
             return false;

@@ -45,7 +45,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
-import com.atlauncher.gui.dialogs.AddCursePackDialog;
+import com.atlauncher.gui.dialogs.AddCurseForgePackDialog;
 import com.atlauncher.gui.dialogs.AddFTBPackDialog;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.PackManager;
@@ -128,7 +128,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             Analytics.sendEvent(page, "Next", "Navigation", "Pack");
             refresh();
         });
-        this.addCurseButton.addActionListener(e -> new AddCursePackDialog());
+        this.addCurseButton.addActionListener(e -> new AddCurseForgePackDialog());
         this.addFTBPackButton.addActionListener(e -> new AddFTBPackDialog());
         this.clearButton.addActionListener(e -> {
             searchField.setText("");

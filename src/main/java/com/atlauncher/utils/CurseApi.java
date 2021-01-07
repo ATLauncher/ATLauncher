@@ -88,6 +88,10 @@ public class CurseApi {
         return searchCurse(gameVersion, Constants.CURSE_MODS_SECTION_ID, query, page, 0, sort);
     }
 
+    public static List<CurseMod> searchModPacks(String query, int page, String sort) {
+        return searchCurse(Constants.CURSE_MODPACKS_SECTION_ID, query, page, 0, sort);
+    }
+
     public static List<CurseMod> searchModsForFabric(String gameVersion, String query, int page, String sort) {
         return searchCurse(gameVersion, Constants.CURSE_MODS_SECTION_ID, query, page,
                 Constants.CURSE_FABRIC_CATEGORY_ID, sort);
