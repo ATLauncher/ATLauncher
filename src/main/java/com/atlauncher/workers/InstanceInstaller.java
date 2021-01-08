@@ -416,6 +416,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         packVersion.minecraft = minecraftTarget.version;
         packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
+        packVersion.memory = Optional.ofNullable(modpacksChPackVersionManifest.specs.minimum)
+                .orElse(modpacksChPackVersionManifest.specs.recommended);
 
         this.version.minecraftVersion = MinecraftManager.getMinecraftVersion(packVersion.minecraft);
 
