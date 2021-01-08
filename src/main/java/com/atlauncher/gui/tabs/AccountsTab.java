@@ -413,10 +413,16 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     mojangAccount.uuid = response.getAuth().getSelectedProfile().getId().toString();
                     if (remember) {
                         mojangAccount.setPassword(password);
+                    } else {
+                        mojangAccount.encryptedPassword = null;
+                        mojangAccount.password = null;
                     }
                     mojangAccount.remember = remember;
                     mojangAccount.clientToken = clientToken;
                     mojangAccount.store = response.getAuth().saveForStorage();
+
+                    AccountManager.saveAccounts();
+                    com.atlauncher.evnt.manager.AccountManager.post();
                 }
 
                 Analytics.sendEvent("Edit", "Account");

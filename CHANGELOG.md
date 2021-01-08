@@ -33,6 +33,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix share code on instance context menu showing when it shouldn't
 - Use native file picker when enabled (default for OSX) [#430]
 - Fix some dialogs not showing on top in non Windows [#428]
+- Fix saving existing Mojang account not removing password when unchecked
 
 ### Misc
 - Tweak building of artifacts
