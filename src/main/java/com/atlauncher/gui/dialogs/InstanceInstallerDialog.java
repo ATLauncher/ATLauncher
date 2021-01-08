@@ -70,6 +70,7 @@ import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -78,6 +79,7 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import org.mini2Dx.gettext.GetText;
@@ -228,26 +230,17 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.gridy++;
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            JLabel enableUserLockLabel = new JLabel(GetText.tr("Enable User Lock") + "? ");
+            JLabel enableUserLockLabel = new JLabelWithHover(GetText.tr("Enable User Lock") + "?",
+                    Utils.getIconImage("/assets/image/Help.png"),
+                    new HTMLBuilder().center().text(GetText.tr(
+                            "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else."))
+                            .build());
             middle.add(enableUserLockLabel, gbc);
 
             gbc.gridx++;
             gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             enableUserLock = new JCheckBox();
-            enableUserLock.addActionListener(e -> {
-                if (enableUserLock.isSelected()) {
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Enable User Lock") + "? ")
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else.<br/><br/>Are you sure you want to do this?"))
-                                    .build())
-                            .setType(DialogManager.WARNING).show();
-
-                    if (ret != 0) {
-                        enableUserLock.setSelected(false);
-                    }
-                }
-            });
             middle.add(enableUserLock, gbc);
         }
 
