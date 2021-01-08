@@ -40,21 +40,21 @@ import javax.swing.JScrollPane;
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.curse.CurseFile;
-import com.atlauncher.data.curse.CurseFileDependency;
-import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeFileDependency;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.gui.card.CurseFileDependencyCard;
+import com.atlauncher.gui.card.CurseForgeFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.CurseForgeApi;
 
 import org.mini2Dx.gettext.GetText;
 
-public class CurseModFileSelectorDialog extends JDialog {
+public class CurseForgeProjectFileSelectorDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
     private int filesLength = 0;
-    private final CurseMod mod;
+    private final CurseForgeProject mod;
     private Instance instance;
     private Integer installedFileId = null;
 
@@ -62,14 +62,14 @@ public class CurseModFileSelectorDialog extends JDialog {
     private JButton addButton;
     private JLabel versionsLabel;
     private JLabel installedJLabel;
-    private JComboBox<CurseFile> filesDropdown;
-    private final List<CurseFile> files = new ArrayList<>();
+    private JComboBox<CurseForgeFile> filesDropdown;
+    private final List<CurseForgeFile> files = new ArrayList<>();
 
-    public CurseModFileSelectorDialog(CurseMod mod, Instance instance) {
+    public CurseForgeProjectFileSelectorDialog(CurseForgeProject mod, Instance instance) {
         this(App.launcher.getParent(), mod, instance);
     }
 
-    public CurseModFileSelectorDialog(Window parent, CurseMod mod, Instance instance) {
+    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance) {
         super(parent, ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
@@ -78,7 +78,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         setupComponents();
     }
 
-    public CurseModFileSelectorDialog(Window parent, CurseMod mod, Instance instance, int installedFileId) {
+    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance, int installedFileId) {
         super(parent, ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
@@ -89,7 +89,7 @@ public class CurseModFileSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("Curse Mods File Selector Dialog");
+        Analytics.sendScreenView("CurseForge Project File Selector Dialog");
 
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.name));
@@ -144,7 +144,7 @@ public class CurseModFileSelectorDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
 
         addButton.addActionListener(e -> {
-            CurseFile file = (CurseFile) filesDropdown.getSelectedItem();
+            CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
             // #. {0} is the name of the mod we're installing
             final JDialog dialog = new JDialog(this, GetText.tr("Installing {0}", file.displayName),
@@ -185,24 +185,24 @@ public class CurseModFileSelectorDialog extends JDialog {
         });
 
         filesDropdown.addActionListener(e -> {
-            CurseFile selectedFile = (CurseFile) filesDropdown.getSelectedItem();
+            CurseForgeFile selectedFile = (CurseForgeFile) filesDropdown.getSelectedItem();
 
             dependenciesPanel.setVisible(false);
 
             // this file has dependencies
             if (selectedFile.dependencies.size() != 0) {
                 // check to see which required ones we don't already have
-                List<CurseFileDependency> dependencies = selectedFile.dependencies.stream()
+                List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
                         .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
-                                .noneMatch(installedMod -> installedMod.isFromCurse()
-                                        && installedMod.getCurseModId() == dependency.addonId))
+                                .noneMatch(installedMod -> installedMod.isFromCurseForge()
+                                        && installedMod.getCurseForgeModId() == dependency.addonId))
                         .collect(Collectors.toList());
 
                 if (dependencies.size() != 0) {
                     dependenciesPanel.removeAll();
 
                     dependencies.forEach(dependency -> dependenciesPanel
-                            .add(new CurseFileDependencyCard(this, dependency, instance)));
+                            .add(new CurseForgeFileDependencyCard(this, dependency, instance)));
 
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                             (dependencies.size() / 2) + 1));
@@ -236,19 +236,19 @@ public class CurseModFileSelectorDialog extends JDialog {
         Runnable r = () -> {
             LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
-            Stream<CurseFile> curseFilesStream = CurseApi.getFilesForMod(mod.id).stream()
-                    .sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed());
+            Stream<CurseForgeFile> curseFilesStream = CurseForgeApi.getFilesForProject(mod.id).stream()
+                    .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
             if (!App.settings.disableAddModRestrictions) {
                 curseFilesStream = curseFilesStream.filter(file -> App.settings.disableAddModRestrictions
-                        || mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
+                        || mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
                         || file.gameVersion.contains(this.instance.id));
             }
 
             files.addAll(curseFilesStream.collect(Collectors.toList()));
 
             // ensures that font width is taken into account
-            for (CurseFile file : files) {
+            for (CurseForgeFile file : files) {
                 filesLength = Math.max(filesLength,
                         getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
             }
@@ -276,19 +276,19 @@ public class CurseModFileSelectorDialog extends JDialog {
             }
 
             if (filesDropdown.getItemCount() == 0) {
-                DialogManager.okDialog().setParent(CurseModFileSelectorDialog.this).setTitle("No files found")
+                DialogManager.okDialog().setParent(CurseForgeProjectFileSelectorDialog.this).setTitle("No files found")
                         .setContent("No files found for this mod").setType(DialogManager.ERROR).show();
                 dispose();
             }
 
             if (this.installedFileId != null) {
-                CurseFile installedFile = files.stream().filter(f -> f.id == this.installedFileId).findFirst()
+                CurseForgeFile installedFile = files.stream().filter(f -> f.id == this.installedFileId).findFirst()
                         .orElse(null);
 
                 if (installedFile != null) {
                     filesDropdown.setSelectedItem(installedFile);
 
-                    // #. {0} is the name of the Curse mod that the user already has installed
+                    // #. {0} is the name of the CurseForge project that the user already has installed
                     installedJLabel.setText(GetText.tr("The version currently installed is {0}", installedFile));
                     installedJLabel.setVisible(true);
                 }

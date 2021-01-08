@@ -43,6 +43,7 @@ public class Constants {
                 Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream);
     }
 
+    // Launcher config
     public static final LauncherVersion VERSION;
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String DEFAULT_THEME_CLASS = "com.atlauncher.themes.Dark";
@@ -50,6 +51,8 @@ public class Constants {
     public static final String GA_TRACKING_ID = "UA-88820616-7";
     public static final String CROWDIN_URL = "https://crowdin.com/project/atlauncher";
     public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
+
+    // Launcher domains, endpoints, etc
     public static String BASE_LAUNCHER_DOMAIN = "atlauncher.com";
     public static String API_BASE_URL = "https://api." + BASE_LAUNCHER_DOMAIN + "/v1/launcher/";
     public static String API_HOST = "api." + BASE_LAUNCHER_DOMAIN;
@@ -57,29 +60,43 @@ public class Constants {
     public static String PASTE_HOST = "paste." + BASE_LAUNCHER_DOMAIN;
     public static String SERVERS_LIST_PACK = "https://" + BASE_LAUNCHER_DOMAIN + "/servers/list/pack";
     public static String PASTE_API_URL = "https://paste." + BASE_LAUNCHER_DOMAIN + "/api/create";
-    public static final String CURSE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
-    public static final String CURSE_HOST = "addons-ecs.forgesvc.net";
-    public static final int CURSE_FABRIC_CATEGORY_ID = 4780;
-    public static final int CURSE_PAGINATION_SIZE = 40;
-    public static final int CURSE_FABRIC_MOD_ID = 306612;
-    public static final int CURSE_MODS_SECTION_ID = 6;
-    public static final int CURSE_MODPACKS_SECTION_ID = 4471;
-    public static final int CURSE_RESOURCE_PACKS_SECTION_ID = 12;
-    public static final int CURSE_WORLDS_SECTION_ID = 17;
-    public static final String MODPACKS_CH_API_URL = "https://api.modpacks.ch/public";
-    public static final int FTB_PAGINATION_SIZE = 20;
-    public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
-    public static final String FORGE_MAVEN_BASE = "https://files.minecraftforge.net/maven/";
-    public static final String FORGE_HOST = "files.minecraftforge.net";
-    public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
-    public static final String FABRIC_HOST = "maven.fabricmc.net";
+
+    // CDN domains, endpoints, etc
     public static String BASE_CDN_DOMAIN = "download.nodecdn.net";
     public static String BASE_CDN_PATH = "/containers/atl";
     public static String DOWNLOAD_SERVER = "https://" + BASE_CDN_DOMAIN + BASE_CDN_PATH;
     public static String DOWNLOAD_HOST = BASE_CDN_DOMAIN;
+
+    // CurseForge domains, endpoints, config, etc
+    public static final String CURSEFORGE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
+    public static final String CURSEFORGE_HOST = "addons-ecs.forgesvc.net";
+    public static final int CURSEFORGE_FABRIC_CATEGORY_ID = 4780;
+    public static final int CURSEFORGE_PAGINATION_SIZE = 40;
+    public static final int CURSEFORGE_FABRIC_MOD_ID = 306612;
+    public static final int CURSEFORGE_MODS_SECTION_ID = 6;
+    public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
+    public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
+    public static final int CURSEFORGE_WORLDS_SECTION_ID = 17;
+
+    // Modpacks.ch domains, endpoints, config, etc
+    public static final String MODPACKS_CH_API_URL = "https://api.modpacks.ch/public";
+    public static final int MODPACKS_CH_PAGINATION_SIZE = 20;
+
+    // Forge domains, endpoints, etc
+    public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
+    public static final String FORGE_MAVEN_BASE = "https://files.minecraftforge.net/maven/";
+    public static final String FORGE_HOST = "files.minecraftforge.net";
+
+    // Fabric domains, endpoints, etc
+    public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
+    public static final String FABRIC_HOST = "maven.fabricmc.net";
+
+    // Minecraft domains, endpoints, etc
     public static final String LAUNCHER_META_MINECRAFT = "https://launchermeta.mojang.com";
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
+
+    // Misc
     public static final String LEGACY_JAVA_FIXER_URL = "https://cdn.atlcdn.net/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
     public static final String[] DATE_FORMATS = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", "dd MMMM yyyy",

@@ -15,15 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge;
 
-public class CurseCategory {
-    public int id;
-    public int gameId;
-    public String name;
-    public int packageType;
-    public String path;
-    public String initialInclusionPattern;
-    public String extraIncludePattern;
-    public int gameCategoryId;
+public class CurseForgeGameVersionLatestFiles {
+    public String gameVersion;
+    public int projectFileId;
+    public String projectFileName;
+    public int fileType;
 }

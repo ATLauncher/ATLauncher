@@ -15,21 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse.pack;
+package com.atlauncher.data;
 
-import java.util.List;
-
-public class CurseManifest {
-    public CurseMinecraft minecraft;
-    public String manifestType;
-    public String websiteUrl = null;
-    public int manifestVersion;
-    public String name;
-    public String version;
-    public String author;
-    public String curse;
-    public Integer projectID = null;
-    public Integer fileID = null;
-    public List<CurseManifestFile> files;
-    public String overrides;
+public class ATLauncherApiCurseForgeModpack {
+    public Integer id = null;
+    public String slug;
+    public Integer defaultFileId = null;
+    public String summary;
+    public String websiteUrl;
+    public String imageUrl;
 }

@@ -36,21 +36,21 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.card.CurseForgePackCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseForgePacksPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.CurseForgeApi;
 
 import org.mini2Dx.gettext.GetText;
 
 // TODO: this, AddFTBPackDialog and AddModDialog are all very similar and can probably be refactored to be shared
 @SuppressWarnings("serial")
 public final class AddCurseForgePackDialog extends JDialog {
-    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
+    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSEFORGE_PAGINATION_SIZE / 2, 2));
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
@@ -176,7 +176,7 @@ public final class AddCurseForgePackDialog extends JDialog {
         String query = searchField.getText();
 
         new Thread(() -> {
-            setPacks(CurseApi.searchModPacks(query, page,
+            setPacks(CurseForgeApi.searchModPacks(query, page,
                     ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
 
             setLoading(false);
@@ -195,7 +195,7 @@ public final class AddCurseForgePackDialog extends JDialog {
         getPacks();
     }
 
-    private void setPacks(List<CurseMod> projects) {
+    private void setPacks(List<CurseForgeProject> projects) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -206,7 +206,7 @@ public final class AddCurseForgePackDialog extends JDialog {
         contentPanel.removeAll();
 
         prevButton.setEnabled(page > 0);
-        nextButton.setEnabled(projects.size() == Constants.CURSE_PAGINATION_SIZE);
+        nextButton.setEnabled(projects.size() == Constants.CURSEFORGE_PAGINATION_SIZE);
 
         if (projects.size() == 0) {
             contentPanel.setLayout(new BorderLayout());

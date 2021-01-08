@@ -38,15 +38,15 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.gui.card.CurseModCard;
+import com.atlauncher.gui.card.CurseForgeModCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.CurseForgeApi;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -54,7 +54,7 @@ import org.mini2Dx.gettext.GetText;
 public final class AddModsDialog extends JDialog {
     private Instance instance;
 
-    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSE_PAGINATION_SIZE / 2, 2));
+    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSEFORGE_PAGINATION_SIZE / 2, 2));
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
@@ -121,13 +121,13 @@ public final class AddModsDialog extends JDialog {
         searchButtonsPanel.add(this.sortComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
-            CurseMod mod = CurseApi.getModById(Constants.CURSE_FABRIC_MOD_ID);
+            CurseForgeProject mod = CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID);
 
             Analytics.sendEvent("AddFabricApi", "CurseMod");
-            new CurseModFileSelectorDialog(mod, instance);
+            new CurseForgeProjectFileSelectorDialog(mod, instance);
 
             if (instance.launcher.mods.stream()
-                    .anyMatch(m -> m.isFromCurse() && m.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
+                    .anyMatch(m -> m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
                 fabricApiWarningLabel.setVisible(false);
                 installFabricApiButton.setVisible(false);
             }
@@ -136,7 +136,7 @@ public final class AddModsDialog extends JDialog {
         LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
         if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
-                .noneMatch(mod -> mod.isFromCurse() && mod.getCurseModId() == Constants.CURSE_FABRIC_MOD_ID)) {
+                .noneMatch(mod -> mod.isFromCurseForge() && mod.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
@@ -233,18 +233,18 @@ public final class AddModsDialog extends JDialog {
 
         new Thread(() -> {
             if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
-                setMods(CurseApi.searchResourcePacks(query, page,
+                setMods(CurseForgeApi.searchResourcePacks(query, page,
                         ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
-                setMods(CurseApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
+                setMods(CurseForgeApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
                         page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else {
                 if (this.instance.launcher.loaderVersion.isFabric()) {
-                    setMods(CurseApi.searchModsForFabric(
+                    setMods(CurseForgeApi.searchModsForFabric(
                             App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
-                    setMods(CurseApi.searchMods(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
+                    setMods(CurseForgeApi.searchMods(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
                             page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
@@ -265,7 +265,7 @@ public final class AddModsDialog extends JDialog {
         getMods();
     }
 
-    private void setMods(List<CurseMod> mods) {
+    private void setMods(List<CurseForgeProject> mods) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -276,7 +276,7 @@ public final class AddModsDialog extends JDialog {
         contentPanel.removeAll();
 
         prevButton.setEnabled(page > 0);
-        nextButton.setEnabled(mods.size() == Constants.CURSE_PAGINATION_SIZE);
+        nextButton.setEnabled(mods.size() == Constants.CURSEFORGE_PAGINATION_SIZE);
 
         if (mods.size() == 0) {
             contentPanel.setLayout(new BorderLayout());
@@ -285,7 +285,7 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new WrapLayout());
 
             mods.forEach(curseMod -> {
-                contentPanel.add(new CurseModCard(this, curseMod, this.instance), gbc);
+                contentPanel.add(new CurseForgeModCard(this, curseMod, this.instance), gbc);
                 gbc.gridy++;
             });
         }

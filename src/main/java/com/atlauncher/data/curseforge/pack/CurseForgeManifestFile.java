@@ -15,11 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge.pack;
 
-public class CurseSortableGameVersion {
-    public String gameVersionPadded;
-    public String gameVersion;
-    public String gameVersionReleaseDate;
-    public String gameVersionName;
+public class CurseForgeManifestFile {
+    public int projectID;
+    public int fileID;
+    public boolean required;
 }

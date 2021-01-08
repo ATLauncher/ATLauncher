@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge;
 
 import java.util.List;
 
-public class CurseModLatestFile extends CurseFile {
-    public List<CurseSortableGameVersion> sortableGameVersion;
+public class CurseForgeProjectLatestFile extends CurseForgeFile {
+    public List<CurseForgeSortableGameVersion> sortableGameVersion;
     public String changelog;
     public boolean isCompatibleWithClient;
     public int categorySectionPackageType;

@@ -22,12 +22,12 @@ import java.util.Comparator;
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.curse.CurseMod;
-import com.atlauncher.data.curse.CurseModLatestFile;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.curseforge.CurseForgeProjectLatestFile;
+import com.atlauncher.utils.CurseForgeApi;
 
 public class CurseForgeUpdateManager {
-    public static CurseModLatestFile getLatestVersion(Instance instance) {
+    public static CurseForgeProjectLatestFile getLatestVersion(Instance instance) {
         return Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance);
     }
 
@@ -39,12 +39,12 @@ public class CurseForgeUpdateManager {
                 .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
                     boolean wasUpdated = false;
 
-                    CurseMod curseForgeMod = CurseApi
-                            .getModById(i.launcher.curseManifest != null ? i.launcher.curseManifest.projectID
+                    CurseForgeProject curseForgeMod = CurseForgeApi
+                            .getProjectById(i.launcher.curseForgeManifest != null ? i.launcher.curseForgeManifest.projectID
                                     : i.launcher.curseForgeProject.id);
 
-                    CurseModLatestFile latestVersion = curseForgeMod.latestFiles.stream()
-                            .sorted(Comparator.comparingInt((CurseModLatestFile file) -> file.id).reversed())
+                    CurseForgeProjectLatestFile latestVersion = curseForgeMod.latestFiles.stream()
+                            .sorted(Comparator.comparingInt((CurseForgeProjectLatestFile file) -> file.id).reversed())
                             .findFirst().orElse(null);
 
                     // if there is a change to the latestversion for an instance (but not a first

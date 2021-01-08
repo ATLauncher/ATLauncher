@@ -29,7 +29,7 @@ import javax.swing.ImageIcon;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.managers.AccountManager;
@@ -52,8 +52,7 @@ public class Pack {
     public boolean system;
     public boolean hasDiscordImage;
     public String description;
-    public CurseMod cursePack;
-    public CurseMod curseForgeProject;
+    public CurseForgeProject curseForgeProject;
     public ModpacksChPackManifest modpacksChPack;
     public String discordInviteURL = null;
     public String supportURL = null;

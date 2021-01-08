@@ -498,7 +498,7 @@ public class InstanceV1 implements Cloneable {
         instanceLauncher.name = name;
         instanceLauncher.version = version;
         instanceLauncher.java = java;
-        instanceLauncher.enableCurseIntegration = enableCurseIntegration;
+        instanceLauncher.enableCurseForgeIntegration = enableCurseIntegration;
         instanceLauncher.enableEditingMods = enableEditingMods;
         instanceLauncher.loaderVersion = loaderVersion;
         instanceLauncher.isDev = isDev;

@@ -186,13 +186,13 @@ public final class AddFTBPackDialog extends JDialog {
             } else {
                 packList = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%s/modpack/search/%d?term=%s", Constants.MODPACKS_CH_API_URL,
-                                Constants.FTB_PAGINATION_SIZE, query))
+                                Constants.MODPACKS_CH_PAGINATION_SIZE, query))
                         .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
                         .asClass(ModpacksChPackList.class);
             }
 
-            List<Integer> packsToShow = packList.packs.stream().skip((page - 1) * Constants.FTB_PAGINATION_SIZE)
-                    .limit(Constants.FTB_PAGINATION_SIZE).collect(Collectors.toList());
+            List<Integer> packsToShow = packList.packs.stream().skip((page - 1) * Constants.MODPACKS_CH_PAGINATION_SIZE)
+                    .limit(Constants.MODPACKS_CH_PAGINATION_SIZE).collect(Collectors.toList());
 
             List<ModpacksChPackManifest> packs = packsToShow.parallelStream()
                     .map(packId -> com.atlauncher.network.Download.build()
@@ -230,7 +230,7 @@ public final class AddFTBPackDialog extends JDialog {
         contentPanel.removeAll();
 
         prevButton.setEnabled(page > 1);
-        nextButton.setEnabled(packs.size() == Constants.FTB_PAGINATION_SIZE);
+        nextButton.setEnabled(packs.size() == Constants.MODPACKS_CH_PAGINATION_SIZE);
 
         if (packs.size() == 0) {
             contentPanel.setLayout(new BorderLayout());

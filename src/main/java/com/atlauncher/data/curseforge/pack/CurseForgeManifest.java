@@ -15,19 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge.pack;
 
-public class CurseFileDependency {
-    public int id;
-    public int addonId;
-    public int type;
-    public int fileId;
+import java.util.List;
 
-    public boolean isRequired() {
-        return this.type == 3;
-    }
-
-    public boolean isOptional() {
-        return this.type == 2;
-    }
+public class CurseForgeManifest {
+    public CurseForgeMinecraft minecraft;
+    public String manifestType;
+    public String websiteUrl = null;
+    public int manifestVersion;
+    public String name;
+    public String version;
+    public String author;
+    public String curse;
+    public Integer projectID = null;
+    public Integer fileID = null;
+    public List<CurseForgeManifestFile> files;
+    public String overrides;
 }

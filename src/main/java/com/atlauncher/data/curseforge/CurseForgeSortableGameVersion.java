@@ -15,9 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse.pack;
+package com.atlauncher.data.curseforge;
 
-public class CurseModLoader {
-    public String id;
-    public boolean primary;
+public class CurseForgeSortableGameVersion {
+    public String gameVersionPadded;
+    public String gameVersion;
+    public String gameVersionReleaseDate;
+    public String gameVersionName;
 }

@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge;
 
 import java.util.List;
 
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 
-public class CurseFile {
+public class CurseForgeFile {
     public int id;
     public String displayName;
     public String fileName;
@@ -33,9 +33,9 @@ public class CurseFile {
     public String downloadUrl;
     public boolean isAlternate;
     public int alternateFileId;
-    public List<CurseFileDependency> dependencies;
+    public List<CurseForgeFileDependency> dependencies;
     public boolean isAvailable;
-    public List<CurseFileModule> modules;
+    public List<CurseForgeFileModule> modules;
     public long packageFingerprint;
     public List<String> gameVersion;
     public String gameVersionDateReleased;
@@ -48,23 +48,23 @@ public class CurseFile {
         return this.displayName + releaseTypeString;
     }
 
-    public Mod convertToMod(CurseMod curseMod) {
+    public Mod convertToMod(CurseForgeProject curseForgeProject) {
         Mod mod = new Mod();
 
-        mod.curseFileId = id;
-        mod.curseModId = curseMod.id;
+        mod.curseForgeFileId = id;
+        mod.curseForgeProjectId = curseForgeProject.id;
         mod.client = true;
-        mod.description = curseMod.summary;
+        mod.description = curseForgeProject.summary;
         mod.download = DownloadType.direct;
         mod.file = fileName;
         mod.filesize = fileLength;
         mod.fingerprint = packageFingerprint;
-        mod.name = curseMod.name;
-        mod.type = curseMod.getModType();
+        mod.name = curseForgeProject.name;
+        mod.type = curseForgeProject.getModType();
         mod.url = downloadUrl;
         mod.version = displayName;
-        mod.website = curseMod.websiteUrl;
-        mod.curseForgeProject = curseMod;
+        mod.website = curseForgeProject.websiteUrl;
+        mod.curseForgeProject = curseForgeProject;
         mod.curseForgeFile = this;
 
         return mod;

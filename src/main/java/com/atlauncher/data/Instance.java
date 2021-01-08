@@ -47,13 +47,13 @@ import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.curse.CurseFile;
-import com.atlauncher.data.curse.CurseMod;
-import com.atlauncher.data.curse.CurseModLatestFile;
-import com.atlauncher.data.curse.pack.CurseManifest;
-import com.atlauncher.data.curse.pack.CurseManifestFile;
-import com.atlauncher.data.curse.pack.CurseMinecraft;
-import com.atlauncher.data.curse.pack.CurseModLoader;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.curseforge.CurseForgeProjectLatestFile;
+import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
+import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
+import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
+import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
 import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
@@ -141,7 +141,7 @@ public class Instance extends MinecraftVersion {
 
                 return latestVersion != null && latestVersion.id != this.launcher.modpacksChPackVersionManifest.id;
             } else if (isCurseForgePack()) {
-                CurseModLatestFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(this);
+                CurseForgeProjectLatestFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(this);
 
                 return latestVersion != null && latestVersion.id != this.launcher.curseForgeProject.id;
             }
@@ -753,21 +753,21 @@ public class Instance extends MinecraftVersion {
 
     public DisableableMod getDisableableModByCurseModId(int curseModId) {
         return this.launcher.mods.stream()
-                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == curseModId)
+                .filter(installedMod -> installedMod.isFromCurseForge() && installedMod.getCurseForgeModId() == curseModId)
                 .findFirst().orElse(null);
     }
 
-    public void addFileFromCurse(CurseMod mod, CurseFile file) {
+    public void addFileFromCurse(CurseForgeProject mod, CurseForgeFile file) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
-        Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID
+        Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
                 ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
-                : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID
+                : (mod.categorySection.gameCategoryId == Constants.CURSEFORGE_WORLDS_SECTION_ID
                         ? this.getRoot().resolve("saves").resolve(file.fileName)
                         : this.getRoot().resolve("mods").resolve(file.fileName));
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
                 .downloadTo(downloadLocation).size(file.fileLength);
 
-        if (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID) {
+        if (mod.categorySection.gameCategoryId == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
             download = download.unzipTo(this.getRoot().resolve("saves"));
         } else {
             download = download.copyTo(finalLocation);
@@ -776,9 +776,9 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        // find mods with the same curse mod id
+        // find mods with the same CurseForge project id
         List<DisableableMod> sameMods = this.launcher.mods.stream()
-                .filter(installedMod -> installedMod.isFromCurse() && installedMod.getCurseModId() == mod.id)
+                .filter(installedMod -> installedMod.isFromCurseForge() && installedMod.getCurseForgeModId() == mod.id)
                 .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
@@ -797,15 +797,15 @@ public class Instance extends MinecraftVersion {
             download.copy();
         }
 
-        // remove any mods that are from the same mod on Curse from the master mod list
+        // remove any mods that are from the same mod on CurseForge from the master mod list
         this.launcher.mods = this.launcher.mods.stream()
-                .filter(installedMod -> !installedMod.isFromCurse() || installedMod.getCurseModId() != mod.id)
+                .filter(installedMod -> !installedMod.isFromCurseForge() || installedMod.getCurseForgeModId() != mod.id)
                 .collect(Collectors.toList());
 
         // add this mod
         this.launcher.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
-                mod.categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
-                        : (mod.categorySection.gameCategoryId == Constants.CURSE_WORLDS_SECTION_ID ? Type.worlds
+                mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
+                        : (mod.categorySection.gameCategoryId == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds
                                 : Type.mods),
                 null, mod.summary, false, true, true, mod, file));
 
@@ -891,17 +891,17 @@ public class Instance extends MinecraftVersion {
 
     public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides) {
         Path to = Paths.get(saveTo).resolve(name + ".zip");
-        CurseManifest manifest = new CurseManifest();
+        CurseForgeManifest manifest = new CurseForgeManifest();
 
-        CurseMinecraft minecraft = new CurseMinecraft();
+        CurseForgeMinecraft minecraft = new CurseForgeMinecraft();
 
-        List<CurseModLoader> modLoaders = new ArrayList<>();
-        CurseModLoader modLoader = new CurseModLoader();
+        List<CurseForgeModLoader> modLoaders = new ArrayList<>();
+        CurseForgeModLoader modLoader = new CurseForgeModLoader();
 
         String loaderVersion = launcher.loaderVersion.version;
 
-        // Since Curse treats Farbic as a second class citizen :(, we need to force a
-        // forge loader and people need to use Jumploader in order to have Fabric packs
+        // Since CurseForge treats Farbic as a second class citizen :(, we need to force a
+        // Forge loader and people need to use Jumploader in order to have Fabric packs
         // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
         if (launcher.loaderVersion.type.equals("Fabric")) {
             loaderVersion = ForgeLoader.getRecommendedVersion(id);
@@ -920,10 +920,10 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.version = version;
         manifest.author = author;
-        manifest.files = this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).map(mod -> {
-            CurseManifestFile file = new CurseManifestFile();
-            file.projectID = mod.curseModId;
-            file.fileID = mod.curseFileId;
+        manifest.files = this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).map(mod -> {
+            CurseForgeManifestFile file = new CurseForgeManifestFile();
+            file.projectID = mod.curseForgeProjectId;
+            file.fileID = mod.curseForgeFileId;
             file.required = true;
 
             return file;
@@ -947,9 +947,9 @@ public class Instance extends MinecraftVersion {
 
         // create modlist.html
         StringBuilder sb = new StringBuilder("<ul>");
-        this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).forEach(mod -> {
-            if (mod.hasFullCurseInformation()) {
-                sb.append("<li><a href=\"").append(mod.curseMod.websiteUrl).append("\">").append(mod.name)
+        this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
+            if (mod.hasFullCurseForgeInformation()) {
+                sb.append("<li><a href=\"").append(mod.curseForgeProject.websiteUrl).append("\">").append(mod.name)
                         .append("</a></li>");
             } else {
                 sb.append("<li>").append(mod.name).append("</li>");
@@ -983,8 +983,8 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        // remove files that come from Curse or aren't disabled
-        launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurse()).forEach(mod -> {
+        // remove files that come from CurseForge or aren't disabled
+        launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
 
             if (file.exists()) {
@@ -1110,7 +1110,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isOldCurseForgePack() {
-        return launcher.curseManifest != null;
+        return launcher.curseForgeManifest != null;
     }
 
     public boolean isCurseForgePack() {
@@ -1150,8 +1150,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean hasCurseForgeProjectId() {
-        if (launcher.curseManifest != null) {
-            return launcher.curseManifest.projectID != null;
+        if (launcher.curseForgeManifest != null) {
+            return launcher.curseForgeManifest.projectID != null;
         }
 
         return launcher.curseForgeProject != null;

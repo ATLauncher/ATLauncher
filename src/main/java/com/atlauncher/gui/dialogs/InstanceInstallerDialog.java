@@ -59,9 +59,9 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.data.curse.CurseFile;
-import com.atlauncher.data.curse.CurseMod;
-import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackLink;
@@ -76,7 +76,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
@@ -90,8 +90,8 @@ public class InstanceInstallerDialog extends JDialog {
     private boolean isServer = false;
     private Pack pack;
     private Instance instance = null;
-    private CurseManifest curseManifest = null;
-    private CurseMod curseForgeProject = null;
+    private CurseForgeManifest curseForgeManifest = null;
+    private CurseForgeProject curseForgeProject = null;
     private ModpacksChPackManifest modpacksChPackManifest = null;
     private MultiMCManifest multiMCManifest = null;
 
@@ -111,7 +111,7 @@ public class InstanceInstallerDialog extends JDialog {
     private final boolean isUpdate;
     private final PackVersion autoInstallVersion;
 
-    public InstanceInstallerDialog(CurseManifest manifest, Path curseExtractedPath) {
+    public InstanceInstallerDialog(CurseForgeManifest manifest, Path curseExtractedPath) {
         this(manifest, false, false, null, null, false, curseExtractedPath, null, App.launcher.getParent());
     }
 
@@ -153,11 +153,11 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (object instanceof Pack) {
             handlePackInstall(object, isServer);
-        } else if (object instanceof CurseMod) {
+        } else if (object instanceof CurseForgeProject) {
             handleCurseForgeInstall(object);
         } else if (object instanceof ModpacksChPackManifest) {
             handleModpacksChInstall(object);
-        } else if (object instanceof CurseManifest) {
+        } else if (object instanceof CurseForgeManifest) {
             handleCurseForgeImport(object);
         } else if (object instanceof MultiMCManifest) {
             handleMultiMcImport(object);
@@ -363,7 +363,7 @@ public class InstanceInstallerDialog extends JDialog {
                 boolean saveMods = !isServer && isReinstall && saveModsCheckbox.isSelected();
 
                 final InstanceInstaller instanceInstaller = new InstanceInstaller(nameField.getText(), pack, version,
-                        isReinstall, isServer, saveMods, shareCode, showModsChooser, loaderVersion, curseManifest,
+                        isReinstall, isServer, saveMods, shareCode, showModsChooser, loaderVersion, curseForgeManifest,
                         curseExtractedPath, modpacksChPackManifest, multiMCManifest, multiMCExtractedPath) {
 
                     protected void done() {
@@ -585,7 +585,7 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     private void handleCurseForgeInstall(Object object) {
-        curseForgeProject = (CurseMod) object;
+        curseForgeProject = (CurseForgeProject) object;
 
         pack = new Pack();
         pack.name = curseForgeProject.name;
@@ -595,9 +595,9 @@ public class InstanceInstallerDialog extends JDialog {
         pack.websiteURL = curseForgeProject.websiteUrl;
         pack.curseForgeProject = curseForgeProject;
 
-        List<CurseFile> files = CurseApi.getFilesForMod(curseForgeProject.id);
+        List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
 
-        pack.versions = files.stream().sorted(Comparator.comparingInt((CurseFile file) -> file.id).reversed())
+        pack.versions = files.stream().sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed())
                 .map(f -> {
                     PackVersion packVersion = new PackVersion();
                     packVersion.version = f.displayName;
@@ -652,26 +652,26 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     private void handleCurseForgeImport(Object object) {
-        curseManifest = (CurseManifest) object;
+        curseForgeManifest = (CurseForgeManifest) object;
 
         pack = new Pack();
-        pack.name = curseManifest.name;
+        pack.name = curseForgeManifest.name;
 
-        if (curseManifest.projectID != null) {
-            CurseMod cursePack = CurseApi.getModById(curseManifest.projectID);
+        if (curseForgeManifest.projectID != null) {
+            CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(curseForgeManifest.projectID);
 
-            curseManifest.websiteUrl = cursePack.websiteUrl;
+            curseForgeManifest.websiteUrl = curseForgeProject.websiteUrl;
 
-            pack.externalId = curseManifest.projectID;
-            pack.description = cursePack.summary;
-            pack.cursePack = cursePack;
+            pack.externalId = curseForgeManifest.projectID;
+            pack.description = curseForgeProject.summary;
+            pack.curseForgeProject = curseForgeProject;
         }
 
         PackVersion packVersion = new PackVersion();
-        packVersion.version = curseManifest.version;
+        packVersion.version = curseForgeManifest.version;
 
         try {
-            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseManifest.minecraft.version);
+            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseForgeManifest.minecraft.version);
         } catch (InvalidMinecraftVersion e) {
             LogManager.error(e.getMessage());
             return;
@@ -684,7 +684,7 @@ public class InstanceInstallerDialog extends JDialog {
         isReinstall = false;
 
         // #. {0} is the name of the pack the user is installing
-        setTitle(GetText.tr("Installing {0}", curseManifest.name));
+        setTitle(GetText.tr("Installing {0}", curseForgeManifest.name));
     }
 
     private void handleMultiMcImport(Object object) {

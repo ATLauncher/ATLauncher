@@ -15,15 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge;
 
-public class CurseAuthor {
-    public String name;
-    public String url;
-    public int projectId;
+import java.util.List;
+
+public class CurseForgeFingerprintedMod {
     public int id;
-    public int projectTitleId;
-    public String projectTitleTitle;
-    public int userId;
-    public int twitchId;
+    public CurseForgeFile file;
+    public List<CurseForgeProjectLatestFile> latestFiles;
 }

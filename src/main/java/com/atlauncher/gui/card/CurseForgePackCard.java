@@ -30,7 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
@@ -40,9 +40,9 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public final class CurseForgePackCard extends JPanel {
     private final Window parent;
-    public final CurseMod project;
+    public final CurseForgeProject project;
 
-    public CurseForgePackCard(Window parent, final CurseMod project) {
+    public CurseForgePackCard(Window parent, final CurseForgeProject project) {
         this.parent = parent;
         this.project = project;
 

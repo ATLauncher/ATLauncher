@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
 
@@ -30,34 +31,30 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.curse.CurseFileDependency;
-import com.atlauncher.data.curse.CurseMod;
-import com.atlauncher.gui.dialogs.CurseModFileSelectorDialog;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.CurseApi;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class CurseFileDependencyCard extends JPanel {
+public final class CurseForgeModCard extends JPanel {
     private Window parent;
-    private final CurseFileDependency dependency;
     private Instance instance;
+    public final CurseForgeProject mod;
 
-    public CurseFileDependencyCard(Window parent, CurseFileDependency dependency, Instance instance) {
+    public CurseForgeModCard(Window parent, final CurseForgeProject mod, Instance instance) {
         this.parent = parent;
-
-        setLayout(new BorderLayout());
-
-        this.dependency = dependency;
+        this.mod = mod;
         this.instance = instance;
 
         setupComponents();
     }
 
     private void setupComponents() {
-        CurseMod mod = CurseApi.getModById(dependency.addonId);
+        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(250, 180));
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
@@ -78,8 +75,8 @@ public final class CurseFileDependencyCard extends JPanel {
         buttonsPanel.add(viewButton);
 
         addButton.addActionListener(e -> {
-            Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
-            new CurseModFileSelectorDialog(parent, mod, instance);
+            Analytics.sendEvent(mod.name, "Add", "CurseMod");
+            new CurseForgeProjectFileSelectorDialog(parent, mod, instance);
         });
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));

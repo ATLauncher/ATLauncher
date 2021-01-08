@@ -15,12 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge.pack;
 
 import java.util.List;
 
-public class CurseFingerprintedMod {
-    public int id;
-    public CurseFile file;
-    public List<CurseModLatestFile> latestFiles;
+public class CurseForgeMinecraft {
+    public String version;
+    public List<CurseForgeModLoader> modLoaders;
 }

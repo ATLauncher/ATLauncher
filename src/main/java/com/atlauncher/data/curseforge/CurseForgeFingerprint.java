@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.data.curseforge;
 
-public class ATLauncherApiCurseModpack {
-    public Integer id = null;
-    public String slug;
-    public Integer defaultFileId = null;
-    public String summary;
-    public String websiteUrl;
-    public String imageUrl;
+import java.util.List;
+
+public class CurseForgeFingerprint {
+    public boolean isCacheBuilt;
+    public List<CurseForgeFingerprintedMod> exactMatches;
+    public List<Long> exactFingerprints;
 }

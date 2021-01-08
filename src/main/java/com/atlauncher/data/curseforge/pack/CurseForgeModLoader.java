@@ -15,10 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse.pack;
+package com.atlauncher.data.curseforge.pack;
 
-public class CurseManifestFile {
-    public int projectID;
-    public int fileID;
-    public boolean required;
+public class CurseForgeModLoader {
+    public String id;
+    public boolean primary;
 }

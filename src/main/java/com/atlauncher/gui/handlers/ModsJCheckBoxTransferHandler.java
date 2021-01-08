@@ -29,8 +29,8 @@ import javax.swing.TransferHandler;
 
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Type;
-import com.atlauncher.data.curse.CurseFingerprint;
-import com.atlauncher.data.curse.CurseFingerprintedMod;
+import com.atlauncher.data.curseforge.CurseForgeFingerprint;
+import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -40,7 +40,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 
@@ -168,22 +168,22 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
                         LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
 
-                        CurseFingerprint fingerprintResponse = CurseApi.checkFingerprint(murmurHash);
+                        CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
 
                         if (fingerprintResponse.exactMatches.size() == 1) {
-                            CurseFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
+                            CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
 
-                            // add Curse information
-                            mod.curseMod = CurseApi.getModById(foundMod.id);
-                            mod.curseModId = foundMod.id;
-                            mod.curseFile = foundMod.file;
-                            mod.curseFileId = foundMod.file.id;
+                            // add CurseForge information
+                            mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
+                            mod.curseForgeProjectId = foundMod.id;
+                            mod.curseForgeFile = foundMod.file;
+                            mod.curseForgeFileId = foundMod.file.id;
 
-                            mod.name = mod.curseMod.name;
-                            mod.description = mod.curseMod.summary;
+                            mod.name = mod.curseForgeProject.name;
+                            mod.description = mod.curseForgeProject.summary;
 
-                            LogManager.debug("Found matching mod from CurseForge called " + mod.curseMod.name
-                                    + " with file named " + mod.curseFile.displayName);
+                            LogManager.debug("Found matching mod from CurseForge called " + mod.curseForgeProject.name
+                                    + " with file named " + mod.curseForgeFile.displayName);
                         }
                     } catch (IOException e1) {
                         LogManager.logStackTrace(e1);

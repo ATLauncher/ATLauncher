@@ -15,30 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge;
 
 import java.util.List;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.json.ModType;
 
-public class CurseMod {
+public class CurseForgeProject {
     public int id;
     public String name;
-    public List<CurseAuthor> authors;
-    public List<CurseAttachment> attachments;
+    public List<CurseForgeAuthor> authors;
+    public List<CurseForgeAttachment> attachments;
     public String websiteUrl;
     public int gameId;
     public String summary;
     public int defaultFileId;
     public int downloadCount;
-    public List<CurseModLatestFile> latestFiles;
-    public List<CurseModCategory> categories;
+    public List<CurseForgeProjectLatestFile> latestFiles;
+    public List<CurseForgeCategory> categories;
     public int status;
     public int primaryCategoryId;
-    public CurseCategory categorySection;
+    public CurseForgeCategorySection categorySection;
     public String slug;
-    public List<CurseGameVersionLatestFiles> gameVersionLatestFiles;
+    public List<CurseForgeGameVersionLatestFiles> gameVersionLatestFiles;
     public boolean isFeatured;
     public float popularityScore;
     public int gamePopularityRank;
@@ -50,10 +50,10 @@ public class CurseMod {
     public String dateCreated;
     public String dateReleased;
     public boolean isAvailable;
-    public boolean isExperiemental;
+    public boolean isExperimental;
 
     public ModType getModType() {
-        if (categorySection.gameCategoryId == Constants.CURSE_RESOURCE_PACKS_SECTION_ID) {
+        if (categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return ModType.resourcepack;
         }
 

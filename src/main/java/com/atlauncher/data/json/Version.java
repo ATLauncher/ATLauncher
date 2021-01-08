@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.atlauncher.annot.Json;
 import com.atlauncher.managers.LogManager;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * This class contains information about a pack's version. This is a singular
@@ -58,9 +59,10 @@ public class Version {
     public boolean noConfigs;
 
     /**
-     * If this version allows Curse mod integration.
+     * If this version allows CurseForge integration.
      */
-    public boolean enableCurseIntegration = false;
+    @SerializedName(value = "enableCurseForgeIntegration", alternate = { "enableCurseIntegration" })
+    public boolean enableCurseForgeIntegration = false;
 
     /**
      * If this version allows editing mods.
@@ -194,8 +196,8 @@ public class Version {
         return this.noConfigs;
     }
 
-    public boolean hasEnabledCurseIntegration() {
-        return this.enableCurseIntegration;
+    public boolean hasEnabledCurseForgeIntegration() {
+        return this.enableCurseForgeIntegration;
     }
 
     public boolean hasEnabledEditingMods() {

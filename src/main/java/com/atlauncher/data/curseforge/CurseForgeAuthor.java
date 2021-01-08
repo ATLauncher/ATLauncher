@@ -15,16 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge;
 
-public class CurseModCategory {
-    public int categoryId;
+public class CurseForgeAuthor {
     public String name;
     public String url;
-    public String avatarUrl;
-    public int parentId;
-    public int rootId;
     public int projectId;
-    public int avatarId;
-    public int gameId;
+    public int id;
+    public int projectTitleId;
+    public String projectTitleTitle;
+    public int userId;
+    public int twitchId;
 }

@@ -350,7 +350,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             add(enableFeralGamemode, gbc);
         }
 
-        // Disable Curse Minecraft version restrictions
+        // Disable CurseForge Minecraft version restrictions
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -359,7 +359,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         JLabelWithHover disableAddModRestrictionsLabel = new JLabelWithHover(
                 GetText.tr("Disable Add Mod Restrictions?"), HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This will allow you to disable the restrictions in place to prevent you from installing mods from Curse that are not for your current Minecraft version or loader. By disabling these restrictions, you can install any mod, so be sure that it's compatable with the Minecraft version and loader (if any) that you're on."))
+                        "This will allow you to disable the restrictions in place to prevent you from installing mods from CurseForge that are not for your current Minecraft version or loader. By disabling these restrictions, you can install any mod, so be sure that it's compatible with the Minecraft version and loader (if any) that you're on."))
                         .build());
         add(disableAddModRestrictionsLabel, gbc);
 
@@ -378,7 +378,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover disableCustomFontsLabel = new JLabelWithHover(GetText.tr("Disable Custom Fonts?"), HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This will disable custom fonts used by themes. If your system has issues with font display not looking right, you can disable this to switch to a default compatable font."))
+                        "This will disable custom fonts used by themes. If your system has issues with font display not looking right, you can disable this to switch to a default compatible font."))
                         .build());
         add(disableCustomFontsLabel, gbc);
 

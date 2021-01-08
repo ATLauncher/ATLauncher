@@ -26,8 +26,8 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.curse.CurseFile;
-import com.atlauncher.data.curse.CurseMod;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
@@ -83,14 +83,14 @@ public class Mod {
     public List<String> depends;
     public String filePrefix;
     public String description;
-    public CurseMod curseForgeProject;
-    public CurseFile curseForgeFile;
+    public CurseForgeProject curseForgeProject;
+    public CurseForgeFile curseForgeFile;
 
-    @SerializedName("curse_id")
-    public Integer curseModId;
+    @SerializedName(value = "curseforge_project_id", alternate = { "curse_id" })
+    public Integer curseForgeProjectId;
 
-    @SerializedName("curse_file_id")
-    public Integer curseFileId;
+    @SerializedName(value = "curseforge_file_id", alternate = { "curse_file_id" })
+    public Integer curseForgeFileId;
 
     public String getName() {
         return this.name;
@@ -316,12 +316,12 @@ public class Mod {
         return this.description;
     }
 
-    public Integer getCurseModId() {
-        return this.curseModId;
+    public Integer getCurseForgeProjectId() {
+        return this.curseForgeProjectId;
     }
 
-    public Integer getCurseFileId() {
-        return this.curseFileId;
+    public Integer getCurseForgeFileId() {
+        return this.curseForgeFileId;
     }
 
     public boolean hasDepends() {

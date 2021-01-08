@@ -15,15 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curse;
+package com.atlauncher.data.curseforge;
 
-public class CurseAttachment {
-    public int id;
-    public int projectId;
-    public String description;
-    public boolean isDefault;
-    public String thumbnailUrl;
-    public String title;
+public class CurseForgeCategory {
+    public int categoryId;
+    public String name;
     public String url;
-    public int status;
+    public String avatarUrl;
+    public int parentId;
+    public int rootId;
+    public int projectId;
+    public int avatarId;
+    public int gameId;
 }

@@ -46,12 +46,12 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceLauncher;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.Type;
-import com.atlauncher.data.curse.CurseAttachment;
-import com.atlauncher.data.curse.CurseFile;
-import com.atlauncher.data.curse.CurseFingerprint;
-import com.atlauncher.data.curse.CurseMod;
-import com.atlauncher.data.curse.pack.CurseManifest;
-import com.atlauncher.data.curse.pack.CurseModLoader;
+import com.atlauncher.data.curseforge.CurseForgeAttachment;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeFingerprint;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
+import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
 import com.atlauncher.data.json.Delete;
 import com.atlauncher.data.json.Deletes;
 import com.atlauncher.data.json.DownloadType;
@@ -96,7 +96,7 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
@@ -122,7 +122,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public final String shareCode;
     public final boolean showModsChooser;
     public LoaderVersion loaderVersion;
-    public CurseManifest curseForgeManifest;
+    public CurseForgeManifest curseForgeManifest;
     public Path curseForgeExtractedPath;
     public final ModpacksChPackManifest modpacksChPackManifest;
     public ModpacksChPackVersionManifest modpacksChPackVersionManifest;
@@ -160,7 +160,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
             boolean isReinstall, boolean isServer, boolean saveMods, String shareCode, boolean showModsChooser,
-            LoaderVersion loaderVersion, CurseManifest curseManifest, Path curseForgeExtractedPath,
+            LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest, Path curseForgeExtractedPath,
             ModpacksChPackManifest modpacksChPackManifest, MultiMCManifest multiMCManifest, Path multiMCExtractedPath) {
         this.name = name;
         this.pack = pack;
@@ -180,7 +180,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.temp = FileSystem.TEMP.resolve(pack.getSafeName() + "_" + version.getSafeVersion());
 
         this.loaderVersion = loaderVersion;
-        this.curseForgeManifest = curseManifest;
+        this.curseForgeManifest = curseForgeManifest;
         this.curseForgeExtractedPath = curseForgeExtractedPath;
         this.modpacksChPackManifest = modpacksChPackManifest;
         this.multiMCManifest = multiMCManifest;
@@ -268,7 +268,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private String getAnalyticsCategory() {
         if (this.curseForgeManifest != null) {
-            return "CursePack";
+            return "CurseForgePack";
         } else if (this.modpacksChPackManifest != null) {
             return "ModpacksChPack";
         } else if (this.multiMCManifest != null) {
@@ -312,12 +312,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.packVersion = new Version();
         packVersion.version = curseForgeManifest.version;
         packVersion.minecraft = curseForgeManifest.minecraft.version;
-        packVersion.enableCurseIntegration = true;
+        packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
 
         packVersion.loader = new com.atlauncher.data.json.Loader();
 
-        CurseModLoader forgeVersion = curseForgeManifest.minecraft.modLoaders.stream().filter(e -> e.primary)
+        CurseForgeModLoader forgeVersion = curseForgeManifest.minecraft.modLoaders.stream().filter(e -> e.primary)
                 .findFirst().orElse(null);
 
         if (forgeVersion == null) {
@@ -346,12 +346,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         int[] projectIdsFound = curseForgeManifest.files.stream().mapToInt(file -> file.projectID).toArray();
 
-        Map<Integer, CurseMod> foundProjects = CurseApi.getAddonsAsMap(projectIdsFound);
+        Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
         packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
-            CurseMod curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
-                    .orElseGet(() -> CurseApi.getModById(file.projectID));
-            CurseFile curseForgeFile = CurseApi.getFileForMod(file.projectID, file.fileID);
+            CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
+                    .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
+            CurseForgeFile curseForgeFile = CurseForgeApi.getFileForProject(file.projectID, file.fileID);
 
             Mod mod = curseForgeFile.convertToMod(curseForgeProject);
             mod.optional = !file.required;
@@ -381,8 +381,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();
 
-        curseForgeManifest = Gsons.MINECRAFT
-                .fromJson(new String(ZipUtil.unpackEntry(manifestFile.toFile(), "manifest.json")), CurseManifest.class);
+        curseForgeManifest = Gsons.MINECRAFT.fromJson(
+                new String(ZipUtil.unpackEntry(manifestFile.toFile(), "manifest.json")), CurseForgeManifest.class);
         curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
 
         ZipUtil.unpack(manifestFile.toFile(), curseForgeExtractedPath.toFile());
@@ -414,7 +414,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.packVersion = new Version();
         packVersion.version = this.version.version;
         packVersion.minecraft = minecraftTarget.version;
-        packVersion.enableCurseIntegration = true;
+        packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
 
         this.version.minecraftVersion = MinecraftManager.getMinecraftVersion(packVersion.minecraft);
@@ -483,7 +483,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.packVersion = new Version();
         packVersion.version = "1";
         packVersion.minecraft = minecraftVersion;
-        packVersion.enableCurseIntegration = true;
+        packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
 
         packVersion.loader = new com.atlauncher.data.json.Loader();
@@ -621,7 +621,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
                             com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
                             this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
-                            mod.getCurseModId(), mod.getCurseFileId(), mod.curseForgeProject, mod.curseForgeFile));
+                            mod.getCurseForgeProjectId(), mod.getCurseForgeFileId(), mod.curseForgeProject,
+                            mod.curseForgeFile));
         }
 
         if (this.isReinstall && instance.hasCustomMods()) {
@@ -852,7 +853,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.externaPackId = this.pack.externalId;
         instanceLauncher.version = this.packVersion.version;
         instanceLauncher.java = this.packVersion.java;
-        instanceLauncher.enableCurseIntegration = this.packVersion.enableCurseIntegration;
+        instanceLauncher.enableCurseForgeIntegration = this.packVersion.enableCurseForgeIntegration;
         instanceLauncher.enableEditingMods = this.packVersion.enableEditingMods;
         instanceLauncher.loaderVersion = this.loaderVersion;
         instanceLauncher.isDev = this.version.isDev;
@@ -867,8 +868,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
         instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
 
-        if (instanceLauncher.curseManifest != null) {
-            instanceLauncher.curseManifest = null;
+        if (instanceLauncher.curseForgeManifest != null) {
+            instanceLauncher.curseForgeManifest = null;
         }
 
         if (this.version.isDev) {
@@ -1568,7 +1569,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (this.pack.curseForgeProject != null) {
             fireTask(GetText.tr("Downloading Instance Image"));
-            CurseAttachment attachment = this.pack.curseForgeProject.attachments.stream().filter(a -> a.isDefault)
+            CurseForgeAttachment attachment = this.pack.curseForgeProject.attachments.stream().filter(a -> a.isDefault)
                     .findFirst().orElse(null);
 
             if (attachment != null) {
@@ -1613,31 +1614,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         }
                     });
 
-            CurseFingerprint fingerprintResponse = CurseApi
+            CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                     .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
             int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id).toArray();
 
-            Map<Integer, CurseMod> foundProjects = CurseApi.getAddonsAsMap(projectIdsFound);
+            Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
             fingerprintResponse.exactMatches.stream().filter(em -> murmurHashes.containsKey(em.file.packageFingerprint))
                     .forEach(foundMod -> {
                         DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
 
-                        // add Curse information
-                        dm.curseModId = foundMod.id;
-                        dm.curseFile = foundMod.file;
-                        dm.curseFileId = foundMod.file.id;
+                        // add CurseForge information
+                        dm.curseForgeProjectId = foundMod.id;
+                        dm.curseForgeFile = foundMod.file;
+                        dm.curseForgeFileId = foundMod.file.id;
 
-                        CurseMod curseMod = foundProjects.get(foundMod.id);
+                        CurseForgeProject curseForgeProject = foundProjects.get(foundMod.id);
 
-                        if (curseMod != null) {
-                            dm.curseMod = curseMod;
-                            dm.name = curseMod.name;
-                            dm.description = curseMod.summary;
+                        if (curseForgeProject != null) {
+                            dm.curseForgeProject = curseForgeProject;
+                            dm.name = curseForgeProject.name;
+                            dm.description = curseForgeProject.summary;
                         }
 
-                        LogManager.debug("Found matching mod from CurseForge called " + dm.curseFile.displayName);
+                        LogManager.debug("Found matching mod from CurseForge called " + dm.curseForgeFile.displayName);
                     });
         }
     }

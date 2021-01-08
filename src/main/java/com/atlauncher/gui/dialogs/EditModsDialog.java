@@ -46,8 +46,8 @@ import javax.swing.UIManager;
 import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.curse.CurseFingerprint;
-import com.atlauncher.data.curse.CurseFingerprintedMod;
+import com.atlauncher.data.curseforge.CurseForgeFingerprint;
+import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -58,7 +58,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.CurseApi;
+import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 
@@ -269,22 +269,23 @@ public class EditModsDialog extends JDialog {
 
                                 LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
 
-                                CurseFingerprint fingerprintResponse = CurseApi.checkFingerprint(murmurHash);
+                                CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
 
                                 if (fingerprintResponse.exactMatches.size() == 1) {
-                                    CurseFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
+                                    CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
 
-                                    // add Curse information
-                                    mod.curseMod = CurseApi.getModById(foundMod.id);
-                                    mod.curseModId = foundMod.id;
-                                    mod.curseFile = foundMod.file;
-                                    mod.curseFileId = foundMod.file.id;
+                                    // add CurseForge information
+                                    mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
+                                    mod.curseForgeProjectId = foundMod.id;
+                                    mod.curseForgeFile = foundMod.file;
+                                    mod.curseForgeFileId = foundMod.file.id;
 
-                                    mod.name = mod.curseMod.name;
-                                    mod.description = mod.curseMod.summary;
+                                    mod.name = mod.curseForgeProject.name;
+                                    mod.description = mod.curseForgeProject.summary;
 
-                                    LogManager.debug("Found matching mod from CurseForge called " + mod.curseMod.name
-                                            + " with file named " + mod.curseFile.displayName);
+                                    LogManager.debug(
+                                            "Found matching mod from CurseForge called " + mod.curseForgeProject.name
+                                                    + " with file named " + mod.curseForgeFile.displayName);
                                 }
                             } catch (IOException e1) {
                                 LogManager.logStackTrace(e1);
@@ -307,7 +308,7 @@ public class EditModsDialog extends JDialog {
         });
         bottomPanel.add(addButton);
 
-        if (instance.launcher.enableCurseIntegration) {
+        if (instance.launcher.enableCurseForgeIntegration) {
             JButton browseMods = new JButton(GetText.tr("Browse Mods"));
             browseMods.addActionListener(e -> {
                 new AddModsDialog(this, instance);
@@ -395,11 +396,13 @@ public class EditModsDialog extends JDialog {
     }
 
     private void checkBoxesChanged() {
-        if (instance.launcher.enableCurseIntegration) {
-            boolean hasSelectedACurseMod = (enabledMods.stream().anyMatch(AbstractButton::isSelected) && enabledMods
-                    .stream().filter(AbstractButton::isSelected).anyMatch(cb -> cb.getDisableableMod().isFromCurse()))
-                    || (disabledMods.stream().anyMatch(AbstractButton::isSelected) && disabledMods.stream()
-                            .filter(AbstractButton::isSelected).anyMatch(cb -> cb.getDisableableMod().isFromCurse()));
+        if (instance.launcher.enableCurseForgeIntegration) {
+            boolean hasSelectedACurseMod = (enabledMods.stream().anyMatch(AbstractButton::isSelected)
+                    && enabledMods.stream().filter(AbstractButton::isSelected)
+                            .anyMatch(cb -> cb.getDisableableMod().isFromCurseForge()))
+                    || (disabledMods.stream().anyMatch(AbstractButton::isSelected)
+                            && disabledMods.stream().filter(AbstractButton::isSelected)
+                                    .anyMatch(cb -> cb.getDisableableMod().isFromCurseForge()));
 
             checkForUpdatesButton.setEnabled(hasSelectedACurseMod);
             reinstallButton.setEnabled(hasSelectedACurseMod);
@@ -425,7 +428,7 @@ public class EditModsDialog extends JDialog {
                 GetText.tr("Checking For Updates"));
         progressDialog.addThread(new Thread(() -> {
             for (ModsJCheckBox mod : mods) {
-                if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
+                if (mod.isSelected() && mod.getDisableableMod().isFromCurseForge()) {
                     mod.getDisableableMod().checkForUpdate(this, instance);
                 }
                 progressDialog.doneTask();
@@ -447,7 +450,7 @@ public class EditModsDialog extends JDialog {
         mods.addAll(disabledMods);
 
         for (ModsJCheckBox mod : mods) {
-            if (mod.isSelected() && mod.getDisableableMod().isFromCurse()) {
+            if (mod.isSelected() && mod.getDisableableMod().isFromCurseForge()) {
                 mod.getDisableableMod().reinstall(this, instance);
             }
         }

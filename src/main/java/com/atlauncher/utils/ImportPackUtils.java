@@ -27,7 +27,7 @@ import java.util.Properties;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.data.curse.pack.CurseManifest;
+import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -82,8 +82,8 @@ public class ImportPackUtils {
         Path tmpDir = FileSystem.TEMP.resolve("curseforgeimport" + file.getName().toString().toLowerCase());
 
         try {
-            CurseManifest manifest = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")),
-                    CurseManifest.class);
+            CurseForgeManifest manifest = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")),
+                    CurseForgeManifest.class);
 
             if (projectId != null) {
                 manifest.projectID = projectId;

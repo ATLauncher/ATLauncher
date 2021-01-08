@@ -179,7 +179,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.setVisible(instance.isCurseForgePack()
                 || (instance.isModpacksChPack() && instance.launcher.modpacksChPackManifest.hasTag("FTB")));
 
-        if (instance.launcher.enableCurseIntegration) {
+        if (instance.launcher.enableCurseForgeIntegration) {
             bottom.add(this.addButton);
         }
 
