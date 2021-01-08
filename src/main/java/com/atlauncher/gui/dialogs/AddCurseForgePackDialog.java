@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.gui.card.CurseForgePackCard;
+import com.atlauncher.gui.card.CurseForgeProjectCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseForgePacksPanel;
@@ -215,7 +215,10 @@ public final class AddCurseForgePackDialog extends JDialog {
             contentPanel.setLayout(new WrapLayout());
 
             projects.forEach(project -> {
-                contentPanel.add(new CurseForgePackCard(this, project), gbc);
+                contentPanel.add(new CurseForgeProjectCard(project, e -> {
+                    Analytics.sendEvent(project.name, "Add", "CurseForgePack");
+                    new InstanceInstallerDialog(this, project);
+                }), gbc);
                 gbc.gridy++;
             });
         }

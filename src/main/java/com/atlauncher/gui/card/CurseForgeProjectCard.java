@@ -20,7 +20,7 @@ package com.atlauncher.gui.card;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Window;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -30,29 +30,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class CurseForgeModCard extends JPanel {
-    private Window parent;
-    private Instance instance;
-    public final CurseForgeProject mod;
+public final class CurseForgeProjectCard extends JPanel {
 
-    public CurseForgeModCard(Window parent, final CurseForgeProject mod, Instance instance) {
-        this.parent = parent;
-        this.mod = mod;
-        this.instance = instance;
-
-        setupComponents();
-    }
-
-    private void setupComponents() {
+    public CurseForgeProjectCard(final CurseForgeProject mod, ActionListener al) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
@@ -74,10 +60,7 @@ public final class CurseForgeModCard extends JPanel {
         buttonsPanel.add(addButton);
         buttonsPanel.add(viewButton);
 
-        addButton.addActionListener(e -> {
-            Analytics.sendEvent(mod.name, "Add", "CurseMod");
-            new CurseForgeProjectFileSelectorDialog(parent, mod, instance);
-        });
+        addButton.addActionListener(al);
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
 

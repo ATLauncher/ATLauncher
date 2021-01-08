@@ -78,7 +78,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
         buttonsPanel.add(viewButton);
 
         addButton.addActionListener(e -> {
-            Analytics.sendEvent(mod.name, "AddDependency", "CurseMod");
+            Analytics.sendEvent(mod.name, "AddDependency", "CurseForgeMod");
             new CurseForgeProjectFileSelectorDialog(parent, mod, instance);
         });
 

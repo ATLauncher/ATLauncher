@@ -78,7 +78,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         setupComponents();
     }
 
-    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance, int installedFileId) {
+    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance,
+            int installedFileId) {
         super(parent, ModalityType.APPLICATION_MODAL);
 
         this.mod = mod;
@@ -173,7 +174,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             dialog.add(bottomPanel, BorderLayout.SOUTH);
 
             Runnable r = () -> {
-                Analytics.sendEvent(mod.name + " - " + file.displayName, "AddFile", "CurseMod");
+                Analytics.sendEvent(mod.name + " - " + file.displayName, "AddFile", "CurseForgeMod");
                 instance.addFileFromCurse(mod, file);
                 dialog.dispose();
                 dispose();
@@ -288,7 +289,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 if (installedFile != null) {
                     filesDropdown.setSelectedItem(installedFile);
 
-                    // #. {0} is the name of the CurseForge project that the user already has installed
+                    // #. {0} is the name of the CurseForge project that the user already has
+                    // installed
                     installedJLabel.setText(GetText.tr("The version currently installed is {0}", installedFile));
                     installedJLabel.setVisible(true);
                 }

@@ -40,7 +40,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.gui.card.CurseForgeModCard;
+import com.atlauncher.gui.card.CurseForgeProjectCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
@@ -123,11 +123,11 @@ public final class AddModsDialog extends JDialog {
         this.installFabricApiButton.addActionListener(e -> {
             CurseForgeProject mod = CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID);
 
-            Analytics.sendEvent("AddFabricApi", "CurseMod");
+            Analytics.sendEvent("AddFabricApi", "CurseForgeMod");
             new CurseForgeProjectFileSelectorDialog(mod, instance);
 
-            if (instance.launcher.mods.stream()
-                    .anyMatch(m -> m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
+            if (instance.launcher.mods.stream().anyMatch(
+                    m -> m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
                 fabricApiWarningLabel.setVisible(false);
                 installFabricApiButton.setVisible(false);
             }
@@ -135,8 +135,8 @@ public final class AddModsDialog extends JDialog {
 
         LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
-        if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
-                .noneMatch(mod -> mod.isFromCurseForge() && mod.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
+        if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream().noneMatch(
+                mod -> mod.isFromCurseForge() && mod.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
 
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
@@ -208,7 +208,7 @@ public final class AddModsDialog extends JDialog {
             page -= 1;
         }
 
-        Analytics.sendEvent(page, "Previous", "Navigation", "CurseMod");
+        Analytics.sendEvent(page, "Previous", "Navigation", "CurseForgeMod");
 
         getMods();
     }
@@ -218,7 +218,7 @@ public final class AddModsDialog extends JDialog {
             page += 1;
         }
 
-        Analytics.sendEvent(page, "Next", "Navigation", "CurseMod");
+        Analytics.sendEvent(page, "Next", "Navigation", "CurseForgeMod");
 
         getMods();
     }
@@ -236,16 +236,16 @@ public final class AddModsDialog extends JDialog {
                 setMods(CurseForgeApi.searchResourcePacks(query, page,
                         ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
-                setMods(CurseForgeApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
-                        page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                setMods(CurseForgeApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id,
+                        query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
             } else {
                 if (this.instance.launcher.loaderVersion.isFabric()) {
                     setMods(CurseForgeApi.searchModsForFabric(
                             App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
-                    setMods(CurseForgeApi.searchMods(App.settings.disableAddModRestrictions ? null : this.instance.id, query,
-                            page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    setMods(CurseForgeApi.searchMods(App.settings.disableAddModRestrictions ? null : this.instance.id,
+                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
 
@@ -260,7 +260,7 @@ public final class AddModsDialog extends JDialog {
     private void searchForMods() {
         String query = searchField.getText();
 
-        Analytics.sendEvent(query, "Search", "CurseMod");
+        Analytics.sendEvent(query, "Search", "CurseForgeMod");
 
         getMods();
     }
@@ -284,8 +284,11 @@ public final class AddModsDialog extends JDialog {
         } else {
             contentPanel.setLayout(new WrapLayout());
 
-            mods.forEach(curseMod -> {
-                contentPanel.add(new CurseForgeModCard(this, curseMod, this.instance), gbc);
+            mods.forEach(mod -> {
+                contentPanel.add(new CurseForgeProjectCard(mod, e -> {
+                    Analytics.sendEvent(mod.name, "Add", "CurseForgeMod");
+                    new CurseForgeProjectFileSelectorDialog(this, mod, instance);
+                }), gbc);
                 gbc.gridy++;
             });
         }
