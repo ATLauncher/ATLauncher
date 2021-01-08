@@ -89,35 +89,35 @@ public class InstanceManager {
                         continue;
                     }
                 }
-            } catch (Exception e2) {
-                LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
-                continue;
-            }
 
-            if (instance == null) {
-                LogManager.error("Failed to load instance in the folder " + instanceDir);
-                continue;
-            } else {
-                if (converted) {
-                    instance.save();
-                }
+                if (instance == null) {
+                    LogManager.error("Failed to load instance in the folder " + instanceDir);
+                    continue;
+                } else {
+                    if (converted) {
+                        instance.save();
+                    }
 
-                if (instance.launcher.curseForgeManifest != null) {
-                    if (instance.launcher.curseForgeManifest.projectID != null
+                    if (instance.launcher.curseForgeManifest != null
+                            && instance.launcher.curseForgeManifest.projectID != null
                             && instance.launcher.curseForgeManifest.fileID != null) {
                         LogManager.info(String.format("Converting instance \"%s\" CurseForge information",
                                 instance.launcher.name));
-                        instance.launcher.curseForgeManifest = null;
                         instance.launcher.curseForgeProject = CurseForgeApi
                                 .getProjectById(instance.launcher.curseForgeManifest.projectID);
                         instance.launcher.curseForgeFile = CurseForgeApi.getFileForProject(
-                                instance.launcher.curseForgeManifest.projectID, instance.launcher.curseForgeManifest.fileID);
+                                instance.launcher.curseForgeManifest.projectID,
+                                instance.launcher.curseForgeManifest.fileID);
+                        instance.launcher.curseForgeManifest = null;
 
                         instance.save();
                     }
-                }
 
-                Data.INSTANCES.add(instance);
+                    Data.INSTANCES.add(instance);
+                }
+            } catch (Exception e2) {
+                LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
+                continue;
             }
         }
 
