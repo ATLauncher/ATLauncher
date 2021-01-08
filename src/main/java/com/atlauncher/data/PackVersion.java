@@ -36,8 +36,13 @@ public class PackVersion {
     }
 
     public String toString() {
-        if (this.minecraftVersion == null || this.minecraftVersion.version.equalsIgnoreCase(this.version)) {
+        if (this.minecraftVersion == null
+                || (this.minecraftVersion.version.equalsIgnoreCase(this.version) && !this.minecraftVersion.snapshot)) {
             return this.version;
+        }
+
+        if (this.minecraftVersion.snapshot) {
+            return this.version + " (Snapshot)";
         }
 
         return this.version + " (" + this.minecraftVersion.version + ")";
