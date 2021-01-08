@@ -55,6 +55,20 @@
                     "if not exist .\\testLauncher mkdir .\\testLauncher"
                 ]
             }
+        },
+        {
+            "label": "makeTestLauncherDevDirectory",
+            "type": "shell",
+            "linux": {
+                "command": "mkdir -p ./testLauncher/dev"
+            },
+            "windows": {
+                "command": "cmd",
+                "args": [
+                    "/C",
+                    "if not exist .\\testLauncher\\dev mkdir .\\testLauncher\\dev"
+                ]
+            }
         }
     ]
 }
