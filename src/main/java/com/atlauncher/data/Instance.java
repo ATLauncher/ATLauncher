@@ -17,8 +17,12 @@
  */
 package com.atlauncher.data;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +33,9 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +44,10 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
@@ -77,6 +87,7 @@ import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonIOException;
 
 import org.mini2Dx.gettext.GetText;
@@ -682,6 +693,9 @@ public class Instance extends MinecraftVersion {
                             });
                         }
                     }
+                    if (App.settings.enableAutomaticBackupAfterLaunch) {
+                        backup();
+                    }
                     if (App.settings.keepLauncherOpen && App.launcher.checkForUpdatedFiles()) {
                         App.launcher.reloadLauncherData();
                     }
@@ -752,8 +766,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public DisableableMod getDisableableModByCurseModId(int curseModId) {
-        return this.launcher.mods.stream()
-                .filter(installedMod -> installedMod.isFromCurseForge() && installedMod.getCurseForgeModId() == curseModId)
+        return this.launcher.mods.stream().filter(
+                installedMod -> installedMod.isFromCurseForge() && installedMod.getCurseForgeModId() == curseModId)
                 .findFirst().orElse(null);
     }
 
@@ -797,7 +811,8 @@ public class Instance extends MinecraftVersion {
             download.copy();
         }
 
-        // remove any mods that are from the same mod on CurseForge from the master mod list
+        // remove any mods that are from the same mod on CurseForge from the master mod
+        // list
         this.launcher.mods = this.launcher.mods.stream()
                 .filter(installedMod -> !installedMod.isFromCurseForge() || installedMod.getCurseForgeModId() != mod.id)
                 .collect(Collectors.toList());
@@ -900,7 +915,8 @@ public class Instance extends MinecraftVersion {
 
         String loaderVersion = launcher.loaderVersion.version;
 
-        // Since CurseForge treats Farbic as a second class citizen :(, we need to force a
+        // Since CurseForge treats Farbic as a second class citizen :(, we need to force
+        // a
         // Forge loader and people need to use Jumploader in order to have Fabric packs
         // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
         if (launcher.loaderVersion.type.equals("Fabric")) {
@@ -1163,5 +1179,49 @@ public class Instance extends MinecraftVersion {
         }
 
         return launcher.packId != 0 && getPack() != null;
+    }
+
+    public void backup() {
+        final JDialog dialog = new JDialog(App.launcher.getParent(), GetText.tr("Backing Up {0}", launcher.name),
+                ModalityType.APPLICATION_MODAL);
+        dialog.setSize(300, 100);
+        dialog.setLocationRelativeTo(App.launcher.getParent());
+        dialog.setResizable(false);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+        JLabel doing = new JLabel(GetText.tr("Backing Up {0}", launcher.name));
+        doing.setHorizontalAlignment(JLabel.CENTER);
+        doing.setVerticalAlignment(JLabel.TOP);
+        topPanel.add(doing);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BorderLayout());
+        JProgressBar progressBar = new JProgressBar();
+        bottomPanel.add(progressBar, BorderLayout.NORTH);
+        progressBar.setIndeterminate(true);
+
+        dialog.add(topPanel, BorderLayout.CENTER);
+        dialog.add(bottomPanel, BorderLayout.SOUTH);
+
+        Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Backup", getAnalyticsCategory());
+
+        final Thread backupThread = new Thread(() -> {
+            Timestamp timestamp = new Timestamp(new Date().getTime());
+            String time = timestamp.toString().replaceAll("[^0-9]", "_");
+            String filename = getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
+            ZipUtil.pack(getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile(),
+                    ZipNameMapper.INSTANCE_BACKUP);
+            dialog.dispose();
+            App.TOASTER.pop(GetText.tr("Backup is complete"));
+        });
+        backupThread.start();
+        dialog.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                backupThread.interrupt();
+                dialog.dispose();
+            }
+        });
+        dialog.setVisible(true);
     }
 }

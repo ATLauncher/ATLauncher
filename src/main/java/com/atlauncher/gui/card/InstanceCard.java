@@ -19,7 +19,6 @@ package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
@@ -28,24 +27,17 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -78,11 +70,9 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.reflect.TypeToken;
 
 import org.mini2Dx.gettext.GetText;
-import org.zeroturnaround.zip.ZipUtil;
 
 /**
  * <p/>
@@ -335,49 +325,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         .setType(DialogManager.INFO).show();
 
                 if (ret == DialogManager.YES_OPTION) {
-                    final JDialog dialog = new JDialog(App.launcher.getParent(),
-                            GetText.tr("Backing Up {0}", instance.launcher.name), ModalityType.APPLICATION_MODAL);
-                    dialog.setSize(300, 100);
-                    dialog.setLocationRelativeTo(App.launcher.getParent());
-                    dialog.setResizable(false);
-
-                    JPanel topPanel = new JPanel();
-                    topPanel.setLayout(new BorderLayout());
-                    JLabel doing = new JLabel(GetText.tr("Backing Up {0}", instance.launcher.name));
-                    doing.setHorizontalAlignment(JLabel.CENTER);
-                    doing.setVerticalAlignment(JLabel.TOP);
-                    topPanel.add(doing);
-
-                    JPanel bottomPanel = new JPanel();
-                    bottomPanel.setLayout(new BorderLayout());
-                    JProgressBar progressBar = new JProgressBar();
-                    bottomPanel.add(progressBar, BorderLayout.NORTH);
-                    progressBar.setIndeterminate(true);
-
-                    dialog.add(topPanel, BorderLayout.CENTER);
-                    dialog.add(bottomPanel, BorderLayout.SOUTH);
-
-                    Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Backup",
-                            instance.getAnalyticsCategory());
-
-                    final Thread backupThread = new Thread(() -> {
-                        Timestamp timestamp = new Timestamp(new Date().getTime());
-                        String time = timestamp.toString().replaceAll("[^0-9]", "_");
-                        String filename = instance.getSafeName() + "-" + time.substring(0, time.lastIndexOf("_"))
-                                + ".zip";
-                        ZipUtil.pack(instance.getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile(),
-                                ZipNameMapper.INSTANCE_BACKUP);
-                        dialog.dispose();
-                        App.TOASTER.pop(GetText.tr("Backup is complete"));
-                    });
-                    backupThread.start();
-                    dialog.addWindowListener(new WindowAdapter() {
-                        public void windowClosing(WindowEvent e) {
-                            backupThread.interrupt();
-                            dialog.dispose();
-                        }
-                    });
-                    dialog.setVisible(true);
+                    instance.backup();
                 }
             } else {
                 DialogManager.okDialog().setType(DialogManager.WARNING).setTitle(GetText.tr("No saves found"))

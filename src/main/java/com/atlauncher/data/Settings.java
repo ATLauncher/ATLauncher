@@ -106,7 +106,8 @@ public class Settings {
     public int serverCheckerWait = 5;
 
     // Backups
-    public boolean enableModsBackups = true;
+    public boolean enableModsBackups = false;
+    public boolean enableAutomaticBackupAfterLaunch = false;
 
     public void convert(Properties properties) {
         String importedDateFormat = properties.getProperty("dateformat");

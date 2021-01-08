@@ -15,6 +15,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add suport for updating CurseForge packs [#393]
 - Add in pack browser for CurseForge packs [#394]
 - Sort mods in edit mods dialog in alphabetical order
+- Add setting to run automatic backups after launching an instance
 
 ### Fixes
 - Fix exported instances including disabled mods [#420]
