@@ -43,6 +43,7 @@ public class InstanceLauncher {
 
     public Java java;
 
+    @SerializedName(value = "enableCurseForgeIntegration", alternate = { "enableCurseIntegration" })
     public boolean enableCurseForgeIntegration = false;
     public boolean enableEditingMods = true;
 
