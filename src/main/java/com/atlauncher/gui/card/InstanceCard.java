@@ -502,8 +502,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                     && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
 
                     updateItem.setVisible(instance.isUpdatable());
-                    updateItem.setEnabled(instance.hasUpdate());
-                    updateItem.setEnabled(instance.launcher.isPlayable);
+                    updateItem.setEnabled(instance.hasUpdate() && instance.launcher.isPlayable);
 
                     rightClickMenu.show(image, e.getX(), e.getY());
 
