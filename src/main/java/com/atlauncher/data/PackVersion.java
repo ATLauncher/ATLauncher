@@ -41,8 +41,12 @@ public class PackVersion {
             return this.version;
         }
 
-        if (this.minecraftVersion.snapshot) {
+        if (this.minecraftVersion.version.equalsIgnoreCase(this.version) && this.minecraftVersion.snapshot) {
             return this.version + " (Snapshot)";
+        }
+
+        if (this.minecraftVersion.snapshot) {
+            return this.version + " (" + this.minecraftVersion.version + ")" + " (Snapshot)";
         }
 
         return this.version + " (" + this.minecraftVersion.version + ")";
