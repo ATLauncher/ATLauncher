@@ -47,13 +47,15 @@ public class ForgeLoader implements Loader {
     protected String installerUrl;
     protected String version;
     protected String rawVersion;
+    protected Long installerSize;
+    protected String installerSha1;
     protected String minecraft;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-                    LoaderVersion versionOverride) {
+            LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
@@ -64,6 +66,14 @@ public class ForgeLoader implements Loader {
 
             this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
                     + "-installer.jar";
+
+            if (versionOverride.size != null) {
+                this.installerSize = versionOverride.size;
+            }
+
+            if (versionOverride.hash != null) {
+                this.installerSha1 = versionOverride.hash;
+            }
         } else if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
             this.rawVersion = this.minecraft + "-" + this.version;
@@ -86,6 +96,14 @@ public class ForgeLoader implements Loader {
             this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
                     + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
+        }
+
+        if (metadata.containsKey("installerSize")) {
+            this.installerSize = (Long) metadata.get("installerSize");
+        }
+
+        if (metadata.containsKey("installerSha1")) {
+            this.installerSha1 = (String) metadata.get("installerSha1");
         }
     }
 
@@ -123,8 +141,20 @@ public class ForgeLoader implements Loader {
                         FileSystem.LOADERS.resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar"))
                 .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient).unzipTo(this.tempDir.toPath());
 
+        if (installerSize != null) {
+            download = download.size(this.installerSize);
+        }
+
+        if (installerSha1 != null) {
+            download = download.hash(this.installerSha1);
+        }
+
         if (download.needToDownload()) {
-            instanceInstaller.setTotalBytes(download.getFilesize());
+            if (installerSize != null) {
+                instanceInstaller.setTotalBytes(installerSize);
+            } else {
+                instanceInstaller.setTotalBytes(download.getFilesize());
+            }
         }
 
         download.downloadFile();
@@ -246,8 +276,9 @@ public class ForgeLoader implements Loader {
         APIResponse<List<ATLauncherApiForgeVersion>> data = Download.build()
                 .setUrl(String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft)).asType(type);
 
-        return data.getData().stream()
-                .map(version -> new LoaderVersion(version.version, version.raw_version, version.recommended, "Forge"))
+        return data
+                .getData().stream().map(version -> new LoaderVersion(version.version, version.rawVersion,
+                        version.recommended, "Forge", version.installerSize, version.installerSha1Hash))
                 .collect(Collectors.toList());
     }
 

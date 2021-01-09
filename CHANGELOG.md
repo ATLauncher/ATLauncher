@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.2.1
 
 ### New Features
+- Use hash/size for forge loaders from server
 
 ### Fixes
 - Fix downloading files causing multiple connections to open

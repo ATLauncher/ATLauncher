@@ -21,17 +21,25 @@ public class LoaderVersion {
     public String version;
     public String rawVersion;
     public boolean recommended;
+    public Long size;
+    public String hash;
     public String type;
 
-    public LoaderVersion(String version, String rawVersion, boolean recommended, String type) {
+    public LoaderVersion(String version, String rawVersion, boolean recommended, String type, Long size, String hash) {
         this.version = version;
         this.rawVersion = rawVersion;
         this.recommended = recommended;
         this.type = type;
+        this.size = size;
+        this.hash = hash;
+    }
+
+    public LoaderVersion(String version, String rawVersion, boolean recommended, String type) {
+        this(version, rawVersion, recommended, type, null, null);
     }
 
     public LoaderVersion(String version, boolean recommended, String type) {
-        this(version, version, recommended, type);
+        this(version, version, recommended, type, null, null);
     }
 
     public LoaderVersion(String version) {

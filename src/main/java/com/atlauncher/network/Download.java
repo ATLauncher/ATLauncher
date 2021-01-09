@@ -325,8 +325,6 @@ public final class Download {
     }
 
     private String getHashFromURL() throws IOException {
-        LogManager.debug("hash");
-
         if (this.response == null) {
             this.execute();
         }

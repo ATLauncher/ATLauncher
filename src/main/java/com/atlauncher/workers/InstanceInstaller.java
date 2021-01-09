@@ -335,7 +335,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         Map<String, Object> loaderMeta = new HashMap<>();
         loaderMeta.put("minecraft", curseForgeManifest.minecraft.version);
         loaderMeta.put("version", forgeVersionInfo.getData().version);
-        loaderMeta.put("rawVersion", forgeVersionInfo.getData().raw_version);
+        loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
+        loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
+        loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
         packVersion.loader.metadata = loaderMeta;
 
         if (Utils.matchVersion(curseForgeManifest.minecraft.version, "1.13", false, true)) {
@@ -443,7 +445,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             Map<String, Object> loaderMeta = new HashMap<>();
             loaderMeta.put("minecraft", packVersion.minecraft);
             loaderMeta.put("version", forgeVersionInfo.getData().version);
-            loaderMeta.put("rawVersion", forgeVersionInfo.getData().raw_version);
+            loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
+            loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
+            loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
             packVersion.loader.metadata = loaderMeta;
 
             if (Utils.matchVersion(packVersion.minecraft, "1.13", false, true)) {
@@ -508,7 +512,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             Map<String, Object> loaderMeta = new HashMap<>();
             loaderMeta.put("minecraft", minecraftVersion);
             loaderMeta.put("version", forgeVersionInfo.getData().version);
-            loaderMeta.put("rawVersion", forgeVersionInfo.getData().raw_version);
+            loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
+            loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
+            loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
             packVersion.loader.metadata = loaderMeta;
 
             if (Utils.matchVersion(minecraftVersion, "1.13", false, true)) {
