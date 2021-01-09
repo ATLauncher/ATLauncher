@@ -3,44 +3,11 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.2.0
+## 3.4.2.1
 
 ### New Features
-- Add in version field when exporting an instance [#419]
-- Allow importing packs from url [#425]
-- Add MultiMC instance importing [#426]
-- Allow setting which account to use in Instance settings
-- Add setting to hide pack name and version from Instance card
-- Add support for modpacks.ch (FTB) packs [#392]
-- Add suport for updating CurseForge packs [#393]
-- Add in pack browser for CurseForge packs [#394]
-- Sort mods in edit mods dialog in alphabetical order
-- Add setting to run automatic backups after launching an instance
-- Remove pagination on PacksTab, use infinite scroll instead
 
 ### Fixes
-- Fix exported instances including disabled mods [#420]
-- Clean up old instance format [#422]
-- Fix some issues with remembering window size and position option [#423]
-- Fix instance installation not cancelling on download exceptions
-- Remove system info logging on startup
-- Remove bottom set of buttons on system pack cards
-- Fix add mods dialog not being wide enough
-- Fix potential NPE in PerformanceManager
-- Fix issue with opening wrong browser in linux [#424]
-- Fix long mod names in Add Mod dropdown not showing correctly [#427]
-- Fix install issues with older Forge versions
-- Fix share code on instance context menu showing when it shouldn't
-- Use native file picker when enabled (default for OSX) [#430]
-- Fix some dialogs not showing on top in non Windows [#428]
-- Fix saving existing Mojang account not removing password when unchecked
-- Clean up InstancesPanel components and remove Has Update button
+Fix downloading files causing multiple connections to open
 
 ### Misc
-- Tweak building of artifacts
-- Make installs from CurseForge quicker
-- Use 31st December for showing date format options [#429]
-- Make base domain customisable more easily
-- Move default images into the jar
-- Allow accepting all ssl certs
-- Update SUPPORT.md

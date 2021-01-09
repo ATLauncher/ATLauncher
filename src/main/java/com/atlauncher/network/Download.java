@@ -520,16 +520,6 @@ public final class Download {
             return;
         }
 
-        try {
-            this.execute();
-        } catch (IOException e) {
-            if (this.instanceInstaller != null) {
-                this.instanceInstaller.cancel(true);
-            }
-
-            throw e;
-        }
-
         Path oldPath = null;
         if (Files.exists(this.to)) {
             oldPath = this.to.resolveSibling(this.to.getFileName().toString() + ".bak");
