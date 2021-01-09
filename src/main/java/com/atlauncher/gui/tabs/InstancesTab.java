@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,9 +26,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -49,13 +51,10 @@ import org.mini2Dx.gettext.GetText;
 public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = -969812552965390610L;
     private JButton clearButton;
-    private JTextField searchBox;
+    private JTextField searchField;
     private JButton searchButton;
-    private JCheckBox hasUpdate;
-    private JLabel hasUpdateLabel;
 
     private String searchText = null;
-    private boolean isUpdate = false;
 
     private JPanel panel;
     private JScrollPane scrollPane;
@@ -75,52 +74,53 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
 
         JButton importButton = new JButton(GetText.tr("Import"));
         importButton.addActionListener(e -> new ImportInstanceDialog());
-        topPanel.add(importButton);
 
-        JButton addCurseButton = new JButton(GetText.tr("Add CurseForge Pack"));
-        addCurseButton.addActionListener(e -> new AddCurseForgePackDialog());
-        topPanel.add(addCurseButton);
+        JButton addCurseForgePackButton = new JButton(GetText.tr("Add CurseForge Pack"));
+        addCurseForgePackButton.addActionListener(e -> new AddCurseForgePackDialog());
 
-        JButton addFTBPack = new JButton(GetText.tr("Add FTB Pack"));
-        addFTBPack.addActionListener(e -> new AddFTBPackDialog());
-        topPanel.add(addFTBPack);
+        JButton addFTBPackButton = new JButton(GetText.tr("Add FTB Pack"));
+        addFTBPackButton.addActionListener(e -> new AddFTBPackDialog());
 
-        clearButton = new JButton(GetText.tr("Clear"));
-        clearButton.addActionListener(e -> {
-            searchBox.setText("");
-            hasUpdate.setSelected(false);
-            reload();
-        });
-        topPanel.add(clearButton);
-
-        searchBox = new JTextField(16);
+        searchField = new JTextField(16);
         if (keepFilters) {
-            searchBox.setText(this.searchText);
+            searchField.setText(this.searchText);
         }
-        searchBox.addKeyListener(new KeyAdapter() {
+        searchField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    Analytics.sendEvent(searchBox.getText(), "Search", "Instance");
+                    Analytics.sendEvent(searchField.getText(), "Search", "Instance");
                     reload();
                 }
             }
         });
-        topPanel.add(searchBox);
+        searchField.setMaximumSize(new Dimension(190, 23));
 
         searchButton = new JButton(GetText.tr("Search"));
         searchButton.addActionListener(e -> {
-            Analytics.sendEvent(searchBox.getText(), "Search", "Instance");
+            Analytics.sendEvent(searchField.getText(), "Search", "Instance");
             reload();
         });
+
+        clearButton = new JButton(GetText.tr("Clear"));
+        clearButton.addActionListener(e -> {
+            searchField.setText("");
+            reload();
+        });
+
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        topPanel.add(importButton);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(addCurseForgePackButton);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(addFTBPackButton);
+        topPanel.add(Box.createHorizontalGlue());
+        topPanel.add(searchField);
+        topPanel.add(Box.createHorizontalStrut(5));
         topPanel.add(searchButton);
-
-        hasUpdate = new JCheckBox();
-        hasUpdate.setSelected(isUpdate);
-        hasUpdate.addActionListener(e -> reload());
-        topPanel.add(hasUpdate);
-
-        hasUpdateLabel = new JLabel(GetText.tr("Has Update"));
-        topPanel.add(hasUpdateLabel);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(clearButton);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -148,12 +148,6 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
                     }
                 }
 
-                if (isUpdate) {
-                    if (!instance.hasUpdate()) {
-                        showInstance = false;
-                    }
-                }
-
                 if (showInstance) {
                     panel.add(new InstanceCard(instance), gbc);
                     gbc.gridy++;
@@ -174,8 +168,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
 
     public void reload() {
         this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
-        this.searchText = searchBox.getText();
-        this.isUpdate = hasUpdate.isSelected();
+        this.searchText = searchField.getText();
         if (this.searchText.isEmpty()) {
             this.searchText = null;
         }
@@ -183,7 +176,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         loadContent(true);
         validate();
         repaint();
-        searchBox.requestFocus();
+        searchField.requestFocus();
     }
 
     @Override
@@ -195,7 +188,6 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
     public void onRelocalization() {
         clearButton.setText(GetText.tr("Clear"));
         searchButton.setText(GetText.tr("Search"));
-        hasUpdateLabel.setText(GetText.tr("Has Update"));
 
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
