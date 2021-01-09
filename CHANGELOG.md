@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
-Fix downloading files causing multiple connections to open
+- Fix downloading files causing multiple connections to open
+- Fix downloading files without hashes causing multiple connections
 
 ### Misc

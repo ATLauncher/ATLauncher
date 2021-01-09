@@ -80,7 +80,9 @@ public final class Download {
 
     public boolean exists() {
         try {
-            this.execute();
+            if (this.response == null) {
+                this.execute();
+            }
 
             return this.response.isSuccessful();
         } catch (IOException e) {
@@ -294,7 +296,9 @@ public final class Download {
 
     public int code() {
         try {
-            this.execute();
+            if (this.response == null) {
+                this.execute();
+            }
             return this.response.code();
         } catch (Exception e) {
             LogManager.logStackTrace(e);
@@ -313,13 +317,19 @@ public final class Download {
     }
 
     public int getResponseCode() throws IOException {
-        this.execute();
+        if (this.response == null) {
+            this.execute();
+        }
 
         return this.response.code();
     }
 
     private String getHashFromURL() throws IOException {
-        this.execute();
+        LogManager.debug("hash");
+
+        if (this.response == null) {
+            this.execute();
+        }
 
         String etag = this.response.header("ETag");
         if (etag == null) {
@@ -349,7 +359,9 @@ public final class Download {
     public long getFilesize() {
         try {
             if (this.size == -1L) {
-                this.execute();
+                if (this.response == null) {
+                    this.execute();
+                }
                 long size = Long.parseLong(this.response.header("Content-Length"));
 
                 if (size == -1L) {
