@@ -40,6 +40,8 @@ public abstract class AbstractToolPanel extends JPanel {
         add(MIDDLE_PANEL, BorderLayout.CENTER);
         add(BOTTOM_PANEL, BorderLayout.SOUTH);
 
+        LAUNCH_BUTTON.setFont(App.THEME.getNormalFont().deriveFont(16f));
+
         if (TITLE != null) {
             setBorder(BorderFactory.createTitledBorder(null, TITLE, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                     App.THEME.getBoldFont()));

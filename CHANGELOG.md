@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in pack browser for CurseForge packs [#394]
 - Sort mods in edit mods dialog in alphabetical order
 - Add setting to run automatic backups after launching an instance
+- Remove pagination on PacksTab, use infinite scroll instead
 
 ### Fixes
 - Fix exported instances including disabled mods [#420]
@@ -23,7 +24,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix some issues with remembering window size and position option [#423]
 - Fix instance installation not cancelling on download exceptions
 - Remove system info logging on startup
-- Move previous/next page buttons on packs to edges
 - Remove bottom set of buttons on system pack cards
 - Fix add mods dialog not being wide enough
 - Fix potential NPE in PerformanceManager

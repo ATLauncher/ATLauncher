@@ -19,14 +19,18 @@ package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -57,24 +61,21 @@ import org.mini2Dx.gettext.GetText;
 public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
-    private final JPanel bottomPanel = new JPanel();
     private final JButton addButton = new JButton(GetText.tr("Add Pack"));
     private final JButton addCurseButton = new JButton(GetText.tr("Add CurseForge Pack"));
     private final JButton addFTBPackButton = new JButton(GetText.tr("Add FTB Pack"));
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton expandAllButton = new JButton(GetText.tr("Expand All"));
     private final JButton collapseAllButton = new JButton(GetText.tr("Collapse All"));
-    private final JButton previousPageButton = new JButton(GetText.tr("Previous Page"));
-    private final JButton nextPageButton = new JButton(GetText.tr("Next Page"));
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
     private final JScrollPane scrollPane;
     private NilCard nilCard;
     private final boolean isSystem;
     private final boolean isFeatured;
-    private boolean loaded = false;
-    private int page = 1;
+    private boolean loadingMore = false;
 
+    private final List<Pack> packs = new LinkedList<>();
     private final List<PackCard> cards = new LinkedList<>();
 
     public PacksTab(boolean isFeatured, boolean isSystem) {
@@ -84,20 +85,35 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
 
+        searchField.setMaximumSize(new Dimension(190, 23));
+
         scrollPane = new JScrollPane(this.contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        this.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if (!loadingMore && !isFeatured && !isSystem) {
+                    int maxValue = scrollPane.getVerticalScrollBar().getMaximum()
+                            - scrollPane.getVerticalScrollBar().getVisibleAmount();
+                    int currentValue = scrollPane.getVerticalScrollBar().getValue();
+
+                    if ((float) currentValue / (float) maxValue > 0.9f) {
+                        loadMorePacks();
+                    }
+                }
+            }
+        });
 
         if (!this.isFeatured && !this.isSystem) {
             this.add(this.topPanel, BorderLayout.NORTH);
-            this.add(this.bottomPanel, BorderLayout.SOUTH);
         }
+
+        this.add(scrollPane, BorderLayout.CENTER);
 
         RelocalizationManager.addListener(this);
 
         this.setupTopPanel();
-        this.setupBottomPanel();
 
         refresh();
 
@@ -117,22 +133,10 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 }
             }
         });
-        this.previousPageButton.addActionListener(e -> {
-            page -= 1;
-            Analytics.sendEvent(page, "Previous", "Navigation", "Pack");
-            refresh();
-
-        });
-        this.nextPageButton.addActionListener(e -> {
-            page += 1;
-            Analytics.sendEvent(page, "Next", "Navigation", "Pack");
-            refresh();
-        });
         this.addCurseButton.addActionListener(e -> new AddCurseForgePackDialog());
         this.addFTBPackButton.addActionListener(e -> new AddFTBPackDialog());
         this.clearButton.addActionListener(e -> {
             searchField.setText("");
-            page = 1;
             refresh();
         });
 
@@ -140,7 +144,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     Analytics.sendEvent(searchField.getText(), "Search", "Pack");
-                    page = 1;
                     refresh();
                 }
             }
@@ -148,7 +151,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
         this.searchButton.addActionListener(e -> {
             Analytics.sendEvent(searchField.getText(), "Search", "Pack");
-            page = 1;
             refresh();
         });
     }
@@ -163,36 +165,44 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     }
 
     private void setupTopPanel() {
-        this.topPanel.add(this.addCurseButton);
-        this.topPanel.add(this.addFTBPackButton);
-        this.topPanel.add(this.clearButton);
-        this.topPanel.add(this.searchField);
-        this.topPanel.add(this.searchButton);
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        topPanel.add(addCurseButton);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(addFTBPackButton);
+        topPanel.add(Box.createHorizontalGlue());
+        topPanel.add(searchField);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(searchButton);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(clearButton);
+        topPanel.add(Box.createHorizontalGlue());
+        topPanel.add(expandAllButton);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(collapseAllButton);
     }
 
-    private void setupBottomPanel() {
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    private void loadMorePacks() {
+        loadingMore = true;
 
-        this.bottomPanel.add(this.previousPageButton);
-        this.bottomPanel.add(Box.createHorizontalGlue());
-        this.bottomPanel.add(this.expandAllButton);
-        this.bottomPanel.add(Box.createHorizontalStrut(5));
-        this.bottomPanel.add(this.collapseAllButton);
-        this.bottomPanel.add(Box.createHorizontalGlue());
-        this.bottomPanel.add(this.nextPageButton);
+        addPackCards();
+        load(true);
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                loadingMore = false;
+            }
+        });
     }
 
-    private void loadPacks(boolean force) {
-        if (!force && loaded) {
-            return;
-        }
-
+    private void loadPacksToShow() {
         List<Pack> packs = App.settings.sortPacksAlphabetically
                 ? PackManager.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
                 : PackManager.getPacksSortedPositionally(this.isFeatured, this.isSystem);
 
-        packs.stream().filter(Pack::canInstall).filter(pack -> {
+        this.packs.clear();
+        this.packs.addAll(packs.stream().filter(Pack::canInstall).filter(pack -> {
             String searchText = this.searchField.getText();
 
             if (!searchText.isEmpty()) {
@@ -203,20 +213,17 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             }
 
             return true;
-        }).skip((page - 1) * 20).limit(20).forEach(pack -> this.cards.add(new PackCard(pack)));
+        }).collect(Collectors.toList()));
+    }
 
-        previousPageButton.setEnabled(page != 1);
-
-        // TODO: when there are multiples of 20 packs, this will break
-        nextPageButton.setEnabled(this.cards.size() == 20);
+    private void addPackCards() {
+        this.packs.stream().skip(this.cards.size()).limit(10).forEach(pack -> this.cards.add(new PackCard(pack)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-
-        loaded = true;
     }
 
     private void load(boolean keep) {
@@ -258,7 +265,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     public void refresh() {
         this.cards.clear();
         addLoadingCard();
-        loadPacks(true);
+        loadPacksToShow();
+        addPackCards();
         reload();
     }
 
@@ -276,8 +284,6 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         clearButton.setText(GetText.tr("Clear"));
         expandAllButton.setText(GetText.tr("Expand All"));
         collapseAllButton.setText(GetText.tr("Collapse All"));
-        previousPageButton.setText(GetText.tr("Previous Page"));
-        nextPageButton.setText(GetText.tr("Next Page"));
         searchButton.setText(GetText.tr("Search"));
 
         if (nilCard != null) {
