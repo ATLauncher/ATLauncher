@@ -619,6 +619,10 @@ public final class Download {
     }
 
     private void runPostProcessors() {
+        if (this.response != null) {
+            this.response.close();
+        }
+
         if (Files.exists(this.to) && this.unzipTo != null) {
             FileUtils.createDirectory(this.unzipTo);
 
