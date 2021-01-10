@@ -64,9 +64,6 @@ public class ForgeLoader implements Loader {
             this.version = versionOverride.version;
             this.rawVersion = versionOverride.rawVersion;
 
-            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
-                    + "-installer.jar";
-
             if (versionOverride.size != null) {
                 this.installerSize = versionOverride.size;
             }
@@ -81,22 +78,16 @@ public class ForgeLoader implements Loader {
             if (metadata.containsKey("rawVersion")) {
                 this.rawVersion = (String) metadata.get("rawVersion");
             }
-
-            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.rawVersion + "/forge-" + this.rawVersion
-                    + "-installer.jar";
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
-            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
-                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
-                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         } else if ((boolean) metadata.get("recommended")) {
             LogManager.debug("Downloading recommended Forge version");
             this.version = getRecommendedVersion(this.minecraft);
-            this.installerUrl = Constants.FORGE_MAVEN + "/" + this.minecraft + "-" + this.version
-                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "/forge-" + this.minecraft + "-" + this.version
-                    + (this.minecraft.equals("1.10") ? "-1.10.0" : "") + "-installer.jar";
         }
+
+        this.installerUrl = Constants.DOWNLOAD_SERVER + "/maven/net/minecraftforge/forge/" + this.minecraft + "-"
+                + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
 
         if (metadata.containsKey("installerSize")) {
             this.installerSize = (Long) metadata.get("installerSize");

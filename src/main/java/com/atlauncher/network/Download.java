@@ -414,6 +414,13 @@ public final class Download {
     }
 
     private void downloadDirect() {
+        if (size == -1L) {
+            size = this.getFilesize();
+
+            if (instanceInstaller != null && size > 0L) {
+                instanceInstaller.addBytesToDownload(size);
+            }
+        }
         try (FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
                 ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
@@ -451,18 +458,20 @@ public final class Download {
             FileUtils.delete(this.to);
         }
 
-        try {
-            // open the connection
-            this.execute();
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
+        // if already opened or not first attempt, open the connection
+        if (this.response == null || attempt != 1) {
+            try {
+                this.execute();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
 
-            if (this.response != null) {
-                this.response.close();
-                this.response = null;
+                if (this.response != null) {
+                    this.response.close();
+                    this.response = null;
+                }
+
+                return false;
             }
-
-            return false;
         }
 
         // download the file to disk
@@ -528,6 +537,19 @@ public final class Download {
 
             runPostProcessors();
             return;
+        }
+
+        // open the connection if not already opened
+        if (this.response == null) {
+            try {
+                this.execute();
+            } catch (IOException e) {
+                if (this.instanceInstaller != null) {
+                    this.instanceInstaller.cancel(true);
+                }
+
+                throw e;
+            }
         }
 
         Path oldPath = null;

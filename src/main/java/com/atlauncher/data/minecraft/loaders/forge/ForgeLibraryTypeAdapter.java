@@ -87,7 +87,14 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                     if (object.get("url").getAsString().isEmpty()) {
                         artifact.url = Constants.FORGE_MAVEN + artifact.path;
                     } else {
-                        artifact.url = object.get("url").getAsString() + artifact.path;
+                        String url = object.get("url").getAsString();
+
+                        if (url.equalsIgnoreCase(Constants.FORGE_MAVEN_BASE)
+                                || url.equalsIgnoreCase(Constants.FORGE_MAVEN_BASE.replace("https://", "http://"))) {
+                            url = Constants.DOWNLOAD_SERVER + "/maven/";
+                        }
+
+                        artifact.url = url + artifact.path;
                     }
                 } else {
                     artifact.url = Constants.MINECRAFT_LIBRARIES + artifact.path;
@@ -100,13 +107,10 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                     try {
                         // if the file exists, assume it's good. This is only needed for older Forge
                         // versions anyway, so should be okay :finger_crossed:
-                        if (!Files.exists(downloadedLibrary)) {
-                            new com.atlauncher.network.Download().setUrl(artifact.url).downloadTo(downloadedLibrary)
-                                    .downloadFile();
+                        if (Files.exists(downloadedLibrary)) {
+                            artifact.size = Files.size(downloadedLibrary);
+                            artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
                         }
-
-                        artifact.size = Files.size(downloadedLibrary);
-                        artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
                     } catch (Throwable t) {
                         LogManager.logStackTrace(t);
                     }

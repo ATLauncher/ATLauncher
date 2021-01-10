@@ -21,4 +21,6 @@ public interface NetworkProgressable {
     void setTotalBytes(long bytes);
 
     void addDownloadedBytes(long bytes);
+
+    void addBytesToDownload(long bytes);
 }

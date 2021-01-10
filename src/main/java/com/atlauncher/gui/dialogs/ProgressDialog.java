@@ -212,4 +212,10 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
         this.downloadedBytes = 0L;
         subProgressBar.setVisible(false);
     }
+
+    @Override
+    public void addBytesToDownload(long bytes) {
+        this.totalBytes += bytes;
+        this.updateProgressBar();
+    }
 }

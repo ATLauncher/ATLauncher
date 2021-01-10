@@ -2210,6 +2210,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.updateProgressBar();
     }
 
+    @Override
+    public void addBytesToDownload(long bytes) {
+        this.totalBytes += bytes;
+        this.updateProgressBar();
+    }
+
     private void updateProgressBar() {
         double progress;
         if (this.totalBytes > 0) {

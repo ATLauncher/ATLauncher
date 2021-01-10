@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Use hash/size for forge loaders from server
+- Switch to using own Forge mirror for installer and older libraries
 
 ### Fixes
 - Fix downloading files causing multiple connections to open
