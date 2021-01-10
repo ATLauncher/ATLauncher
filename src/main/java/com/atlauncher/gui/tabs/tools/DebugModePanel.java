@@ -42,16 +42,18 @@ public class DebugModePanel extends AbstractToolPanel {
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.setEnabled(!LogManager.showDebug);
 
-        LAUNCH_BUTTON.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    // Handle left-click
-                    Analytics.sendEvent("DebugMode", "Run", "Tool");
+        if (!LogManager.showDebug) {
+            LAUNCH_BUTTON.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        // Handle left-click
+                        Analytics.sendEvent("DebugMode", "Run", "Tool");
 
-                    OS.relaunchInDebugMode(e.isShiftDown() ? 5 : 3);
+                        OS.relaunchInDebugMode(e.isShiftDown() ? 5 : 3);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
