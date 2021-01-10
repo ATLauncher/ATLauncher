@@ -6,8 +6,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.2.1
 
 ### New Features
-- Use hash/size for forge loaders from server
-- Switch to using own Forge mirror for installer and older libraries
 
 ### Fixes
 - Fix downloading files causing multiple connections to open
@@ -19,3 +17,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix issue with extraArguments being null on instance conversion
 
 ### Misc
+- Use hash/size for forge loaders from server
+- Switch to using own Forge mirror for installer and older libraries
