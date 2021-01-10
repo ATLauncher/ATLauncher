@@ -284,12 +284,13 @@ public class MCLauncher {
 
             argsString = argsString.replace(account.minecraftUsername, "REDACTED");
             argsString = argsString.replace(account.uuid, "REDACTED");
-            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-
-            if (props != null) {
-                argsString = argsString.replace(props, "REDACTED");
-            }
         }
+
+        if (props != null) {
+            argsString = argsString.replace(props, "REDACTED");
+        }
+        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
+        argsString = argsString.replace(account.getSessionToken(), "REDACTED");
 
         return argsString;
     }

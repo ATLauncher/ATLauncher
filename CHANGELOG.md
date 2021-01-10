@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Check all mods on CurseForge when installing that don't have it
 - Packs installed from CurseForge always showing as having updates
 - Debug mode tool panel still working when in debug mode
+- Always censor certain arguments when launching regardless of debug
 
 ### Misc
