@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Switch to DOCUMENT_MODAL for modals to make console always usable
 - Check all mods on CurseForge when installing that don't have it
+- Packs installed from CurseForge always showing as having updates
 
 ### Misc

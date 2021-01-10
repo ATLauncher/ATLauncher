@@ -154,7 +154,7 @@ public class Instance extends MinecraftVersion {
             } else if (isCurseForgePack()) {
                 CurseForgeProjectLatestFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(this);
 
-                return latestVersion != null && latestVersion.id != this.launcher.curseForgeProject.id;
+                return latestVersion != null && latestVersion.id != this.launcher.curseForgeFile.id;
             }
         } else {
             Pack pack = this.getPack();
