@@ -60,7 +60,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
 
     public SetupDialog() {
         // #. {0} is the name of the launcher (ATLauncher)
-        super(null, GetText.tr("{0} Setup", Constants.LAUNCHER_NAME), ModalityType.APPLICATION_MODAL);
+        super(null, GetText.tr("{0} Setup", Constants.LAUNCHER_NAME), ModalityType.DOCUMENT_MODAL);
         this.requestFocus();
         this.setSize(400, 250);
         setLocationRelativeTo(null);

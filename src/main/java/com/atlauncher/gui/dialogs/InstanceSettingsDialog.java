@@ -71,7 +71,7 @@ public class InstanceSettingsDialog extends JDialog {
 
     public InstanceSettingsDialog(Instance instance) {
         super(App.launcher.getParent(), GetText.tr("{0} Settings", instance.launcher.name),
-                ModalityType.APPLICATION_MODAL);
+                ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
 
         setupComponents();

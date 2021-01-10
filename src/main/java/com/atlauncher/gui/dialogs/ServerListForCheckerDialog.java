@@ -54,7 +54,7 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
     private final ServersForCheckerTab SERVERS_TAB = new ServersForCheckerTab();
 
     public ServerListForCheckerDialog() {
-        super(null, GetText.tr("Server Checker"), ModalityType.APPLICATION_MODAL);
+        super(null, GetText.tr("Server Checker"), ModalityType.DOCUMENT_MODAL);
         setSize(400, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

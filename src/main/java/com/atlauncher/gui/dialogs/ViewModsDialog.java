@@ -50,7 +50,7 @@ public final class ViewModsDialog extends JDialog {
 
     public ViewModsDialog(Pack pack) {
         // #. {0} is the name of the pack
-        super(App.launcher.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.DOCUMENT_MODAL);
 
         Analytics.sendScreenView("View Mods Dialog");
 

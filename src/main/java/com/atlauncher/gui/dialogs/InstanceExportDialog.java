@@ -64,8 +64,7 @@ public class InstanceExportDialog extends JDialog {
     final GridBagConstraints gbc = new GridBagConstraints();
 
     public InstanceExportDialog(Instance instance) {
-        super(App.launcher.getParent(), GetText.tr("Export {0}", instance.launcher.name),
-                ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Export {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
 
         setupComponents();

@@ -70,7 +70,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance) {
-        super(parent, ModalityType.APPLICATION_MODAL);
+        super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
         this.instance = instance;
@@ -80,7 +80,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
     public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance,
             int installedFileId) {
-        super(parent, ModalityType.APPLICATION_MODAL);
+        super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
         this.instance = instance;

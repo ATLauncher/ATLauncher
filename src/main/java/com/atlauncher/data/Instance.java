@@ -1183,7 +1183,7 @@ public class Instance extends MinecraftVersion {
 
     public void backup() {
         final JDialog dialog = new JDialog(App.launcher.getParent(), GetText.tr("Backing Up {0}", launcher.name),
-                ModalityType.APPLICATION_MODAL);
+                ModalityType.DOCUMENT_MODAL);
         dialog.setSize(300, 100);
         dialog.setLocationRelativeTo(App.launcher.getParent());
         dialog.setResizable(false);

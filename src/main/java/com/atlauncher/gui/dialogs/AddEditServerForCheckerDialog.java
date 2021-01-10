@@ -62,7 +62,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
 
     public AddEditServerForCheckerDialog(MinecraftServer minecraftServer) {
         super(null, (minecraftServer == null ? GetText.tr("Add Server") : GetText.tr("Edit Server")),
-                ModalityType.APPLICATION_MODAL);
+                ModalityType.DOCUMENT_MODAL);
         setSize(300, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

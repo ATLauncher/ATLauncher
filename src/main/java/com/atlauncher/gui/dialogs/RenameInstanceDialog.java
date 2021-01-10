@@ -50,7 +50,7 @@ public class RenameInstanceDialog extends JDialog {
     private Instance instance;
 
     public RenameInstanceDialog(Instance instance) {
-        super(null, GetText.tr("Renaming Instance"), ModalityType.APPLICATION_MODAL);
+        super(null, GetText.tr("Renaming Instance"), ModalityType.DOCUMENT_MODAL);
 
         this.instance = instance;
 

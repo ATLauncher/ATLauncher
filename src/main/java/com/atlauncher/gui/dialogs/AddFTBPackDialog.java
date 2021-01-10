@@ -65,7 +65,7 @@ public final class AddFTBPackDialog extends JDialog {
     private int page = 1;
 
     public AddFTBPackDialog() {
-        super(App.launcher.getParent(), GetText.tr("Add FTB Pack"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Add FTB Pack"), ModalityType.DOCUMENT_MODAL);
 
         this.setPreferredSize(new Dimension(620, 500));
         this.setResizable(false);

@@ -61,7 +61,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     }
 
     public LoginWithMicrosoftDialog(MicrosoftAccount account) {
-        super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.DOCUMENT_MODAL);
 
         this.account = account;
         this.setMinimumSize(new Dimension(400, 400));

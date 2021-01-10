@@ -81,7 +81,7 @@ public class EditModsDialog extends JDialog {
     public EditModsDialog(Instance instance) {
         super(App.launcher.getParent(),
                 // #. {0} is the name of the instance
-                GetText.tr("Editing Mods For {0}", instance.launcher.name), ModalityType.APPLICATION_MODAL);
+                GetText.tr("Editing Mods For {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
         setSize(550, 450);
         setLocationRelativeTo(App.launcher.getParent());

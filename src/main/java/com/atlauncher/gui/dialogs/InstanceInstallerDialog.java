@@ -146,7 +146,7 @@ public class InstanceInstallerDialog extends JDialog {
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
             Path curseExtractedPath, Path multiMCExtractedPath, Window parent) {
-        super(parent, ModalityType.APPLICATION_MODAL);
+        super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;
@@ -323,7 +323,7 @@ public class InstanceInstallerDialog extends JDialog {
                 // #. {0} is the name of the pack the user is installing
                 isServer ? GetText.tr("Installing {0} Server", pack.getName())
                         // #. {0} is the name of the pack the user is installing
-                        : GetText.tr("Installing {0}", pack.getName())), ModalityType.APPLICATION_MODAL);
+                        : GetText.tr("Installing {0}", pack.getName())), ModalityType.DOCUMENT_MODAL);
                 dialog.setLocationRelativeTo(App.launcher.getParent());
                 dialog.setSize(300, 100);
                 dialog.setResizable(false);

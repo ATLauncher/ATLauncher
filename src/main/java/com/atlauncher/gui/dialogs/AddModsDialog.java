@@ -80,7 +80,7 @@ public final class AddModsDialog extends JDialog {
 
     public AddModsDialog(Window parent, Instance instance) {
         // #. {0} is the name of the mod we're installing
-        super(parent, GetText.tr("Adding Mods For {0}", instance.launcher.name), ModalityType.APPLICATION_MODAL);
+        super(parent, GetText.tr("Adding Mods For {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
 
         this.setPreferredSize(new Dimension(620, 500));

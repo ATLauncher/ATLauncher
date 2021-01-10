@@ -49,7 +49,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
     private double downloadedBytes = 0; // Total number of bytes downloaded
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
-        super(App.launcher.getParent(), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), ModalityType.DOCUMENT_MODAL);
         this.labelText = initLabelText;
         this.closedLogMessage = initClosedLogMessage;
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);

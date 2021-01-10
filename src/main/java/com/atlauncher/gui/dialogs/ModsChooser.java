@@ -63,7 +63,7 @@ public class ModsChooser extends JDialog {
     private boolean wasClosed = false;
 
     public ModsChooser(InstanceInstaller installerr) {
-        super(App.launcher.getParent(), GetText.tr("Select Mods To Install"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Select Mods To Install"), ModalityType.DOCUMENT_MODAL);
         this.installer = installerr;
 
         Analytics.sendScreenView("Mods Chooser Dialog");

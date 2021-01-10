@@ -62,7 +62,7 @@ public class FileChooserDialog extends JDialog {
 
     public FileChooserDialog(Window parent, String title, String labelName, String bottomText, String selectorText,
             String[] subOptions, String[] options) {
-        super(parent, title, ModalityType.APPLICATION_MODAL);
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.fileOptions = options;
         setSize(400, 175);
         setLocationRelativeTo(null);

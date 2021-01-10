@@ -58,7 +58,7 @@ public class ImportInstanceDialog extends JDialog {
     private final JButton addButton;
 
     public ImportInstanceDialog() {
-        super(App.launcher.getParent(), GetText.tr("Import Instance"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Import Instance"), ModalityType.DOCUMENT_MODAL);
         setSize(500, 250);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

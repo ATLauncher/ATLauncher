@@ -364,7 +364,7 @@ public class Launcher {
     }
 
     public void reloadLauncherData() {
-        final JDialog dialog = new JDialog(this.parent, ModalityType.APPLICATION_MODAL);
+        final JDialog dialog = new JDialog(this.parent, ModalityType.DOCUMENT_MODAL);
         dialog.setSize(300, 100);
         dialog.setTitle("Updating Launcher");
         dialog.setLocationRelativeTo(App.launcher.getParent());

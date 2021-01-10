@@ -63,7 +63,7 @@ public final class AddCurseForgePackDialog extends JDialog {
     private int page = 0;
 
     public AddCurseForgePackDialog() {
-        super(App.launcher.getParent(), GetText.tr("Add CurseForge Pack"), ModalityType.APPLICATION_MODAL);
+        super(App.launcher.getParent(), GetText.tr("Add CurseForge Pack"), ModalityType.DOCUMENT_MODAL);
 
         this.setPreferredSize(new Dimension(620, 500));
         this.setResizable(false);
