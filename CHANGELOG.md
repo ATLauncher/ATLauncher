@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix downloading files causing multiple connections to open
 - Fix downloading files without hashes causing multiple connections
 - Fix downloading files causing connections to stay open
+- Fix launch arguments having some oddities and missing Tricks arg
 
 ### Misc

@@ -29,7 +29,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceSettings;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
@@ -84,12 +83,11 @@ public class MCLauncher {
         ErrorReporting.recordInstancePlay(instance.getPackName(), instance.getVersion(), instance.getLoaderVersion(),
                 (instance instanceof Instance ? 2 : 1));
 
-        InstanceSettings settings = instance.getSettings();
-        int initialMemory = Optional.ofNullable(settings.getInitialMemory()).orElse(App.settings.initialMemory);
-        int maximumMemory = Optional.ofNullable(settings.getMaximumMemory()).orElse(App.settings.maximumMemory);
-        int permGen = Optional.ofNullable(settings.getPermGen()).orElse(App.settings.metaspace);
-        String javaPath = Optional.ofNullable(settings.getJavaPath()).orElse(App.settings.javaPath);
-        String javaArguments = Optional.ofNullable(settings.getJavaArguments()).orElse(App.settings.javaParameters);
+        int initialMemory = Optional.ofNullable(instance.launcher.initialMemory).orElse(App.settings.initialMemory);
+        int maximumMemory = Optional.ofNullable(instance.launcher.maximumMemory).orElse(App.settings.maximumMemory);
+        int permGen = Optional.ofNullable(instance.launcher.permGen).orElse(App.settings.metaspace);
+        String javaPath = Optional.ofNullable(instance.launcher.javaPath).orElse(App.settings.javaPath);
+        String javaArguments = Optional.ofNullable(instance.launcher.javaArguments).orElse(App.settings.javaParameters);
 
         if (instance instanceof Instance) {
             // add minecraft client jar
@@ -217,9 +215,15 @@ public class MCLauncher {
         for (String argument : instance.arguments.jvmAsStringList().stream().distinct().collect(Collectors.toList())) {
             argument = replaceArgument(argument, instance, account, props, nativesDir);
 
-            if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
+            if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")
+                    && !arguments.contains(argument)) {
                 arguments.add(argument);
             }
+        }
+
+        if (OS.isWindows() && !arguments
+                .contains("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump")) {
+            arguments.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
 
         arguments.add("-Djava.library.path=" + nativesDir);

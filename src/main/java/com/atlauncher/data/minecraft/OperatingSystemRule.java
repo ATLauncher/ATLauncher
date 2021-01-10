@@ -56,6 +56,6 @@ public class OperatingSystemRule {
         Pattern pattern = Pattern.compile(version);
         Matcher matcher = pattern.matcher(OS.getVersion());
 
-        return matcher.matches();
+        return matcher.find();
     }
 }
