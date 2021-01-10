@@ -478,7 +478,7 @@ public class InstanceV1 implements Cloneable {
         instance.mainClass = mainClass;
         instance.arguments = theMinecraftVersion.arguments;
 
-        if (extraArguments.split(" ").length != 0) {
+        if (extraArguments != null && extraArguments.split(" ").length != 0) {
             List<ArgumentRule> args = Arrays.asList(extraArguments.split(" ")).stream()
                     .map(arg -> new ArgumentRule(null, arg)).collect(Collectors.toList());
 

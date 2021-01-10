@@ -16,5 +16,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix downloading from a pool causing write issues when multiple dirs
 - Fix launch arguments having some oddities and missing Tricks arg
 - Fix instance installer progress being off in some places
+- Fix issue with extraArguments being null on instance conversion
 
 ### Misc
