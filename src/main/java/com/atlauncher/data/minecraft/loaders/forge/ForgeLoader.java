@@ -90,7 +90,13 @@ public class ForgeLoader implements Loader {
                 + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
 
         if (metadata.containsKey("installerSize")) {
-            this.installerSize = (Long) metadata.get("installerSize");
+            Object value = metadata.get("installerSize");
+
+            if (value instanceof Double) {
+                this.installerSize = ((Double) metadata.get("installerSize")).longValue();
+            } else if (value instanceof Long) {
+                this.installerSize = (Long) metadata.get("installerSize");
+            }
         }
 
         if (metadata.containsKey("installerSha1")) {
