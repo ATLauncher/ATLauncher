@@ -49,8 +49,8 @@ public class CurseForgeUpdateManager {
 
                     // if there is a change to the latestversion for an instance (but not a first
                     // time write), then refresh instances panel
-                    if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                    if (Data.CURSEFORGE_INSTANCE_LATEST_VERSION.containsKey(i)
+                            && Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
                         wasUpdated = true;
                     }
 

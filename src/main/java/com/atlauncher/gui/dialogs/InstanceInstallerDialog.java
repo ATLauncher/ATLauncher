@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.swing.JButton;
@@ -54,6 +55,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.MinecraftVersion;
@@ -83,6 +85,8 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 import org.mini2Dx.gettext.GetText;
+
+import okhttp3.CacheControl;
 
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
@@ -713,7 +717,13 @@ public class InstanceInstallerDialog extends JDialog {
         instance = (Instance) object;
 
         if (instance.isModpacksChPack()) {
-            handleModpacksChInstall(instance.launcher.modpacksChPackManifest);
+            ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
+                            instance.launcher.modpacksChPackManifest.id))
+                    .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                    .asClass(ModpacksChPackManifest.class);
+
+            handleModpacksChInstall(packManifest);
         } else if (instance.isCurseForgePack()) {
             handleCurseForgeInstall(instance.launcher.curseForgeProject);
         } else {
