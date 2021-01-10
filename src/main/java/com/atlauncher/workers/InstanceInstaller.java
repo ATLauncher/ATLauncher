@@ -1611,48 +1611,46 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void checkModsOnCurseForge() throws Exception {
-        if (this.modpacksChPackManifest != null || this.multiMCManifest != null) {
-            fireTask(GetText.tr("Checking Mods On CurseForge"));
-            fireSubProgressUnknown();
+        fireTask(GetText.tr("Checking Mods On CurseForge"));
+        fireSubProgressUnknown();
 
-            Map<Long, DisableableMod> murmurHashes = new HashMap<>();
+        Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
-            this.modsInstalled.stream().filter(dm -> dm.getFile(root, this.packVersion.minecraft) != null)
-                    .forEach(dm -> {
-                        try {
-                            murmurHashes.put(Hashing.murmur(dm.getFile(root, this.packVersion.minecraft).toPath()), dm);
-                        } catch (IOException e) {
-                            LogManager.logStackTrace(e);
-                        }
-                    });
+        this.modsInstalled.stream().filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
+                .filter(dm -> dm.getFile(root, this.packVersion.minecraft) != null).forEach(dm -> {
+                    try {
+                        murmurHashes.put(Hashing.murmur(dm.getFile(root, this.packVersion.minecraft).toPath()), dm);
+                    } catch (IOException e) {
+                        LogManager.logStackTrace(e);
+                    }
+                });
 
-            CurseForgeFingerprint fingerprintResponse = CurseForgeApi
-                    .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+        CurseForgeFingerprint fingerprintResponse = CurseForgeApi
+                .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
-            int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id).toArray();
+        int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id).toArray();
 
-            Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
+        Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
-            fingerprintResponse.exactMatches.stream().filter(em -> murmurHashes.containsKey(em.file.packageFingerprint))
-                    .forEach(foundMod -> {
-                        DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
+        fingerprintResponse.exactMatches.stream().filter(em -> murmurHashes.containsKey(em.file.packageFingerprint))
+                .forEach(foundMod -> {
+                    DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
 
-                        // add CurseForge information
-                        dm.curseForgeProjectId = foundMod.id;
-                        dm.curseForgeFile = foundMod.file;
-                        dm.curseForgeFileId = foundMod.file.id;
+                    // add CurseForge information
+                    dm.curseForgeProjectId = foundMod.id;
+                    dm.curseForgeFile = foundMod.file;
+                    dm.curseForgeFileId = foundMod.file.id;
 
-                        CurseForgeProject curseForgeProject = foundProjects.get(foundMod.id);
+                    CurseForgeProject curseForgeProject = foundProjects.get(foundMod.id);
 
-                        if (curseForgeProject != null) {
-                            dm.curseForgeProject = curseForgeProject;
-                            dm.name = curseForgeProject.name;
-                            dm.description = curseForgeProject.summary;
-                        }
+                    if (curseForgeProject != null) {
+                        dm.curseForgeProject = curseForgeProject;
+                        dm.name = curseForgeProject.name;
+                        dm.description = curseForgeProject.summary;
+                    }
 
-                        LogManager.debug("Found matching mod from CurseForge called " + dm.curseForgeFile.displayName);
-                    });
-        }
+                    LogManager.debug("Found matching mod from CurseForge called " + dm.curseForgeFile.displayName);
+                });
     }
 
     public List<Mod> sortMods(List<Mod> original) {
