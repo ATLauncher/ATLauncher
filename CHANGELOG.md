@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
-- Updating modpacks.ch instances not showing latest versions
+- Updating modpacks.ch instances not showing latest versions\
+- Fix installs of pack with no mods causing issues
 
 ### Misc
