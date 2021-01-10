@@ -1054,13 +1054,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         DownloadPool smallPool = pool.downsize();
 
-        this.setTotalBytes(smallPool.totalSize());
-        this.fireSubProgress(0);
-
-        smallPool.downloadAll();
+        if (smallPool.size() != 0) {
+            this.setTotalBytes(smallPool.totalSize());
+            this.fireSubProgress(0);
+            smallPool.downloadAll();
+        }
 
         // copy resources to instance
         if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            fireTask(GetText.tr("Copying Resources"));
+            fireSubProgressUnknown();
+
             index.objects.forEach((key, object) -> {
                 String filename = object.hash.substring(0, 2) + "/" + object.hash;
 

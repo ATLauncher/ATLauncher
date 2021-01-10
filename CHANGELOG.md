@@ -15,5 +15,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix downloading files causing connections to stay open
 - Fix downloading from a pool causing write issues when multiple dirs
 - Fix launch arguments having some oddities and missing Tricks arg
+- Fix instance installer progress being off in some places
 
 ### Misc
