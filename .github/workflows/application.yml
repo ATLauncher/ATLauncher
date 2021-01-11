@@ -4,11 +4,10 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         java-version: ["1.8", "1.9", "1.10", "1.11", "1.12", "1.13", "1.14"]
-
     steps:
       - uses: actions/checkout@v2
 
@@ -33,9 +32,8 @@ jobs:
         with:
           run: ./gradlew test
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: test
-
     steps:
       - uses: actions/checkout@v2
 
@@ -63,3 +61,81 @@ jobs:
         with:
           name: ATLauncher
           path: dist/*
+  release:
+    runs-on: ubuntu-20.04
+    needs: build
+    if: ${{ github.ref == 'refs/heads/master' }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download built artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Read changelog
+        id: changelog
+        uses: pCYSl5EDgo/cat@master
+        with:
+          path: ./CHANGELOG.md
+
+      - name: Remove the top part of the changelog
+        id: remove-top-of-changelog
+        uses: frabert/replace-string-action@v1.2
+        with:
+          string: ${{ steps.changelog.outputs.text }}
+          pattern: '^.*?(### (New Features|Fixes|Misc)\n.*)$'
+          replace-with: '$1'
+          flags: gs
+
+      - name: Clean up the changelog to only have used sections
+        id: clean-changelog
+        run: |
+          awk '/^$/ {if (i) {b=b $0 "\n"} else {print $0 }; next} /^###/ {i=1; b=$0; next} {if (i) {print b}; i=0; print $0; next}' <<'EOF' > fixed-changelog.md
+          ${{ steps.remove-top-of-changelog.outputs.replaced }}
+          EOF
+          echo 'cleaned-changelog<<EOF' >> $GITHUB_ENV
+          cat fixed-changelog.md >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Read version
+        id: version
+        uses: pCYSl5EDgo/cat@master
+        with:
+          path: ./src/main/resources/version
+          trim: true
+
+      - name: Remove stream from version
+        id: clean-version
+        uses: frabert/replace-string-action@v1.2
+        with:
+          string: ${{ steps.version.outputs.text }}
+          pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
+          replace-with: '$1'
+
+      - name: Create GitHub Release
+        uses: meeDamian/github-release@2.0
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ steps.clean-version.outputs.replaced }}
+          commitish: master
+          name: ${{ steps.clean-version.outputs.replaced }}
+          body: ${{ env.cleaned-changelog }}
+          prerelease: false
+          allow_override: false
+          gzip: false
+          files: |
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
+
+      - name: Create ATLauncher Version
+        uses: ATLauncher/release-atlauncher-action@master
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
+        with:
+          api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
+          version: ${{ steps.clean-version.outputs.replaced }}
+          changelog: ${{ env.cleaned-changelog }}
+          files: |
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
