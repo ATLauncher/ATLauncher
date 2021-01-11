@@ -121,6 +121,14 @@ public class App {
     public static boolean discordInitialized = false;
 
     /**
+     * This allows skipping the setup dialog on first run. This is mainly used for
+     * automation tests. It can be skipped with the below command line argument.
+     * <p/>
+     * --skip-setup-dialog
+     */
+    public static boolean skipSetupDialog = false;
+
+    /**
      * This allows skipping the system tray integration so that the launcher doesn't
      * even try to show the icon and menu etc, in the users system tray. It can be
      * skipped with the below command line argument.
@@ -326,8 +334,13 @@ public class App {
         LogManager.info("Launcher finished loading everything");
 
         if (settings.firstTimeRun) {
-            LogManager.warn("Launcher not setup. Loading Setup Dialog");
-            new SetupDialog();
+            if (skipSetupDialog) {
+                App.settings.firstTimeRun = false;
+                App.settings.save();
+            } else {
+                LogManager.warn("Launcher not setup. Loading Setup Dialog");
+                new SetupDialog();
+            }
         }
 
         boolean open = true;
@@ -824,6 +837,7 @@ public class App {
         // Parse all the command line arguments
         OptionParser parser = new OptionParser();
         parser.accepts("updated").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("skip-setup-dialog").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("disable-error-reporting").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-integration").withOptionalArg().ofType(Boolean.class);
@@ -857,6 +871,11 @@ public class App {
         if (options.has("debug-level")) {
             LogManager.debugLevel = (Integer) options.valueOf("debug-level");
             LogManager.debug("Debug level has been set to " + options.valueOf("debug-level") + "!");
+        }
+
+        skipSetupDialog = options.has("skip-setup-dialog");
+        if (skipSetupDialog) {
+            LogManager.debug("Skipping setup dialog!");
         }
 
         skipTrayIntegration = options.has("skip-tray-integration");

@@ -19,6 +19,7 @@ plugins {
     id 'edu.sc.seis.launch4j' version '2.4.9'
     id 'net.minecrell.licenser' version '0.4.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
+    id 'com.adarshr.test-logger' version '2.1.1'
 }
 
 apply plugin: 'org.mini2Dx.gettext'
@@ -63,8 +64,11 @@ dependencies {
     implementation 'com.github.oshi:oshi-core:5.3.6'
     implementation 'net.freeutils:jlhttp:2.5'
 
+    testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.assertj:assertj-swing-junit:3.17.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.0'
 }
 
 application {
@@ -73,7 +77,12 @@ application {
 
 test {
     useJUnitPlatform()
+
+    testlogger {
+        theme 'mocha'
+    }
 }
+
 
 jar {
     manifest {

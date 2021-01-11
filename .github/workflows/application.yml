@@ -29,7 +29,9 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Test
-        run: ./gradlew test
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: ./gradlew test
   build:
     runs-on: ubuntu-latest
     needs: test
@@ -53,11 +55,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Test
-        run: ./gradlew test
-
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2

@@ -189,6 +189,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
      */
     private void setupTabs() {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
+        tabbedPane.setName("mainTabs");
 
         PerformanceManager.start("newsTab");
         NewsTab newsTab = new NewsTab();

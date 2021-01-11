@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package com.atlauncher.utils;
 
-import com.atlauncher.utils.Java;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public class TestJava {
+public class JavaTest {
     @Test
     public void testThatJavaVersionNumberIsReturnedCorrectly() {
         assertEquals(7, Java.parseJavaVersionNumber("1.7.0_64"));

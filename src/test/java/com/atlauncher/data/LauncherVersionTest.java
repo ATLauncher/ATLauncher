@@ -1,4 +1,3 @@
-
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
  * Copyright (C) 2013-2019 ATLauncher
@@ -16,13 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import com.atlauncher.data.LauncherVersion;
+package com.atlauncher.data;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestLauncherVersion {
+import org.junit.jupiter.api.Test;
+
+public class LauncherVersionTest {
 
     private static final LauncherVersion testVersion = new LauncherVersion(1, 0, 0, 0, "Release");
 

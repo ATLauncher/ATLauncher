@@ -1,4 +1,3 @@
-
 /*
  * ATLauncher - https://github.com/ATLauncher/ATLauncher
  * Copyright (C) 2013-2019 ATLauncher
@@ -16,18 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.atlauncher.utils;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TestOS {
+public class OSTest {
     private List<JavaInfo> installedJavas;
 
     @BeforeEach

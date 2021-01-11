@@ -128,7 +128,9 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
 
         openFolder = new JButton(GetText.tr("Open Folder"));
+
         updateData = new JButton(GetText.tr("Update Data"));
+        updateData.setName("updateData");
 
         username = new JComboBox<>();
         username.setRenderer(new AccountsDropDownRenderer());
