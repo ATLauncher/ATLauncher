@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Fix instance installer failing when fingerprinting fails [#436]
+- Fix not working on NAT64 networks [#434]
 
 ### Misc
 - Add in automated UI testing
