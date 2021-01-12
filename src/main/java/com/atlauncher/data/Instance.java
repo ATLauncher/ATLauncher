@@ -484,7 +484,7 @@ public class Instance extends MinecraftVersion {
                 LogManager.logStackTrace(e2, false);
             }
 
-            ProgressDialog prepareDialog = new ProgressDialog(GetText.tr("Preparing For Launch"), 4,
+            ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 4,
                     GetText.tr("Preparing For Launch"));
             prepareDialog.addThread(new Thread(() -> {
                 LogManager.info("Preparing for launch!");
@@ -493,7 +493,7 @@ public class Instance extends MinecraftVersion {
             }));
             prepareDialog.start();
 
-            if (prepareDialog.getReturnValue() == null || !(boolean) prepareDialog.getReturnValue()) {
+            if (prepareDialog.getReturnValue() == null || prepareDialog.getReturnValue()) {
                 LogManager.error("Failed to prepare instance " + this.launcher.name
                         + " for launch. Check the logs and try again.");
                 return false;
@@ -516,15 +516,16 @@ public class Instance extends MinecraftVersion {
                     if (account instanceof MojangAccount) {
                         MojangAccount mojangAccount = (MojangAccount) account;
                         LogManager.info("Logging into Minecraft!");
-                        ProgressDialog loginDialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
-                                GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                        ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
+                                GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
+                                "Aborted login to Minecraft!");
                         loginDialog.addThread(new Thread(() -> {
                             loginDialog.setReturnValue(mojangAccount.login());
                             loginDialog.close();
                         }));
                         loginDialog.start();
 
-                        final LoginResponse session = (LoginResponse) loginDialog.getReturnValue();
+                        final LoginResponse session = loginDialog.getReturnValue();
 
                         if (session == null) {
                             App.launcher.setMinecraftLaunched(false);
@@ -539,8 +540,8 @@ public class Instance extends MinecraftVersion {
                         MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
 
                         LogManager.info("Logging into Minecraft!");
-                        ProgressDialog loginDialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
-                                GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                        ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
+                                0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
                         loginDialog.addThread(new Thread(() -> {
                             loginDialog.setReturnValue(microsoftAccount.ensureAccessTokenValid());
                             loginDialog.close();

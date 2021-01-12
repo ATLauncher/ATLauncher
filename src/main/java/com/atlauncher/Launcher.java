@@ -224,7 +224,7 @@ public class Launcher {
             LogManager.info("Downloading Launcher Update");
             Analytics.sendEvent("Update", "Launcher");
 
-            ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Launcher Update"), 1,
+            ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Launcher Update"), 1,
                     GetText.tr("Downloading Launcher Update"));
             progressDialog.addThread(new Thread(() -> {
                 com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
@@ -248,7 +248,7 @@ public class Launcher {
             }));
             progressDialog.start();
 
-            if ((Boolean) progressDialog.getReturnValue()) {
+            if (progressDialog.getReturnValue()) {
                 runUpdate(path, newFile.getAbsolutePath());
             }
         } catch (IOException e) {
@@ -361,7 +361,7 @@ public class Launcher {
         if (updateThread != null && updateThread.isAlive()) {
             updateThread.interrupt();
         }
-        
+
         updateThread = new Thread(() -> {
             if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModpacksChPack())) {
                 ModpacksChUpdateManager.checkForUpdates();

@@ -46,7 +46,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
-            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.CURSEFORGE_HOST};
+            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.CURSEFORGE_HOST };
 
     public NetworkCheckerToolPanel() {
         super(GetText.tr("Network Checker"));
@@ -78,8 +78,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 .setType(DialogManager.INFO).show();
 
         if (ret == 0) {
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Network Checker"), 13 + HOSTS.length,
-                    GetText.tr("Network Checker Running. Please Wait!"), "Network Checker Tool Cancelled!");
+            final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Network Checker"),
+                    13 + HOSTS.length, GetText.tr("Network Checker Running. Please Wait!"),
+                    "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
                 StringBuilder results = new StringBuilder();
 
@@ -206,7 +207,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 dialog.close();
             }));
             dialog.start();
-            if (dialog.getReturnValue() == null || !(Boolean) dialog.getReturnValue()) {
+            if (dialog.getReturnValue() == null || !dialog.getReturnValue()) {
                 LogManager.error("Network Test failed to run!");
             } else {
                 LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");

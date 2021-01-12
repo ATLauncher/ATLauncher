@@ -103,7 +103,7 @@ public abstract class AbstractAccount implements Serializable {
     public abstract String getSkinUrl();
 
     public void updateUsername() {
-        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Username Change"), 0,
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Checking For Username Change"), 0,
                 GetText.tr("Checking Username Change For {0}", this.minecraftUsername),
                 "Aborting checking for username change for " + this.minecraftUsername);
 
@@ -131,7 +131,7 @@ public abstract class AbstractAccount implements Serializable {
         if (dialog.getReturnValue() == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
                     .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
-        } else if ((Boolean) dialog.getReturnValue()) {
+        } else if (dialog.getReturnValue()) {
             AccountManager.saveAccounts();
             DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))
                     .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();

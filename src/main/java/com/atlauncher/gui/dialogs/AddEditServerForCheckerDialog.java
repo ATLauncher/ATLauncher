@@ -167,9 +167,8 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 String name = serverName.getText();
                 final String host = serverHost.getText();
                 final int port = Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", ""));
-                QueryVersion qv = null;
 
-                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking Server"), 0,
+                final ProgressDialog<QueryVersion> dialog = new ProgressDialog<>(GetText.tr("Checking Server"), 0,
                         GetText.tr("Checking Server"), "Cancelled Server Check!");
                 dialog.addThread(new Thread(() -> {
                     dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
@@ -177,9 +176,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 }));
                 dialog.start();
 
-                if (dialog.getReturnValue() != null) {
-                    qv = (QueryVersion) dialog.getReturnValue();
-                }
+                QueryVersion qv = dialog.getReturnValue();
 
                 if (qv == null) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(GetText.tr(

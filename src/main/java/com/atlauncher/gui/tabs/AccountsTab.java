@@ -388,7 +388,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         }
 
         LogManager.info("Logging into Minecraft!");
-        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Logging Into Minecraft"), 0,
+        final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"), 0,
                 GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
         dialog.addThread(new Thread(() -> {
             LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
@@ -397,7 +397,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             dialog.close();
         }));
         dialog.start();
-        LoginResponse response = (LoginResponse) dialog.getReturnValue();
+        LoginResponse response = dialog.getReturnValue();
         if (response != null && response.hasAuth() && response.isValidAuth()) {
             if (accountsComboBox.getSelectedIndex() == 0) {
                 account = new MojangAccount(username, password, response, remember, clientToken);

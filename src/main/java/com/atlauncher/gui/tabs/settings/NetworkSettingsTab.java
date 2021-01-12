@@ -212,7 +212,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         }
 
         final Type theType = type;
-        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking Proxy"), 0,
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Checking Proxy"), 0,
                 GetText.tr("Checking the proxy entered."), "Cancelled Proxy Test!");
         dialog.addThread(new Thread(() -> {
             dialog.setReturnValue(Utils.testProxy(
@@ -225,7 +225,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
             return false;
         }
 
-        if (!(Boolean) dialog.getReturnValue()) {
+        if (!dialog.getReturnValue()) {
             DialogManager.okDialog().setTitle(GetText.tr("Help"))
                     .setContent(GetText.tr("Cannot connect to proxy. Please check the settings and try again."))
                     .setType(DialogManager.ERROR).show();

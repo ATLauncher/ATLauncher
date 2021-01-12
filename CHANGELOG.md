@@ -14,3 +14,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Add in automated UI testing
+- Cleanup of ProgressDialog

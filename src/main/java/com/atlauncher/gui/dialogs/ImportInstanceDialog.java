@@ -168,7 +168,7 @@ public class ImportInstanceDialog extends JDialog {
         addButton.addActionListener(e -> {
             setVisible(false);
 
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Import Instance"), 0,
+            final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Import Instance"), 0,
                     GetText.tr("Import Instance"));
 
             dialog.addThread(new Thread(() -> {
@@ -186,7 +186,7 @@ public class ImportInstanceDialog extends JDialog {
 
             dialog.start();
 
-            if (!((boolean) dialog.getReturnValue())) {
+            if (!dialog.getReturnValue()) {
                 setVisible(true);
                 DialogManager.okDialog().setTitle(GetText.tr("Failed To Import Instance"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(

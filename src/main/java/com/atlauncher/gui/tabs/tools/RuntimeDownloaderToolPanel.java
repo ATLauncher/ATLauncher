@@ -67,7 +67,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
     public void actionPerformed(ActionEvent e) {
         Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
 
-        final ProgressDialog dialog = new ProgressDialog(GetText.tr("Runtime Downloader"), 3,
+        final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Runtime Downloader"), 3,
                 GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
@@ -148,7 +148,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
         } else {
             LogManager.info("Runtime downloaded!");
 
-            String path = (String) dialog.getReturnValue();
+            String path = dialog.getReturnValue();
 
             App.settings.javaPath = path;
             App.settings.save();
