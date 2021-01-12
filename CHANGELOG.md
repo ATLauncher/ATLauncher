@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Fix instance installer failing when fingerprinting fails [#436]
 - Fix not working on NAT64 networks [#434]
+- Fix some external pack actions UI hangs when servers slow [#435]
 
 ### Misc
 - Add in automated UI testing

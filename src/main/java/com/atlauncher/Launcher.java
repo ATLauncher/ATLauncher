@@ -81,6 +81,9 @@ public class Launcher {
     private PacksTab featuredPacksPanel; // The featured packs panel
     private PacksTab packsPanel; // The packs panel
 
+    // Update thread
+    private Thread updateThread;
+
     // Minecraft tracking variables
     private Process minecraftProcess = null; // The process minecraft is running on
     public boolean minecraftLaunched = false; // If Minecraft has been Launched
@@ -355,12 +358,19 @@ public class Launcher {
     }
 
     private void checkForExternalPackUpdates() {
-        if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModpacksChPack())) {
-            ModpacksChUpdateManager.checkForUpdates();
+        if (updateThread != null && updateThread.isAlive()) {
+            updateThread.interrupt();
         }
-        if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
-            CurseForgeUpdateManager.checkForUpdates();
-        }
+        
+        updateThread = new Thread(() -> {
+            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModpacksChPack())) {
+                ModpacksChUpdateManager.checkForUpdates();
+            }
+            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
+                CurseForgeUpdateManager.checkForUpdates();
+            }
+        });
+        updateThread.start();
     }
 
     public void reloadLauncherData() {

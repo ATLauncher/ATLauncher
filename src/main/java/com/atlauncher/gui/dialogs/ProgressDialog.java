@@ -35,13 +35,14 @@ import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class ProgressDialog extends JDialog implements NetworkProgressable {
+public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     private final String labelText; // The text to add to the JLabel
     private final JProgressBar progressBar; // The Progress Bar
     private final JProgressBar subProgressBar; // The Progress Bar
     private Thread thread = null; // The Thread were optionally running
     private final String closedLogMessage; // The message to log to the console when dialog closed
-    private Object returnValue = null; // The value returned
+    private T returnValue = null; // The value returned
+    public boolean wasClosed = false; // If the dialog was closed by the user
     private final JLabel label = new JLabel();
     private int tasksToDo;
     private int tasksDone;
@@ -80,6 +81,7 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                wasClosed = true;
                 if (closedLogMessage != null) {
                     LogManager.error(closedLogMessage);
                 }
@@ -115,11 +117,11 @@ public class ProgressDialog extends JDialog implements NetworkProgressable {
         this.label.setText(this.labelText);
     }
 
-    public void setReturnValue(Object returnValue) {
+    public void setReturnValue(T returnValue) {
         this.returnValue = returnValue;
     }
 
-    public Object getReturnValue() {
+    public T getReturnValue() {
         return this.returnValue;
     }
 

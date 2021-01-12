@@ -717,13 +717,27 @@ public class InstanceInstallerDialog extends JDialog {
         instance = (Instance) object;
 
         if (instance.isModpacksChPack()) {
-            ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
-                    .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
-                            instance.launcher.modpacksChPackManifest.id))
-                    .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                    .asClass(ModpacksChPackManifest.class);
+            final ProgressDialog<ModpacksChPackManifest> dialog = new ProgressDialog<>(
+                    GetText.tr("Downloading Pack Manifest"), 0, GetText.tr("Downloading Pack Manifest"),
+                    "Cancelled downloading modpacks.ch pack manifest");
+            dialog.addThread(new Thread(() -> {
+                ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
+                        .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
+                                instance.launcher.modpacksChPackManifest.id))
+                        .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                        .asClass(ModpacksChPackManifest.class);
+                dialog.setReturnValue(packManifest);
+                dialog.close();
+            }));
+            dialog.start();
 
-            handleModpacksChInstall(packManifest);
+            if (dialog.wasClosed) {
+                setVisible(false);
+                dispose();
+                return;
+            }
+
+            handleModpacksChInstall(dialog.getReturnValue());
         } else if (instance.isCurseForgePack()) {
             handleCurseForgeInstall(instance.launcher.curseForgeProject);
         } else {
