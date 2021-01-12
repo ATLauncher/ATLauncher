@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Fix instance installer failing when fingerprinting fails [#436]
 
 ### Misc
 - Add in automated UI testing

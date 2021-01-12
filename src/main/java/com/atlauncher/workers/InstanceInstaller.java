@@ -1629,31 +1629,36 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                     .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
-            int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id).toArray();
+            if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
+                int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id).toArray();
 
-            if (projectIdsFound.length != 0) {
-                Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
+                if (projectIdsFound.length != 0) {
+                    Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
-                fingerprintResponse.exactMatches.stream()
-                        .filter(em -> murmurHashes.containsKey(em.file.packageFingerprint)).forEach(foundMod -> {
-                            DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
+                    if (foundProjects != null) {
+                        fingerprintResponse.exactMatches.stream()
+                                .filter(em -> murmurHashes.containsKey(em.file.packageFingerprint))
+                                .forEach(foundMod -> {
+                                    DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
 
-                            // add CurseForge information
-                            dm.curseForgeProjectId = foundMod.id;
-                            dm.curseForgeFile = foundMod.file;
-                            dm.curseForgeFileId = foundMod.file.id;
+                                    // add CurseForge information
+                                    dm.curseForgeProjectId = foundMod.id;
+                                    dm.curseForgeFile = foundMod.file;
+                                    dm.curseForgeFileId = foundMod.file.id;
 
-                            CurseForgeProject curseForgeProject = foundProjects.get(foundMod.id);
+                                    CurseForgeProject curseForgeProject = foundProjects.get(foundMod.id);
 
-                            if (curseForgeProject != null) {
-                                dm.curseForgeProject = curseForgeProject;
-                                dm.name = curseForgeProject.name;
-                                dm.description = curseForgeProject.summary;
-                            }
+                                    if (curseForgeProject != null) {
+                                        dm.curseForgeProject = curseForgeProject;
+                                        dm.name = curseForgeProject.name;
+                                        dm.description = curseForgeProject.summary;
+                                    }
 
-                            LogManager.debug(
-                                    "Found matching mod from CurseForge called " + dm.curseForgeFile.displayName);
-                        });
+                                    LogManager.debug("Found matching mod from CurseForge called "
+                                            + dm.curseForgeFile.displayName);
+                                });
+                    }
+                }
             }
         }
     }
