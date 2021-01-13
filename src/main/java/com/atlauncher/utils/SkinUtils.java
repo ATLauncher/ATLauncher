@@ -26,12 +26,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.atlauncher.FileSystem;
 import com.atlauncher.managers.LogManager;
 
 public class SkinUtils {
     public static ImageIcon getDefaultHead() {
-        return getHead(FileSystem.SKINS.resolve("default.png").toFile());
+        return getHead(Utils.getImage("/assets/image/skins/default.png"));
     }
 
     public static ImageIcon getHead(BufferedImage image) {
