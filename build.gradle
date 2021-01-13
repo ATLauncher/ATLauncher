@@ -67,6 +67,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testImplementation 'org.assertj:assertj-swing-junit:3.17.1'
+    testImplementation 'org.mock-server:mockserver-netty:5.11.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.0'
 }

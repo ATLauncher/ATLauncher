@@ -50,6 +50,7 @@ public class PackManager {
     public static void loadPacks() {
         PerformanceManager.start();
         LogManager.debug("Loading packs");
+        Data.PACKS.clear();
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();

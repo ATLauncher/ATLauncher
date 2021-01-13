@@ -1,0 +1,24 @@
+{
+  "windows": {
+    "x86": {
+      "version": "1.8.0_51",
+      "url": "runtimes/jre-win-32-1.8.0_51.xz",
+      "sha1": "e09ffca4f233398e186ee6ca514ea426a380a607",
+      "size": 38942464
+    },
+    "x64": {
+      "version": "1.8.0_51",
+      "url": "runtimes/jre-win-64-1.8.0_51.xz",
+      "sha1": "8a8bdecc9ea1bd361d0cb621c81850b67cb57692",
+      "size": 41251360
+    }
+  },
+  "osx": {
+    "x64": {
+      "version": "1.8.0_51",
+      "url": "runtimes/jre-osx-64-1.8.0_51.xz",
+      "sha1": "146bf64df14342388f4159cfaca1751202dd8837",
+      "size": 39026768
+    }
+  }
+}

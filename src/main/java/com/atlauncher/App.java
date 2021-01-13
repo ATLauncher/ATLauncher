@@ -34,9 +34,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -136,6 +142,15 @@ public class App {
      * --skip-tray-integration
      */
     public static boolean skipTrayIntegration = false;
+
+    /**
+     * This allows skipping the in built analytics collection. This is mainly useful
+     * for development when you don't want to report analytics. For end users, this
+     * can be turned off in the launcher setup or through the settings.
+     * <p/>
+     * --disable-analytics
+     */
+    public static boolean disableAnalytics = false;
 
     /**
      * This allows skipping the in built error reporting. This is mainly useful for
@@ -841,6 +856,7 @@ public class App {
         parser.accepts("updated").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-setup-dialog").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("disable-analytics").withOptionalArg().ofType(Boolean.class);
         parser.accepts("disable-error-reporting").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-hash-checking").withOptionalArg().ofType(Boolean.class);
@@ -856,6 +872,9 @@ public class App {
         parser.accepts("debug").withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug-level").withRequiredArg().ofType(Integer.class);
         parser.accepts("launch").withRequiredArg().ofType(String.class);
+        parser.accepts("proxy-type").withRequiredArg().ofType(String.class);
+        parser.accepts("proxy-host").withRequiredArg().ofType(String.class);
+        parser.accepts("proxy-port").withRequiredArg().ofType(Integer.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
@@ -883,6 +902,11 @@ public class App {
         skipTrayIntegration = options.has("skip-tray-integration");
         if (skipTrayIntegration) {
             LogManager.debug("Skipping tray integration!");
+        }
+
+        disableAnalytics = options.has("disable-analytics");
+        if (disableAnalytics) {
+            LogManager.debug("Disabling analytics!");
         }
 
         disableErrorReporting = options.has("disable-error-reporting");
@@ -949,6 +973,29 @@ public class App {
         skipHashChecking = options.has("skip-hash-checking");
         if (skipHashChecking) {
             LogManager.debug("Skipping hash checking! Don't ask for support with this enabled!");
+        }
+
+        if (options.has("proxy-type") && options.has("proxy-host") && options.has("proxy-port")) {
+            String proxyType = String.valueOf(options.valueOf("proxy-type"));
+            String proxyHost = String.valueOf(options.valueOf("proxy-host"));
+            Integer proxyPort = (Integer) options.valueOf("proxy-port");
+
+            Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.valueOf(proxyType),
+                    new InetSocketAddress(proxyHost, proxyPort));
+
+            LogManager.warn("Proxy set to " + proxy);
+
+            ProxySelector.setDefault(new ProxySelector() {
+                @Override
+                public List<java.net.Proxy> select(URI uri) {
+                    return Arrays.asList(proxy);
+                }
+
+                @Override
+                public void connectFailed(URI uri, SocketAddress sa, IOException e) {
+                    LogManager.logStackTrace("Connection could not be established to proxy at socket [" + sa + "]", e);
+                }
+            });
         }
     }
 }

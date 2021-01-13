@@ -1,0 +1,155 @@
+{
+  "arguments": {
+    "game": [
+      "--username",
+      "${auth_player_name}",
+      "--version",
+      "${version_name}",
+      "--gameDir",
+      "${game_directory}",
+      "--assetsDir",
+      "${assets_root}",
+      "--assetIndex",
+      "${assets_index_name}",
+      "--uuid",
+      "${auth_uuid}",
+      "--accessToken",
+      "${auth_access_token}",
+      "--userType",
+      "${user_type}",
+      "--versionType",
+      "${version_type}",
+      {
+        "rules": [
+          {
+            "action": "allow",
+            "features": {
+              "is_demo_user": true
+            }
+          }
+        ],
+        "value": "--demo"
+      },
+      {
+        "rules": [
+          {
+            "action": "allow",
+            "features": {
+              "has_custom_resolution": true
+            }
+          }
+        ],
+        "value": [
+          "--width",
+          "${resolution_width}",
+          "--height",
+          "${resolution_height}"
+        ]
+      }
+    ],
+    "jvm": [
+      {
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx"
+            }
+          }
+        ],
+        "value": [
+          "-XstartOnFirstThread"
+        ]
+      },
+      {
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "windows"
+            }
+          }
+        ],
+        "value": "-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump"
+      },
+      {
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "windows",
+              "version": "^10\\."
+            }
+          }
+        ],
+        "value": [
+          "-Dos.name=Windows 10",
+          "-Dos.version=10.0"
+        ]
+      },
+      {
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "arch": "x86"
+            }
+          }
+        ],
+        "value": "-Xss1M"
+      },
+      "-Djava.library.path=${natives_directory}",
+      "-Dminecraft.launcher.brand=${launcher_name}",
+      "-Dminecraft.launcher.version=${launcher_version}",
+      "-cp",
+      "${classpath}"
+    ]
+  },
+  "assetIndex": {
+    "id": "1.16",
+    "sha1": "3b67bf61fbd049c1fb5481e9a015626ae1a859eb",
+    "size": 249,
+    "totalSize": 2017,
+    "url": "https://launchermeta.mojang.com/v1/packages/f8e11ca03b475dd655755b945334c7a0ac2c3b43/1.16.json"
+  },
+  "assets": "1.16",
+  "complianceLevel": 1,
+  "downloads": {
+    "client": {
+      "sha1": "4addb91039ae452c5612f288bfe6ce925dac92c5",
+      "size": 318,
+      "url": "https://launcher.mojang.com/v1/objects/4addb91039ae452c5612f288bfe6ce925dac92c5/client.jar"
+    }
+  },
+  "id": "1.16.4",
+  "libraries": [
+    {
+      "downloads": {
+        "artifact": {
+          "path": "com/atlauncher/test/1.0/test-1.0.jar",
+          "sha1": "ef28203c29fe08638c2e685286427f00a4791962",
+          "size": 313,
+          "url": "https://libraries.minecraft.net/com/atlauncher/test/1.0/test-1.0.jar"
+        }
+      },
+      "name": "com.atlauncher:test:1.0"
+    }
+  ],
+  "logging": {
+    "client": {
+      "argument": "-Dlog4j.configurationFile=${path}",
+      "file": {
+        "id": "client-1.12.xml",
+        "sha1": "9150e6e5de6d49a83113ed3be5719aed2a387523",
+        "size": 86,
+        "url": "https://launcher.mojang.com/v1/objects/9150e6e5de6d49a83113ed3be5719aed2a387523/client-1.12.xml"
+      },
+      "type": "log4j2-xml"
+    }
+  },
+  "mainClass": "net.minecraft.client.main.Main",
+  "minimumLauncherVersion": 21,
+  "releaseTime": "2020-10-29T15:49:37+00:00",
+  "time": "2020-10-29T15:49:37+00:00",
+  "type": "release"
+}

@@ -111,7 +111,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableAnalytics = new JCheckBox();
-        enableAnalytics.setSelected(true);
+        enableAnalytics.setSelected(!App.disableAnalytics);
         middle.add(enableAnalytics, gbc);
 
         // Bottom Panel Stuff

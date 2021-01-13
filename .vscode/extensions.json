@@ -11,6 +11,7 @@
         "naco-siren.gradle-language",
         "rebornix.project-snippets",
         "mrorz.language-gettext",
-        "aaron-bond.better-comments"
+        "aaron-bond.better-comments",
+        "mathiasfrohlich.kotlin"
     ]
 }

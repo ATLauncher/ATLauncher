@@ -22,8 +22,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.ui.mocks.MockHelper;
 import com.atlauncher.utils.FileUtils;
 
 import org.assertj.swing.core.GenericTypeMatcher;
@@ -35,10 +38,15 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.logging.MockServerLogger;
+import org.mockserver.socket.PortFactory;
+import org.mockserver.socket.tls.KeyStoreFactory;
 
 public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
     // get a working directory specifically for this run
     protected static final Path workingDir = Paths.get("testLauncher/ui-tests/" + UUID.randomUUID()).toAbsolutePath();
+    protected ClientAndServer mockServer;
 
     protected FrameFixture frame;
 
@@ -56,11 +64,26 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
     public final void setUp() {
         preSetUp();
 
+        HttpsURLConnection.setDefaultSSLSocketFactory(
+                new KeyStoreFactory(new MockServerLogger()).sslContext().getSocketFactory());
+
+        mockServer = ClientAndServer.startClientAndServer(PortFactory.findFreePort());
+
+        if (System.getenv("CI") == null || !System.getenv("CI").equalsIgnoreCase("true")) {
+            mockServer.openUI();
+        }
+
         this.setUpRobot();
 
+        this.setupHttpMocks();
+
         // start the application
-        ApplicationLauncher.application(App.class).withArgs("--skip-setup-dialog", "--skip-integration",
-                "--skip-tray-integration", "--no-launcher-update", "--working-dir=" + workingDir.toString()).start();
+        ApplicationLauncher.application(App.class)
+                .withArgs("--skip-setup-dialog", "--skip-integration", "--disable-analytics",
+                        "--disable-error-reporting", "--skip-tray-integration", "--no-launcher-update",
+                        "--proxy-type=SOCKS", "--proxy-host=127.0.0.1", "--proxy-port=" + mockServer.getPort(),
+                        "--working-dir=" + workingDir.toString())
+                .start();
 
         // get a reference to the main launcher frame
         frame = WindowFinder.findFrame(new GenericTypeMatcher<Frame>(Frame.class) {
@@ -79,6 +102,19 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         onSetUp();
     }
 
+    private void setupHttpMocks() {
+        // files.json
+        MockHelper.mockFilesJson(mockServer);
+
+        // files to download
+        MockHelper.mockFileResponse(mockServer, "newnews.json");
+        MockHelper.mockFileResponse(mockServer, "runtimes.json");
+        MockHelper.mockFileResponse(mockServer, "users.json");
+        MockHelper.mockFileResponse(mockServer, "minecraft.json");
+        MockHelper.mockFileResponse(mockServer, "packsnew.json");
+        MockHelper.mockFileResponse(mockServer, "version.json");
+    }
+
     protected void onSetUp() {
     }
 
@@ -86,6 +122,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
     public final void tearDown() {
         try {
             onTearDown();
+            mockServer.stop(true);
         } finally {
             cleanUp();
         }

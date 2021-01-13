@@ -34,7 +34,7 @@ public final class Analytics implements SettingsListener {
         ga = GoogleAnalytics.builder()
                 .withConfig(new GoogleAnalyticsConfig().setDiscoverRequestParameters(true)
                         .setProxyHost(App.settings.proxyHost).setProxyPort(App.settings.proxyPort)
-                        .setEnabled(App.settings.enableAnalytics))
+                        .setEnabled(!App.disableAnalytics && App.settings.enableAnalytics))
                 .withDefaultRequest(new DefaultRequest().userAgent(Network.USER_AGENT)
                         .clientId(App.settings.analyticsClientId).customDimension(1, Java.getLauncherJavaVersion()))
                 .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
@@ -101,6 +101,6 @@ public final class Analytics implements SettingsListener {
     @Override
     public void onSettingsSaved() {
         ga.getConfig().setProxyHost(App.settings.proxyHost).setProxyPort(App.settings.proxyPort)
-                .setEnabled(App.settings.enableAnalytics);
+                .setEnabled(!App.disableAnalytics && App.settings.enableAnalytics);
     }
 }

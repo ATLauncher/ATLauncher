@@ -53,18 +53,20 @@ public class Constants {
     public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
 
     // Launcher domains, endpoints, etc
+    public static String BASE_LAUNCHER_PROTOCOL = "https://";
     public static String BASE_LAUNCHER_DOMAIN = "atlauncher.com";
-    public static String API_BASE_URL = "https://api." + BASE_LAUNCHER_DOMAIN + "/v1/launcher/";
+    public static String API_BASE_URL = BASE_LAUNCHER_PROTOCOL + "api." + BASE_LAUNCHER_DOMAIN + "/v1/launcher/";
     public static String API_HOST = "api." + BASE_LAUNCHER_DOMAIN;
-    public static String PASTE_CHECK_URL = "https://paste." + BASE_LAUNCHER_DOMAIN;
+    public static String PASTE_CHECK_URL = BASE_LAUNCHER_PROTOCOL + "paste." + BASE_LAUNCHER_DOMAIN;
     public static String PASTE_HOST = "paste." + BASE_LAUNCHER_DOMAIN;
-    public static String SERVERS_LIST_PACK = "https://" + BASE_LAUNCHER_DOMAIN + "/servers/list/pack";
-    public static String PASTE_API_URL = "https://paste." + BASE_LAUNCHER_DOMAIN + "/api/create";
+    public static String SERVERS_LIST_PACK = BASE_LAUNCHER_PROTOCOL + BASE_LAUNCHER_DOMAIN + "/servers/list/pack";
+    public static String PASTE_API_URL = BASE_LAUNCHER_PROTOCOL + "paste." + BASE_LAUNCHER_DOMAIN + "/api/create";
 
     // CDN domains, endpoints, etc
+    public static String BASE_CDN_PROTOCOL = "https://";
     public static String BASE_CDN_DOMAIN = "download.nodecdn.net";
     public static String BASE_CDN_PATH = "/containers/atl";
-    public static String DOWNLOAD_SERVER = "https://" + BASE_CDN_DOMAIN + BASE_CDN_PATH;
+    public static String DOWNLOAD_SERVER = BASE_CDN_PROTOCOL + BASE_CDN_DOMAIN + BASE_CDN_PATH;
     public static String DOWNLOAD_HOST = BASE_CDN_DOMAIN;
 
     // CurseForge domains, endpoints, config, etc
@@ -126,23 +128,29 @@ public class Constants {
     public static final String MICROSOFT_MINECRAFT_PROFILE_URL = "https://api.minecraftservices.com/minecraft/profile";
 
     public static void setBaseLauncherDomain(String baseLauncherDomain) {
-        BASE_LAUNCHER_DOMAIN = baseLauncherDomain;
-        API_BASE_URL = "https://api." + baseLauncherDomain + "/v1/launcher/";
-        API_HOST = "api." + baseLauncherDomain;
-        PASTE_CHECK_URL = "https://paste." + baseLauncherDomain;
-        PASTE_HOST = "paste." + baseLauncherDomain;
-        SERVERS_LIST_PACK = "https://" + baseLauncherDomain + "/servers/list/pack";
-        PASTE_API_URL = "https://paste." + baseLauncherDomain + "/api/create";
+        String host = baseLauncherDomain.replace("https://", "").replace("http://", "");
+
+        BASE_LAUNCHER_PROTOCOL = baseLauncherDomain.startsWith("https://") ? "https://" : "http://";
+        BASE_LAUNCHER_DOMAIN = host;
+        API_BASE_URL = BASE_LAUNCHER_PROTOCOL + "api." + host + "/v1/launcher/";
+        API_HOST = "api." + host;
+        PASTE_CHECK_URL = BASE_LAUNCHER_PROTOCOL + "paste." + host;
+        PASTE_HOST = "paste." + host;
+        SERVERS_LIST_PACK = BASE_LAUNCHER_PROTOCOL + host + "/servers/list/pack";
+        PASTE_API_URL = BASE_LAUNCHER_PROTOCOL + "paste." + host + "/api/create";
     }
 
     public static void setBaseCdnDomain(String baseCdnDomain) {
-        BASE_CDN_DOMAIN = baseCdnDomain;
-        DOWNLOAD_SERVER = "https://" + baseCdnDomain + BASE_CDN_PATH;
-        DOWNLOAD_HOST = baseCdnDomain;
+        String host = baseCdnDomain.replace("https://", "").replace("http://", "");
+
+        BASE_CDN_PROTOCOL = baseCdnDomain.startsWith("https://") ? "https://" : "http://";
+        BASE_CDN_DOMAIN = host;
+        DOWNLOAD_SERVER = baseCdnDomain + BASE_CDN_PATH;
+        DOWNLOAD_HOST = host;
     }
 
     public static void setBaseCdnPath(String baseCdnPath) {
         BASE_CDN_PATH = baseCdnPath;
-        DOWNLOAD_SERVER = "https://" + BASE_CDN_DOMAIN + baseCdnPath;
+        DOWNLOAD_SERVER = BASE_CDN_PROTOCOL + BASE_CDN_DOMAIN + baseCdnPath;
     }
 }

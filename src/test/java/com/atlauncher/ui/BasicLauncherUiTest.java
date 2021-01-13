@@ -21,8 +21,10 @@ import java.awt.Dialog;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
+import com.atlauncher.constants.Constants;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.PackCard;
+import com.atlauncher.ui.mocks.MockHelper;
 
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -48,11 +50,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         mainTabsFixture.requireVisible();
         mainTabsFixture.requireTitle("News", Index.atIndex(0));
         mainTabsFixture.requireSelectedTab(Index.atIndex(0));
-    }
 
-    @Test
-    public void testThatUsersCanLogin() {
-        JTabbedPaneFixture mainTabsFixture = this.frame.tabbedPane("mainTabs");
         mainTabsFixture.selectTab("Accounts");
 
         JComboBoxFixture accountsTabAccountsComboBox = this.frame.comboBox("accountsTabAccountsComboBox");
@@ -69,8 +67,15 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         JTextComponentFixture passwordField = this.frame.textBox("passwordField");
         passwordField.requireVisible().requireEditable();
 
-        usernameField.setText(System.getenv("MOJANG_ACCOUNT_USERNAME"));
-        passwordField.setText(System.getenv("MOJANG_ACCOUNT_PASSWORD"));
+        MockHelper.mockJson(mockServer, "POST", "authserver.mojang.com", "/authenticate", "login-success.js");
+        MockHelper.mockJson(mockServer, "GET", "sessionserver.mojang.com",
+                "/session/minecraft/profile/e50e5b562ca3c41f35631867a7cb14c5", "profile.json");
+        MockHelper.mockPng(mockServer, "GET", "textures.minecraft.net",
+                "/texture/3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3",
+                "3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3.png");
+
+        usernameField.setText("test@example.com");
+        passwordField.setText("password");
 
         // login
         loginButton.click();
@@ -78,7 +83,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         DialogFixture loginDialog = WindowFinder.findDialog("loginDialog").using(robot());
         loginDialog.requireVisible();
 
-        // give it time
+        // give it 5 seconds
         Pause.pause(5, TimeUnit.SECONDS);
 
         // account was added, fields cleared
@@ -89,22 +94,36 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         // account selector now showing
         JComboBoxFixture accountSelector = this.frame.comboBox("accountSelector");
         accountSelector.requireVisible();
-    }
-
-    @Test
-    public void testThatInstancesCanInstall() {
-        JTabbedPaneFixture mainTabsFixture = this.frame.tabbedPane("mainTabs");
         mainTabsFixture.selectTab("Vanilla Packs");
+
+        MockHelper.mockCdnJson(mockServer, "GET", "/containers/atl/packs/VanillaMinecraft/versions/1.16.4/Configs.json",
+                "vanilla-1-16-4-configs.json");
+        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com", "/mc/game/version_manifest.json",
+                "version_manifest.json");
+        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
+                "/v1/packages/3c33166875193f50f446a0730960208fcbf9f96c/1.16.4.json", "1.16.4.json");
+        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
+                "/v1/packages/f8e11ca03b475dd655755b945334c7a0ac2c3b43/1.16.json", "1.16.json");
+        MockHelper.mockPng(mockServer, "GET", "resources.download.minecraft.net",
+                "/1b/1b5fa6ad7c204f60654d43fa25560ff36a6420dc", "1b5fa6ad7c204f60654d43fa25560ff36a6420dc");
+        MockHelper.mockPng(mockServer, "GET", "resources.download.minecraft.net",
+                "/a8/a81ca0f94145275865aca5b27df09b17836bc102", "a81ca0f94145275865aca5b27df09b17836bc102");
+        MockHelper.mockJar(mockServer, "GET", "libraries.minecraft.net", "/com/atlauncher/test/1.0/test-1.0.jar",
+                "test-1.0.jar");
+        MockHelper.mockXml(mockServer, "GET", "launcher.mojang.com",
+                "/v1/objects/9150e6e5de6d49a83113ed3be5719aed2a387523/client-1.12.xml", "client-1.12.xml");
+        MockHelper.mockJar(mockServer, "GET", "launcher.mojang.com",
+                "/v1/objects/4addb91039ae452c5612f288bfe6ce925dac92c5/client.jar", "client-1-16-4.jar");
+        MockHelper.mockNoResponseSuccess(mockServer, "POST", Constants.API_HOST,
+                "/v1/launcher/pack/VanillaMinecraft/installed/");
 
         JPanelFixture vanillaPacksPanel = this.frame.panel("vanillaPacksPanel");
         vanillaPacksPanel.requireVisible();
 
-        // give it time
-        Pause.pause(5, TimeUnit.SECONDS);
-
-        JPanelFixture vanillaPackCard = vanillaPacksPanel.panel(new GenericTypeMatcher<PackCard>(PackCard.class) {
+        JPanelFixture vanillaPackCard = vanillaPacksPanel.panel(new GenericTypeMatcher<PackCard>(PackCard.class, true) {
             @Override
             protected boolean isMatching(PackCard packCard) {
+                System.out.println(packCard);
                 return packCard.getPack().name.equalsIgnoreCase("Vanilla Minecraft") && packCard.isVisible();
             }
         });
@@ -114,10 +133,10 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         newInstanceButton.requireVisible();
         newInstanceButton.click();
 
-        DialogFixture loginDialog = WindowFinder.findDialog("instanceInstallerDialog").using(robot());
-        loginDialog.requireVisible();
+        DialogFixture instanceInstallerDialog = WindowFinder.findDialog("instanceInstallerDialog").using(robot());
+        instanceInstallerDialog.requireVisible();
 
-        JButtonFixture installButton = loginDialog.button(JButtonMatcher.withText("Install"));
+        JButtonFixture installButton = instanceInstallerDialog.button(JButtonMatcher.withText("Install"));
         installButton.requireVisible();
 
         installButton.click();

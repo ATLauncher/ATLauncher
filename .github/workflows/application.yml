@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        java-version: ["1.8", "1.9", "1.10", "1.11", "1.12", "1.13", "1.14"]
+        java-version: ["1.8", "1.9", "1.10", "1.11", "1.12", "1.13", "1.14", "1.15"]
     steps:
       - uses: actions/checkout@v2
 
@@ -29,9 +29,6 @@ jobs:
 
       - name: Test
         uses: GabrielBB/xvfb-action@v1
-        env:
-          MOJANG_ACCOUNT_USERNAME: ${{ secrets.MOJANG_ACCOUNT_USERNAME }}
-          MOJANG_ACCOUNT_PASSWORD: ${{ secrets.MOJANG_ACCOUNT_PASSWORD }}
         with:
           run: ./gradlew test
   build:

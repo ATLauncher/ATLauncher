@@ -1,0 +1,25 @@
+[
+  {
+    "id": 7,
+    "position": 8,
+    "name": "Vanilla Minecraft",
+    "type": "public",
+    "devVersions": [],
+    "versions": [
+      {
+        "version": "1.16.4",
+        "minecraft": "1.16.4",
+        "canUpdate": true,
+        "isRecommended": true
+      }
+    ],
+    "createServer": true,
+    "logging": true,
+    "featured": false,
+    "system": true,
+    "hasDiscordImage": false,
+    "description": "Play Minecraft the way it was intended with Vanilla Minecraft. No mods, just plain simple Minecraft as Mojang intended you to play.",
+    "supportURL": "http://www.minecraft.net",
+    "websiteURL": "http://www.minecraft.net"
+  }
+]
