@@ -80,6 +80,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     public PacksTab(boolean isFeatured, boolean isSystem) {
         super(new BorderLayout());
+        setName(isSystem ? "vanillaPacksPanel" : (isSystem ? "featuredPacksPanel" : "packsPanel"));
         this.isFeatured = isFeatured;
         this.isSystem = isSystem;
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));

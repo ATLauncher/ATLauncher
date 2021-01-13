@@ -631,6 +631,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
     }
 
+    public Instance getInstance() {
+        return instance;
+    }
+
     @Override
     public void onRelocalization() {
         this.playButton.setText(GetText.tr("Play"));

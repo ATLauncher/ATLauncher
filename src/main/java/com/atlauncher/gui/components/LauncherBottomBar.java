@@ -133,6 +133,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         updateData.setName("updateData");
 
         username = new JComboBox<>();
+        username.setName("accountSelector");
         username.setRenderer(new AccountsDropDownRenderer());
 
         for (AbstractAccount account : AccountManager.getAccounts()) {

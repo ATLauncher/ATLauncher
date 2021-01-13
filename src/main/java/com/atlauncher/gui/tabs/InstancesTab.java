@@ -125,6 +125,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         add(topPanel, BorderLayout.NORTH);
 
         panel = new JPanel();
+        panel.setName("instancesPanel");
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);

@@ -152,6 +152,7 @@ public class InstanceInstallerDialog extends JDialog {
             Path curseExtractedPath, Path multiMCExtractedPath, Window parent) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
+        setName("instanceInstallerDialog");
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;
 

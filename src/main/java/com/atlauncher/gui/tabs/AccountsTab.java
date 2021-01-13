@@ -120,6 +120,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.anchor = GridBagConstraints.CENTER;
 
         accountsComboBox = new JComboBox<>();
+        accountsComboBox.setName("accountsTabAccountsComboBox");
         accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
         for (AbstractAccount account : AccountManager.getAccounts()) {
             accountsComboBox.addItem(new ComboItem<>(account, account.minecraftUsername));
@@ -192,6 +193,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         usernameField = new JTextField(16);
+        usernameField.setName("usernameField");
         usernameField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -213,6 +215,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         passwordField = new JPasswordField(16);
+        passwordField.setName("passwordField");
         passwordField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -259,6 +262,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout());
         leftButton = new JButton(GetText.tr("Add"));
+        leftButton.setName("leftButton");
         leftButton.addActionListener(e -> leftButtonActions());
         rightButton = new JButton(GetText.tr("Clear"));
         rightButton.addActionListener(e -> {
@@ -390,6 +394,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         LogManager.info("Logging into Minecraft!");
         final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"), 0,
                 GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
+        dialog.setName("loginDialog");
         dialog.addThread(new Thread(() -> {
             LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
                     new String(passwordField.getPassword()), clientToken);

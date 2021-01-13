@@ -29,6 +29,9 @@ jobs:
 
       - name: Test
         uses: GabrielBB/xvfb-action@v1
+        env:
+          MOJANG_ACCOUNT_USERNAME: ${{ secrets.MOJANG_ACCOUNT_USERNAME }}
+          MOJANG_ACCOUNT_PASSWORD: ${{ secrets.MOJANG_ACCOUNT_PASSWORD }}
         with:
           run: ./gradlew test
   build:
