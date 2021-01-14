@@ -240,10 +240,11 @@ need to take.
 First grab the built project from Crowdin, and then grab out the translation to add/update. For this example, let's take
 German.
 
-Pop this file in the `processTranslations/in` directory and then run the `processTranslations.bat` or
-`processTranslations.sh` file to fix them up and output them into the `processTranslations/out` directory.
+Pop this file in the `scripts/processTranslations/in` directory and then run the `scripts/processTranslations.bat` or
+`scripts/processTranslations.sh` file to fix them up and output them into the `scripts/processTranslations/out`
+directory.
 
-Now take the converted files from the `processTranslations/out` directory and put them in the
+Now take the converted files from the `scripts/processTranslations/out` directory and put them in the
 `src\main\resources\assets\lang` directory.
 
 Now open `src\main\java\com\atlauncher\data\Language.java` and in the static block at the top, add in the language:
