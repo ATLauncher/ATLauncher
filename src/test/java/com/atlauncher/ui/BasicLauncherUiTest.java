@@ -52,6 +52,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         mainTabsFixture.requireSelectedTab(Index.atIndex(0));
 
         mainTabsFixture.selectTab("Accounts");
+        Pause.pause(1, TimeUnit.SECONDS);
 
         JComboBoxFixture accountsTabAccountsComboBox = this.frame.comboBox("accountsTabAccountsComboBox");
         accountsTabAccountsComboBox.requireVisible();
@@ -95,6 +96,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         JComboBoxFixture accountSelector = this.frame.comboBox("accountSelector");
         accountSelector.requireVisible();
         mainTabsFixture.selectTab("Vanilla Packs");
+        Pause.pause(1, TimeUnit.SECONDS);
 
         MockHelper.mockCdnJson(mockServer, "GET", "/containers/atl/packs/VanillaMinecraft/versions/1.16.4/Configs.json",
                 "vanilla-1-16-4-configs.json");
@@ -158,6 +160,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         installSuccessDialog.button(JButtonMatcher.withText("Ok")).click();
 
         mainTabsFixture.selectTab("Instances");
+        Pause.pause(1, TimeUnit.SECONDS);
 
         JPanelFixture instancesPanel = this.frame.panel("instancesPanel");
         instancesPanel.requireVisible();
