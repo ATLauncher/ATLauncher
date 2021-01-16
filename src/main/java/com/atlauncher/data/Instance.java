@@ -493,7 +493,7 @@ public class Instance extends MinecraftVersion {
             }));
             prepareDialog.start();
 
-            if (prepareDialog.getReturnValue() == null || prepareDialog.getReturnValue()) {
+            if (prepareDialog.getReturnValue() == null || !prepareDialog.getReturnValue()) {
                 LogManager.error("Failed to prepare instance " + this.launcher.name
                         + " for launch. Check the logs and try again.");
                 return false;
