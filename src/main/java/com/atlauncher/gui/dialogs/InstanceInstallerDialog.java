@@ -254,26 +254,17 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.gridy++;
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            saveModsLabel = new JLabel(GetText.tr("Save Mods") + "? ");
+            saveModsLabel = new JLabelWithHover(GetText.tr("Save Mods") + "? ",
+                    Utils.getIconImage("/assets/image/Help.png"),
+                    new HTMLBuilder().center().text(GetText.tr(
+                            "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed."))
+                            .build());
             middle.add(saveModsLabel, gbc);
 
             gbc.gridx++;
             gbc.insets = UIConstants.FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             saveModsCheckbox = new JCheckBox();
-            saveModsCheckbox.addActionListener(e -> {
-                if (saveModsCheckbox.isSelected()) {
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Save Mods") + "? ")
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed.<br/><br/>Are you sure you want to do this?"))
-                                    .build())
-                            .setType(DialogManager.INFO).show();
-
-                    if (ret != 0) {
-                        saveModsCheckbox.setSelected(false);
-                    }
-                }
-            });
 
             PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
             Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
@@ -319,7 +310,16 @@ public class InstanceInstallerDialog extends JDialog {
                     return;
                 }
 
-                final PackVersion version = (PackVersion) versionsDropDown.getSelectedItem();
+                final PackVersion version = ((PackVersion) versionsDropDown.getSelectedItem());
+                Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(version.minecraftVersion);
+
+                if (minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(instance.id)
+                        && !saveModsCheckbox.isSelected()) {
+                    if (showDifferentMinecraftVersionsDialog() == -1) {
+                        return;
+                    }
+                }
+
                 final JDialog dialog = new JDialog(parent, isReinstall ? (
                 // #. {0} is the name of the pack the user is installing
                 isServer ? GetText.tr("Reinstalling {0} Server", pack.getName())
@@ -569,6 +569,20 @@ public class InstanceInstallerDialog extends JDialog {
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
         setVisible(true);
+    }
+
+    private int showDifferentMinecraftVersionsDialog() {
+        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Save Mods?"))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>The mods installed will be removed since you've not checked the \"Save Mods\" checkbox.<br/><br/>Do you want to save your mods?"))
+                        .build())
+                .setType(DialogManager.WARNING).show();
+
+        if (ret == 0) {
+            saveModsCheckbox.setSelected(true);
+        }
+
+        return ret;
     }
 
     private void handlePackInstall(Object object, final boolean isServer) {
