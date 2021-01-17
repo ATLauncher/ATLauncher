@@ -25,11 +25,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
@@ -96,6 +99,8 @@ public class EditModsDialog extends JDialog {
         });
 
         setupComponents();
+
+        scanMissingMods();
 
         loadMods();
 
@@ -237,60 +242,8 @@ public class EditModsDialog extends JDialog {
                             type = com.atlauncher.data.Type.shaderpack;
                         }
                         if (type != null) {
-                            DisableableMod mod = new DisableableMod();
-                            mod.disabled = true;
-                            mod.userAdded = true;
-                            mod.wasSelected = true;
-                            mod.file = file.getName();
-                            mod.type = type;
-                            mod.optional = true;
-                            mod.name = file.getName();
-                            mod.version = "Unknown";
-                            mod.description = null;
-
-                            MCMod mcMod = Utils.getMCModForFile(file);
-                            if (mcMod != null) {
-                                mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
-                                mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-                                mod.description = Optional.ofNullable(mcMod.description).orElse(null);
-                            } else {
-                                FabricMod fabricMod = Utils.getFabricModForFile(file);
-                                if (fabricMod != null) {
-                                    mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
-                                    mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                                    mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
-                                }
-                            }
-
+                            DisableableMod mod = generateMod(file, type, false);
                             File copyTo = instance.getRoot().resolve("disabledmods").toFile();
-
-                            try {
-                                long murmurHash = Hashing.murmur(file.toPath());
-
-                                LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
-
-                                CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
-
-                                if (fingerprintResponse.exactMatches.size() == 1) {
-                                    CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
-
-                                    // add CurseForge information
-                                    mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
-                                    mod.curseForgeProjectId = foundMod.id;
-                                    mod.curseForgeFile = foundMod.file;
-                                    mod.curseForgeFileId = foundMod.file.id;
-
-                                    mod.name = mod.curseForgeProject.name;
-                                    mod.description = mod.curseForgeProject.summary;
-
-                                    LogManager.debug(
-                                            "Found matching mod from CurseForge called " + mod.curseForgeProject.name
-                                                    + " with file named " + mod.curseForgeFile.displayName);
-                                }
-                            } catch (IOException e1) {
-                                LogManager.logStackTrace(e1);
-                            }
-
                             if (Utils.copyFile(file, copyTo)) {
                                 instance.launcher.mods.add(mod);
                                 reload = true;
@@ -349,6 +302,93 @@ public class EditModsDialog extends JDialog {
         JButton closeButton = new JButton(GetText.tr("Close"));
         closeButton.addActionListener(e -> dispose());
         bottomPanel.add(closeButton);
+    }
+
+    private DisableableMod generateMod(File file, com.atlauncher.data.Type type, boolean enabled) {
+        DisableableMod mod = new DisableableMod();
+        mod.disabled = !enabled;
+        mod.userAdded = true;
+        mod.wasSelected = true;
+        mod.file = file.getName();
+        mod.type = type;
+        mod.optional = true;
+        mod.name = file.getName();
+        mod.version = "Unknown";
+        mod.description = null;
+
+        MCMod mcMod = Utils.getMCModForFile(file);
+        if (mcMod != null) {
+            mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
+            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
+            mod.description = Optional.ofNullable(mcMod.description).orElse(null);
+        } else {
+            FabricMod fabricMod = Utils.getFabricModForFile(file);
+            if (fabricMod != null) {
+                mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
+                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
+                mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+            }
+        }
+
+        try {
+            long murmurHash = Hashing.murmur(file.toPath());
+
+            LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
+
+            CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
+
+            if (fingerprintResponse.exactMatches.size() == 1) {
+                CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
+
+                // add CurseForge information
+                mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
+                mod.curseForgeProjectId = foundMod.id;
+                mod.curseForgeFile = foundMod.file;
+                mod.curseForgeFileId = foundMod.file.id;
+
+                mod.name = mod.curseForgeProject.name;
+                mod.description = mod.curseForgeProject.summary;
+
+                LogManager.debug("Found matching mod from CurseForge called " + mod.curseForgeProject.name
+                        + " with file named " + mod.curseForgeFile.displayName);
+            }
+        } catch (IOException e1) {
+            LogManager.logStackTrace(e1);
+        }
+
+        return mod;
+    }
+
+    private void scanMissingMods() {
+        try (Stream<Path> stream = Files.list(instance.ROOT.resolve("mods"))) {
+            List<Path> files = stream
+                    .filter(file -> !Files.isDirectory(file) && (file.getFileName().toString().endsWith(".zip")
+                            || file.getFileName().toString().endsWith(".jar")
+                            || file.getFileName().toString().endsWith(".litemod")))
+                    .filter(file -> instance.launcher.mods.stream()
+                            .noneMatch(mod -> mod.type == com.atlauncher.data.Type.mods
+                                    && mod.file.equals(file.getFileName().toString())))
+                    .collect(Collectors.toList());
+
+            if (files.size() != 0) {
+                final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
+                        GetText.tr("Scanning New Mods"));
+
+                progressDialog.addThread(new Thread(() -> {
+                    List<DisableableMod> mods = files.parallelStream()
+                            .map(file -> generateMod(file.toFile(), com.atlauncher.data.Type.mods, true))
+                            .collect(Collectors.toList());
+                    mods.stream().forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
+                    instance.launcher.mods.addAll(mods);
+                    instance.save();
+                    progressDialog.close();
+                }));
+
+                progressDialog.start();
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace("Error scanning missing mods", e);
+        }
     }
 
     private void loadMods() {

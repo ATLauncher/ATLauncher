@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.2.6
 
 ### New Features
+- Scan mods added to mods folder manually when clicking Edit Mods
 
 ### Fixes
 - Files downloaded with 0 size will (almost) never be valid
