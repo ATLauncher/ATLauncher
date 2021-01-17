@@ -385,7 +385,8 @@ public final class Download {
         }
 
         if (Files.exists(this.to)) {
-            if (this.ignoreFailures) {
+            // if we're ignoring failures and the file is not 0 size, then we're fine
+            if (this.ignoreFailures && this.to.toFile().length() != 0) {
                 return false;
             }
 
@@ -477,8 +478,8 @@ public final class Download {
         // download the file to disk
         this.downloadDirect();
 
-        // check if the hash matches (or they're ignored)
-        if (this.ignoreFailures || hashMatches()) {
+        // check if the hash matches (or they're ignored and file isn't 0 bytes)
+        if ((this.ignoreFailures && this.to.toFile().length() != 0) || hashMatches()) {
             return true;
         }
 
@@ -572,7 +573,8 @@ public final class Download {
             expected = Hashing.HashCode.fromString(this.getHash());
         }
 
-        if (this.ignoreFailures || (expected != null && expected.equals(Hashing.HashCode.EMPTY))) {
+        if ((this.ignoreFailures && this.to.toFile().length() != 0)
+                || (expected != null && expected.equals(Hashing.HashCode.EMPTY))) {
             if (this.response.isSuccessful()) {
                 this.downloadDirect();
             }
