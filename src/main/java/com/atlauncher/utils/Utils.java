@@ -49,6 +49,7 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
@@ -1563,5 +1564,17 @@ public class Utils {
         }
 
         return "";
+    }
+
+    public static boolean isAcceptedModFile(File file) {
+        return isAcceptedModFile(file.getName());
+    }
+
+    public static boolean isAcceptedModFile(Path path) {
+        return isAcceptedModFile(path.getFileName().toString());
+    }
+
+    public static boolean isAcceptedModFile(String filename) {
+        return filename.endsWith(".jar") || filename.endsWith(".zip") || filename.endsWith(".litemod");
     }
 }

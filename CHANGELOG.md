@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Scan mods added to mods folder manually when clicking Edit Mods
+- Remove mods from instance that are no longer in filesystem
 - Show filename in context menu in Edit Mods dialog
 
 ### Fixes

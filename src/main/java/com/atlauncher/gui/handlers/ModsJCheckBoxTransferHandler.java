@@ -126,8 +126,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     File file = (File) item;
                     File copyTo = instanceFile;
 
-                    if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".litemod")
-                            && !file.getName().endsWith(".zip")) {
+                    if (!Utils.isAcceptedModFile(file)) {
                         DialogManager.okDialog().setTitle(GetText.tr("Invalid File")).setContent(GetText
                                 .tr("Skipping file {0}. Only zip, jar and litemod files can be added.", file.getName()))
                                 .setType(DialogManager.ERROR).show();

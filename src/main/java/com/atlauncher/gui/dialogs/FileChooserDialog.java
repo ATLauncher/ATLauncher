@@ -56,14 +56,12 @@ public class FileChooserDialog extends JDialog {
     private final JComboBox<String> selector;
 
     private File[] filesChosen;
-    private final String[] fileOptions;
 
     private boolean closed = false;
 
     public FileChooserDialog(Window parent, String title, String labelName, String bottomText, String selectorText,
-            String[] subOptions, String[] options) {
+            String[] subOptions) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.fileOptions = options;
         setSize(400, 175);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -180,13 +178,7 @@ public class FileChooserDialog extends JDialog {
     }
 
     private boolean shouldAcceptFilename(String name) {
-        for (String ext : fileOptions) {
-            if (name.endsWith(ext)) {
-                return true;
-            }
-        }
-
-        return false;
+        return Utils.isAcceptedModFile(name);
     }
 
     private File[] getFilesUsingFileDialog() {
@@ -217,10 +209,8 @@ public class FileChooserDialog extends JDialog {
             return null;
         }
         for (File file : filesChosen) {
-            for (String ext : fileOptions) {
-                if (file.getName().endsWith(ext)) {
-                    files.add(file);
-                }
+            if (Utils.isAcceptedModFile(file)) {
+                files.add(file);
             }
         }
         return files;

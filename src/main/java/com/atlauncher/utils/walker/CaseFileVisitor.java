@@ -28,6 +28,7 @@ import java.util.List;
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Utils;
 
 public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
     private final CaseType caseType;
@@ -44,8 +45,7 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
             return FileVisitResult.CONTINUE;
         }
 
-        if (!Files.isRegularFile(path) || (!path.getFileName().endsWith("jar") && !path.getFileName().endsWith("zip")
-                && !path.getFileName().endsWith("litemod"))) {
+        if (!Files.isRegularFile(path) || !Utils.isAcceptedModFile(path)) {
             if (caseType == CaseType.upper) {
                 String filename = path.getFileName().toString();
                 filename = filename.substring(0, filename.lastIndexOf(".")).toUpperCase()

@@ -60,6 +60,7 @@ import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Hashing;
@@ -212,7 +213,7 @@ public class EditModsDialog extends JDialog {
             }
 
             FileChooserDialog fcd = new FileChooserDialog(this, GetText.tr("Add Mod"), GetText.tr("Mod"),
-                    GetText.tr("Add"), GetText.tr("Type of Mod"), modTypes, new String[] { "jar", "zip", "litemod" });
+                    GetText.tr("Add"), GetText.tr("Type of Mod"), modTypes);
 
             if (fcd.wasClosed()) {
                 return;
@@ -360,14 +361,14 @@ public class EditModsDialog extends JDialog {
     }
 
     private void scanMissingMods() {
+        PerformanceManager.start("EditModsDialog::scanMissingMods - CheckForAddedMods");
+        // first find the mods that have been added by the user manually
         try (Stream<Path> stream = Files.list(instance.ROOT.resolve("mods"))) {
             List<Path> files = stream
-                    .filter(file -> !Files.isDirectory(file) && (file.getFileName().toString().endsWith(".zip")
-                            || file.getFileName().toString().endsWith(".jar")
-                            || file.getFileName().toString().endsWith(".litemod")))
-                    .filter(file -> instance.launcher.mods.stream()
-                            .noneMatch(mod -> mod.type == com.atlauncher.data.Type.mods
-                                    && mod.file.equals(file.getFileName().toString())))
+                    .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
+                            file -> instance.launcher.mods.stream()
+                                    .noneMatch(mod -> mod.type == com.atlauncher.data.Type.mods
+                                            && mod.file.equals(file.getFileName().toString())))
                     .collect(Collectors.toList());
 
             if (files.size() != 0) {
@@ -378,7 +379,7 @@ public class EditModsDialog extends JDialog {
                     List<DisableableMod> mods = files.parallelStream()
                             .map(file -> generateMod(file.toFile(), com.atlauncher.data.Type.mods, true))
                             .collect(Collectors.toList());
-                    mods.stream().forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
+                    mods.forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
                     instance.launcher.mods.addAll(mods);
                     instance.save();
                     progressDialog.close();
@@ -389,6 +390,28 @@ public class EditModsDialog extends JDialog {
         } catch (IOException e) {
             LogManager.logStackTrace("Error scanning missing mods", e);
         }
+        PerformanceManager.end("EditModsDialog::scanMissingMods - CheckForAddedMods");
+
+        PerformanceManager.start("EditModsDialog::scanMissingMods - CheckForRemovedMods");
+        // next remove any mods that the no longer exist in the filesystem
+        List<DisableableMod> removedMods = instance.launcher.mods.parallelStream().filter(mod -> {
+            if (!mod.wasSelected || mod.type != com.atlauncher.data.Type.mods) {
+                return false;
+            }
+
+            if (mod.disabled) {
+                return (mod.getFile(instance) != null && !mod.getDisabledFile(instance).exists());
+            } else {
+                return (mod.getFile(instance) != null && !mod.getFile(instance).exists());
+            }
+        }).collect(Collectors.toList());
+
+        if (removedMods.size() != 0) {
+            removedMods.forEach(mod -> LogManager.info("Mod no longer in filesystem: " + mod.file));
+            instance.launcher.mods.removeAll(removedMods);
+            instance.save();
+        }
+        PerformanceManager.end("EditModsDialog::scanMissingMods - CheckForRemovedMods");
     }
 
     private void loadMods() {

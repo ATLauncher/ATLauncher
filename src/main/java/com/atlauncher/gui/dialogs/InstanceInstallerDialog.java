@@ -311,12 +311,15 @@ public class InstanceInstallerDialog extends JDialog {
                 }
 
                 final PackVersion version = ((PackVersion) versionsDropDown.getSelectedItem());
-                Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(version.minecraftVersion);
 
-                if (minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(instance.id)
-                        && !saveModsCheckbox.isSelected()) {
-                    if (showDifferentMinecraftVersionsDialog() == -1) {
-                        return;
+                if (isReinstall || isUpdate) {
+                    Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(version.minecraftVersion);
+
+                    if (minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(instance.id)
+                            && !saveModsCheckbox.isSelected()) {
+                        if (showDifferentMinecraftVersionsDialog() == -1) {
+                            return;
+                        }
                     }
                 }
 
