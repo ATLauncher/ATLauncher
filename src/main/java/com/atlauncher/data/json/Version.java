@@ -22,9 +22,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -276,24 +280,28 @@ public class Version {
         return this.mods;
     }
 
-    public List<Mod> getClientInstallMods() {
-        List<Mod> mods = new ArrayList<>();
-        for (Mod mod : this.mods) {
-            if (mod.installOnClient()) {
-                mods.add(mod);
-            }
-        }
-        return mods;
+    public List<Mod> getClientInstallMods(InstanceInstaller instanceInstaller) {
+        return getInstallMods(instanceInstaller, true);
     }
 
-    public List<Mod> getServerInstallMods() {
-        List<Mod> mods = new ArrayList<>();
-        for (Mod mod : this.mods) {
-            if (mod.installOnServer()) {
-                mods.add(mod);
+    public List<Mod> getServerInstallMods(InstanceInstaller instanceInstaller) {
+        return getInstallMods(instanceInstaller, false);
+    }
+
+    public List<Mod> getInstallMods(InstanceInstaller instanceInstaller, boolean client) {
+        return this.mods.stream().filter(client ? Mod::installOnClient : Mod::installOnServer).map(mod -> {
+            if (instanceInstaller.isReinstall) {
+                Optional<DisableableMod> matchingMod = instanceInstaller.instance.launcher.mods.parallelStream()
+                        .filter(dm -> dm.file.equals(mod.file)).findFirst();
+
+                if (matchingMod.isPresent() && matchingMod.get().hasFullCurseForgeInformation()) {
+                    mod.curseForgeProject = matchingMod.get().curseForgeProject;
+                    mod.curseForgeFile = matchingMod.get().curseForgeFile;
+                }
             }
-        }
-        return mods;
+
+            return mod;
+        }).collect(Collectors.toList());
     }
 
     public List<Action> getActions() {

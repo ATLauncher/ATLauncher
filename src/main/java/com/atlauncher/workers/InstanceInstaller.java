@@ -585,7 +585,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void determineModsToBeInstalled() {
         this.allMods = sortMods(
-                (this.isServer ? this.packVersion.getServerInstallMods() : this.packVersion.getClientInstallMods()));
+                (this.isServer ? this.packVersion.getServerInstallMods(
+                        this) : this.packVersion.getClientInstallMods(this)));
 
         boolean hasOptional = this.allMods.stream().anyMatch(Mod::isOptional);
 

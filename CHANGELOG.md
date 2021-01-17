@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Files downloaded with 0 size will (almost) never be valid
 - When updating to a different MC version, show dialog about mods
+- Don't recheck CurseForge for mod info when not needed on reinstall
 
 ### Misc
