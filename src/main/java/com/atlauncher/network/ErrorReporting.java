@@ -59,6 +59,8 @@ public final class ErrorReporting {
         ignoredMessages.add("not verified (no certificates)");
         ignoredMessages.add("No such host is known");
         ignoredMessages.add("nodename nor servname provided, or not known");
+        ignoredMessages.add("NoSuchFileException");
+        ignoredMessages.add("Account does not own Minecraft");
     }
 
     public static void init(boolean disable) {

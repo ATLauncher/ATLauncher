@@ -544,6 +544,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 .setUrl(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT))
                 .asClass(VersionManifest.class);
 
+        if (versionManifest == null) {
+            throw new Exception("Failed to download Minecraft version manifest");
+        }
+
         VersionManifestVersion minecraftVersion = versionManifest.versions.stream()
                 .filter(version -> version.id.equalsIgnoreCase(this.packVersion.getMinecraft())).findFirst()
                 .orElse(null);
@@ -584,9 +588,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void determineModsToBeInstalled() {
-        this.allMods = sortMods(
-                (this.isServer ? this.packVersion.getServerInstallMods(
-                        this) : this.packVersion.getClientInstallMods(this)));
+        this.allMods = sortMods((this.isServer ? this.packVersion.getServerInstallMods(this)
+                : this.packVersion.getClientInstallMods(this)));
 
         boolean hasOptional = this.allMods.stream().anyMatch(Mod::isOptional);
 

@@ -16,3 +16,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't recheck CurseForge for mod info when not needed on reinstall
 
 ### Misc
+- Add more exclusions to error reporting
