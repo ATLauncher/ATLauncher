@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Scan mods added to mods folder manually when clicking Edit Mods
+- Show filename in context menu in Edit Mods dialog
 
 ### Fixes
 - Files downloaded with 0 size will (almost) never be valid
