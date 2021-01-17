@@ -39,13 +39,21 @@ public class CurseForgeUpdateManager {
                 .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
                     boolean wasUpdated = false;
 
-                    CurseForgeProject curseForgeMod = CurseForgeApi
-                            .getProjectById(i.launcher.curseForgeManifest != null ? i.launcher.curseForgeManifest.projectID
+                    CurseForgeProject curseForgeMod = CurseForgeApi.getProjectById(
+                            i.launcher.curseForgeManifest != null ? i.launcher.curseForgeManifest.projectID
                                     : i.launcher.curseForgeProject.id);
+
+                    if (curseForgeMod == null) {
+                        return false;
+                    }
 
                     CurseForgeProjectLatestFile latestVersion = curseForgeMod.latestFiles.stream()
                             .sorted(Comparator.comparingInt((CurseForgeProjectLatestFile file) -> file.id).reversed())
                             .findFirst().orElse(null);
+
+                    if (latestVersion == null) {
+                        return false;
+                    }
 
                     // if there is a change to the latestversion for an instance (but not a first
                     // time write), then refresh instances panel

@@ -49,9 +49,17 @@ public class ModpacksChUpdateManager {
                             .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
                             .asClass(ModpacksChPackManifest.class);
 
+                    if (packManifest == null) {
+                        return false;
+                    }
+
                     ModpacksChPackVersion latestVersion = packManifest.versions.stream().sorted(
                             Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
                             .findFirst().orElse(null);
+
+                    if (latestVersion == null) {
+                        return false;
+                    }
 
                     // if there is a change to the latestversion for an instance (but not a first
                     // time write), then refresh instances panel

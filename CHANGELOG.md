@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Files downloaded with 0 size will (almost) never be valid
 - When updating to a different MC version, show dialog about mods
 - Don't recheck CurseForge for mod info when not needed on reinstall
+- Do some null checking when checking for external pack updates
 
 ### Misc
 - Add more exclusions to error reporting
