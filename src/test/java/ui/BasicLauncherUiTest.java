@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.ui;
+package ui;
 
 import java.awt.Dialog;
 import java.nio.file.Files;
@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.PackCard;
-import com.atlauncher.ui.mocks.MockHelper;
 
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -40,6 +39,8 @@ import org.assertj.swing.timing.Condition;
 import org.assertj.swing.timing.Pause;
 import org.assertj.swing.timing.Timeout;
 import org.junit.Test;
+
+import ui.mocks.MockHelper;
 
 public class BasicLauncherUiTest extends AbstractUiTest {
     @Test

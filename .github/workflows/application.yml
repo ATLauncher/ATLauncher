@@ -27,11 +27,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Test
+      - name: Run Unit Tests
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: ./gradlew test --tests com.atlauncher.*
+
+      - name: Run UI Tests
         uses: GabrielBB/xvfb-action@v1
         continue-on-error: true
         with:
-          run: ./gradlew test
+          run: ./gradlew test --tests ui.*
   build:
     runs-on: ubuntu-20.04
     needs: test
@@ -112,34 +117,34 @@ jobs:
           pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
           replace-with: '$1'
 
-      # - name: Create GitHub Release
-      #   uses: meeDamian/github-release@2.0
-      #   if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     tag: v${{ steps.clean-version.outputs.replaced }}
-      #     commitish: master
-      #     name: ${{ steps.clean-version.outputs.replaced }}
-      #     body: ${{ env.cleaned-changelog }}
-      #     prerelease: false
-      #     allow_override: false
-      #     gzip: false
-      #     files: |
-      #       ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
-      #       ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
-      #       ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
+      - name: Create GitHub Release
+        uses: meeDamian/github-release@2.0
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ steps.clean-version.outputs.replaced }}
+          commitish: master
+          name: ${{ steps.clean-version.outputs.replaced }}
+          body: ${{ env.cleaned-changelog }}
+          prerelease: false
+          allow_override: false
+          gzip: false
+          files: |
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
 
-      # - name: Create ATLauncher Version
-      #   uses: ATLauncher/release-atlauncher-action@master
-      #   if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
-      #   with:
-      #     api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
-      #     version: ${{ steps.clean-version.outputs.replaced }}
-      #     changelog: ${{ env.cleaned-changelog }}
-      #     files: |
-      #       ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
-      #       ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
-      #       ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
+      - name: Create ATLauncher Version
+        uses: ATLauncher/release-atlauncher-action@master
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
+        with:
+          api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
+          version: ${{ steps.clean-version.outputs.replaced }}
+          changelog: ${{ env.cleaned-changelog }}
+          files: |
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
 
       - name: Update version
         if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
@@ -158,7 +163,6 @@ jobs:
           ### Fixes
 
           ### Misc
-
           EOF
           echo "${NEW_VERSION}.Beta" > src/main/resources/version
 

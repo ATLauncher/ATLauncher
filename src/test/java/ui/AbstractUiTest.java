@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.ui;
+package ui;
 
 import java.awt.Frame;
 import java.nio.file.Path;
@@ -26,7 +26,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.ui.mocks.MockHelper;
 import com.atlauncher.utils.FileUtils;
 
 import org.assertj.swing.core.GenericTypeMatcher;
@@ -42,6 +41,8 @@ import org.mockserver.integration.ClientAndServer;
 import org.mockserver.logging.MockServerLogger;
 import org.mockserver.socket.PortFactory;
 import org.mockserver.socket.tls.KeyStoreFactory;
+
+import ui.mocks.MockHelper;
 
 public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
     // get a working directory specifically for this run
