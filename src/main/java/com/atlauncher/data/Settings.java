@@ -343,7 +343,7 @@ public class Settings {
         }
     }
 
-    private void validateJavaPath() {
+    public void validateJavaPath() {
         if (!usingCustomJavaPath || javaPath == null) {
             javaPath = OS.getDefaultJavaPath();
         }

@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.2.7
 
 ### New Features
+- Add delete button to RuntimeDownloaderToolPanel
 
 ### Fixes
 

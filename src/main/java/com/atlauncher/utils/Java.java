@@ -258,4 +258,21 @@ public class Java {
         PerformanceManager.end();
         return javas;
     }
+
+    public static boolean hasInstalledRuntime() {
+        boolean found = false;
+
+        if (Files.isDirectory(FileSystem.RUNTIMES)) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(FileSystem.RUNTIMES)) {
+                for (Path path : directoryStream) {
+                    if (Files.exists(path.resolve("release"))) {
+                        found = true;
+                    }
+                }
+            } catch (IOException e) {
+            }
+        }
+
+        return found;
+    }
 }

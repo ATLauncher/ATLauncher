@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.tools;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,7 +32,7 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public abstract class AbstractToolPanel extends JPanel {
     protected final JPanel MIDDLE_PANEL = new JPanel();
-    protected final JPanel BOTTOM_PANEL = new JPanel();
+    protected final JPanel BOTTOM_PANEL = new JPanel(new FlowLayout());
 
     protected final JButton LAUNCH_BUTTON = new JButton(GetText.tr("Launch"));
 

@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import com.atlauncher.App;
@@ -33,9 +34,12 @@ import com.atlauncher.data.Runtime;
 import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -46,6 +50,7 @@ import okhttp3.OkHttpClient;
 
 @SuppressWarnings("serial")
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
+    protected final JButton REMOVE_BUTTON = new JButton(GetText.tr("Remove"));
 
     public RuntimeDownloaderToolPanel() {
         super(GetText.tr("Runtime Downloader"));
@@ -56,15 +61,61 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        this.checkLaunchButtonEnabled();
+
+        BOTTOM_PANEL.add(REMOVE_BUTTON);
+        REMOVE_BUTTON.addActionListener(this);
+        REMOVE_BUTTON.setFont(App.THEME.getNormalFont().deriveFont(16f));
+
+        setButtonEnabledStates();
     }
 
-    private void checkLaunchButtonEnabled() {
+    private void setButtonEnabledStates() {
         LAUNCH_BUTTON.setEnabled(!OS.isLinux());
+        REMOVE_BUTTON.setEnabled(!OS.isLinux() && Java.hasInstalledRuntime());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == REMOVE_BUTTON) {
+            removeRuntime();
+        } else {
+            downloadRuntime();
+        }
+
+        setButtonEnabledStates();
+    }
+
+    private void removeRuntime() {
+        Analytics.sendEvent("RuntimeDownloader", "Remove", "Tool");
+
+        String oldPath = App.settings.javaPath;
+
+        if (FileUtils.deleteDirectory(FileSystem.RUNTIMES)) {
+            DialogManager
+                    .okDialog().setTitle(GetText.tr("Runtime Downloader")).setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("Downloaded runtimes have been removed.")).build())
+                    .setType(DialogManager.INFO).show();
+
+            // switch back to use default
+            App.settings.javaPath = OS.getDefaultJavaPath();
+            App.settings.save();
+
+            // remove the path from any custom paths set for instances
+            InstanceManager.getInstances().stream()
+                    .filter(i -> i.launcher.javaPath != null && i.launcher.javaPath.contains(oldPath)).forEach(i -> {
+                        i.launcher.javaPath = null;
+                        i.save();
+                    });
+        } else {
+            LogManager.error("Runtime removal failed!");
+            DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("An error occurred removing the runtime. Please check the logs.")).build())
+                    .setType(DialogManager.ERROR).show();
+        }
+    }
+
+    private void downloadRuntime() {
         Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
 
         final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Runtime Downloader"), 3,
