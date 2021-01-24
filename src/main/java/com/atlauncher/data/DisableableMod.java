@@ -30,11 +30,14 @@ import com.atlauncher.App;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Utils;
 import com.google.gson.annotations.SerializedName;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
@@ -282,8 +285,15 @@ public class DisableableMod implements Serializable {
             return false;
         }
 
-        new CurseForgeProjectFileSelectorDialog(parent, CurseForgeApi.getProjectById(curseForgeProjectId), instance,
-                curseForgeFileId);
+        ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(GetText.tr("Checking For Update On CurseForge"),
+                0, GetText.tr("Checking For Update On CurseForge"), "Cancelled checking for update on CurseForge");
+        dialog.addThread(new Thread(() -> {
+            dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
+            dialog.close();
+        }));
+        dialog.start();
+
+        new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
 
         return true;
     }
@@ -291,8 +301,15 @@ public class DisableableMod implements Serializable {
     public boolean reinstall(Window parent, Instance instance) {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "Instance");
 
-        new CurseForgeProjectFileSelectorDialog(parent, CurseForgeApi.getProjectById(curseForgeProjectId), instance,
-                curseForgeFileId);
+        ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(GetText.tr("Getting Files From CurseForge"), 0,
+                GetText.tr("Getting Files From CurseForge"), "Cancelled getting files from CurseForge");
+        dialog.addThread(new Thread(() -> {
+            dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
+            dialog.close();
+        }));
+        dialog.start();
+
+        new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
 
         return true;
     }

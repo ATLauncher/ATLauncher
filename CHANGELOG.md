@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Dialog when installing file from CurseForge not showing progress
 - Checking for mods on CurseForge running out of memory causing issue
+- Reinstalling or Updating CurseForge mods hanging when calling api
 
 ### Misc
 
