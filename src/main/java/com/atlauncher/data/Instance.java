@@ -772,7 +772,7 @@ public class Instance extends MinecraftVersion {
                 .findFirst().orElse(null);
     }
 
-    public void addFileFromCurse(CurseForgeProject mod, CurseForgeFile file) {
+    public void addFileFromCurse(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
                 ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
@@ -780,7 +780,10 @@ public class Instance extends MinecraftVersion {
                         ? this.getRoot().resolve("saves").resolve(file.fileName)
                         : this.getRoot().resolve("mods").resolve(file.fileName));
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
-                .downloadTo(downloadLocation).size(file.fileLength);
+                .downloadTo(downloadLocation).size(file.fileLength)
+                .withHttpClient(Network.createProgressClient(dialog));
+
+        dialog.setTotalBytes(file.fileLength);
 
         if (mod.categorySection.gameCategoryId == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
             download = download.unzipTo(this.getRoot().resolve("saves"));

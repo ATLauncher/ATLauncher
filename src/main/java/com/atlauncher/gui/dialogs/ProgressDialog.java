@@ -49,7 +49,8 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     private double totalBytes = 0; // Total number of bytes to download
     private double downloadedBytes = 0; // Total number of bytes downloaded
 
-    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
+    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
+            boolean showProgressBar) {
         super(App.launcher.getParent(), ModalityType.DOCUMENT_MODAL);
         this.labelText = initLabelText;
         this.closedLogMessage = initClosedLogMessage;
@@ -69,6 +70,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         if (initMax <= 0) {
             progressBar.setIndeterminate(true);
         }
+        progressBar.setVisible(showProgressBar);
         bottomPanel.add(progressBar, BorderLayout.NORTH);
 
         subProgressBar = new JProgressBar(0, 10000);
@@ -95,8 +97,20 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         });
     }
 
+    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
+        this(title, initMax, initLabelText, initClosedLogMessage, true);
+    }
+
     public ProgressDialog(String title, int initMax, String initLabelText) {
-        this(title, initMax, initLabelText, null);
+        this(title, initMax, initLabelText, null, true);
+    }
+
+    public ProgressDialog(String title) {
+        this(title, 0, title, null, true);
+    }
+
+    public ProgressDialog(String title, boolean showProgressBar) {
+        this(title, 0, title, null, showProgressBar);
     }
 
     public void addThread(Thread thread) {

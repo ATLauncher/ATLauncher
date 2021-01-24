@@ -34,7 +34,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
@@ -147,42 +146,16 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         addButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
-            // #. {0} is the name of the mod we're installing
-            final JDialog dialog = new JDialog(this, GetText.tr("Installing {0}", file.displayName),
-                    ModalityType.DOCUMENT_MODAL);
-
-            dialog.setLocationRelativeTo(this);
-            dialog.setSize(300, 100);
-            dialog.setResizable(false);
-
-            JPanel topPanel = new JPanel();
-            topPanel.setLayout(new BorderLayout());
-            // #. {0} is the name of the mod we're installing
-            final JLabel doing = new JLabel(GetText.tr("Installing {0}", file.displayName));
-            doing.setHorizontalAlignment(JLabel.CENTER);
-            doing.setVerticalAlignment(JLabel.TOP);
-            topPanel.add(doing, BorderLayout.NORTH);
-
-            JPanel bottomPanel = new JPanel();
-            bottomPanel.setLayout(new BorderLayout());
-
-            JProgressBar progressBar = new JProgressBar(0, 100);
-            bottomPanel.add(progressBar, BorderLayout.NORTH);
-            progressBar.setIndeterminate(true);
-
-            dialog.add(topPanel, BorderLayout.CENTER);
-            dialog.add(bottomPanel, BorderLayout.SOUTH);
-
-            Runnable r = () -> {
+            ProgressDialog progressDialog = new ProgressDialog<>(
+                    // #. {0} is the name of the mod we're installing
+                    GetText.tr("Installing {0}", file.displayName), false);
+            progressDialog.addThread(new Thread(() -> {
                 Analytics.sendEvent(mod.name + " - " + file.displayName, "AddFile", "CurseForgeMod");
-                instance.addFileFromCurse(mod, file);
-                dialog.dispose();
-                dispose();
-            };
+                instance.addFileFromCurse(mod, file, progressDialog);
 
-            new Thread(r).start();
-
-            dialog.setVisible(true);
+                progressDialog.close();
+            }));
+            progressDialog.start();
         });
 
         filesDropdown.addActionListener(e -> {

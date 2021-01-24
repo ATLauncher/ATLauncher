@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add delete button to RuntimeDownloaderToolPanel
 
 ### Fixes
+- Dialog when installing file from CurseForge not showing progress
 
 ### Misc
 
