@@ -1614,7 +1614,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
     }
 
-    private void checkModsOnCurseForge() throws Exception {
+    private void checkModsOnCurseForge() {
         fireTask(GetText.tr("Checking Mods On CurseForge"));
         fireSubProgressUnknown();
 
@@ -1623,9 +1623,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.modsInstalled.stream().filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
                 .filter(dm -> dm.getFile(root, this.packVersion.minecraft) != null).forEach(dm -> {
                     try {
-                        murmurHashes.put(Hashing.murmur(dm.getFile(root, this.packVersion.minecraft).toPath()), dm);
-                    } catch (IOException e) {
-                        LogManager.logStackTrace(e);
+                        long hash = Hashing.murmur(dm.getFile(root, this.packVersion.minecraft).toPath());
+                        murmurHashes.put(hash, dm);
+                    } catch (Throwable t) {
+                        LogManager.logStackTrace(t);
                     }
                 });
 
