@@ -143,23 +143,42 @@ public final class AddModsDialog extends JDialog {
         searchButtonsPanel.add(this.sortComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
-            CurseForgeProject mod = CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID);
+            boolean isCurseForge = ((ComboItem<String>) hostComboBox.getSelectedItem()).getValue()
+                    .equalsIgnoreCase("CurseForge");
+            if (isCurseForge) {
+                CurseForgeProject mod = CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID);
 
-            Analytics.sendEvent("AddFabricApi", "CurseForgeMod");
-            new CurseForgeProjectFileSelectorDialog(mod, instance);
+                Analytics.sendEvent("AddFabricApi", "CurseForgeMod");
+                new CurseForgeProjectFileSelectorDialog(mod, instance);
 
-            if (instance.launcher.mods.stream().anyMatch(
-                    m -> m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
-                fabricApiWarningLabel.setVisible(false);
-                installFabricApiButton.setVisible(false);
+                if (instance.launcher.mods.stream().anyMatch(
+                        m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
+                                || (m.isFromModrinth()
+                                        && m.modrinthMod.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
+                    fabricApiWarningLabel.setVisible(false);
+                    installFabricApiButton.setVisible(false);
+                }
+            } else {
+                ModrinthMod mod = ModrinthApi.getMod(Constants.MODRINTH_FABRIC_MOD_ID);
+
+                Analytics.sendEvent("AddFabricApi", "ModrinthMod");
+                new ModrinthVersionSelectorDialog(mod, instance);
+
+                if (instance.launcher.mods.stream().anyMatch(
+                        m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
+                                || (m.isFromModrinth()
+                                        && m.modrinthMod.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
+                    fabricApiWarningLabel.setVisible(false);
+                    installFabricApiButton.setVisible(false);
+                }
             }
         });
 
         LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
-        if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream().noneMatch(
-                mod -> mod.isFromCurseForge() && mod.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)) {
-
+        if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
+                .noneMatch(m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
+                        || m.isFromModrinth() && m.modrinthMod.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
         }
