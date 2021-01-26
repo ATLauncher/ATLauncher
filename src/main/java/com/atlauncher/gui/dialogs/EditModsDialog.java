@@ -460,15 +460,14 @@ public class EditModsDialog extends JDialog {
 
     private void checkBoxesChanged() {
         if (instance.launcher.enableCurseForgeIntegration) {
-            boolean hasSelectedACurseMod = (enabledMods.stream().anyMatch(AbstractButton::isSelected)
+            boolean hasSelectedACurseForgeOrModrinthMod = (enabledMods.stream().anyMatch(AbstractButton::isSelected)
                     && enabledMods.stream().filter(AbstractButton::isSelected)
-                            .anyMatch(cb -> cb.getDisableableMod().isFromCurseForge()))
-                    || (disabledMods.stream().anyMatch(AbstractButton::isSelected)
-                            && disabledMods.stream().filter(AbstractButton::isSelected)
-                                    .anyMatch(cb -> cb.getDisableableMod().isFromCurseForge()));
+                            .anyMatch(cb -> cb.getDisableableMod().isUpdatable()))
+                    || (disabledMods.stream().anyMatch(AbstractButton::isSelected) && disabledMods.stream()
+                            .filter(AbstractButton::isSelected).anyMatch(cb -> cb.getDisableableMod().isUpdatable()));
 
-            checkForUpdatesButton.setEnabled(hasSelectedACurseMod);
-            reinstallButton.setEnabled(hasSelectedACurseMod);
+            checkForUpdatesButton.setEnabled(hasSelectedACurseForgeOrModrinthMod);
+            reinstallButton.setEnabled(hasSelectedACurseForgeOrModrinthMod);
         }
 
         removeButton.setEnabled((disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected))
@@ -491,7 +490,7 @@ public class EditModsDialog extends JDialog {
                 GetText.tr("Checking For Updates"));
         progressDialog.addThread(new Thread(() -> {
             for (ModsJCheckBox mod : mods) {
-                if (mod.isSelected() && mod.getDisableableMod().isFromCurseForge()) {
+                if (mod.isSelected() && mod.getDisableableMod().isUpdatable()) {
                     mod.getDisableableMod().checkForUpdate(this, instance);
                 }
                 progressDialog.doneTask();
@@ -513,7 +512,7 @@ public class EditModsDialog extends JDialog {
         mods.addAll(disabledMods);
 
         for (ModsJCheckBox mod : mods) {
-            if (mod.isSelected() && mod.getDisableableMod().isFromCurseForge()) {
+            if (mod.isSelected() && mod.getDisableableMod().isUpdatable()) {
                 mod.getDisableableMod().reinstall(this, instance);
             }
         }

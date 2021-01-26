@@ -3,9 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.2.7
+## 3.4.3.0
 
 ### New Features
+- Add support for downloading mods from Modrinth [#440]
 - Add delete button to RuntimeDownloaderToolPanel
 
 ### Fixes

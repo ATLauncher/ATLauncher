@@ -37,16 +37,21 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.modrinth.ModrinthMod;
+import com.atlauncher.data.modrinth.ModrinthSearchHit;
+import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.gui.card.CurseForgeProjectCard;
-import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.gui.card.ModrinthSearchHitCard;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.ModrinthApi;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -54,10 +59,13 @@ import org.mini2Dx.gettext.GetText;
 public final class AddModsDialog extends JDialog {
     private Instance instance;
 
-    private final JPanel contentPanel = new JPanel(new GridLayout(Constants.CURSEFORGE_PAGINATION_SIZE / 2, 2));
+    private boolean updating = false;
+
+    private final JPanel contentPanel = new JPanel(new GridLayout(0, 2));
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JComboBox<ComboItem<String>> hostComboBox = new JComboBox<ComboItem<String>>();
     private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
 
@@ -83,20 +91,34 @@ public final class AddModsDialog extends JDialog {
         super(parent, GetText.tr("Adding Mods For {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
 
-        this.setPreferredSize(new Dimension(620, 500));
+        this.setPreferredSize(new Dimension(680, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        contentPanel.setBorder(
+                BorderFactory.createEmptyBorder(0, UIConstants.SPACING_LARGE * 10, 0, UIConstants.SPACING_LARGE * 10));
+
+        hostComboBox.addItem(new ComboItem<>("CurseForge", "CurseForge"));
+        hostComboBox.addItem(new ComboItem<>("Modrinth", "Modrinth"));
+        hostComboBox.setSelectedIndex(App.settings.defaultModPlatform.equals("CurseForge") ? 0 : 1);
 
         if (instance.launcher.loaderVersion != null) {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
-
         sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
         sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
+        sectionComboBox.setVisible(App.settings.defaultModPlatform.equals("CurseForge"));
 
-        sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
-        sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
-        sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
+        if (App.settings.defaultModPlatform.equals("CurseForge")) {
+            sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
+            sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
+            sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
+        } else {
+            sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
+            sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
+            sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
+            sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
+        }
 
         setupComponents();
 
@@ -114,10 +136,10 @@ public final class AddModsDialog extends JDialog {
 
         JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
+        searchButtonsPanel.add(this.hostComboBox);
         searchButtonsPanel.add(this.searchField);
         searchButtonsPanel.add(this.searchButton);
         searchButtonsPanel.add(this.sectionComboBox);
-        searchButtonsPanel.add(new JLabel(GetText.tr("Sort") + ":"));
         searchButtonsPanel.add(this.sortComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
@@ -171,19 +193,50 @@ public final class AddModsDialog extends JDialog {
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);
 
-        this.sectionComboBox.addActionListener(e -> {
+        this.hostComboBox.addActionListener(e -> {
+            updating = true;
+            boolean isCurseForge = ((ComboItem<String>) hostComboBox.getSelectedItem()).getValue()
+                    .equalsIgnoreCase("CurseForge");
+
+            sortComboBox.removeAllItems();
+            if (isCurseForge) {
+                sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
+                sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
+                sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
+            } else {
+                sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
+                sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
+                sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
+                sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
+            }
+
+            sectionComboBox.setVisible(isCurseForge);
+
             if (searchField.getText().isEmpty()) {
                 loadDefaultMods();
             } else {
                 searchForMods();
             }
+            updating = false;
+        });
+
+        this.sectionComboBox.addActionListener(e -> {
+            if (!updating) {
+                if (searchField.getText().isEmpty()) {
+                    loadDefaultMods();
+                } else {
+                    searchForMods();
+                }
+            }
         });
 
         this.sortComboBox.addActionListener(e -> {
-            if (searchField.getText().isEmpty()) {
-                loadDefaultMods();
-            } else {
-                searchForMods();
+            if (!updating) {
+                if (searchField.getText().isEmpty()) {
+                    loadDefaultMods();
+                } else {
+                    searchForMods();
+                }
             }
         });
 
@@ -230,22 +283,38 @@ public final class AddModsDialog extends JDialog {
         nextButton.setEnabled(false);
 
         String query = searchField.getText();
+        boolean isCurseForge = ((ComboItem<String>) hostComboBox.getSelectedItem()).getValue()
+                .equalsIgnoreCase("CurseForge");
 
         new Thread(() -> {
-            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
-                setMods(CurseForgeApi.searchResourcePacks(query, page,
-                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
-            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
-                setMods(CurseForgeApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id,
-                        query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+            if (isCurseForge) {
+                if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+                    setCurseForgeMods(CurseForgeApi.searchResourcePacks(query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
+                    setCurseForgeMods(
+                            CurseForgeApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id,
+                                    query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                } else {
+                    if (this.instance.launcher.loaderVersion.isFabric()) {
+                        setCurseForgeMods(CurseForgeApi.searchModsForFabric(
+                                App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    } else {
+                        setCurseForgeMods(CurseForgeApi.searchMods(
+                                App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    }
+                }
             } else {
                 if (this.instance.launcher.loaderVersion.isFabric()) {
-                    setMods(CurseForgeApi.searchModsForFabric(
+                    setModrinthMods(ModrinthApi.searchModsForFabric(
                             App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
-                    setMods(CurseForgeApi.searchMods(App.settings.disableAddModRestrictions ? null : this.instance.id,
-                            query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    setModrinthMods(ModrinthApi.searchModsForForge(
+                            App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
 
@@ -265,7 +334,7 @@ public final class AddModsDialog extends JDialog {
         getMods();
     }
 
-    private void setMods(List<CurseForgeProject> mods) {
+    private void setCurseForgeMods(List<CurseForgeProject> mods) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -282,13 +351,54 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
-            contentPanel.setLayout(new WrapLayout());
+            contentPanel.setLayout(new GridLayout(0, 2));
 
             mods.forEach(mod -> {
-                contentPanel.add(new CurseForgeProjectCard(mod, e -> {
-                    Analytics.sendEvent(mod.name, "Add", "CurseForgeMod");
-                    new CurseForgeProjectFileSelectorDialog(this, mod, instance);
+                CurseForgeProject castMod = (CurseForgeProject) mod;
+
+                contentPanel.add(new CurseForgeProjectCard(castMod, e -> {
+                    Analytics.sendEvent(castMod.name, "Add", "CurseForgeMod");
+                    new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
                 }), gbc);
+
+                gbc.gridy++;
+            });
+        }
+
+        SwingUtilities.invokeLater(() -> jscrollPane.getVerticalScrollBar().setValue(0));
+
+        revalidate();
+        repaint();
+    }
+
+    private void setModrinthMods(ModrinthSearchResult searchResult) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets.set(2, 2, 2, 2);
+
+        contentPanel.removeAll();
+
+        prevButton.setEnabled(page > 0);
+        nextButton.setEnabled((searchResult.offset + searchResult.limit) < searchResult.totalHits);
+
+        if (searchResult.hits.size() == 0) {
+            contentPanel.setLayout(new BorderLayout());
+            contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
+        } else {
+            contentPanel.setLayout(new GridLayout(0, 2));
+
+            searchResult.hits.forEach(mod -> {
+                ModrinthSearchHit castMod = (ModrinthSearchHit) mod;
+
+                contentPanel.add(new ModrinthSearchHitCard(castMod, e -> {
+                    ModrinthMod modrinthMod = ModrinthApi.getMod(castMod.modId);
+                    Analytics.sendEvent(castMod.title, "Add", "ModrinthMod");
+                    new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
+                }), gbc);
+
                 gbc.gridy++;
             });
         }

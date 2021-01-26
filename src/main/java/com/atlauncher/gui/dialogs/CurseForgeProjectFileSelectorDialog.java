@@ -50,8 +50,8 @@ import com.atlauncher.utils.CurseForgeApi;
 
 import org.mini2Dx.gettext.GetText;
 
+@SuppressWarnings("serial")
 public class CurseForgeProjectFileSelectorDialog extends JDialog {
-    private static final long serialVersionUID = -6984886874482721558L;
     private int filesLength = 0;
     private final CurseForgeProject mod;
     private Instance instance;
@@ -262,8 +262,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 if (installedFile != null) {
                     filesDropdown.setSelectedItem(installedFile);
 
-                    // #. {0} is the name of the CurseForge project that the user already has
-                    // installed
+                    // #. {0} is the name of the file that the user already has installed
                     installedJLabel.setText(GetText.tr("The version currently installed is {0}", installedFile));
                     installedJLabel.setVisible(true);
                 }

@@ -28,6 +28,8 @@ import javax.swing.JToolTip;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.data.modrinth.ModrinthDonationUrl;
+import com.atlauncher.data.modrinth.ModrinthMod;
 import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ModsChooser;
@@ -141,6 +143,52 @@ public class ModsJCheckBox extends JCheckBox {
             contextMenu.add(new JPopupMenu.Separator());
         }
 
+        if (getDisableableMod().isFromModrinth()) {
+            ModrinthMod modrinthMod = getDisableableMod().modrinthMod;
+
+            JMenuItem openOnModrinth = new JMenuItem(GetText.tr("Open On Modrinth"));
+            openOnModrinth.addActionListener(
+                    e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", modrinthMod.slug)));
+            contextMenu.add(openOnModrinth);
+
+            if (modrinthMod.discordUrl != null) {
+                JMenuItem openDiscord = new JMenuItem(GetText.tr("Open Discord"));
+                openDiscord.addActionListener(e -> OS.openWebBrowser(modrinthMod.discordUrl));
+                contextMenu.add(openDiscord);
+            }
+
+            if (modrinthMod.issuesUrl != null) {
+                JMenuItem openIssues = new JMenuItem(GetText.tr("Open Issues"));
+                openIssues.addActionListener(e -> OS.openWebBrowser(modrinthMod.issuesUrl));
+                contextMenu.add(openIssues);
+            }
+
+            if (modrinthMod.sourceUrl != null) {
+                JMenuItem openSourceUrl = new JMenuItem(GetText.tr("Open Source Url"));
+                openSourceUrl.addActionListener(e -> OS.openWebBrowser(modrinthMod.sourceUrl));
+                contextMenu.add(openSourceUrl);
+            }
+
+            if (modrinthMod.wikiUrl != null) {
+                JMenuItem openWiki = new JMenuItem(GetText.tr("Open Wiki"));
+                openWiki.addActionListener(e -> OS.openWebBrowser(modrinthMod.wikiUrl));
+                contextMenu.add(openWiki);
+            }
+
+            contextMenu.add(new JPopupMenu.Separator());
+
+            if (modrinthMod.donationUrls != null && modrinthMod.donationUrls.size() != 0) {
+                for (ModrinthDonationUrl donation : modrinthMod.donationUrls) {
+                    // #. {0} is the name of the platform used for donations (Patreon, paypal, etc)
+                    JMenuItem openDonationLink = new JMenuItem(GetText.tr("Donate ({0})", donation.platform));
+                    openDonationLink.addActionListener(e -> OS.openWebBrowser(donation.url));
+                    contextMenu.add(openDonationLink);
+                }
+
+                contextMenu.add(new JPopupMenu.Separator());
+            }
+        }
+
         JMenuItem enableDisableButton = new JMenuItem(
                 getDisableableMod().disabled ? GetText.tr("Enable") : GetText.tr("Disable"));
         enableDisableButton.addActionListener(e -> {
@@ -178,7 +226,7 @@ public class ModsJCheckBox extends JCheckBox {
         });
         contextMenu.add(remove);
 
-        if (getDisableableMod().isFromCurseForge()) {
+        if (getDisableableMod().isFromCurseForge() || getDisableableMod().isFromModrinth()) {
             contextMenu.add(new JPopupMenu.Separator());
 
             JMenuItem reinstall = new JMenuItem(GetText.tr("Reinstall"));

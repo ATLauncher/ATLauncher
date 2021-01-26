@@ -71,6 +71,9 @@ import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
+import com.atlauncher.data.modrinth.ModrinthFile;
+import com.atlauncher.data.modrinth.ModrinthMod;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -832,6 +835,60 @@ public class Instance extends MinecraftVersion {
 
         // #. {0} is the name of a mod that was installed
         App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
+    }
+
+    public void addFileFromModrinth(ModrinthMod mod, ModrinthVersion version, ProgressDialog dialog) {
+        ModrinthFile fileToDownload = version.getPrimaryFile();
+
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
+        Path finalLocation = this.getRoot().resolve("mods").resolve(fileToDownload.filename);
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
+                .downloadTo(downloadLocation).copyTo(finalLocation)
+                .withHttpClient(Network.createProgressClient(dialog));
+
+        if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha1")) {
+            download = download.hash(fileToDownload.hashes.get("sha1"));
+        }
+
+        if (Files.exists(finalLocation)) {
+            FileUtils.delete(finalLocation);
+        }
+
+        // find mods with the same Modrinth id
+        List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
+                installedMod -> installedMod.isFromModrinth() && installedMod.modrinthMod.id.equalsIgnoreCase(mod.id))
+                .collect(Collectors.toList());
+
+        // delete mod files that are the same mod id
+        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
+                        .setContent("Failed to download " + fileToDownload.filename + ". Please try again later.")
+                        .show();
+                return;
+            }
+        } else {
+            download.copy();
+        }
+
+        // remove any mods that are from the same mod from the master mod list
+        this.launcher.mods = this.launcher.mods.stream().filter(
+                installedMod -> !installedMod.isFromModrinth() || !installedMod.modrinthMod.id.equalsIgnoreCase(mod.id))
+                .collect(Collectors.toList());
+
+        // add this mod
+        this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, Type.mods,
+                null, mod.description, false, true, true, mod, version));
+
+        this.save();
+
+        // #. {0} is the name of a mod that was installed
+        App.TOASTER.pop(GetText.tr("{0} Installed", mod.title));
     }
 
     public boolean hasCustomMods() {

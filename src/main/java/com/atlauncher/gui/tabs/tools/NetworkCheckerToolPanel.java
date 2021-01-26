@@ -46,7 +46,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
-            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.CURSEFORGE_HOST };
+            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.CURSEFORGE_HOST,
+            Constants.MODRINTH_HOST, Constants.MODPACKS_CH_HOST };
 
     public NetworkCheckerToolPanel() {
         super(GetText.tr("Network Checker"));
@@ -79,7 +80,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
         if (ret == 0) {
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Network Checker"),
-                    13 + HOSTS.length, GetText.tr("Network Checker Running. Please Wait!"),
+                    17 + HOSTS.length, GetText.tr("Network Checker Running. Please Wait!"),
                     "Network Checker Tool Cancelled!");
             dialog.addThread(new Thread(() -> {
                 StringBuilder results = new StringBuilder();
@@ -109,6 +110,24 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                 results.append("Tracert to " + Constants.CURSEFORGE_HOST + " was ")
                         .append(Utils.traceRoute(Constants.CURSEFORGE_HOST)).append("\n\n----------------\n\n");
+                dialog.doneTask();
+
+                // Connection to Modrinth API
+                results.append("Ping results to " + Constants.MODRINTH_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.MODRINTH_HOST));
+                dialog.doneTask();
+
+                results.append("Tracert to " + Constants.MODRINTH_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.MODRINTH_HOST)).append("\n\n----------------\n\n");
+                dialog.doneTask();
+
+                // Connection to Modpacks.ch API
+                results.append("Ping results to " + Constants.MODPACKS_CH_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.MODPACKS_CH_HOST));
+                dialog.doneTask();
+
+                results.append("Tracert to " + Constants.MODPACKS_CH_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.MODPACKS_CH_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Connection to Fabric CDN

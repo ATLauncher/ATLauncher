@@ -80,8 +80,14 @@ public class Constants {
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final int CURSEFORGE_WORLDS_SECTION_ID = 17;
 
+    // Modrinth domains, endpoints, config, etc
+    public static final String MODRINTH_API_URL = "https://api.modrinth.com/api/v1";
+    public static final String MODRINTH_HOST = "api.modrinth.com";
+    public static final int MODRINTH_PAGINATION_SIZE = 40;
+
     // Modpacks.ch domains, endpoints, config, etc
     public static final String MODPACKS_CH_API_URL = "https://api.modpacks.ch/public";
+    public static final String MODPACKS_CH_HOST = "api.modpacks.ch";
     public static final int MODPACKS_CH_PAGINATION_SIZE = 20;
 
     // Forge domains, endpoints, etc

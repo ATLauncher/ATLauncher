@@ -50,6 +50,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<String>> theme;
     private final JComboBox<ComboItem<String>> dateFormat;
     private final JComboBox<ComboItem<Integer>> selectedTabOnStartup;
+    private final JComboBox<ComboItem<String>> defaultModPlatform;
     private final JCheckBox sortPacksAlphabetically;
     private final JCheckBox showPackNameAndVersion;
     private final JCheckBox keepLauncherOpen;
@@ -199,6 +200,36 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
 
         add(selectedTabOnStartup, gbc);
+
+        // Default mod platform
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover defaultModPlatformLabel = new JLabelWithHover(GetText.tr("Default Mod Platform") + ":",
+                HELP_ICON, GetText.tr("The default mod platform to use when adding mods to instances."));
+
+        add(defaultModPlatformLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        defaultModPlatform = new JComboBox<>();
+        defaultModPlatform.addItem(new ComboItem<>("CurseForge", "CurseForge"));
+        defaultModPlatform.addItem(new ComboItem<>("Modrinth", "Modrinth"));
+
+        for (int i = 0; i < defaultModPlatform.getItemCount(); i++) {
+            ComboItem<String> item = defaultModPlatform.getItemAt(i);
+
+            if (item.getValue().equals(App.settings.defaultModPlatform)) {
+                defaultModPlatform.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        add(defaultModPlatform, gbc);
 
         // Sort Packs Alphabetically
 
@@ -461,6 +492,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.theme = ((ComboItem<String>) theme.getSelectedItem()).getValue();
         App.settings.dateFormat = ((ComboItem<String>) dateFormat.getSelectedItem()).getValue();
         App.settings.selectedTabOnStartup = ((ComboItem<Integer>) selectedTabOnStartup.getSelectedItem()).getValue();
+        App.settings.defaultModPlatform = ((ComboItem<String>) defaultModPlatform.getSelectedItem()).getValue();
         App.settings.sortPacksAlphabetically = sortPacksAlphabetically.isSelected();
         App.settings.showPackNameAndVersion = showPackNameAndVersion.isSelected();
         App.settings.keepLauncherOpen = keepLauncherOpen.isSelected();

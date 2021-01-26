@@ -63,6 +63,7 @@ public class Settings {
     public String theme = Constants.DEFAULT_THEME_CLASS;
     public String dateFormat = "dd/MM/yyyy";
     public int selectedTabOnStartup = 0;
+    public String defaultModPlatform = "CurseForge";
     public boolean sortPacksAlphabetically = false;
     public boolean showPackNameAndVersion = true;
     public boolean keepLauncherOpen = true;
@@ -301,6 +302,8 @@ public class Settings {
     public void validate() {
         validateWindowSettings();
 
+        validateDefaultModPlatform();
+
         validateJavaPath();
 
         validateMemory();
@@ -340,6 +343,13 @@ public class Settings {
         if (consolePosition != null
                 && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
             consolePosition = null;
+        }
+    }
+
+    private void validateDefaultModPlatform() {
+        if (defaultModPlatform == null
+                || !(defaultModPlatform.equals("CurseForge") || defaultModPlatform.equals("Modrinth"))) {
+            defaultModPlatform = "CurseForge";
         }
     }
 

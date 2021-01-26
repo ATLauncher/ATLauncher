@@ -30,20 +30,20 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class CurseForgeProjectCard extends JPanel {
-    public CurseForgeProjectCard(final CurseForgeProject mod, ActionListener al) {
+public final class ModrinthSearchHitCard extends JPanel {
+    public ModrinthSearchHitCard(final ModrinthSearchHit mod, ActionListener al) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
-        summary.setText(mod.summary);
+        summary.setText(mod.description);
         summary.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
         summary.setEditable(false);
         summary.setHighlighter(null);
@@ -61,12 +61,12 @@ public final class CurseForgeProjectCard extends JPanel {
 
         addButton.addActionListener(al);
 
-        viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
+        viewButton.addActionListener(e -> OS.openWebBrowser(mod.pageUrl));
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
 
-        TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder border = new TitledBorder(null, mod.title, TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
     }
