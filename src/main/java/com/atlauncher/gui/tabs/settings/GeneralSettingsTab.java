@@ -390,7 +390,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         JLabelWithHover disableAddModRestrictionsLabel = new JLabelWithHover(
                 GetText.tr("Disable Add Mod Restrictions?"), HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This will allow you to disable the restrictions in place to prevent you from installing mods from CurseForge that are not for your current Minecraft version or loader. By disabling these restrictions, you can install any mod, so be sure that it's compatible with the Minecraft version and loader (if any) that you're on."))
+                        "This will allow you to disable the restrictions in place to prevent you from installing mods that are not for your current Minecraft version or loader. By disabling these restrictions, you can install any mod, so be sure that it's compatible with the Minecraft version and loader (if any) that you're on."))
                         .build());
         add(disableAddModRestrictionsLabel, gbc);
 
