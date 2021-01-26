@@ -154,6 +154,45 @@ public final class Hashing {
         }
     }
 
+    public static HashCode sha512(Path file) {
+        if (!Files.exists(file)) {
+            return HashCode.EMPTY;
+        }
+
+        try (Hasher hasher = new SHA512Hasher(Files.newInputStream(file))) {
+            return hasher.hash();
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error hashing (SHA-512) file " + file.getFileName(), e);
+            return HashCode.EMPTY;
+        }
+    }
+
+    public static HashCode sha512(String str) {
+        if (str == null || str.isEmpty()) {
+            return HashCode.EMPTY;
+        }
+
+        try (Hasher hasher = new SHA512Hasher(new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8)))) {
+            return hasher.hash();
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error hashing (SHA-512) string " + str, e);
+            return HashCode.EMPTY;
+        }
+    }
+
+    public static HashCode sha512(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return HashCode.EMPTY;
+        }
+
+        try (Hasher hasher = new SHA512Hasher(new ByteArrayInputStream(bytes))) {
+            return hasher.hash();
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error hashing (SHA-512) byte array", e);
+            return HashCode.EMPTY;
+        }
+    }
+
     public static HashCode sha1(Path file) {
         if (!Files.exists(file)) {
             return HashCode.EMPTY;
@@ -195,6 +234,37 @@ public final class Hashing {
 
     private interface Hasher extends Closeable {
         HashCode hash();
+    }
+
+    private static final class SHA512Hasher implements Hasher {
+        private final InputStream is;
+        private final MessageDigest digest;
+
+        private SHA512Hasher(InputStream is) throws NoSuchAlgorithmException {
+            this.is = is;
+            this.digest = MessageDigest.getInstance("SHA-512");
+        }
+
+        @Override
+        public HashCode hash() {
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[8192];
+                int len;
+                while ((len = this.is.read(buffer, 0, 8192)) != -1) {
+                    bos.write(buffer, 0, len);
+                }
+
+                return new HashCode(this.digest.digest(bos.toByteArray()));
+            } catch (Exception e) {
+                LogManager.logStackTrace("Error hashing (SHA-512)", e);
+                return null;
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            this.is.close();
+        }
     }
 
     private static final class SHA1Hasher implements Hasher {

@@ -846,7 +846,9 @@ public class Instance extends MinecraftVersion {
                 .downloadTo(downloadLocation).copyTo(finalLocation)
                 .withHttpClient(Network.createProgressClient(dialog));
 
-        if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha1")) {
+        if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
+            download = download.hash(fileToDownload.hashes.get("sha512"));
+        } else if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha1")) {
             download = download.hash(fileToDownload.hashes.get("sha1"));
         }
 

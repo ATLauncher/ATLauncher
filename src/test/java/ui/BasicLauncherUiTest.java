@@ -126,7 +126,6 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         JPanelFixture vanillaPackCard = vanillaPacksPanel.panel(new GenericTypeMatcher<PackCard>(PackCard.class, true) {
             @Override
             protected boolean isMatching(PackCard packCard) {
-                System.out.println(packCard);
                 return packCard.getPack().name.equalsIgnoreCase("Vanilla Minecraft") && packCard.isVisible();
             }
         });
