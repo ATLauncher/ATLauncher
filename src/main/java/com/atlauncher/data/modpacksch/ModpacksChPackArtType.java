@@ -24,5 +24,8 @@ public enum ModpacksChPackArtType {
     SPLASH,
 
     @SerializedName("square")
-    SQUARE
+    SQUARE,
+
+    @SerializedName("logo")
+    LOGO
 }

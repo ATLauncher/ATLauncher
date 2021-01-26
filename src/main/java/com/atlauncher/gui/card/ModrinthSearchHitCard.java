@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -32,6 +33,8 @@ import javax.swing.border.TitledBorder;
 import com.atlauncher.App;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.BackgroundImageWorker;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -50,6 +53,12 @@ public final class ModrinthSearchHitCard extends JPanel {
         summary.setLineWrap(true);
         summary.setWrapStyleWord(true);
         summary.setEditable(false);
+
+        JLabel icon = new JLabel(Utils.getIconImage("/assets/image/NoIcon.png"));
+        icon.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        icon.setVisible(false);
+
+        summaryPanel.add(icon, BorderLayout.WEST);
         summaryPanel.add(summary, BorderLayout.CENTER);
         summaryPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
@@ -69,5 +78,9 @@ public final class ModrinthSearchHitCard extends JPanel {
         TitledBorder border = new TitledBorder(null, mod.title, TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
+
+        if (mod.iconUrl != null && !mod.iconUrl.isEmpty()) {
+            new BackgroundImageWorker(icon, mod.iconUrl).execute();
+        }
     }
 }

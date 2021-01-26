@@ -21,19 +21,26 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.util.Comparator;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.data.modpacksch.ModpacksChPackArt;
+import com.atlauncher.data.modpacksch.ModpacksChPackArtType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.BackgroundImageWorker;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -62,6 +69,12 @@ public final class FTBPackCard extends JPanel {
         summary.setLineWrap(true);
         summary.setWrapStyleWord(true);
         summary.setEditable(false);
+
+        JLabel icon = new JLabel(Utils.getIconImage("/assets/image/NoIcon.png"));
+        icon.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        icon.setVisible(false);
+
+        summaryPanel.add(icon, BorderLayout.WEST);
         summaryPanel.add(summary, BorderLayout.CENTER);
         summaryPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
@@ -91,5 +104,12 @@ public final class FTBPackCard extends JPanel {
         TitledBorder border = new TitledBorder(null, pack.name, TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
+
+        Optional<ModpacksChPackArt> art = pack.art.stream()
+                .filter(a -> a.type == ModpacksChPackArtType.LOGO || a.type == ModpacksChPackArtType.SQUARE)
+                .sorted(Comparator.comparingInt((ModpacksChPackArt a) -> a.updated).reversed()).findFirst();
+        if (art.isPresent()) {
+            new BackgroundImageWorker(icon, art.get().url).execute();
+        }
     }
 }
