@@ -21,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
 import java.awt.Window;
 import java.util.List;
 
@@ -37,7 +36,6 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -46,6 +44,7 @@ import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.gui.card.CurseForgeProjectCard;
 import com.atlauncher.gui.card.ModrinthSearchHitCard;
+import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.network.Analytics;
@@ -61,7 +60,7 @@ public final class AddModsDialog extends JDialog {
 
     private boolean updating = false;
 
-    private final JPanel contentPanel = new JPanel(new GridLayout(0, 2));
+    private final JPanel contentPanel = new JPanel(new WrapLayout());
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
@@ -94,9 +93,6 @@ public final class AddModsDialog extends JDialog {
         this.setPreferredSize(new Dimension(680, 500));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        contentPanel.setBorder(
-                BorderFactory.createEmptyBorder(0, UIConstants.SPACING_LARGE * 10, 0, UIConstants.SPACING_LARGE * 10));
 
         hostComboBox.addItem(new ComboItem<>("CurseForge", "CurseForge"));
         hostComboBox.addItem(new ComboItem<>("Modrinth", "Modrinth"));
@@ -370,7 +366,7 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
-            contentPanel.setLayout(new GridLayout(0, 2));
+            contentPanel.setLayout(new WrapLayout());
 
             mods.forEach(mod -> {
                 CurseForgeProject castMod = (CurseForgeProject) mod;
@@ -407,7 +403,7 @@ public final class AddModsDialog extends JDialog {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
-            contentPanel.setLayout(new GridLayout(0, 2));
+            contentPanel.setLayout(new WrapLayout());
 
             searchResult.hits.forEach(mod -> {
                 ModrinthSearchHit castMod = (ModrinthSearchHit) mod;

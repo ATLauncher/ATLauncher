@@ -37,7 +37,6 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
 
     @Override
     protected ImageIcon doInBackground() throws Exception {
-        System.out.println("Getting " + this.url);
         BufferedImage image = ImageIO.read(new URL(this.url));
         label.setIcon(new ImageIcon(image.getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
         label.setVisible(true);
