@@ -19,7 +19,9 @@ package com.atlauncher.managers;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -70,5 +72,20 @@ public class MinecraftManager {
             return Data.MINECRAFT.get(version);
         }
         throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
+    }
+
+    public static List<MinecraftVersion> getMajorMinecraftVersions(String version) throws InvalidMinecraftVersion {
+        MinecraftVersion parentVersion = getMinecraftVersion(version);
+
+        // this doesn't apply for snapshots
+        if (parentVersion.snapshot) {
+            List<MinecraftVersion> singleList = new ArrayList<>();
+            singleList.add(parentVersion);
+            return singleList;
+        }
+
+        return Data.MINECRAFT.entrySet().stream()
+                .filter(e -> e.getKey().startsWith(version.substring(0, version.lastIndexOf("."))))
+                .map(e -> e.getValue()).collect(Collectors.toList());
     }
 }

@@ -313,9 +313,8 @@ public class DisableableMod implements Serializable {
             Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
                     .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
-            if (!App.settings.disableAddModRestrictions) {
-                curseForgeFilesStream = curseForgeFilesStream.filter(
-                        file -> App.settings.disableAddModRestrictions || file.gameVersion.contains(instance.id));
+            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                curseForgeFilesStream = curseForgeFilesStream.filter(file -> file.gameVersion.contains(instance.id));
             }
 
             if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
@@ -342,9 +341,9 @@ public class DisableableMod implements Serializable {
                 Stream<ModrinthVersion> versionsStream = versions.stream()
                         .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
-                if (!App.settings.disableAddModRestrictions) {
+                if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                     versionsStream = versionsStream.filter(
-                            v -> App.settings.disableAddModRestrictions || v.gameVersions.contains(instance.id));
+                            v -> v.gameVersions.contains(instance.id));
                 }
 
                 if (versionsStream.noneMatch(v -> Date.from(Instant.parse(v.datePublished))

@@ -64,6 +64,7 @@ public class Settings {
     public String dateFormat = "dd/MM/yyyy";
     public int selectedTabOnStartup = 0;
     public String defaultModPlatform = "CurseForge";
+    public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean sortPacksAlphabetically = false;
     public boolean showPackNameAndVersion = true;
     public boolean keepLauncherOpen = true;
@@ -71,7 +72,7 @@ public class Settings {
     public boolean enableTrayMenu = true;
     public boolean enableDiscordIntegration = true;
     public boolean enableFeralGamemode = OS.isLinux() && Utils.executableInPath("gamemoderun");
-    public boolean disableAddModRestrictions = false;
+    private boolean disableAddModRestrictions = false;
     public boolean disableCustomFonts = false;
     public boolean useNativeFilePicker = OS.isMac();
 
@@ -302,6 +303,7 @@ public class Settings {
     public void validate() {
         validateWindowSettings();
 
+        validateDisableAddModRestrictions();
         validateDefaultModPlatform();
 
         validateJavaPath();
@@ -343,6 +345,12 @@ public class Settings {
         if (consolePosition != null
                 && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
             consolePosition = null;
+        }
+    }
+
+    private void validateDisableAddModRestrictions() {
+        if (disableAddModRestrictions && addModRestriction != AddModRestriction.NONE) {
+            addModRestriction = AddModRestriction.NONE;
         }
     }
 

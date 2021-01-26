@@ -38,13 +38,17 @@ import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileDependency;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.CurseForgeFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 
@@ -210,16 +214,27 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         Runnable r = () -> {
             LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
-            Stream<CurseForgeFile> curseFilesStream = CurseForgeApi.getFilesForProject(mod.id).stream()
+            Stream<CurseForgeFile> curseForgeFilesStream = CurseForgeApi.getFilesForProject(mod.id).stream()
                     .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
-            if (!App.settings.disableAddModRestrictions) {
-                curseFilesStream = curseFilesStream.filter(file -> App.settings.disableAddModRestrictions
-                        || mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
-                        || file.gameVersion.contains(this.instance.id));
+            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                curseForgeFilesStream = curseForgeFilesStream.filter(
+                        file -> mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
+                                || file.gameVersion.contains(this.instance.id));
+            } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
+                try {
+                    List<String> minecraftVersionsToSearch = MinecraftManager
+                            .getMajorMinecraftVersions(this.instance.id).stream().map(mv -> mv.version)
+                            .collect(Collectors.toList());
+
+                    curseForgeFilesStream = curseForgeFilesStream
+                            .filter(v -> v.gameVersion.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                } catch (InvalidMinecraftVersion e) {
+                    LogManager.logStackTrace(e);
+                }
             }
 
-            files.addAll(curseFilesStream.collect(Collectors.toList()));
+            files.addAll(curseForgeFilesStream.collect(Collectors.toList()));
 
             // ensures that font width is taken into account
             for (CurseForgeFile file : files) {
@@ -228,7 +243,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             }
 
             // try to filter out non compatable mods (Forge on Fabric and vice versa)
-            if (App.settings.disableAddModRestrictions) {
+            if (App.settings.addModRestriction == AddModRestriction.NONE) {
                 files.forEach(version -> filesDropdown.addItem(version));
             } else {
                 files.stream().filter(version -> {
@@ -241,8 +256,10 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     }
 
                     if (loaderVersion != null && !loaderVersion.isFabric()) {
-                        return !displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
-                                && !displayName.contains("[fabric") && !fileName.contains("fabricmod");
+                        // if it's Forge, and the gameVersion has "Fabric" then exclude it
+                        return version.gameVersion.contains("Fabric")
+                                || (!displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
+                                        && !displayName.contains("[fabric") && !fileName.contains("fabricmod"));
                     }
 
                     return true;

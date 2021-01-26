@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
@@ -43,7 +44,7 @@ public class ModrinthApi {
         return searchModrinth(null, query, page, sort, null);
     }
 
-    public static ModrinthSearchResult searchModrinth(String gameVersion, String query, int page, String index,
+    public static ModrinthSearchResult searchModrinth(List<String> gameVersions, String query, int page, String index,
             String category) {
         try {
             List<List<String>> facets = new ArrayList<>();
@@ -52,10 +53,9 @@ public class ModrinthApi {
                     Constants.MODRINTH_PAGINATION_SIZE, page * Constants.MODRINTH_PAGINATION_SIZE,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), index);
 
-            if (gameVersion != null) {
-                List<String> versionFacets = new ArrayList<>();
-                versionFacets.add(String.format("versions:%s", gameVersion));
-                facets.add(versionFacets);
+            if (gameVersions != null) {
+                facets.add(
+                        gameVersions.stream().map(gv -> String.format("versions:%s", gv)).collect(Collectors.toList()));
             }
 
             if (category != null) {
@@ -77,12 +77,14 @@ public class ModrinthApi {
         return null;
     }
 
-    public static ModrinthSearchResult searchModsForForge(String gameVersion, String query, int page, String sort) {
-        return searchModrinth(gameVersion, query, page, sort, "forge");
+    public static ModrinthSearchResult searchModsForForge(List<String> gameVersions, String query, int page,
+            String sort) {
+        return searchModrinth(gameVersions, query, page, sort, "forge");
     }
 
-    public static ModrinthSearchResult searchModsForFabric(String gameVersion, String query, int page, String sort) {
-        return searchModrinth(gameVersion, query, page, sort, "fabric");
+    public static ModrinthSearchResult searchModsForFabric(List<String> gameVersions, String query, int page,
+            String sort) {
+        return searchModrinth(gameVersions, query, page, sort, "fabric");
     }
 
     public static ModrinthMod getMod(String modId) {

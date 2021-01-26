@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add support for downloading mods from Modrinth [#440]
 - Add delete button to RuntimeDownloaderToolPanel
 - Add icons when browsing mods/packs to add
+- Add in more options for add mod restrictions [#439]
 
 ### Fixes
 - Dialog when installing file from CurseForge not showing progress
@@ -16,4 +17,3 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Reinstalling or Updating CurseForge mods hanging when calling api
 
 ### Misc
-

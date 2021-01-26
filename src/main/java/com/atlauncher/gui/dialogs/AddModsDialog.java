@@ -22,7 +22,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Window;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -36,17 +38,21 @@ import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthMod;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.CurseForgeProjectCard;
 import com.atlauncher.gui.card.ModrinthSearchHitCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
@@ -303,32 +309,47 @@ public final class AddModsDialog extends JDialog {
 
         new Thread(() -> {
             if (isCurseForge) {
+                String versionToSearchFor = App.settings.addModRestriction == AddModRestriction.STRICT
+                        ? this.instance.id
+                        : null;
+
                 if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                     setCurseForgeMods(CurseForgeApi.searchResourcePacks(query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
-                    setCurseForgeMods(
-                            CurseForgeApi.searchWorlds(App.settings.disableAddModRestrictions ? null : this.instance.id,
-                                    query, page, ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    setCurseForgeMods(CurseForgeApi.searchWorlds(versionToSearchFor, query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
                     if (this.instance.launcher.loaderVersion.isFabric()) {
-                        setCurseForgeMods(CurseForgeApi.searchModsForFabric(
-                                App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                        setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     } else {
-                        setCurseForgeMods(CurseForgeApi.searchMods(
-                                App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                        setCurseForgeMods(CurseForgeApi.searchMods(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     }
                 }
             } else {
+                List<String> versionsToSearchFor = new ArrayList<>();
+
+                if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                    versionsToSearchFor.add(this.instance.id);
+                } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
+                    try {
+                        versionsToSearchFor.addAll(MinecraftManager.getMajorMinecraftVersions(this.instance.id).stream()
+                                .map(mv -> mv.version).collect(Collectors.toList()));
+                    } catch (InvalidMinecraftVersion e) {
+                        LogManager.logStackTrace(e);
+                        versionsToSearchFor = null;
+                    }
+                } else if (App.settings.addModRestriction == AddModRestriction.NONE) {
+                    versionsToSearchFor = null;
+                }
+
                 if (this.instance.launcher.loaderVersion.isFabric()) {
-                    setModrinthMods(ModrinthApi.searchModsForFabric(
-                            App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                    setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
-                    setModrinthMods(ModrinthApi.searchModsForForge(
-                            App.settings.disableAddModRestrictions ? null : this.instance.id, query, page,
+                    setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }

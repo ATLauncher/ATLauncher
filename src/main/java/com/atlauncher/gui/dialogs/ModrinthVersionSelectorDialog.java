@@ -35,10 +35,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
+import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthMod;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ModrinthApi;
 
@@ -176,9 +180,26 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             Stream<ModrinthVersion> modrinthVersionsStream = this.versionsData.stream()
                     .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
-            if (!App.settings.disableAddModRestrictions) {
-                modrinthVersionsStream = modrinthVersionsStream.filter(
-                        v -> App.settings.disableAddModRestrictions || v.gameVersions.contains(this.instance.id));
+            if (App.settings.addModRestriction != AddModRestriction.NONE
+                    && this.instance.launcher.loaderVersion != null) {
+                modrinthVersionsStream = modrinthVersionsStream
+                        .filter(v -> this.instance.launcher.loaderVersion.isFabric() ? v.loaders.contains("fabric")
+                                : v.loaders.contains("forge"));
+            }
+
+            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                modrinthVersionsStream = modrinthVersionsStream.filter(v -> v.gameVersions.contains(this.instance.id));
+            } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
+                try {
+                    List<String> minecraftVersionsToSearch = MinecraftManager
+                            .getMajorMinecraftVersions(this.instance.id).stream().map(mv -> mv.version)
+                            .collect(Collectors.toList());
+
+                    modrinthVersionsStream = modrinthVersionsStream.filter(
+                            v -> v.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                } catch (InvalidMinecraftVersion e) {
+                    LogManager.logStackTrace(e);
+                }
             }
 
             versions.addAll(modrinthVersionsStream.collect(Collectors.toList()));
