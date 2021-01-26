@@ -185,7 +185,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                             (dependencies.size() / 2) + 1));
 
-                    setSize(550, 400);
+                    setSize(550, 450);
                     setLocationRelativeTo(App.launcher.getParent());
 
                     dependenciesPanel.setVisible(true);

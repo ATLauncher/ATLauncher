@@ -18,11 +18,14 @@
 package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -30,12 +33,15 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFileDependency;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.BackgroundImageWorker;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -49,6 +55,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
         this.parent = parent;
 
         setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(250, 180));
 
         this.dependency = dependency;
         this.instance = instance;
@@ -68,6 +75,12 @@ public final class CurseForgeFileDependencyCard extends JPanel {
         summary.setLineWrap(true);
         summary.setWrapStyleWord(true);
         summary.setEditable(false);
+
+        JLabel icon = new JLabel(Utils.getIconImage("/assets/image/NoIcon.png"));
+        icon.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        icon.setVisible(false);
+
+        summaryPanel.add(icon, BorderLayout.WEST);
         summaryPanel.add(summary, BorderLayout.CENTER);
         summaryPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
@@ -90,5 +103,10 @@ public final class CurseForgeFileDependencyCard extends JPanel {
         TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
+
+        Optional<CurseForgeAttachment> attachment = mod.attachments.stream().filter(a -> a.isDefault).findFirst();
+        if (attachment.isPresent()) {
+            new BackgroundImageWorker(icon, attachment.get().thumbnailUrl).execute();
+        }
     }
 }
