@@ -471,6 +471,12 @@ public class App {
     private static void checkInstalledCorrectly() {
         boolean matched = false;
 
+        // user used the installer
+        if (Files.exists(FileSystem.BASE_DIR.resolve("unins000.dat"))
+                && Files.exists(FileSystem.BASE_DIR.resolve("unins000.exe"))) {
+            return;
+        }
+
         if ((Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
                 && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
             matched = true;

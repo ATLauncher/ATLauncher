@@ -12,6 +12,7 @@
         "rebornix.project-snippets",
         "mrorz.language-gettext",
         "aaron-bond.better-comments",
-        "mathiasfrohlich.kotlin"
+        "mathiasfrohlich.kotlin",
+        "idleberg.innosetup"
     ]
 }

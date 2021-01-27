@@ -175,6 +175,7 @@ launch4j {
     textVersion = "${project.version}"
     copyright = "2013-${currentYear()} ${project.name}"
     companyName = "${project.name}"
+    bundledJrePath = "jre/"
     jvmOptions = [
         "-Djna.nosys=true",
         "-Djava.net.preferIPv4Stack=true",
