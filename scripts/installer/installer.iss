@@ -18,6 +18,7 @@ PrivilegesRequired=lowest
 SetupIconFile=..\..\src\main\resources\assets\image\Icon.ico
 Compression=lzma
 SolidCompression=yes
+OutputBaseFilename={#MyAppName}-setup
 UninstallDisplayIcon={app}\{#MyAppName}.exe
 UninstallDisplayName={#MyAppName}
 WizardStyle=modern
