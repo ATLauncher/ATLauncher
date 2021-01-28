@@ -17,12 +17,15 @@
  */
 package com.atlauncher.network;
 
+import java.awt.Rectangle;
+
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
@@ -31,18 +34,27 @@ public final class Analytics implements SettingsListener {
     private static GoogleAnalytics ga;
 
     public static void startSession() {
-        ga = GoogleAnalytics.builder()
-                .withConfig(new GoogleAnalyticsConfig().setDiscoverRequestParameters(true)
-                        .setProxyHost(App.settings.proxyHost).setProxyPort(App.settings.proxyPort)
-                        .setEnabled(!App.disableAnalytics && App.settings.enableAnalytics))
-                .withDefaultRequest(new DefaultRequest().userAgent(Network.USER_AGENT)
-                        .clientId(App.settings.analyticsClientId).customDimension(1, Java.getLauncherJavaVersion()))
+        ga = GoogleAnalytics.builder().withConfig(buildConfig()).withDefaultRequest(buildDefaultRequest())
                 .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
                 .withAppVersion(Constants.VERSION.toStringForLogging()).build();
 
         ga.screenView().sessionControl("start").sendAsync();
 
         Runtime.getRuntime().addShutdownHook(new Thread(Analytics::endSession));
+    }
+
+    private static GoogleAnalyticsConfig buildConfig() {
+        return new GoogleAnalyticsConfig().setDiscoverRequestParameters(true).setProxyHost(App.settings.proxyHost)
+                .setProxyPort(App.settings.proxyPort).setEnabled(!App.disableAnalytics && App.settings.enableAnalytics);
+    }
+
+    private static DefaultRequest buildDefaultRequest() {
+        Rectangle screenBounds = OS.getScreenVirtualBounds();
+        String screenResolution = String.format("%dx%d", screenBounds.width, screenBounds.height);
+
+        return new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.analyticsClientId)
+                .customDimension(1, Java.getLauncherJavaVersion()).customDimension(2, System.getProperty("os.name"))
+                .customDimension(3, System.getProperty("os.arch")).screenResolution(screenResolution);
     }
 
     public static void sendScreenView(String title) {

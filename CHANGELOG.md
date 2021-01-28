@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in more options for add mod restrictions [#439]
 - Create installer and use optional jre [#443]
 - Packs on CurseForge using JumpLoader no longer use Forge [#444]
+- Add OS information to Google Analytics
 
 ### Fixes
 - Dialog when installing file from CurseForge not showing progress

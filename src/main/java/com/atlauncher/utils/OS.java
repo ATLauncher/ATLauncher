@@ -578,4 +578,35 @@ public enum OS {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(text, null);
     }
+
+    public static Object getUserAgentString() {
+        String name = "";
+        String arch = "";
+
+        switch (getOS()) {
+            case WINDOWS: {
+                name = "Windows NT " + getVersion();
+
+                if (OS.is64Bit()) {
+                    arch = "; Win64; x64";
+                }
+                break;
+            }
+            case OSX: {
+                // M1 machines still show Intel
+                name = String.format("Macintosh; Intel %s %s", getName(), getVersion().replaceAll(".", "_"));
+                break;
+            }
+            case LINUX: {
+                name = String.format("%s; Linux", getName());
+
+                if (OS.is64Bit()) {
+                    arch = "x86_64";
+                }
+                break;
+            }
+        }
+
+        return String.format("%s%s", name, arch);
+    }
 }

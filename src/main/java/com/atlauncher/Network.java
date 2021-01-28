@@ -36,6 +36,7 @@ import com.atlauncher.network.DebugLoggingInterceptor;
 import com.atlauncher.network.ErrorReportingInterceptor;
 import com.atlauncher.network.UserAgentInterceptor;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.ProgressResponseBody;
 
 import okhttp3.Cache;
@@ -53,9 +54,10 @@ public final class Network {
 
     public static OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
 
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like "
-            + "Gecko) Chrome/28.0.1500.72 Safari/537.36 " + Constants.LAUNCHER_NAME + "/"
-            + Constants.VERSION.toStringForLogging() + " Java/" + Java.getLauncherJavaVersion();
+    public static final String USER_AGENT = String.format(
+            "Mozilla/5.0 (%s) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36 %s/%s Java/%s",
+            OS.getUserAgentString(), Constants.LAUNCHER_NAME, Constants.VERSION.toStringForLogging(),
+            Java.getLauncherJavaVersion());
 
     static {
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
