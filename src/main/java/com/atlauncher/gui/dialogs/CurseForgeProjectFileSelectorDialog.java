@@ -160,6 +160,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 progressDialog.close();
             }));
             progressDialog.start();
+            dispose();
         });
 
         filesDropdown.addActionListener(e -> {

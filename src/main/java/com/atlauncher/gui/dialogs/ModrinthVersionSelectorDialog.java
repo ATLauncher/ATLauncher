@@ -155,6 +155,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 progressDialog.close();
             }));
             progressDialog.start();
+            dispose();
         });
 
         JButton cancel = new JButton(GetText.tr("Cancel"));

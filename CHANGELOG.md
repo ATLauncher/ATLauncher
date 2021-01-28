@@ -19,5 +19,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Reinstalling or Updating CurseForge mods hanging when calling api
 - Setup dialog not having correct spacing
 - Redact Authorization headers from debug logging
+- Close dialog after adding a mod to an instance
 
 ### Misc
