@@ -18,5 +18,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Checking for mods on CurseForge running out of memory causing issue
 - Reinstalling or Updating CurseForge mods hanging when calling api
 - Setup dialog not having correct spacing
+- Redact Authorization headers from debug logging
 
 ### Misc

@@ -32,7 +32,12 @@ public final class DebugLoggingInterceptor implements Interceptor {
         Request request = chain.request();
 
         LogManager.debug(String.format("Sending request %s", request.url()), 3);
-        LogManager.debug(request.toString(), 5);
+
+        String debugLogMessage = request.toString();
+        if (request.header("Authorization") != null) {
+            debugLogMessage = debugLogMessage.replace(request.header("Authorization"), "REDACTED");
+        }
+        LogManager.debug(debugLogMessage, 5);
 
         long t1 = System.nanoTime();
         Response response = chain.proceed(request);
