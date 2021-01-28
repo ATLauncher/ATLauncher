@@ -21,5 +21,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Setup dialog not having correct spacing
 - Redact Authorization headers from debug logging
 - Close dialog after adding a mod to an instance
+- Fix adding mods failing when fingerprinting fails
 
 ### Misc

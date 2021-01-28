@@ -338,7 +338,7 @@ public class EditModsDialog extends JDialog {
 
             CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
 
-            if (fingerprintResponse.exactMatches.size() == 1) {
+            if (fingerprintResponse != null && fingerprintResponse.exactMatches.size() == 1) {
                 CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
 
                 // add CurseForge information
