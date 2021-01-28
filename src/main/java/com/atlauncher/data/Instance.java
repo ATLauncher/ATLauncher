@@ -979,7 +979,6 @@ public class Instance extends MinecraftVersion {
         String loaderVersion = launcher.loaderVersion.version;
 
         // Since CurseForge treats Farbic as a second class citizen :(, we need to force
-        // a
         // Forge loader and people need to use Jumploader in order to have Fabric packs
         // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
         if (launcher.loaderVersion.type.equals("Fabric")) {

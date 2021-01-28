@@ -77,6 +77,7 @@ import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ATLauncherApiForgeVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackArt;
 import com.atlauncher.data.modpacksch.ModpacksChPackArtType;
@@ -317,33 +318,56 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         packVersion.loader = new com.atlauncher.data.json.Loader();
 
-        CurseForgeModLoader forgeVersion = curseForgeManifest.minecraft.modLoaders.stream().filter(e -> e.primary)
-                .findFirst().orElse(null);
+        boolean hasJumpLoader = curseForgeManifest.files.stream()
+                .anyMatch(m -> m.projectID == Constants.CURSEFORGE_JUMPLOADER_MOD_ID);
 
-        if (forgeVersion == null) {
-            throw new Exception("Failed to find Forge version");
-        }
+        if (hasJumpLoader) {
+            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+            }.getType();
 
-        String forgeVersionString = forgeVersion.id.replace("forge-", "");
+            List<FabricMetaVersion> loaders = com.atlauncher.network.Download.build().setUrl(
+                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", packVersion.minecraft))
+                    .asType(type);
 
-        java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-        }.getType();
+            if (loaders == null || loaders.size() == 0) {
+                throw new Exception("Failed to get Fabric version for pack containing JumpLoader");
+            }
 
-        APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
-                .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString)).asType(type);
-
-        Map<String, Object> loaderMeta = new HashMap<>();
-        loaderMeta.put("minecraft", curseForgeManifest.minecraft.version);
-        loaderMeta.put("version", forgeVersionInfo.getData().version);
-        loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
-        loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
-        loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
-        packVersion.loader.metadata = loaderMeta;
-
-        if (Utils.matchVersion(curseForgeManifest.minecraft.version, "1.13", false, true)) {
-            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.Forge113Loader";
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", packVersion.minecraft);
+            loaderMeta.put("loader", loaders.get(0).loader.version);
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
         } else {
-            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
+            CurseForgeModLoader forgeVersion = curseForgeManifest.minecraft.modLoaders.stream().filter(e -> e.primary)
+                    .findFirst().orElse(null);
+
+            if (forgeVersion == null) {
+                throw new Exception("Failed to find Forge version");
+            }
+
+            String forgeVersionString = forgeVersion.id.replace("forge-", "");
+
+            java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
+            }.getType();
+
+            APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString))
+                    .asType(type);
+
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", curseForgeManifest.minecraft.version);
+            loaderMeta.put("version", forgeVersionInfo.getData().version);
+            loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
+            loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
+            loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
+            packVersion.loader.metadata = loaderMeta;
+
+            if (Utils.matchVersion(curseForgeManifest.minecraft.version, "1.13", false, true)) {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.Forge113Loader";
+            } else {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
+            }
         }
 
         int[] projectIdsFound = curseForgeManifest.files.stream().mapToInt(file -> file.projectID).toArray();

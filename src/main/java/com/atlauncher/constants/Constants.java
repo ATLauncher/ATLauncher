@@ -75,6 +75,7 @@ public class Constants {
     public static final int CURSEFORGE_FABRIC_CATEGORY_ID = 4780;
     public static final int CURSEFORGE_PAGINATION_SIZE = 40;
     public static final int CURSEFORGE_FABRIC_MOD_ID = 306612;
+    public static final int CURSEFORGE_JUMPLOADER_MOD_ID = 361988;
     public static final int CURSEFORGE_MODS_SECTION_ID = 6;
     public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;

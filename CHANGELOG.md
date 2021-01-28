@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add icons when browsing mods/packs to add
 - Add in more options for add mod restrictions [#439]
 - Create installer and use optional jre [#443]
+- Packs on CurseForge using JumpLoader no longer use Forge [#444]
 
 ### Fixes
 - Dialog when installing file from CurseForge not showing progress
