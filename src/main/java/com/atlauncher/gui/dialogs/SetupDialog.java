@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -83,11 +84,13 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         languageLabel = new JLabel(GetText.tr("Language") + ": ");
         middle.add(languageLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         language = new JComboBox<>(Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
@@ -100,6 +103,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
 
         gbc.gridx = 0;
         gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "? ",
                 Utils.getIconImage("/assets/image/Help.png"),
@@ -109,6 +113,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         middle.add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableAnalytics = new JCheckBox();
         enableAnalytics.setSelected(!App.disableAnalytics);
