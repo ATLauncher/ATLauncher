@@ -23,5 +23,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Redact Authorization headers from debug logging
 - Close dialog after adding a mod to an instance
 - Fix adding mods failing when fingerprinting fails
+- When relaunching in debug mode, add the original arguments
 
 ### Misc

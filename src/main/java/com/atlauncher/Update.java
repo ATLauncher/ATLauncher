@@ -20,6 +20,7 @@ package com.atlauncher;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.atlauncher.utils.OS;
@@ -29,6 +30,8 @@ public class Update {
     public static void main(String[] args) {
         String launcherPath = args[0];
         String temporaryUpdatePath = args[1];
+        String[] otherArgs = Arrays.copyOfRange(args, 2, args.length);
+
         File launcher = new File(launcherPath);
         File temporaryUpdate = new File(temporaryUpdatePath);
         Utils.copyFile(temporaryUpdate, launcher.getParentFile());
@@ -58,6 +61,9 @@ public class Update {
         }
 
         arguments.add("--updated=true");
+
+        // pass in all the other arguments
+        arguments.addAll(Arrays.asList(otherArgs));
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(FileSystem.BASE_DIR.toFile());

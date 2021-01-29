@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Update;
 import com.atlauncher.constants.Constants;
@@ -535,6 +536,9 @@ public enum OS {
         if (!OS.isUsingMacApp()) {
             arguments.add(path);
         }
+
+        // pass in all the original arguments
+        arguments.addAll(Arrays.asList(App.PASSED_ARGS));
 
         if (args != null) {
             arguments.addAll(args);

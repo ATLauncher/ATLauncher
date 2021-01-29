@@ -99,6 +99,8 @@ import oshi.software.os.OperatingSystem;
  * application is launched.
  */
 public class App {
+    public static String[] PASSED_ARGS;
+
     /**
      * The taskpool used to quickly add in tasks to do in the background.
      */
@@ -271,6 +273,8 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
+        PASSED_ARGS = args;
+        
         // Parse all the command line arguments
         parseCommandLineArguments(args);
 

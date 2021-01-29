@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -269,6 +270,9 @@ public class Launcher {
         arguments.add("com.atlauncher.Update");
         arguments.add(currentPath);
         arguments.add(temporaryUpdatePath);
+
+        // pass in all the original arguments
+        arguments.addAll(Arrays.asList(App.PASSED_ARGS));
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(arguments);
