@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Create installer and use optional jre [#443]
 - Packs on CurseForge using JumpLoader no longer use Forge [#444]
 - Add OS information to Google Analytics
+- Use newer universalJavaApplicationStub for OSX app
 
 ### Fixes
 - Dialog when installing file from CurseForge not showing progress

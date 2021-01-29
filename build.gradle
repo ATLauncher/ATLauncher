@@ -20,6 +20,7 @@ plugins {
     id 'net.minecrell.licenser' version '0.4.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'com.adarshr.test-logger' version '2.1.1'
+    id 'de.undercouch.download' version '4.1.1'
 }
 
 apply plugin: 'org.mini2Dx.gettext'
@@ -198,6 +199,13 @@ task copyArtifacts(type: Copy) {
     into "${projectDir}/dist"
 }
 
+task downloadNewerUniversalJavaApplicationStub(type: Download) {
+    description 'Downloads newer universalJavaApplicationStub'
+    src 'https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/475d0cfb5f76896a7ab367c64bb4f628a46f0366/src/universalJavaApplicationStub'
+    dest file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub")
+    overwrite true
+}
+
 task createMacApp(type: Zip) {
     dependsOn createApp, shadowJar
     from("$buildDir/macApp") {
@@ -221,4 +229,4 @@ clean.doFirst {
 
 build.finalizedBy copyArtifacts
 shadowJar.dependsOn jar
-build.dependsOn createExe, createMacApp
+createApp.finalizedBy downloadNewerUniversalJavaApplicationStub
