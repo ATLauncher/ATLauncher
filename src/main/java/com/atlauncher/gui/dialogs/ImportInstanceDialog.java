@@ -169,7 +169,7 @@ public class ImportInstanceDialog extends JDialog {
             setVisible(false);
 
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Import Instance"), 0,
-                    GetText.tr("Import Instance"));
+                    GetText.tr("Import Instance"), this);
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {

@@ -365,7 +365,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Delete",
                         instance.getAnalyticsCategory());
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
-                        GetText.tr("Deleting Instance. Please wait..."), null);
+                        GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     InstanceManager.removeInstance(instance);
                     dialog.close();
@@ -511,7 +511,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
                             final String newName = clonedName;
                             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
-                                    GetText.tr("Cloning Instance. Please wait..."), null);
+                                    GetText.tr("Cloning Instance. Please wait..."), null, App.launcher.getParent());
                             dialog.addThread(new Thread(() -> {
                                 InstanceManager.cloneInstance(instance, newName);
                                 dialog.close();

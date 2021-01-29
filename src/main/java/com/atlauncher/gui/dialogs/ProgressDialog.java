@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -50,8 +51,8 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     private double downloadedBytes = 0; // Total number of bytes downloaded
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
-            boolean showProgressBar) {
-        super(App.launcher.getParent(), ModalityType.DOCUMENT_MODAL);
+            boolean showProgressBar, Window parent) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
         this.labelText = initLabelText;
         this.closedLogMessage = initClosedLogMessage;
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -96,9 +97,21 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
             }
         });
     }
+    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
+            boolean showProgressBar) {
+        this(title, initMax, initLabelText, initClosedLogMessage, showProgressBar, App.launcher.getParent());
+    }
+
+    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage, Window parent) {
+        this(title, initMax, initLabelText, initClosedLogMessage, true, parent);
+    }
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
         this(title, initMax, initLabelText, initClosedLogMessage, true);
+    }
+
+    public ProgressDialog(String title, int initMax, String initLabelText, Window parent) {
+        this(title, initMax, initLabelText, null, true, parent);
     }
 
     public ProgressDialog(String title, int initMax, String initLabelText) {
@@ -109,8 +122,8 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         this(title, 0, title, null, true);
     }
 
-    public ProgressDialog(String title, boolean showProgressBar) {
-        this(title, 0, title, null, showProgressBar);
+    public ProgressDialog(String title, boolean showProgressBar, Window parent) {
+        this(title, 0, title, null, showProgressBar, parent);
     }
 
     public void addThread(Thread thread) {

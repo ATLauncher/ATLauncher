@@ -220,7 +220,7 @@ public class EditModsDialog extends JDialog {
             }
 
             final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
-                    GetText.tr("Copying Mods"));
+                    GetText.tr("Copying Mods"), this);
 
             progressDialog.addThread(new Thread(() -> {
                 ArrayList<File> files = fcd.getChosenFiles();
@@ -373,7 +373,7 @@ public class EditModsDialog extends JDialog {
 
             if (files.size() != 0) {
                 final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
-                        GetText.tr("Scanning New Mods"));
+                        GetText.tr("Scanning New Mods"), this);
 
                 progressDialog.addThread(new Thread(() -> {
                     List<DisableableMod> mods = files.parallelStream()
@@ -487,7 +487,7 @@ public class EditModsDialog extends JDialog {
         mods.addAll(disabledMods);
 
         ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Checking For Updates"), mods.size(),
-                GetText.tr("Checking For Updates"));
+                GetText.tr("Checking For Updates"), this);
         progressDialog.addThread(new Thread(() -> {
             for (ModsJCheckBox mod : mods) {
                 if (mod.isSelected() && mod.getDisableableMod().isUpdatable()) {

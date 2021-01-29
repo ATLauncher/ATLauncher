@@ -147,7 +147,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
             ProgressDialog progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
-                    GetText.tr("Installing {0}", version.name), true);
+                    GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
                 Analytics.sendEvent(mod.title + " - " + version.name, "AddFile", "ModrinthMod");
                 instance.addFileFromModrinth(mod, version, progressDialog);

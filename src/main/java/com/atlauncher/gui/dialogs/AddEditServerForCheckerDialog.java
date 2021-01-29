@@ -169,7 +169,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
                 final int port = Integer.parseInt(serverPort.getText().replaceAll("[^0-9]", ""));
 
                 final ProgressDialog<QueryVersion> dialog = new ProgressDialog<>(GetText.tr("Checking Server"), 0,
-                        GetText.tr("Checking Server"), "Cancelled Server Check!");
+                        GetText.tr("Checking Server"), "Cancelled Server Check!", this);
                 dialog.addThread(new Thread(() -> {
                     dialog.setReturnValue(MCQuery.getMinecraftServerQueryVersion(host, port));
                     dialog.close();

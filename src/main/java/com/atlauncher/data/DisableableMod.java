@@ -323,7 +323,7 @@ public class DisableableMod implements Serializable {
 
             ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(
                     GetText.tr("Checking For Update On CurseForge"), 0, GetText.tr("Checking For Update On CurseForge"),
-                    "Cancelled checking for update on CurseForge");
+                    "Cancelled checking for update on CurseForge", parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
                 dialog.close();
@@ -333,7 +333,7 @@ public class DisableableMod implements Serializable {
             new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
         } else if (isFromModrinth()) {
             ProgressDialog<List<Object>> dialog = new ProgressDialog<>(GetText.tr("Checking For Update On Modrinth"), 0,
-                    GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth");
+                    GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth", parent);
             dialog.addThread(new Thread(() -> {
                 ModrinthMod mod = ModrinthApi.getMod(modrinthMod.id);
                 List<ModrinthVersion> versions = ModrinthApi.getVersions(mod.versions);
@@ -342,8 +342,7 @@ public class DisableableMod implements Serializable {
                         .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    versionsStream = versionsStream.filter(
-                            v -> v.gameVersions.contains(instance.id));
+                    versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instance.id));
                 }
 
                 if (versionsStream.noneMatch(v -> Date.from(Instant.parse(v.datePublished))
@@ -380,7 +379,7 @@ public class DisableableMod implements Serializable {
 
         if (isFromCurseForge()) {
             ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(GetText.tr("Getting Files From CurseForge"),
-                    0, GetText.tr("Getting Files From CurseForge"), "Cancelled getting files from CurseForge");
+                    0, GetText.tr("Getting Files From CurseForge"), "Cancelled getting files from CurseForge", parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
                 dialog.close();
@@ -390,7 +389,7 @@ public class DisableableMod implements Serializable {
             new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
         } else if (isFromModrinth()) {
             ProgressDialog<ModrinthMod> dialog = new ProgressDialog<>(GetText.tr("Getting Files From Modrinth"), 0,
-                    GetText.tr("Getting Files From Modrinth"), "Cancelled getting files from Modrinth");
+                    GetText.tr("Getting Files From Modrinth"), "Cancelled getting files from Modrinth", parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(ModrinthApi.getMod(modrinthMod.id));
                 dialog.close();

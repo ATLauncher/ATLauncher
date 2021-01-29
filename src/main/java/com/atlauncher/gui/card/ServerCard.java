@@ -197,7 +197,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent(server.pack + " - " + server.version, "Delete", "Server");
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Server"), 0,
-                        GetText.tr("Deleting Server. Please wait..."), null);
+                        GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     ServerManager.removeServer(server);
                     dialog.close();

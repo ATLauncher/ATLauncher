@@ -119,7 +119,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             }
 
             final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
-                    GetText.tr("Copying Mods"));
+                    GetText.tr("Copying Mods"), dialog);
 
             progressDialog.addThread(new Thread(() -> {
                 for (Object item : data) {

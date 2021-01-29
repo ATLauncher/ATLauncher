@@ -152,7 +152,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             ProgressDialog progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
-                    GetText.tr("Installing {0}", file.displayName), false);
+                    GetText.tr("Installing {0}", file.displayName), false, this);
             progressDialog.addThread(new Thread(() -> {
                 Analytics.sendEvent(mod.name + " - " + file.displayName, "AddFile", "CurseForgeMod");
                 instance.addFileFromCurse(mod, file, progressDialog);

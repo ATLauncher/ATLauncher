@@ -737,7 +737,7 @@ public class InstanceInstallerDialog extends JDialog {
         if (instance.isModpacksChPack()) {
             final ProgressDialog<ModpacksChPackManifest> dialog = new ProgressDialog<>(
                     GetText.tr("Downloading Pack Manifest"), 0, GetText.tr("Downloading Pack Manifest"),
-                    "Cancelled downloading modpacks.ch pack manifest");
+                    "Cancelled downloading modpacks.ch pack manifest", this);
             dialog.addThread(new Thread(() -> {
                 ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,

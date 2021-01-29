@@ -241,7 +241,7 @@ public class InstanceExportDialog extends JDialog {
         JButton exportButton = new JButton(GetText.tr("Export"));
         exportButton.addActionListener(arg0 -> {
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Exporting Instance"), 0,
-                    GetText.tr("Exporting Instance. Please wait..."), null);
+                    GetText.tr("Exporting Instance. Please wait..."), null, this);
 
             dialog.addThread(new Thread(() -> {
                 if (instance.exportAsCurseZip(name.getText(), version.getText(), author.getText(), saveTo.getText(),

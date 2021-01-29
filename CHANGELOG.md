@@ -25,5 +25,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Close dialog after adding a mod to an instance
 - Fix adding mods failing when fingerprinting fails
 - When relaunching in debug mode, add the original arguments
+- Some dialogs not showing on top in OSX correctly
 
 ### Misc
