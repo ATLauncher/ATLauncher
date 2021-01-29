@@ -1,0 +1,12 @@
+[Desktop Entry]
+Categories=Game;
+Exec=/opt/atlauncher/run.sh
+Icon=/opt/atlauncher/icon.svg
+Keywords=game;Minecraft;
+MimeType=
+Name=ATLauncher
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
