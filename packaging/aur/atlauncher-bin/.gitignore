@@ -1,0 +1,5 @@
+pkg/*
+src/*
+atlauncher-*.pkg.tar.*
+atlauncher-*.jar
+jar

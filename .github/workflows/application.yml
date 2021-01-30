@@ -167,7 +167,7 @@ jobs:
           echo "${NEW_VERSION}.Beta" > src/main/resources/version
 
       - name: Commit new version/CHANGELOG file
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@v7.0.0
         if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         with:
           add: 'CHANGELOG.md src/main/resources/version'

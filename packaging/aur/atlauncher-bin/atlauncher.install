@@ -1,0 +1,16 @@
+# This is a default template for a post-install scriptlet.
+# Uncomment only required functions and remove any functions
+# you don't need (and this header).
+
+## arg 1:  the new package version
+post_install() {
+    echo ">>> PACKAGES NOTES"
+    echo ">>> --------------"
+    echo ">>> This launcher requires you to login with a valid minecraft.net account to be"
+    echo ">>> able to install mod packs and play minecraft."
+    echo ">>> To create an account, connect to https://www.minecraft.net/store/minecraft-java-edition"
+    echo ">>> and buy the full game. You should then be able to log in and play."
+    echo ">>> --------------"
+}
+
+# vim:set ts=2 sw=2 et:

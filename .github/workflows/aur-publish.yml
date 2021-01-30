@@ -1,0 +1,49 @@
+name: aur-publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  aur-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Remove v from the release
+        id: clean-version
+        uses: frabert/replace-string-action@v1.2
+        with:
+          string: ${{ env.GITHUB_REF }}
+          pattern: 'v([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)'
+          replace-with: '$1'
+
+      - name: Publish atlauncher AUR package
+        uses: ./.github/actions/publish-to-aur
+        with:
+          version: ${{ steps.clean-version.outputs.replaced }}
+          copyFiles: ./packaging/aur/common
+          workingDir: ./packaging/aur/atlauncher
+          packageName: atlauncher
+          aurUsername: ${{ secrets.AUR_USERNAME }}
+          aurEmail: ${{ secrets.AUR_EMAIL }}
+          aurSshPrivateKey: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          aurCommitMessage: Update to version ${{ steps.clean-version.outputs.replaced }}
+
+      - name: Publish atlauncher-bin AUR package
+        uses: ./.github/actions/publish-to-aur
+        with:
+          version: ${{ steps.clean-version.outputs.replaced }}
+          copyFiles: ./packaging/aur/common
+          workingDir: ./packaging/aur/atlauncher-bin
+          packageName: atlauncher-bin
+          aurUsername: ${{ secrets.AUR_USERNAME }}
+          aurEmail: ${{ secrets.AUR_EMAIL }}
+          aurSshPrivateKey: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          aurCommitMessage: Update to version ${{ steps.clean-version.outputs.replaced }}
+
+      - name: Commit changed files
+        uses: EndBug/add-and-commit@v7.0.0
+        with:
+          add: 'packaging/aur/'
+          message: 'chore: update aur packages'

@@ -1,0 +1,30 @@
+name: 'Build & Publish a package to AUR'
+description: 'Build & Publish a package to AUR'
+branding:
+  icon: user-check
+  color: gray-dark
+inputs:
+  version:
+    description: 'The version'
+    required: true
+  workingDir:
+    description: 'The directory to work in'
+    required: true
+  packageName:
+    description: 'The name of the package to publish to'
+    required: true
+  aurUsername:
+    description: 'The username for the AUR user to publish as'
+    required: true
+  aurEmail:
+    description: 'The email for the AUR user to publish as'
+    required: true
+  aurSshPrivateKey:
+    description: 'The private SSH key for the AUR user to publish as'
+    required: true
+  aurCommitMessage:
+    description: 'The commit message to send to AUR when publishing'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

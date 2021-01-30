@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+
+# fix for users of special IM modules
+unset XMODIFIERS GTK_IM_MODULE QT_IM_MODULE
+
+mkdir -p "${HOME}/.local/share/atlauncher"
+cd "${HOME}/.local/share/atlauncher"
+cp -u /usr/share/java/atlauncher/ATLauncher.jar .
+
+# disable launcher updates since we're managing updates through AUR
+exec java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -jar ATLauncher.jar --no-launcher-update "$@" >/dev/null

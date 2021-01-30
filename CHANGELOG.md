@@ -28,3 +28,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Some dialogs not showing on top in OSX correctly
 
 ### Misc
+- Add in automatic publishing of AUR packages on release

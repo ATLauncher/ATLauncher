@@ -20,6 +20,10 @@ cache/
 # OS X
 .DS_Store
 
+# ACT
+.actrc
+.secrets
+
 # Other
 java_pid*.hprof
 *.log
