@@ -24,14 +24,18 @@ OutputBaseFilename={#MyAppName}-setup
 UninstallDisplayIcon={app}\{#MyAppName}.exe
 UninstallDisplayName={#MyAppName}
 WizardStyle=modern
+ChangesAssociations=yes
 
 [Run]
 Filename: {tmp}\7za.exe; Parameters: "x ""{tmp}\jre.zip"" -o""{app}\"" * -r -aoa"; Flags: runhidden runascurrentuser; Components: java
 Filename: {app}\{#MyAppName}.exe; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: nowait postinstall skipifsilent
 
+[Tasks]
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
+
 [Files]
 Source: "7za.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
-Source: "{tmp}\{#MyAppName}.exe"; DestDir: "{app}"; Flags: external
+Source: "{tmp}\{#MyAppName}.exe"; DestDir: "{app}"; Flags: external ignoreversion
 Source: "{tmp}\jre.zip"; DestDir: "{tmp}"; Flags: external deleteafterinstall; Components: java
 
 [Components]
@@ -43,6 +47,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe"
+Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe"; Tasks: desktopicon
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [UninstallDelete]
