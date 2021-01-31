@@ -1,11 +1,11 @@
 [Desktop Entry]
 Categories=Game;
 Exec=/opt/atlauncher/run.sh
-Icon=/opt/atlauncher/icon.svg
+Icon=atlauncher
 Keywords=game;Minecraft;
 MimeType=
 Name=ATLauncher
-Comment=A Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
+Comment=A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
 Path=
 StartupNotify=true
 Terminal=false

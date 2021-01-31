@@ -6,5 +6,5 @@ Architecture: all
 Depends: default-jre-headless | java8-runtime-headless | java8-runtime | java-8-runtime, wget, desktop-file-utils
 Installed-Size: 2220
 Maintainer: Ryan Dowling <ryan.dowling@atlauncher.com>
-Description: ATLauncher is a Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly.
+Description: A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
 Homepage: https://atlauncher.com

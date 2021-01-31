@@ -13,6 +13,7 @@
         "mrorz.language-gettext",
         "aaron-bond.better-comments",
         "mathiasfrohlich.kotlin",
-        "idleberg.innosetup"
+        "idleberg.innosetup",
+        "laurenttreguier.rpm-spec"
     ]
 }

@@ -7,8 +7,8 @@ pkgname=atlauncher
 _upstreamname=ATLauncher
 pkgrel=1
 pkgver=3.4.2.6
-pkgdesc="A Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install
-ModPacks easily and quickly."
+pkgdesc="A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install
+modpacks easily and quickly."
 arch=('any')
 url="https://github.com/ATLauncher/ATLauncher"
 license=('GPL3')

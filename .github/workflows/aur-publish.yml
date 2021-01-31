@@ -22,7 +22,6 @@ jobs:
         uses: ./.github/actions/publish-to-aur
         with:
           version: ${{ steps.clean-version.outputs.replaced }}
-          copyFiles: ./packaging/aur/common
           workingDir: ./packaging/aur/atlauncher
           packageName: atlauncher
           aurUsername: ${{ secrets.AUR_USERNAME }}
@@ -34,7 +33,6 @@ jobs:
         uses: ./.github/actions/publish-to-aur
         with:
           version: ${{ steps.clean-version.outputs.replaced }}
-          copyFiles: ./packaging/aur/common
           workingDir: ./packaging/aur/atlauncher-bin
           packageName: atlauncher-bin
           aurUsername: ${{ secrets.AUR_USERNAME }}

@@ -15,6 +15,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add OS information to Google Analytics
 - Use newer universalJavaApplicationStub for OSX app
 - Add in debian packaging
+- Add in RPM packaging
 
 ### Fixes
 - Dialog when installing file from CurseForge not showing progress
