@@ -259,9 +259,9 @@ public class Instance extends MinecraftVersion {
                 version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
             } else if (isCurseForgePack()) {
                 version = Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id);
+            } else {
+                return;
             }
-
-            return;
         } else {
             if (this.launcher.isDev) {
                 version = getLatestVersion().hash;
