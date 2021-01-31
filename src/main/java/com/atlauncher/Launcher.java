@@ -361,7 +361,7 @@ public class Launcher {
         return downloads.stream().anyMatch(com.atlauncher.network.Download::needToDownload);
     }
 
-    private void checkForExternalPackUpdates() {
+    public void checkForExternalPackUpdates() {
         if (updateThread != null && updateThread.isAlive()) {
             updateThread.interrupt();
         }

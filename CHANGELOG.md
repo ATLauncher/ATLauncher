@@ -27,6 +27,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - When relaunching in debug mode, add the original arguments
 - Some dialogs not showing on top in OSX correctly
 - External pack instances not saving don't update preference
+- Installing/reinstalling/updating external pack not showing updates
 
 ### Misc
 - Add in automatic publishing of AUR packages on release

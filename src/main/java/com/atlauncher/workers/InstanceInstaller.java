@@ -90,9 +90,11 @@ import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -921,6 +923,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         InstanceManager.getInstances().add(instance);
+
+        // after adding, check for updates if an external pack
+        if (instance.isExternalPack()) {
+            App.launcher.checkForExternalPackUpdates();
+        }
 
         App.launcher.reloadInstancesPanel();
     }
