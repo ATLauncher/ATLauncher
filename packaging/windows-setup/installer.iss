@@ -50,6 +50,9 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe"
 Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe"; Tasks: desktopicon
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
+[InstallDelete]
+Type: filesandordirs; Name: "{app}\jre"; Components: java
+
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\jre"; Components: java
 
