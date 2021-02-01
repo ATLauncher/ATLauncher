@@ -1,6 +1,6 @@
 [Desktop Entry]
 Categories=Game;
-Exec=/opt/atlauncher/run.sh
+Exec=atlauncher
 Icon=atlauncher
 Keywords=game;Minecraft;
 MimeType=

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 INSTDIR="${XDG_DATA_HOME-$HOME/.local/share}/atlauncher"
 
@@ -12,4 +13,4 @@ if [[ ! -f ${INSTDIR}/ATLauncher.jar ]]; then
     wget "https://download.nodecdn.net/containers/atl/ATLauncher.jar" 2>&1
 fi
 
-java -jar ATLauncher.jar "$@"
+exec java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -jar ATLauncher.jar "$@"

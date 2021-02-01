@@ -28,8 +28,8 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/atlauncher.met
 desktop-file-validate %{buildroot}/%{_datadir}/applications/atlauncher.desktop
 
 %install
-mkdir -p %{buildroot}/opt/atlauncher
-install -m 0755 run.sh %{buildroot}/opt/atlauncher/run.sh
+mkdir -p %{buildroot}/usr/bin
+install -m 0755 atlauncher %{buildroot}/usr/bin/atlauncher
 
 mkdir -p %{buildroot}/usr/share/pixmaps
 install -m 0644 atlauncher.png %{buildroot}/usr/share/pixmaps/atlauncher.png
@@ -44,8 +44,7 @@ mkdir -p %{buildroot}/%{_metainfodir}
 install -m 0644 atlauncher.metainfo.xml %{buildroot}/%{_metainfodir}/atlauncher.metainfo.xml
 
 %files
-%dir /opt/atlauncher
-/opt/atlauncher/run.sh
+/usr/bin/atlauncher
 /usr/share/pixmaps/atlauncher.png
 /usr/share/icons/hicolor/scalable/apps/atlauncher.svg
 %{_datadir}/applications/atlauncher.desktop
