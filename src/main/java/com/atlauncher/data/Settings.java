@@ -301,6 +301,8 @@ public class Settings {
     }
 
     public void validate() {
+        validateAnalyticsClientId();
+
         validateWindowSettings();
 
         validateDisableAddModRestrictions();
@@ -318,6 +320,16 @@ public class Settings {
         validateConcurrentConnections();
 
         validateDateFormat();
+    }
+
+    private void validateAnalyticsClientId() {
+        // people are sharing configs around with a static id or with null which means
+        // it's hard to see actual usage, so randomise if enabled
+        if (enableAnalytics && (analyticsClientId == null
+                || analyticsClientId.equalsIgnoreCase("30662333-d88f-4e21-8d77-95739af9bf78"))) {
+            analyticsClientId = UUID.randomUUID().toString();
+            save();
+        }
     }
 
     private void validateWindowSettings() {
