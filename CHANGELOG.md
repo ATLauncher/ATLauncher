@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.3.1
 
 ### New Features
+- Add in Download Clearer tool to remove up old downloads
 
 ### Fixes
 
