@@ -36,18 +36,10 @@ If applicable, add logs to help explain your problem.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information, or remove if not applicable):**
+**System information (please complete the following information, or remove if not applicable):**
 
-- OS: [e.g. iOS]
-- Browser [e.g. chrome, safari]
-- Version [e.g. 22]
-
-**Smartphone (please complete the following information, or remove if not applicable):**
-
-- Device: [e.g. iPhone6]
-- OS: [e.g. iOS8.1]
-- Browser [e.g. stock browser, safari]
-- Version [e.g. 22]
+- OS (including distro/version): [e.g. Windows 10, OSX Big Sur, Arch Linux]
+- Java Version: [e.g. Java 8, Amazon Coretto 8]
 
 **Additional context**
 Add any other context about the problem here.
