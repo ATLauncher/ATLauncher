@@ -18,7 +18,6 @@
 package com.atlauncher.utils.javafinder;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -63,7 +62,7 @@ public class JavaInfo {
 
         try {
             this.isRuntime = Files.isSameFile(FileSystem.RUNTIMES, Paths.get(this.rootPath).getParent());
-        } catch (IOException e) {
+        } catch (Exception e) {
             this.isRuntime = false;
         }
     }
