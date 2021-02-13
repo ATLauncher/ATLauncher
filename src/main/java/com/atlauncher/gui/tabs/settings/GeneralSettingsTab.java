@@ -121,6 +121,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         theme.addItem(new ComboItem<>("com.atlauncher.themes.ArcOrange", "Arc Orange"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.CyanLight", "Cyan Light"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.HighTechDarkness", "High Tech Darkness"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.OneDark", "One Dark"));
 
         for (int i = 0; i < theme.getItemCount(); i++) {
             ComboItem<String> item = theme.getItemAt(i);
