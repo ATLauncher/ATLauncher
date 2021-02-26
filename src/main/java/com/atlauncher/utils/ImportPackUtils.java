@@ -53,22 +53,26 @@ public class ImportPackUtils {
     }
 
     public static boolean loadFromFile(File file) {
-        if (ZipUtil.containsEntry(file, "manifest.json")) {
-            return loadCurseForgeFormat(file, null, null);
+        try {
+            if (ZipUtil.containsEntry(file, "manifest.json")) {
+                return loadCurseForgeFormat(file, null, null);
+            }
+
+            Path tmpDir = FileSystem.TEMP.resolve("multimcimport" + file.getName().toString().toLowerCase());
+
+            ZipUtil.unpack(file, tmpDir.toFile());
+
+            if (tmpDir.toFile().list().length == 1
+                    && ZipUtil.containsEntry(file, tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
+                return loadMultiMCFormat(tmpDir.resolve(tmpDir.toFile().list()[0]));
+            }
+
+            FileUtils.deleteDirectory(tmpDir);
+
+            LogManager.error("Unknown format for importing");
+        } catch (Throwable t) {
+            LogManager.logStackTrace("Error in zip file for import", t);
         }
-
-        Path tmpDir = FileSystem.TEMP.resolve("multimcimport" + file.getName().toString().toLowerCase());
-
-        ZipUtil.unpack(file, tmpDir.toFile());
-
-        if (tmpDir.toFile().list().length == 1
-                && ZipUtil.containsEntry(file, tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
-            return loadMultiMCFormat(tmpDir.resolve(tmpDir.toFile().list()[0]));
-        }
-
-        FileUtils.deleteDirectory(tmpDir);
-
-        LogManager.error("Unknown format for importing");
 
         return false;
     }
@@ -82,8 +86,8 @@ public class ImportPackUtils {
         Path tmpDir = FileSystem.TEMP.resolve("curseforgeimport" + file.getName().toString().toLowerCase());
 
         try {
-            CurseForgeManifest manifest = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")),
-                    CurseForgeManifest.class);
+            CurseForgeManifest manifest = Gsons.MINECRAFT
+                    .fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")), CurseForgeManifest.class);
 
             if (projectId != null) {
                 manifest.projectID = projectId;

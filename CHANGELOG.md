@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - The check for isRuntime in JavaInfo throwing NPE
+- Fix using native dialog not applying to instance import [#446]
 
 ### Misc
 - Regenerate known shared/broken analytics client ids

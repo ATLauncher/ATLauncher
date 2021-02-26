@@ -18,12 +18,14 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -130,30 +132,50 @@ public class ImportInstanceDialog extends JDialog {
 
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(FileSystem.USER_DOWNLOADS.toFile());
-            chooser.setDialogTitle(GetText.tr("Select"));
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.setAcceptAllFileFilterUsed(false);
-            chooser.setFileFilter(new FileFilter() {
-                @Override
-                public String getDescription() {
-                    return "Modpack Export (.zip)";
-                }
+            if (App.settings.useNativeFilePicker) {
+                FileDialog fileDialog = new FileDialog(this, GetText.tr("Select file/s"), FileDialog.LOAD);
+                fileDialog.setFilenameFilter(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File f, String name) {
+                        if (f.isDirectory()) {
+                            return true;
+                        }
 
-                @Override
-                public boolean accept(File f) {
-                    if (f.isDirectory()) {
-                        return true;
+                        return f.getName().endsWith(".zip");
+                    }
+                });
+                fileDialog.setVisible(true);
+
+                if (fileDialog.getFiles().length != 0) {
+                    filePath.setText(fileDialog.getFiles()[0].getAbsolutePath());
+                    changeAddButtonStatus();
+                }
+            } else {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setCurrentDirectory(FileSystem.USER_DOWNLOADS.toFile());
+                chooser.setDialogTitle(GetText.tr("Select"));
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                chooser.setAcceptAllFileFilterUsed(false);
+                chooser.setFileFilter(new FileFilter() {
+                    @Override
+                    public String getDescription() {
+                        return "Modpack Export (.zip)";
                     }
 
-                    return f.getName().endsWith(".zip");
-                }
-            });
+                    @Override
+                    public boolean accept(File f) {
+                        if (f.isDirectory()) {
+                            return true;
+                        }
 
-            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                filePath.setText(chooser.getSelectedFile().getAbsolutePath());
-                changeAddButtonStatus();
+                        return f.getName().endsWith(".zip");
+                    }
+                });
+
+                if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    filePath.setText(chooser.getSelectedFile().getAbsolutePath());
+                    changeAddButtonStatus();
+                }
             }
         });
         filePathPanel.add(browseButton);
@@ -187,12 +209,12 @@ public class ImportInstanceDialog extends JDialog {
             dialog.start();
 
             if (!dialog.getReturnValue()) {
-                setVisible(true);
                 DialogManager.okDialog().setTitle(GetText.tr("Failed To Import Instance"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "An error occured when trying to import an instance.<br/><br/>Check the console for more information."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
+                setVisible(true);
             } else {
                 dispose();
             }
