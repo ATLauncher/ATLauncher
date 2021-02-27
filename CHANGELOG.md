@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in Download Clearer tool to remove up old downloads
+- Add in text field with login url on Microsoft login dialog [#453]
 
 ### Fixes
 - The check for isRuntime in JavaInfo throwing NPE
