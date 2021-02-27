@@ -870,6 +870,14 @@ public class InstanceInstallerDialog extends JDialog {
             return;
         }
 
+        if (item.loaderType.equalsIgnoreCase("forge")) {
+            loaderVersionLabel.setText(GetText.tr("Forge Version") + ": ");
+        } else if (item.loaderType.equalsIgnoreCase("fabric")) {
+            loaderVersionLabel.setText(GetText.tr("Fabric Version") + ": ");
+        } else {
+            loaderVersionLabel.setText(GetText.tr("Loader Version") + ": ");
+        }
+
         loaderVersionsDropDown.setEnabled(false);
         loaderVersions.clear();
 
@@ -938,7 +946,8 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        loaderVersionLabel = new JLabel(GetText.tr("Loader Version") + ": ");
+        loaderVersionLabel = new JLabel();
+
         middle.add(loaderVersionLabel, gbc);
 
         gbc.gridx++;

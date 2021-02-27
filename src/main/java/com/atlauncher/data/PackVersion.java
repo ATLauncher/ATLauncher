@@ -28,6 +28,7 @@ public class PackVersion {
     public boolean isDev = false;
     public boolean hasLoader = false;
     public boolean hasChoosableLoader = false;
+    public String loaderType;
     public transient Integer _modpacksChId = null;
     public transient CurseForgeFile _curseForgeFile = null;
 

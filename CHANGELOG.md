@@ -3,11 +3,12 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.4.0
+## 3.4.3.1
 
 ### New Features
 - Add in Download Clearer tool to remove up old downloads
 - Add in text field with login url on Microsoft login dialog [#453]
+- When using a choosable loader, show the name of the loader
 
 ### Fixes
 - The check for isRuntime in JavaInfo throwing NPE
