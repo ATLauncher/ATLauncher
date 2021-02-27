@@ -70,6 +70,10 @@ public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
             packVersion.hasChoosableLoader = rootJsonObject.get("hasChoosableLoader").getAsBoolean();
         }
 
+        if (rootJsonObject.has("loaderType")) {
+            packVersion.loaderType = rootJsonObject.get("loaderType").getAsString();
+        }
+
         return packVersion;
     }
 }

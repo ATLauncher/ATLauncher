@@ -870,9 +870,9 @@ public class InstanceInstallerDialog extends JDialog {
             return;
         }
 
-        if (item.loaderType.equalsIgnoreCase("forge")) {
+        if (item.loaderType != null && item.loaderType.equalsIgnoreCase("forge")) {
             loaderVersionLabel.setText(GetText.tr("Forge Version") + ": ");
-        } else if (item.loaderType.equalsIgnoreCase("fabric")) {
+        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("fabric")) {
             loaderVersionLabel.setText(GetText.tr("Fabric Version") + ": ");
         } else {
             loaderVersionLabel.setText(GetText.tr("Loader Version") + ": ");
