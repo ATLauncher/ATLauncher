@@ -58,7 +58,7 @@ public class ServerListForCheckerDialog extends JDialog implements ActionListene
         setSize(400, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        setIconImage(Utils.getImage("/assets/image/icon.png"));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
         JTabbedPane TABBED_PANE = new JTabbedPane(JTabbedPane.TOP);

@@ -59,7 +59,7 @@ public class InstanceExportDialog extends JDialog {
     private final JPanel topPanel = new JPanel();
     private final JPanel bottomPanel = new JPanel();
 
-    final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
+    final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
 
     final GridBagConstraints gbc = new GridBagConstraints();
 

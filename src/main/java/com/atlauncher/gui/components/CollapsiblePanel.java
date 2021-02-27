@@ -250,10 +250,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
      */
     private ImageIcon[] createExpandAndCollapseIcon() {
         ImageIcon[] iconArrow = new ImageIcon[2];
-        iconArrow[COLLAPSED] = Utils
-                .getIconImage("/assets/image/icons/collapsed" + (App.THEME.isDark() ? "-dark" : "") + ".png");
-        iconArrow[EXPANDED] = Utils
-                .getIconImage("/assets/image/icons/expanded" + (App.THEME.isDark() ? "-dark" : "") + ".png");
+        iconArrow[COLLAPSED] = Utils.getIconImage(App.THEME.getIconPath("collapsed"));
+        iconArrow[EXPANDED] = Utils.getIconImage(App.THEME.getIconPath("expanded"));
         return iconArrow;
     }
 

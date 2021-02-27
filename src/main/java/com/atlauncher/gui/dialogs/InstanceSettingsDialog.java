@@ -61,9 +61,9 @@ public class InstanceSettingsDialog extends JDialog {
     private final JPanel topPanel = new JPanel();
     private final JPanel bottomPanel = new JPanel();
 
-    final ImageIcon HELP_ICON = Utils.getIconImage("/assets/image/Help.png");
-    final ImageIcon ERROR_ICON = Utils.getIconImage("/assets/image/Error.png");
-    final ImageIcon WARNING_ICON = Utils.getIconImage("/assets/image/Warning.png");
+    final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
+    final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
+    final ImageIcon WARNING_ICON = Utils.getIconImage(App.THEME.getIconPath("warning"));
 
     final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
 

@@ -509,7 +509,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.dateFormat = ((ComboItem<String>) dateFormat.getSelectedItem()).getValue();
         App.settings.selectedTabOnStartup = ((ComboItem<Integer>) selectedTabOnStartup.getSelectedItem()).getValue();
         App.settings.defaultModPlatform = ((ComboItem<String>) defaultModPlatform.getSelectedItem()).getValue();
-        App.settings.addModRestriction = ((ComboItem<AddModRestriction>) addModRestriction.getSelectedItem()).getValue();
+        App.settings.addModRestriction = ((ComboItem<AddModRestriction>) addModRestriction.getSelectedItem())
+                .getValue();
         App.settings.sortPacksAlphabetically = sortPacksAlphabetically.isSelected();
         App.settings.showPackNameAndVersion = showPackNameAndVersion.isSelected();
         App.settings.keepLauncherOpen = keepLauncherOpen.isSelected();

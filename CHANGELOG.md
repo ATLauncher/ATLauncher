@@ -3,7 +3,7 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.3.1
+## 3.4.4.0
 
 ### New Features
 - Add in Download Clearer tool to remove up old downloads
@@ -18,3 +18,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Misc
 - Regenerate known shared/broken analytics client ids
 - Add svg icon for AUR packages and remove hardcoded path [#448]
+- Change images/icons and arrange them better for themes

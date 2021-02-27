@@ -70,7 +70,7 @@ public final class FTBPackCard extends JPanel {
         summary.setWrapStyleWord(true);
         summary.setEditable(false);
 
-        JLabel icon = new JLabel(Utils.getIconImage("/assets/image/NoIcon.png"));
+        JLabel icon = new JLabel(Utils.getIconImage("/assets/image/no-icon.png"));
         icon.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         icon.setVisible(false);
 

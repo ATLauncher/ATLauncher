@@ -274,7 +274,7 @@ public class App {
      */
     public static void main(String[] args) {
         PASSED_ARGS = args;
-        
+
         // Parse all the command line arguments
         parseCommandLineArguments(args);
 
@@ -604,7 +604,7 @@ public class App {
                 Method getApplication = util.getMethod("getApplication");
                 Object application = getApplication.invoke(util);
                 Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
-                setDockIconImage.invoke(application, Utils.getImage("/assets/image/Icon.png"));
+                setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon.png"));
             } catch (Exception ex) {
                 LogManager.logStackTrace("Failed to set dock icon", ex);
             }
@@ -764,7 +764,7 @@ public class App {
     private static void trySystemTrayIntegration() throws Exception {
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
-            trayIcon = new TrayIcon(Utils.getImage("/assets/image/Icon.png"));
+            trayIcon = new TrayIcon(Utils.getImage("/assets/image/icon.png"));
 
             trayIcon.addMouseListener(new MouseAdapter() {
                 @Override

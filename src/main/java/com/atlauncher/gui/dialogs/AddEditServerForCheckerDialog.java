@@ -66,7 +66,7 @@ public class AddEditServerForCheckerDialog extends JDialog implements ActionList
         setSize(300, 200);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        setIconImage(Utils.getImage("/assets/image/icon.png"));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 

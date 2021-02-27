@@ -73,7 +73,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(true);
         setLayout(new BorderLayout());
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        setIconImage(Utils.getImage("/assets/image/icon.png"));
 
         setMinimumSize(new Dimension(1200, 700));
         setLocationRelativeTo(null);

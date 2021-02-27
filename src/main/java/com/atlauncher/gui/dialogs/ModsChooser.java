@@ -68,7 +68,7 @@ public class ModsChooser extends JDialog {
 
         Analytics.sendScreenView("Mods Chooser Dialog");
 
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        setIconImage(Utils.getImage("/assets/image/icon.png"));
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);

@@ -196,7 +196,7 @@ public class Server {
             return Utils.getIconImage(instancesImage);
         }
 
-        return Utils.getIconImage("/assets/image/DefaultPackImage.png");
+        return Utils.getIconImage("/assets/image/default-image.png");
     }
 
     public void save() {

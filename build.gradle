@@ -89,7 +89,7 @@ test {
 jar {
     manifest {
         attributes(
-                'SplashScreen-Image': '/assets/image/SplashScreen.png',
+                'SplashScreen-Image': '/assets/image/splash-screen.png',
                 'Implementation-Title': project.name,
                 'Implementation-Version': version,
                 'Implementation-Vender': 'ATLauncher',
@@ -144,7 +144,7 @@ macAppBundle {
     appStyle = 'universalJavaApplicationStub'
     runtimeConfigurationName = 'shadow'
     jarTask = 'shadowJar'
-    icon = 'src/main/resources/assets/image/Icon.icns'
+    icon = 'src/main/resources/assets/image/icon.icns'
     javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
     javaProperties.put('apple.laf.useScreenMenuBar', 'true')
     javaExtras.put("-Djna.nosys", "true")
@@ -169,7 +169,7 @@ launch4j {
     outfile = "ATLauncher-${project.version}.exe"
     jreMinVersion = "${project.targetCompatibility.toString()}"
     mainClassName = 'com.atlauncher.App'
-    icon = "${projectDir}/src/main/resources/assets/image/Icon.ico"
+    icon = "${projectDir}/src/main/resources/assets/image/icon.ico"
     initialHeapPercent = 5
     maxHeapPercent = 100
     version = "${project.version}"

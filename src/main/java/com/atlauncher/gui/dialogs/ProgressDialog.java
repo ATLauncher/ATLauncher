@@ -56,7 +56,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         this.labelText = initLabelText;
         this.closedLogMessage = initClosedLogMessage;
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        setIconImage(Utils.getImage("/assets/image/Icon.png"));
+        setIconImage(Utils.getImage("/assets/image/icon.png"));
         setSize(300, 100);
         setTitle(title);
         setLocationRelativeTo(App.launcher.getParent());

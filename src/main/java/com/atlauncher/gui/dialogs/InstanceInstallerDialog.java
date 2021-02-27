@@ -236,7 +236,7 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             JLabel enableUserLockLabel = new JLabelWithHover(GetText.tr("Enable User Lock") + "?",
-                    Utils.getIconImage("/assets/image/Help.png"),
+                    Utils.getIconImage(App.THEME.getIconPath("question")),
                     new HTMLBuilder().center().text(GetText.tr(
                             "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else."))
                             .build());
@@ -255,7 +255,7 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             saveModsLabel = new JLabelWithHover(GetText.tr("Save Mods") + "? ",
-                    Utils.getIconImage("/assets/image/Help.png"),
+                    Utils.getIconImage(App.THEME.getIconPath("question")),
                     new HTMLBuilder().center().text(GetText.tr(
                             "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed."))
                             .build());

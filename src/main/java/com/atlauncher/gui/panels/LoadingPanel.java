@@ -37,7 +37,7 @@ public class LoadingPanel extends JPanel {
     public LoadingPanel(String text) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        ImageIcon imageIcon = Utils.getIconImage("/assets/image/LoadingBars.gif");
+        ImageIcon imageIcon = Utils.getIconImage("/assets/image/loading-bars.gif");
 
         JLabel iconLabel = new JLabel();
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

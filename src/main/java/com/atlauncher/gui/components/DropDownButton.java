@@ -54,8 +54,8 @@ public class DropDownButton extends JButton {
     public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(
-                Utils.getIconImage("/assets/image/icons/" + (popupMenu.isShowing() ? "expanded" : "collapsed")
-                        + (App.THEME.isDark() ? "-dark" : "") + ".png").getImage(),
+                Utils.getIconImage(App.THEME.getIconPath((popupMenu.isShowing() ? "expanded" : "collapsed")))
+                        .getImage(),
                 getWidth() - 20, ((getHeight() - 12) / 2), null);
     }
 }

@@ -166,7 +166,7 @@ public abstract class AbstractAccount implements Serializable {
 
                         // even UUID's use the alex skin
                         if ((uid.hashCode() & 1) != 0) {
-                            skinFilename = "default_alex.png";
+                            skinFilename = "default-alex.png";
                         }
 
                         // Only copy over the default skin if there is no skin for the user
@@ -194,7 +194,7 @@ public abstract class AbstractAccount implements Serializable {
 
                                 // even UUID's use the alex skin
                                 if ((uid.hashCode() & 1) != 0) {
-                                    skinFilename = "default_alex.png";
+                                    skinFilename = "default-alex.png";
                                 }
 
                                 // Only copy over the default skin if there is no skin for the user

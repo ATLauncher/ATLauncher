@@ -38,7 +38,7 @@ import org.mini2Dx.gettext.GetText;
  */
 @SuppressWarnings("serial")
 public class SplashScreen extends JWindow {
-    private static final BufferedImage img = Utils.getImage("SplashScreen");
+    private static final BufferedImage img = Utils.getImage("splash-screen.png");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();
 
     public SplashScreen() {
