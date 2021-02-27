@@ -104,9 +104,10 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         setTitle(GetText.tr("Installing {0}", mod.title));
 
         setSize(550, 200);
+        setMinimumSize(new Dimension(550, 200));
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
-        setResizable(false);
+        setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         addButton = new JButton(GetText.tr("Add"));

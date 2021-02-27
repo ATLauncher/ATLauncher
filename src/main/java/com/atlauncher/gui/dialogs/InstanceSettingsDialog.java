@@ -88,6 +88,7 @@ public class InstanceSettingsDialog extends JDialog {
     private void setupComponents() {
         int systemRam = OS.getSystemRam();
         setSize(750, 400);
+        setMinimumSize(new Dimension(750, 400));
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);

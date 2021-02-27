@@ -88,9 +88,10 @@ public class EditModsDialog extends JDialog {
                 GetText.tr("Editing Mods For {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
         setSize(550, 450);
+        setMinimumSize(new Dimension(550, 450));
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
-        setResizable(false);
+        setResizable(true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override

@@ -80,9 +80,10 @@ public class InstanceExportDialog extends JDialog {
 
     private void setupComponents() {
         setSize(550, 430);
+        setMinimumSize(new Dimension(550, 430));
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
-        setResizable(false);
+        setResizable(true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         topPanel.setLayout(new GridBagLayout());

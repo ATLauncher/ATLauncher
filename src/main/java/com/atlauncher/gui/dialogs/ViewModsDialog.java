@@ -55,7 +55,8 @@ public final class ViewModsDialog extends JDialog {
         Analytics.sendScreenView("View Mods Dialog");
 
         this.setPreferredSize(new Dimension(550, 450));
-        this.setResizable(false);
+        this.setMinimumSize(new Dimension(550, 450));
+        this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

@@ -97,7 +97,8 @@ public final class AddModsDialog extends JDialog {
         this.instance = instance;
 
         this.setPreferredSize(new Dimension(680, 500));
-        this.setResizable(false);
+        this.setMinimumSize(new Dimension(680, 500));
+        this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         hostComboBox.addItem(new ComboItem<>("CurseForge", "CurseForge"));

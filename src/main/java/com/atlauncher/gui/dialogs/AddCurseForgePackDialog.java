@@ -66,7 +66,8 @@ public final class AddCurseForgePackDialog extends JDialog {
         super(App.launcher.getParent(), GetText.tr("Add CurseForge Pack"), ModalityType.DOCUMENT_MODAL);
 
         this.setPreferredSize(new Dimension(620, 500));
-        this.setResizable(false);
+        this.setMinimumSize(new Dimension(620, 500));
+        this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));

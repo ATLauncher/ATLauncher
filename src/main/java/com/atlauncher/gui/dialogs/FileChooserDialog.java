@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -63,6 +64,7 @@ public class FileChooserDialog extends JDialog {
             String[] subOptions) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         setSize(400, 175);
+        setMinimumSize(new Dimension(400, 175));
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/Icon.png"));
