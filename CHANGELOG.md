@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Regenerate known shared/broken analytics client ids
+- Add svg icon for AUR packages and remove hardcoded path [#448]

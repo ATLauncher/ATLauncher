@@ -20,12 +20,14 @@ conflicts=('atlauncher-bin')
 source=("$_upstreamname-$pkgver.tar.gz::https://github.com/ATLauncher/ATLauncher/archive/v$pkgver.tar.gz"
         "atlauncher"
         "atlauncher.desktop"
-        "atlauncher.png")
+        "atlauncher.png"
+        "atlauncher.svg")
 
 sha256sums=('a3b4adbcdad732f76abdbb035042133fb9e0530af4ba93dc148efdf185a2f0db'
             'a1184d3b8ed125b6a182871bb19851c0635806c29f3d392660ae716a61174a89'
-            '2031ca113046368aaf81ed31c45bc45ebe050717caaa927599c0c6f1f9b32cfa'
-            'dd370888c78fdb652d656d97e4a7f7e8c90aa8d75d4f4d01d0bd32e95c327c47')
+            '2e7eed9ae7174e0c94ff0a71d3735b73b6742f911033dccd6b52853d511d766c'
+            'dd370888c78fdb652d656d97e4a7f7e8c90aa8d75d4f4d01d0bd32e95c327c47'
+            '5e8aa9b202e69296b649d8d9bcf92083a05426e9480487aeea606c2490a2c5fa')
 
 build() {
   cd "$_upstreamname-$pkgver"
@@ -52,4 +54,5 @@ package() {
   # install desktop launcher with icon
   install -D -m644 "$srcdir/atlauncher.desktop" "$pkgdir/usr/share/applications/atlauncher.desktop"
   install -D -m644 "$srcdir/atlauncher.png" "$pkgdir/usr/share/pixmaps/atlauncher.png"
+  install -D -m644 "$srcdir/atlauncher.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/atlauncher.svg"
 }
