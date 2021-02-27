@@ -289,13 +289,17 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         });
         loginWithMicrosoftButton = new JButton(GetText.tr("Login with Microsoft"));
         loginWithMicrosoftButton.addActionListener(e -> {
+            int numberOfAccountsBefore = AccountManager.getAccounts().size();
             new LoginWithMicrosoftDialog();
-            accountsComboBox.removeAllItems();
-            accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
-            for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
+
+            if (numberOfAccountsBefore != AccountManager.getAccounts().size()) {
+                accountsComboBox.removeAllItems();
+                accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
+                for (AbstractAccount accountt : AccountManager.getAccounts()) {
+                    accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
+                }
+                accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
             }
-            accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
         });
         buttons.add(leftButton);
         buttons.add(rightButton);
