@@ -1,9 +1,8 @@
 name: aur-publish
 
 on:
-  push:
-    tags:
-      - v*
+  release:
+    types: [published]
 
 jobs:
   aur-publish:
@@ -16,7 +15,7 @@ jobs:
         uses: frabert/replace-string-action@v1.2
         with:
           string: ${{ env.GITHUB_REF }}
-          pattern: 'refs/tags/v([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)'
+          pattern: 'v([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)'
           replace-with: '$1'
 
       - name: Publish atlauncher AUR package
