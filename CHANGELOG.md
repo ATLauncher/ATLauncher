@@ -15,6 +15,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix using native dialog not applying to instance import [#446]
 - Allow resizing (and fix sizes of) some dialogs [#452]
 - Fix cancelling login with Microsoft reloading the account selector
+- Fix exporting Fabric instances not working
 
 ### Misc
 - Regenerate known shared/broken analytics client ids

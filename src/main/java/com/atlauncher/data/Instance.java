@@ -983,6 +983,16 @@ public class Instance extends MinecraftVersion {
         // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
         if (launcher.loaderVersion.type.equals("Fabric")) {
             loaderVersion = ForgeLoader.getRecommendedVersion(id);
+
+            // no recommended version, so grab latest
+            if (loaderVersion == null) {
+                loaderVersion = ForgeLoader.getLatestVersion(id);
+            }
+        }
+
+        if (loaderVersion == null) {
+            LogManager.error("Failed to get loader version for this pack");
+            return false;
         }
 
         modLoader.id = "forge-" + loaderVersion;

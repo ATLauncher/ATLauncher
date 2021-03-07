@@ -110,13 +110,17 @@ public class ForgeLoader implements Loader {
     }
 
     public String getLatestVersion() {
+        return ForgeLoader.getPromotion(ForgePromotionType.LATEST, this.minecraft);
+    }
+
+    public static String getLatestVersion(String minecraft) {
         ForgePromotions promotions = getPromotions();
 
-        if (promotions == null || !promotions.hasPromo(this.minecraft + "-latest")) {
+        if (promotions == null || !promotions.hasPromo(minecraft + "-latest")) {
             return null;
         }
 
-        return promotions.getPromo(this.minecraft + "-latest");
+        return promotions.getPromo(minecraft + "-latest");
     }
 
     public static String getRecommendedVersion(String minecraft) {
@@ -127,6 +131,14 @@ public class ForgeLoader implements Loader {
         }
 
         return promotions.getPromo(minecraft + "-recommended");
+    }
+
+    public static String getPromotion(ForgePromotionType promotionType, String minecraft) {
+        if (promotionType == ForgePromotionType.LATEST) {
+            return getLatestVersion(minecraft);
+        }
+
+        return getRecommendedVersion(minecraft);
     }
 
     @Override
