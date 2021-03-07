@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow resizing (and fix sizes of) some dialogs [#452]
 - Fix cancelling login with Microsoft reloading the account selector
 - Fix exporting Fabric instances not working
+- Fix adding mod version showing wrong files for loader [#454]
 
 ### Misc
 - Regenerate known shared/broken analytics client ids

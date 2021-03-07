@@ -236,6 +236,19 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 }
             }
 
+            // filter out mods that are explicitely for Forge/Fabric and not our loader
+            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                if (cf.gameVersion.contains("Forge") && loaderVersion.isFabric()) {
+                    return false;
+                }
+
+                if (cf.gameVersion.contains("Fabric") && !loaderVersion.isFabric()) {
+                    return false;
+                }
+
+                return true;
+            });
+
             files.addAll(curseForgeFilesStream.collect(Collectors.toList()));
 
             // ensures that font width is taken into account
