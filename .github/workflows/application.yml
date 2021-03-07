@@ -172,3 +172,10 @@ jobs:
         with:
           add: 'CHANGELOG.md src/main/resources/version'
           message: 'chore: bump version'
+
+      - name: Close issues tagged with awaiting-release
+        uses: bdougie/close-issues-based-on-label@v1.2
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
+        env:
+          LABEL: awaiting-release
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
