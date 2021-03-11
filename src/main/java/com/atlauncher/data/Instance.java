@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +40,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -74,6 +77,9 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthMod;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.data.multimc.MultiMCComponent;
+import com.atlauncher.data.multimc.MultiMCManifest;
+import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -213,6 +219,12 @@ public class Instance extends MinecraftVersion {
 
             return GetText.tr("No Description");
         }
+    }
+
+    private boolean hasCustomImage() {
+        File customImage = this.getRoot().resolve("instance.png").toFile();
+
+        return customImage.exists();
     }
 
     public ImageIcon getImage() {
@@ -967,7 +979,221 @@ public class Instance extends MinecraftVersion {
         return true;
     }
 
-    public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides) {
+    public boolean export(String name, String version, String author, InstanceExportFormat format, String saveTo,
+            List<String> overrides) {
+        if (format == InstanceExportFormat.ATLAUNCHER) {
+            return exportAsCurseZip(name, version, author, saveTo, overrides, true);
+        } else if (format == InstanceExportFormat.CURSEFORGE) {
+            return exportAsCurseZip(name, version, author, saveTo, overrides, false);
+        } else if (format == InstanceExportFormat.MULTIMC) {
+            return exportAsMultiMcZip(name, version, author, saveTo, overrides);
+        }
+
+        return false;
+    }
+
+    public boolean exportAsMultiMcZip(String name, String version, String author, String saveTo,
+            List<String> overrides) {
+        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        MultiMCManifest manifest = new MultiMCManifest();
+
+        manifest.formatVersion = 1;
+
+        manifest.components = new ArrayList<>();
+
+        // lwjgl 3
+        MultiMCComponent lwjgl3Component = new MultiMCComponent();
+        lwjgl3Component.cachedName = "LWJGL 3";
+        lwjgl3Component.cachedVersion = "3.2.2";
+        lwjgl3Component.cachedVolatile = true;
+        lwjgl3Component.dependencyOnly = true;
+        lwjgl3Component.uid = "org.lwjgl3";
+        lwjgl3Component.version = "3.2.2";
+        manifest.components.add(lwjgl3Component);
+
+        // minecraft
+        MultiMCComponent minecraftComponent = new MultiMCComponent();
+        minecraftComponent.cachedName = "Minecraft";
+
+        minecraftComponent.cachedRequires = new ArrayList<>();
+        MultiMCRequire lwjgl3Require = new MultiMCRequire();
+        lwjgl3Require.equals = "3.2.2";
+        lwjgl3Require.suggests = "3.2.2";
+        lwjgl3Require.uid = "org.lwjgl3";
+        minecraftComponent.cachedRequires.add(lwjgl3Require);
+
+        minecraftComponent.cachedVersion = id;
+        minecraftComponent.cachedVolatile = true;
+        minecraftComponent.dependencyOnly = true;
+        minecraftComponent.uid = "org.lwjgl3";
+        minecraftComponent.version = "3.2.2";
+        manifest.components.add(minecraftComponent);
+
+        // fabric loader
+        if (launcher.loaderVersion.type.equals("Fabric")) {
+            // mappings
+            MultiMCComponent fabricMappingsComponent = new MultiMCComponent();
+            fabricMappingsComponent.cachedName = "Intermediary Mappings";
+
+            fabricMappingsComponent.cachedRequires = new ArrayList<>();
+            MultiMCRequire minecraftRequire = new MultiMCRequire();
+            minecraftRequire.equals = id;
+            minecraftRequire.uid = "net.minecraft";
+            fabricMappingsComponent.cachedRequires.add(minecraftRequire);
+
+            fabricMappingsComponent.cachedVersion = id;
+            fabricMappingsComponent.cachedVolatile = true;
+            fabricMappingsComponent.dependencyOnly = true;
+            fabricMappingsComponent.uid = "net.fabricmc.intermediary";
+            fabricMappingsComponent.version = id;
+            manifest.components.add(fabricMappingsComponent);
+
+            // loader
+            MultiMCComponent fabricLoaderComponent = new MultiMCComponent();
+            fabricLoaderComponent.cachedName = "Fabric Loader";
+
+            fabricLoaderComponent.cachedRequires = new ArrayList<>();
+            MultiMCRequire intermediaryRequire = new MultiMCRequire();
+            intermediaryRequire.uid = "net.fabricmc.intermediary";
+            fabricLoaderComponent.cachedRequires.add(intermediaryRequire);
+
+            fabricLoaderComponent.cachedVersion = launcher.loaderVersion.version;
+            fabricLoaderComponent.uid = "net.fabricmc.fabric-loader";
+            fabricLoaderComponent.version = launcher.loaderVersion.version;
+            manifest.components.add(fabricLoaderComponent);
+        }
+
+        // forge loader
+        if (launcher.loaderVersion.type.equals("Forge")) {
+            // loader
+            MultiMCComponent forgeMappingsComponent = new MultiMCComponent();
+            forgeMappingsComponent.cachedName = "Forge";
+
+            forgeMappingsComponent.cachedRequires = new ArrayList<>();
+            MultiMCRequire minecraftRequire = new MultiMCRequire();
+            minecraftRequire.equals = id;
+            minecraftRequire.uid = "net.minecraft";
+            forgeMappingsComponent.cachedRequires.add(minecraftRequire);
+
+            forgeMappingsComponent.cachedVersion = launcher.loaderVersion.version;
+            forgeMappingsComponent.uid = "net.minecraftforge";
+            forgeMappingsComponent.version = launcher.loaderVersion.version;
+            manifest.components.add(forgeMappingsComponent);
+        }
+
+        // create temp directory to put this in
+        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        FileUtils.createDirectory(tempDir);
+
+        // create mmc-pack.json
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("mmc-pack.json").toFile())) {
+            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save mmc-pack.json", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // create instance.cfg
+        Path instanceCfgPath = tempDir.resolve("instance.cfg");
+        Properties instanceCfg = new Properties();
+
+        String iconKey = "default";
+        if (hasCustomImage()) {
+            String customIconFileName = "atlauncher_" + getSafeName().toLowerCase();
+            Path customIconPath = tempDir.resolve(customIconFileName + ".png");
+
+            FileUtils.copyFile(this.getRoot().resolve("instance.png"), customIconPath, true);
+
+            iconKey = customIconFileName;
+        }
+
+        instanceCfg.setProperty("AutoCloseConsole", "false");
+        instanceCfg.setProperty("ForgeVersion", "false");
+        instanceCfg.setProperty("InstanceType", "OneSix");
+        instanceCfg.setProperty("IntendedVersion", "");
+        instanceCfg.setProperty("JavaPath", Optional.ofNullable(launcher.javaPath).orElse(App.settings.javaPath)
+                + File.separator + "bin" + File.separator + (OS.isWindows() ? "javaw.exe" : "java"));
+        instanceCfg.setProperty("JVMArgs", Optional.ofNullable(launcher.javaArguments).orElse(""));
+        instanceCfg.setProperty("LWJGLVersion", "");
+        instanceCfg.setProperty("LaunchMaximized", "false");
+        instanceCfg.setProperty("LiteloaderVersion", "");
+        instanceCfg.setProperty("LogPrePostOutput", "true");
+        instanceCfg.setProperty("MCLaunchMethod", "LauncherPart");
+        instanceCfg.setProperty("MaxMemAlloc",
+                Optional.ofNullable(launcher.maximumMemory).orElse(App.settings.maximumMemory) + "");
+        instanceCfg.setProperty("MinMemAlloc",
+                Optional.ofNullable(launcher.initialMemory).orElse(App.settings.initialMemory) + "");
+        instanceCfg.setProperty("MinecraftWinHeight", App.settings.windowHeight + "");
+        instanceCfg.setProperty("MinecraftWinWidth", App.settings.windowWidth + "");
+        instanceCfg.setProperty("OverrideCommands", "false");
+        instanceCfg.setProperty("OverrideConsole", "false");
+        instanceCfg.setProperty("OverrideJava", launcher.javaPath == null ? "false" : "true");
+        instanceCfg.setProperty("OverrideJavaArgs", launcher.javaArguments == null ? "false" : "true");
+        instanceCfg.setProperty("OverrideJavaLocation", "false");
+        instanceCfg.setProperty("OverrideMCLaunchMethod", "false");
+        instanceCfg.setProperty("OverrideMemory", launcher.maximumMemory == null ? "false" : "true");
+        instanceCfg.setProperty("OverrideNativeWorkarounds", "false");
+        instanceCfg.setProperty("OverrideWindow", "false");
+        instanceCfg.setProperty("PermGen", Optional.ofNullable(launcher.permGen).orElse(App.settings.metaspace) + "");
+        instanceCfg.setProperty("PostExitCommand", "");
+        instanceCfg.setProperty("PreLaunchCommand", "");
+        instanceCfg.setProperty("ShowConsole", "false");
+        instanceCfg.setProperty("ShowConsoleOnError", "true");
+        instanceCfg.setProperty("UseNativeGLFW", "false");
+        instanceCfg.setProperty("UseNativeOpenAL", "false");
+        instanceCfg.setProperty("WrapperCommand", "");
+        instanceCfg.setProperty("iconKey", iconKey);
+        instanceCfg.setProperty("name", launcher.name);
+        instanceCfg.setProperty("lastLaunchTime", "");
+        instanceCfg.setProperty("notes", "");
+        instanceCfg.setProperty("totalTimePlayed", "0");
+
+        try (OutputStream outputStream = Files.newOutputStream(instanceCfgPath)) {
+            instanceCfg.store(outputStream, "Exported by ATLauncher");
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save mmc-pack.json", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // create an empty .packignore file
+        Path packignoreFile = tempDir.resolve(".packignore");
+        try {
+            packignoreFile.toFile().createNewFile();
+        } catch (IOException ignored) {
+            // this is okay to ignore, it's unused but seems to be there by default
+        }
+
+        // copy over the files into the .minecraft folder
+        Path dotMinecraftPath = tempDir.resolve(".minecraft");
+        FileUtils.createDirectory(dotMinecraftPath);
+
+        for (String path : overrides) {
+            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+                    && (getRoot().resolve(path).toFile().isFile()
+                            || getRoot().resolve(path).toFile().list().length != 0)) {
+                if (getRoot().resolve(path).toFile().isDirectory()) {
+                    Utils.copyDirectory(getRoot().resolve(path).toFile(), dotMinecraftPath.resolve(path).toFile());
+                } else {
+                    Utils.copyFile(getRoot().resolve(path).toFile(), dotMinecraftPath.resolve(path).toFile(), true);
+                }
+            }
+        }
+
+        ZipUtil.pack(tempDir.toFile(), to.toFile());
+
+        FileUtils.deleteDirectory(tempDir);
+
+        return true;
+    }
+
+    public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides,
+            boolean supportFabric) {
         Path to = Paths.get(saveTo).resolve(name + ".zip");
         CurseForgeManifest manifest = new CurseForgeManifest();
 
@@ -976,12 +1202,14 @@ public class Instance extends MinecraftVersion {
         List<CurseForgeModLoader> modLoaders = new ArrayList<>();
         CurseForgeModLoader modLoader = new CurseForgeModLoader();
 
+        String loaderType = launcher.loaderVersion.type.toLowerCase();
         String loaderVersion = launcher.loaderVersion.version;
 
         // Since CurseForge treats Farbic as a second class citizen :(, we need to force
         // Forge loader and people need to use Jumploader in order to have Fabric packs
         // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
-        if (launcher.loaderVersion.type.equals("Fabric")) {
+        if (launcher.loaderVersion.type.equals("Fabric") && !supportFabric) {
+            loaderType = "forge";
             loaderVersion = ForgeLoader.getRecommendedVersion(id);
 
             // no recommended version, so grab latest
@@ -995,7 +1223,7 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
-        modLoader.id = "forge-" + loaderVersion;
+        modLoader.id = loaderType + "-" + loaderVersion;
         modLoader.primary = true;
         modLoaders.add(modLoader);
 

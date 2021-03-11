@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.3.2
 
 ### New Features
+- Add ability to export instances in different formats [#455]
 
 ### Fixes
 

@@ -17,14 +17,8 @@
  */
 package com.atlauncher.data.multimc;
 
-import java.util.List;
-
-public class MultiMCComponent {
-    public String cachedName;
-    public List<MultiMCRequire> cachedRequires;
-    public String cachedVersion;
-    public boolean cachedVolatile;
-    public boolean dependencyOnly;
+public class MultiMCRequire {
+    public String equals;
+    public String suggests;
     public String uid;
-    public String version;
 }

@@ -15,16 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.multimc;
+package com.atlauncher.data;
 
-import java.util.List;
-
-public class MultiMCComponent {
-    public String cachedName;
-    public List<MultiMCRequire> cachedRequires;
-    public String cachedVersion;
-    public boolean cachedVolatile;
-    public boolean dependencyOnly;
-    public String uid;
-    public String version;
+public enum InstanceExportFormat {
+    ATLAUNCHER, CURSEFORGE, MULTIMC
 }

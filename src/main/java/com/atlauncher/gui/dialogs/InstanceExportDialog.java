@@ -35,6 +35,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -44,8 +45,10 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -79,8 +82,8 @@ public class InstanceExportDialog extends JDialog {
     }
 
     private void setupComponents() {
-        setSize(550, 430);
-        setMinimumSize(new Dimension(550, 430));
+        setSize(550, 460);
+        setMinimumSize(new Dimension(550, 460));
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(true);
@@ -139,6 +142,25 @@ public class InstanceExportDialog extends JDialog {
         author.setText(AccountManager.getSelectedAccount().minecraftUsername);
         topPanel.add(author, gbc);
 
+        // Format
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover formatLabel = new JLabelWithHover(GetText.tr("Format") + ":", HELP_ICON,
+                GetText.tr("Which format to export this instance as"));
+        topPanel.add(formatLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        final JComboBox<ComboItem<InstanceExportFormat>> format = new JComboBox<>();
+        format.addItem(new ComboItem<>(InstanceExportFormat.ATLAUNCHER, "ATLauncher"));
+        format.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
+        format.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
+        topPanel.add(format, gbc);
+
         // Export File
         gbc.gridx = 0;
         gbc.gridy++;
@@ -196,11 +218,9 @@ public class InstanceExportDialog extends JDialog {
         overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
         overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
 
+        // get all files ignoring ATLauncher specific things
         File[] files = instance.getRoot().toFile()
-                .listFiles(pathname -> !pathname.getName().equalsIgnoreCase(".fabric")
-                        && !pathname.getName().equalsIgnoreCase(".jumploader")
-                        && !pathname.getName().equalsIgnoreCase(".mixin.out")
-                        && !pathname.getName().equalsIgnoreCase("disabledmods")
+                .listFiles(pathname -> !pathname.getName().equalsIgnoreCase("disabledmods")
                         && !pathname.getName().equalsIgnoreCase("jarmods")
                         && !pathname.getName().equalsIgnoreCase("instance.json"));
 
@@ -245,7 +265,8 @@ public class InstanceExportDialog extends JDialog {
                     GetText.tr("Exporting Instance. Please wait..."), null, this);
 
             dialog.addThread(new Thread(() -> {
-                if (instance.exportAsCurseZip(name.getText(), version.getText(), author.getText(), saveTo.getText(),
+                if (instance.export(name.getText(), version.getText(), author.getText(),
+                        ((ComboItem<InstanceExportFormat>) format.getSelectedItem()).getValue(), saveTo.getText(),
                         overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                     OS.openFileExplorer(Paths.get(saveTo.getText()).resolve(name.getText() + ".zip"), true);
