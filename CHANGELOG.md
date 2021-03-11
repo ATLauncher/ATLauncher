@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add ability to export instances in different formats [#455]
 
 ### Fixes
+- Some modpacks.ch packs not installing correctly
 
 ### Misc

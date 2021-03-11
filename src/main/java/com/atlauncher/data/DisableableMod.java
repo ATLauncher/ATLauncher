@@ -52,6 +52,7 @@ public class DisableableMod implements Serializable {
     public String version;
     public boolean optional;
     public String file;
+    public String path;
     public Type type;
     public Color colour;
     public String description;
@@ -74,14 +75,15 @@ public class DisableableMod implements Serializable {
     public ModrinthMod modrinthMod;
     public ModrinthVersion modrinthVersion;
 
-    public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseForgeModId,
-            Integer curseForgeFileId, CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile,
-            ModrinthMod modrinthMod, ModrinthVersion modrinthVersion) {
+    public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
+            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected,
+            Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
+            CurseForgeFile curseForgeFile, ModrinthMod modrinthMod, ModrinthVersion modrinthVersion) {
         this.name = name;
         this.version = version;
         this.optional = optional;
         this.file = file;
+        this.path = path;
         this.type = type;
         this.colour = colour;
         this.description = description;
@@ -96,44 +98,52 @@ public class DisableableMod implements Serializable {
         this.modrinthVersion = modrinthVersion;
     }
 
+    public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
+            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected,
+            Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
+            CurseForgeFile curseForgeFile) {
+        this(name, version, optional, file, path, type, colour, description, disabled, userAdded, wasSelected,
+                curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
+    }
+
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseForgeModId,
             Integer curseForgeFileId, CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected,
                 curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected,
             CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected,
                 curseForgeProject.id, curseForgeFile.id, curseForgeProject, curseForgeFile);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected, ModrinthMod modrinthMod,
             ModrinthVersion modrinthVersion) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected, null, null,
-                null, null, modrinthMod, modrinthVersion);
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, null,
+                null, null, null, modrinthMod, modrinthVersion);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseForgeModId,
             Integer curseForgeFileId) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected,
                 curseForgeModId, curseForgeFileId, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded, boolean wasSelected) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, wasSelected, null, null,
-                null, null);
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, null,
+                null, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded) {
-        this(name, version, optional, file, type, colour, description, disabled, userAdded, true, null, null, null,
-                null);
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, true, null, null,
+                null, null);
     }
 
     public DisableableMod() {
@@ -258,7 +268,10 @@ public class DisableableMod implements Serializable {
 
     public File getFile(Path base, String mcVersion) {
         File dir = null;
-        switch (type) {
+        if (path != null) {
+            dir = base.resolve(path).toFile();
+        } else {
+            switch (type) {
             case jar:
             case forge:
             case mcpc:
@@ -293,6 +306,7 @@ public class DisableableMod implements Serializable {
             default:
                 LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
                 break;
+            }
         }
         if (dir == null) {
             return null;

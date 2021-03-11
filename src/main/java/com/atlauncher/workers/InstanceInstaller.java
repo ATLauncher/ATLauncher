@@ -665,12 +665,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
             }
 
-            this.modsInstalled
-                    .add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(), mod.isOptional(), file,
-                            com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
-                            this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
-                            mod.getCurseForgeProjectId(), mod.getCurseForgeFileId(), mod.curseForgeProject,
-                            mod.curseForgeFile));
+            this.modsInstalled.add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(),
+                    mod.isOptional(), file, mod.path,
+                    com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
+                    this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
+                    mod.getCurseForgeProjectId(), mod.getCurseForgeFileId(), mod.curseForgeProject,
+                    mod.curseForgeFile));
         }
 
         if (this.isReinstall && instance.hasCustomMods()) {

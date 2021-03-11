@@ -49,6 +49,7 @@ public class ModpacksChPackVersionManifestFile {
         mod.server = !clientonly;
         mod.download = DownloadType.direct;
         mod.file = name;
+        mod.path = path.substring(0, 2).equalsIgnoreCase("./") ? path.substring(2) : path;
         mod.filesize = size;
         mod.sha1 = sha1;
         mod.name = name;
