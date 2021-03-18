@@ -59,4 +59,8 @@ public class CurseForgeProject {
 
         return ModType.mods;
     }
+
+    public boolean equals(Object object) {
+        return id == ((CurseForgeProject) object).id;
+    }
 }

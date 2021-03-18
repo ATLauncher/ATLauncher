@@ -42,12 +42,13 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the CurseForge API.
  */
 public class CurseForgeApi {
-    public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page, int categoryId, String sort) {
+    public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page, int categoryId,
+            String sort) {
         return searchCurseForge(null, sectionId, query, page, categoryId, sort);
     }
 
-    public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page, int categoryId,
-                                                      String sort) {
+    public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
+            int categoryId, String sort) {
         try {
             String url = String.format(
                     "%s/addon/search?gameId=432&categoryId=%d&sectionId=%s&searchFilter=%s&sort=%s&sortDescending=true&pageSize=%d&index=%d",
@@ -101,17 +102,25 @@ public class CurseForgeApi {
     }
 
     public static CurseForgeFile getFileForProject(int modId, int fileId) {
-        return Download.build().setUrl(String.format("%s/addon/%d/file/%d", Constants.CURSEFORGE_API_URL, modId, fileId))
+        return Download.build()
+                .setUrl(String.format("%s/addon/%d/file/%d", Constants.CURSEFORGE_API_URL, modId, fileId))
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asClass(CurseForgeFile.class);
     }
 
     public static CurseForgeProject getProjectById(int modId) {
         return Download.build().setUrl(String.format("%s/addon/%d", Constants.CURSEFORGE_API_URL, modId))
-                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asClass(CurseForgeProject.class);
+                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                .asClass(CurseForgeProject.class);
     }
 
     public static Map<Integer, CurseForgeProject> getProjectsAsMap(int[] addonIds) {
-        return getProjects(addonIds).stream().collect(Collectors.toMap(p -> p.id, p -> p));
+        try {
+            return getProjects(addonIds).stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
+        } catch (Throwable t) {
+            LogManager.logStackTrace("Error trying to get CurseForge projects as map", t);
+        }
+
+        return null;
     }
 
     public static List<CurseForgeProject> getProjects(int[] projectIds) {
