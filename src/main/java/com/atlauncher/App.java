@@ -26,13 +26,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -161,14 +156,6 @@ public class App {
      * --disable-error-reporting
      */
     public static boolean disableErrorReporting = false;
-
-    /**
-     * This removes writing the launchers location to AppData/Application Support.
-     * It can be enabled with the below command line argument.
-     * <p/>
-     * --skip-integration
-     */
-    public static boolean skipIntegration = false;
 
     /**
      * This allows skipping the hash checking when downloading files. It can be
@@ -396,10 +383,6 @@ public class App {
                 LogManager.logStackTrace("Failed to initialize Discord integration", e);
                 discordInitialized = false;
             }
-        }
-
-        if (!skipIntegration) {
-            integrate();
         }
 
         if (packCodeToAdd != null) {
@@ -788,83 +771,6 @@ public class App {
         }
     }
 
-    /**
-     * This creates some integration files so the launcher can work with other
-     * applications by storing some properties about itself and it's location in a
-     * set location.
-     */
-    public static void integrate() {
-        if (!Utils.getOSStorageDir().exists()) {
-            boolean success = Utils.getOSStorageDir().mkdirs();
-            if (!success) {
-                LogManager.error("Failed to create OS storage directory");
-                return;
-            }
-        }
-
-        File f = new File(Utils.getOSStorageDir(), "atlauncher.conf");
-
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to create atlauncher.conf", e);
-            return;
-        }
-
-        Properties props = new Properties();
-        InputStream is = null;
-        try {
-            is = new FileInputStream(f);
-            props.load(is);
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace("Failed to open atlauncher.conf for reading", e);
-            return;
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to read from atlauncher.conf", e);
-            return;
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to close atlauncher.conf FileInputStream", e);
-                }
-            }
-        }
-
-        props.setProperty("java_version", Java.getLauncherJavaVersion());
-        props.setProperty("location", FileSystem.BASE_DIR.toString());
-        props.setProperty("executable",
-                new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath());
-
-        packCodeToAdd = props.getProperty("pack_code_to_add", null);
-        props.remove("pack_code_to_add");
-
-        packToInstall = props.getProperty("pack_to_install", null);
-        props.remove("pack_to_install");
-
-        packShareCodeToInstall = props.getProperty("pack_share_code_to_install", null);
-        props.remove("pack_share_code_to_install");
-
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(f);
-            props.store(os, "");
-        } catch (FileNotFoundException e) {
-            LogManager.logStackTrace("Failed to open atlauncher.conf for writing", e);
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to write to atlauncher.conf", e);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to close atlauncher.conf FileOutputStream", e);
-                }
-            }
-        }
-    }
-
     private static void parseCommandLineArguments(String[] args) {
         // Parse all the command line arguments
         OptionParser parser = new OptionParser();
@@ -873,7 +779,6 @@ public class App {
         parser.accepts("skip-tray-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("disable-analytics").withOptionalArg().ofType(Boolean.class);
         parser.accepts("disable-error-reporting").withOptionalArg().ofType(Boolean.class);
-        parser.accepts("skip-integration").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-hash-checking").withOptionalArg().ofType(Boolean.class);
         parser.accepts("force-offline-mode").withOptionalArg().ofType(Boolean.class);
         parser.accepts("working-dir").withRequiredArg().ofType(String.class);
@@ -978,11 +883,6 @@ public class App {
         closeLauncher = options.has("close-launcher");
         if (closeLauncher) {
             LogManager.debug("Closing launcher once Minecraft is launched!");
-        }
-
-        skipIntegration = options.has("skip-integration");
-        if (skipIntegration) {
-            LogManager.debug("Skipping integration!");
         }
 
         skipHashChecking = options.has("skip-hash-checking");

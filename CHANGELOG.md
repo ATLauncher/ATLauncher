@@ -16,3 +16,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Loading settings sometimes returning a NPE
 
 ### Misc
+- Remove integration files from being written [#462]
