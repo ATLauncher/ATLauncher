@@ -1482,6 +1482,10 @@ public class Instance extends MinecraftVersion {
     }
 
     public void backup() {
+        backup(App.settings.backupMode);
+    }
+
+    public void backup(BackupMode backupMode) {
         final JDialog dialog = new JDialog(App.launcher.getParent(), GetText.tr("Backing Up {0}", launcher.name),
                 ModalityType.DOCUMENT_MODAL);
         dialog.setSize(300, 100);
@@ -1510,8 +1514,10 @@ public class Instance extends MinecraftVersion {
             Timestamp timestamp = new Timestamp(new Date().getTime());
             String time = timestamp.toString().replaceAll("[^0-9]", "_");
             String filename = getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
+
             ZipUtil.pack(getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile(),
-                    ZipNameMapper.INSTANCE_BACKUP);
+                    ZipNameMapper.getMapperForBackupMode(backupMode));
+
             dialog.dispose();
             App.TOASTER.pop(GetText.tr("Backup is complete"));
         });

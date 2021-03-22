@@ -49,6 +49,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.APIResponse;
+import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -87,7 +88,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
     private final JButton updateButton = new JButton(GetText.tr("Update"));
     private final JButton renameButton = new JButton(GetText.tr("Rename"));
-    private final JButton backupButton = new JButton(GetText.tr("Backup"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton exportButton = new JButton(GetText.tr("Export"));
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
@@ -96,6 +96,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
+
+    private final JPopupMenu backupPopupMenu = new JPopupMenu();
+    private final JMenuItem normalBackupMenuItem = new JMenuItem(GetText.tr("Normal Backup"));
+    private final JMenuItem normalPlusModsBackupMenuItem = new JMenuItem(GetText.tr("Normal + Mods Backup"));
+    private final JMenuItem fullBackupMenuItem = new JMenuItem(GetText.tr("Full Backup"));
+    private final DropDownButton backupButton = new DropDownButton(GetText.tr("Backup"), backupPopupMenu);
 
     private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
     private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
@@ -141,7 +147,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.exportButton);
         bottom.add(this.getHelpButton);
 
-        setupLinksButtonPopupMenu();
+        setupButtonPopupMenus();
 
         // check it can be exported
         this.exportButton.setVisible(instance.canBeExported());
@@ -201,7 +207,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.validatePlayable();
     }
 
-    private void setupLinksButtonPopupMenu() {
+    private void setupButtonPopupMenus() {
         if (instance.getPack() != null) {
             if (instance.getPack().discordInviteURL != null) {
                 discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().discordInviteURL));
@@ -218,6 +224,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 getHelpPopupMenu.add(websiteLinkMenuItem);
             }
         }
+
+        normalBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.NORMAL));
+        backupPopupMenu.add(normalBackupMenuItem);
+
+        normalPlusModsBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.NORMAL_PLUS_MODS));
+        backupPopupMenu.add(normalPlusModsBackupMenuItem);
+
+        fullBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.FULL));
+        backupPopupMenu.add(fullBackupMenuItem);
     }
 
     private void validatePlayable() {
@@ -315,22 +330,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Rename",
                     instance.getAnalyticsCategory());
             new RenameInstanceDialog(instance);
-        });
-        this.backupButton.addActionListener(e -> {
-            if (Files.isDirectory(instance.getRoot().resolve("saves"))) {
-                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Backing Up {0}", instance.launcher.name))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "Backups saves all your worlds as well as some other files such as your configs and<br/>optionally your mods (you can enable/disable this in the Settings tab), so you can restore them later.<br/><br/>Once backed up you can find the zip file in the backups/ folder.<br/><br/>Do you want to backup this instance?"))
-                                .build())
-                        .setType(DialogManager.INFO).show();
-
-                if (ret == DialogManager.YES_OPTION) {
-                    instance.backup();
-                }
-            } else {
-                DialogManager.okDialog().setType(DialogManager.WARNING).setTitle(GetText.tr("No saves found"))
-                        .setContent(GetText.tr("No saves were found for this instance")).show();
-            }
         });
         this.addButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
@@ -649,6 +648,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.setText(GetText.tr("Open Website"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.settingsButton.setText(GetText.tr("Settings"));
+
+        this.normalBackupMenuItem.setText(GetText.tr("Normal Backup"));
+        this.normalPlusModsBackupMenuItem.setText(GetText.tr("Normal + Mods Backup"));
+        this.fullBackupMenuItem.setText(GetText.tr("Full Backup"));
+        this.backupButton.setText(GetText.tr("Backup"));
 
         this.discordLinkMenuItem.setText(GetText.tr("Discord"));
         this.supportLinkMenuItem.setText(GetText.tr("Support"));

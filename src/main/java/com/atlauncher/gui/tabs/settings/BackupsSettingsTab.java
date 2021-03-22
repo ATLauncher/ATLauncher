@@ -20,35 +20,52 @@ package com.atlauncher.gui.tabs.settings;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.BackupMode;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.utils.ComboItem;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class BackupsSettingsTab extends AbstractSettingsTab {
-    private final JCheckBox enableModsBackups;
+    private final JComboBox<ComboItem<BackupMode>> backupMode;
     private final JCheckBox enableAutomaticBackupAfterLaunch;
 
     public BackupsSettingsTab() {
-        // Enable mods backups
+        // Backup mode
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover enableModsBackupsLabel = new JLabelWithHover(GetText.tr("Enable Mods Backups") + "?", HELP_ICON,
-                GetText.tr("If mods should be backed up when creating a backup for an instance."));
-        add(enableModsBackupsLabel, gbc);
+        JLabelWithHover backupModeLabel = new JLabelWithHover(GetText.tr("Backup Mode") + ":", HELP_ICON, GetText.tr(
+                "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."));
+
+        add(backupModeLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableModsBackups = new JCheckBox();
-        enableModsBackups.setSelected(App.settings.enableModsBackups);
-        add(enableModsBackups, gbc);
+        backupMode = new JComboBox<>();
+        backupMode.addItem(new ComboItem<>(BackupMode.NORMAL, GetText.tr("Backup saves, configs and options only")));
+        backupMode.addItem(new ComboItem<>(BackupMode.NORMAL_PLUS_MODS,
+                GetText.tr("Backup saves, mods, configs and options only")));
+        backupMode.addItem(new ComboItem<>(BackupMode.FULL, GetText.tr("Backup everything in the instance folder")));
+
+        for (int i = 0; i < backupMode.getItemCount(); i++) {
+            ComboItem<BackupMode> item = backupMode.getItemAt(i);
+
+            if (item.getValue() == App.settings.backupMode) {
+                backupMode.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        add(backupMode, gbc);
 
         // Enable automatic backup after launch
 
@@ -70,7 +87,7 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.enableModsBackups = enableModsBackups.isSelected();
+        App.settings.backupMode = ((ComboItem<BackupMode>) backupMode.getSelectedItem()).getValue();
         App.settings.enableAutomaticBackupAfterLaunch = enableAutomaticBackupAfterLaunch.isSelected();
     }
 

@@ -17,21 +17,41 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
+import com.atlauncher.data.BackupMode;
 
 import org.zeroturnaround.zip.NameMapper;
 
 public class ZipNameMapper {
-    public static final NameMapper INSTANCE_BACKUP = name -> {
-        if (App.settings.enableModsBackups
-                && (name.startsWith("mods") || name.startsWith("jarmods") || name.startsWith("coremods"))) {
-            return name;
-        }
-
+    public static final NameMapper NORMAL_BACKUP = name -> {
         if (name.equalsIgnoreCase("options.txt") || name.startsWith("saves") || name.startsWith("config")) {
             return name;
         }
 
         return null;
     };
+
+    public static final NameMapper NORMAL_PLUS_MODS_BACKUP = name -> {
+        if (name.equalsIgnoreCase("options.txt") || name.startsWith("saves") || name.startsWith("config")
+                || name.startsWith("mods") || name.startsWith("jarmods") || name.startsWith("coremods")) {
+            return name;
+        }
+
+        return null;
+    };
+
+    public static final NameMapper FULL_BACKUP = name -> {
+        return name;
+    };
+
+    public static NameMapper getMapperForBackupMode(BackupMode backupMode) {
+        if (backupMode == BackupMode.NORMAL) {
+            return NORMAL_BACKUP;
+        }
+
+        if (backupMode == BackupMode.NORMAL_PLUS_MODS) {
+            return NORMAL_PLUS_MODS_BACKUP;
+        }
+
+        return FULL_BACKUP;
+    }
 }

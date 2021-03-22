@@ -108,8 +108,8 @@ public class Settings {
     public int serverCheckerWait = 5;
 
     // Backups
-    public boolean enableModsBackups = false;
     public boolean enableAutomaticBackupAfterLaunch = false;
+    public BackupMode backupMode = BackupMode.NORMAL;
 
     public void convert(Properties properties) {
         String importedDateFormat = properties.getProperty("dateformat");
@@ -266,11 +266,6 @@ public class Settings {
         String importedEnableOpenEyeReporting = properties.getProperty("enableopeneyereporting");
         if (importedEnableOpenEyeReporting != null) {
             enableOpenEyeReporting = Boolean.parseBoolean(importedEnableOpenEyeReporting);
-        }
-
-        String importedEnableModsBackups = properties.getProperty("enablemodsbackups");
-        if (importedEnableModsBackups != null) {
-            enableModsBackups = Boolean.parseBoolean(importedEnableModsBackups);
         }
 
         String importedServerCheckerWait = properties.getProperty("servercheckerwait");
@@ -457,15 +452,15 @@ public class Settings {
             Type type = Type.HTTP;
 
             switch (this.proxyType) {
-                case "HTTP":
-                    type = Type.HTTP;
-                    break;
-                case "SOCKS":
-                    type = Type.SOCKS;
-                    break;
-                case "DIRECT":
-                    type = Type.DIRECT;
-                    break;
+            case "HTTP":
+                type = Type.HTTP;
+                break;
+            case "SOCKS":
+                type = Type.SOCKS;
+                break;
+            case "DIRECT":
+                type = Type.DIRECT;
+                break;
             }
 
             proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));
