@@ -28,7 +28,7 @@ public class ZipNameMapper {
             return name;
         }
 
-        if (name.equalsIgnoreCase("options.txt") || name.startsWith("saves")) {
+        if (name.equalsIgnoreCase("options.txt") || name.startsWith("saves") || name.startsWith("config")) {
             return name;
         }
 
