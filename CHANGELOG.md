@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Some modpacks.ch packs not installing correctly
 - Checking mods on CurseForge sometimes failing
+- Loading settings sometimes returning a NPE
 
 ### Misc

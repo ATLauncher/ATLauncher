@@ -667,6 +667,11 @@ public class App {
             }
         }
 
+        // make sure settings isn't null
+        if (settings == null) {
+            settings = new Settings();
+        }
+
         // validate the settings
         settings.validate();
     }
