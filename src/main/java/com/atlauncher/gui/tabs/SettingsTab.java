@@ -34,6 +34,7 @@ import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
+import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
 import com.atlauncher.managers.CheckingServersManager;
@@ -45,13 +46,15 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
+    private final ModsSettingsTab modsSettingsTab = new ModsSettingsTab();
     private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
     private final NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
     private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
     private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
     private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
-    private final List<Tab> tabs = Arrays.asList(new Tab[] { this.generalSettingsTab, this.javaSettingsTab,
-            this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab });
+    private final List<Tab> tabs = Arrays
+            .asList(new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab,
+                    this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab });
     private final JTabbedPane tabbedPane;
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 
@@ -82,6 +85,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 boolean reloadInstancesPanel = generalSettingsTab.needToReloadInstancesPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                 generalSettingsTab.save();
+                modsSettingsTab.save();
                 javaSettingsTab.save();
                 networkSettingsTab.save();
                 loggingSettingsTab.save();

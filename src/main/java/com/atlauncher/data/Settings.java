@@ -63,8 +63,6 @@ public class Settings {
     public String theme = Constants.DEFAULT_THEME_CLASS;
     public String dateFormat = "dd/MM/yyyy";
     public int selectedTabOnStartup = 0;
-    public String defaultModPlatform = "CurseForge";
-    public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean sortPacksAlphabetically = false;
     public boolean showPackNameAndVersion = true;
     public boolean keepLauncherOpen = true;
@@ -75,6 +73,10 @@ public class Settings {
     private boolean disableAddModRestrictions = false;
     public boolean disableCustomFonts = false;
     public boolean useNativeFilePicker = OS.isMac();
+
+    // Mods
+    public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
+    public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
 
     // Java/Minecraft
@@ -364,8 +366,8 @@ public class Settings {
 
     private void validateDefaultModPlatform() {
         if (defaultModPlatform == null
-                || !(defaultModPlatform.equals("CurseForge") || defaultModPlatform.equals("Modrinth"))) {
-            defaultModPlatform = "CurseForge";
+                || !(defaultModPlatform == ModPlatform.CURSEFORGE || defaultModPlatform == ModPlatform.MODRINTH)) {
+            defaultModPlatform = ModPlatform.CURSEFORGE;
         }
     }
 

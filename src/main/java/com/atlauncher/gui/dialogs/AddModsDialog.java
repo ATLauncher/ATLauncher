@@ -40,6 +40,7 @@ import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthMod;
@@ -70,7 +71,7 @@ public final class AddModsDialog extends JDialog {
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
-    private final JComboBox<ComboItem<String>> hostComboBox = new JComboBox<ComboItem<String>>();
+    private final JComboBox<ComboItem<ModPlatform>> hostComboBox = new JComboBox<ComboItem<ModPlatform>>();
     private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
 
@@ -101,18 +102,18 @@ public final class AddModsDialog extends JDialog {
         this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        hostComboBox.addItem(new ComboItem<>("CurseForge", "CurseForge"));
-        hostComboBox.addItem(new ComboItem<>("Modrinth", "Modrinth"));
-        hostComboBox.setSelectedIndex(App.settings.defaultModPlatform.equals("CurseForge") ? 0 : 1);
+        hostComboBox.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
+        hostComboBox.addItem(new ComboItem<>(ModPlatform.MODRINTH, "Modrinth"));
+        hostComboBox.setSelectedIndex(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? 0 : 1);
 
         if (instance.launcher.loaderVersion != null) {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
         sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
         sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
-        sectionComboBox.setVisible(App.settings.defaultModPlatform.equals("CurseForge"));
+        sectionComboBox.setVisible(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE);
 
-        if (App.settings.defaultModPlatform.equals("CurseForge")) {
+        if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
             sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
             sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
             sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
@@ -146,8 +147,8 @@ public final class AddModsDialog extends JDialog {
         searchButtonsPanel.add(this.sortComboBox);
 
         this.installFabricApiButton.addActionListener(e -> {
-            boolean isCurseForge = ((ComboItem<String>) hostComboBox.getSelectedItem()).getValue()
-                    .equalsIgnoreCase("CurseForge");
+            boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                    .getValue() == ModPlatform.CURSEFORGE;
             if (isCurseForge) {
                 CurseForgeProject mod = CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID);
 
@@ -217,8 +218,8 @@ public final class AddModsDialog extends JDialog {
 
         this.hostComboBox.addActionListener(e -> {
             updating = true;
-            boolean isCurseForge = ((ComboItem<String>) hostComboBox.getSelectedItem()).getValue()
-                    .equalsIgnoreCase("CurseForge");
+            boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                    .getValue() == ModPlatform.CURSEFORGE;
 
             sortComboBox.removeAllItems();
             if (isCurseForge) {
@@ -305,8 +306,8 @@ public final class AddModsDialog extends JDialog {
         nextButton.setEnabled(false);
 
         String query = searchField.getText();
-        boolean isCurseForge = ((ComboItem<String>) hostComboBox.getSelectedItem()).getValue()
-                .equalsIgnoreCase("CurseForge");
+        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                .getValue() == ModPlatform.CURSEFORGE;
 
         new Thread(() -> {
             if (isCurseForge) {
