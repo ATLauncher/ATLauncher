@@ -244,9 +244,15 @@ public class EditModsDialog extends JDialog {
                             type = com.atlauncher.data.Type.shaderpack;
                         }
                         if (type != null) {
-                            DisableableMod mod = generateMod(file, type, false);
-                            File copyTo = instance.getRoot().resolve("disabledmods").toFile();
-                            if (Utils.copyFile(file, copyTo)) {
+                            DisableableMod mod = generateMod(file, type, App.settings.enableAddedModsByDefault);
+                            File copyTo = App.settings.enableAddedModsByDefault ? mod.getFile(instance)
+                                    : mod.getDisabledFile(instance);
+
+                            if (!copyTo.getParentFile().exists()) {
+                                copyTo.getParentFile().mkdirs();
+                            }
+
+                            if (Utils.copyFile(file, copyTo, true)) {
                                 instance.launcher.mods.add(mod);
                                 reload = true;
                             }

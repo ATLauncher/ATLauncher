@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add ability to export instances in different formats [#455]
 - Save config folder when backing up an instance [#463]
 - Add configurable backup modes [#463]
+- Add config to enable manually added mods by default
 
 ### Fixes
 - Some modpacks.ch packs not installing correctly
