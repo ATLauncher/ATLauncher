@@ -214,6 +214,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             xstsAuthResponse = MicrosoftAuthAPI.getXstsToken(xblToken);
         } catch (DownloadException e) {
             if (e.response != null) {
+                LogManager.debug(Gsons.DEFAULT.toJson(e.response));
                 XboxLiveAuthErrorResponse xboxLiveAuthErrorResponse = Gsons.DEFAULT.fromJson(e.response,
                         XboxLiveAuthErrorResponse.class);
 
@@ -248,6 +249,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft("XBL3.0 x=" + xblUhs + ";" + xblXsts);
 
         Store store = MicrosoftAuthAPI.getMcEntitlements(loginResponse.accessToken);
+
+        LogManager.info(Gsons.DEFAULT.toJson(store));
 
         if (!(store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
                 && store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {

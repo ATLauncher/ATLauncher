@@ -105,8 +105,7 @@ public class ForgeLoader implements Loader {
     }
 
     public static ForgePromotions getPromotions() {
-        return Download.build().cached().setUrl(String.format("%s/promotions_slim.json", Constants.FORGE_MAVEN))
-                .asClass(ForgePromotions.class);
+        return Download.build().cached().setUrl(Constants.FORGE_PROMOTIONS_FILE).asClass(ForgePromotions.class);
     }
 
     public String getLatestVersion() {

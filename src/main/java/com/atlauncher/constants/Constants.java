@@ -93,9 +93,10 @@ public class Constants {
     public static final int MODPACKS_CH_PAGINATION_SIZE = 20;
 
     // Forge domains, endpoints, etc
-    public static final String FORGE_MAVEN = "https://files.minecraftforge.net/maven/net/minecraftforge/forge";
-    public static final String FORGE_MAVEN_BASE = "https://files.minecraftforge.net/maven/";
-    public static final String FORGE_HOST = "files.minecraftforge.net";
+    public static final String FORGE_MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge";
+    public static final String FORGE_PROMOTIONS_FILE = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
+    public static final String FORGE_MAVEN_BASE = "https://maven.minecraftforge.net/";
+    public static final String FORGE_HOST = "maven.minecraftforge.net";
 
     // Fabric domains, endpoints, etc
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";

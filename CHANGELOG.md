@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Some modpacks.ch packs not installing correctly
 - Checking mods on CurseForge sometimes failing
 - Loading settings sometimes returning a NPE
+- Forge maven changing url
 
 ### Misc
 - Remove integration files from being written [#462]
