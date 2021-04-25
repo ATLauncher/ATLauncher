@@ -311,7 +311,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         this.packVersion = new Version();
-        packVersion.version = curseForgeManifest.version;
+        packVersion.version = Optional.ofNullable(curseForgeManifest.version).orElse("1.0.0");
         packVersion.minecraft = curseForgeManifest.minecraft.version;
         packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;

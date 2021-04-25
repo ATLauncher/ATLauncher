@@ -683,7 +683,7 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         PackVersion packVersion = new PackVersion();
-        packVersion.version = curseForgeManifest.version;
+        packVersion.version = Optional.ofNullable(curseForgeManifest.version).orElse("1.0.0");
 
         try {
             packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseForgeManifest.minecraft.version);
