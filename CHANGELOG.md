@@ -17,6 +17,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Checking mods on CurseForge sometimes failing
 - Loading settings sometimes returning a NPE
 - Forge maven changing url
+- Don't start up the launcher when running on Java 16 or newer [#465]
 
 ### Misc
 - Remove integration files from being written [#462]
