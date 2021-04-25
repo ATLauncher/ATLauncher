@@ -19,6 +19,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Forge maven changing url
 - Don't start up the launcher when running on Java 16 or newer [#465]
 - Importing CurseForge instances without a version failing [#467]
+- Checking for mod updates showing when it shouldn't [#466]
 
 ### Misc
 - Remove integration files from being written [#462]

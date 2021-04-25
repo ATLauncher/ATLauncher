@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.atlauncher.App;
@@ -34,10 +35,12 @@ import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.modrinth.ModrinthMod;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
 import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
@@ -330,6 +333,31 @@ public class DisableableMod implements Serializable {
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                 curseForgeFilesStream = curseForgeFilesStream.filter(file -> file.gameVersion.contains(instance.id));
             }
+
+            if (App.settings.addModRestriction == AddModRestriction.LAX) {
+                try {
+                    List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
+                            .stream().map(mv -> mv.version).collect(Collectors.toList());
+
+                    curseForgeFilesStream = curseForgeFilesStream.filter(
+                            file -> file.gameVersion.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                } catch (InvalidMinecraftVersion e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            // filter out mods that are explicitely for Forge/Fabric and not our loader
+            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                if (cf.gameVersion.contains("Forge") && instance.launcher.loaderVersion.isFabric()) {
+                    return false;
+                }
+
+                if (cf.gameVersion.contains("Fabric") && !instance.launcher.loaderVersion.isFabric()) {
+                    return false;
+                }
+
+                return true;
+            });
 
             if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
                 return false;
