@@ -2,7 +2,8 @@ name: aur-publish
 
 on:
   release:
-    types: [published]
+    types:
+      - published
 
 jobs:
   aur-publish:
