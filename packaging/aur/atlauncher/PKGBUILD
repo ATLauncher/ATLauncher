@@ -13,7 +13,7 @@ arch=('any')
 url="https://github.com/ATLauncher/ATLauncher"
 license=('GPL3')
 depends=('java-runtime=8' 'openal')
-makedepends=('java-environment=8' 'gradle')
+makedepends=('java-environment=8')
 provides=('atlauncher')
 conflicts=('atlauncher-bin')
 
@@ -31,7 +31,9 @@ sha256sums=('d7ce8831680f2de30f7081d6032b0825da431d576cbb6bb5f57811611054d694'
 
 build() {
   cd "$_upstreamname-$pkgver"
-  gradle build -x test
+
+  chmod 0755 ./gradlew
+  ./gradlew build -x test
 }
 
 package() {
