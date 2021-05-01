@@ -3,7 +3,7 @@ name: aur-publish
 on:
   release:
     types:
-      - published
+      - created
 
 jobs:
   aur-publish:

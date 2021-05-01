@@ -117,6 +117,18 @@ jobs:
           pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
           replace-with: '$1'
 
+      - name: Create ATLauncher Version
+        uses: ATLauncher/release-atlauncher-action@master
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
+        with:
+          api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
+          version: ${{ steps.clean-version.outputs.replaced }}
+          changelog: ${{ env.cleaned-changelog }}
+          files: |
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
+            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
+
       - name: Create GitHub Release
         uses: meeDamian/github-release@2.0
         if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
@@ -129,18 +141,6 @@ jobs:
           prerelease: false
           allow_override: false
           gzip: false
-          files: |
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
-
-      - name: Create ATLauncher Version
-        uses: ATLauncher/release-atlauncher-action@master
-        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
-        with:
-          api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
-          version: ${{ steps.clean-version.outputs.replaced }}
-          changelog: ${{ env.cleaned-changelog }}
           files: |
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
