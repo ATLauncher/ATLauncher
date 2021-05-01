@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.3.3
 
 ### New Features
+- Add setting to not use HTTP/2
 
 ### Fixes
 

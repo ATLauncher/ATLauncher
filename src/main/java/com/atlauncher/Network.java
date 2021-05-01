@@ -18,6 +18,8 @@
 package com.atlauncher;
 
 import java.security.cert.CertificateException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,13 +43,18 @@ import com.atlauncher.utils.ProgressResponseBody;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Response;
 
 public final class Network {
     public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
-    public static OkHttpClient CLIENT = new OkHttpClient.Builder().addNetworkInterceptor(new UserAgentInterceptor())
-            .addInterceptor(new DebugLoggingInterceptor()).addNetworkInterceptor(new ErrorReportingInterceptor())
+    private static List<Protocol> protocols = App.settings.dontUseHttp2 ? Arrays.asList(Protocol.HTTP_1_1)
+            : Arrays.asList(Protocol.HTTP_2, Protocol.HTTP_1_1);
+
+    public static OkHttpClient CLIENT = new OkHttpClient.Builder().protocols(protocols)
+            .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
+            .addNetworkInterceptor(new ErrorReportingInterceptor())
             .connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
             .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
             .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
@@ -71,6 +78,14 @@ public final class Network {
         CACHED_CLIENT = CACHED_CLIENT.newBuilder().connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
+    }
+
+    public static void setProtocols() {
+        protocols = App.settings.dontUseHttp2 ? Arrays.asList(Protocol.HTTP_1_1)
+                : Arrays.asList(Protocol.HTTP_2, Protocol.HTTP_1_1);
+
+        CLIENT = CLIENT.newBuilder().protocols(protocols).build();
+        CACHED_CLIENT = CACHED_CLIENT.newBuilder().protocols(protocols).build();
     }
 
     public static OkHttpClient createProgressClient(final NetworkProgressable progressable) {
