@@ -17,26 +17,11 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.util.List;
+import java.util.Map;
 
 import com.atlauncher.annot.Json;
 
 @Json
-public class MinecraftVersion {
-    public String id;
-    public int complianceLevel;
-    public JavaVersion javaVersion;
-    public Arguments arguments;
-    public String minecraftArguments;
-    public String type;
-    public String time;
-    public String releaseTime;
-    public String minimumLauncherVersion;
-    public MojangAssetIndex assetIndex;
-    public String assets;
-    public MojangDownloads downloads;
-    public Logging logging;
-    public List<Library> libraries;
-    public List<Rule> rules;
-    public String mainClass;
+public class JavaRuntimeManifest {
+    public Map<String, JavaRuntimeManifestFile> files;
 }

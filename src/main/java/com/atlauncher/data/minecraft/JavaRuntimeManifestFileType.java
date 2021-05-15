@@ -17,26 +17,14 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.util.List;
-
 import com.atlauncher.annot.Json;
+import com.google.gson.annotations.SerializedName;
 
 @Json
-public class MinecraftVersion {
-    public String id;
-    public int complianceLevel;
-    public JavaVersion javaVersion;
-    public Arguments arguments;
-    public String minecraftArguments;
-    public String type;
-    public String time;
-    public String releaseTime;
-    public String minimumLauncherVersion;
-    public MojangAssetIndex assetIndex;
-    public String assets;
-    public MojangDownloads downloads;
-    public Logging logging;
-    public List<Library> libraries;
-    public List<Rule> rules;
-    public String mainClass;
+public enum JavaRuntimeManifestFileType {
+    @SerializedName("directory")
+    DIRECTORY,
+
+    @SerializedName("file")
+    FILE,
 }

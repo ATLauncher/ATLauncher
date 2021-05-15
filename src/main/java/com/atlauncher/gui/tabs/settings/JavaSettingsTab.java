@@ -80,6 +80,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JCheckBox startMinecraftMaximised;
     private final JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
     private final JCheckBox ignoreJavaOnInstanceLaunch;
+    private final JLabelWithHover useJavaProvidedByMinecraftLabel;
+    private final JCheckBox useJavaProvidedByMinecraft;
 
     public JavaSettingsTab() {
         int systemRam = OS.getSystemRam();
@@ -378,6 +380,28 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             ignoreJavaOnInstanceLaunch.setSelected(true);
         }
         add(ignoreJavaOnInstanceLaunch, gbc);
+
+        // Use Java Provided By Minecraft
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        useJavaProvidedByMinecraftLabel = new JLabelWithHover(GetText.tr("Use Java Provided By Minecraft") + "?",
+                HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr(
+                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
+                        .build());
+        add(useJavaProvidedByMinecraftLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        useJavaProvidedByMinecraft = new JCheckBox();
+        if (App.settings.useJavaProvidedByMinecraft) {
+            useJavaProvidedByMinecraft.setSelected(true);
+        }
+        add(useJavaProvidedByMinecraft, gbc);
     }
 
     public boolean isValidJavaPath() {
@@ -413,6 +437,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.javaParameters = javaParameters.getText();
         App.settings.maximiseMinecraft = startMinecraftMaximised.isSelected();
         App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
+        App.settings.useJavaProvidedByMinecraft = useJavaProvidedByMinecraft.isSelected();
     }
 
     @Override
@@ -461,9 +486,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.startMinecraftMaximisedLabel.setToolTipText(GetText
                 .tr("Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
 
-        this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java checks On Launch") + "?");
+        this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java Checks On Launch") + "?");
         this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(
                 "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
+
+        this.useJavaProvidedByMinecraftLabel.setText(GetText.tr("Use Java Provided By Minecraft") + "?");
+        this.useJavaProvidedByMinecraftLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
+                "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
+                .build());
     }
 
     @Override

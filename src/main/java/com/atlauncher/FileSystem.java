@@ -38,6 +38,7 @@ public final class FileSystem {
     public static final Path CACHE = BASE_DIR.resolve("cache");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
+    public static final Path MINECRAFT_RUNTIMES = RUNTIMES.resolve("minecraft");
 
     public static final Path CONFIGS = BASE_DIR.resolve("configs");
     public static final Path COMMON = CONFIGS.resolve("common");
@@ -160,6 +161,7 @@ public final class FileSystem {
         FileUtils.createDirectory(LOADERS);
         FileUtils.createDirectory(LOGS);
         FileUtils.createDirectory(RUNTIMES);
+        FileUtils.createDirectory(MINECRAFT_RUNTIMES);
         FileUtils.createDirectory(SERVERS);
         FileUtils.createDirectory(TEMP);
 

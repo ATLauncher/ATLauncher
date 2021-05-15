@@ -61,6 +61,7 @@ public final class Download {
     private String hash;
     private Long fingerprint = null;
     public long size = -1L;
+    private boolean executable = false;
     public InstanceInstaller instanceInstaller;
     private OkHttpClient httpClient = Network.CLIENT;
     private RequestBody post = null;
@@ -222,6 +223,12 @@ public final class Download {
 
     public Download size(long size) {
         this.size = size;
+
+        return this;
+    }
+
+    public Download executable(boolean executable) {
+        this.executable = executable;
 
         return this;
     }
@@ -662,6 +669,10 @@ public final class Download {
             FileUtils.createDirectory(this.unzipTo);
 
             ZipUtil.unpack(this.to.toFile(), this.unzipTo.toFile());
+        }
+
+        if (Files.exists(this.to) && this.executable) {
+            this.to.toFile().setExecutable(this.executable);
         }
     }
 

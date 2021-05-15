@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,6 +69,10 @@ import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
 import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
 import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
 import com.atlauncher.data.minecraft.AssetIndex;
+import com.atlauncher.data.minecraft.JavaRuntime;
+import com.atlauncher.data.minecraft.JavaRuntimeManifest;
+import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
+import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
@@ -115,6 +120,8 @@ public class Instance extends MinecraftVersion {
 
     public Instance(MinecraftVersion version) {
         this.id = version.id;
+        this.complianceLevel = version.complianceLevel;
+        this.javaVersion = version.javaVersion;
         this.arguments = version.arguments;
         this.minecraftArguments = version.minecraftArguments;
         this.type = version.type;
@@ -380,6 +387,67 @@ public class Instance extends MinecraftVersion {
 
         progressDialog.doneTask();
 
+        // download Java runtime
+        if (javaVersion != null && Data.JAVA_RUNTIMES != null && App.settings.useJavaProvidedByMinecraft) {
+            Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
+            String runtimeSystemString = JavaRuntimes.getSystem();
+
+            if (runtimesForSystem.containsKey(javaVersion.component)) {
+                progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}", javaVersion.majorVersion));
+
+                JavaRuntime runtimeToDownload = runtimesForSystem.get(javaVersion.component).get(0);
+
+                try {
+                    JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build().cached()
+                            .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
+                            .hash(runtimeToDownload.manifest.sha1).asClassWithThrow(JavaRuntimeManifest.class);
+
+                    DownloadPool pool = new DownloadPool();
+
+                    // create root directory
+                    Path runtimeSystemDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                            .resolve(runtimeSystemString);
+                    Path runtimeDirectory = runtimeSystemDirectory.resolve(javaVersion.component);
+                    FileUtils.createDirectory(runtimeDirectory);
+
+                    // create all the directories
+                    javaRuntimeManifest.files.forEach((key, file) -> {
+                        if (file.type == JavaRuntimeManifestFileType.DIRECTORY) {
+                            FileUtils.createDirectory(runtimeDirectory.resolve(key));
+                        }
+                    });
+
+                    // collect the files we need to download
+                    javaRuntimeManifest.files.forEach((key, file) -> {
+                        if (file.type == JavaRuntimeManifestFileType.FILE) {
+                            com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                                    .setUrl(file.downloads.raw.url).downloadTo(runtimeDirectory.resolve(key))
+                                    .hash(file.downloads.raw.sha1).size(file.downloads.raw.size)
+                                    .executable(file.executable).withHttpClient(httpClient);
+
+                            pool.add(download);
+                        }
+                    });
+
+                    DownloadPool smallPool = pool.downsize();
+
+                    progressDialog.setTotalBytes(smallPool.totalSize());
+
+                    smallPool.downloadAll();
+
+                    // write out the version file (theres also a .sha1 file created, but we're not
+                    // doing that)
+                    Files.write(runtimeSystemDirectory.resolve(".version"),
+                            runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
+                    // Files.write(runtimeSystemDirectory.resolve(javaVersion.component
+                    // + ".sha1"), runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to download Java runtime", e);
+                }
+            }
+        }
+        progressDialog.doneTask();
+
         // organise assets
         progressDialog.setLabel(GetText.tr("Downloading Resources"));
         MojangAssetIndex assetIndex = this.assetIndex;
@@ -499,7 +567,7 @@ public class Instance extends MinecraftVersion {
                 LogManager.logStackTrace(e2, false);
             }
 
-            ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 4,
+            ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 5,
                     GetText.tr("Preparing For Launch"));
             prepareDialog.addThread(new Thread(() -> {
                 LogManager.info("Preparing for launch!");

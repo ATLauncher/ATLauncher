@@ -20,6 +20,7 @@ package com.atlauncher.workers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 import javax.swing.SwingWorker;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -66,6 +68,10 @@ import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.FabricMod;
+import com.atlauncher.data.minecraft.JavaRuntime;
+import com.atlauncher.data.minecraft.JavaRuntimeManifest;
+import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
+import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingFile;
 import com.atlauncher.data.minecraft.MCMod;
@@ -822,6 +828,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return false;
         }
 
+        downloadRuntime();
+        if (isCancelled()) {
+            return false;
+        }
+
         installLoader();
         if (isCancelled()) {
             return false;
@@ -1374,6 +1385,79 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         hideSubProgressBar();
+    }
+
+    private void downloadRuntime() {
+        addPercent(5);
+
+        if (minecraftVersion.javaVersion == null || Data.JAVA_RUNTIMES == null
+                || !App.settings.useJavaProvidedByMinecraft) {
+            return;
+        }
+
+        Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
+        String runtimeSystemString = JavaRuntimes.getSystem();
+
+        if (!runtimesForSystem.containsKey(minecraftVersion.javaVersion.component)) {
+            return;
+        }
+
+        fireTask(GetText.tr("Downloading Java Runtime {0}", minecraftVersion.javaVersion.majorVersion));
+        fireSubProgressUnknown();
+
+        JavaRuntime runtimeToDownload = runtimesForSystem.get(minecraftVersion.javaVersion.component).get(0);
+
+        try {
+            JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build().cached()
+                    .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
+                    .hash(runtimeToDownload.manifest.sha1).asClassWithThrow(JavaRuntimeManifest.class);
+
+            OkHttpClient httpClient = Network.createProgressClient(this);
+            DownloadPool pool = new DownloadPool();
+
+            // create root directory
+            Path runtimeSystemDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(minecraftVersion.javaVersion.component)
+                    .resolve(runtimeSystemString);
+            Path runtimeDirectory = runtimeSystemDirectory.resolve(minecraftVersion.javaVersion.component);
+            FileUtils.createDirectory(runtimeDirectory);
+
+            // create all the directories
+            javaRuntimeManifest.files.forEach((key, file) -> {
+                if (file.type == JavaRuntimeManifestFileType.DIRECTORY) {
+                    FileUtils.createDirectory(runtimeDirectory.resolve(key));
+                }
+            });
+
+            // collect the files we need to download
+            javaRuntimeManifest.files.forEach((key, file) -> {
+                if (file.type == JavaRuntimeManifestFileType.FILE) {
+                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                            .setUrl(file.downloads.raw.url).downloadTo(runtimeDirectory.resolve(key))
+                            .hash(file.downloads.raw.sha1).size(file.downloads.raw.size).executable(file.executable)
+                            .withInstanceInstaller(this).withHttpClient(httpClient);
+
+                    pool.add(download);
+                }
+            });
+
+            DownloadPool smallPool = pool.downsize();
+
+            this.setTotalBytes(smallPool.totalSize());
+            this.fireSubProgress(0);
+
+            smallPool.downloadAll();
+
+            // write out the version file (theres also a .sha1 file created, but we're not
+            // doing that)
+            Files.write(runtimeSystemDirectory.resolve(".version"),
+                    runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
+            // Files.write(runtimeSystemDirectory.resolve(minecraftVersion.javaVersion.component
+            // + ".sha1"), runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
+
+            hideSubProgressBar();
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to download Java runtime", e);
+        }
     }
 
     private void installLoader() {

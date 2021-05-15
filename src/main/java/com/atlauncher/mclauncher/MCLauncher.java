@@ -18,7 +18,9 @@
 package com.atlauncher.mclauncher;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +34,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.managers.LogManager;
@@ -90,6 +93,18 @@ public class MCLauncher {
         String javaArguments = Optional.ofNullable(instance.launcher.javaArguments).orElse(App.settings.javaParameters);
 
         if (instance instanceof Instance) {
+            // are we using Mojangs provided runtime?
+            if (instance.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
+                        .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
+
+                if (Files.isDirectory(runtimeDirectory)) {
+                    javaPath = runtimeDirectory.toAbsolutePath().toString();
+                    LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
+                            instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
+                }
+            }
+
             // add minecraft client jar
             cpb.append(instance.getMinecraftJar().getAbsolutePath());
         }
@@ -138,7 +153,7 @@ public class MCLauncher {
         }
 
         String path = javaPath + File.separator + "bin" + File.separator + "java";
-        if (OS.isWindows()) {
+        if (OS.isWindows() && (Files.exists(Paths.get(path + "w")) || Files.exists(Paths.get(path + "w.exe")))) {
             path += "w";
         }
         arguments.add(path);

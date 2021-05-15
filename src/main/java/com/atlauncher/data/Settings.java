@@ -89,6 +89,7 @@ public class Settings {
     public String javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
+    public boolean useJavaProvidedByMinecraft = true;
 
     // Network
     public int concurrentConnections = 8;
@@ -456,15 +457,15 @@ public class Settings {
             Type type = Type.HTTP;
 
             switch (this.proxyType) {
-            case "HTTP":
-                type = Type.HTTP;
-                break;
-            case "SOCKS":
-                type = Type.SOCKS;
-                break;
-            case "DIRECT":
-                type = Type.DIRECT;
-                break;
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
             }
 
             proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));

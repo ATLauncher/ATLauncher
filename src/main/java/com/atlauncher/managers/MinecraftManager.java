@@ -19,6 +19,7 @@ package com.atlauncher.managers;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,8 +27,11 @@ import java.util.stream.Collectors;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.MinecraftVersion;
+import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.network.Download;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -60,6 +64,25 @@ public class MinecraftManager {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading Minecraft versions");
+        PerformanceManager.end();
+    }
+
+    /**
+     * Loads info about the java runtimes for Minecraft
+     */
+    public static void loadJavaRuntimes() {
+        PerformanceManager.start();
+        LogManager.debug("Loading Java runtimes");
+
+        try {
+            Data.JAVA_RUNTIMES = Download.build().cached().setUrl(Constants.MINECRAFT_JAVA_RUNTIME_URL)
+                    .asClassWithThrow(JavaRuntimes.class);
+        } catch (IOException e) {
+            // safe to ignore, we'll just not use it
+            LogManager.logStackTrace(e);
+        }
+
+        LogManager.debug("Finished loading Java runtimes");
         PerformanceManager.end();
     }
 

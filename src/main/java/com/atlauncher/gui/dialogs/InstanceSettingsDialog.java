@@ -34,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -42,6 +43,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -182,75 +184,95 @@ public class InstanceSettingsDialog extends JDialog {
         topPanel.add(permGen, gbc);
 
         // Java Path
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 1;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON, "<html>" + GetText
-                .tr("This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
-                + "</html>");
-        topPanel.add(javaPathLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-
-        JPanel javaPathPanel = new JPanel();
-        javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
-
-        JPanel javaPathPanelTop = new JPanel();
-        javaPathPanelTop.setLayout(new BoxLayout(javaPathPanelTop, BoxLayout.X_AXIS));
-
-        JPanel javaPathPanelBottom = new JPanel();
-        javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
-
         final JTextField javaPath = new JTextField(32);
-        javaPath.setText(getIfNotNull(this.instance.launcher.javaPath, App.settings.javaPath));
-        JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
-        javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
-        JButton javaBrowseButton = new JButton(GetText.tr("Browse"));
-        javaBrowseButton.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new File(javaPath.getText()));
-            chooser.setDialogTitle(GetText.tr("Select path to Java install"));
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setAcceptAllFileFilterUsed(false);
+        if (App.settings.useJavaProvidedByMinecraft && instance.javaVersion != null) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.gridwidth = 1;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
+                    new HTMLBuilder().center().text(GetText.tr(
+                            "This version of Minecraft provides a specific version of Java to be used with it, so you cannot set a custom Java path.<br/><br/>In order to manually set a path, you must disable this option (highly not recommended) in the Java settings of the launcher."))
+                            .build());
+            topPanel.add(javaPathLabel, gbc);
 
-            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
+            gbc.gridx++;
+            gbc.insets = UIConstants.FIELD_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            final JLabel javaPathDummy = new JLabel("Uses Java provided by Minecraft");
+            javaPathDummy.setEnabled(false);
+            topPanel.add(javaPathDummy, gbc);
+        } else {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.gridwidth = 1;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
+                    "<html>" + GetText.tr(
+                            "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what your doing just set<br/>this to the path where the bin folder is for the version of Java you want to use<br/><br/>If you mess up, click the Reset button to go back to the default")
+                            + "</html>");
+            topPanel.add(javaPathLabel, gbc);
+
+            gbc.gridx++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
+            JPanel javaPathPanel = new JPanel();
+            javaPathPanel.setLayout(new BoxLayout(javaPathPanel, BoxLayout.Y_AXIS));
+
+            JPanel javaPathPanelTop = new JPanel();
+            javaPathPanelTop.setLayout(new BoxLayout(javaPathPanelTop, BoxLayout.X_AXIS));
+
+            JPanel javaPathPanelBottom = new JPanel();
+            javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
+
+            javaPath.setText(getIfNotNull(this.instance.launcher.javaPath, App.settings.javaPath));
+            JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
+            javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
+            JButton javaBrowseButton = new JButton(GetText.tr("Browse"));
+            javaBrowseButton.addActionListener(e -> {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setCurrentDirectory(new File(javaPath.getText()));
+                chooser.setDialogTitle(GetText.tr("Select path to Java install"));
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                chooser.setAcceptAllFileFilterUsed(false);
+
+                if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
+                }
+            });
+
+            JComboBox<JavaInfo> installedJavas = new JComboBox<>();
+            installedJavas.setPreferredSize(new Dimension(516, 24));
+            if (Java.getInstalledJavas().size() != 0) {
+                Java.getInstalledJavas().forEach(installedJavas::addItem);
+
+                installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
+                        .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
+                        .orElse(null));
+
+                installedJavas.addActionListener(
+                        e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
             }
-        });
 
-        JComboBox<JavaInfo> installedJavas = new JComboBox<>();
-        installedJavas.setPreferredSize(new Dimension(516, 24));
-        if (Java.getInstalledJavas().size() != 0) {
-            Java.getInstalledJavas().forEach(installedJavas::addItem);
+            if (installedJavas.getItemCount() != 0) {
+                javaPathPanelTop.add(installedJavas);
+            }
 
-            installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
-                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
-                    .orElse(null));
+            javaPathPanelBottom.add(javaPath);
+            javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+            javaPathPanelBottom.add(javaPathResetButton);
+            javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+            javaPathPanelBottom.add(javaBrowseButton);
 
-            installedJavas
-                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+            javaPathPanel.add(javaPathPanelTop);
+            javaPathPanel.add(Box.createVerticalStrut(5));
+            javaPathPanel.add(javaPathPanelBottom);
+
+            topPanel.add(javaPathPanel, gbc);
         }
-
-        if (installedJavas.getItemCount() != 0) {
-            javaPathPanelTop.add(installedJavas);
-        }
-
-        javaPathPanelBottom.add(javaPath);
-        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
-        javaPathPanelBottom.add(javaPathResetButton);
-        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
-        javaPathPanelBottom.add(javaBrowseButton);
-
-        javaPathPanel.add(javaPathPanelTop);
-        javaPathPanel.add(Box.createVerticalStrut(5));
-        javaPathPanel.add(javaPathPanelBottom);
-
-        topPanel.add(javaPathPanel, gbc);
 
         // Java Paramaters
 
@@ -295,7 +317,7 @@ public class InstanceSettingsDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover accountLabel = new JLabelWithHover(GetText.tr("Account Override") + ":", HELP_ICON, GetText.tr(
-                "Which account to use when launching this instnace. Use Launcher Default will use whichever account is selected in the launcher."));
+                "Which account to use when launching this instance. Use Launcher Default will use whichever account is selected in the launcher."));
 
         topPanel.add(accountLabel, gbc);
 
@@ -359,9 +381,14 @@ public class InstanceSettingsDialog extends JDialog {
         this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);
         this.instance.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
         this.instance.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
-        this.instance.launcher.javaPath = (javaPath.equals(App.settings.javaPath) ? null : javaPath);
+
+        if (!App.settings.useJavaProvidedByMinecraft || instance.javaVersion == null) {
+            this.instance.launcher.javaPath = (javaPath.equals(App.settings.javaPath) ? null : javaPath);
+        }
+
         this.instance.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null
                 : javaParameters);
+        this.instance.launcher.account = account;
         this.instance.launcher.account = account;
         this.instance.save();
     }

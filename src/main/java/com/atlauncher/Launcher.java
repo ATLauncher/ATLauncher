@@ -118,6 +118,8 @@ public class Launcher {
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
 
+        MinecraftManager.loadJavaRuntimes(); // Load info about the different java runtimes
+
         PackManager.loadPacks(); // Load the Packs available in the Launcher
 
         PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs

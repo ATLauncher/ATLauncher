@@ -106,6 +106,8 @@ public class Constants {
     public static final String LAUNCHER_META_MINECRAFT = "https://launchermeta.mojang.com";
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
+    public static final String MINECRAFT_JAVA_RUNTIME_URL = LAUNCHER_META_MINECRAFT
+            + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
 
     // Misc
     public static final String LEGACY_JAVA_FIXER_URL = "https://cdn.atlcdn.net/legacyjavafixer-1.0.jar";
