@@ -17,10 +17,12 @@
  */
 package com.atlauncher;
 
+import java.awt.Color;
 import java.util.Date;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.AccountTypeAdapter;
+import com.atlauncher.data.ColorTypeAdapter;
 import com.atlauncher.data.DateTypeAdapter;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.PackVersionTypeAdapter;
@@ -41,13 +43,15 @@ public final class Gsons {
     public static final Gson DEFAULT = new GsonBuilder()
             .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
+            .registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter()).setPrettyPrinting()
             .create();
 
-    public static final Gson DEFAULT_ALT = new GsonBuilder()
+    public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).setPrettyPrinting().create();
 
     public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
+            .registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())

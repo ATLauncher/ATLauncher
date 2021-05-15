@@ -152,16 +152,6 @@ public class Java {
     }
 
     /**
-     * Checks if the user is using Java 16 or above.
-     *
-     * @return true if the user is using Java 16 or above else false
-     */
-    public static boolean isJava16OrAbove() {
-        int version = getLauncherJavaVersionNumber();
-        return version >= 16;
-    }
-
-    /**
      * Checks if the user is using Java 7 or above.
      *
      * @return true if the user is using Java 7 or above else false

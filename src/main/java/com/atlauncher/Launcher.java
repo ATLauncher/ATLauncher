@@ -102,19 +102,6 @@ public class Launcher {
             OS.openWebBrowser("https://atl.pw/java8download");
             System.exit(0);
         }
-
-        if (Java.isJava16OrAbove()) {
-            LogManager.warn("You're using Java 16 or above which isn't supported by ATLauncher!");
-
-            DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "You're using Java 16 or above which isn't supported by ATLauncher. You need to downgrade your Java in order to use ATLauncher.<br/><br/>The launcher will not start until you do this.<br/><br/>If you're seeing this message even after installing an older version, you may need to uninstall the newer version first.<br/><br/>Click ok to open the Java download page and close the launcher."))
-                            .build())
-                    .addOption(GetText.tr("Ok")).setType(DialogManager.ERROR).show();
-
-            OS.openWebBrowser("https://atl.pw/java8download");
-            System.exit(0);
-        }
     }
 
     public void loadEverything() {
