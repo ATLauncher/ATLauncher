@@ -1410,7 +1410,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         try {
             JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build().cached()
                     .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
-                    .hash(runtimeToDownload.manifest.sha1).asClassWithThrow(JavaRuntimeManifest.class);
+                    .hash(runtimeToDownload.manifest.sha1).downloadTo(FileSystem.MINECRAFT_RUNTIMES
+                            .resolve(minecraftVersion.javaVersion.component).resolve("manifest.json"))
+                    .asClassWithThrow(JavaRuntimeManifest.class);
 
             OkHttpClient httpClient = Network.createProgressClient(this);
             DownloadPool pool = new DownloadPool();

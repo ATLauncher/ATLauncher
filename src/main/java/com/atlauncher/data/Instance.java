@@ -400,7 +400,9 @@ public class Instance extends MinecraftVersion {
                 try {
                     JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build().cached()
                             .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
-                            .hash(runtimeToDownload.manifest.sha1).asClassWithThrow(JavaRuntimeManifest.class);
+                            .hash(runtimeToDownload.manifest.sha1).downloadTo(FileSystem.MINECRAFT_RUNTIMES
+                                    .resolve(javaVersion.component).resolve("manifest.json"))
+                            .asClassWithThrow(JavaRuntimeManifest.class);
 
                     DownloadPool pool = new DownloadPool();
 

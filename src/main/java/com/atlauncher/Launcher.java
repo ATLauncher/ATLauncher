@@ -118,7 +118,10 @@ public class Launcher {
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
 
-        MinecraftManager.loadJavaRuntimes(); // Load info about the different java runtimes
+        // Load info about the different java runtimes
+        App.TASKPOOL.execute(() -> {
+            MinecraftManager.loadJavaRuntimes();
+        });
 
         PackManager.loadPacks(); // Load the Packs available in the Launcher
 
