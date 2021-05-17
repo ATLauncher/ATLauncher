@@ -18,11 +18,13 @@
 package com.atlauncher.data;
 
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 
 public class PackVersion {
     public String version;
     public String hash;
-    public MinecraftVersion minecraftVersion;
+    public VersionManifestVersion minecraftVersion;
     public boolean canUpdate = true;
     public boolean isRecommended = true;
     public boolean isDev = false;
@@ -37,20 +39,21 @@ public class PackVersion {
     }
 
     public String toString() {
-        if (this.minecraftVersion == null
-                || (this.minecraftVersion.version.equalsIgnoreCase(this.version) && !this.minecraftVersion.snapshot)) {
+        if (this.minecraftVersion == null || (this.minecraftVersion.id.equalsIgnoreCase(this.version)
+                && this.minecraftVersion.type != VersionManifestVersionType.SNAPSHOT)) {
             return this.version;
         }
 
-        if (this.minecraftVersion.version.equalsIgnoreCase(this.version) && this.minecraftVersion.snapshot) {
+        if (this.minecraftVersion.id.equalsIgnoreCase(this.version)
+                && this.minecraftVersion.type == VersionManifestVersionType.SNAPSHOT) {
             return this.version + " (Snapshot)";
         }
 
-        if (this.minecraftVersion.snapshot) {
-            return this.version + " (" + this.minecraftVersion.version + ")" + " (Snapshot)";
+        if (this.minecraftVersion.type == VersionManifestVersionType.SNAPSHOT) {
+            return this.version + " (" + this.minecraftVersion.id + ")" + " (Snapshot)";
         }
 
-        return this.version + " (" + this.minecraftVersion.version + ")";
+        return this.version + " (" + this.minecraftVersion.id + ")";
     }
 
     public boolean versionMatches(String version) {

@@ -58,13 +58,13 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.json.Version;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackLink;
 import com.atlauncher.data.modpacksch.ModpacksChPackLinkType;
@@ -267,12 +267,12 @@ public class InstanceInstallerDialog extends JDialog {
             saveModsCheckbox = new JCheckBox();
 
             PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
-            Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
+            Optional<VersionManifestVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
 
             saveModsLabel.setVisible(
-                    minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
+                    minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
             saveModsCheckbox.setVisible(
-                    minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
+                    minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
 
             middle.add(saveModsCheckbox, gbc);
         }
@@ -313,9 +313,9 @@ public class InstanceInstallerDialog extends JDialog {
                 final PackVersion version = ((PackVersion) versionsDropDown.getSelectedItem());
 
                 if (isReinstall || isUpdate) {
-                    Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(version.minecraftVersion);
+                    Optional<VersionManifestVersion> minecraftVersion = Optional.ofNullable(version.minecraftVersion);
 
-                    if (minecraftVersion.isPresent() && !minecraftVersion.get().version.equalsIgnoreCase(instance.id)
+                    if (minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(instance.id)
                             && !saveModsCheckbox.isSelected()) {
                         if (showDifferentMinecraftVersionsDialog() == -1) {
                             return;
@@ -783,13 +783,13 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown = new JComboBox<>();
         if (pack.isTester()) {
             for (PackVersion pv : pack.getDevVersions()) {
-                if (!isServer || (isServer && pv.minecraftVersion.server)) {
+                if (!isServer || (isServer && pv.minecraftVersion.hasServer())) {
                     versions.add(pv);
                 }
             }
         }
         for (PackVersion pv : pack.getVersions()) {
-            if (!isServer || (isServer && pv.minecraftVersion.server)) {
+            if (!isServer || (isServer && pv.minecraftVersion.hasServer())) {
                 versions.add(pv);
             }
         }
@@ -839,12 +839,12 @@ public class InstanceInstallerDialog extends JDialog {
 
                 if (!isServer && isReinstall) {
                     PackVersion packVersion = ((PackVersion) e.getItem());
-                    Optional<MinecraftVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
+                    Optional<VersionManifestVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
 
                     saveModsLabel.setVisible(minecraftVersion.isPresent()
-                            && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
+                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
                     saveModsCheckbox.setVisible(minecraftVersion.isPresent()
-                            && !minecraftVersion.get().version.equalsIgnoreCase(this.instance.id));
+                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
                 }
             }
         });

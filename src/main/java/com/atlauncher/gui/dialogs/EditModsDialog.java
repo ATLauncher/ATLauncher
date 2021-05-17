@@ -199,19 +199,7 @@ public class EditModsDialog extends JDialog {
 
         JButton addButton = new JButton(GetText.tr("Add Mod"));
         addButton.addActionListener(e -> {
-            boolean usesCoreMods = false;
-            try {
-                usesCoreMods = MinecraftManager.getMinecraftVersion(instance.id).coremods;
-            } catch (InvalidMinecraftVersion e1) {
-                LogManager.logStackTrace(e1);
-            }
-            String[] modTypes;
-            if (usesCoreMods) {
-                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack",
-                        "Shader Pack" };
-            } else {
-                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
-            }
+            String[] modTypes  = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
 
             FileChooserDialog fcd = new FileChooserDialog(this, GetText.tr("Add Mod"), GetText.tr("Mod"),
                     GetText.tr("Add"), GetText.tr("Type of Mod"), modTypes);

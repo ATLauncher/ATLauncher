@@ -226,7 +226,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                 try {
                     List<String> minecraftVersionsToSearch = MinecraftManager
-                            .getMajorMinecraftVersions(this.instance.id).stream().map(mv -> mv.version)
+                            .getMajorMinecraftVersions(this.instance.id).stream().map(mv -> mv.id)
                             .collect(Collectors.toList());
 
                     curseForgeFilesStream = curseForgeFilesStream

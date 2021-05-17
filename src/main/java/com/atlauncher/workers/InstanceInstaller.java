@@ -682,13 +682,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (this.isReinstall && instance.hasCustomMods()) {
             // user chose to save mods even though Minecraft version changed, so add them to
             // the installed list
-            if (this.saveMods || instance.id.equalsIgnoreCase(version.minecraftVersion.version)) {
+            if (this.saveMods || instance.id.equalsIgnoreCase(version.minecraftVersion.id)) {
                 modsInstalled.addAll(instance.getCustomDisableableMods());
             }
 
             // user choosing to not save mods and Minecraft version changed, so delete
             // custom mods
-            if (!this.saveMods && !instance.id.equalsIgnoreCase(version.minecraftVersion.version)) {
+            if (!this.saveMods && !instance.id.equalsIgnoreCase(version.minecraftVersion.id)) {
                 for (com.atlauncher.data.DisableableMod mod : instance.getCustomDisableableMods()) {
                     this.instance.launcher.mods.remove(mod);
                     Utils.delete((mod.isDisabled() ? mod.getDisabledFile(this.instance) : mod.getFile(this.instance)));
@@ -1934,10 +1934,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             } else {
                 FileUtils.deleteDirectory(this.root.resolve("mods"));
 
-                if (this.version.minecraftVersion.coremods && Files.isDirectory(this.root.resolve("coremods"))) {
-                    FileUtils.deleteDirectory(this.root.resolve("coremods"));
-                }
-
                 if (isReinstall && Files.isDirectory(this.root.resolve("jarmods"))) {
                     FileUtils.deleteDirectory(this.root.resolve("jarmods"));
                 }
@@ -2029,10 +2025,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (!Files.exists(directory)) {
                 FileUtils.createDirectory(directory);
             }
-        }
-
-        if (this.version.minecraftVersion.coremods) {
-            FileUtils.createDirectory(this.root.resolve("coremods"));
         }
     }
 
@@ -2152,7 +2144,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         } else if (forge != null) {
             return forge.getFile();
         } else {
-            return "minecraft_server." + this.version.minecraftVersion.version + ".jar";
+            return "minecraft_server." + this.version.minecraftVersion.id + ".jar";
         }
     }
 

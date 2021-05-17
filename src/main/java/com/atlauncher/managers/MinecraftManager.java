@@ -17,8 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +24,13 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.minecraft.JavaRuntimes;
+import com.atlauncher.data.minecraft.VersionManifest;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.network.Download;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 public class MinecraftManager {
     /**
@@ -47,22 +43,17 @@ public class MinecraftManager {
         Data.MINECRAFT.clear();
 
         try {
-            java.lang.reflect.Type type = new TypeToken<List<MinecraftVersion>>() {
-            }.getType();
-            List<MinecraftVersion> list = Gsons.DEFAULT_ALT
-                    .fromJson(new FileReader(FileSystem.JSON.resolve("minecraft.json").toFile()), type);
+            VersionManifest versionManifest = Download.build().cached().setUrl(Constants.MINECRAFT_VERSION_MANIFEST_URL)
+                    .downloadTo(FileSystem.JSON.resolve("version_manifest.json"))
+                    .asClassWithThrow(VersionManifest.class);
 
-            if (list == null) {
-                LogManager.error("Error loading Minecraft Versions. List was null. Exiting!");
-                System.exit(1); // Cannot recover from this so exit
-            }
-
-            for (MinecraftVersion mv : list) {
-                Data.MINECRAFT.put(mv.version, mv);
-            }
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
+            versionManifest.versions.forEach((version) -> {
+                Data.MINECRAFT.put(version.id, version);
+            });
+        } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
+
         LogManager.debug("Finished loading Minecraft versions");
         PerformanceManager.end();
     }
@@ -90,25 +81,28 @@ public class MinecraftManager {
         return Data.MINECRAFT.containsKey(version);
     }
 
-    public static MinecraftVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
-        if (Data.MINECRAFT.containsKey(version)) {
-            return Data.MINECRAFT.get(version);
+    public static VersionManifestVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
+        if (!Data.MINECRAFT.containsKey(version)) {
+            throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
         }
-        throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
+
+        return Data.MINECRAFT.get(version);
     }
 
-    public static List<MinecraftVersion> getMajorMinecraftVersions(String version) throws InvalidMinecraftVersion {
-        MinecraftVersion parentVersion = getMinecraftVersion(version);
+    public static List<VersionManifestVersion> getMajorMinecraftVersions(String version)
+            throws InvalidMinecraftVersion {
+        VersionManifestVersion parentVersion = getMinecraftVersion(version);
 
-        // this doesn't apply for snapshots
-        if (parentVersion.snapshot) {
-            List<MinecraftVersion> singleList = new ArrayList<>();
+        // this doesn't apply for anything other than release types
+        if (parentVersion.type != VersionManifestVersionType.RELEASE) {
+            List<VersionManifestVersion> singleList = new ArrayList<>();
             singleList.add(parentVersion);
             return singleList;
         }
 
         return Data.MINECRAFT.entrySet().stream()
-                .filter(e -> e.getKey().startsWith(version.substring(0, version.lastIndexOf("."))))
+                .filter(e -> e.getValue().type == VersionManifestVersionType.RELEASE
+                        && e.getKey().startsWith(version.substring(0, version.lastIndexOf("."))))
                 .map(e -> e.getValue()).collect(Collectors.toList());
     }
 }

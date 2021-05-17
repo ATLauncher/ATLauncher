@@ -338,7 +338,7 @@ public final class AddModsDialog extends JDialog {
                 } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                     try {
                         versionsToSearchFor.addAll(MinecraftManager.getMajorMinecraftVersions(this.instance.id).stream()
-                                .map(mv -> mv.version).collect(Collectors.toList()));
+                                .map(mv -> mv.id).collect(Collectors.toList()));
                     } catch (InvalidMinecraftVersion e) {
                         LogManager.logStackTrace(e);
                         versionsToSearchFor = null;

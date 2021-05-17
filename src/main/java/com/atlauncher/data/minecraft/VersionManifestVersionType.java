@@ -18,22 +18,19 @@
 package com.atlauncher.data.minecraft;
 
 import com.atlauncher.annot.Json;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
+import com.google.gson.annotations.SerializedName;
 
 @Json
-public class VersionManifestVersion {
-    public String id;
-    public VersionManifestVersionType type;
-    public String url;
-    public String time;
-    public String releaseTime;
+public enum VersionManifestVersionType {
+    @SerializedName("snapshot")
+    SNAPSHOT,
 
-    public boolean hasServer() {
-        DateTime parsedReleaseTime = ISODateTimeFormat.dateTimeParser().parseDateTime(releaseTime);
+    @SerializedName("release")
+    RELEASE,
 
-        // check if the release is after 1.2.5 release time
-        return parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2012-03-28T22:00:00+00:00"));
-    }
+    @SerializedName("old_beta")
+    OLD_BETA,
+
+    @SerializedName("old_alpha")
+    OLD_ALPHA,
 }

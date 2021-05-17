@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Launcher not working with Java 16 [#465]
 
 ### Misc
+- Get Minecraft versions from Minecraft launcher meta [#460]

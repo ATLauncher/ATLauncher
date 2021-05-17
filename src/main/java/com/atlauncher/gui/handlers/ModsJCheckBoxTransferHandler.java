@@ -33,13 +33,11 @@ import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
-import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.FileTypeDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
@@ -75,19 +73,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             Type type;
             File instanceFile;
 
-            boolean usesCoreMods = false;
-            try {
-                usesCoreMods = MinecraftManager.getMinecraftVersion(dialog.instance.id).coremods;
-            } catch (InvalidMinecraftVersion e1) {
-                LogManager.logStackTrace(e1);
-            }
-            String[] modTypes;
-            if (usesCoreMods) {
-                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "CoreMods Mod", "Texture Pack",
-                        "Shader Pack" };
-            } else {
-                modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
-            }
+            String[] modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
 
             FileTypeDialog fcd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding Mods"), GetText.tr("Add"),
                     GetText.tr("Type"), modTypes);

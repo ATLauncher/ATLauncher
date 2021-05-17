@@ -337,7 +337,7 @@ public class DisableableMod implements Serializable {
             if (App.settings.addModRestriction == AddModRestriction.LAX) {
                 try {
                     List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
-                            .stream().map(mv -> mv.version).collect(Collectors.toList());
+                            .stream().map(mv -> mv.id).collect(Collectors.toList());
 
                     curseForgeFilesStream = curseForgeFilesStream.filter(
                             file -> file.gameVersion.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));

@@ -25,12 +25,12 @@ import java.util.Map;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.MinecraftServer;
-import com.atlauncher.data.MinecraftVersion;
 import com.atlauncher.data.News;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.curseforge.CurseForgeProjectLatestFile;
 import com.atlauncher.data.minecraft.JavaRuntimes;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 
 public final class Data {
@@ -45,7 +45,7 @@ public final class Data {
 
     public static final List<Server> SERVERS = new LinkedList<>();
 
-    public static final Map<String, MinecraftVersion> MINECRAFT = new HashMap<>();
+    public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
     public static JavaRuntimes JAVA_RUNTIMES = null;
 
     // Tools related things
