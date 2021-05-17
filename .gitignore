@@ -28,3 +28,5 @@ cache/
 java_pid*.hprof
 *.log
 mockserver_keystore_*
+packaging/linux/flatpak/.flatpak-builder
+packaging/linux/flatpak/build-dir

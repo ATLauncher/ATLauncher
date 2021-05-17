@@ -1,0 +1,13 @@
+[Desktop Entry]
+Categories=Game;
+Exec=/app/bin/atlauncher.sh
+Icon=com.atlauncher.ATLauncher
+Keywords=game;Minecraft;
+MimeType=
+Name=ATLauncher
+Comment=A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
