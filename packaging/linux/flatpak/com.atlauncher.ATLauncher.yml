@@ -53,6 +53,3 @@ modules:
             path: com.atlauncher.ATLauncher.metainfo.xml
           - type: file
             path: com.atlauncher.ATLauncher.desktop
-
-
-
