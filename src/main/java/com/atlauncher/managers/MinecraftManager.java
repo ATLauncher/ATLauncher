@@ -19,9 +19,12 @@ package com.atlauncher.managers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
@@ -31,6 +34,10 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.network.Download;
+
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 public class MinecraftManager {
     /**
@@ -104,5 +111,13 @@ public class MinecraftManager {
                 .filter(e -> e.getValue().type == VersionManifestVersionType.RELEASE
                         && e.getKey().startsWith(version.substring(0, version.lastIndexOf("."))))
                 .map(e -> e.getValue()).collect(Collectors.toList());
+    }
+
+    public static List<VersionManifestVersion> getFilteredMinecraftVersions(
+            List<VersionManifestVersionType> filterTypes) {
+        return Data.MINECRAFT.values().stream().filter(mv -> filterTypes.contains(mv.type))
+                .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+                }).reversed()).collect(Collectors.toList());
     }
 }

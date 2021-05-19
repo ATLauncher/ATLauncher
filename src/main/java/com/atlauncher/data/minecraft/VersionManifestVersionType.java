@@ -23,14 +23,30 @@ import com.google.gson.annotations.SerializedName;
 @Json
 public enum VersionManifestVersionType {
     @SerializedName("snapshot")
-    SNAPSHOT,
+    SNAPSHOT {
+        public String toString() {
+            return "Snapshot";
+        }
+    },
 
     @SerializedName("release")
-    RELEASE,
+    RELEASE {
+        public String toString() {
+            return "Release";
+        }
+    },
 
     @SerializedName("old_beta")
-    OLD_BETA,
+    OLD_BETA {
+        public String toString() {
+            return "Beta";
+        }
+    },
 
     @SerializedName("old_alpha")
-    OLD_ALPHA,
+    OLD_ALPHA {
+        public String toString() {
+            return "Alpha";
+        }
+    },
 }

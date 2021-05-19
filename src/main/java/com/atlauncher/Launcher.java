@@ -43,6 +43,7 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
+import com.atlauncher.gui.tabs.VanillaPacksTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
@@ -78,7 +79,7 @@ public class Launcher {
     private InstancesTab instancesPanel; // The instances panel
     private ServersTab serversPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
-    private PacksTab vanillaPacksPanel; // The vanilla packs panel
+    private VanillaPacksTab vanillaPacksPanel; // The vanilla packs panel
     private PacksTab featuredPacksPanel; // The featured packs panel
     private PacksTab packsPanel; // The packs panel
 
@@ -509,7 +510,7 @@ public class Launcher {
      *
      * @param vanillaPacksPanel Vanilla Packs Panel
      */
-    public void setVanillaPacksPanel(PacksTab vanillaPacksPanel) {
+    public void setVanillaPacksPanel(VanillaPacksTab vanillaPacksPanel) {
         this.vanillaPacksPanel = vanillaPacksPanel;
     }
 

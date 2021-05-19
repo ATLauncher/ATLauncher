@@ -50,6 +50,7 @@ import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
+import com.atlauncher.gui.tabs.VanillaPacksTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
@@ -197,7 +198,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         PerformanceManager.end("newsTab");
 
         PerformanceManager.start("vanillaPacksTab");
-        PacksTab vanillaPacksTab = new PacksTab(false, true);
+        VanillaPacksTab vanillaPacksTab = new VanillaPacksTab();
         App.launcher.setVanillaPacksPanel(vanillaPacksTab);
         PerformanceManager.end("vanillaPacksTab");
 
