@@ -12,4 +12,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Launcher not working with Java 16 [#465]
 
 ### Misc
+- Force minimum of Java 8u141/7u151
 - Get Minecraft versions from Minecraft launcher meta [#460]

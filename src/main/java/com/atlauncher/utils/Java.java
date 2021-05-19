@@ -180,12 +180,12 @@ public class Java {
 
     /**
      * Checks if the user is using Java 8 or newer or if on Java 7 at least version
-     * 111 or if on Java 8 at least version 101 or newer.
+     * 151 or if on Java 8 at least version 141 or newer.
      */
     public static boolean isUsingJavaSupportingLetsEncrypt() {
         return getLauncherJavaVersionNumber() > 8
-                || (getLauncherJavaVersionNumber() == 7 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 111)
-                || (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 101);
+                || (getLauncherJavaVersionNumber() == 7 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 151)
+                || (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 141);
     }
 
     /**
