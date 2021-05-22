@@ -401,7 +401,6 @@ public class Launcher {
             NewsManager.loadNews(); // Load the news
             reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher
-            reloadVanillaPacksPanel(); // Reload packs panel
             reloadFeaturedPacksPanel(); // Reload packs panel
             reloadPacksPanel(); // Reload packs panel
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
@@ -546,20 +545,6 @@ public class Launcher {
      */
     public void reloadNewsPanel() {
         this.newsPanel.reload(); // Reload the news panel
-    }
-
-    /**
-     * Reloads the panel used for Vanilla Packs
-     */
-    public void reloadVanillaPacksPanel() {
-        this.vanillaPacksPanel.reload();
-    }
-
-    /**
-     * Refreshes the panel used for Vanilla Packs
-     */
-    public void refreshVanillaPacksPanel() {
-        this.vanillaPacksPanel.refresh();
     }
 
     /**

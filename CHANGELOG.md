@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Misc
 - Force minimum of Java 8u141/7u151
 - Get Minecraft versions from Minecraft launcher meta [#460]
+- Move to a cleaner and more reusable instance installer method

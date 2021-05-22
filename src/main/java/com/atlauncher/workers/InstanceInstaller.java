@@ -79,7 +79,6 @@ import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.MojangDownload;
 import com.atlauncher.data.minecraft.MojangDownloads;
-import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -216,6 +215,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 generatePackVersionFromModpacksCh();
             } else if (multiMCManifest != null) {
                 generatePackVersionFromMultiMC();
+            } else if (pack._new) {
+                generatePackVersionFromNewFormat();
             } else {
                 downloadPackVersionJson();
             }
@@ -577,27 +578,26 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         hideSubProgressBar();
     }
 
+    private void generatePackVersionFromNewFormat() throws Exception {
+        addPercent(5);
+        fireTask(GetText.tr("Generating Pack Version Definition From New Format"));
+        fireSubProgressUnknown();
+
+        this.packVersion = new Version();
+        packVersion.version = version.minecraftVersion.id;
+        packVersion.minecraft = version.minecraftVersion.id;
+        packVersion.enableCurseForgeIntegration = true;
+        packVersion.enableEditingMods = true;
+
+        hideSubProgressBar();
+    }
+
     private void downloadMinecraftVersionJson() throws Exception {
         addPercent(5);
         fireTask(GetText.tr("Downloading Minecraft Definition"));
         fireSubProgressUnknown();
 
-        VersionManifest versionManifest = com.atlauncher.network.Download.build().cached()
-                .setUrl(String.format("%s/mc/game/version_manifest.json", Constants.LAUNCHER_META_MINECRAFT))
-                .asClass(VersionManifest.class);
-
-        if (versionManifest == null) {
-            throw new Exception("Failed to download Minecraft version manifest");
-        }
-
-        VersionManifestVersion minecraftVersion = versionManifest.versions.stream()
-                .filter(version -> version.id.equalsIgnoreCase(this.packVersion.getMinecraft())).findFirst()
-                .orElse(null);
-
-        if (minecraftVersion == null) {
-            throw new Exception(
-                    String.format("Failed to find Minecraft version of %s", this.packVersion.getMinecraft()));
-        }
+        VersionManifestVersion minecraftVersion = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
 
         this.minecraftVersion = com.atlauncher.network.Download.build().cached().setUrl(minecraftVersion.url)
                 .downloadTo(this.temp.resolve("minecraft.json")).asClass(MinecraftVersion.class);
@@ -1676,7 +1676,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireTask(GetText.tr("Copying " + minecraftFolder + " folder"));
             Utils.copyDirectory(this.multiMCExtractedPath.resolve(minecraftFolder + "/").toFile(), this.root.toFile(),
                     false);
-        } else {
+        } else if (!pack._new) {
             fireTask(GetText.tr("Downloading Configs"));
 
             File configs = this.temp.resolve("Configs.zip").toFile();

@@ -220,7 +220,6 @@ public class AccountManager {
             Data.SELECTED_ACCOUNT = account;
             App.settings.lastAccount = account.username;
         }
-        App.launcher.refreshVanillaPacksPanel();
         App.launcher.refreshFeaturedPacksPanel();
         App.launcher.refreshPacksPanel();
         App.launcher.reloadInstancesPanel();
