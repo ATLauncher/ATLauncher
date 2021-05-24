@@ -20,9 +20,10 @@ package com.atlauncher.data.installables;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
 public class VanillaInstallable extends ATLauncherFormatInstallable {
-    public VanillaInstallable(VersionManifestVersion minecraftVersion) {
+    public VanillaInstallable(VersionManifestVersion minecraftVersion, LoaderVersion loaderVersion) {
         super();
 
         this.pack = new Pack();
@@ -33,8 +34,8 @@ public class VanillaInstallable extends ATLauncherFormatInstallable {
         this.packVersion = new PackVersion();
         this.packVersion.version = minecraftVersion.id;
         this.packVersion.minecraftVersion = minecraftVersion;
-        this.packVersion.hasLoader = false;
+        this.packVersion.hasLoader = loaderVersion != null;
 
-        this.loaderVersion = null;
+        this.loaderVersion = loaderVersion;
     }
 }

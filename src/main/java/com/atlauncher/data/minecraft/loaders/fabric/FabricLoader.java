@@ -223,11 +223,16 @@ public class FabricLoader implements Loader {
         java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
         }.getType();
 
-        List<FabricMetaVersion> versions = Download.build()
-                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft)).asType(type);
+        try {
+            List<FabricMetaVersion> versions = Download.build()
+                    .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft))
+                    .asTypeWithThrow(type);
 
-        return versions.stream().map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
-                .collect(Collectors.toList());
+            return versions.stream().map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            return new ArrayList<>();
+        }
     }
 
     @Override

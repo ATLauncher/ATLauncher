@@ -31,10 +31,13 @@ import java.util.Optional;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -54,10 +57,15 @@ import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.data.minecraft.loaders.LoaderType;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 
 import org.joda.time.format.DateTimeFormat;
@@ -80,6 +88,16 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     private JTable minecraftVersionTable;
     private DefaultTableModel minecraftVersionTableModel;
 
+    private ButtonGroup loaderTypeButtonGroup = new ButtonGroup();
+    private JRadioButton loaderTypeNoneRadioButton = new JRadioButton(GetText.tr("None"));
+    private JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
+    private JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
+
+    private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
+
+    private JButton createServerButton = new JButton(GetText.tr("Create Server"));
+    private JButton createInstanceButton = new JButton(GetText.tr("Create Instance"));
+
     public VanillaPacksTab() {
         super(new BorderLayout());
         setName("vanillaPacksPanel");
@@ -96,7 +114,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
+        gbc.anchor = GridBagConstraints.EAST;
 
         JLabel nameLabel = new JLabel(GetText.tr("Instance Name") + ":");
         mainPanel.add(nameLabel, gbc);
@@ -127,9 +145,12 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 }
 
                 String currentValue = nameField.getText();
+                LoaderType selectedLoader = getSelectedLoader();
 
                 // if the name is the same as the default is, then we're not dirty
-                nameFieldDirty = !currentValue.equals(String.format("Minecraft %s", selectedMinecraftVersion));
+                nameFieldDirty = !(currentValue.equals(String.format("Minecraft %s", selectedMinecraftVersion))
+                        || (selectedLoader != null && currentValue.equals(
+                                String.format("Minecraft %s with %s", selectedMinecraftVersion, selectedLoader))));
             }
         });
         mainPanel.add(nameField, gbc);
@@ -174,9 +195,12 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 }
 
                 String currentValue = descriptionField.getText();
+                LoaderType selectedLoader = getSelectedLoader();
 
                 // if the description is the same as the default is, then we're not dirty
-                descriptionFieldDirty = !currentValue.equals(String.format("Minecraft %s", selectedMinecraftVersion));
+                descriptionFieldDirty = !(currentValue.equals(String.format("Minecraft %s", selectedMinecraftVersion))
+                        || (selectedLoader != null && currentValue.equals(
+                                String.format("Minecraft %s with %s", selectedMinecraftVersion, selectedLoader))));
             }
         });
         mainPanel.add(descriptionScrollPane, gbc);
@@ -282,6 +306,59 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         mainPanel.add(minecraftVersionScrollPane, gbc);
 
+        // Loader Type
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.EAST;
+
+        JLabel loaderTypeLabel = new JLabel(GetText.tr("Loader") + "?");
+        mainPanel.add(loaderTypeLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
+        loaderTypeButtonGroup.add(loaderTypeNoneRadioButton);
+        loaderTypeButtonGroup.add(loaderTypeFabricRadioButton);
+        loaderTypeButtonGroup.add(loaderTypeForgeRadioButton);
+
+        JPanel loaderTypePanel = new JPanel(new FlowLayout());
+        loaderTypePanel.add(loaderTypeNoneRadioButton);
+        loaderTypePanel.add(loaderTypeFabricRadioButton);
+        loaderTypePanel.add(loaderTypeForgeRadioButton);
+
+        loaderTypeNoneRadioButton.addActionListener(e -> {
+            selectedLoaderTypeChanged(null);
+        });
+        loaderTypeFabricRadioButton.addActionListener(e -> {
+            selectedLoaderTypeChanged(LoaderType.FABRIC);
+        });
+        loaderTypeForgeRadioButton.addActionListener(e -> {
+            selectedLoaderTypeChanged(LoaderType.FORGE);
+        });
+
+        loaderTypeNoneRadioButton.setSelected(true);
+
+        mainPanel.add(loaderTypePanel, gbc);
+
+        // Loader Version
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabel loaderVersionLabel = new JLabel(GetText.tr("Loader Version") + ":");
+        mainPanel.add(loaderVersionLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
+        loaderVersionsDropDown.setEnabled(false);
+        loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("Select Loader First")));
+        mainPanel.add(loaderVersionsDropDown, gbc);
+
         // Enable User Lock
         gbc.gridx = 0;
         gbc.gridy += 2;
@@ -330,8 +407,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 int maxIndex = lsm.getMaxSelectionIndex();
                 for (int i = minIndex; i <= maxIndex; i++) {
                     if (lsm.isSelectedIndex(i)) {
-                        selectedMinecraftVersion = (String) minecraftVersionTableModel.getValueAt(i, 0);
-                        selectedMinecraftVersionChanged(selectedMinecraftVersion);
+                        selectedMinecraftVersionChanged((String) minecraftVersionTableModel.getValueAt(i, 0));
                     }
                 }
             }
@@ -350,16 +426,37 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         minecraftVersionTable.setShowVerticalLines(false);
     }
 
-    private void selectedMinecraftVersionChanged(String selectedMinecraftVersion) {
-        String defaultValue = String.format("Minecraft %s", selectedMinecraftVersion);
+    private void selectedMinecraftVersionChanged(String newSelectedMinecraftVersion) {
+        if (selectedMinecraftVersion != newSelectedMinecraftVersion) {
+            selectedMinecraftVersion = newSelectedMinecraftVersion;
+            String defaultValue = String.format("Minecraft %s", newSelectedMinecraftVersion);
 
-        if (!nameFieldDirty) {
-            nameField.setText(defaultValue);
+            if (!nameFieldDirty) {
+                nameField.setText(defaultValue);
+            }
+
+            if (!descriptionFieldDirty) {
+                descriptionField.setText(defaultValue);
+            }
+
+            // refresh the loader versions if we have one selected
+            LoaderType selectedLoaderType = getSelectedLoader();
+            if (selectedLoaderType != null) {
+                selectedLoaderTypeChanged(selectedLoaderType);
+            }
+        }
+    }
+
+    private LoaderType getSelectedLoader() {
+        if (loaderTypeFabricRadioButton.isSelected()) {
+            return LoaderType.FABRIC;
         }
 
-        if (!descriptionFieldDirty) {
-            descriptionField.setText(defaultValue);
+        if (loaderTypeForgeRadioButton.isSelected()) {
+            return LoaderType.FORGE;
         }
+
+        return null;
     }
 
     private void reloadMinecraftVersionsTable() {
@@ -397,10 +494,100 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         minecraftVersionTable.revalidate();
     }
 
+    private void selectedLoaderTypeChanged(LoaderType selectedLoader) {
+        loaderVersionsDropDown.removeAllItems();
+        loaderVersionsDropDown.setEnabled(false);
+
+        if (selectedLoader == null) {
+            // update the name and description fields if they're not dirty
+            String defaultNameFieldValue = String.format("Minecraft %s", selectedMinecraftVersion);
+            if (!nameFieldDirty) {
+                nameField.setText(defaultNameFieldValue);
+            }
+
+            if (!descriptionFieldDirty) {
+                descriptionField.setText(defaultNameFieldValue);
+            }
+
+            loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("Select Loader First")));
+            return;
+        }
+
+        loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("Getting Loader Versions")));
+
+        loaderTypeNoneRadioButton.setEnabled(false);
+        loaderTypeFabricRadioButton.setEnabled(false);
+        loaderTypeForgeRadioButton.setEnabled(false);
+        loaderVersionsDropDown.setEnabled(false);
+        createServerButton.setEnabled(false);
+        createInstanceButton.setEnabled(false);
+
+        Runnable r = () -> {
+            List<LoaderVersion> loaderVersions = new ArrayList<>();
+
+            if (selectedLoader == LoaderType.FABRIC) {
+                loaderVersions.addAll(FabricLoader.getChoosableVersions(selectedMinecraftVersion));
+            } else if (selectedLoader == LoaderType.FORGE) {
+                loaderVersions.addAll(ForgeLoader.getChoosableVersions(selectedMinecraftVersion));
+            }
+
+            if (loaderVersions.size() == 0) {
+                loaderVersionsDropDown.removeAllItems();
+                loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("No Versions Found")));
+                loaderTypeNoneRadioButton.setEnabled(true);
+                loaderTypeFabricRadioButton.setEnabled(true);
+                loaderTypeForgeRadioButton.setEnabled(true);
+                createServerButton.setEnabled(true);
+                createInstanceButton.setEnabled(true);
+                return;
+            }
+
+            int loaderVersionLength = 0;
+
+            // ensures that font width is taken into account
+            for (LoaderVersion version : loaderVersions) {
+                loaderVersionLength = Math.max(loaderVersionLength,
+                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
+            }
+
+            loaderVersionsDropDown.removeAllItems();
+
+            loaderVersions.forEach(version -> loaderVersionsDropDown
+                    .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
+
+            // ensures that the dropdown is at least 200 px wide
+            loaderVersionLength = Math.max(200, loaderVersionLength);
+
+            // ensures that there is a maximum width of 400 px to prevent overflow
+            loaderVersionLength = Math.min(400, loaderVersionLength);
+
+            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
+
+            loaderTypeNoneRadioButton.setEnabled(true);
+            loaderTypeFabricRadioButton.setEnabled(true);
+            loaderTypeForgeRadioButton.setEnabled(true);
+            loaderVersionsDropDown.setEnabled(true);
+            createServerButton.setEnabled(true);
+            createInstanceButton.setEnabled(true);
+
+            // update the name and description fields if they're not dirty
+            String defaultNameFieldValue = String.format("Minecraft %s with %s", selectedMinecraftVersion,
+                    selectedLoader.toString());
+            if (!nameFieldDirty) {
+                nameField.setText(defaultNameFieldValue);
+            }
+
+            if (!descriptionFieldDirty) {
+                descriptionField.setText(defaultNameFieldValue);
+            }
+        };
+
+        new Thread(r).start();
+    }
+
     private void setupBottomPanel() {
         JPanel bottomPanel = new JPanel(new FlowLayout());
 
-        JButton createServerButton = new JButton(GetText.tr("Create Server"));
         bottomPanel.add(createServerButton);
         createServerButton.addActionListener(new ActionListener() {
             @Override
@@ -409,7 +596,6 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             }
         });
 
-        JButton createInstanceButton = new JButton(GetText.tr("Create Instance"));
         bottomPanel.add(createInstanceButton);
         createInstanceButton.addActionListener(new ActionListener() {
             @Override
@@ -424,7 +610,11 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     private void install(boolean isServer) {
         Installable installable;
         try {
-            installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(selectedMinecraftVersion));
+            LoaderVersion selectedLoaderVersion = ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem())
+                    .getValue();
+
+            installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(selectedMinecraftVersion),
+                    selectedLoaderVersion);
             installable.instanceName = nameField.getText();
             installable.isReinstall = false;
             installable.isServer = isServer;

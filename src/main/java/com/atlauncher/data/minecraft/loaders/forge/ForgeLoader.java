@@ -19,6 +19,7 @@ package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -281,13 +282,18 @@ public class ForgeLoader implements Loader {
         java.lang.reflect.Type type = new TypeToken<APIResponse<List<ATLauncherApiForgeVersion>>>() {
         }.getType();
 
-        APIResponse<List<ATLauncherApiForgeVersion>> data = Download.build()
-                .setUrl(String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft)).asType(type);
+        try {
+            APIResponse<List<ATLauncherApiForgeVersion>> data = Download.build()
+                    .setUrl(String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft))
+                    .asTypeWithThrow(type);
 
-        return data
-                .getData().stream().map(version -> new LoaderVersion(version.version, version.rawVersion,
-                        version.recommended, "Forge", version.installerSize, version.installerSha1Hash))
-                .collect(Collectors.toList());
+            return data
+                    .getData().stream().map(version -> new LoaderVersion(version.version, version.rawVersion,
+                            version.recommended, "Forge", version.installerSize, version.installerSha1Hash))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            return new ArrayList<LoaderVersion>();
+        }
     }
 
     @Override
