@@ -51,7 +51,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.atlauncher.App;
-import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
@@ -62,11 +61,9 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.utils.Utils;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -606,7 +603,17 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             installable.isReinstall = false;
             installable.isServer = isServer;
 
-            installable.startInstall();
+            boolean success = installable.startInstall();
+
+            if (success) {
+                nameFieldDirty = false;
+                descriptionFieldDirty = false;
+
+                loaderTypeNoneRadioButton.setSelected(true);
+                selectedLoaderTypeChanged(null);
+
+                minecraftVersionTable.setRowSelectionInterval(0, 0);
+            }
         } catch (InvalidMinecraftVersion e) {
             LogManager.logStackTrace(e);
         }
