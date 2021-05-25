@@ -179,7 +179,6 @@ public class Server {
 
     public ImageIcon getImage() {
         File customImage = this.getRoot().resolve("server.png").toFile();
-        File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
 
         if (customImage.exists()) {
             try {
@@ -187,13 +186,15 @@ public class Server {
                 Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
                 return new ImageIcon(dimg);
             } catch (IOException e) {
-                LogManager.logStackTrace("Error creating scaled image from the custom image of instance " + this.name,
-                        e);
+                LogManager.logStackTrace("Error creating scaled image from the custom image of server " + this.name, e);
             }
         }
 
-        if (instancesImage.exists()) {
-            return Utils.getIconImage(instancesImage);
+        if (getPack() != null) {
+            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
+            if (instancesImage.exists()) {
+                return Utils.getIconImage(instancesImage);
+            }
         }
 
         return Utils.getIconImage("/assets/image/default-image.png");

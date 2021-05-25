@@ -590,9 +590,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         packVersion.minecraft = version.minecraftVersion.id;
         packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
-        packVersion.loader = new com.atlauncher.data.json.Loader();
 
-        if (loaderVersion.isForge()) {
+        if (loaderVersion != null && loaderVersion.isForge()) {
+            packVersion.loader = new com.atlauncher.data.json.Loader();
             java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
             }.getType();
 
@@ -613,7 +613,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             } else {
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
             }
-        } else if (loaderVersion.isFabric()) {
+        } else if (loaderVersion != null && loaderVersion.isFabric()) {
+            packVersion.loader = new com.atlauncher.data.json.Loader();
             Map<String, Object> loaderMeta = new HashMap<>();
             loaderMeta.put("minecraft", version.minecraftVersion.id);
             loaderMeta.put("loader", loaderVersion.version);

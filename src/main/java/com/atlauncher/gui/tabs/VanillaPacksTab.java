@@ -431,6 +431,13 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             selectedMinecraftVersion = newSelectedMinecraftVersion;
             String defaultValue = String.format("Minecraft %s", newSelectedMinecraftVersion);
 
+            try {
+                VersionManifestVersion version = MinecraftManager.getMinecraftVersion(newSelectedMinecraftVersion);
+                createServerButton.setVisible(version.hasServer());
+            } catch (InvalidMinecraftVersion ignored) {
+                createServerButton.setVisible(false);
+            }
+
             if (!nameFieldDirty) {
                 nameField.setText(defaultValue);
             }
