@@ -230,25 +230,6 @@ public class InstanceInstallerDialog extends JDialog {
         gbc = this.setupVersionsDropdown(gbc);
         gbc = this.setupLoaderVersionsDropdown(gbc);
 
-        if (!this.isServer && !isReinstall) {
-            gbc.gridx = 0;
-            gbc.gridy++;
-            gbc.insets = UIConstants.LABEL_INSETS;
-            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-            JLabel enableUserLockLabel = new JLabelWithHover(GetText.tr("Enable User Lock") + "?",
-                    Utils.getIconImage(App.THEME.getIconPath("question")),
-                    new HTMLBuilder().center().text(GetText.tr(
-                            "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else."))
-                            .build());
-            middle.add(enableUserLockLabel, gbc);
-
-            gbc.gridx++;
-            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
-            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-            enableUserLock = new JCheckBox();
-            middle.add(enableUserLock, gbc);
-        }
-
         if (!this.isServer && isReinstall) {
             gbc.gridx = 0;
             gbc.gridy++;

@@ -359,26 +359,6 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("Select Loader First")));
         mainPanel.add(loaderVersionsDropDown, gbc);
 
-        // Enable User Lock
-        gbc.gridx = 0;
-        gbc.gridy += 2;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-
-        JLabel enableUserLockLabel = new JLabelWithHover(GetText.tr("Enable User Lock") + "?",
-                Utils.getIconImage(App.THEME.getIconPath("question")),
-                new HTMLBuilder().center().text(GetText.tr(
-                        "Enabling the user lock setting will lock this instance to only be played<br/>by the person installing this instance (you) and will not show the instance to anyone else."))
-                        .build());
-        mainPanel.add(enableUserLockLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-
-        JCheckBox enableUserLock = new JCheckBox();
-        mainPanel.add(enableUserLock, gbc);
-
         add(mainPanel, BorderLayout.CENTER);
     }
 
