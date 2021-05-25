@@ -582,7 +582,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionForVanilla() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From New Format"));
+        fireTask(GetText.tr("Generating Pack Version Definition For Vanilla Minecraft"));
         fireSubProgressUnknown();
 
         this.packVersion = new Version();

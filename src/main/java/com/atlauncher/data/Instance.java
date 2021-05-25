@@ -76,6 +76,7 @@ import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
@@ -93,6 +94,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
@@ -162,7 +164,21 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean hasUpdate() {
-        if (this.isExternalPack()) {
+        if (launcher.vanillaInstance) {
+            if (this.type == "snapshot") {
+                return MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.SNAPSHOT)
+                        .get(0).id != this.id;
+            } else if (this.type == "release") {
+                return MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.RELEASE)
+                        .get(0).id != this.id;
+            } else if (this.type == "old_beta") {
+                return MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_BETA)
+                        .get(0).id != this.id;
+            } else if (this.type == "old_alpha") {
+                return MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_ALPHA)
+                        .get(0).id != this.id;
+            }
+        } else if (this.isExternalPack()) {
             if (isModpacksChPack()) {
                 ModpacksChPackVersion latestVersion = Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(this);
 
@@ -273,7 +289,19 @@ public class Instance extends MinecraftVersion {
     public void ignoreUpdate() {
         String version;
 
-        if (isExternalPack()) {
+        if (launcher.vanillaInstance) {
+            if (this.type == "snapshot") {
+                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.SNAPSHOT).get(0).id;
+            } else if (this.type == "release") {
+                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.RELEASE).get(0).id;
+            } else if (this.type == "old_beta") {
+                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_BETA).get(0).id;
+            } else if (this.type == "old_alpha") {
+                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_ALPHA).get(0).id;
+            } else {
+                return;
+            }
+        } else if (isExternalPack()) {
             if (isModpacksChPack()) {
                 version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
             } else if (isCurseForgePack()) {
@@ -296,6 +324,24 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean hasLatestUpdateBeenIgnored() {
+        if (launcher.vanillaInstance) {
+            if (this.type == "snapshot") {
+                return hasUpdateBeenIgnored(
+                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.SNAPSHOT).get(0).id);
+            } else if (this.type == "release") {
+                return hasUpdateBeenIgnored(
+                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.RELEASE).get(0).id);
+            } else if (this.type == "old_beta") {
+                return hasUpdateBeenIgnored(
+                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_BETA).get(0).id);
+            } else if (this.type == "old_alpha") {
+                return hasUpdateBeenIgnored(
+                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_ALPHA).get(0).id);
+            }
+
+            return false;
+        }
+
         if (isExternalPack()) {
             if (isModpacksChPack()) {
                 return hasUpdateBeenIgnored(Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id));

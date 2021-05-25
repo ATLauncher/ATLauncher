@@ -65,9 +65,12 @@ import com.atlauncher.data.installables.CurseForgeManifestInstallable;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.ModpacksChInstallable;
 import com.atlauncher.data.installables.MultiMCInstallable;
+import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackLink;
 import com.atlauncher.data.modpacksch.ModpacksChPackLinkType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
@@ -305,8 +308,15 @@ public class InstanceInstallerDialog extends JDialog {
 
                     installable.multiMCManifest = multiMCManifest;
                     installable.multiMCExtractedPath = multiMCExtractedPath;
+                } else if (instance != null && instance.launcher.vanillaInstance) {
+                    installable = new VanillaInstallable(packVersion.minecraftVersion, loaderVersion,
+                            instance.launcher.description);
                 } else {
                     installable = new ATLauncherInstallable(pack, packVersion, loaderVersion);
+                }
+
+                if (instance != null) {
+                    installable.instance = instance;
                 }
 
                 installable.instanceName = nameField.getText();
@@ -314,7 +324,13 @@ public class InstanceInstallerDialog extends JDialog {
                 installable.isServer = isServer;
                 installable.saveMods = !isServer && isReinstall && saveModsCheckbox.isSelected();
 
-                installable.startInstall();
+                setVisible(false);
+
+                boolean success = installable.startInstall();
+
+                if (success) {
+                    dispose();
+                }
             }
         });
         JButton cancel = new JButton(GetText.tr("Cancel"));
@@ -371,6 +387,27 @@ public class InstanceInstallerDialog extends JDialog {
 
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", curseForgeProject.name));
+    }
+
+    private void handleVanillaInstall() {
+        pack = new Pack();
+        pack.vanillaInstance = true;
+        pack.name = instance.launcher.pack;
+        pack.description = instance.launcher.description;
+
+        pack.versions = MinecraftManager.getMinecraftVersions().stream().map(v -> {
+            PackVersion packVersion = new PackVersion();
+            packVersion.version = v.id;
+            packVersion.minecraftVersion = v;
+
+            if (instance.launcher.loaderVersion != null) {
+                packVersion.hasLoader = true;
+                packVersion.hasChoosableLoader = true;
+                packVersion.loaderType = instance.launcher.loaderVersion.type;
+            }
+
+            return packVersion;
+        }).collect(Collectors.toList());
     }
 
     private void handleModpacksChInstall(Object object) {
@@ -498,6 +535,8 @@ public class InstanceInstallerDialog extends JDialog {
             handleModpacksChInstall(dialog.getReturnValue());
         } else if (instance.isCurseForgePack()) {
             handleCurseForgeInstall(instance.launcher.curseForgeProject);
+        } else if (instance.launcher.vanillaInstance) {
+            handleVanillaInstall();
         } else {
             pack = instance.getPack();
         }
@@ -632,14 +671,25 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setEnabled(false);
 
         Runnable r = () -> {
-            Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.version), Version.class);
-
-            if (jsonVersion == null) {
-                return;
-            }
-
             loaderVersions.clear();
-            loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
+
+            if (this.instance != null && this.instance.launcher.vanillaInstance) {
+                if (this.instance.launcher.loaderVersion.isFabric()) {
+                    loaderVersions.addAll(FabricLoader.getChoosableVersions(this.instance.id));
+                } else if (this.instance.launcher.loaderVersion.isForge()) {
+                    loaderVersions.addAll(ForgeLoader.getChoosableVersions(this.instance.id));
+                } else {
+                    return;
+                }
+            } else {
+                Version jsonVersion = Gsons.DEFAULT.fromJson(pack.getJSON(item.version), Version.class);
+
+                if (jsonVersion == null) {
+                    return;
+                }
+
+                loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
+            }
 
             // ensures that font width is taken into account
             for (LoaderVersion version : loaderVersions) {
