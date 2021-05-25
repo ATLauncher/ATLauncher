@@ -39,7 +39,7 @@ import org.mini2Dx.gettext.GetText;
  */
 @SuppressWarnings("serial")
 public class NilCard extends JPanel implements RelocalizationListener {
-    private static final Image defaultImage = Utils.getIconImage("/assets/image/default-image.png")
+    private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png")
             .getImage();
 
     private final JTextArea error = new JTextArea();
