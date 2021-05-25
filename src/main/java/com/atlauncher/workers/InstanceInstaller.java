@@ -588,6 +588,36 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         packVersion.minecraft = version.minecraftVersion.id;
         packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
+        packVersion.loader = new com.atlauncher.data.json.Loader();
+
+        if (loaderVersion.isForge()) {
+            java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
+            }.getType();
+
+            APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, loaderVersion.version))
+                    .asType(type);
+
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", version.minecraftVersion.id);
+            loaderMeta.put("version", forgeVersionInfo.getData().version);
+            loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
+            loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
+            loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
+            packVersion.loader.metadata = loaderMeta;
+
+            if (Utils.matchVersion(version.minecraftVersion.id, "1.13", false, true)) {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.Forge113Loader";
+            } else {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
+            }
+        } else if (loaderVersion.isFabric()) {
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", version.minecraftVersion.id);
+            loaderMeta.put("loader", loaderVersion.version);
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+        }
 
         hideSubProgressBar();
     }

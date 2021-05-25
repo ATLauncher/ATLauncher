@@ -50,6 +50,10 @@ public class LoaderVersion {
         return this.type.equalsIgnoreCase("Fabric");
     }
 
+    public boolean isForge() {
+        return this.type.equalsIgnoreCase("Forge");
+    }
+
     public String toString() {
         if (this.recommended) {
             return this.version + " (Recommended)";
