@@ -74,4 +74,5 @@ public class InstanceLauncher {
 
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
+    public boolean _new = false;
 }

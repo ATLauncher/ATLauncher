@@ -281,6 +281,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return "ModpacksChPack";
         } else if (this.multiMCManifest != null) {
             return "MultiMCPack";
+        } else if (this.pack._new) {
+            return "Vanilla";
         }
 
         return "Pack";
@@ -956,6 +958,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.multiMCManifest = multiMCManifest;
         instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
         instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
+        instanceLauncher._new = this.pack._new;
 
         if (instanceLauncher.curseForgeManifest != null) {
             instanceLauncher.curseForgeManifest = null;

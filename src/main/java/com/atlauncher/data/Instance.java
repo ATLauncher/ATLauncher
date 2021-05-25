@@ -1511,6 +1511,10 @@ public class Instance extends MinecraftVersion {
         return launcher.modpacksChPackManifest != null && launcher.modpacksChPackVersionManifest != null;
     }
 
+    public boolean isVanillaInstance() {
+        return launcher._new;
+    }
+
     public boolean isExternalPack() {
         return isOldCurseForgePack() || isCurseForgePack() || isModpacksChPack() || isMultiMcImport();
     }
@@ -1526,6 +1530,10 @@ public class Instance extends MinecraftVersion {
 
         if (isModpacksChPack()) {
             return "ModpacksChInstance";
+        }
+
+        if (isVanillaInstance()) {
+            return "VanillaInstance";
         }
 
         return "Instance";
