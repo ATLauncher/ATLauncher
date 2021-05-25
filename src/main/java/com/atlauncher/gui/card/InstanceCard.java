@@ -164,7 +164,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             this.updateButton.setVisible(instance.isUpdatable());
         }
 
-        if (instance.isExternalPack()) {
+        if (instance.isExternalPack() || instance.launcher.vanillaInstance) {
             this.serversButton.setVisible(false);
         }
 
@@ -441,12 +441,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     rightClickMenu.add(updateItem);
 
-                    changeDescriptionItem.setVisible(
-                            instance.isExternalPack() || (instance.getPack() != null && instance.getPack().system));
+                    changeDescriptionItem.setVisible(instance.isExternalPack() || instance.launcher.vanillaInstance
+                            || (instance.getPack() != null && instance.getPack().system));
 
-                    shareCodeItem.setVisible(
-                            (instance.getPack() != null && !instance.getPack().system) && !instance.isExternalPack()
-                                    && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
+                    shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
+                            && !instance.isExternalPack() && !instance.launcher.vanillaInstance
+                            && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
 
                     updateItem.setVisible(instance.isUpdatable());
                     updateItem.setEnabled(instance.hasUpdate() && instance.launcher.isPlayable);

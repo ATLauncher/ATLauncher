@@ -1512,7 +1512,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isVanillaInstance() {
-        return launcher._new;
+        return launcher.vanillaInstance;
     }
 
     public boolean isExternalPack() {
@@ -1552,6 +1552,10 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isUpdatable() {
+        if (launcher.vanillaInstance) {
+            return true;
+        }
+
         if (isExternalPack()) {
             return isUpdatableExternalPack();
         }

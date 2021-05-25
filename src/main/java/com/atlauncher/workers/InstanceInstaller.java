@@ -215,8 +215,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 generatePackVersionFromModpacksCh();
             } else if (multiMCManifest != null) {
                 generatePackVersionFromMultiMC();
-            } else if (pack._new) {
-                generatePackVersionFromNewFormat();
+            } else if (pack.vanillaInstance) {
+                generatePackVersionForVanilla();
             } else {
                 downloadPackVersionJson();
             }
@@ -281,7 +281,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return "ModpacksChPack";
         } else if (this.multiMCManifest != null) {
             return "MultiMCPack";
-        } else if (this.pack._new) {
+        } else if (this.pack.vanillaInstance) {
             return "Vanilla";
         }
 
@@ -580,7 +580,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         hideSubProgressBar();
     }
 
-    private void generatePackVersionFromNewFormat() throws Exception {
+    private void generatePackVersionForVanilla() throws Exception {
         addPercent(5);
         fireTask(GetText.tr("Generating Pack Version Definition From New Format"));
         fireSubProgressUnknown();
@@ -958,7 +958,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.multiMCManifest = multiMCManifest;
         instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
         instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
-        instanceLauncher._new = this.pack._new;
+        instanceLauncher.vanillaInstance = this.pack.vanillaInstance;
 
         if (instanceLauncher.curseForgeManifest != null) {
             instanceLauncher.curseForgeManifest = null;
@@ -1709,7 +1709,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireTask(GetText.tr("Copying " + minecraftFolder + " folder"));
             Utils.copyDirectory(this.multiMCExtractedPath.resolve(minecraftFolder + "/").toFile(), this.root.toFile(),
                     false);
-        } else if (!pack._new) {
+        } else if (!pack.vanillaInstance) {
             fireTask(GetText.tr("Downloading Configs"));
 
             File configs = this.temp.resolve("Configs.zip").toFile();

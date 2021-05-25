@@ -23,13 +23,14 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
 public class VanillaInstallable extends ATLauncherFormatInstallable {
-    public VanillaInstallable(VersionManifestVersion minecraftVersion, LoaderVersion loaderVersion) {
+    public VanillaInstallable(VersionManifestVersion minecraftVersion, LoaderVersion loaderVersion,
+            String description) {
         super();
 
         this.pack = new Pack();
-        this.pack._new = true;
+        this.pack.vanillaInstance = true;
         this.pack.name = "Vanilla Minecraft";
-        this.pack.description = "Vanilla Minecraft";
+        this.pack.description = description;
 
         this.packVersion = new PackVersion();
         this.packVersion.version = minecraftVersion.id;

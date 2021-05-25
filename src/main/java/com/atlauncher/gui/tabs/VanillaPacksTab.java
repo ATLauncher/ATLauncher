@@ -614,7 +614,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                     .getValue();
 
             installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(selectedMinecraftVersion),
-                    selectedLoaderVersion);
+                    selectedLoaderVersion, descriptionField.getText());
             installable.instanceName = nameField.getText();
             installable.isReinstall = false;
             installable.isServer = isServer;

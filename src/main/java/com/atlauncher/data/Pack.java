@@ -40,7 +40,7 @@ import com.atlauncher.utils.Utils;
 public class Pack {
     public int id;
     public int externalId;
-    public boolean _new = false;
+    public boolean vanillaInstance = false;
     public int position;
     public String name;
     public PackType type;
