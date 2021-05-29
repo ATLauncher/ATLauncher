@@ -121,6 +121,17 @@ public class InstanceManager {
             }
         }
 
+        // convert all old system instances into just a Vanilla instance
+        Data.INSTANCES.forEach(instance -> {
+            if (instance.getPack() != null && instance.getPack().system) {
+                instance.launcher.vanillaInstance = true;
+                instance.launcher.packId = 0;
+                instance.launcher.pack = "Minecraft";
+
+                instance.save();
+            }
+        });
+
         LogManager.debug("Finished loading instances");
         PerformanceManager.end();
     }

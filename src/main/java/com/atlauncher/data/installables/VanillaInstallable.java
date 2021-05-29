@@ -29,7 +29,7 @@ public class VanillaInstallable extends ATLauncherFormatInstallable {
 
         this.pack = new Pack();
         this.pack.vanillaInstance = true;
-        this.pack.name = "Vanilla Minecraft";
+        this.pack.name = "Minecraft";
         this.pack.description = description;
 
         this.packVersion = new PackVersion();
