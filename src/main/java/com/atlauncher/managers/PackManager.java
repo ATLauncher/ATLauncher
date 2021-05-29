@@ -68,7 +68,7 @@ public class PackManager {
      *
      * @return The Packs available in the Launcher sorted alphabetically
      */
-    public static List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean isSystem) {
+    public static List<Pack> getPacksSortedAlphabetically(boolean isFeatured) {
         List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : Data.PACKS) {
@@ -78,14 +78,8 @@ public class PackManager {
                 }
             }
 
-            if (isSystem) {
-                if (pack.isSystem()) {
-                    packs.add(pack);
-                }
-            } else {
-                if (!pack.isSystem()) {
-                    packs.add(pack);
-                }
+            if (!pack.isSystem()) {
+                packs.add(pack);
             }
         }
 
@@ -98,7 +92,7 @@ public class PackManager {
      *
      * @return The Packs available in the Launcher sorted by position
      */
-    public static List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean isSystem) {
+    public static List<Pack> getPacksSortedPositionally(boolean isFeatured) {
         List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : Data.PACKS) {
@@ -108,14 +102,8 @@ public class PackManager {
                 }
             }
 
-            if (isSystem) {
-                if (pack.isSystem()) {
-                    packs.add(pack);
-                }
-            } else {
-                if (!pack.isSystem()) {
-                    packs.add(pack);
-                }
+            if (!pack.isSystem()) {
+                packs.add(pack);
             }
         }
 

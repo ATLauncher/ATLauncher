@@ -71,18 +71,16 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JButton searchButton = new JButton(GetText.tr("Search"));
     private final JScrollPane scrollPane;
     private NilCard nilCard;
-    private final boolean isSystem;
     private final boolean isFeatured;
     private boolean loadingMore = false;
 
     private final List<Pack> packs = new LinkedList<>();
     private final List<PackCard> cards = new LinkedList<>();
 
-    public PacksTab(boolean isFeatured, boolean isSystem) {
+    public PacksTab(boolean isFeatured) {
         super(new BorderLayout());
-        setName(isSystem ? "vanillaPacksPanel" : (isSystem ? "featuredPacksPanel" : "packsPanel"));
+        setName(isFeatured ? "featuredPacksPanel" : "packsPanel");
         this.isFeatured = isFeatured;
-        this.isSystem = isSystem;
         this.topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.contentPanel.setLayout(new GridBagLayout());
 
@@ -94,7 +92,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (!loadingMore && !isFeatured && !isSystem) {
+                if (!loadingMore && !isFeatured) {
                     int maxValue = scrollPane.getVerticalScrollBar().getMaximum()
                             - scrollPane.getVerticalScrollBar().getVisibleAmount();
                     int currentValue = scrollPane.getVerticalScrollBar().getValue();
@@ -106,7 +104,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             }
         });
 
-        if (!this.isFeatured && !this.isSystem) {
+        if (!this.isFeatured) {
             this.add(this.topPanel, BorderLayout.NORTH);
         }
 
@@ -199,8 +197,8 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     private void loadPacksToShow() {
         List<Pack> packs = App.settings.sortPacksAlphabetically
-                ? PackManager.getPacksSortedAlphabetically(this.isFeatured, this.isSystem)
-                : PackManager.getPacksSortedPositionally(this.isFeatured, this.isSystem);
+                ? PackManager.getPacksSortedAlphabetically(this.isFeatured)
+                : PackManager.getPacksSortedPositionally(this.isFeatured);
 
         this.packs.clear();
         this.packs.addAll(packs.stream().filter(Pack::canInstall).filter(pack -> {
@@ -273,8 +271,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
 
     @Override
     public String getTitle() {
-        return (this.isFeatured ? GetText.tr("Featured Packs")
-                : (this.isSystem ? GetText.tr("Vanilla Packs") : GetText.tr("Packs")));
+        return this.isFeatured ? GetText.tr("Featured Packs") : GetText.tr("Packs");
     }
 
     @Override
