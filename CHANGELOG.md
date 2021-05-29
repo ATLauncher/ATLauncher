@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use Java runtimes (when available) for Minecraft [#459]
 - Add in new Vanilla pack installer + support for snapshots [#460]
 - Allow changing description by double clicking description area
+- Add in popup message when launcher has update but they're disabled
 
 ### Fixes
 - Launcher not working with Java 16 [#465]

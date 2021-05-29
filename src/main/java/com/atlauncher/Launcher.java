@@ -389,11 +389,7 @@ public class Launcher {
         }
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
-
-        // Load info about the different java runtimes
-        App.TASKPOOL.execute(() -> {
-            MinecraftManager.loadJavaRuntimes();
-        });
+        MinecraftManager.loadJavaRuntimes(); // Load info about the different java runtimes
     }
 
     public void reloadLauncherData() {
@@ -429,12 +425,23 @@ public class Launcher {
 
     private void checkForLauncherUpdate() {
         PerformanceManager.start();
-        if (App.noLauncherUpdate) {
-            return;
-        }
 
         LogManager.debug("Checking for launcher update");
         if (launcherHasUpdate()) {
+            if (App.noLauncherUpdate) {
+                int ret = DialogManager.okDialog().setTitle("Launcher Update Available")
+                        .setContent(new HTMLBuilder().center().split(80).text(GetText.tr(
+                                "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."))
+                                .build())
+                        .addOption(GetText.tr("Visit Downloads Page")).setType(DialogManager.INFO).show();
+
+                if (ret == 1) {
+                    OS.openWebBrowser("https://atlauncher.com/downloads");
+                }
+
+                return;
+            }
+
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
