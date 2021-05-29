@@ -17,12 +17,17 @@
  */
 package com.atlauncher.data.curseforge;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.MinecraftManager;
+
+import org.joda.time.format.ISODateTimeFormat;
 
 public class CurseForgeFile {
     public int id;
@@ -81,15 +86,19 @@ public class CurseForgeFile {
         // if more than 1, we need to filter out non Minecraft versions (loaders for
         // instance) and then order them by Minecraft versions release date to make sure
         // we use the newest (SkyFactory 4 lists 3 Minecraft versions for some reason)
-        Stream<String> validVersionsStream = gameVersion.stream();
-
-        // filter out non valid Minecraft versions
-        validVersionsStream = validVersionsStream.filter(gv -> MinecraftManager.isMinecraftVersion(gv));
-
-        // sort by Minecraft version release date
-        // can't do easily right now
+        Optional<String> minecraftVersion = gameVersion.stream().filter(gv -> MinecraftManager.isMinecraftVersion(gv))
+                .map(gv -> {
+                    try {
+                        return MinecraftManager.getMinecraftVersion(gv);
+                    } catch (InvalidMinecraftVersion e) {
+                        // this should never happen because of the filter
+                        return null;
+                    }
+                }).filter(gv -> gv != null).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+                }).reversed()).map(mv -> mv.id).findFirst();
 
         // worse case if nothing comes back, just grab the first item
-        return validVersionsStream.findFirst().orElseGet(() -> gameVersion.get(0));
+        return minecraftVersion.orElseGet(() -> gameVersion.get(0));
     }
 }
