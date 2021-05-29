@@ -383,6 +383,19 @@ public class Launcher {
         updateThread.start();
     }
 
+    public void updateData() {
+        if (checkForUpdatedFiles()) {
+            reloadLauncherData();
+        }
+
+        MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
+
+        // Load info about the different java runtimes
+        App.TASKPOOL.execute(() -> {
+            MinecraftManager.loadJavaRuntimes();
+        });
+    }
+
     public void reloadLauncherData() {
         final JDialog dialog = new JDialog(this.parent, ModalityType.DOCUMENT_MODAL);
         dialog.setSize(300, 100);
@@ -398,6 +411,7 @@ public class Launcher {
             checkForLauncherUpdate();
             checkForExternalPackUpdates();
             addExecutableBitToTools();
+
             NewsManager.loadNews(); // Load the news
             reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher

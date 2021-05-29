@@ -828,8 +828,8 @@ public class Instance extends MinecraftVersion {
                     if (App.settings.enableAutomaticBackupAfterLaunch) {
                         backup();
                     }
-                    if (App.settings.keepLauncherOpen && App.launcher.checkForUpdatedFiles()) {
-                        App.launcher.reloadLauncherData();
+                    if (App.settings.keepLauncherOpen) {
+                        App.launcher.updateData();
                     }
                     if (Files.isDirectory(nativesTempDir)) {
                         FileUtils.deleteDirectory(nativesTempDir);
