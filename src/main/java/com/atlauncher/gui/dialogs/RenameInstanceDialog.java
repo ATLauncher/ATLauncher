@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -50,14 +51,18 @@ public class RenameInstanceDialog extends JDialog {
     private Instance instance;
 
     public RenameInstanceDialog(Instance instance) {
-        super(null, GetText.tr("Renaming Instance"), ModalityType.DOCUMENT_MODAL);
+        this(instance, App.launcher.getParent());
+    }
+
+    public RenameInstanceDialog(Instance instance, Window parent) {
+        super(parent, GetText.tr("Renaming Instance"), ModalityType.DOCUMENT_MODAL);
 
         this.instance = instance;
 
         Analytics.sendScreenView("Rename Instance Dialog");
 
         setSize(320, 150);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/icon.png"));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

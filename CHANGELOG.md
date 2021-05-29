@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Launcher not working with Java 16 [#465]
 - Issues with some CurseForge packs not allowing to be installed
+- Rename instance dialog not having a parent window set
 
 ### Misc
 - Force minimum of Java 8u141/7u151
