@@ -17,7 +17,11 @@
  */
 package com.atlauncher.managers;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.VersionManifest;
@@ -32,6 +37,8 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.network.Download;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -45,16 +52,29 @@ public class MinecraftManager {
 
         Data.MINECRAFT.clear();
 
-        try {
-            VersionManifest versionManifest = Download.build().cached().setUrl(Constants.MINECRAFT_VERSION_MANIFEST_URL)
-                    .downloadTo(FileSystem.JSON.resolve("version_manifest.json"))
-                    .asClassWithThrow(VersionManifest.class);
+        VersionManifest versionManifest = null;
+        Path manifestPath = FileSystem.JSON.resolve("version_manifest.json");
 
+        try {
+            versionManifest = Download.build().cached().setUrl(Constants.MINECRAFT_VERSION_MANIFEST_URL)
+                    .downloadTo(manifestPath).asClassWithThrow(VersionManifest.class);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+
+            if (Files.exists(manifestPath)) {
+                try {
+                    versionManifest = Gsons.DEFAULT.fromJson(new FileReader(manifestPath.toFile()),
+                            VersionManifest.class);
+                } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
+                    LogManager.logStackTrace(e1);
+                }
+            }
+        }
+
+        if (versionManifest != null) {
             versionManifest.versions.forEach((version) -> {
                 Data.MINECRAFT.put(version.id, version);
             });
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
         }
 
         LogManager.debug("Finished loading Minecraft versions");
