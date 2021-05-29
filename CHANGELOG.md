@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Use Java runtimes (when available) for Minecraft [#459]
 - Add in new Vanilla pack installer + support for snapshots [#460]
+- Allow changing description by double clicking description area
 
 ### Fixes
 - Launcher not working with Java 16 [#465]

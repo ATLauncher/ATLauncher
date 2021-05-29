@@ -1658,4 +1658,8 @@ public class Instance extends MinecraftVersion {
         });
         dialog.setVisible(true);
     }
+
+    public boolean canChangeDescription() {
+        return isExternalPack() || launcher.vanillaInstance || (getPack() != null && getPack().system);
+    }
 }

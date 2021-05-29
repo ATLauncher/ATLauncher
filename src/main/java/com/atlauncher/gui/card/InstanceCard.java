@@ -127,6 +127,17 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.descArea.setWrapStyleWord(true);
         this.descArea.setEditable(false);
 
+        if (instance.canChangeDescription()) {
+            this.descArea.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        showChangeDescriptionDialog();
+                    }
+                }
+            });
+        }
+
         JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
 
@@ -441,8 +452,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     rightClickMenu.add(updateItem);
 
-                    changeDescriptionItem.setVisible(instance.isExternalPack() || instance.launcher.vanillaInstance
-                            || (instance.getPack() != null && instance.getPack().system));
+                    changeDescriptionItem.setVisible(instance.canChangeDescription());
 
                     shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
                             && !instance.isExternalPack() && !instance.launcher.vanillaInstance
@@ -454,23 +464,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     rightClickMenu.show(image, e.getX(), e.getY());
 
                     changeDescriptionItem.addActionListener(e13 -> {
-                        JTextArea textArea = new JTextArea(instance.launcher.description);
-                        textArea.setColumns(30);
-                        textArea.setRows(10);
-                        textArea.setLineWrap(true);
-                        textArea.setWrapStyleWord(true);
-                        textArea.setSize(300, 150);
-
-                        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
-                                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION,
-                                JOptionPane.INFORMATION_MESSAGE);
-
-                        if (ret == 0) {
-                            instance.launcher.description = textArea.getText();
-                            instance.save();
-
-                            descArea.setText(textArea.getText());
-                        }
+                        showChangeDescriptionDialog();
                     });
 
                     changeImageItem.addActionListener(e13 -> {
@@ -628,6 +622,25 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
+    }
+
+    private void showChangeDescriptionDialog() {
+        JTextArea textArea = new JTextArea(instance.launcher.description);
+        textArea.setColumns(30);
+        textArea.setRows(10);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setSize(300, 150);
+
+        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
+                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+        if (ret == 0) {
+            instance.launcher.description = textArea.getText();
+            instance.save();
+
+            descArea.setText(textArea.getText());
+        }
     }
 
     public Instance getInstance() {
