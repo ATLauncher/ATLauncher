@@ -18,9 +18,11 @@
 package com.atlauncher.data.curseforge;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.managers.MinecraftManager;
 
 public class CurseForgeFile {
     public int id;
@@ -68,5 +70,26 @@ public class CurseForgeFile {
         mod.curseForgeFile = this;
 
         return mod;
+    }
+
+    public String getGameVersion() {
+        // only 1 version, so grab that
+        if (gameVersion.size() == 1) {
+            return gameVersion.get(0);
+        }
+
+        // if more than 1, we need to filter out non Minecraft versions (loaders for
+        // instance) and then order them by Minecraft versions release date to make sure
+        // we use the newest (SkyFactory 4 lists 3 Minecraft versions for some reason)
+        Stream<String> validVersionsStream = gameVersion.stream();
+
+        // filter out non valid Minecraft versions
+        validVersionsStream = validVersionsStream.filter(gv -> MinecraftManager.isMinecraftVersion(gv));
+
+        // sort by Minecraft version release date
+        // can't do easily right now
+
+        // worse case if nothing comes back, just grab the first item
+        return validVersionsStream.findFirst().orElseGet(() -> gameVersion.get(0));
     }
 }

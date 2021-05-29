@@ -357,7 +357,7 @@ public class InstanceInstallerDialog extends JDialog {
                     packVersion._curseForgeFile = f;
 
                     try {
-                        packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.gameVersion.get(0));
+                        packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());
                     } catch (InvalidMinecraftVersion e) {
                         LogManager.error(e.getMessage());
                         return null;
