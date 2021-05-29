@@ -279,7 +279,7 @@ public class MCLauncher {
         argument = argument.replace("${assets_index_name}", instance.getAssets());
         argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
         argument = argument.replace("${auth_access_token}", account.getAccessToken());
-        argument = argument.replace("${version_type}", instance.getVersionType());
+        argument = argument.replace("${version_type}", instance.type.getValue());
         argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
         argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
         argument = argument.replace("${natives_directory}", nativesDir);
