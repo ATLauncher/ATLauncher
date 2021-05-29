@@ -82,6 +82,11 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     private JTextArea descriptionField = new JTextArea(2, 40);
     private boolean descriptionFieldDirty = false;
 
+    private JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(GetText.tr("Releases"));
+    private JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(GetText.tr("Snapshots"));
+    private JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox(GetText.tr("Betas"));
+    private JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox(GetText.tr("Alphas"));
+
     private JTable minecraftVersionTable;
     private DefaultTableModel minecraftVersionTableModel;
 
@@ -223,7 +228,6 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         minecraftVersionFilterLabel.setFont(App.THEME.getBoldFont());
         minecraftVersionFilterPanel.add(minecraftVersionFilterLabel);
 
-        JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(GetText.tr("Releases"));
         minecraftVersionReleasesFilterCheckbox.setSelected(true);
         minecraftVersionReleasesFilterCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -239,7 +243,6 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         });
         minecraftVersionFilterPanel.add(minecraftVersionReleasesFilterCheckbox);
 
-        JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(GetText.tr("Snapshots"));
         minecraftVersionSnapshotsFilterCheckbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -254,7 +257,6 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         });
         minecraftVersionFilterPanel.add(minecraftVersionSnapshotsFilterCheckbox);
 
-        JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox(GetText.tr("Betas"));
         minecraftVersionBetasFilterCheckbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -269,7 +271,6 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         });
         minecraftVersionFilterPanel.add(minecraftVersionBetasFilterCheckbox);
 
-        JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox(GetText.tr("Alphas"));
         minecraftVersionAlphasFilterCheckbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -476,6 +477,16 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         // refresh the table
         minecraftVersionTable.revalidate();
+
+        // update checkboxes so not all of them can be unchecked
+        minecraftVersionReleasesFilterCheckbox.setEnabled(
+                !(minecraftVersionReleasesFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+        minecraftVersionSnapshotsFilterCheckbox.setEnabled(
+                !(minecraftVersionSnapshotsFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+        minecraftVersionBetasFilterCheckbox.setEnabled(
+                !(minecraftVersionBetasFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+        minecraftVersionAlphasFilterCheckbox.setEnabled(
+                !(minecraftVersionAlphasFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
     }
 
     private void selectedLoaderTypeChanged(LoaderType selectedLoader) {
