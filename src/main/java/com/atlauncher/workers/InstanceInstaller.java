@@ -1958,7 +1958,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 FileUtils.deleteDirectory(this.root.resolve("bin"));
             }
 
-            if (Files.isDirectory(this.root.resolve("config"))) {
+            if (!instance.launcher.vanillaInstance && Files.isDirectory(this.root.resolve("config"))) {
                 FileUtils.deleteDirectory(this.root.resolve("config"));
             }
 
