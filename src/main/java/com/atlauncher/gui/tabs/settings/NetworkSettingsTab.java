@@ -51,6 +51,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private final JLabelWithHover dontUseHttp2Label;
     private final JCheckBox dontUseHttp2;
 
+    private final JLabelWithHover dontValidateModpacksChDownloadsLabel;
+    private final JCheckBox dontValidateModpacksChDownloads;
+
     private final JLabelWithHover enableProxyLabel;
     private final JCheckBox enableProxy;
 
@@ -117,6 +120,23 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         dontUseHttp2 = new JCheckBox();
         dontUseHttp2.setSelected(App.settings.dontUseHttp2);
         add(dontUseHttp2, gbc);
+
+        // Don't validate Modpacks.ch downloads
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        dontValidateModpacksChDownloadsLabel = new JLabelWithHover(
+                GetText.tr("Don't Validate Modpacks.Ch Downloads") + "?", HELP_ICON, GetText.tr(
+                        "If downloads from modpacks.ch (FTB) should not be validated. This shouldn't be enabled unless encountering issues."));
+        add(dontValidateModpacksChDownloadsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        dontValidateModpacksChDownloads = new JCheckBox();
+        dontValidateModpacksChDownloads.setSelected(App.settings.dontValidateModpacksChDownloads);
+        add(dontValidateModpacksChDownloads, gbc);
 
         // Enable Proxy
         gbc.gridx = 0;
@@ -261,6 +281,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.concurrentConnections = (Integer) concurrentConnections.getValue();
         App.settings.connectionTimeout = (Integer) connectionTimeout.getValue();
         App.settings.dontUseHttp2 = dontUseHttp2.isSelected();
+        App.settings.dontValidateModpacksChDownloads = dontValidateModpacksChDownloads.isSelected();
         App.settings.enableProxy = enableProxy.isSelected();
         if (enableProxy.isSelected()) {
             App.settings.proxyHost = proxyHost.getText();
@@ -292,9 +313,13 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.connectionTimeoutLabel.setToolTipText(
                 "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
 
-        this.dontUseHttp2Label.setText(GetText.tr("Enable Proxy") + "?");
-        this.dontUseHttp2Label
-                .setToolTipText(GetText.tr("If you use a proxy to connect to the internet you can enable it here."));
+        this.dontUseHttp2Label.setText(GetText.tr("Don't Use HTTP/2") + "?");
+        this.dontUseHttp2Label.setToolTipText(GetText
+                .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
+
+        this.dontValidateModpacksChDownloadsLabel.setText(GetText.tr("Don't Validate Modpacks.Ch Downloads") + "?");
+        this.dontValidateModpacksChDownloadsLabel.setToolTipText(GetText.tr(
+                "If downloads from modpacks.ch (FTB) should not be validated. This shouldn't be enabled unless encountering issues."));
 
         this.enableProxyLabel.setText(GetText.tr("Don't Use HTTP/2") + "?");
         this.enableProxyLabel.setToolTipText(GetText

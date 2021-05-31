@@ -28,4 +28,5 @@
         "com.sun.*"
     ],
     "java.codeGeneration.generateComments": true,
+    "git.inputValidationLength": 100,
 }

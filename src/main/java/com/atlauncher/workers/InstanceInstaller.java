@@ -1540,8 +1540,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 download = download.hash(mod.md5);
             }
 
-            // modpacks.ch api just flat out returns wrong hases/sizes so ignore
-            if (modpacksChPackVersionManifest != null) {
+            // modpacks.ch api has had issues in the past, so if user enabled, don't check
+            // hashes
+            if (modpacksChPackVersionManifest != null && App.settings.dontValidateModpacksChDownloads) {
                 download = download.ignoreFailures();
             }
 
@@ -1664,16 +1665,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireSubProgressUnknown();
             fireTask(GetText.tr("Calculating Files To Download"));
 
-            List<com.atlauncher.network.Download> filesToDownload = modpacksChPackVersionManifest.files
-                    .parallelStream().filter(
-                            f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
-                    .map(file -> com.atlauncher.network.Download.build().setUrl(file.url).size((long) file.size)
-                            .hash(file.sha1).ignoreFailures()
-                            .downloadTo(root
-                                    .resolve((file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2)
-                                            : file.path) + file.name))
-                            .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this)))
-                    .collect(Collectors.toList());
+            List<com.atlauncher.network.Download> filesToDownload = modpacksChPackVersionManifest.files.parallelStream()
+                    .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD).map(file -> {
+                        com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
+                                .setUrl(file.url).size((long) file.size).hash(file.sha1)
+                                .downloadTo(root.resolve(
+                                        (file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2)
+                                                : file.path) + file.name))
+                                .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
+
+                        // modpacks.ch api has had issues in the past, so if user enabled, don't check
+                        // hashes
+                        if (App.settings.dontValidateModpacksChDownloads) {
+                            download = download.ignoreFailures();
+                        }
+
+                        return download;
+                    }).collect(Collectors.toList());
 
             fireTask(GetText.tr("Creating Config Directories"));
 
@@ -1766,8 +1774,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 // we can't check the provided hash and size here otherwise download fails as
                 // their api doesn't return the correct info
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build().setUrl(art.url)
-                        .size(art.size).hash(art.sha1).downloadTo(root.resolve("instance.png")).ignoreFailures()
+                        .size(art.size).hash(art.sha1).downloadTo(root.resolve("instance.png"))
                         .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
+
+                // modpacks.ch api has had issues in the past, so if user enabled, don't check
+                // hashes
+                if (App.settings.dontValidateModpacksChDownloads) {
+                    imageDownload = imageDownload.ignoreFailures();
+                }
 
                 this.setTotalBytes(art.size);
                 imageDownload.downloadFile();

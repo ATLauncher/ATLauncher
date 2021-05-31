@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in new Vanilla pack installer + support for snapshots [#460]
 - Allow changing description by double clicking description area
 - Add in popup message when launcher has update but they're disabled
+- Add setting to networks tab to not validate downloads from modpacks.ch
 
 ### Fixes
 - Launcher not working with Java 16 [#465]
