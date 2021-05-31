@@ -78,6 +78,7 @@ public class Settings {
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
     public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
+    public boolean dontCheckModsOnCurseForge = false;
 
     // Java/Minecraft
     public int initialMemory = 512;

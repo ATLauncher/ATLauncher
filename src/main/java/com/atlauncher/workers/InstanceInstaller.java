@@ -730,9 +730,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (this.multiMCManifest != null) {
-            fireTask(GetText.tr("Checking Mods On CurseForge"));
-            fireSubProgressUnknown();
-
             String minecraftFolder = Files.exists(multiMCExtractedPath.resolve(".minecraft")) ? ".minecraft"
                     : "minecraft";
 
@@ -1790,6 +1787,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void checkModsOnCurseForge() {
+        if (App.settings.dontCheckModsOnCurseForge) {
+            return;
+        }
+
         fireTask(GetText.tr("Checking Mods On CurseForge"));
         fireSubProgressUnknown();
 

@@ -199,7 +199,7 @@ public class EditModsDialog extends JDialog {
 
         JButton addButton = new JButton(GetText.tr("Add Mod"));
         addButton.addActionListener(e -> {
-            String[] modTypes  = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
+            String[] modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
 
             FileChooserDialog fcd = new FileChooserDialog(this, GetText.tr("Add Mod"), GetText.tr("Mod"),
                     GetText.tr("Add"), GetText.tr("Type of Mod"), modTypes);
@@ -326,30 +326,32 @@ public class EditModsDialog extends JDialog {
             }
         }
 
-        try {
-            long murmurHash = Hashing.murmur(file.toPath());
+        if (!App.settings.dontCheckModsOnCurseForge) {
+            try {
+                long murmurHash = Hashing.murmur(file.toPath());
 
-            LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
+                LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
 
-            CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
+                CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
 
-            if (fingerprintResponse != null && fingerprintResponse.exactMatches.size() == 1) {
-                CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
+                if (fingerprintResponse != null && fingerprintResponse.exactMatches.size() == 1) {
+                    CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
 
-                // add CurseForge information
-                mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
-                mod.curseForgeProjectId = foundMod.id;
-                mod.curseForgeFile = foundMod.file;
-                mod.curseForgeFileId = foundMod.file.id;
+                    // add CurseForge information
+                    mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
+                    mod.curseForgeProjectId = foundMod.id;
+                    mod.curseForgeFile = foundMod.file;
+                    mod.curseForgeFileId = foundMod.file.id;
 
-                mod.name = mod.curseForgeProject.name;
-                mod.description = mod.curseForgeProject.summary;
+                    mod.name = mod.curseForgeProject.name;
+                    mod.description = mod.curseForgeProject.summary;
 
-                LogManager.debug("Found matching mod from CurseForge called " + mod.curseForgeProject.name
-                        + " with file named " + mod.curseForgeFile.displayName);
+                    LogManager.debug("Found matching mod from CurseForge called " + mod.curseForgeProject.name
+                            + " with file named " + mod.curseForgeFile.displayName);
+                }
+            } catch (IOException e1) {
+                LogManager.logStackTrace(e1);
             }
-        } catch (IOException e1) {
-            LogManager.logStackTrace(e1);
         }
 
         return mod;
