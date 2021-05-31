@@ -97,6 +97,16 @@ public final class DialogManager {
         return dialog;
     }
 
+    public static DialogManager yesNoCancelDialog() {
+        DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
+
+        dialog.addOption(GetText.tr("Yes"), true);
+        dialog.addOption(GetText.tr("No"));
+        dialog.addOption(GetText.tr("Cancel"));
+
+        return dialog;
+    }
+
     public DialogManager setParent(Window parent) {
         this.parent = parent;
         return this;

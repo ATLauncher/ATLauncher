@@ -107,8 +107,9 @@ public abstract class Installable {
         if (isReinstall || isUpdate) {
             Optional<VersionManifestVersion> minecraftVersion = Optional.ofNullable(version.minecraftVersion);
 
-            if (minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(instance.id) && saveMods) {
-                if (showDifferentMinecraftVersionsDialog() == -1) {
+            if (minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(instance.id) && !saveMods) {
+                int ret = showDifferentMinecraftVersionsDialog();
+                if (ret == -1 || ret == 2) {
                     return false;
                 }
             }
@@ -352,8 +353,8 @@ public abstract class Installable {
         return true;
     }
 
-    private int showDifferentMinecraftVersionsDialog() {
-        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Save Mods?"))
+    public int showDifferentMinecraftVersionsDialog() {
+        int ret = DialogManager.yesNoCancelDialog().setTitle(GetText.tr("Save Mods?"))
                 .setContent(new HTMLBuilder().center().text(GetText.tr(
                         "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>The mods installed will be removed since you've not checked the \"Save Mods\" checkbox.<br/><br/>Do you want to save your mods?"))
                         .build())
