@@ -30,6 +30,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
@@ -103,15 +103,15 @@ public class InstanceInstallerDialog extends JDialog {
 
     private JPanel middle;
     private JButton install;
-    private JProgressBar progressBar;
-    private JProgressBar subProgressBar;
     private JTextField nameField;
     private JComboBox<PackVersion> versionsDropDown;
-    private final List<PackVersion> versions = new ArrayList<>();
     private JLabel loaderVersionLabel;
     private JComboBox<LoaderVersion> loaderVersionsDropDown;
     private final List<LoaderVersion> loaderVersions = new ArrayList<>();
-    private JCheckBox enableUserLock;
+
+    private JLabel showAllMinecraftVersionsLabel = new JLabel(GetText.tr("Show All"));
+    private JCheckBox showAllMinecraftVersionsCheckbox = new JCheckBox();
+
     private JLabel saveModsLabel;
     private JCheckBox saveModsCheckbox;
     private final boolean isUpdate;
@@ -228,6 +228,25 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
 
         gbc = this.setupVersionsDropdown(gbc);
+
+        if (isReinstall && instance.launcher.vanillaInstance) {
+            gbc.gridx++;
+            middle.add(showAllMinecraftVersionsCheckbox, gbc);
+
+            showAllMinecraftVersionsCheckbox.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == ItemEvent.SELECTED || e.getStateChange() == ItemEvent.DESELECTED) {
+                        setVanillaPackVersions(e.getStateChange() == ItemEvent.SELECTED);
+                        setVersionsDropdown();
+                    }
+                }
+            });
+
+            gbc.gridx++;
+            middle.add(showAllMinecraftVersionsLabel, gbc);
+        }
+
         gbc = this.setupLoaderVersionsDropdown(gbc);
 
         if (!this.isServer && isReinstall) {
@@ -376,19 +395,24 @@ public class InstanceInstallerDialog extends JDialog {
         pack.name = instance.launcher.pack;
         pack.description = instance.launcher.description;
 
-        pack.versions = MinecraftManager.getMinecraftVersions().stream().map(v -> {
-            PackVersion packVersion = new PackVersion();
-            packVersion.version = v.id;
-            packVersion.minecraftVersion = v;
+        setVanillaPackVersions(false);
+    }
 
-            if (instance.launcher.loaderVersion != null) {
-                packVersion.hasLoader = true;
-                packVersion.hasChoosableLoader = true;
-                packVersion.loaderType = instance.launcher.loaderVersion.type;
-            }
+    private void setVanillaPackVersions(boolean showAll) {
+        pack.versions = MinecraftManager.getMinecraftVersions().stream()
+                .filter(mv -> showAll || mv.type == instance.type).map(v -> {
+                    PackVersion packVersion = new PackVersion();
+                    packVersion.version = v.id;
+                    packVersion.minecraftVersion = v;
 
-            return packVersion;
-        }).collect(Collectors.toList());
+                    if (instance.launcher.loaderVersion != null) {
+                        packVersion.hasLoader = true;
+                        packVersion.hasChoosableLoader = true;
+                        packVersion.loaderType = instance.launcher.loaderVersion.type;
+                    }
+
+                    return packVersion;
+                }).collect(Collectors.toList());
     }
 
     private void handleModpacksChInstall(Object object) {
@@ -540,7 +564,46 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
         versionsDropDown = new JComboBox<>();
+        setVersionsDropdown();
+        middle.add(versionsDropDown, gbc);
+
+        versionsDropDown.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                updateLoaderVersions((PackVersion) e.getItem());
+
+                if (!isServer && isReinstall) {
+                    PackVersion packVersion = ((PackVersion) e.getItem());
+                    Optional<VersionManifestVersion> minecraftVersion = Optional
+                            .ofNullable(packVersion.minecraftVersion);
+
+                    saveModsLabel.setVisible(minecraftVersion.isPresent()
+                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                    saveModsCheckbox.setVisible(minecraftVersion.isPresent()
+                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                }
+            }
+        });
+
+        if (autoInstallVersion != null) {
+            versionsDropDown.setSelectedItem(autoInstallVersion);
+            versionsDropDown.setEnabled(false);
+        }
+
+        if (multiMCManifest != null) {
+            gbc.gridx--;
+            versionLabel.setVisible(multiMCManifest == null);
+            versionsDropDown.setVisible(multiMCManifest == null);
+        }
+
+        return gbc;
+    }
+
+    private void setVersionsDropdown() {
+        List<PackVersion> versions = new ArrayList<>();
+        versionsDropDown.removeAllItems();
+
         if (pack.isTester()) {
             for (PackVersion pv : pack.getDevVersions()) {
                 if (!isServer || (isServer && pv.minecraftVersion.hasServer())) {
@@ -591,37 +654,6 @@ public class InstanceInstallerDialog extends JDialog {
         versionLength = Math.min(250, versionLength);
 
         versionsDropDown.setPreferredSize(new Dimension(versionLength, 23));
-        middle.add(versionsDropDown, gbc);
-
-        versionsDropDown.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                updateLoaderVersions((PackVersion) e.getItem());
-
-                if (!isServer && isReinstall) {
-                    PackVersion packVersion = ((PackVersion) e.getItem());
-                    Optional<VersionManifestVersion> minecraftVersion = Optional
-                            .ofNullable(packVersion.minecraftVersion);
-
-                    saveModsLabel.setVisible(minecraftVersion.isPresent()
-                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
-                    saveModsCheckbox.setVisible(minecraftVersion.isPresent()
-                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
-                }
-            }
-        });
-
-        if (autoInstallVersion != null) {
-            versionsDropDown.setSelectedItem(autoInstallVersion);
-            versionsDropDown.setEnabled(false);
-        }
-
-        if (multiMCManifest != null) {
-            gbc.gridx--;
-            versionLabel.setVisible(multiMCManifest == null);
-            versionsDropDown.setVisible(multiMCManifest == null);
-        }
-
-        return gbc;
     }
 
     protected void updateLoaderVersions(PackVersion item) {
