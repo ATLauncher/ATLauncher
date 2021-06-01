@@ -550,6 +550,15 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             loaderVersions.forEach(version -> loaderVersionsDropDown
                     .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
 
+            if (selectedLoader == LoaderType.FORGE) {
+                Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
+                        .findFirst();
+
+                if (recommendedVersion.isPresent()) {
+                    loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
+                }
+            }
+
             // ensures that the dropdown is at least 200 px wide
             loaderVersionLength = Math.max(200, loaderVersionLength);
 
