@@ -307,7 +307,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionFromCurseForgeManifest() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From Curse"));
+        fireTask(GetText.tr("Generating Pack Version Definition From CurseForge"));
         fireSubProgressUnknown();
 
         if (!curseForgeManifest.manifestType.equals("minecraftModpack")) {

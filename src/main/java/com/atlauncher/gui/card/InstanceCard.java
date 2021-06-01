@@ -27,13 +27,11 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -41,7 +39,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -51,6 +48,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
@@ -59,10 +57,8 @@ import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.InstanceExportDialog;
-import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -109,6 +105,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
     private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
 
+    private final JPopupMenu editInstancePopupMenu = new JPopupMenu();
+    private final JMenuItem reinstallMenuItem = new JMenuItem(GetText.tr("Reinstall"));
+    private final JMenuItem renameMenuItem = new JMenuItem(GetText.tr("Rename"));
+    private final JMenuItem changeDescriptionMenuItem = new JMenuItem(GetText.tr("Change Description"));
+    private final JMenuItem changeImageMenuItem = new JMenuItem(GetText.tr("Change Image"));
+    private final JMenuItem addFabricMenuItem = new JMenuItem(GetText.tr("Add Fabric"));
+    private final JMenuItem removeFabricMenuItem = new JMenuItem(GetText.tr("Remove Fabric"));
+    private final JMenuItem addForgeMenuItem = new JMenuItem(GetText.tr("Add Forge"));
+    private final JMenuItem removeForgeMenuItem = new JMenuItem(GetText.tr("Remove Forge"));
+    private final DropDownButton editInstanceButton = new DropDownButton(GetText.tr("Edit Instance"),
+            editInstancePopupMenu);
+
     public InstanceCard(Instance instance) {
         super(instance);
         this.instance = instance;
@@ -128,11 +136,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.descArea.setEditable(false);
 
         if (instance.canChangeDescription()) {
-            this.descArea.addMouseListener(new MouseAdapter(){
+            this.descArea.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
-                        showChangeDescriptionDialog();
+                        instance.startChangeDescription();
+                        descArea.setText(instance.launcher.description);
                     }
                 }
             });
@@ -150,6 +159,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         top.add(this.playButton);
         top.add(this.reinstallButton);
         top.add(this.updateButton);
+        top.add(this.editInstanceButton);
         top.add(this.renameButton);
         top.add(this.backupButton);
         top.add(this.settingsButton);
@@ -162,6 +172,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         // check it can be exported
         this.exportButton.setVisible(instance.canBeExported());
+
+        // vanilla instances do some things different
+        this.settingsButton.setVisible(instance.launcher.vanillaInstance);
+        this.renameButton.setVisible(!instance.launcher.vanillaInstance);
+        this.reinstallButton.setVisible(!instance.launcher.vanillaInstance);
+        this.updateButton.setVisible(!instance.launcher.vanillaInstance);
 
         // if not an ATLauncher pack, a system pack or has no urls, don't show the links
         // button
@@ -244,6 +260,64 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         fullBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.FULL));
         backupPopupMenu.add(fullBackupMenuItem);
+
+        if (instance.launcher.vanillaInstance) {
+            setupEditInstanceButton();
+        }
+    }
+
+    private void setupEditInstanceButton() {
+        editInstancePopupMenu.add(reinstallMenuItem);
+        editInstancePopupMenu.add(renameMenuItem);
+        editInstancePopupMenu.add(changeDescriptionMenuItem);
+        editInstancePopupMenu.add(changeImageMenuItem);
+        editInstancePopupMenu.addSeparator();
+        editInstancePopupMenu.add(addFabricMenuItem);
+        editInstancePopupMenu.add(removeFabricMenuItem);
+        editInstancePopupMenu.add(addForgeMenuItem);
+        editInstancePopupMenu.add(removeForgeMenuItem);
+
+        setEditInstanceMenuItemVisbility();
+
+        reinstallMenuItem.addActionListener(e -> instance.startReinstall());
+        renameMenuItem.addActionListener(e -> instance.startRename());
+        changeDescriptionMenuItem.addActionListener(e -> {
+            instance.startChangeDescription();
+            descArea.setText(instance.launcher.description);
+        });
+        changeImageMenuItem.addActionListener(e -> {
+            instance.startChangeImage();
+            image.setImage(instance.getImage().getImage());
+        });
+
+        // loader things
+        addFabricMenuItem.addActionListener(e -> {
+            instance.addLoader(LoaderType.FABRIC);
+            setEditInstanceMenuItemVisbility();
+        });
+        addForgeMenuItem.addActionListener(e -> {
+            instance.addLoader(LoaderType.FORGE);
+            setEditInstanceMenuItemVisbility();
+        });
+        removeFabricMenuItem.addActionListener(e -> {
+            instance.removeLoader();
+            setEditInstanceMenuItemVisbility();
+        });
+        removeForgeMenuItem.addActionListener(e -> {
+            instance.removeLoader();
+            setEditInstanceMenuItemVisbility();
+        });
+    }
+
+    private void setEditInstanceMenuItemVisbility() {
+        addFabricMenuItem
+                .setVisible(instance.launcher.loaderVersion == null || !instance.launcher.loaderVersion.isFabric());
+        addForgeMenuItem
+                .setVisible(instance.launcher.loaderVersion == null || !instance.launcher.loaderVersion.isForge());
+        removeFabricMenuItem
+                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
+        removeForgeMenuItem
+                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
     }
 
     private void validatePlayable() {
@@ -315,15 +389,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
         });
         this.reinstallButton.addActionListener(e -> {
-            if (AccountManager.getSelectedAccount() == null) {
-                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot reinstall pack as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
-            } else {
-                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Reinstall",
-                        instance.getAnalyticsCategory());
-                new InstanceInstallerDialog(instance);
-            }
+            instance.startReinstall();
         });
         this.updateButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
@@ -338,9 +404,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.update();
         });
         this.renameButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Rename",
-                    instance.getAnalyticsCategory());
-            new RenameInstanceDialog(instance);
+            instance.startRename();
         });
         this.addButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
@@ -464,29 +528,13 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     rightClickMenu.show(image, e.getX(), e.getY());
 
                     changeDescriptionItem.addActionListener(e13 -> {
-                        showChangeDescriptionDialog();
+                        instance.startChangeDescription();
+                        descArea.setText(instance.launcher.description);
                     });
 
                     changeImageItem.addActionListener(e13 -> {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                        chooser.setAcceptAllFileFilterUsed(false);
-                        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                        int ret = chooser.showOpenDialog(App.launcher.getParent());
-                        if (ret == JFileChooser.APPROVE_OPTION) {
-                            File img = chooser.getSelectedFile();
-                            if (img.getAbsolutePath().endsWith(".png")) {
-                                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
-                                        "ChangeImage", instance.getAnalyticsCategory());
-                                try {
-                                    Utils.safeCopy(img, instance.getRoot().resolve("instance.png").toFile());
-                                    image.setImage(instance.getImage().getImage());
-                                    instance.save();
-                                } catch (IOException ex) {
-                                    LogManager.logStackTrace("Failed to set instance image", ex);
-                                }
-                            }
-                        }
+                        instance.startChangeImage();
+                        image.setImage(instance.getImage().getImage());
                     });
 
                     cloneItem.addActionListener(e14 -> {
@@ -622,25 +670,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
-    }
-
-    private void showChangeDescriptionDialog() {
-        JTextArea textArea = new JTextArea(instance.launcher.description);
-        textArea.setColumns(30);
-        textArea.setRows(10);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setSize(300, 150);
-
-        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
-                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-
-        if (ret == 0) {
-            instance.launcher.description = textArea.getText();
-            instance.save();
-
-            descArea.setText(textArea.getText());
-        }
     }
 
     public Instance getInstance() {

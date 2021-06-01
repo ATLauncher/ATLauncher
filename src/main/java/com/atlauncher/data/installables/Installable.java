@@ -56,6 +56,7 @@ public abstract class Installable {
     public boolean isServer = false;
     public boolean isUpdate = false;
     public boolean isReinstall = false;
+    public boolean addingLoader = false;
     public boolean saveMods = false;
     public Instance instance;
 
@@ -115,15 +116,9 @@ public abstract class Installable {
             }
         }
 
-        final JDialog dialog = new JDialog(parent, isReinstall ? (
-        // #. {0} is the name of the pack the user is installing
-        isServer ? GetText.tr("Reinstalling {0} Server", pack.getName())
-                // #. {0} is the name of the pack the user is installing
-                : GetText.tr("Reinstalling {0}", pack.getName())) : (
-        // #. {0} is the name of the pack the user is installing
-        isServer ? GetText.tr("Installing {0} Server", pack.getName())
-                // #. {0} is the name of the pack the user is installing
-                : GetText.tr("Installing {0}", pack.getName())), ModalityType.DOCUMENT_MODAL);
+        String dialogTitle = getDialogTitle(pack.getName());
+
+        final JDialog dialog = new JDialog(parent, dialogTitle, ModalityType.DOCUMENT_MODAL);
         dialog.setLocationRelativeTo(App.launcher.getParent());
         dialog.setSize(300, 100);
         dialog.setResizable(false);
@@ -263,8 +258,10 @@ public abstract class Installable {
 
                 dialog.dispose();
 
-                DialogManager.okDialog().setTitle(title).setContent(new HTMLBuilder().center().text(text).build())
-                        .setType(type).show();
+                if (!addingLoader) {
+                    DialogManager.okDialog().setTitle(title).setContent(new HTMLBuilder().center().text(text).build())
+                            .setType(type).show();
+                }
             }
         };
 
@@ -351,6 +348,26 @@ public abstract class Installable {
         dialog.setVisible(true);
 
         return true;
+    }
+
+    private String getDialogTitle(String name) {
+        if (addingLoader) {
+            return GetText.tr("Adding {0} {1}", getLoaderVersion().type, getLoaderVersion().version);
+        }
+
+        if (isReinstall) {
+            if (isServer) {
+                return GetText.tr("Reinstalling {0} Server", name);
+            }
+
+            return GetText.tr("Reinstalling {0}", name);
+        }
+
+        if (isServer) {
+            return GetText.tr("Installing {0} Server", name);
+        }
+
+        return GetText.tr("Installing {0}", name);
     }
 
     public int showDifferentMinecraftVersionsDialog() {

@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
@@ -47,11 +48,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
@@ -68,6 +77,8 @@ import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
 import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
 import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
+import com.atlauncher.data.installables.Installable;
+import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimeManifest;
@@ -76,8 +87,10 @@ import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
-import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
@@ -87,9 +100,11 @@ import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
@@ -100,6 +115,7 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -121,6 +137,10 @@ public class Instance extends MinecraftVersion {
     public transient Path ROOT;
 
     public Instance(MinecraftVersion version) {
+        setValues(version);
+    }
+
+    public void setValues(MinecraftVersion version) {
         this.id = version.id;
         this.complianceLevel = version.complianceLevel;
         this.javaVersion = version.javaVersion;
@@ -165,19 +185,8 @@ public class Instance extends MinecraftVersion {
 
     public boolean hasUpdate() {
         if (launcher.vanillaInstance) {
-            if (this.type == VersionManifestVersionType.SNAPSHOT) {
-                return !MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.SNAPSHOT).get(0).id
-                        .equals(this.id);
-            } else if (this.type == VersionManifestVersionType.RELEASE) {
-                return !MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.RELEASE).get(0).id
-                        .equals(this.id);
-            } else if (this.type == VersionManifestVersionType.OLD_BETA) {
-                return !MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_BETA).get(0).id
-                        .equals(this.id);
-            } else if (this.type == VersionManifestVersionType.OLD_ALPHA) {
-                return !MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_ALPHA).get(0).id
-                        .equals(this.id);
-            }
+            // must be reinstalled
+            return false;
         } else if (this.isExternalPack()) {
             if (isModpacksChPack()) {
                 ModpacksChPackVersion latestVersion = Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(this);
@@ -290,17 +299,7 @@ public class Instance extends MinecraftVersion {
         String version;
 
         if (launcher.vanillaInstance) {
-            if (this.type == VersionManifestVersionType.SNAPSHOT) {
-                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.SNAPSHOT).get(0).id;
-            } else if (this.type == VersionManifestVersionType.RELEASE) {
-                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.RELEASE).get(0).id;
-            } else if (this.type == VersionManifestVersionType.OLD_BETA) {
-                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_BETA).get(0).id;
-            } else if (this.type == VersionManifestVersionType.OLD_ALPHA) {
-                version = MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_ALPHA).get(0).id;
-            } else {
-                return;
-            }
+            return;
         } else if (isExternalPack()) {
             if (isModpacksChPack()) {
                 version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
@@ -325,20 +324,6 @@ public class Instance extends MinecraftVersion {
 
     public boolean hasLatestUpdateBeenIgnored() {
         if (launcher.vanillaInstance) {
-            if (this.type == VersionManifestVersionType.SNAPSHOT) {
-                return hasUpdateBeenIgnored(
-                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.SNAPSHOT).get(0).id);
-            } else if (this.type == VersionManifestVersionType.RELEASE) {
-                return hasUpdateBeenIgnored(
-                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.RELEASE).get(0).id);
-            } else if (this.type == VersionManifestVersionType.OLD_BETA) {
-                return hasUpdateBeenIgnored(
-                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_BETA).get(0).id);
-            } else if (this.type == VersionManifestVersionType.OLD_ALPHA) {
-                return hasUpdateBeenIgnored(
-                        MinecraftManager.getFilteredMinecraftVersions(VersionManifestVersionType.OLD_ALPHA).get(0).id);
-            }
-
             return false;
         }
 
@@ -1657,5 +1642,208 @@ public class Instance extends MinecraftVersion {
 
     public boolean canChangeDescription() {
         return isExternalPack() || launcher.vanillaInstance || (getPack() != null && getPack().system);
+    }
+
+    public void startReinstall() {
+        Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Reinstall", getAnalyticsCategory());
+        new InstanceInstallerDialog(this);
+    }
+
+    public void startRename() {
+        Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Rename", getAnalyticsCategory());
+        new RenameInstanceDialog(this);
+    }
+
+    public void startChangeDescription() {
+        JTextArea textArea = new JTextArea(launcher.description);
+        textArea.setColumns(30);
+        textArea.setRows(10);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setSize(300, 150);
+
+        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
+                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+        if (ret == 0) {
+            launcher.description = textArea.getText();
+            save();
+        }
+    }
+
+    public void startChangeImage() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
+        int ret = chooser.showOpenDialog(App.launcher.getParent());
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            File img = chooser.getSelectedFile();
+            if (img.getAbsolutePath().endsWith(".png")) {
+                Analytics.sendEvent(launcher.pack + " - " + launcher.version, "ChangeImage", getAnalyticsCategory());
+                try {
+                    Utils.safeCopy(img, getRoot().resolve("instance.png").toFile());
+                    save();
+                } catch (IOException ex) {
+                    LogManager.logStackTrace("Failed to set instance image", ex);
+                }
+            }
+        }
+    }
+
+    public void addLoader(LoaderType loaderType) {
+        Analytics.sendEvent(loaderType == LoaderType.FORGE ? 1 : 2, launcher.pack + " - " + launcher.version,
+                "AddLoader", getAnalyticsCategory());
+
+        ProgressDialog<List<LoaderVersion>> progressDialog = new ProgressDialog<>(
+                GetText.tr("Checking For {0} Versions", loaderType), 0,
+                GetText.tr("Checking For {0} Versions", loaderType));
+        progressDialog.addThread(new Thread(() -> {
+            if (loaderType == LoaderType.FABRIC) {
+                progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
+            } else if (loaderType == LoaderType.FORGE) {
+                progressDialog.setReturnValue(ForgeLoader.getChoosableVersions(id));
+            }
+
+            progressDialog.doneTask();
+            progressDialog.close();
+        }));
+        progressDialog.start();
+
+        List<LoaderVersion> loaderVersions = progressDialog.getReturnValue();
+
+        if (loaderVersions == null || loaderVersions.size() == 0) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Versions Available For {0}", loaderType))
+                    .setContent(new HTMLBuilder().center().text(
+                            GetText.tr("{0} has not been installed as there are no versions available.", loaderType))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+            return;
+        }
+
+        JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
+
+        int loaderVersionLength = 0;
+
+        // ensures that font width is taken into account
+        for (LoaderVersion version : loaderVersions) {
+            loaderVersionLength = Math.max(loaderVersionLength,
+                    loaderVersionsDropDown.getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString())
+                            + 25);
+        }
+
+        loaderVersions.forEach(
+                version -> loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(version, version.toString())));
+
+        if (loaderType == LoaderType.FORGE) {
+            Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
+                    .findFirst();
+
+            if (recommendedVersion.isPresent()) {
+                loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
+            }
+        }
+
+        // ensures that the dropdown is at least 200 px wide
+        loaderVersionLength = Math.max(200, loaderVersionLength);
+
+        // ensures that there is a maximum width of 400 px to prevent overflow
+        loaderVersionLength = Math.min(400, loaderVersionLength);
+
+        loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        Box box = Box.createHorizontalBox();
+        box.add(new JLabel(GetText.tr("Select {0} Version To Install", loaderType)));
+        box.add(Box.createHorizontalGlue());
+
+        panel.add(box);
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(loaderVersionsDropDown);
+        panel.add(Box.createVerticalStrut(20));
+
+        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), panel,
+                GetText.tr("Installing {0}", loaderType), JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE);
+
+        if (ret != 0) {
+            return;
+        }
+
+        LoaderVersion loaderVersion = ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue();
+        boolean success = false;
+
+        try {
+            Installable installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(id), loaderVersion,
+                    launcher.description);
+            installable.instance = this;
+            installable.instanceName = launcher.name;
+            installable.isReinstall = true;
+            installable.addingLoader = true;
+            installable.isServer = false;
+            installable.saveMods = true;
+
+            success = installable.startInstall();
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (success) {
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Installed", loaderType))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("{0} {1} has been installed.", loaderType, loaderVersion.version)).build())
+                    .setType(DialogManager.INFO).show();
+        } else {
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Installed", loaderType))
+                    .setContent(new HTMLBuilder().center().text(GetText
+                            .tr("{0} has not been installed. Check the console for more information.", loaderType))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+        }
+    }
+
+    public void removeLoader() {
+        Analytics.sendEvent(launcher.loaderVersion.isForge() ? 1 : 2, launcher.pack + " - " + launcher.version,
+                "RemoveLoader", getAnalyticsCategory());
+        String loaderType = launcher.loaderVersion.type;
+
+        ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Removing {0}", loaderType), 0,
+                GetText.tr("Removing {0}", loaderType));
+        progressDialog.addThread(new Thread(() -> {
+            try {
+                VersionManifestVersion minecraftVersion = MinecraftManager.getMinecraftVersion(id);
+                MinecraftVersion version = com.atlauncher.network.Download.build().cached().setUrl(minecraftVersion.url)
+                        .asClassWithThrow(MinecraftVersion.class);
+                setValues(version);
+                progressDialog.setReturnValue(true);
+            } catch (IOException | InvalidMinecraftVersion e) {
+                LogManager.logStackTrace(e);
+                progressDialog.setReturnValue(false);
+            }
+
+            progressDialog.doneTask();
+            progressDialog.close();
+        }));
+        progressDialog.start();
+
+        if (progressDialog.getReturnValue()) {
+            launcher.loaderVersion = null;
+            save();
+
+            App.launcher.reloadInstancesPanel();
+
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("{0} has been removed from this instance.", loaderType)).build())
+                    .setType(DialogManager.INFO).show();
+        } else {
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Removed", loaderType))
+                    .setContent(new HTMLBuilder().center().text(
+                            GetText.tr("{0} has not been removed. Check the console for more information.", loaderType))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+        }
     }
 }
