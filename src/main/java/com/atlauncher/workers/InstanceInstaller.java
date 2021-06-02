@@ -163,6 +163,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public String mainClass;
     public Arguments arguments;
+    public boolean success;
 
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
             boolean isReinstall, boolean isServer, boolean saveMods, String shareCode, boolean showModsChooser,
@@ -195,6 +196,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public void setInstance(Instance instance) {
         this.instance = instance;
+    }
+
+    private boolean success(boolean success) {
+        this.success = success;
+
+        return success;
     }
 
     @Override
@@ -230,7 +237,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             determineModsToBeInstalled();
 
             if (isCancelled()) {
-                return false;
+                return success(false);
             }
 
             backupSelectFiles();
@@ -252,7 +259,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             install();
 
             if (isCancelled()) {
-                return false;
+                return success(false);
             }
 
             if (!this.isServer) {
@@ -265,13 +272,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     (this.isServer ? "Server" : "") + (this.isReinstall ? "Reinstalled" : "Installed"),
                     getAnalyticsCategory());
 
-            return true;
+            return success(true);
         } catch (Exception e) {
+            success(false);
             cancel(true);
             LogManager.logStackTrace(e);
         }
 
-        return false;
+        return success(false);
     }
 
     private String getAnalyticsCategory() {

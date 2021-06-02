@@ -347,7 +347,7 @@ public abstract class Installable {
         instanceInstaller.execute();
         dialog.setVisible(true);
 
-        return true;
+        return instanceInstaller.success;
     }
 
     private String getDialogTitle(String name) {
