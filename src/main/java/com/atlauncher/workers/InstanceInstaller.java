@@ -1429,7 +1429,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadRuntime() {
         addPercent(5);
 
-        if (minecraftVersion.javaVersion == null || Data.JAVA_RUNTIMES == null
+        if (isServer || minecraftVersion.javaVersion == null || Data.JAVA_RUNTIMES == null
                 || !App.settings.useJavaProvidedByMinecraft) {
             return;
         }
