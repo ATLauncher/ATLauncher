@@ -215,7 +215,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.openButton);
 
         rightPanel.setLayout(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 180));
+        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
         rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         rightPanel.add(as, BorderLayout.SOUTH);

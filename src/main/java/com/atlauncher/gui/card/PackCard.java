@@ -111,7 +111,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         actionsPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         actionsPanel.add(as, BorderLayout.SOUTH);
-        actionsPanel.setPreferredSize(new Dimension(actionsPanel.getPreferredSize().width, 180));
+        actionsPanel.setPreferredSize(new Dimension(actionsPanel.getPreferredSize().width, 155));
 
         this.getContentPane().add(splitter);
 
