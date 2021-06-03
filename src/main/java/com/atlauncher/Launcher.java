@@ -198,7 +198,7 @@ public class Launcher {
 
         checkForExternalPackUpdates();
 
-        if (App.settings.enableLogs && App.settings.enableAnalytics) {
+        if (!App.settings.firstTimeRun && App.settings.enableLogs && App.settings.enableAnalytics) {
             Analytics.startSession();
         }
         PerformanceManager.end();
