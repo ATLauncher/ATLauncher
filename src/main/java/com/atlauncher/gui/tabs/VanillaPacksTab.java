@@ -370,6 +370,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             }
         };
         minecraftVersionTable = new JTable(minecraftVersionTableModel);
+        minecraftVersionTable.getTableHeader().setReorderingAllowed(false);
 
         ListSelectionModel sm = minecraftVersionTable.getSelectionModel();
         sm.addListSelectionListener(new ListSelectionListener() {
