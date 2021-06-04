@@ -160,11 +160,6 @@ public class MCLauncher {
 
         arguments.add("-XX:-OmitStackTraceInFastThrow");
 
-        if (javaArguments.isEmpty() && !Java.isMinecraftJavaNewerThanJava8()) {
-            // Some defaults if on Java 8 or less
-            javaArguments = "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy";
-        }
-
         arguments.add("-Xms" + initialMemory + "M");
 
         if (OS.getMaximumRam() != 0 && maximumMemory < instance.getMemory()) {

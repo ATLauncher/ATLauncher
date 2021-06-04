@@ -19,6 +19,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issues with some CurseForge packs not allowing to be installed
 - Rename instance dialog not having a parent window set
 - Fix custom vanilla instances deleting the configs folder on reinstall/update [#468]
+- Launch arguments being added in when Java arguments were empty [#471]
 
 ### Misc
 - Force minimum of Java 8u141/7u151
