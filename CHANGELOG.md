@@ -20,6 +20,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Rename instance dialog not having a parent window set
 - Fix custom vanilla instances deleting the configs folder on reinstall/update [#468]
 - Launch arguments being added in when Java arguments were empty [#471]
+- Issue with missing Forge launcher jar not downloading correctly
 
 ### Misc
 - Force minimum of Java 8u141/7u151

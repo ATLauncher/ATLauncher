@@ -53,9 +53,9 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
 
             if (library.downloads.artifact.url.isEmpty()) {
                 // forge installer provides this out the zip, but when the file is removed from
-                // shared libraries, we need to change the url to grab the universal jar (same)
+                // shared libraries, we need to change the url to grab the launcher jar (same)
                 library.downloads.artifact.url = Constants.FORGE_MAVEN_BASE
-                        + library.downloads.artifact.path.replace(".jar", "-universal.jar");
+                        + library.downloads.artifact.path.replace(".jar", "-launcher.jar");
             }
         } else {
             if (object.has("checksums")) {
