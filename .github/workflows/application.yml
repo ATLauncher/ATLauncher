@@ -146,6 +146,13 @@ jobs:
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
 
+      - name: Package up AUR versions
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: aur-publish
+          client-payload: '{"version": "${{ steps.clean-version.outputs.replaced }}"}'
+
       - name: Update version
         if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         run: |
