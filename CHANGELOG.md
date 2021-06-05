@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - The Edit Instance button showing for non vanilla instances
+- Force ignoring failures on Modpacks.ch downloads again (they're still largely broken)
 
 ### Misc
