@@ -21,6 +21,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.Box;
@@ -35,6 +37,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
@@ -398,9 +401,25 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useJavaProvidedByMinecraft = new JCheckBox();
-        if (App.settings.useJavaProvidedByMinecraft) {
-            useJavaProvidedByMinecraft.setSelected(true);
-        }
+        useJavaProvidedByMinecraft.setSelected(App.settings.useJavaProvidedByMinecraft);
+        useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.DESELECTED) {
+                    SwingUtilities.invokeLater(() -> {
+                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                                .setType(DialogManager.WARNING)
+                                .setContent(GetText.tr(
+                                        "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
+                                .show();
+
+                        if (ret != 0) {
+                            useJavaProvidedByMinecraft.setSelected(true);
+                        }
+                    });
+                }
+            }
+        });
         add(useJavaProvidedByMinecraft, gbc);
     }
 
