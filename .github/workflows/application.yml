@@ -147,6 +147,7 @@ jobs:
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
 
       - name: Package up AUR versions
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}

@@ -33,4 +33,6 @@ RUN git clone https://aur.archlinux.org/yay-bin.git /home/notroot/yay-bin && \
 COPY entrypoint.sh /entrypoint.sh
 
 USER root
+RUN chmod +x /entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]
