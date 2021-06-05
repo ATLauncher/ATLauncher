@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.gui.card.InstanceCard;
-import com.atlauncher.gui.card.PackCard;
 
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -101,8 +100,6 @@ public class BasicLauncherUiTest extends AbstractUiTest {
 
         MockHelper.mockCdnJson(mockServer, "GET", "/containers/atl/packs/VanillaMinecraft/versions/1.16.4/Configs.json",
                 "vanilla-1-16-4-configs.json");
-        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com", "/mc/game/version_manifest.json",
-                "version_manifest.json");
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
                 "/v1/packages/3c33166875193f50f446a0730960208fcbf9f96c/1.16.4.json", "1.16.4.json");
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
@@ -123,37 +120,21 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         JPanelFixture vanillaPacksPanel = this.frame.panel("vanillaPacksPanel");
         vanillaPacksPanel.requireVisible();
 
-        JPanelFixture vanillaPackCard = vanillaPacksPanel.panel(new GenericTypeMatcher<PackCard>(PackCard.class, true) {
-            @Override
-            protected boolean isMatching(PackCard packCard) {
-                return packCard.getPack().name.equalsIgnoreCase("Vanilla Minecraft") && packCard.isVisible();
-            }
-        });
-        vanillaPackCard.requireVisible();
-
-        JButtonFixture newInstanceButton = vanillaPackCard.button(JButtonMatcher.withText("New Instance"));
-        newInstanceButton.requireVisible();
-        newInstanceButton.click();
-
-        DialogFixture instanceInstallerDialog = WindowFinder.findDialog("instanceInstallerDialog").using(robot());
-        instanceInstallerDialog.requireVisible();
-
-        JButtonFixture installButton = instanceInstallerDialog.button(JButtonMatcher.withText("Install"));
-        installButton.requireVisible();
-
-        installButton.click();
+        JButtonFixture createInstanceButton = vanillaPacksPanel.button(JButtonMatcher.withText("Create Instance"));
+        createInstanceButton.requireVisible();
+        createInstanceButton.click();
 
         Pause.pause(new Condition("Waits for install to finish") {
             @Override
             public boolean test() {
-                return Files.exists(workingDir.resolve("instances/VanillaMinecraft/instance.json"));
+                return Files.exists(workingDir.resolve("instances/Minecraft1164/instance.json"));
             }
         }, Timeout.timeout(5, TimeUnit.MINUTES));
 
         DialogFixture installSuccessDialog = WindowFinder.findDialog(new GenericTypeMatcher<Dialog>(Dialog.class) {
             @Override
             protected boolean isMatching(Dialog dialog) {
-                return dialog.getTitle().matches("Vanilla Minecraft [0-9\\.]+ Installed");
+                return dialog.getTitle().matches("Minecraft [0-9\\.]+ Installed");
             }
         }).using(robot());
         installSuccessDialog.requireVisible();
@@ -169,12 +150,12 @@ public class BasicLauncherUiTest extends AbstractUiTest {
                 .panel(new GenericTypeMatcher<InstanceCard>(InstanceCard.class) {
                     @Override
                     protected boolean isMatching(InstanceCard instanceCard) {
-                        return instanceCard.getInstance().launcher.name.equals("Vanilla Minecraft");
+                        return instanceCard.getInstance().launcher.name.equals("Minecraft 1.16.4");
                     }
                 });
         vanillaInstanceCard.requireVisible();
 
         vanillaInstanceCard.button(JButtonMatcher.withText("Play")).requireVisible().requireEnabled();
-        vanillaInstanceCard.button(JButtonMatcher.withText("Reinstall")).requireVisible().requireEnabled();
+        vanillaInstanceCard.button(JButtonMatcher.withText("Edit Instance")).requireVisible().requireEnabled();
     }
 }
