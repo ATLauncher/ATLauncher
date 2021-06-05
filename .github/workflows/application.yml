@@ -149,7 +149,7 @@ jobs:
       - name: Package up AUR versions
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
           event-type: aur-publish
           client-payload: '{"version": "${{ steps.clean-version.outputs.replaced }}"}'
 
