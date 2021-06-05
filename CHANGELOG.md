@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- The Edit Instance button showing for non vanilla instances
 
 ### Misc
