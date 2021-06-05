@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add setting to networks tab to not validate downloads from modpacks.ch
 - Add setting to mods tab to not check mods on CurseForge
 - Add ability to install/remove a loader from vanilla instances
+- Add in skin updater tool
 
 ### Fixes
 - Launcher not working with Java 16 [#465]

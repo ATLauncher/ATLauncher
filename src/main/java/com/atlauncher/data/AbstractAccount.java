@@ -100,6 +100,8 @@ public abstract class AbstractAccount implements Serializable {
 
     public abstract String getCurrentUsername();
 
+    public abstract void updateSkinPreCheck();
+
     public abstract String getSkinUrl();
 
     public void updateUsername() {
@@ -148,6 +150,8 @@ public abstract class AbstractAccount implements Serializable {
      * skin server.
      */
     public void updateSkin() {
+        updateSkinPreCheck();
+
         if (!this.skinUpdating) {
             this.skinUpdating = true;
             final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();

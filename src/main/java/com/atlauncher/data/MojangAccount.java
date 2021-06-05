@@ -140,6 +140,10 @@ public class MojangAccount extends AbstractAccount {
     }
 
     @Override
+    public void updateSkinPreCheck() {
+    }
+
+    @Override
     public String getSkinUrl() {
         StringBuilder response;
         try {
