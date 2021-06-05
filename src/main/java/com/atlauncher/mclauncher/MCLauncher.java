@@ -98,6 +98,10 @@ public class MCLauncher {
                 Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
                         .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
 
+                if (OS.isMac()) {
+                    runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
+                }
+
                 if (Files.isDirectory(runtimeDirectory)) {
                     javaPath = runtimeDirectory.toAbsolutePath().toString();
                     LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
