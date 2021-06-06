@@ -175,7 +175,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         // vanilla instances do some things different
         this.editInstanceButton.setVisible(instance.launcher.vanillaInstance);
-        this.settingsButton.setVisible(instance.launcher.vanillaInstance);
         this.renameButton.setVisible(!instance.launcher.vanillaInstance);
         this.reinstallButton.setVisible(!instance.launcher.vanillaInstance);
         this.updateButton.setVisible(!instance.launcher.vanillaInstance);
