@@ -38,6 +38,7 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
+import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -178,7 +179,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                     dialog.setReturnValue(null);
                 }
 
-                ZipUtil.unpack(unpackedFile, runtimeFolder);
+                ArchiveUtils.extract(unpackedFile.toPath(), runtimeFolder.toPath());
                 Utils.delete(unpackedFile);
 
                 dialog.setReturnValue(runtimeFolder.getAbsolutePath());

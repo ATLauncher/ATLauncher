@@ -58,11 +58,11 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
-import org.zeroturnaround.zip.ZipUtil;
 
 @SuppressWarnings("serial")
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
@@ -175,7 +175,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                     String time = timestamp.toString().replaceAll("[^0-9]", "_");
                     String filename = "Server-" + server.getSafeName() + "-" + time.substring(0, time.lastIndexOf("_"))
                             + ".zip";
-                    ZipUtil.pack(server.getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile());
+                    ArchiveUtils.extract(server.getRoot(), FileSystem.BACKUPS.resolve(filename));
                     dialog.dispose();
                     App.TOASTER.pop(GetText.tr("Backup is complete"));
                 });

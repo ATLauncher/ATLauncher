@@ -32,13 +32,12 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.Gson;
-
-import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.CacheControl;
 import okhttp3.Headers;
@@ -676,7 +675,7 @@ public final class Download {
         if (Files.exists(this.to) && this.unzipTo != null) {
             FileUtils.createDirectory(this.unzipTo);
 
-            ZipUtil.unpack(this.to.toFile(), this.unzipTo.toFile());
+            ArchiveUtils.extract(this.to, this.unzipTo);
         }
 
         if (Files.exists(this.to) && this.executable) {

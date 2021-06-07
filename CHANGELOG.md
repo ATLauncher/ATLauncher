@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue importing/installing from zip files with certain characters [#474]
 
 ### Misc

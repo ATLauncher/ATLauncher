@@ -34,8 +34,6 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 
-import org.zeroturnaround.zip.ZipUtil;
-
 public class ImportPackUtils {
     public static boolean loadFromUrl(String url) {
         return loadFromUrl(new Download().setUrl(url).downloadTo(FileSystem.TEMP.resolve("import.zip")), null, null);
@@ -54,16 +52,16 @@ public class ImportPackUtils {
 
     public static boolean loadFromFile(File file) {
         try {
-            if (ZipUtil.containsEntry(file, "manifest.json")) {
+            if (ArchiveUtils.archiveContainsFile(file.toPath(), "manifest.json")) {
                 return loadCurseForgeFormat(file, null, null);
             }
 
             Path tmpDir = FileSystem.TEMP.resolve("multimcimport" + file.getName().toString().toLowerCase());
 
-            ZipUtil.unpack(file, tmpDir.toFile());
+            ArchiveUtils.extract(file.toPath(), tmpDir);
 
             if (tmpDir.toFile().list().length == 1
-                    && ZipUtil.containsEntry(file, tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
+                    && ArchiveUtils.archiveContainsFile(file.toPath(), tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
                 return loadMultiMCFormat(tmpDir.resolve(tmpDir.toFile().list()[0]));
             }
 
@@ -86,8 +84,8 @@ public class ImportPackUtils {
         Path tmpDir = FileSystem.TEMP.resolve("curseforgeimport" + file.getName().toString().toLowerCase());
 
         try {
-            CurseForgeManifest manifest = Gsons.MINECRAFT
-                    .fromJson(new String(ZipUtil.unpackEntry(file, "manifest.json")), CurseForgeManifest.class);
+            CurseForgeManifest manifest = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "manifest.json"),
+                    CurseForgeManifest.class);
 
             if (projectId != null) {
                 manifest.projectID = projectId;
@@ -108,7 +106,7 @@ public class ImportPackUtils {
                 return false;
             }
 
-            ZipUtil.unpack(file, tmpDir.toFile());
+            ArchiveUtils.extract(file.toPath(), tmpDir);
 
             new InstanceInstallerDialog(manifest, tmpDir);
         } catch (Exception e) {

@@ -89,7 +89,6 @@ import com.google.gson.reflect.TypeToken;
 
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
-import org.zeroturnaround.zip.ZipUtil;
 
 import io.pack200.Pack200;
 import net.iharder.Base64;
@@ -1500,7 +1499,7 @@ public class Utils {
             java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
             }.getType();
 
-            List<MCMod> mods = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "mcmod.info")), type);
+            List<MCMod> mods = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
 
             if (mods.size() != 0 && mods.get(0) != null) {
                 return mods.get(0);
@@ -1514,7 +1513,7 @@ public class Utils {
 
     public static FabricMod getFabricModForFile(File file) {
         try {
-            FabricMod mod = Gsons.MINECRAFT.fromJson(new String(ZipUtil.unpackEntry(file, "fabric.mod.json")),
+            FabricMod mod = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "fabric.mod.json"),
                     FabricMod.class);
 
             if (mod != null) {

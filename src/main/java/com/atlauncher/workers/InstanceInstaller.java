@@ -102,6 +102,7 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
+import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
@@ -437,10 +438,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireSubProgressUnknown();
 
         curseForgeManifest = Gsons.MINECRAFT.fromJson(
-                new String(ZipUtil.unpackEntry(manifestFile.toFile(), "manifest.json")), CurseForgeManifest.class);
+                new String(ArchiveUtils.getFile(manifestFile, "manifest.json")), CurseForgeManifest.class);
         curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
 
-        ZipUtil.unpack(manifestFile.toFile(), curseForgeExtractedPath.toFile());
+        ArchiveUtils.extract(manifestFile, curseForgeExtractedPath);
         Files.delete(manifestFile);
 
         generatePackVersionFromCurseForgeManifest();
@@ -1737,7 +1738,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireSubProgressUnknown();
             fireTask(GetText.tr("Extracting Configs"));
 
-            ZipUtil.unpack(configs, this.root.toFile());
+            ArchiveUtils.extract(configs.toPath(), this.root);
             Utils.delete(configs);
         }
     }

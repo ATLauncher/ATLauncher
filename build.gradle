@@ -65,6 +65,7 @@ dependencies {
     implementation 'com.github.oshi:oshi-core:5.3.6'
     implementation 'net.freeutils:jlhttp:2.5'
     implementation 'joda-time:joda-time:2.10.10'
+    implementation 'org.apache.commons:commons-compress:1.20'
 
     testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
@@ -135,6 +136,7 @@ shadowJar {
     minimize {
         exclude(dependency('org.apache.logging.log4j:.*:.*'))
         exclude(dependency('com.formdev:.*:.*'))
+        exclude(dependency('org.apache.commons:commons-compress:.*'))
     }
     classifier = ''
 }
