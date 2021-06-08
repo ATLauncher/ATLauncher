@@ -21,16 +21,21 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import com.atlauncher.managers.LogManager;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.utils.IOUtils;
+import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipException;
 import org.zeroturnaround.zip.ZipUtil;
 
@@ -96,8 +101,12 @@ public class ArchiveUtils {
     }
 
     public static void extract(Path archivePath, Path extractToPath) {
+        extract(archivePath, extractToPath, name -> name);
+    }
+
+    public static void extract(Path archivePath, Path extractToPath, NameMapper nameMapper) {
         try {
-            ZipUtil.unpack(archivePath.toFile(), extractToPath.toFile());
+            ZipUtil.unpack(archivePath.toFile(), extractToPath.toFile(), nameMapper);
             return;
         } catch (ZipException e) {
             // allow this to fail as we can fallback to Apache Commons library
@@ -113,12 +122,17 @@ public class ArchiveUtils {
                 }
 
                 Path outputPath;
+                String fileName = nameMapper.map(entry.getName());
+
+                if (fileName == null) {
+                    continue;
+                }
 
                 try {
-                    outputPath = extractToPath.resolve(entry.getName());
+                    outputPath = extractToPath.resolve(fileName);
                 } catch (InvalidPathException e) {
-                    LogManager.logStackTrace("InvalidPath when extracting file with name of " + entry.getName(), e);
-                    outputPath = extractToPath.resolve(entry.getName().replaceAll("[:*\\?\"<>|]", ""));
+                    LogManager.logStackTrace("InvalidPath when extracting file with name of " + fileName, e);
+                    outputPath = extractToPath.resolve(fileName.replaceAll("[:*\\?\"<>|]", ""));
                 }
 
                 File f = outputPath.toFile();
@@ -136,6 +150,57 @@ public class ArchiveUtils {
                     }
                 }
             }
+        } catch (Exception e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return;
+    }
+
+    public static void createZip(Path pathToCompress, Path archivePath) {
+        createZip(pathToCompress, archivePath, name -> name);
+    }
+
+    public static void createZip(Path pathToCompress, Path archivePath, NameMapper nameMapper) {
+
+        try (OutputStream os = Files.newOutputStream(archivePath);
+                ArchiveOutputStream aos = new ArchiveStreamFactory().createArchiveOutputStream("ZIP", os)) {
+
+            Files.walkFileTree(pathToCompress, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+                    // only copy files, no symbolic links or directories
+                    if (attributes.isSymbolicLink() || attributes.isDirectory()) {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    // get filename
+                    String fileName = nameMapper.map(pathToCompress.relativize(file).toString());
+
+                    if (fileName == null) {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    try {
+                        ArchiveEntry entry = aos.createArchiveEntry(file.toFile(), fileName);
+                        aos.putArchiveEntry(entry);
+                        Files.copy(file, aos);
+                        aos.closeArchiveEntry();
+
+                    } catch (IOException e) {
+                        LogManager.logStackTrace(String.format("Unable to add %s to zip", file), e);
+                    }
+
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException e) {
+                    LogManager.logStackTrace(String.format("Unable to add %s to zip", file), e);
+                    return FileVisitResult.CONTINUE;
+                }
+
+            });
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }

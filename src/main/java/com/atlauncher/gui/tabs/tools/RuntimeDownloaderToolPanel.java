@@ -45,7 +45,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
-import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.OkHttpClient;
 

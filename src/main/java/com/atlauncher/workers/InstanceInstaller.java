@@ -111,7 +111,6 @@ import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
 
 import org.mini2Dx.gettext.GetText;
-import org.zeroturnaround.zip.ZipUtil;
 
 import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;

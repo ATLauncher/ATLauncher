@@ -115,6 +115,7 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
@@ -123,7 +124,6 @@ import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonIOException;
 
 import org.mini2Dx.gettext.GetText;
-import org.zeroturnaround.zip.ZipUtil;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -530,9 +530,9 @@ public class Instance extends MinecraftVersion {
         // extract natives to a temp dir
         this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
             if (library.hasNativeForOS()) {
-                File nativeFile = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path).toFile();
+                Path nativePath = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path);
 
-                ZipUtil.unpack(nativeFile, nativesTempDir.toFile(), name -> {
+                ArchiveUtils.extract(nativePath, nativesTempDir, name -> {
                     if (library.extract != null && library.extract.shouldExclude(name)) {
                         return null;
                     }
@@ -1286,7 +1286,7 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        ZipUtil.pack(tempDir.toFile(), to.toFile());
+        ArchiveUtils.createZip(tempDir, to);
 
         FileUtils.deleteDirectory(tempDir);
 
@@ -1417,7 +1417,7 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        ZipUtil.pack(tempDir.toFile(), to.toFile());
+        ArchiveUtils.createZip(tempDir, to);
 
         FileUtils.deleteDirectory(tempDir);
 
@@ -1624,7 +1624,7 @@ public class Instance extends MinecraftVersion {
             String time = timestamp.toString().replaceAll("[^0-9]", "_");
             String filename = getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
 
-            ZipUtil.pack(getRoot().toFile(), FileSystem.BACKUPS.resolve(filename).toFile(),
+            ArchiveUtils.createZip(getRoot(), FileSystem.BACKUPS.resolve(filename),
                     ZipNameMapper.getMapperForBackupMode(backupMode));
 
             dialog.dispose();
