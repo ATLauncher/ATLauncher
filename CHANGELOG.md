@@ -3,12 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.4.3
+## 3.4.4.4
 
 ### New Features
 
 ### Fixes
-- Issue importing/installing from zip files with certain characters [#474]
-- Issue importing some MultiMC exports not working correctly
 
 ### Misc
