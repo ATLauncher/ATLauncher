@@ -180,3 +180,11 @@ jobs:
         with:
           add: 'CHANGELOG.md src/main/resources/version'
           message: 'chore: bump version'
+
+      - name: Add comment, remove label and then close issues labeled with 'awaiting-release'
+        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
+        uses: ./.github/actions/label-cleanup
+        with:
+          label: 'awaiting-release'
+          comment: 'This has been fixed with version ${{ steps.clean-version.outputs.replaced }}'
+          token: ${{ secrets.GITHUB_TOKEN }}
