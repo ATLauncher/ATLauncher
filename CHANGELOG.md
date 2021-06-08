@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue importing/installing from zip files with certain characters [#474]
+- Issue importing some MultiMC exports not working correctly
 
 ### Misc

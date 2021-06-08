@@ -245,7 +245,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             prepareFilesystem();
 
-            if (this.packVersion.loader != null) {
+            if (this.packVersion.loader != null && this.packVersion.loader.className != null) {
                 this.loader = this.packVersion.getLoader().getLoader(this.temp.resolve("loader").toFile(), this,
                         this.loaderVersion);
 
@@ -436,8 +436,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();
 
-        curseForgeManifest = Gsons.MINECRAFT.fromJson(
-                new String(ArchiveUtils.getFile(manifestFile, "manifest.json")), CurseForgeManifest.class);
+        curseForgeManifest = Gsons.MINECRAFT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "manifest.json")),
+                CurseForgeManifest.class);
         curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
 
         ArchiveUtils.extract(manifestFile, curseForgeExtractedPath);

@@ -502,7 +502,7 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         packVersion.hasLoader = multiMCManifest.components.stream()
-                .anyMatch(c -> c.uid.equalsIgnoreCase("net.fabricmc.intermediary")
+                .anyMatch(c -> c.uid.equalsIgnoreCase("net.minecraftforge")
                         || c.uid.equalsIgnoreCase("net.fabricmc.intermediary"));
 
         pack.versions = Collections.singletonList(packVersion);
