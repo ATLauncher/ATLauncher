@@ -131,19 +131,22 @@ public class ArchiveUtils {
                 try {
                     outputPath = extractToPath.resolve(fileName);
                 } catch (InvalidPathException e) {
-                    LogManager.logStackTrace("InvalidPath when extracting file with name of " + fileName, e);
-                    outputPath = extractToPath.resolve(fileName.replaceAll("[:*\\?\"<>|]", ""));
+                    String newFilename = fileName.replaceAll("[:*\\?\"<>|]", "");
+                    LogManager
+                            .warn(String.format("InvalidPath when extracting file with name of '%s'. Renaming to '%s'",
+                                    fileName, newFilename));
+                    outputPath = extractToPath.resolve(newFilename);
                 }
 
                 File f = outputPath.toFile();
                 if (entry.isDirectory()) {
                     if (!f.isDirectory() && !f.mkdirs()) {
-                        throw new IOException("failed to create directory " + f);
+                        throw new IOException("Failed to create directory " + f);
                     }
                 } else {
                     File parent = f.getParentFile();
                     if (!parent.isDirectory() && !parent.mkdirs()) {
-                        throw new IOException("failed to create directory " + parent);
+                        throw new IOException("Failed to create directory " + parent);
                     }
                     try (OutputStream o = Files.newOutputStream(f.toPath())) {
                         IOUtils.copy(ais, o);
@@ -162,6 +165,14 @@ public class ArchiveUtils {
     }
 
     public static void createZip(Path pathToCompress, Path archivePath, NameMapper nameMapper) {
+        try {
+            ZipUtil.pack(pathToCompress.toFile(), archivePath.toFile(), nameMapper);
+            return;
+        } catch (ZipException e) {
+            // allow this to fail as we can fallback to Apache Commons library
+            LogManager.error("Failed to create zip " + archivePath.toAbsolutePath() + " from "
+                    + pathToCompress.toAbsolutePath());
+        }
 
         try (OutputStream os = Files.newOutputStream(archivePath);
                 ArchiveOutputStream aos = new ArchiveStreamFactory().createArchiveOutputStream("ZIP", os)) {
