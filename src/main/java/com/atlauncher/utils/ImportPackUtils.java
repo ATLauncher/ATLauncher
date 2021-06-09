@@ -101,9 +101,7 @@ public class ImportPackUtils {
             }
 
             if (manifest.manifestVersion != 1) {
-                LogManager.error("Cannot install as the manifest is version " + manifest.manifestVersion
-                        + " which I cannot install");
-                return false;
+                LogManager.warn("Manifest is version " + manifest.manifestVersion + " which may be an issue!");
             }
 
             ArchiveUtils.extract(file.toPath(), tmpDir);

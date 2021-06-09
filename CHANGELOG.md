@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Some packs on CurseForge not being able to be installed due to having bad manifestVersion
 
 ### Misc

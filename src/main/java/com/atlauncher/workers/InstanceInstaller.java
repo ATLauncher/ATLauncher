@@ -323,8 +323,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (curseForgeManifest.manifestVersion != 1) {
-            throw new Exception(
-                    "Manifest is version " + curseForgeManifest.manifestVersion + " which I cannot install");
+            LogManager.warn("Manifest is version " + curseForgeManifest.manifestVersion + " which may be an issue!");
         }
 
         this.packVersion = new Version();
