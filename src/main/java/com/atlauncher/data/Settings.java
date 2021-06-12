@@ -62,9 +62,10 @@ public class Settings {
     public String language = "English";
     public String theme = Constants.DEFAULT_THEME_CLASS;
     public String dateFormat = "dd/MM/yyyy";
+    public String instanceTitleFormat = "dd/MM/yyyy";
     public int selectedTabOnStartup = 0;
     public boolean sortPacksAlphabetically = false;
-    public boolean showPackNameAndVersion = true;
+    public Boolean showPackNameAndVersion = true;
     public boolean keepLauncherOpen = true;
     public boolean enableConsole = true;
     public boolean enableTrayMenu = true;
@@ -321,6 +322,8 @@ public class Settings {
         validateConcurrentConnections();
 
         validateDateFormat();
+
+        validateInstanceTitleFormat();
     }
 
     private void validateAnalyticsClientId() {
@@ -494,8 +497,28 @@ public class Settings {
     private void validateDateFormat() {
         if (!Arrays.asList(Constants.DATE_FORMATS).contains(dateFormat)) {
             LogManager.warn("Tried to set the date format to " + dateFormat + " which is not valid! Setting "
-                    + "back to default of dd/MM/yyyy!");
-            dateFormat = "dd/MM/yyyy";
+                    + "back to default of " + Constants.DATE_FORMATS[0] + "!");
+            dateFormat = Constants.DATE_FORMATS[0];
+        }
+    }
+
+    private void validateInstanceTitleFormat() {
+        if (!Arrays.asList(Constants.INSTANCE_TITLE_FORMATS).contains(instanceTitleFormat)) {
+            LogManager.warn(
+                    "Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
+                            + "back to default of " + Constants.INSTANCE_TITLE_FORMATS[0] + "!");
+            instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
+        }
+
+        if (showPackNameAndVersion != null) {
+            if (showPackNameAndVersion) {
+                instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
+            } else {
+                instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[1];
+            }
+
+            showPackNameAndVersion = null;
+            save();
         }
     }
 
