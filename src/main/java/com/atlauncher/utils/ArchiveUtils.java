@@ -36,14 +36,13 @@ import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.utils.IOUtils;
 import org.zeroturnaround.zip.NameMapper;
-import org.zeroturnaround.zip.ZipException;
 import org.zeroturnaround.zip.ZipUtil;
 
 public class ArchiveUtils {
     public static boolean archiveContainsFile(Path archivePath, String file) {
         try {
             return ZipUtil.containsEntry(archivePath.toFile(), file);
-        } catch (ZipException e) {
+        } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LogManager.error("Failed to check if archive contains file in " + archivePath.toAbsolutePath());
         }
@@ -73,7 +72,7 @@ public class ArchiveUtils {
     public static String getFile(Path archivePath, String file) {
         try {
             return new String(ZipUtil.unpackEntry(archivePath.toFile(), file));
-        } catch (ZipException e) {
+        } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LogManager.error("Failed to get contents of file in " + archivePath.toAbsolutePath());
         }
@@ -108,7 +107,7 @@ public class ArchiveUtils {
         try {
             ZipUtil.unpack(archivePath.toFile(), extractToPath.toFile(), nameMapper);
             return;
-        } catch (ZipException e) {
+        } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LogManager.error("Failed to extract " + archivePath.toAbsolutePath());
         }
@@ -168,7 +167,7 @@ public class ArchiveUtils {
         try {
             ZipUtil.pack(pathToCompress.toFile(), archivePath.toFile(), nameMapper);
             return;
-        } catch (ZipException e) {
+        } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LogManager.error("Failed to create zip " + archivePath.toAbsolutePath() + " from "
                     + pathToCompress.toAbsolutePath());

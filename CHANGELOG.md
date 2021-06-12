@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Some packs on CurseForge not being able to be installed due to having bad manifestVersion
+- Fix some CurseForge packs not being able to be installed due to filenames [#474]
 
 ### Misc
