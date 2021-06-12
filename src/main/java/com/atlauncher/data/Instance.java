@@ -1082,10 +1082,8 @@ public class Instance extends MinecraftVersion {
 
     public boolean export(String name, String version, String author, InstanceExportFormat format, String saveTo,
             List<String> overrides) {
-        if (format == InstanceExportFormat.ATLAUNCHER) {
-            return exportAsCurseZip(name, version, author, saveTo, overrides, true);
-        } else if (format == InstanceExportFormat.CURSEFORGE) {
-            return exportAsCurseZip(name, version, author, saveTo, overrides, false);
+        if (format == InstanceExportFormat.CURSEFORGE) {
+            return exportAsCurseZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MULTIMC) {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }
@@ -1293,8 +1291,7 @@ public class Instance extends MinecraftVersion {
         return true;
     }
 
-    public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides,
-            boolean supportFabric) {
+    public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides) {
         Path to = Paths.get(saveTo).resolve(name + ".zip");
         CurseForgeManifest manifest = new CurseForgeManifest();
 
@@ -1305,24 +1302,6 @@ public class Instance extends MinecraftVersion {
 
         String loaderType = launcher.loaderVersion.type.toLowerCase();
         String loaderVersion = launcher.loaderVersion.version;
-
-        // Since CurseForge treats Farbic as a second class citizen :(, we need to force
-        // Forge loader and people need to use Jumploader in order to have Fabric packs
-        // (https://www.curseforge.com/minecraft/mc-mods/jumploader)
-        if (launcher.loaderVersion.type.equals("Fabric") && !supportFabric) {
-            loaderType = "forge";
-            loaderVersion = ForgeLoader.getRecommendedVersion(id);
-
-            // no recommended version, so grab latest
-            if (loaderVersion == null) {
-                loaderVersion = ForgeLoader.getLatestVersion(id);
-            }
-        }
-
-        if (loaderVersion == null) {
-            LogManager.error("Failed to get loader version for this pack");
-            return false;
-        }
 
         modLoader.id = loaderType + "-" + loaderVersion;
         modLoader.primary = true;

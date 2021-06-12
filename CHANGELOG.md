@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.4.4
 
 ### New Features
+- Add support to export CurseForge instances with Fabric
 
 ### Fixes
 - Some packs on CurseForge not being able to be installed due to having bad manifestVersion

@@ -156,7 +156,6 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JComboBox<ComboItem<InstanceExportFormat>> format = new JComboBox<>();
-        format.addItem(new ComboItem<>(InstanceExportFormat.ATLAUNCHER, "ATLauncher"));
         format.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
         format.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
         topPanel.add(format, gbc);
