@@ -160,7 +160,7 @@ jobs:
         if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.REPOSITORY_DISPATCH_TOKEN }}
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
           event-type: aur-publish
           client-payload: '{"version": "${{ steps.clean-version.outputs.replaced }}"}'
 
@@ -197,4 +197,4 @@ jobs:
         with:
           label: 'awaiting-release'
           comment: 'This has been fixed with version ${{ steps.clean-version.outputs.replaced }}'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
