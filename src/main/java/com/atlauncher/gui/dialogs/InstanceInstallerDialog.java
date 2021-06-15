@@ -81,6 +81,7 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Utils;
 
@@ -106,7 +107,7 @@ public class InstanceInstallerDialog extends JDialog {
     private JTextField nameField;
     private JComboBox<PackVersion> versionsDropDown;
     private JLabel loaderVersionLabel;
-    private JComboBox<LoaderVersion> loaderVersionsDropDown;
+    private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown;
     private final List<LoaderVersion> loaderVersions = new ArrayList<>();
 
     private JLabel showAllMinecraftVersionsLabel = new JLabel(GetText.tr("Show All"));
@@ -286,7 +287,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
                 LoaderVersion loaderVersion = (packVersion.hasLoader() && packVersion.hasChoosableLoader())
-                        ? (LoaderVersion) loaderVersionsDropDown.getSelectedItem()
+                        ? ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue()
                         : null;
 
                 if (curseForgeManifest != null) {
@@ -675,7 +676,7 @@ public class InstanceInstallerDialog extends JDialog {
         loaderVersions.clear();
 
         loaderVersionsDropDown.removeAllItems();
-        loaderVersionsDropDown.addItem(new LoaderVersion(GetText.tr("Getting Loader Versions")));
+        loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("Getting Loader Versions")));
 
         loaderVersionLabel.setVisible(true);
         loaderVersionsDropDown.setVisible(true);
@@ -688,9 +689,9 @@ public class InstanceInstallerDialog extends JDialog {
 
             if (this.instance != null && this.instance.launcher.vanillaInstance) {
                 if (this.instance.launcher.loaderVersion.isFabric()) {
-                    loaderVersions.addAll(FabricLoader.getChoosableVersions(this.instance.id));
+                    loaderVersions.addAll(FabricLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isForge()) {
-                    loaderVersions.addAll(ForgeLoader.getChoosableVersions(this.instance.id));
+                    loaderVersions.addAll(ForgeLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else {
                     return;
                 }
@@ -704,6 +705,15 @@ public class InstanceInstallerDialog extends JDialog {
                 loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
             }
 
+            if (loaderVersions.size() == 0) {
+                loaderVersionsDropDown.removeAllItems();
+                loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("No Versions Found")));
+                loaderVersionLabel.setVisible(true);
+                loaderVersionsDropDown.setVisible(true);
+                versionsDropDown.setEnabled(true);
+                return;
+            }
+
             // ensures that font width is taken into account
             for (LoaderVersion version : loaderVersions) {
                 loaderVersionLength = Math.max(loaderVersionLength,
@@ -712,13 +722,15 @@ public class InstanceInstallerDialog extends JDialog {
 
             loaderVersionsDropDown.removeAllItems();
 
-            loaderVersions.forEach(version -> loaderVersionsDropDown.addItem(version));
+            loaderVersions.forEach(version -> loaderVersionsDropDown
+                    .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
 
             if (isReinstall && instance.launcher.loaderVersion != null) {
                 String loaderVersionString = instance.launcher.loaderVersion.version;
 
                 for (int i = 0; i < loaderVersionsDropDown.getItemCount(); i++) {
-                    LoaderVersion loaderVersion = loaderVersionsDropDown.getItemAt(i);
+                    LoaderVersion loaderVersion = ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getItemAt(i))
+                            .getValue();
 
                     if (loaderVersion.version.equals(loaderVersionString)) {
                         loaderVersionsDropDown.setSelectedItem(loaderVersion);
