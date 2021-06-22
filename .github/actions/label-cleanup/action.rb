@@ -3,8 +3,9 @@ require 'octokit'
 repo = ENV["GITHUB_REPOSITORY"]
 label = ENV["LABEL"]
 comment = ENV["COMMENT"]
+token = ENV["TOKEN"]
 
-client = Octokit::Client.new(:bearer_token => ENV["TOKEN"])
+client = Octokit::Client.new(:access_token => token)
 client.auto_paginate = true
 
 open_issues = client.list_issues(repo, { :labels => label, :state => 'open'})
