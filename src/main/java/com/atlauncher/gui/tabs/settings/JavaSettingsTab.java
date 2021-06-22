@@ -24,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -73,7 +74,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JComboBox<String> commonScreenSizes;
     private final JLabelWithHover javaPathLabel;
     private JTextField javaPath;
-    private final JComboBox<JavaInfo> installedJavas;
+    private final JComboBox<JavaInfo> installedJavasComboBox;
     private final JButton javaPathResetButton;
     private final JButton javaBrowseButton;
     private final JLabelWithHover javaParametersLabel;
@@ -261,21 +262,24 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         JPanel javaPathPanelBottom = new JPanel();
         javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
 
-        installedJavas = new JComboBox<>();
-        installedJavas.setPreferredSize(new Dimension(516, 24));
-        if (Java.getInstalledJavas().size() != 0) {
-            Java.getInstalledJavas().forEach(installedJavas::addItem);
+        installedJavasComboBox = new JComboBox<>();
+        installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
+        List<JavaInfo> installedJavas = Java.getInstalledJavas();
+        int selectedIndex = 0;
 
-            installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
-                    .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
-                    .orElse(null));
+        for (JavaInfo javaInfo : installedJavas) {
+            installedJavasComboBox.addItem(javaInfo);
 
-            installedJavas
-                    .addActionListener(e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+            if (javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)) {
+                selectedIndex = installedJavasComboBox.getItemCount() - 1;
+            }
         }
 
-        if (installedJavas.getItemCount() != 0) {
-            javaPathPanelTop.add(installedJavas);
+        if (installedJavasComboBox.getItemCount() != 0) {
+            installedJavasComboBox.setSelectedIndex(selectedIndex);
+            installedJavasComboBox.addActionListener(
+                    e -> javaPath.setText(((JavaInfo) installedJavasComboBox.getSelectedItem()).rootPath));
+            javaPathPanelTop.add(installedJavasComboBox);
         }
 
         javaPath = new JTextField(32);
@@ -453,6 +457,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.windowWidth = (Integer) widthField.getValue();
         App.settings.windowHeight = (Integer) heightField.getValue();
         App.settings.javaPath = javaPath.getText();
+        App.settings.usingCustomJavaPath = !javaPath.getText().equalsIgnoreCase(OS.getDefaultJavaPath());
         App.settings.javaParameters = javaParameters.getText();
         App.settings.maximiseMinecraft = startMinecraftMaximised.isSelected();
         App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();

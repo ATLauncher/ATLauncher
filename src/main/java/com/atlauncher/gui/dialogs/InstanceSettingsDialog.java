@@ -25,6 +25,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -244,21 +245,26 @@ public class InstanceSettingsDialog extends JDialog {
                 }
             });
 
-            JComboBox<JavaInfo> installedJavas = new JComboBox<>();
-            installedJavas.setPreferredSize(new Dimension(516, 24));
-            if (Java.getInstalledJavas().size() != 0) {
-                Java.getInstalledJavas().forEach(installedJavas::addItem);
+            JComboBox<JavaInfo> installedJavasComboBox = new JComboBox<>();
+            installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
+            List<JavaInfo> installedJavas = Java.getInstalledJavas();
+            int selectedIndex = 0;
 
-                installedJavas.setSelectedItem(Java.getInstalledJavas().stream()
-                        .filter(javaInfo -> javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)).findFirst()
-                        .orElse(null));
+            for (JavaInfo javaInfo : installedJavas) {
+                installedJavasComboBox.addItem(javaInfo);
 
-                installedJavas.addActionListener(
-                        e -> javaPath.setText(((JavaInfo) installedJavas.getSelectedItem()).rootPath));
+                if (javaInfo.rootPath
+                        .equalsIgnoreCase(getIfNotNull(this.instance.launcher.javaPath, App.settings.javaPath))) {
+                    selectedIndex = installedJavasComboBox.getItemCount() - 1;
+                }
             }
 
-            if (installedJavas.getItemCount() != 0) {
-                javaPathPanelTop.add(installedJavas);
+            if (installedJavasComboBox.getItemCount() != 0) {
+                installedJavasComboBox.setSelectedIndex(selectedIndex);
+                installedJavasComboBox.addActionListener(
+                        e -> javaPath.setText(((JavaInfo) installedJavasComboBox.getSelectedItem()).rootPath));
+
+                javaPathPanelTop.add(installedJavasComboBox);
             }
 
             javaPathPanelBottom.add(javaPath);
