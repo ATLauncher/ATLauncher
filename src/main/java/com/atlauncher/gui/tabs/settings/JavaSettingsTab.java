@@ -246,7 +246,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"))
+                        "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what you're doing, just set<br/>this to the path where the bin folder is for the version of Java you want to use.<br/><br/>If you mess up, click the Reset button to go back to the default"))
                         .build());
         add(javaPathLabel, gbc);
 
