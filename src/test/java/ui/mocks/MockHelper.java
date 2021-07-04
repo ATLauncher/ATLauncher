@@ -46,8 +46,6 @@ public class MockHelper {
         mockedFilePaths.put("newnews.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/newnews.json"));
         mockedFilePaths.put("runtimes.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/runtimes.json"));
         mockedFilePaths.put("users.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/users.json"));
-        mockedFilePaths.put("minecraft.json",
-                Paths.get("src/test/resources/mocks/download-nodecdn-net/minecraft.json"));
         mockedFilePaths.put("packsnew.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/packsnew.json"));
         mockedFilePaths.put("version.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/version.json"));
     }
@@ -83,13 +81,6 @@ public class MockHelper {
             users.size = (int) Files.size(mockedFilePaths.get("users.json"));
             users.sha1 = Hashing.sha1(mockedFilePaths.get("users.json")).toString();
             downloadableFiles.add(users);
-
-            DownloadableFile minecraft = new DownloadableFile();
-            minecraft.name = "minecraft.json";
-            minecraft.folder = "json";
-            minecraft.size = (int) Files.size(mockedFilePaths.get("minecraft.json"));
-            minecraft.sha1 = Hashing.sha1(mockedFilePaths.get("minecraft.json")).toString();
-            downloadableFiles.add(minecraft);
 
             DownloadableFile packsNew = new DownloadableFile();
             packsNew.name = "packsnew.json";
