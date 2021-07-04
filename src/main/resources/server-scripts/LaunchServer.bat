@@ -18,6 +18,8 @@ if $SYSTEM_os_arch==x86 (
     set mem=%memsixtyfour%
 )
 
+java -version
+
 echo Launching %%SERVERJAR%% with arguments '%*' and '%mem%' max memory
 
 :: add nogui to the end of this line to disable the gui ::
