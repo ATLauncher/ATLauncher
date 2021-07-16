@@ -9,6 +9,13 @@ testLauncher/
 run/
 configs/
 cache/
+assets/
+downloads/
+minecraft/
+libraries/
+instances/
+temp/
+loaders/
 
 # IDE Config
 .idea/
