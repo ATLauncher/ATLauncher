@@ -118,6 +118,8 @@ public class Settings {
     public boolean enableAutomaticBackupAfterLaunch = false;
     public BackupMode backupMode = BackupMode.NORMAL;
 
+    public String commandPath = null;
+
     public void convert(Properties properties) {
         String importedDateFormat = properties.getProperty("dateformat");
         if (importedDateFormat != null) {
