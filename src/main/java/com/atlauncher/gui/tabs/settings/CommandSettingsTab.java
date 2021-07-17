@@ -28,8 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CommandSettingsTab extends AbstractSettingsTab implements ActionListener {
-    private final JTextArea preLaunchCommand;
-    private final JTextArea postExitCommand;
+    private final JTextField preLaunchCommand;
+    private final JTextField postExitCommand;
 
     private final JCheckBox enableCommands;
 
@@ -67,7 +67,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
         nextColumn();
 
-        preLaunchCommand = new JTextArea(App.settings.preLaunchCommand);
+        preLaunchCommand = new JTextField(App.settings.preLaunchCommand, 32);
         preLaunchCommand.setPreferredSize(new Dimension(516, 24));
         add(preLaunchCommand, gbc);
 
@@ -83,7 +83,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
         nextColumn();
 
-        postExitCommand = new JTextArea(App.settings.postExitCommand);
+        postExitCommand = new JTextField(App.settings.postExitCommand, 32);
         postExitCommand.setPreferredSize(new Dimension(516, 24));
         add(postExitCommand, gbc);
 
