@@ -647,16 +647,13 @@ public class Instance extends MinecraftVersion {
                             return;
                         }
 
-                        if(App.settings.enableCommands)
-                        {
-                            if (!executeCommand(App.settings.preLaunchCommand))
-                            {
+                        if(App.settings.enableCommands) {
+                            if (!executeCommand(App.settings.preLaunchCommand)) {
                                 LogManager.error("Failed to execute pre-launch command");
 
                                 App.launcher.setMinecraftLaunched(false);
 
-                                if (App.launcher.getParent() != null)
-                                {
+                                if (App.launcher.getParent() != null) {
                                     App.launcher.getParent().setVisible(true);
                                 }
 
@@ -689,16 +686,13 @@ public class Instance extends MinecraftVersion {
                             return;
                         }
 
-                        if(App.settings.enableCommands)
-                        {
-                            if (!executeCommand(App.settings.preLaunchCommand))
-                            {
+                        if(App.settings.enableCommands) {
+                            if (!executeCommand(App.settings.preLaunchCommand)) {
                                 LogManager.error("Failed to execute pre-launch command");
 
                                 App.launcher.setMinecraftLaunched(false);
 
-                                if (App.launcher.getParent() != null)
-                                {
+                                if (App.launcher.getParent() != null) {
                                     App.launcher.getParent().setVisible(true);
                                 }
 
@@ -830,16 +824,13 @@ public class Instance extends MinecraftVersion {
                         MinecraftError.showInformationPopup(detectedError);
                     }
 
-                    if(App.settings.enableCommands)
-                    {
-                        if (!executeCommand(App.settings.preLaunchCommand))
-                        {
+                    if(App.settings.enableCommands) {
+                        if (!executeCommand(App.settings.preLaunchCommand)) {
                             LogManager.error("Failed to execute pre-launch command");
 
                             App.launcher.setMinecraftLaunched(false);
 
-                            if (App.launcher.getParent() != null)
-                            {
+                            if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
                             }
 
@@ -879,15 +870,12 @@ public class Instance extends MinecraftVersion {
 
     }
 
-    private boolean executeCommand(String command)
-    {
-        try
-        {
+    private boolean executeCommand(String command) {
+        try {
             CommandExecutor.executeCommand(this, command);
             return true;
         }
-        catch (CommandException e)
-        {
+        catch (CommandException e) {
             DialogManager.okDialog().setTitle(GetText.tr("Error executing command"))
                 .setContent("Error executing command: \n" + System.lineSeparator() + e.getMessage())
                 .setType(DialogManager.ERROR).show();
