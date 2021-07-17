@@ -118,7 +118,9 @@ public class Settings {
     public boolean enableAutomaticBackupAfterLaunch = false;
     public BackupMode backupMode = BackupMode.NORMAL;
 
-    public String commandPath = null;
+    public boolean enableCommands = false;
+    public String preLaunchCommand = null;
+    public String postExitCommand = null;
 
     public void convert(Properties properties) {
         String importedDateFormat = properties.getProperty("dateformat");
@@ -295,6 +297,11 @@ public class Settings {
         String importedAnalyticsClientId = properties.getProperty("analyticsclientid");
         if (importedAnalyticsClientId != null) {
             analyticsClientId = importedAnalyticsClientId;
+        }
+
+        String importedPreLaunchCommand = properties.getProperty("prelaunchcommand");
+        if (importedPreLaunchCommand != null) {
+            preLaunchCommand = importedPreLaunchCommand;
         }
 
         // validate everything

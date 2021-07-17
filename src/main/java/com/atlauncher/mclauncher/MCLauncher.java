@@ -18,12 +18,13 @@
 package com.atlauncher.mclauncher;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
@@ -37,6 +38,7 @@ import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
+import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
@@ -46,10 +48,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
+import org.apache.commons.io.IOUtils;
 
 public class MCLauncher {
 
     public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir) throws Exception {
+
         return launch(account, instance, null, nativesTempDir.toFile());
     }
 
@@ -67,6 +71,7 @@ public class MCLauncher {
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir)
             throws Exception {
+
         List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath());
 
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
@@ -77,6 +82,8 @@ public class MCLauncher {
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();
     }
+
+
 
     private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
             String nativesDir) {
