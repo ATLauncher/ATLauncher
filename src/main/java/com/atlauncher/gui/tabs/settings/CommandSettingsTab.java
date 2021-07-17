@@ -60,7 +60,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
         //region Pre-launch command
         JLabel preLaunchCommandLabel = new JLabelWithHover(
-            GetText.tr("Pre-launch command:"),
+            GetText.tr("Pre-launch command:") + ":",
             HELP_ICON,
             GetText.tr("This command will be run before the instance launches. The game will not run until the command has finished."));
         add(preLaunchCommandLabel, gbc);
@@ -76,7 +76,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
         //region Post-exit command
         JLabel postExitCommandLabel = new JLabelWithHover(
-            GetText.tr("Post-exit command:"),
+            GetText.tr("Post-exit command") + ":",
             HELP_ICON,
             GetText.tr("This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
         add(postExitCommandLabel, gbc);
@@ -96,7 +96,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
         JTextPane parameterInformation = new JTextPane();
         parameterInformation.setText(
-            "The following variables are available for each command:" + System.lineSeparator()
+            GetText.tr("The following variables are available for each command") + ":" + System.lineSeparator()
                 + "$INST_NAME: " + GetText.tr("The name of the instance") + System.lineSeparator()
                 + "$INST_ID: " + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
                 + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory") + System.lineSeparator()
@@ -139,7 +139,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
     @Override
     public String getTitle() {
-        return "Commands";
+        return GetText.tr("Commands");
     }
 
     public void save() {

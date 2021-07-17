@@ -868,8 +868,8 @@ public class Instance extends MinecraftVersion {
             return true;
         }
         catch (CommandException e) {
-            DialogManager.okDialog().setTitle(GetText.tr("Error executing command"))
-                .setContent("Error executing command: \n" + System.lineSeparator() + e.getMessage())
+            DialogManager.okDialog().setTitle(GetText.tr(GetText.tr("Error executing command")))
+                .setContent(GetText.tr("Error executing command") + ": " + System.lineSeparator() + System.lineSeparator() + e.getMessage())
                 .setType(DialogManager.ERROR).show();
             return false;
         }
