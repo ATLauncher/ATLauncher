@@ -118,6 +118,7 @@ public class Settings {
     public boolean enableAutomaticBackupAfterLaunch = false;
     public BackupMode backupMode = BackupMode.NORMAL;
 
+    //Commands
     public boolean enableCommands = false;
     public String preLaunchCommand = null;
     public String postExitCommand = null;
@@ -302,6 +303,16 @@ public class Settings {
         String importedPreLaunchCommand = properties.getProperty("prelaunchcommand");
         if (importedPreLaunchCommand != null) {
             preLaunchCommand = importedPreLaunchCommand;
+        }
+
+        String importedPostExitCommand = properties.getProperty("postexitcommand");
+        if (importedPostExitCommand != null) {
+            postExitCommand = importedPostExitCommand;
+        }
+
+        String importedEnableCommands = properties.getProperty("enablecommands");
+        if(importedEnableCommands != null) {
+            enableCommands = Boolean.parseBoolean(importedEnableCommands);
         }
 
         // validate everything

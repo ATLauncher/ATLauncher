@@ -71,7 +71,6 @@ public class MCLauncher {
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir)
             throws Exception {
-
         List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath());
 
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
@@ -83,7 +82,71 @@ public class MCLauncher {
         return processBuilder.start();
     }
 
+    /***
+     * Executes the command specified by <param>command</param>
+     * @param instance
+     */
+    public static void executeCommand(Instance instance, String command)
+    {
+        if(App.settings.preLaunchCommand == null)
+            return;
 
+        try
+        {
+            command = replaceArgumentTokensForCommand(getCommandArgumentTokensForInstance(instance), command);
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+
+            if(process.exitValue() != 0)
+            {
+                System.out.println(process.exitValue());
+
+                String errorText = IOUtils.toString(process.getErrorStream());
+
+                if(errorText.isEmpty())
+                    errorText = IOUtils.toString(process.getInputStream());
+
+                throw new CommandException(errorText);
+            }
+        }
+        catch (IOException | InterruptedException e)
+        {
+            throw new CommandException(e);
+        }
+    }
+
+    private static String replaceArgumentTokensForCommand(Map<String, String> tokens, String command)
+    {
+        final Pattern tokenPattern = Pattern.compile("\\$([A-Z_]+)");
+        final StringBuffer result = new StringBuffer();
+        Matcher match = tokenPattern.matcher(command);
+
+        while(match.find())
+        {
+            final String key = match.group(1);
+
+            if(tokens.containsKey(key))
+            {
+                match.appendReplacement(result, tokens.get(key));
+            }
+        }
+
+        match.appendTail(result);
+
+        return result.toString();
+    }
+
+    private static Map<String, String> getCommandArgumentTokensForInstance(Instance instance)
+    {
+        final Map<String, String> result = new HashMap<>();
+        result.put("INST_NAME", instance.getName());
+        result.put("INST_ID", instance.getRootDirectory().getName());
+        result.put("INST_DIR" , instance.getRootDirectory().getAbsolutePath());
+        result.put("INST_MC_DIR", ""); //not a thing in atlauncher, but keep it for compatibility
+        result.put("INST_JAVA", instance.getMinecraftJar().getAbsolutePath());
+        result.put("INST_JAVA_ARGS", instance.getSettings().javaArguments);
+        return result;
+    }
 
     private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
             String nativesDir) {
