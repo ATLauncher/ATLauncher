@@ -96,7 +96,8 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
         JTextPane parameterInformation = new JTextPane();
         parameterInformation.setText(
-            GetText.tr("The following variables are available for each command") + ":" + System.lineSeparator()
+            GetText.tr("Commands will be run in the directory of the instance that is launched/exited.") + System.lineSeparator()
+                + GetText.tr("The following variables are available for each command") + ":" + System.lineSeparator()
                 + "$INST_NAME: " + GetText.tr("The name of the instance") + System.lineSeparator()
                 + "$INST_ID: " + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
                 + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory") + System.lineSeparator()
