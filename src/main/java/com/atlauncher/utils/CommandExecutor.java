@@ -49,7 +49,7 @@ public class CommandExecutor {
 
         try {
             command = replaceArgumentTokensForCommand(getCommandArgumentTokensForInstance(instance), command);
-            Process process = Runtime.getRuntime().exec(command);
+            Process process = Runtime.getRuntime().exec(command, new String[]{}, instance.getRootDirectory());
             process.waitFor();
 
             if (process.exitValue() != 0) {

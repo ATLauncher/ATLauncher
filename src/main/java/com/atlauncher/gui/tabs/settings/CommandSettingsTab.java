@@ -60,7 +60,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
 
         //region Pre-launch command
         JLabel preLaunchCommandLabel = new JLabelWithHover(
-            GetText.tr("Pre-launch command:") + ":",
+            GetText.tr("Pre-launch command") + ":",
             HELP_ICON,
             GetText.tr("This command will be run before the instance launches. The game will not run until the command has finished."));
         add(preLaunchCommandLabel, gbc);
