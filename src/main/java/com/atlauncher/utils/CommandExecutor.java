@@ -20,9 +20,13 @@ package com.atlauncher.utils;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.exceptions.CommandException;
+import com.atlauncher.managers.LogManager;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -49,20 +53,27 @@ public class CommandExecutor {
 
         try {
             command = replaceArgumentTokensForCommand(getCommandArgumentTokensForInstance(instance), command);
+
+            LogManager.info("Running command: \"" + command + "\"");
+
             Process process = Runtime.getRuntime().exec(command, new String[]{}, instance.getRootDirectory());
+
+            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line;
+
+            while((line = reader.readLine()) != null)
+            {
+                LogManager.info(line);
+            }
+
             process.waitFor();
 
             if (process.exitValue() != 0) {
-                System.out.println(process.exitValue());
-
-                String errorText = IOUtils.toString(process.getErrorStream());
-
-                if (errorText.isEmpty())
-                    errorText = IOUtils.toString(process.getInputStream());
-
-                throw new CommandException(errorText);
+                throw new CommandException();
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e ) {
+            LogManager.logStackTrace(e);
             throw new CommandException(e);
         }
     }
