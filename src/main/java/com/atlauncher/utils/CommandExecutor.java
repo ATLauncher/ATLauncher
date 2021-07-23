@@ -54,7 +54,7 @@ public class CommandExecutor {
 
             LogManager.info("Running command: \"" + command + "\"");
 
-            Process process = Runtime.getRuntime().exec(command, new String[]{}, instance.getRootDirectory());
+            Process process = Runtime.getRuntime().exec(command, null, instance.getRootDirectory());
 
             printStreamToLog(process.getInputStream());
 
