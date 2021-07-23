@@ -280,6 +280,12 @@ public class InstanceExportDialog extends JDialog {
         });
         bottomPanel.add(exportButton);
 
+        JButton cancelButton = new JButton(GetText.tr("Cancel"));
+        cancelButton.addActionListener(arg0 -> {
+            close();
+        });
+        bottomPanel.add(cancelButton);
+
         add(topPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }

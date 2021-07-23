@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in java-version command to LaunchServer scripts
+- Add in cancel button to export dialog
 
 ### Fixes
 - Errors when trying to install Forge for 1.17
