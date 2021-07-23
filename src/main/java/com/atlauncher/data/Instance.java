@@ -116,7 +116,12 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
-import com.atlauncher.utils.*;
+import com.atlauncher.utils.ArchiveUtils;
+import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonIOException;
 
 import org.mini2Dx.gettext.GetText;
