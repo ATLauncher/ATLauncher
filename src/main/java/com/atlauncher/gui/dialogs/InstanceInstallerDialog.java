@@ -64,6 +64,7 @@ import com.atlauncher.data.installables.CurseForgeInstallable;
 import com.atlauncher.data.installables.CurseForgeManifestInstallable;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.ModpacksChInstallable;
+import com.atlauncher.data.installables.ModrinthManifestInstallable;
 import com.atlauncher.data.installables.MultiMCInstallable;
 import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.json.Version;
@@ -75,6 +76,7 @@ import com.atlauncher.data.modpacksch.ModpacksChPackLink;
 import com.atlauncher.data.modpacksch.ModpacksChPackLinkType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
+import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -98,6 +100,7 @@ public class InstanceInstallerDialog extends JDialog {
     private Pack pack;
     private Instance instance = null;
     private CurseForgeManifest curseForgeManifest = null;
+    private ModrinthModpackManifest modrinthManifest = null;
     private CurseForgeProject curseForgeProject = null;
     private ModpacksChPackManifest modpacksChPackManifest = null;
     private MultiMCManifest multiMCManifest = null;
@@ -119,38 +122,42 @@ public class InstanceInstallerDialog extends JDialog {
     private final PackVersion autoInstallVersion;
 
     public InstanceInstallerDialog(CurseForgeManifest manifest, Path curseExtractedPath) {
-        this(manifest, false, false, null, null, false, curseExtractedPath, null, App.launcher.getParent());
+        this(manifest, false, false, null, null, false, curseExtractedPath, App.launcher.getParent());
+    }
+
+    public InstanceInstallerDialog(ModrinthModpackManifest manifest, Path modrinthExtractedPath) {
+        this(manifest, false, false, null, null, false, modrinthExtractedPath, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(MultiMCManifest manifest, Path multiMCExtractedPath) {
-        this(manifest, false, false, null, null, false, null, multiMCExtractedPath, App.launcher.getParent());
+        this(manifest, false, false, null, null, false, multiMCExtractedPath, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false, null, null, true, null, null, App.launcher.getParent());
+        this(object, false, false, null, null, true, null, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Window parent, Object object) {
-        this(object, false, false, null, null, true, null, null, parent);
+        this(object, false, false, null, null, true, null, parent);
     }
 
     public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
-        this(pack, false, false, version, shareCode, showModsChooser, null, null, App.launcher.getParent());
+        this(pack, false, false, version, shareCode, showModsChooser, null, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this(pack, false, true, null, null, true, null, null, App.launcher.getParent());
+        this(pack, false, true, null, null, true, null, App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
-            String shareCode, boolean showModsChooser, Path curseExtractedPath, Path multiMCExtractedPath) {
-        this(object, isUpdate, isServer, autoInstallVersion, shareCode, showModsChooser, curseExtractedPath,
-                multiMCExtractedPath, App.launcher.getParent());
+            String shareCode, boolean showModsChooser, Path extractedPath) {
+        this(object, isUpdate, isServer, autoInstallVersion, shareCode, showModsChooser, extractedPath,
+                App.launcher.getParent());
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
-            Path curseExtractedPath, Path multiMCExtractedPath, Window parent) {
+            Path extractedPath, Window parent) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         setName("instanceInstallerDialog");
@@ -167,6 +174,8 @@ public class InstanceInstallerDialog extends JDialog {
             handleModpacksChInstall(object);
         } else if (object instanceof CurseForgeManifest) {
             handleCurseForgeImport(object);
+        } else if (object instanceof ModrinthModpackManifest) {
+            handleModrinthImport(object);
         } else if (object instanceof MultiMCManifest) {
             handleMultiMcImport(object);
         } else {
@@ -294,12 +303,17 @@ public class InstanceInstallerDialog extends JDialog {
                     installable = new CurseForgeManifestInstallable(pack, packVersion, loaderVersion);
 
                     installable.curseForgeManifest = curseForgeManifest;
-                    installable.curseExtractedPath = curseExtractedPath;
+                    installable.curseExtractedPath = extractedPath;
                 } else if (curseForgeProject != null) {
                     installable = new CurseForgeInstallable(pack, packVersion, loaderVersion);
 
                     installable.curseForgeManifest = curseForgeManifest;
-                    installable.curseExtractedPath = curseExtractedPath;
+                    installable.curseExtractedPath = extractedPath;
+                } else if (modrinthManifest != null) {
+                    installable = new ModrinthManifestInstallable(pack, packVersion, loaderVersion);
+
+                    installable.modrinthManifest = modrinthManifest;
+                    installable.modrinthExtractedPath = extractedPath;
                 } else if (modpacksChPackManifest != null) {
                     installable = new ModpacksChInstallable(pack, packVersion, loaderVersion);
 
@@ -308,7 +322,7 @@ public class InstanceInstallerDialog extends JDialog {
                     installable = new MultiMCInstallable(pack, packVersion, loaderVersion);
 
                     installable.multiMCManifest = multiMCManifest;
-                    installable.multiMCExtractedPath = multiMCExtractedPath;
+                    installable.multiMCExtractedPath = extractedPath;
                 } else if (instance != null && instance.launcher.vanillaInstance) {
                     installable = new VanillaInstallable(packVersion.minecraftVersion, loaderVersion,
                             instance.launcher.description);
@@ -483,6 +497,34 @@ public class InstanceInstallerDialog extends JDialog {
 
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", curseForgeManifest.name));
+    }
+
+    private void handleModrinthImport(Object object) {
+        modrinthManifest = (ModrinthModpackManifest) object;
+
+        pack = new Pack();
+        pack.name = modrinthManifest.name;
+
+        PackVersion packVersion = new PackVersion();
+        packVersion.version = Optional.ofNullable(modrinthManifest.versionId).orElse("1.0.0");
+
+        try {
+            packVersion.minecraftVersion = MinecraftManager
+                    .getMinecraftVersion(modrinthManifest.dependencies.get("minecraft"));
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.error(e.getMessage());
+            return;
+        }
+
+        packVersion.hasLoader = modrinthManifest.dependencies.containsKey("fabric-loader")
+                || modrinthManifest.dependencies.containsKey("forge");
+
+        pack.versions = Collections.singletonList(packVersion);
+
+        isReinstall = false;
+
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", modrinthManifest.name));
     }
 
     private void handleMultiMcImport(Object object) {

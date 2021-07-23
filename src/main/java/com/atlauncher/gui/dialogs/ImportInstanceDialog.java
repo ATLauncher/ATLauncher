@@ -77,7 +77,7 @@ public class ImportInstanceDialog extends JDialog {
         middle.setLayout(new BorderLayout());
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
-                "Select an exported instance zip to import it.<br/>We currently support ATLauncher, CurseForge and MultiMC exported zip files."))
+                "Select an exported instance zip to import it.<br/>We currently support ATLauncher, CurseForge, Modrinth and MultiMC exported zip files."))
                 .build());
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);

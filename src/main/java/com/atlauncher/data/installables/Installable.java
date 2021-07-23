@@ -41,6 +41,7 @@ import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -66,6 +67,8 @@ public abstract class Installable {
     public boolean showModsChooser = true;
     public CurseForgeManifest curseForgeManifest;
     public Path curseExtractedPath;
+    public ModrinthModpackManifest modrinthManifest;
+    public Path modrinthExtractedPath;
     public ModpacksChPackManifest modpacksChPackManifest;
     public MultiMCManifest multiMCManifest;
     public Path multiMCExtractedPath;
@@ -153,7 +156,7 @@ public abstract class Installable {
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
                 isServer, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest, curseExtractedPath,
-                modpacksChPackManifest, multiMCManifest, multiMCExtractedPath) {
+                modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest, multiMCExtractedPath) {
 
             protected void done() {
                 Boolean success = false;

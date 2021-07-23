@@ -15,8 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.data.installables;
 
-public enum InstanceExportFormat {
-    CURSEFORGE, MODRINTH, MULTIMC
+import com.atlauncher.data.Pack;
+import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+
+public class ModrinthManifestInstallable extends ATLauncherFormatInstallable {
+    public ModrinthManifestInstallable(Pack pack, PackVersion packVersion, LoaderVersion loaderVersion) {
+        super(pack, packVersion, loaderVersion);
+    }
 }

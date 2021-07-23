@@ -70,4 +70,12 @@ public class LoaderVersion {
 
         return true;
     }
+
+    public String getTypeForModrinthExport() {
+        if (this.isFabric()) {
+            return "fabric-loader";
+        }
+
+        return "forge";
+    }
 }

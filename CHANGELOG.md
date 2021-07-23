@@ -8,10 +8,12 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Add in java-version command to LaunchServer scripts
 - Add in cancel button to export dialog
+- Add support for importing and exporting packs in Modrinth format [#491]
 
 ### Fixes
 - Errors when trying to install Forge for 1.17
 - Removing loader from an instance making it non launchable
 - The add loader buttons on edit instance showing when they shouldn't
+- Issue with modpacks downloading mods and not checking their hashes correctly
 
 ### Misc

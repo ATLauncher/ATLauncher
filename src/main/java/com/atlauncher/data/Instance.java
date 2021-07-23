@@ -95,6 +95,8 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthMod;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
+import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
@@ -117,6 +119,7 @@ import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
@@ -1082,7 +1085,9 @@ public class Instance extends MinecraftVersion {
     public boolean export(String name, String version, String author, InstanceExportFormat format, String saveTo,
             List<String> overrides) {
         if (format == InstanceExportFormat.CURSEFORGE) {
-            return exportAsCurseZip(name, version, author, saveTo, overrides);
+            return exportAsCurseForgeZip(name, version, author, saveTo, overrides);
+        } else if (format == InstanceExportFormat.MODRINTH) {
+            return exportAsModrinthZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MULTIMC) {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }
@@ -1290,7 +1295,8 @@ public class Instance extends MinecraftVersion {
         return true;
     }
 
-    public boolean exportAsCurseZip(String name, String version, String author, String saveTo, List<String> overrides) {
+    public boolean exportAsCurseForgeZip(String name, String version, String author, String saveTo,
+            List<String> overrides) {
         Path to = Paths.get(saveTo).resolve(name + ".zip");
         CurseForgeManifest manifest = new CurseForgeManifest();
 
@@ -1380,6 +1386,105 @@ public class Instance extends MinecraftVersion {
 
         // remove files that come from CurseForge or aren't disabled
         launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
+            File file = mod.getFile(this, overridesPath);
+
+            if (file.exists()) {
+                FileUtils.delete(file.toPath());
+            }
+        });
+
+        for (String path : overrides) {
+            // if no files, remove the directory
+            if (overridesPath.resolve(path).toFile().isDirectory()
+                    && overridesPath.resolve(path).toFile().list().length == 0) {
+                FileUtils.deleteDirectory(overridesPath.resolve(path));
+            }
+        }
+
+        ArchiveUtils.createZip(tempDir, to);
+
+        FileUtils.deleteDirectory(tempDir);
+
+        return true;
+    }
+
+    public boolean exportAsModrinthZip(String name, String version, String author, String saveTo,
+            List<String> overrides) {
+        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        ModrinthModpackManifest manifest = new ModrinthModpackManifest();
+
+        manifest.formatVersion = "1";
+        manifest.game = "minecraft";
+        manifest.versionId = version;
+        manifest.name = name;
+        manifest.summary = this.launcher.description;
+        manifest.files = this.launcher.mods.stream()
+                .filter(m -> !m.disabled && (m.isFromCurseForge() || m.isFromModrinth())).map(mod -> {
+                    Path modPath = mod.getFile(this).toPath();
+
+                    ModrinthModpackFile file = new ModrinthModpackFile();
+                    file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
+
+                    file.hashes = new HashMap<>();
+                    file.hashes.put("sha512", Hashing.sha512(modPath).toString());
+
+                    file.env = new HashMap<>();
+                    file.env.put("client", "required");
+                    file.env.put("server", "unsupported");
+
+                    file.downloads = new ArrayList<>();
+                    String downloadUrl = "";
+                    if (mod.isFromCurseForge()) {
+                        downloadUrl = mod.curseForgeFile.downloadUrl;
+                    } else if (mod.isFromModrinth()) {
+                        downloadUrl = mod.modrinthVersion.getPrimaryFile().url;
+                    }
+                    file.downloads.add(downloadUrl);
+
+                    return file;
+                }).collect(Collectors.toList());
+        manifest.dependencies = new HashMap<>();
+
+        manifest.dependencies.put("minecraft", this.id);
+
+        if (this.launcher.loaderVersion != null) {
+            manifest.dependencies.put(this.launcher.loaderVersion.getTypeForModrinthExport(),
+                    this.launcher.loaderVersion.version);
+        }
+
+        // create temp directory to put this in
+        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        FileUtils.createDirectory(tempDir);
+
+        // create manifest.json
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("index.json").toFile())) {
+            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace("Failed to save index.json", e);
+
+            FileUtils.deleteDirectory(tempDir);
+
+            return false;
+        }
+
+        // copy over the overrides folder
+        Path overridesPath = tempDir.resolve("overrides");
+        FileUtils.createDirectory(overridesPath);
+
+        for (String path : overrides) {
+            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+                    && (getRoot().resolve(path).toFile().isFile()
+                            || getRoot().resolve(path).toFile().list().length != 0)) {
+                if (getRoot().resolve(path).toFile().isDirectory()) {
+                    Utils.copyDirectory(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile());
+                } else {
+                    Utils.copyFile(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile(), true);
+                }
+            }
+        }
+
+        // remove files that come from CurseForge/Modrinth or aren't disabled
+        launcher.mods.stream().filter(m -> !m.disabled && (m.isFromCurseForge() || m.isFromModrinth())).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
 
             if (file.exists()) {
@@ -1508,6 +1613,10 @@ public class Instance extends MinecraftVersion {
         return launcher.curseForgeProject != null && launcher.curseForgeFile != null;
     }
 
+    public boolean isModrinthImport() {
+        return launcher.modrinthManifest != null;
+    }
+
     public boolean isMultiMcImport() {
         return launcher.multiMCManifest != null;
     }
@@ -1521,7 +1630,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isExternalPack() {
-        return isOldCurseForgePack() || isCurseForgePack() || isModpacksChPack() || isMultiMcImport();
+        return isOldCurseForgePack() || isCurseForgePack() || isModpacksChPack() || isModrinthImport()
+                || isMultiMcImport();
     }
 
     public boolean isUpdatableExternalPack() {
@@ -1537,6 +1647,10 @@ public class Instance extends MinecraftVersion {
             return "ModpacksChInstance";
         }
 
+        if (isModrinthImport()) {
+            return "ModrinthImport";
+        }
+
         if (isVanillaInstance()) {
             return "VanillaInstance";
         }
@@ -1545,7 +1659,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void update() {
-        new InstanceInstallerDialog(this, true, false, null, null, true, null, null, App.launcher.getParent());
+        new InstanceInstallerDialog(this, true, false, null, null, true, null, App.launcher.getParent());
     }
 
     public boolean hasCurseForgeProjectId() {

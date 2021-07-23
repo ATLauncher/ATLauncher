@@ -15,8 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.data.modrinth.pack;
 
-public enum InstanceExportFormat {
-    CURSEFORGE, MODRINTH, MULTIMC
+import java.util.List;
+import java.util.Map;
+
+public class ModrinthModpackManifest {
+    public String formatVersion;
+    public String game;
+    public String versionId;
+    public String name;
+    public String summary;
+
+    public List<ModrinthModpackFile> files;
+    public Map<String, String> dependencies;
 }

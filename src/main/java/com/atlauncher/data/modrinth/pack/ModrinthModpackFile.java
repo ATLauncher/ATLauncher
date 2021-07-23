@@ -15,28 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.modrinth.pack;
 
 import java.util.List;
+import java.util.Map;
 
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
 
-public class ModpacksChPackVersionManifestFile {
-    public String version;
+public class ModrinthModpackFile {
     public String path;
-    public String url;
-    public String sha1;
-    public int size;
-    public List<Object> tags;
-    public boolean clientonly;
-    public boolean serveronly;
-    public boolean optional;
-    public int id;
-    public String name;
-    public ModpacksChPackVersionManifectFileType type;
-    public int updated;
+    public Map<String, String> hashes;
+    public Map<String, String> env;
+    public List<String> downloads;
 
     public ModType getType() {
         return ModType.mods;
@@ -45,21 +37,19 @@ public class ModpacksChPackVersionManifestFile {
     public Mod convertToMod() {
         Mod mod = new Mod();
 
-        mod.client = !serveronly;
-        mod.server = !clientonly;
+        mod.client = env == null || (env.containsKey("client") && env.get("client").equalsIgnoreCase("required"));
+        mod.server = env == null || (env.containsKey("client") && env.get("client").equalsIgnoreCase("required"));
         mod.download = DownloadType.direct;
-        mod.file = name;
-        mod.path = path.substring(0, 2).equalsIgnoreCase("./") ? path.substring(2) : path;
-        mod.filesize = size;
-        mod.sha1 = sha1;
-        mod.name = name;
-        mod.url = url;
+        mod.file = path.substring(path.lastIndexOf("/") + 1);
+        mod.path = path.substring(0, path.lastIndexOf("/"));
+        mod.sha1 = hashes.containsKey("sha1") ? hashes.get("sha1") : null;
+        mod.sha512 = hashes.containsKey("sha512") ? hashes.get("sha512") : null;
+        mod.fingerprint = hashes.containsKey("murmur2") ? Long.parseLong(hashes.get("murmur2")) : null;
+        mod.name = path.replace("mods/", "").replace(".jar", "");
+        mod.url = downloads.get(0);
         mod.type = getType();
-        mod.version = version;
-        mod.optional = optional;
-
-        // modpacks.ch have wrong hashes quite often
-        mod.ignoreFailures = true;
+        mod.version = "";
+        mod.optional = env != null && (env.containsKey("client") && env.get("client").equalsIgnoreCase("optional"));
 
         return mod;
     }
