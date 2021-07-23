@@ -19,6 +19,7 @@ package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -38,10 +39,11 @@ import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Processor {
-    private String jar;
-    private List<String> classpath;
-    private List<String> args;
-    private Map<String, String> outputs;
+    public String jar;
+    public List<String> sides;
+    public List<String> classpath;
+    public List<String> args;
+    public Map<String, String> outputs;
 
     public String getJar() {
         return this.jar;
@@ -67,7 +69,6 @@ public class Processor {
             throws IOException {
         // delete any outputs that are invalid. They still need to run
         if (!this.needToRun(installProfile, extractedDir, instanceInstaller)) {
-            LogManager.debug("No need to run processor " + this.jar + " since outputs all match hashes");
             return;
         }
 
@@ -113,6 +114,11 @@ public class Processor {
         List<String> args = new ArrayList<>();
 
         for (String arg : this.getArgs()) {
+            if (arg.contains("{ROOT}")) {
+                arg = arg.replace("{ROOT}",
+                        installProfile.data.get("ROOT").getValue(!instanceInstaller.isServer, librariesDirectory));
+            }
+
             LogManager.debug("Processing argument " + arg);
             char start = arg.charAt(0);
             char end = arg.charAt(arg.length() - 1);
@@ -179,23 +185,39 @@ public class Processor {
             args.add(FileSystem.LIBRARIES.toFile().getAbsolutePath());
         }
 
-            ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[0]),
-                Processor.class.getClassLoader());
+        ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[0]), Processor.class.getClassLoader());
+        Thread currentThread = Thread.currentThread();
+        ClassLoader threadClassloader = currentThread.getContextClassLoader();
+        currentThread.setContextClassLoader(cl);
+
         try {
-            LogManager.debug("Running processor");
+            LogManager.debug("Running processor with args \"" + String.join(" ", args) + "\"");
             Class<?> cls = Class.forName(mainClass, true, cl);
             Method main = cls.getDeclaredMethod("main", String[].class);
-            main.invoke(null, (Object) args.toArray(new String[0]));
+            main.invoke(null, (Object) args.toArray(new String[args.size()]));
+        } catch (InvocationTargetException ite) {
+            Throwable e = ite.getCause();
+            LogManager.logStackTrace(e);
+            LogManager.error(
+                    "Failed to process processor with jar " + this.jar + " as there was an error invoking the jar");
+            instanceInstaller.cancel(true);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
             LogManager.error(
                     "Failed to process processor with jar " + this.jar + " as there was an error invoking the jar");
             instanceInstaller.cancel(true);
+        } finally {
+            currentThread.setContextClassLoader(threadClassloader);
         }
     }
 
     public boolean needToRun(ForgeInstallProfile installProfile, File extractedDir,
             InstanceInstaller instanceInstaller) {
+        if (this.sides != null && !this.sides.contains(instanceInstaller.isServer ? "server" : "client")) {
+            LogManager.debug("No need to run processor " + this.jar + " since it's not needed for this side");
+            return false;
+        }
+
         if (!this.hasOutputs()) {
             return true;
         }
@@ -255,6 +277,8 @@ public class Processor {
                 }
             }
         }
+
+        LogManager.debug("No need to run processor " + this.jar + " since outputs all match hashes");
 
         return false;
     }

@@ -20,6 +20,7 @@ package com.atlauncher.data.minecraft.loaders.forge;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +54,7 @@ public class ForgeLoader implements Loader {
     protected String minecraft;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
+    protected Path installerPath;
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
@@ -87,6 +89,8 @@ public class ForgeLoader implements Loader {
             this.version = getRecommendedVersion(this.minecraft);
         }
 
+        this.installerPath = FileSystem.LOADERS
+                .resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar");
         this.installerUrl = Constants.DOWNLOAD_SERVER + "/maven/net/minecraftforge/forge/" + this.minecraft + "-"
                 + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
 
@@ -145,9 +149,7 @@ public class ForgeLoader implements Loader {
     public void downloadAndExtractInstaller() throws Exception {
         OkHttpClient httpClient = Network.createProgressClient(instanceInstaller);
 
-        Download download = Download.build().setUrl(this.installerUrl)
-                .downloadTo(
-                        FileSystem.LOADERS.resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar"))
+        Download download = Download.build().setUrl(this.installerUrl).downloadTo(installerPath)
                 .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient).unzipTo(this.tempDir.toPath());
 
         if (installerSize != null) {

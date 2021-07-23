@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in java-version command to LaunchServer scripts
 
 ### Fixes
+- Errors when trying to install Forge for 1.17
 
 ### Misc

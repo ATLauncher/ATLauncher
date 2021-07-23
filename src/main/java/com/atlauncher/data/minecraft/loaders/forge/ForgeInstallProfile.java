@@ -27,9 +27,10 @@ import com.atlauncher.annot.Json;
 public class ForgeInstallProfile {
     public String version;
     public String target; // in <= 1.12.3
-    public Integer spec;
+    public Integer spec; // 0 for < 36 and 1 for >= 37.0.0
     public String json;
     public String path;
+    public String serverJarPath; // for 37.0.0 and onwards
     public String filePath; // in <= 1.12.3
     public String minecraft;
     public String minecraftArguments; // in <= 1.12.3

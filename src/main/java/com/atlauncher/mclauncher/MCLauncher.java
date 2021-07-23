@@ -24,7 +24,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -84,7 +83,7 @@ public class MCLauncher {
         boolean hasCustomJarMods = false;
 
         ErrorReporting.recordInstancePlay(instance.getPackName(), instance.getVersion(), instance.getLoaderVersion(),
-                (instance instanceof Instance ? 2 : 1));
+                2);
 
         int initialMemory = Optional.ofNullable(instance.launcher.initialMemory).orElse(App.settings.initialMemory);
         int maximumMemory = Optional.ofNullable(instance.launcher.maximumMemory).orElse(App.settings.maximumMemory);
@@ -92,25 +91,20 @@ public class MCLauncher {
         String javaPath = Optional.ofNullable(instance.launcher.javaPath).orElse(App.settings.javaPath);
         String javaArguments = Optional.ofNullable(instance.launcher.javaArguments).orElse(App.settings.javaParameters);
 
-        if (instance instanceof Instance) {
-            // are we using Mojangs provided runtime?
-            if (instance.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
-                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
-                        .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
+        // are we using Mojangs provided runtime?
+        if (instance.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
+                    .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
 
-                if (OS.isMac()) {
-                    runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
-                }
-
-                if (Files.isDirectory(runtimeDirectory)) {
-                    javaPath = runtimeDirectory.toAbsolutePath().toString();
-                    LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
-                            instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
-                }
+            if (OS.isMac()) {
+                runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
             }
 
-            // add minecraft client jar
-            cpb.append(instance.getMinecraftJar().getAbsolutePath());
+            if (Files.isDirectory(runtimeDirectory)) {
+                javaPath = runtimeDirectory.toAbsolutePath().toString();
+                LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
+                        instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
+            }
         }
 
         File jarMods = instance.getJarModsDirectory();
@@ -118,8 +112,8 @@ public class MCLauncher {
         if (jarMods.exists() && jarModFiles != null && jarModFiles.length != 0) {
             for (File file : jarModFiles) {
                 hasCustomJarMods = true;
-                cpb.append(File.pathSeparator);
                 cpb.append(file.getAbsolutePath());
+                cpb.append(File.pathSeparator);
             }
         }
 
@@ -127,16 +121,16 @@ public class MCLauncher {
                 library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
                 .forEach(library -> {
-                    cpb.append(File.pathSeparator);
                     cpb.append(
                             FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile().getAbsolutePath());
+                    cpb.append(File.pathSeparator);
                 });
 
         instance.libraries.stream().filter(Library::hasNativeForOS).forEach(library -> {
             com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
 
-            cpb.append(File.pathSeparator);
             cpb.append(FileSystem.LIBRARIES.resolve(download.path).toFile().getAbsolutePath());
+            cpb.append(File.pathSeparator);
         });
 
         File binFolder = instance.getBinDirectory();
@@ -145,10 +139,13 @@ public class MCLauncher {
             for (File file : libraryFiles) {
                 LogManager.info("Added in custom library " + file.getName());
 
-                cpb.append(File.pathSeparator);
                 cpb.append(file);
+                cpb.append(File.pathSeparator);
             }
         }
+
+        // add minecraft client jar last
+        cpb.append(instance.getMinecraftJar().getAbsolutePath());
 
         List<String> arguments = new ArrayList<>();
 
@@ -226,13 +223,10 @@ public class MCLauncher {
             }
         }
 
-        for (String argument : instance.arguments.jvmAsStringList().stream().distinct().collect(Collectors.toList())) {
-            argument = replaceArgument(argument, instance, account, props, nativesDir);
+        String classpath = cpb.toString();
 
-            if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")
-                    && !arguments.contains(argument)) {
-                arguments.add(argument);
-            }
+        for (String argument : instance.arguments.jvmAsStringList()) {
+            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath));
         }
 
         if (OS.isWindows() && !arguments
@@ -240,17 +234,21 @@ public class MCLauncher {
             arguments.add("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump");
         }
 
-        arguments.add("-Djava.library.path=" + nativesDir);
-        arguments.add("-cp");
-        arguments.add(cpb.toString());
+        // if there's no -Djava.library.path already, then add it (for older versions)
+        if (!arguments.stream().anyMatch(arg -> arg.startsWith("-Djava.library.path="))) {
+            arguments.add("-Djava.library.path=" + nativesDir);
+        }
+
+        // if there's no classpath already, then add it (for older versions)
+        if (!arguments.contains("-cp")) {
+            arguments.add("-cp");
+            arguments.add(cpb.toString());
+        }
+
         arguments.add(instance.getMainClass());
 
-        for (String argument : instance.arguments.gameAsStringList().stream().distinct().collect(Collectors.toList())) {
-            argument = replaceArgument(argument, instance, account, props, nativesDir);
-
-            if (!argument.equalsIgnoreCase("-cp") && !argument.equalsIgnoreCase("${classpath}")) {
-                arguments.add(argument);
-            }
+        for (String argument : instance.arguments.gameAsStringList()) {
+            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath));
         }
 
         if (App.settings.maximiseMinecraft) {
@@ -265,7 +263,7 @@ public class MCLauncher {
     }
 
     private static String replaceArgument(String incomingArgument, Instance instance, AbstractAccount account,
-            String props, String nativesDir) {
+            String props, String nativesDir, String classpath) {
         String argument = incomingArgument;
 
         argument = argument.replace("${auth_player_name}", account.minecraftUsername);
@@ -284,6 +282,9 @@ public class MCLauncher {
         argument = argument.replace("${natives_directory}", nativesDir);
         argument = argument.replace("${user_type}", account.type);
         argument = argument.replace("${auth_session}", account.getSessionToken());
+        argument = argument.replace("${library_directory}", FileSystem.LIBRARIES.toAbsolutePath().toString());
+        argument = argument.replace("${classpath}", classpath);
+        argument = argument.replace("${classpath_separator}", File.pathSeparator);
 
         return argument;
     }

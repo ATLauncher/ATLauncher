@@ -23,9 +23,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.managers.LogManager;
@@ -39,9 +41,14 @@ public class Forge113Loader extends ForgeLoader {
         ForgeInstallProfile installProfile = super.getInstallProfile();
 
         installProfile.data.put("SIDE", new Data("client", "server"));
+        installProfile.data.put("ROOT", new Data(instanceInstaller.root.toAbsolutePath().toString()));
         installProfile.data.put("MINECRAFT_JAR",
                 new Data(instanceInstaller.getMinecraftJarLibrary("client").getAbsolutePath(),
                         instanceInstaller.getMinecraftJarLibrary("server").getAbsolutePath()));
+        installProfile.data.put("MINECRAFT_VERSION",
+                new Data(instanceInstaller.temp.resolve("minecraft.json").toAbsolutePath().toString()));
+        installProfile.data.put("INSTALLER", new Data(installerPath.toAbsolutePath().toString()));
+        installProfile.data.put("LIBRARY_DIR", new Data(FileSystem.LIBRARIES.toAbsolutePath().toString()));
 
         return installProfile;
     }
@@ -105,7 +112,22 @@ public class Forge113Loader extends ForgeLoader {
     }
 
     public Arguments getArguments() {
-        return this.getVersion().arguments;
+        int forgeMajorVersion = Integer.parseInt(this.version.substring(0, this.version.indexOf(".")));
+
+        // forge >= 37 needs some altering of the "-DignoreList" argument
+        if (forgeMajorVersion < 37) {
+            return this.getVersion().arguments;
+        }
+
+        List<ArgumentRule> jvmArgs = this.getVersion().arguments.jvm.stream().map(arg -> {
+            if (arg.getValueAsString().startsWith("-DignoreList=")) {
+                return new ArgumentRule(String.format("%s,client-%s.jar", arg.getValueAsString(), this.minecraft));
+            }
+
+            return arg;
+        }).collect(Collectors.toList());
+
+        return new Arguments(this.getVersion().arguments.game, jvmArgs);
     }
 
     public String getMainClass() {
@@ -118,9 +140,8 @@ public class Forge113Loader extends ForgeLoader {
                 .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
 
         if (forgeLibrary != null) {
-            return forgeLibrary.downloads.artifact.path.substring(
-                    forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1
-            );
+            return forgeLibrary.downloads.artifact.path
+                    .substring(forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1);
         }
 
         return null;

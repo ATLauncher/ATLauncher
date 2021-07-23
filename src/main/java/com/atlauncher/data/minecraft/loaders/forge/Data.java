@@ -27,6 +27,11 @@ public class Data {
     private final String client;
     private final String server;
 
+    public Data(String value) {
+        this.client = value;
+        this.server = value;
+    }
+
     public Data(String client, String server) {
         this.client = client;
         this.server = server;

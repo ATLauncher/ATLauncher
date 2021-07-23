@@ -61,4 +61,13 @@ public class LoaderVersion {
 
         return this.version;
     }
+
+    public boolean shouldInstallServerScripts() {
+        // Forge 37 and newer (assumed) provide their own scripts for launching
+        if (this.isForge() && Integer.parseInt(this.version.substring(0, 2), 10) >= 37) {
+            return false;
+        }
+
+        return true;
+    }
 }
