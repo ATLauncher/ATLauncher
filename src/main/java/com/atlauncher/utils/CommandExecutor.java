@@ -46,7 +46,7 @@ public class CommandExecutor {
      * @throws CommandException If the process exits with a non zero value or another error occurs when trying to run the command
      */
     public static void executeCommand(Instance instance, String command) {
-        if (App.settings.preLaunchCommand == null)
+        if (command == null)
             return;
 
         try {
