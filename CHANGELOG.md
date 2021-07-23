@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Errors when trying to install Forge for 1.17
+- Removing loader from an instance making it non launchable
 
 ### Misc

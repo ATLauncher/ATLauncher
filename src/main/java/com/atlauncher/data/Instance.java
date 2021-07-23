@@ -87,7 +87,6 @@ import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
@@ -1788,29 +1787,24 @@ public class Instance extends MinecraftVersion {
                 "RemoveLoader", getAnalyticsCategory());
         String loaderType = launcher.loaderVersion.type;
 
-        ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Removing {0}", loaderType), 0,
-                GetText.tr("Removing {0}", loaderType));
-        progressDialog.addThread(new Thread(() -> {
-            try {
-                VersionManifestVersion minecraftVersion = MinecraftManager.getMinecraftVersion(id);
-                MinecraftVersion version = com.atlauncher.network.Download.build().cached().setUrl(minecraftVersion.url)
-                        .asClassWithThrow(MinecraftVersion.class);
-                setValues(version);
-                progressDialog.setReturnValue(true);
-            } catch (IOException | InvalidMinecraftVersion e) {
-                LogManager.logStackTrace(e);
-                progressDialog.setReturnValue(false);
-            }
+        boolean success = false;
 
-            progressDialog.doneTask();
-            progressDialog.close();
-        }));
-        progressDialog.start();
+        try {
+            Installable installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(id), null,
+                    launcher.description);
+            installable.instance = this;
+            installable.instanceName = launcher.name;
+            installable.isReinstall = true;
+            installable.removingLoader = true;
+            installable.isServer = false;
+            installable.saveMods = true;
 
-        if (progressDialog.getReturnValue()) {
-            launcher.loaderVersion = null;
-            save();
+            success = installable.startInstall();
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.logStackTrace(e);
+        }
 
+        if (success) {
             App.launcher.reloadInstancesPanel();
 
             DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))

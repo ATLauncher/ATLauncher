@@ -57,6 +57,7 @@ public abstract class Installable {
     public boolean isUpdate = false;
     public boolean isReinstall = false;
     public boolean addingLoader = false;
+    public boolean removingLoader = false;
     public boolean saveMods = false;
     public Instance instance;
 
@@ -258,7 +259,7 @@ public abstract class Installable {
 
                 dialog.dispose();
 
-                if (!addingLoader) {
+                if (!addingLoader && !removingLoader) {
                     DialogManager.okDialog().setTitle(title).setContent(new HTMLBuilder().center().text(text).build())
                             .setType(type).show();
                 }
@@ -351,6 +352,11 @@ public abstract class Installable {
     }
 
     private String getDialogTitle(String name) {
+        if (removingLoader) {
+            return GetText.tr("Removing {0} {1}", instance.launcher.loaderVersion.type,
+                    instance.launcher.loaderVersion.version);
+        }
+
         if (addingLoader) {
             return GetText.tr("Adding {0} {1}", getLoaderVersion().type, getLoaderVersion().version);
         }
