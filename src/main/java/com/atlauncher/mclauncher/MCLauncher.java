@@ -18,13 +18,12 @@
 package com.atlauncher.mclauncher;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
@@ -38,7 +37,6 @@ import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
-import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
@@ -48,12 +46,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
-import org.apache.commons.io.IOUtils;
 
 public class MCLauncher {
 
     public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir) throws Exception {
-
         return launch(account, instance, null, nativesTempDir.toFile());
     }
 
@@ -80,72 +76,6 @@ public class MCLauncher {
         processBuilder.redirectErrorStream(true);
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();
-    }
-
-    /***
-     * Executes the command specified by <param>command</param>
-     * @param instance
-     */
-    public static void executeCommand(Instance instance, String command)
-    {
-        if(App.settings.preLaunchCommand == null)
-            return;
-
-        try
-        {
-            command = replaceArgumentTokensForCommand(getCommandArgumentTokensForInstance(instance), command);
-            Process process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-
-            if(process.exitValue() != 0)
-            {
-                System.out.println(process.exitValue());
-
-                String errorText = IOUtils.toString(process.getErrorStream());
-
-                if(errorText.isEmpty())
-                    errorText = IOUtils.toString(process.getInputStream());
-
-                throw new CommandException(errorText);
-            }
-        }
-        catch (IOException | InterruptedException e)
-        {
-            throw new CommandException(e);
-        }
-    }
-
-    private static String replaceArgumentTokensForCommand(Map<String, String> tokens, String command)
-    {
-        final Pattern tokenPattern = Pattern.compile("\\$([A-Z_]+)");
-        final StringBuffer result = new StringBuffer();
-        Matcher match = tokenPattern.matcher(command);
-
-        while(match.find())
-        {
-            final String key = match.group(1);
-
-            if(tokens.containsKey(key))
-            {
-                match.appendReplacement(result, tokens.get(key));
-            }
-        }
-
-        match.appendTail(result);
-
-        return result.toString();
-    }
-
-    private static Map<String, String> getCommandArgumentTokensForInstance(Instance instance)
-    {
-        final Map<String, String> result = new HashMap<>();
-        result.put("INST_NAME", instance.getName());
-        result.put("INST_ID", instance.getRootDirectory().getName());
-        result.put("INST_DIR" , instance.getRootDirectory().getAbsolutePath());
-        result.put("INST_MC_DIR", ""); //not a thing in atlauncher, but keep it for compatibility
-        result.put("INST_JAVA", instance.getMinecraftJar().getAbsolutePath());
-        result.put("INST_JAVA_ARGS", instance.getSettings().javaArguments);
-        return result;
     }
 
     private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
