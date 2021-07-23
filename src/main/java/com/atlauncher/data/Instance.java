@@ -1072,10 +1072,11 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
-        // check pack is a system pack or imported from CurseForge
-        if ((getPack() != null && !getPack().system) && isCurseForgePack()) {
-            LogManager.debug("Instance " + launcher.name
-                    + " cannot be exported due to: Not being a system pack or imported from CurseForge");
+        return canEditInstance();
+    }
+
+    public boolean canEditInstance() {
+        if (getPack() != null || isCurseForgePack() || isModpacksChPack()) {
             return false;
         }
 

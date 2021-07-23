@@ -174,10 +174,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.exportButton.setVisible(instance.canBeExported());
 
         // vanilla instances do some things different
-        this.editInstanceButton.setVisible(instance.launcher.vanillaInstance);
-        this.renameButton.setVisible(!instance.launcher.vanillaInstance);
-        this.reinstallButton.setVisible(!instance.launcher.vanillaInstance);
-        this.updateButton.setVisible(!instance.launcher.vanillaInstance);
+        this.editInstanceButton.setVisible(instance.canEditInstance());
+        this.renameButton.setVisible(!instance.canEditInstance());
+        this.reinstallButton.setVisible(!instance.canEditInstance());
+        this.updateButton.setVisible(!instance.canEditInstance());
 
         // if not an ATLauncher pack, a system pack or has no urls, don't show the links
         // button
@@ -261,7 +261,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         fullBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.FULL));
         backupPopupMenu.add(fullBackupMenuItem);
 
-        if (instance.launcher.vanillaInstance) {
+        if (instance.canEditInstance()) {
             setupEditInstanceButton();
         }
     }

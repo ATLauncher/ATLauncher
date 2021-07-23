@@ -15,5 +15,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Removing loader from an instance making it non launchable
 - The add loader buttons on edit instance showing when they shouldn't
 - Issue with modpacks downloading mods and not checking their hashes correctly
+- Imported modpacks not being able to be customised [#490]
 
 ### Misc
