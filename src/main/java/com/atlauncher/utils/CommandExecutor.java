@@ -56,12 +56,12 @@ public class CommandExecutor {
 
             Process process = Runtime.getRuntime().exec(command, null, instance.getRootDirectory());
 
-            printStreamToLog(process.getInputStream());
+            printStreamToConsole(process.getInputStream());
 
             process.waitFor();
 
             if (process.exitValue() != 0) {
-                printErrorStreamToLog(process.getErrorStream());
+                printErrorStreamToConsole(process.getErrorStream());
 
                 throw new CommandException();
             }
@@ -71,7 +71,7 @@ public class CommandExecutor {
         }
     }
 
-    private static void printStreamToLog(InputStream stream) {
+    private static void printStreamToConsole(InputStream stream) {
         try {
             InputStreamReader inputStreamReader = new InputStreamReader(stream);
             BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -89,7 +89,7 @@ public class CommandExecutor {
     }
 
     //print the whole thing as 1 message rather than line by line
-    private static void printErrorStreamToLog(InputStream stream) {
+    private static void printErrorStreamToConsole(InputStream stream) {
         try {
             boolean hasGotFirstContentLine = false;
             InputStreamReader inputStreamReader = new InputStreamReader(stream);
