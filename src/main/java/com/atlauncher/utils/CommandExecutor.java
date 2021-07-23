@@ -21,8 +21,6 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.managers.LogManager;
-import org.apache.commons.io.IOUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,23 +56,61 @@ public class CommandExecutor {
 
             Process process = Runtime.getRuntime().exec(command, new String[]{}, instance.getRootDirectory());
 
-            InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            String line;
-
-            while((line = reader.readLine()) != null)
-            {
-                LogManager.info(line);
-            }
+            printStreamToLog(process.getInputStream());
 
             process.waitFor();
 
             if (process.exitValue() != 0) {
+                printErrorStreamToLog(process.getErrorStream());
+
                 throw new CommandException();
             }
         } catch (IOException | InterruptedException e ) {
             LogManager.logStackTrace(e);
             throw new CommandException(e);
+        }
+    }
+
+    private static void printStreamToLog(InputStream stream) {
+        try {
+            InputStreamReader inputStreamReader = new InputStreamReader(stream);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                    LogManager.info(line);
+            }
+        }
+        catch(Exception e)
+        {
+            LogManager.logStackTrace(e);
+            //throw new RuntimeException(e);
+        }
+    }
+
+    //print the whole thing as 1 message rather than line by line
+    private static void printErrorStreamToLog(InputStream stream) {
+        try {
+            boolean hasGotFirstContentLine = false;
+            InputStreamReader inputStreamReader = new InputStreamReader(stream);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            StringBuilder message = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                //cut off any initial blank lines
+                if(!line.isEmpty() || hasGotFirstContentLine) {
+                    hasGotFirstContentLine = true;
+                    message.append(line).append(System.lineSeparator());
+                }
+            }
+
+            LogManager.error(message.toString());
+        }
+        catch(Exception e)
+        {
+            LogManager.logStackTrace(e);
+            //throw new RuntimeException(e);
         }
     }
 
