@@ -310,10 +310,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setEditInstanceMenuItemVisbility() {
-        addFabricMenuItem
-                .setVisible(instance.launcher.loaderVersion == null || !instance.launcher.loaderVersion.isFabric());
-        addForgeMenuItem
-                .setVisible(instance.launcher.loaderVersion == null || !instance.launcher.loaderVersion.isForge());
+        addFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
+        addForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
         removeFabricMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
         removeForgeMenuItem
