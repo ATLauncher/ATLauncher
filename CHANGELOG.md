@@ -8,7 +8,9 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Add in java-version command to LaunchServer scripts
 - Add in cancel button to export dialog
+- Add in cancel button to instance settings dialog
 - Add support for importing and exporting packs in Modrinth format [#491]
+- Add ability to disable Discord prescense per instance [#485]
 
 ### Fixes
 - Errors when trying to install Forge for 1.17

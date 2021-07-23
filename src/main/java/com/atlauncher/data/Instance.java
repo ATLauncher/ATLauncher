@@ -699,7 +699,10 @@ public class Instance extends MinecraftVersion {
                         System.exit(0);
                     }
 
-                    if (App.settings.enableDiscordIntegration && App.discordInitialized) {
+                    if (Optional.ofNullable(this.launcher.enableDiscordIntegration)
+                            .orElse(App.settings.enableDiscordIntegration)) {
+                        App.ensureDiscordIsInitialized();
+
                         String playing = this.launcher.pack
                                 + (this.launcher.multiMCManifest != null ? " (" + this.launcher.version + ")" : "");
 
@@ -755,7 +758,7 @@ public class Instance extends MinecraftVersion {
                         App.launcher.getParent().setVisible(true);
                     }
                     long end = System.currentTimeMillis();
-                    if (App.settings.enableDiscordIntegration && App.discordInitialized) {
+                    if (App.discordInitialized) {
                         DiscordRPC.discordClearPresence();
                     }
                     int exitValue = 0; // Assume we exited fine

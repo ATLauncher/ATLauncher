@@ -59,6 +59,7 @@ public class InstanceLauncher {
     public String javaPath;
     public String javaArguments;
     public String account;
+    public Boolean enableDiscordIntegration;
 
     public boolean isDev;
     public boolean isPlayable;

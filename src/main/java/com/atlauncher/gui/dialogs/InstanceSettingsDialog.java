@@ -346,16 +346,55 @@ public class InstanceSettingsDialog extends JDialog {
 
         topPanel.add(account, gbc);
 
+        // Enable Discord Integration
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover enableDiscordIntegrationLabel = new JLabelWithHover(
+                GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
+                GetText.tr("This will enable showing which pack you're playing in Discord."));
+        topPanel.add(enableDiscordIntegrationLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JComboBox<ComboItem<Boolean>> enableDiscordIntegration = new JComboBox<>();
+        enableDiscordIntegration.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+        enableDiscordIntegration.addItem(new ComboItem<>(true, GetText.tr("Yes")));
+        enableDiscordIntegration.addItem(new ComboItem<>(false, GetText.tr("No")));
+
+        if (instance.launcher.enableDiscordIntegration == null) {
+            enableDiscordIntegration.setSelectedIndex(0);
+        } else if (instance.launcher.enableDiscordIntegration) {
+            enableDiscordIntegration.setSelectedIndex(1);
+        } else {
+            enableDiscordIntegration.setSelectedIndex(2);
+        }
+
+        topPanel.add(enableDiscordIntegration, gbc);
+
+        // Bottom Panel
+
         bottomPanel.setLayout(new FlowLayout());
+
         JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
             saveSettings((Integer) initialMemory.getValue(), (Integer) maximumMemory.getValue(),
                     (Integer) permGen.getValue(), javaPath.getText(), javaParameters.getText(),
-                    ((ComboItem<String>) account.getSelectedItem()).getValue());
+                    ((ComboItem<String>) account.getSelectedItem()).getValue(),
+                    ((ComboItem<Boolean>) enableDiscordIntegration.getSelectedItem()).getValue());
             App.TOASTER.pop("Instance Settings Saved");
             close();
         });
         bottomPanel.add(saveButton);
+
+        JButton cancelButton = new JButton(GetText.tr("Cancel"));
+        cancelButton.addActionListener(arg0 -> {
+            close();
+        });
+        bottomPanel.add(cancelButton);
 
         add(topPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -383,7 +422,7 @@ public class InstanceSettingsDialog extends JDialog {
     }
 
     private void saveSettings(Integer initialMemory, Integer maximumMemory, Integer permGen, String javaPath,
-            String javaParameters, String account) {
+            String javaParameters, String account, Boolean enableDiscordIntegration) {
         this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);
         this.instance.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
         this.instance.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
@@ -395,7 +434,9 @@ public class InstanceSettingsDialog extends JDialog {
         this.instance.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null
                 : javaParameters);
         this.instance.launcher.account = account;
-        this.instance.launcher.account = account;
+
+        this.instance.launcher.enableDiscordIntegration = enableDiscordIntegration;
+
         this.instance.save();
     }
 

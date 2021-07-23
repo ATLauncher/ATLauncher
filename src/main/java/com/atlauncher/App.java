@@ -370,21 +370,6 @@ public class App {
             }
         }
 
-        if (settings.enableDiscordIntegration) {
-            try {
-                DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
-                DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
-                DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
-
-                discordInitialized = true;
-
-                Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
-            } catch (Throwable e) {
-                LogManager.logStackTrace("Failed to initialize Discord integration", e);
-                discordInitialized = false;
-            }
-        }
-
         if (packCodeToAdd != null) {
             if (PackManager.addPack(packCodeToAdd)) {
                 Pack packAdded = PackManager.getSemiPublicPackByCode(packCodeToAdd);
@@ -404,6 +389,23 @@ public class App {
             new LauncherFrame(openLauncher);
             ss.close();
         });
+    }
+
+    public static void ensureDiscordIsInitialized() {
+        if (!discordInitialized) {
+            try {
+                DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
+                DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
+                DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
+
+                discordInitialized = true;
+
+                Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
+            } catch (Throwable e) {
+                LogManager.logStackTrace("Failed to initialize Discord integration", e);
+                discordInitialized = false;
+            }
+        }
     }
 
     private static void logSystemInformation() {

@@ -609,7 +609,7 @@ public class Launcher {
         if (this.minecraftProcess != null) {
             LogManager.error("Killing Minecraft");
 
-            if (App.settings.enableDiscordIntegration && App.discordInitialized) {
+            if (App.discordInitialized) {
                 DiscordRPC.discordClearPresence();
             }
 
