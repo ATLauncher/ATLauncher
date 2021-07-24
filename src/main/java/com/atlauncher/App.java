@@ -445,7 +445,7 @@ public class App {
             }
 
             CentralProcessor cpu = hal.getProcessor();
-            LogManager.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().strip(),
+            LogManager.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
                     cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
 
             OperatingSystem os = systemInfo.getOperatingSystem();
