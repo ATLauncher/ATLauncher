@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add support for importing and exporting packs in Modrinth format [#491]
 - Add ability to disable Discord prescense per instance [#485]
 - Add logging of CPU name and JVM args on startup
+- Add check on boot for _JAVA_OPTIONS and provide a link to remove it
 
 ### Fixes
 - Errors when trying to install Forge for 1.17

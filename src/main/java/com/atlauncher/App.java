@@ -299,6 +299,9 @@ public class App {
         // Load the theme and style everything.
         loadTheme(settings.theme);
 
+        // check for _JAVA_OPTIONS being set which breaks things
+        checkForJavaOptions();
+
         final SplashScreen ss = new SplashScreen();
 
         // Load and show the splash screen while we load other things.
@@ -509,6 +512,36 @@ public class App {
                     .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
             }
+        }
+    }
+
+    private static void checkForJavaOptions() {
+        try {
+            String javaOptions = System.getenv("_JAVA_OPTIONS");
+
+            if (javaOptions != null && (javaOptions.toLowerCase().contains("-xmx")
+                    || javaOptions.toLowerCase().contains("-xms") || javaOptions.toLowerCase().contains("-xss"))) {
+                LogManager.warn("_JAVA_OPTIONS environment variable detected: " + javaOptions);
+
+                if (!settings.ignoreJavaOptionsWarning) {
+                    int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
+                            .setTitle("Warning")
+                            .setContent(new HTMLBuilder().center().text(
+                                    "We've detected that you have a _JAVA_OPTIONS environment variable which may cause issues installing and playing Minecraft.<br/><br/>Do you want to fix this now so you don't have any issues in the future?")
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+
+                    if (ret == 0) {
+                        OS.openWebBrowser("https://atl.pw/javaoptionsfromlauncher");
+                        System.exit(0);
+                    } else if (ret == 2) {
+                        settings.ignoreJavaOptionsWarning = true;
+                        settings.save();
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            // ignored
         }
     }
 

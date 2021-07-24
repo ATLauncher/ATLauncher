@@ -50,6 +50,7 @@ public class Settings {
     public List<String> addedPacks = new ArrayList<>();
     public boolean ignoreOneDriveWarning = false;
     public boolean ignoreProgramFilesWarning = false;
+    public boolean ignoreJavaOptionsWarning = false;
 
     // Window settings
     public boolean rememberWindowSizePosition = false;
