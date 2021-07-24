@@ -173,8 +173,6 @@ launch4j {
     jreMinVersion = "${project.targetCompatibility.toString()}"
     mainClassName = 'com.atlauncher.App'
     icon = "${projectDir}/src/main/resources/assets/image/icon.ico"
-    initialHeapPercent = 5
-    maxHeapPercent = 100
     version = "${project.version}"
     textVersion = "${project.version}"
     copyright = "2013-${currentYear()} ${project.name}"

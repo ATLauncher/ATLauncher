@@ -20,5 +20,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - The add loader buttons on edit instance showing when they shouldn't
 - Issue with modpacks downloading mods and not checking their hashes correctly
 - Imported modpacks not being able to be customised [#490]
+- Remove memory arguments from launch4j to hopefully fix some OOM errors
 
 ### Misc
