@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -411,6 +412,9 @@ public class App {
     private static void logSystemInformation() {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
+        LogManager.info(String.format("JVM Arguments: %s",
+                Gsons.DEFAULT_SLIM.toJson(ManagementFactory.getRuntimeMXBean().getInputArguments())));
+
         SwingUtilities.invokeLater(
                 () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
@@ -438,8 +442,8 @@ public class App {
             }
 
             CentralProcessor cpu = hal.getProcessor();
-            LogManager.info("CPU: " + cpu.getPhysicalProcessorCount() + " cores/" + cpu.getLogicalProcessorCount()
-                    + " threads");
+            LogManager.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().strip(),
+                    cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
 
             OperatingSystem os = systemInfo.getOperatingSystem();
 

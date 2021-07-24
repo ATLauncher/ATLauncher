@@ -40,12 +40,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public final class Gsons {
-    public static final Gson DEFAULT = new GsonBuilder()
+    private static final Gson BASE = new GsonBuilder()
             .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .registerTypeAdapter(Color.class, new ColorTypeAdapter())
-            .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter()).setPrettyPrinting()
-            .create();
+            .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter()).create();
+
+    public static final Gson DEFAULT = BASE.newBuilder().setPrettyPrinting().create();
+
+    public static final Gson DEFAULT_SLIM = BASE.newBuilder().create();
 
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).setPrettyPrinting().create();

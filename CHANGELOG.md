@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in cancel button to instance settings dialog
 - Add support for importing and exporting packs in Modrinth format [#491]
 - Add ability to disable Discord prescense per instance [#485]
+- Add logging of CPU name and JVM args on startup
 
 ### Fixes
 - Errors when trying to install Forge for 1.17
