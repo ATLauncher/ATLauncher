@@ -101,6 +101,7 @@ import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -118,6 +119,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.CommandExecutor;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
@@ -653,6 +655,20 @@ public class Instance extends MinecraftVersion {
                             return;
                         }
 
+                        if(App.settings.enableCommands && App.settings.preLaunchCommand != null) {
+                            if (!executeCommand(App.settings.preLaunchCommand)) {
+                                LogManager.error("Failed to execute pre-launch command");
+
+                                App.launcher.setMinecraftLaunched(false);
+
+                                if (App.launcher.getParent() != null) {
+                                    App.launcher.getParent().setVisible(true);
+                                }
+
+                                return;
+                            }
+                        }
+
                         process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir);
                     } else if (account instanceof MicrosoftAccount) {
                         MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
@@ -676,6 +692,20 @@ public class Instance extends MinecraftVersion {
                                     .setContent(GetText.tr("Couldn't login with Microsoft account"))
                                     .setType(DialogManager.ERROR).show();
                             return;
+                        }
+
+                        if(App.settings.enableCommands && App.settings.preLaunchCommand != null) {
+                            if (!executeCommand(App.settings.preLaunchCommand)) {
+                                LogManager.error("Failed to execute pre-launch command");
+
+                                App.launcher.setMinecraftLaunched(false);
+
+                                if (App.launcher.getParent() != null) {
+                                    App.launcher.getParent().setVisible(true);
+                                }
+
+                                return;
+                            }
                         }
 
                         process = MCLauncher.launch(microsoftAccount, this, nativesTempDir);
@@ -805,6 +835,12 @@ public class Instance extends MinecraftVersion {
                         MinecraftError.showInformationPopup(detectedError);
                     }
 
+                    if(App.settings.enableCommands && App.settings.postExitCommand != null) {
+                        if (!executeCommand(App.settings.postExitCommand)) {
+                            LogManager.error("Failed to execute post-exit command");
+                        }
+                    }
+
                     App.launcher.setMinecraftLaunched(false);
                     if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
                             && App.settings.enableLogs) {
@@ -835,6 +871,29 @@ public class Instance extends MinecraftVersion {
             return true;
         }
 
+    }
+
+    private boolean executeCommand(String command) {
+        try {
+            CommandExecutor.executeCommand(this, command);
+            return true;
+        }
+        catch (CommandException e) {
+            String content = GetText.tr("Error executing command");
+
+            if(e.getMessage() != null)
+            {
+                content += ":" + System.lineSeparator() + e.getLocalizedMessage();
+            }
+
+            content += System.lineSeparator() + GetText.tr("Check the console for details");
+
+            DialogManager.okDialog().setTitle(GetText.tr("Error executing command"))
+                .setContent(content)
+                .setType(DialogManager.ERROR).show();
+
+            return false;
+        }
     }
 
     public void sendOpenEyePendingReports() {
