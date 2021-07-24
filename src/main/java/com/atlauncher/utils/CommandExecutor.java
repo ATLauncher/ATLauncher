@@ -64,7 +64,15 @@ public class CommandExecutor {
 
             LogManager.info("Running command: \"" + command + "\"");
 
-            Process process = Runtime.getRuntime().exec(command, null, instance.getRootDirectory());
+            Process process;
+
+            // linux/osx needs to run through sh
+            if (OS.isLinux() || OS.isMac()) {
+                String[] linuxCommand = { "/bin/sh", "-c", command };
+                process = Runtime.getRuntime().exec(linuxCommand, null, instance.getRootDirectory());
+            } else {
+                process = Runtime.getRuntime().exec(command, null, instance.getRootDirectory());
+            }
 
             printStreamToConsole(process.getInputStream());
 
