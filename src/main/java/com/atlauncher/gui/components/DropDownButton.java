@@ -53,9 +53,7 @@ public class DropDownButton extends JButton {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        g.drawImage(
-                Utils.getIconImage(App.THEME.getIconPath((popupMenu.isShowing() ? "expanded" : "collapsed")))
-                        .getImage(),
-                getWidth() - 20, ((getHeight() - 12) / 2), null);
+        g.drawImage(Utils.getIconImage(App.THEME.getIconPath((popupMenu.isShowing() ? "expanded" : "collapsed")))
+                .getImage(), getWidth() - 20, ((getHeight() - 12) / 2), null);
     }
 }

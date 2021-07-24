@@ -27,7 +27,7 @@ import com.atlauncher.workers.InstanceInstaller;
 
 public interface Loader {
     void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-             LoaderVersion versionOverride);
+            LoaderVersion versionOverride);
 
     void downloadAndExtractInstaller() throws Exception;
 

@@ -55,7 +55,8 @@ public class NewsManager {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
             File fileDir = FileSystem.JSON.resolve("newnews.json").toFile();
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
 
             Data.NEWS.addAll(Gsons.DEFAULT.fromJson(in, type));
             in.close();

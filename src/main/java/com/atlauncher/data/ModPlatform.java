@@ -20,7 +20,9 @@ package com.atlauncher.data;
 import com.google.gson.annotations.SerializedName;
 
 public enum ModPlatform {
-    @SerializedName("CurseForge")CURSEFORGE,
+    @SerializedName("CurseForge")
+    CURSEFORGE,
 
-    @SerializedName("Modrinth")MODRINTH
+    @SerializedName("Modrinth")
+    MODRINTH
 }

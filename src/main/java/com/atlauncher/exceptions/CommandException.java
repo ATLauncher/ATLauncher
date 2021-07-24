@@ -17,30 +17,24 @@
  */
 package com.atlauncher.exceptions;
 
-public class CommandException extends RuntimeException
-{
-    public CommandException()
-    {
+public class CommandException extends RuntimeException {
+    public CommandException() {
         super();
     }
 
-    public CommandException(String message)
-    {
+    public CommandException(String message) {
         super(message);
     }
 
-    public CommandException(String message, Throwable cause)
-    {
+    public CommandException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public CommandException(Throwable cause)
-    {
+    public CommandException(Throwable cause) {
         super(cause);
     }
 
-    protected CommandException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
-    {
+    protected CommandException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

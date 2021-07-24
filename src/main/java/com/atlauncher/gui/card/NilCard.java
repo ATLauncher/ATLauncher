@@ -39,8 +39,7 @@ import org.mini2Dx.gettext.GetText;
  */
 @SuppressWarnings("serial")
 public class NilCard extends JPanel implements RelocalizationListener {
-    private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png")
-            .getImage();
+    private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png").getImage();
 
     private final JTextArea error = new JTextArea();
 
@@ -49,7 +48,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
         RelocalizationManager.addListener(this);
 
         this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                    TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
+                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
 
         this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.error.setEditable(false);

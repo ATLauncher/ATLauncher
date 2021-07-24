@@ -22,8 +22,8 @@ import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
 
 /**
- * The Class OpenEyeReportResponse contains information returned from OpenMods OpenEye system when a pending crash
- * report is reported through their API.
+ * The Class OpenEyeReportResponse contains information returned from OpenMods
+ * OpenEye system when a pending crash report is reported through their API.
  */
 public class OpenEyeReportResponse {
     /**
@@ -37,8 +37,8 @@ public class OpenEyeReportResponse {
     private String url;
 
     /**
-     * The note added to the crash, added by the mods developer, if any. Will return null if there has been no note
-     * added.
+     * The note added to the crash, added by the mods developer, if any. Will return
+     * null if there has been no note added.
      */
     private String note;
 
@@ -85,8 +85,8 @@ public class OpenEyeReportResponse {
      */
     public String getNoteDisplay() {
         if (this.hasNote()) {
-            return GetText.tr("A note attached to the crash can be seen below:") + "<br/><br/>" + Utils.splitMultilinedString
-                    (this.getNote(), 100, "<br/>") + "<br/><br/>";
+            return GetText.tr("A note attached to the crash can be seen below:") + "<br/><br/>"
+                    + Utils.splitMultilinedString(this.getNote(), 100, "<br/>") + "<br/><br/>";
         } else {
             return GetText.tr("There is no note attached to this crash.") + "<br/><br/>";
         }

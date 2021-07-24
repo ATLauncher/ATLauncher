@@ -32,5 +32,6 @@ public class UIConstants {
     // CheckBoxes has 4 margin on it, so we negate that here so it aligns up without
     // the need to remove that margin from all CheckBox components
     public static final Insets CHECKBOX_FIELD_INSETS = new Insets(SPACING_LARGE, -SPACING_SMALL, SPACING_LARGE, 0);
-    public static final Insets CHECKBOX_FIELD_INSETS_SMALL = new Insets(SPACING_SMALL, -SPACING_SMALL, SPACING_SMALL, 0);
+    public static final Insets CHECKBOX_FIELD_INSETS_SMALL = new Insets(SPACING_SMALL, -SPACING_SMALL, SPACING_SMALL,
+            0);
 }

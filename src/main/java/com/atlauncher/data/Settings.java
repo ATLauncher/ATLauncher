@@ -119,7 +119,7 @@ public class Settings {
     public boolean enableAutomaticBackupAfterLaunch = false;
     public BackupMode backupMode = BackupMode.NORMAL;
 
-    //Commands
+    // Commands
     public boolean enableCommands = false;
     public String preLaunchCommand = null;
     public String postExitCommand = null;

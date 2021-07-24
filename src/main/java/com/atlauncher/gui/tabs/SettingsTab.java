@@ -54,9 +54,9 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
     private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
     private final CommandSettingsTab commandSettingsTab = new CommandSettingsTab();
-    private final List<Tab> tabs = Arrays
-            .asList(new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab,
-                    this.networkSettingsTab, this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
+    private final List<Tab> tabs = Arrays.asList(
+            new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
+                    this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
     private final JTabbedPane tabbedPane;
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 

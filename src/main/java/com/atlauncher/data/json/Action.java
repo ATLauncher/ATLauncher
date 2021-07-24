@@ -91,20 +91,20 @@ public class Action {
                             instanceInstaller.temp.resolve("actions").toFile());
                 }
                 switch (this.type) {
-                case mods:
-                    Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
-                            new File(instanceInstaller.root.resolve("mods").toFile(), saveAs));
-                    break;
-                case coremods:
-                    Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
-                            new File(instanceInstaller.root.resolve("coremods").toFile(), saveAs));
-                    break;
-                case jar:
-                    Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
-                            new File(instanceInstaller.root.resolve("jarmods").toFile(), saveAs));
-                    break;
-                default:
-                    break;
+                    case mods:
+                        Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
+                                new File(instanceInstaller.root.resolve("mods").toFile(), saveAs));
+                        break;
+                    case coremods:
+                        Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
+                                new File(instanceInstaller.root.resolve("coremods").toFile(), saveAs));
+                        break;
+                    case jar:
+                        Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
+                                new File(instanceInstaller.root.resolve("jarmods").toFile(), saveAs));
+                        break;
+                    default:
+                        break;
                 }
             }
         } else if (this.action == TheAction.rename) {

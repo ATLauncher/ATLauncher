@@ -18,8 +18,9 @@
 package com.atlauncher.data;
 
 /**
- * Response to an API call made to ATLauncher servers. This contains information including if there was an error, the
- * response code of the request, the error message (if any) and the data received (if any) from the API.
+ * Response to an API call made to ATLauncher servers. This contains information
+ * including if there was an error, the response code of the request, the error
+ * message (if any) and the data received (if any) from the API.
  */
 public class APIResponse<T> {
     /**
@@ -30,7 +31,8 @@ public class APIResponse<T> {
     /**
      * The response code returned.
      *
-     * @see <a href="http://wiki.atlauncher.com/api:response_code">http://wiki.atlauncher.com/api:response_code</a>
+     * @see <a href=
+     *      "http://wiki.atlauncher.com/api:response_code">http://wiki.atlauncher.com/api:response_code</a>
      */
     private int code;
 
@@ -40,7 +42,8 @@ public class APIResponse<T> {
     private String message;
 
     /**
-     * The data sent back by the API (if applicable). Can be of various types and may not be specified at all.
+     * The data sent back by the API (if applicable). Can be of various types and
+     * may not be specified at all.
      */
     private T data;
 
@@ -57,7 +60,8 @@ public class APIResponse<T> {
      * Gets the response code for this API response.
      *
      * @return the response code
-     * @see <a href="http://wiki.atlauncher.com/api:response_code">http://wiki.atlauncher.com/api:response_code</a>
+     * @see <a href=
+     *      "http://wiki.atlauncher.com/api:response_code">http://wiki.atlauncher.com/api:response_code</a>
      */
     public int getCode() {
         return this.code;
@@ -66,7 +70,8 @@ public class APIResponse<T> {
     /**
      * Gets the error message returned by the API.
      *
-     * @return the error message received from the API if there was an error, or null if there was no error
+     * @return the error message received from the API if there was an error, or
+     *         null if there was no error
      */
     public String getMessage() {
         return this.message;
@@ -75,7 +80,8 @@ public class APIResponse<T> {
     /**
      * Gets the data returned by the API.
      *
-     * @return the data returned from the API. Please note that this may not be set or be null.
+     * @return the data returned from the API. Please note that this may not be set
+     *         or be null.
      */
     public T getData() {
         return this.data;

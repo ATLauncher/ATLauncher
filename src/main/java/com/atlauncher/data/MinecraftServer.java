@@ -151,8 +151,7 @@ public class MinecraftServer {
         if (this.playersOnline == -1) {
             return GetText.tr("Offline");
         } else {
-            return GetText.tr("Online") + " - " + this.getPrintablePlayersOnline()
-                    + " Players";
+            return GetText.tr("Online") + " - " + this.getPrintablePlayersOnline() + " Players";
         }
     }
 

@@ -46,12 +46,9 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        //region Enable Checkbox
-        JLabel enableCommandsLabel = new JLabelWithHover(
-            GetText.tr("Enable commands") + "?",
-            HELP_ICON,
-            GetText.tr("This allows you to turn launch/exit commands on or off.")
-        );
+        // region Enable Checkbox
+        JLabel enableCommandsLabel = new JLabelWithHover(GetText.tr("Enable commands") + "?", HELP_ICON,
+                GetText.tr("This allows you to turn launch/exit commands on or off."));
         add(enableCommandsLabel, gbc);
 
         nextColumn();
@@ -62,13 +59,12 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
         add(enableCommands, gbc);
 
         nextRow();
-        //endregion
+        // endregion
 
-        //region Pre-launch command
-        JLabelWithHover preLaunchCommandLabel = new JLabelWithHover(
-            GetText.tr("Pre-launch command") + ":",
-            HELP_ICON,
-            GetText.tr("This command will be run before the instance launches. The game will not run until the command has finished."));
+        // region Pre-launch command
+        JLabelWithHover preLaunchCommandLabel = new JLabelWithHover(GetText.tr("Pre-launch command") + ":", HELP_ICON,
+                GetText.tr(
+                        "This command will be run before the instance launches. The game will not run until the command has finished."));
         add(preLaunchCommandLabel, gbc);
 
         nextColumn();
@@ -78,13 +74,12 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
         add(preLaunchCommand, gbc);
 
         nextRow();
-        //endregion
+        // endregion
 
-        //region Post-exit command
-        JLabelWithHover postExitCommandLabel = new JLabelWithHover(
-            GetText.tr("Post-exit command") + ":",
-            HELP_ICON,
-            GetText.tr("This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
+        // region Post-exit command
+        JLabelWithHover postExitCommandLabel = new JLabelWithHover(GetText.tr("Post-exit command") + ":", HELP_ICON,
+                GetText.tr(
+                        "This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
         add(postExitCommandLabel, gbc);
 
         nextColumn();
@@ -94,27 +89,29 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
         add(postExitCommand, gbc);
 
         nextRow();
-        //endregion
+        // endregion
 
-        //region Information text pane
+        // region Information text pane
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.CENTER;
 
         JTextPane parameterInformation = new JTextPane();
-        parameterInformation.setText(
-            GetText.tr("Commands will be run in the directory of the instance that is launched/exited.") + System.lineSeparator()
-                + GetText.tr("The following variables are available for each command") + ":" + System.lineSeparator()
-                + "$INST_NAME: " + GetText.tr("The name of the instance") + System.lineSeparator()
-                + "$INST_ID: " + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
-                + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory") + System.lineSeparator()
-                + "$INST_MC_DIR: " + GetText.tr("Alias for") + " $INST_DIR" + System.lineSeparator() 
-                + "$INST_JAVA: " + GetText.tr("The absolute path to the java executable used for launch") + System.lineSeparator()
-                + "$INST_JAVA_ARGS: " + GetText.tr("The JVM parameters used for launch") + System.lineSeparator()
-        );
+        parameterInformation
+                .setText(GetText.tr("Commands will be run in the directory of the instance that is launched/exited.")
+                        + System.lineSeparator() + GetText.tr("The following variables are available for each command")
+                        + ":" + System.lineSeparator() + "$INST_NAME: " + GetText.tr("The name of the instance")
+                        + System.lineSeparator() + "$INST_ID: "
+                        + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
+                        + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory")
+                        + System.lineSeparator() + "$INST_MC_DIR: " + GetText.tr("Alias for") + " $INST_DIR"
+                        + System.lineSeparator() + "$INST_JAVA: "
+                        + GetText.tr("The absolute path to the java executable used for launch")
+                        + System.lineSeparator() + "$INST_JAVA_ARGS: "
+                        + GetText.tr("The JVM parameters used for launch") + System.lineSeparator());
         parameterInformation.setEditable(false);
 
         add(parameterInformation, gbc);
-        //endregion
+        // endregion
 
         if (enableCommands.isSelected())
             enableCommands();
@@ -157,8 +154,10 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
     }
 
     private String nullIfEmpty(String str) {
-        if (str.isEmpty()) return null;
-        else return str;
+        if (str.isEmpty())
+            return null;
+        else
+            return str;
     }
 
     @Override

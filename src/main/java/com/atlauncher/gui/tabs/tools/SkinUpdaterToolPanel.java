@@ -24,7 +24,6 @@ import javax.swing.JLabel;
 
 import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.manager.AccountManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;

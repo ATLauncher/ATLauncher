@@ -54,7 +54,8 @@ public class MCQuery {
         } catch (Exception ignored) {
         }
 
-        // 1.7 must be queried last because if not, the rest of the checks will ALWAYS fail for some
+        // 1.7 must be queried last because if not, the rest of the checks will ALWAYS
+        // fail for some
         // reason of which I'm not sure of yet
         try {
             ServerListPing17 ping17 = new ServerListPing17();

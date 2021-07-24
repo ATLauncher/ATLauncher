@@ -655,7 +655,7 @@ public class Instance extends MinecraftVersion {
                             return;
                         }
 
-                        if(App.settings.enableCommands && App.settings.preLaunchCommand != null) {
+                        if (App.settings.enableCommands && App.settings.preLaunchCommand != null) {
                             if (!executeCommand(App.settings.preLaunchCommand)) {
                                 LogManager.error("Failed to execute pre-launch command");
 
@@ -694,7 +694,7 @@ public class Instance extends MinecraftVersion {
                             return;
                         }
 
-                        if(App.settings.enableCommands && App.settings.preLaunchCommand != null) {
+                        if (App.settings.enableCommands && App.settings.preLaunchCommand != null) {
                             if (!executeCommand(App.settings.preLaunchCommand)) {
                                 LogManager.error("Failed to execute pre-launch command");
 
@@ -835,7 +835,7 @@ public class Instance extends MinecraftVersion {
                         MinecraftError.showInformationPopup(detectedError);
                     }
 
-                    if(App.settings.enableCommands && App.settings.postExitCommand != null) {
+                    if (App.settings.enableCommands && App.settings.postExitCommand != null) {
                         if (!executeCommand(App.settings.postExitCommand)) {
                             LogManager.error("Failed to execute post-exit command");
                         }
@@ -877,20 +877,17 @@ public class Instance extends MinecraftVersion {
         try {
             CommandExecutor.executeCommand(this, command);
             return true;
-        }
-        catch (CommandException e) {
+        } catch (CommandException e) {
             String content = GetText.tr("Error executing command");
 
-            if(e.getMessage() != null)
-            {
+            if (e.getMessage() != null) {
                 content += ":" + System.lineSeparator() + e.getLocalizedMessage();
             }
 
             content += System.lineSeparator() + GetText.tr("Check the console for details");
 
-            DialogManager.okDialog().setTitle(GetText.tr("Error executing command"))
-                .setContent(content)
-                .setType(DialogManager.ERROR).show();
+            DialogManager.okDialog().setTitle(GetText.tr("Error executing command")).setContent(content)
+                    .setType(DialogManager.ERROR).show();
 
             return false;
         }

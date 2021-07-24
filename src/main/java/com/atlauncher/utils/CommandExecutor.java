@@ -33,18 +33,20 @@ import com.atlauncher.managers.LogManager;
 
 public class CommandExecutor {
     /**
-     * Runs the specified {@code command} in the system command line.
-     * Substitutes <br/>
+     * Runs the specified {@code command} in the system command line. Substitutes
+     * <br/>
      * "$INST_NAME" with the name of the specified {@code instance}, <br/>
      * "$INST_ID" with the name of the instance's root directory, <br/>
-     * "$INST_DIR" with the absolute path the the instance directory
-     * "$INST_JAVA" with the absolute path to the java binary used to run the instance, <br/>
-     * "$INST_JAVA_ARGS" with the JVM arguments (e.g. "-Xmx3G", NOT the arguments used to launch the game, containing account information), <br/>
+     * "$INST_DIR" with the absolute path the the instance directory "$INST_JAVA"
+     * with the absolute path to the java binary used to run the instance, <br/>
+     * "$INST_JAVA_ARGS" with the JVM arguments (e.g. "-Xmx3G", NOT the arguments
+     * used to launch the game, containing account information), <br/>
      * in the specified command, then runs it on the command line.
      *
      * @param instance The instance to run the command for
      * @param command  The command to run on the command line
-     * @throws CommandException If the process exits with a non zero value or another error occurs when trying to run the command
+     * @throws CommandException If the process exits with a non zero value or
+     *                          another error occurs when trying to run the command
      */
     public static void executeCommand(Instance instance, String command) {
         if (command == null)
@@ -66,7 +68,7 @@ public class CommandExecutor {
 
                 throw new CommandException();
             }
-        } catch (IOException | InterruptedException e ) {
+        } catch (IOException | InterruptedException e) {
             LogManager.logStackTrace(e);
             throw new CommandException(e);
         }
@@ -79,17 +81,15 @@ public class CommandExecutor {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                    LogManager.info(line);
+                LogManager.info(line);
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
-            //throw new RuntimeException(e);
+            // throw new RuntimeException(e);
         }
     }
 
-    //print the whole thing as 1 message rather than line by line
+    // print the whole thing as 1 message rather than line by line
     private static void printErrorStreamToConsole(InputStream stream) {
         try {
             boolean hasGotFirstContentLine = false;
@@ -99,26 +99,26 @@ public class CommandExecutor {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                //cut off any initial blank lines
-                if(!line.isEmpty() || hasGotFirstContentLine) {
+                // cut off any initial blank lines
+                if (!line.isEmpty() || hasGotFirstContentLine) {
                     hasGotFirstContentLine = true;
                     message.append(line).append(System.lineSeparator());
                 }
             }
 
             LogManager.error(message.toString());
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
-            //throw new RuntimeException(e);
+            // throw new RuntimeException(e);
         }
     }
 
     /**
-     * Substitutes all tokens beginning with '$' (and in all capitals) with the matching key in {@code tokens} if it exists
+     * Substitutes all tokens beginning with '$' (and in all capitals) with the
+     * matching key in {@code tokens} if it exists
      *
-     * @param tokens  All the keys that will be replaced with their value in {@code command}
+     * @param tokens  All the keys that will be replaced with their value in
+     *                {@code command}
      * @param command The string to substitute into
      * @return The string with all tokens substituted
      */

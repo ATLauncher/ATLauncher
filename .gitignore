@@ -5,17 +5,7 @@ build/
 # Runtime
 bin/
 dist/
-testLauncher/
 run/
-configs/
-cache/
-assets/
-downloads/
-minecraft/
-libraries/
-instances/
-temp/
-loaders/
 
 # IDE Config
 .idea/
@@ -23,6 +13,9 @@ loaders/
 .settings/
 .classpath
 .project
+
+# Launcher Test Run Directory
+testLauncher/
 
 # OS X
 .DS_Store

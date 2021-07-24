@@ -97,6 +97,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
             }
         });
     }
+
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
             boolean showProgressBar) {
         this(title, initMax, initLabelText, initClosedLogMessage, showProgressBar, App.launcher.getParent());

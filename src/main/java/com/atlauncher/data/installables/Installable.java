@@ -156,7 +156,8 @@ public abstract class Installable {
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
                 isServer, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest, curseExtractedPath,
-                modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest, multiMCExtractedPath) {
+                modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
+                multiMCExtractedPath) {
 
             protected void done() {
                 Boolean success = false;
