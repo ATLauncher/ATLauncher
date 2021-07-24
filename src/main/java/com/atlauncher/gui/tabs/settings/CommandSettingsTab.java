@@ -107,7 +107,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
                 + "$INST_NAME: " + GetText.tr("The name of the instance") + System.lineSeparator()
                 + "$INST_ID: " + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
                 + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory") + System.lineSeparator()
-                + "$INST_MC_DIR " + GetText.tr("Alias for") + " $INST_DIR" + System.lineSeparator() 
+                + "$INST_MC_DIR: " + GetText.tr("Alias for") + " $INST_DIR" + System.lineSeparator() 
                 + "$INST_JAVA: " + GetText.tr("The absolute path to the java executable used for launch") + System.lineSeparator()
                 + "$INST_JAVA_ARGS: " + GetText.tr("The JVM parameters used for launch") + System.lineSeparator()
         );
