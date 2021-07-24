@@ -17,10 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.App;
-import com.atlauncher.data.Instance;
-import com.atlauncher.exceptions.CommandException;
-import com.atlauncher.managers.LogManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +25,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.atlauncher.App;
+import com.atlauncher.data.Instance;
+import com.atlauncher.exceptions.CommandException;
+import com.atlauncher.managers.LogManager;
 
 public class CommandExecutor {
     /**
@@ -144,8 +145,7 @@ public class CommandExecutor {
         result.put("INST_NAME", instance.getName());
         result.put("INST_ID", instance.getRootDirectory().getName());
         result.put("INST_DIR", instance.getRootDirectory().getAbsolutePath());
-        //not a thing in atlauncher
-        //result.put("INST_MC_DIR", "");
+        result.put("INST_MC_DIR", instance.getRootDirectory().getAbsolutePath());
         result.put("INST_JAVA", instance.getMinecraftJar().getAbsolutePath());
         result.put("INST_JAVA_ARGS", getJavaParametersForInstance(instance));
         return result;

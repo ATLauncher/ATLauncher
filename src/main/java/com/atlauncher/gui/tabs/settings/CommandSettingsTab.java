@@ -17,15 +17,21 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
-import org.mini2Dx.gettext.GetText;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import org.mini2Dx.gettext.GetText;
 
 public class CommandSettingsTab extends AbstractSettingsTab implements ActionListener {
     private final JTextField preLaunchCommand;
@@ -59,7 +65,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
         //endregion
 
         //region Pre-launch command
-        JLabel preLaunchCommandLabel = new JLabelWithHover(
+        JLabelWithHover preLaunchCommandLabel = new JLabelWithHover(
             GetText.tr("Pre-launch command") + ":",
             HELP_ICON,
             GetText.tr("This command will be run before the instance launches. The game will not run until the command has finished."));
@@ -75,7 +81,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
         //endregion
 
         //region Post-exit command
-        JLabel postExitCommandLabel = new JLabelWithHover(
+        JLabelWithHover postExitCommandLabel = new JLabelWithHover(
             GetText.tr("Post-exit command") + ":",
             HELP_ICON,
             GetText.tr("This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
@@ -101,6 +107,7 @@ public class CommandSettingsTab extends AbstractSettingsTab implements ActionLis
                 + "$INST_NAME: " + GetText.tr("The name of the instance") + System.lineSeparator()
                 + "$INST_ID: " + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
                 + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory") + System.lineSeparator()
+                + "$INST_MC_DIR " + GetText.tr("Alias for") + " $INST_DIR" + System.lineSeparator() 
                 + "$INST_JAVA: " + GetText.tr("The absolute path to the java executable used for launch") + System.lineSeparator()
                 + "$INST_JAVA_ARGS: " + GetText.tr("The JVM parameters used for launch") + System.lineSeparator()
         );
