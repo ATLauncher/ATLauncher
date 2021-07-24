@@ -1042,6 +1042,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
         instanceLauncher.vanillaInstance = this.pack.vanillaInstance;
 
+        if (multiMCManifest != null) {
+            if (multiMCManifest.config.preLaunchCommand != null && !multiMCManifest.config.preLaunchCommand.isEmpty()) {
+                instanceLauncher.preLaunchCommand = multiMCManifest.config.preLaunchCommand;
+                instanceLauncher.enableCommands = true;
+            }
+
+            if (multiMCManifest.config.postExitCommand != null && !multiMCManifest.config.postExitCommand.isEmpty()) {
+                instanceLauncher.postExitCommand = multiMCManifest.config.postExitCommand;
+                instanceLauncher.enableCommands = true;
+            }
+        }
+
         if (instanceLauncher.curseForgeManifest != null) {
             instanceLauncher.curseForgeManifest = null;
         }

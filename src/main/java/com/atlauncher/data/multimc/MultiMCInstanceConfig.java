@@ -27,9 +27,15 @@ public class MultiMCInstanceConfig {
     public Integer permGen;
     public String javaPath;
     public String javaArguments;
+    public String preLaunchCommand;
+    public String postExitCommand;
 
     public MultiMCInstanceConfig(Properties props) {
         name = props.getProperty("name");
+
+        if (name == null) {
+            name = "MultiMC Import";
+        }
 
         if (props.getProperty("MinMemAlloc") != null) {
             initialMemory = Integer.parseInt(props.getProperty("MinMemAlloc"));
@@ -49,6 +55,14 @@ public class MultiMCInstanceConfig {
 
         if (props.getProperty("JvmArgs") != null) {
             javaArguments = props.getProperty("JvmArgs");
+        }
+
+        if (props.getProperty("PreLaunchCommand") != null) {
+            preLaunchCommand = props.getProperty("PreLaunchCommand");
+        }
+
+        if (props.getProperty("PostExitCommand") != null) {
+            postExitCommand = props.getProperty("PostExitCommand");
         }
     }
 }

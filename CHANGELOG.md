@@ -13,7 +13,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add ability to disable Discord prescense per instance [#485]
 - Add logging of CPU name and JVM args on startup
 - Add check on boot for _JAVA_OPTIONS and provide a link to remove it
-- Add support for pre and post launch commands (thanks to @PORTB) [#489]
+- Add support for pre and post launch commands (global or per instance) (thanks to @PORTB) [#489]
+- Split instance settings up into tabs
 
 ### Fixes
 - Errors when trying to install Forge for 1.17

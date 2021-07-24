@@ -33,13 +33,13 @@ import com.atlauncher.gui.components.JLabelWithHover;
 
 import org.mini2Dx.gettext.GetText;
 
-public class CommandSettingsTab extends AbstractSettingsTab implements ActionListener {
+public class CommandsSettingsTab extends AbstractSettingsTab implements ActionListener {
     private final JTextField preLaunchCommand;
     private final JTextField postExitCommand;
 
     private final JCheckBox enableCommands;
 
-    public CommandSettingsTab() {
+    public CommandsSettingsTab() {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;

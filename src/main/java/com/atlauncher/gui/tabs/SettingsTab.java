@@ -31,7 +31,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
-import com.atlauncher.gui.tabs.settings.CommandSettingsTab;
+import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
@@ -53,7 +53,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
     private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
     private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
-    private final CommandSettingsTab commandSettingsTab = new CommandSettingsTab();
+    private final CommandsSettingsTab commandSettingsTab = new CommandsSettingsTab();
     private final List<Tab> tabs = Arrays.asList(
             new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
                     this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });

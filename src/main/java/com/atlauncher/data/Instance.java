@@ -633,6 +633,13 @@ public class Instance extends MinecraftVersion {
 
                     Process process = null;
 
+                    boolean enableCommands = Optional.ofNullable(this.launcher.enableCommands)
+                            .orElse(App.settings.enableCommands);
+                    String preLaunchCommand = Optional.ofNullable(this.launcher.preLaunchCommand)
+                            .orElse(App.settings.preLaunchCommand);
+                    String postExitCommand = Optional.ofNullable(this.launcher.postExitCommand)
+                            .orElse(App.settings.postExitCommand);
+
                     if (account instanceof MojangAccount) {
                         MojangAccount mojangAccount = (MojangAccount) account;
                         LogManager.info("Logging into Minecraft!");
@@ -655,8 +662,8 @@ public class Instance extends MinecraftVersion {
                             return;
                         }
 
-                        if (App.settings.enableCommands && App.settings.preLaunchCommand != null) {
-                            if (!executeCommand(App.settings.preLaunchCommand)) {
+                        if (enableCommands && preLaunchCommand != null) {
+                            if (!executeCommand(preLaunchCommand)) {
                                 LogManager.error("Failed to execute pre-launch command");
 
                                 App.launcher.setMinecraftLaunched(false);
@@ -694,8 +701,8 @@ public class Instance extends MinecraftVersion {
                             return;
                         }
 
-                        if (App.settings.enableCommands && App.settings.preLaunchCommand != null) {
-                            if (!executeCommand(App.settings.preLaunchCommand)) {
+                        if (enableCommands && preLaunchCommand != null) {
+                            if (!executeCommand(preLaunchCommand)) {
                                 LogManager.error("Failed to execute pre-launch command");
 
                                 App.launcher.setMinecraftLaunched(false);
@@ -835,8 +842,8 @@ public class Instance extends MinecraftVersion {
                         MinecraftError.showInformationPopup(detectedError);
                     }
 
-                    if (App.settings.enableCommands && App.settings.postExitCommand != null) {
-                        if (!executeCommand(App.settings.postExitCommand)) {
+                    if (enableCommands && postExitCommand != null) {
+                        if (!executeCommand(postExitCommand)) {
                             LogManager.error("Failed to execute post-exit command");
                         }
                     }

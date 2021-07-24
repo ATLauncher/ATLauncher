@@ -18,16 +18,23 @@
 package com.atlauncher.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.managers.LogManager;
 
@@ -146,15 +153,44 @@ public class CommandExecutor {
         result.put("INST_ID", instance.getRootDirectory().getName());
         result.put("INST_DIR", instance.getRootDirectory().getAbsolutePath());
         result.put("INST_MC_DIR", instance.getRootDirectory().getAbsolutePath());
-        result.put("INST_JAVA", instance.getMinecraftJar().getAbsolutePath());
+        result.put("INST_JAVA", getJavaPathForInstance(instance));
         result.put("INST_JAVA_ARGS", getJavaParametersForInstance(instance));
         return result;
     }
 
+    private static String getJavaPathForInstance(Instance instance) {
+        String javaPath = Optional.ofNullable(instance.launcher.javaPath).orElse(App.settings.javaPath);
+
+        // are we using Mojangs provided runtime?
+        if (instance.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
+                    .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
+
+            if (OS.isMac()) {
+                runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
+            }
+
+            if (Files.isDirectory(runtimeDirectory)) {
+                javaPath = runtimeDirectory.toAbsolutePath().toString();
+                LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
+                        instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
+            }
+        }
+
+        String path = javaPath + File.separator + "bin" + File.separator + "java";
+
+        if (OS.isWindows() && (Files.exists(Paths.get(path + "w")) || Files.exists(Paths.get(path + "w.exe")))) {
+            path += "w";
+        }
+
+        return path;
+    }
+
     private static String getJavaParametersForInstance(Instance instance) {
-        if (instance.getSettings().javaArguments == null)
+        if (instance.launcher.javaArguments == null) {
             return App.settings.javaParameters;
-        else
-            return instance.getSettings().javaArguments;
+        } else {
+            return instance.launcher.javaArguments;
+        }
     }
 }

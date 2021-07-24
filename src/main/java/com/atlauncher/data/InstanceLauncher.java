@@ -60,6 +60,9 @@ public class InstanceLauncher {
     public String javaArguments;
     public String account;
     public Boolean enableDiscordIntegration;
+    public Boolean enableCommands = null;
+    public String preLaunchCommand = null;
+    public String postExitCommand = null;
 
     public boolean isDev;
     public boolean isPlayable;
