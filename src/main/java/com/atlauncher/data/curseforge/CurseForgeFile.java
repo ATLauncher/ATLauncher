@@ -78,6 +78,11 @@ public class CurseForgeFile {
     }
 
     public String getGameVersion() {
+        // CurseForge api returning no versions for some reason
+        if (gameVersion.size() == 0) {
+            return null;
+        }
+
         // only 1 version, so grab that
         if (gameVersion.size() == 1) {
             return gameVersion.get(0);

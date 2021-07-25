@@ -393,8 +393,8 @@ public class InstanceInstallerDialog extends JDialog {
                     try {
                         packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());
                     } catch (InvalidMinecraftVersion e) {
-                        LogManager.error(e.getMessage());
-                        return null;
+                        // somewhat valid, can happen, so grab version from the manifest
+                        packVersion.minecraftVersion = null;
                     }
 
                     return packVersion;
