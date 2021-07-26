@@ -46,6 +46,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+// TODO: fuck this file, it's shit, I hate it
 public final class Download {
     public static final int MAX_ATTEMPTS = 3;
 
@@ -378,7 +379,7 @@ public final class Download {
                 if (this.response == null) {
                     this.execute();
                 }
-                long size = Long.parseLong(this.response.header("Content-Length"));
+                long size = Long.parseLong(this.response.header("Content-Length", "0"));
 
                 if (size == -1L) {
                     this.size = 0L;
@@ -386,11 +387,8 @@ public final class Download {
                     this.size = size;
                 }
             }
-        } catch (Exception ignored) {
-            if (this.response != null) {
-                this.response.close();
-                this.response = null;
-            }
+        } catch (Exception e) {
+            LogManager.logStackTrace(e);
             return -1;
         }
 
@@ -606,7 +604,7 @@ public final class Download {
             boolean downloaded = this.downloadRec(1);
 
             if (!downloaded) {
-                if (this.response.header("content-type").contains("text/html")) {
+                if (this.response != null && this.response.header("content-type").contains("text/html")) {
                     LogManager.error(
                             "The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
 

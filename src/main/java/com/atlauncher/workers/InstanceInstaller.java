@@ -718,8 +718,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         String[] urlParts = minecraftVersion.url.split("/");
         String sha1 = urlParts[urlParts.length - 2];
 
-        this.minecraftVersion = com.atlauncher.network.Download.build().cached().setUrl(minecraftVersion.url)
-                .downloadTo(this.temp.resolve("minecraft.json")).hash(sha1).asClass(MinecraftVersion.class);
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().cached()
+                .setUrl(minecraftVersion.url).downloadTo(this.temp.resolve("minecraft.json"));
+
+        if (sha1.length() == 40) {
+            download = download.hash(sha1);
+        }
+
+        this.minecraftVersion = download.asClass(MinecraftVersion.class);
 
         if (this.minecraftVersion == null) {
             LogManager.error("Failed to download Minecraft json.");
