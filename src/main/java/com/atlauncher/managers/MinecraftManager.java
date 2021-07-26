@@ -39,6 +39,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.network.Download;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -77,8 +78,32 @@ public class MinecraftManager {
             });
         }
 
+        loadAdditiveVersions();
+
         LogManager.debug("Finished loading Minecraft versions");
         PerformanceManager.end();
+    }
+
+    private static void loadAdditiveVersions() {
+        List<VersionManifestVersion> additiveVersionsManifest = null;
+        Path additiveManifestPath = FileSystem.JSON.resolve("additive_versions.json");
+
+        java.lang.reflect.Type type = new TypeToken<List<VersionManifestVersion>>() {
+        }.getType();
+
+        if (Files.exists(additiveManifestPath)) {
+            try {
+                additiveVersionsManifest = Gsons.DEFAULT.fromJson(new FileReader(additiveManifestPath.toFile()), type);
+            } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
+                LogManager.logStackTrace(e1);
+            }
+        }
+
+        if (additiveVersionsManifest != null) {
+            additiveVersionsManifest.forEach((version) -> {
+                Data.MINECRAFT.put(version.id, version);
+            });
+        }
     }
 
     /**

@@ -715,8 +715,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         VersionManifestVersion minecraftVersion = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
 
+        String[] urlParts = minecraftVersion.url.split("/");
+        String sha1 = urlParts[urlParts.length - 2];
+
         this.minecraftVersion = com.atlauncher.network.Download.build().cached().setUrl(minecraftVersion.url)
-                .downloadTo(this.temp.resolve("minecraft.json")).asClass(MinecraftVersion.class);
+                .downloadTo(this.temp.resolve("minecraft.json")).hash(sha1).asClass(MinecraftVersion.class);
+
+        if (this.minecraftVersion == null) {
+            LogManager.error("Failed to download Minecraft json.");
+            this.cancel(true);
+            return;
+        }
 
         hideSubProgressBar();
     }

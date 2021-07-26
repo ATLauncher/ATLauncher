@@ -83,6 +83,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     private boolean descriptionFieldDirty = false;
 
     private JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(GetText.tr("Releases"));
+    private JCheckBox minecraftVersionExperimentsFilterCheckbox = new JCheckBox(GetText.tr("Experiments"));
     private JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(GetText.tr("Snapshots"));
     private JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox(GetText.tr("Betas"));
     private JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox(GetText.tr("Alphas"));
@@ -242,6 +243,20 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             }
         });
         minecraftVersionFilterPanel.add(minecraftVersionReleasesFilterCheckbox);
+
+        minecraftVersionExperimentsFilterCheckbox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (minecraftVersionExperimentsFilterCheckbox.isSelected()) {
+                    minecraftVersionTypeFilters.add(VersionManifestVersionType.EXPERIMENTAL_SNAPSHOT);
+                } else {
+                    minecraftVersionTypeFilters.remove(VersionManifestVersionType.EXPERIMENTAL_SNAPSHOT);
+                }
+
+                reloadMinecraftVersionsTable();
+            }
+        });
+        minecraftVersionFilterPanel.add(minecraftVersionExperimentsFilterCheckbox);
 
         minecraftVersionSnapshotsFilterCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -463,18 +478,20 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                     fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime)), mv.type.toString() });
         });
 
-        // figure out which row to select
-        int newSelectedRow = 0;
-        if (selectedMinecraftVersion != null) {
-            Optional<VersionManifestVersion> versionToSelect = minecraftVersions.stream()
-                    .filter(mv -> mv.id.equals(selectedMinecraftVersion)).findFirst();
+        if (minecraftVersionTable.getRowCount() >= 1) {
+            // figure out which row to select
+            int newSelectedRow = 0;
+            if (selectedMinecraftVersion != null) {
+                Optional<VersionManifestVersion> versionToSelect = minecraftVersions.stream()
+                        .filter(mv -> mv.id.equals(selectedMinecraftVersion)).findFirst();
 
-            if (versionToSelect.isPresent()) {
-                newSelectedRow = minecraftVersions.indexOf(versionToSelect.get());
+                if (versionToSelect.isPresent()) {
+                    newSelectedRow = minecraftVersions.indexOf(versionToSelect.get());
+                }
             }
-        }
 
-        minecraftVersionTable.setRowSelectionInterval(newSelectedRow, newSelectedRow);
+            minecraftVersionTable.setRowSelectionInterval(newSelectedRow, newSelectedRow);
+        }
 
         // refresh the table
         minecraftVersionTable.revalidate();
@@ -482,6 +499,8 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         // update checkboxes so not all of them can be unchecked
         minecraftVersionReleasesFilterCheckbox.setEnabled(
                 !(minecraftVersionReleasesFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+        minecraftVersionExperimentsFilterCheckbox.setEnabled(
+                !(minecraftVersionExperimentsFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
         minecraftVersionSnapshotsFilterCheckbox.setEnabled(
                 !(minecraftVersionSnapshotsFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
         minecraftVersionBetasFilterCheckbox.setEnabled(

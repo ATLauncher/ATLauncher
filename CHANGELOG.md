@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.5.2
 
 ### New Features
+- Add in support for custom Minecraft versions not returned from MC servers (experiments)
 
 ### Fixes
 
