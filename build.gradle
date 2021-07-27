@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.mini2Dx:gettext-gradle-plugin:1.7.1'
+        classpath 'org.mini2Dx:gettext-gradle-plugin:1.9.1'
     }
 }
 
@@ -14,13 +14,13 @@ plugins {
     id 'java'
     id 'application'
 
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'org.cadixdev.licenser' version '0.6.1'
+    id 'com.adarshr.test-logger' version '3.0.0'
     id 'edu.sc.seis.macAppBundle' version '2.3.0'
-    id 'edu.sc.seis.launch4j' version '2.4.9'
-    id 'net.minecrell.licenser' version '0.4.1'
-    id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'com.adarshr.test-logger' version '2.1.1'
-    id 'de.undercouch.download' version '4.1.1'
+    id 'edu.sc.seis.launch4j' version '2.5.0'
+    id 'de.undercouch.download' version '4.1.2'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'com.github.ben-manes.versions' version '0.39.0'
 }
 
 apply plugin: 'org.mini2Dx.gettext'
@@ -33,6 +33,7 @@ version = rootProject.file('src/main/resources/version').text.trim().replace('.B
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
     jcenter()
     maven {
         url 'https://libraries.minecraft.net'
@@ -43,43 +44,53 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.java.dev.jna:jna:5.6.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.tukaani:xz:1.8'
+    implementation 'net.java.dev.jna:jna:5.8.0'
+    implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'org.tukaani:xz:1.9'
     implementation 'com.mojang:authlib:1.5.21'
     implementation 'net.iharder:base64:2.3.9'
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation 'org.zeroturnaround:zt-zip:1.14'
-    implementation 'com.squareup.okhttp3:okhttp:4.8.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'net.mikehardy:google-analytics-java:2.0.11'
     implementation 'io.sentry:sentry:1.7.30'
     implementation 'org.mini2Dx:gettext-lib:1.7.1'
     implementation 'org.apache.logging.log4j:log4j-api:2.14.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.14.0'
+    implementation 'org.mini2Dx:gettext-lib:1.9.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
     implementation 'com.sangupta:murmur:1.0.0'
-    implementation 'org.apache.commons:commons-lang3:3.11'
-    implementation 'com.formdev:flatlaf:0.45'
-    implementation 'com.formdev:flatlaf-extras:0.45'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'com.formdev:flatlaf:1.4'
+    implementation 'com.formdev:flatlaf-extras:1.4'
     implementation 'com.github.pack200:pack200:d5fd0807d6'
-    implementation 'com.github.oshi:oshi-core:5.3.6'
-    implementation 'net.freeutils:jlhttp:2.5'
+    implementation 'com.github.oshi:oshi-core:5.8.0'
+    implementation 'net.freeutils:jlhttp:2.6'
     implementation 'joda-time:joda-time:2.10.10'
-    implementation 'org.apache.commons:commons-compress:1.20'
+    implementation 'org.apache.commons:commons-compress:1.21'
 
-    testImplementation 'junit:junit:4.13.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testImplementation 'org.assertj:assertj-swing-junit:3.17.1'
-    testImplementation 'org.mock-server:mockserver-netty:5.11.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.0'
+    testImplementation 'org.mock-server:mockserver-netty:5.11.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.2'
 }
 
 application {
-    mainClassName = 'com.atlauncher.App'
+    mainClass = 'com.atlauncher.App'
+    applicationDefaultJvmArgs = [
+        "-Djna.nosys=true",
+        "-Djava.net.preferIPv4Stack=true",
+        "-Dawt.useSystemAAFontSettings=on",
+        "-Dswing.aatext=true"
+    ]
 }
 
-test {
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 
     testlogger {
@@ -87,13 +98,12 @@ test {
     }
 }
 
-
 jar {
     manifest {
         attributes(
                 'SplashScreen-Image': '/assets/image/splash-screen.png',
                 'Implementation-Title': project.name,
-                'Implementation-Version': version,
+                'Implementation-Version': archiveVersion,
                 'Implementation-Vender': 'ATLauncher',
                 'Main-Class': 'com.atlauncher.App',
                 'Multi-Release': 'true'
@@ -122,13 +132,15 @@ gettext {
 
 license {
     header = project.file('LICENSEHEADER')
-    sourceSets = [project.sourceSets.main]
     include '**/*.java'
     exclude 'de/zh32/**/*.java'
     exclude 'io/github/**/*.java'
     exclude 'net/minecraft/**/*.java'
     exclude 'com/atlauncher/gui/layouts/WrapLayout.java'
     newLine = false
+    properties {
+        year = currentYear()
+    }
 }
 
 shadowJar {
@@ -158,7 +170,6 @@ macAppBundle {
 }
 
 copyToResourcesJava {
-    exclude(project.configurations.runtime.toList().stream().map({ f -> f.name }).collect(Collectors.toList()))
     rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
 }
 
@@ -202,7 +213,7 @@ task copyArtifacts(type: Copy) {
 
 task downloadNewerUniversalJavaApplicationStub(type: Download) {
     description 'Downloads newer universalJavaApplicationStub'
-    src 'https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/475d0cfb5f76896a7ab367c64bb4f628a46f0366/src/universalJavaApplicationStub'
+    src 'https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub'
     dest file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub")
     overwrite true
 }
