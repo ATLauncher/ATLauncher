@@ -27,6 +27,7 @@ public class MinecraftError {
     static final int OUT_OF_MEMORY = 1;
     static final int CONCURRENT_MODIFICATION_ERROR_1_6 = 2;
     static final int USING_NEWER_JAVA_THAN_8 = 3;
+    static final int NEED_TO_USE_JAVA_16_OR_NEWER = 4;
 
     static void showInformationPopup(int error) {
         switch (error) {
@@ -36,6 +37,8 @@ public class MinecraftError {
                 MinecraftError.showConcurrentModificationError16();
             case MinecraftError.USING_NEWER_JAVA_THAN_8:
                 MinecraftError.showUsingNewerJavaThan8Popup();
+            case MinecraftError.NEED_TO_USE_JAVA_16_OR_NEWER:
+                MinecraftError.showNeedToUseJava16OrNewerPopup();
         }
     }
 
@@ -65,5 +68,13 @@ public class MinecraftError {
         if (ret == 1) {
             OS.openWebBrowser("https://atl.pw/java8download");
         }
+    }
+
+    static void showNeedToUseJava16OrNewerPopup() {
+        DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "Minecraft has crashed due to not being compatable with your Java version.<br/><br/>This version of Minecraft requires Java 16 or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting."))
+                        .build())
+                .setType(DialogManager.INFO).show();
     }
 }

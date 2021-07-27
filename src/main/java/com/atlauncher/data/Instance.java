@@ -776,6 +776,11 @@ public class Instance extends MinecraftVersion {
                         }
 
                         if (line.contains(
+                                "has been compiled by a more recent version of the Java Runtime (class file version 60.0)")) {
+                            detectedError = MinecraftError.NEED_TO_USE_JAVA_16_OR_NEWER;
+                        }
+
+                        if (line.contains(
                                 "class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
                             detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
                         }

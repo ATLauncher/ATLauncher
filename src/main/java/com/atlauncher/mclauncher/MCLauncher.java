@@ -92,7 +92,8 @@ public class MCLauncher {
         String javaArguments = Optional.ofNullable(instance.launcher.javaArguments).orElse(App.settings.javaParameters);
 
         // are we using Mojangs provided runtime?
-        if (instance.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+        if (instance.javaVersion != null && Optional.ofNullable(instance.launcher.useJavaProvidedByMinecraft)
+                .orElse(App.settings.useJavaProvidedByMinecraft)) {
             Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
                     .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
 
