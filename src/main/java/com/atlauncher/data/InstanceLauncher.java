@@ -59,7 +59,8 @@ public class InstanceLauncher {
     public String javaPath;
     public String javaArguments;
     public String account;
-    public Boolean enableDiscordIntegration;
+    public Boolean enableDiscordIntegration = null;
+    public Boolean useJavaProvidedByMinecraft = null;
     public Boolean enableCommands = null;
     public String preLaunchCommand = null;
     public String postExitCommand = null;

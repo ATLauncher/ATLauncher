@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in support for custom Minecraft versions not returned from MC servers (experiments)
+- Add ability to disable using Minecraft provided Java per instance [#484]
 
 ### Fixes
 - Reinstalling an instance with a loader not showing currently installed version
