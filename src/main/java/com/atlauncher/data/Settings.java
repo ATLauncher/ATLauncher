@@ -44,9 +44,7 @@ public class Settings {
     // Launcher things
     public String lastAccount;
     public boolean usingCustomJavaPath = false;
-    public boolean hideOldJavaWarning = false;
     public boolean firstTimeRun = true;
-    public boolean hideJava9Warning = false;
     public List<String> addedPacks = new ArrayList<>();
     public boolean ignoreOneDriveWarning = false;
     public boolean ignoreProgramFilesWarning = false;
@@ -184,16 +182,6 @@ public class Settings {
         String importedFirstTimeRun = properties.getProperty("firsttimerun");
         if (importedFirstTimeRun != null) {
             firstTimeRun = Boolean.parseBoolean(importedFirstTimeRun);
-        }
-
-        String importedHideOldJavaWarning = properties.getProperty("hideoldjavawarning");
-        if (importedHideOldJavaWarning != null) {
-            hideOldJavaWarning = Boolean.parseBoolean(importedHideOldJavaWarning);
-        }
-
-        String importedHideJava9Warning = properties.getProperty("hideJava9Warning");
-        if (importedHideJava9Warning != null) {
-            hideJava9Warning = Boolean.parseBoolean(importedHideJava9Warning);
         }
 
         String importedForgeLoggingLevel = properties.getProperty("forgelogginglevel");

@@ -153,45 +153,6 @@ public class Launcher {
             }
         }
 
-        if (Java.isMinecraftJavaNewerThanJava8() && !App.settings.hideJava9Warning) {
-            LogManager.warn("You're using a newer version of Java than Java 8! Modpacks may not launch!");
-
-            int ret = DialogManager.optionDialog()
-                    .setTitle(GetText.tr("Warning! You may not be able to play Minecraft"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "You're using Java 9 or newer! Older modpacks may not work.<br/><br/>If you have issues playing some packs, you may need to install Java 8 and set it to be used in the launchers java settings"))
-                            .build())
-                    .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
-                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.WARNING).show();
-
-            if (ret == 0) {
-                OS.openWebBrowser("https://atl.pw/java8download");
-                System.exit(0);
-            } else if (ret == 2) {
-                App.settings.hideJava9Warning = true;
-                App.settings.save();
-            }
-        }
-
-        if (!Java.isJava7OrAbove(true) && !App.settings.hideOldJavaWarning) {
-            LogManager.warn("You're using an old unsupported version of Java (Java 7 or older)!");
-
-            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "You're using an unsupported version of Java. You should upgrade your Java to at minimum Java 7.<br/><br/>Without Java 7 some mods will refuse to load meaning you cannot play.<br/><br/>Click Download to go to the Java downloads page"))
-                            .build())
-                    .addOption(GetText.tr("Download"), true).addOption(GetText.tr("Ok"))
-                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.WARNING).show();
-
-            if (ret == 0) {
-                OS.openWebBrowser("https://atl.pw/java8download");
-                System.exit(0);
-            } else if (ret == 2) {
-                App.settings.hideOldJavaWarning = true;
-                App.settings.save();
-            }
-        }
-
         if (App.settings.enableServerChecker) {
             CheckingServersManager.startCheckingServers();
         }
