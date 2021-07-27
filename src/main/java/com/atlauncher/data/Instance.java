@@ -423,7 +423,8 @@ public class Instance extends MinecraftVersion {
         progressDialog.doneTask();
 
         // download Java runtime
-        if (javaVersion != null && Data.JAVA_RUNTIMES != null && App.settings.useJavaProvidedByMinecraft) {
+        if (javaVersion != null && Data.JAVA_RUNTIMES != null && Optional
+                .ofNullable(launcher.useJavaProvidedByMinecraft).orElse(App.settings.useJavaProvidedByMinecraft)) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
             String runtimeSystemString = JavaRuntimes.getSystem();
 
