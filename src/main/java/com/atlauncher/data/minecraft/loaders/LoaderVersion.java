@@ -17,6 +17,8 @@
  */
 package com.atlauncher.data.minecraft.loaders;
 
+import com.atlauncher.data.Instance;
+
 public class LoaderVersion {
     public String version;
     public String rawVersion;
@@ -60,6 +62,21 @@ public class LoaderVersion {
         }
 
         return this.version;
+    }
+
+    public String toStringWithCurrent(Instance instance) {
+        String string = this.version;
+
+        if (this.recommended) {
+            string += " (Recommended)";
+        }
+
+        if (instance != null && instance.launcher.loaderVersion != null
+                && instance.launcher.loaderVersion.version.equals(this.version)) {
+            string += " (Current)";
+        }
+
+        return string;
     }
 
     public boolean shouldInstallServerScripts() {

@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in support for custom Minecraft versions not returned from MC servers (experiments)
 
 ### Fixes
+- Reinstalling an instance with a loader not showing currently installed version
 
 ### Misc
 - Update gradle and packages [#494]
