@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Reinstalling an instance with a loader not showing currently installed version
 - Remove warnings when using Java > 8 or Java 7 when starting launcher
+- The LaunchServer scripts not getting copied over for packs not using loaders
 
 ### Misc
 - Update gradle and packages [#494]
