@@ -248,9 +248,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (minecraftVersionExperimentsFilterCheckbox.isSelected()) {
-                    minecraftVersionTypeFilters.add(VersionManifestVersionType.EXPERIMENTAL_SNAPSHOT);
+                    minecraftVersionTypeFilters.add(VersionManifestVersionType.EXPERIMENT);
                 } else {
-                    minecraftVersionTypeFilters.remove(VersionManifestVersionType.EXPERIMENTAL_SNAPSHOT);
+                    minecraftVersionTypeFilters.remove(VersionManifestVersionType.EXPERIMENT);
                 }
 
                 reloadMinecraftVersionsTable();

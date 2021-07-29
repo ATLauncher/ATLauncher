@@ -41,8 +41,7 @@ public class PackVersion {
     public String toString() {
         if (this.minecraftVersion == null || (this.minecraftVersion.id.equalsIgnoreCase(this.version)
                 && this.minecraftVersion.type != VersionManifestVersionType.SNAPSHOT
-                && this.minecraftVersion.type != VersionManifestVersionType.EXPERIMENTAL_SNAPSHOT
-                && this.minecraftVersion.type != VersionManifestVersionType.PENDING)) {
+                && this.minecraftVersion.type != VersionManifestVersionType.EXPERIMENT)) {
             return this.version;
         }
 
@@ -52,8 +51,7 @@ public class PackVersion {
         }
 
         if (this.minecraftVersion.id.equalsIgnoreCase(this.version)
-                && (this.minecraftVersion.type == VersionManifestVersionType.EXPERIMENTAL_SNAPSHOT
-                        || this.minecraftVersion.type == VersionManifestVersionType.PENDING)) {
+                && this.minecraftVersion.type == VersionManifestVersionType.EXPERIMENT) {
             return this.version + " (Experiment)";
         }
 
@@ -61,8 +59,7 @@ public class PackVersion {
             return this.version + " (" + this.minecraftVersion.id + ")" + " (Snapshot)";
         }
 
-        if (this.minecraftVersion.type == VersionManifestVersionType.EXPERIMENTAL_SNAPSHOT
-                || this.minecraftVersion.type == VersionManifestVersionType.PENDING) {
+        if (this.minecraftVersion.type == VersionManifestVersionType.EXPERIMENT) {
             return this.version + " (" + this.minecraftVersion.id + ")" + " (Experiment)";
         }
 

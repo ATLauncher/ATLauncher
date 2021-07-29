@@ -22,21 +22,10 @@ import com.google.gson.annotations.SerializedName;
 
 @Json
 public enum VersionManifestVersionType {
-    @SerializedName("experimental_snapshot")
-    EXPERIMENTAL_SNAPSHOT {
+    @SerializedName("experiment")
+    EXPERIMENT {
         public String getValue() {
-            return "experimental_snapshot";
-        }
-
-        public String toString() {
-            return "Experiment";
-        }
-    },
-
-    @SerializedName("pending")
-    PENDING {
-        public String getValue() {
-            return "pending";
+            return "experiment";
         }
 
         public String toString() {
