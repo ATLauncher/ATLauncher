@@ -8,6 +8,9 @@ set memsixtyfour=2G
 :: This is 32-bit memory - maximum 1.2G ish::
 set memthirtytwo=1G
 
+:: The path to the Java to use. Wrap in double quotes ("C:\Path\To\Java\bin\java"). Use "java" to point to system default install.
+set javapath="java"
+
 :: Don't edit past this point ::
 
 if $SYSTEM_os_arch==x86 (
@@ -18,10 +21,11 @@ if $SYSTEM_os_arch==x86 (
     set mem=%memsixtyfour%
 )
 
-java -version
+%javapath% -version
 
 echo Launching %%SERVERJAR%% with arguments '%*' and '%mem%' max memory
 
 :: add nogui to the end of this line to disable the gui ::
-java -Xmx%mem% -XX:MaxPermSize=256M %%ARGUMENTS%% -jar %%SERVERJAR%% %*
+%javapath% -Xmx%mem% -XX:MaxPermSize=256M %%ARGUMENTS%% -jar %%SERVERJAR%% %*
 PAUSE
+

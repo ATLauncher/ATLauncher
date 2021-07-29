@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Update the LaunchServer.bat script to make it "simpler" to change Java path
 
 ### Misc
