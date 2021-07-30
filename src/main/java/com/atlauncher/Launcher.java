@@ -46,6 +46,7 @@ import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.VanillaPacksTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.CheckingServersManager;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -114,6 +115,8 @@ public class Launcher {
         checkForLauncherUpdate();
 
         addExecutableBitToTools();
+
+        ConfigManager.loadConfig(); // Load the config
 
         NewsManager.loadNews(); // Load the news
 
@@ -369,6 +372,7 @@ public class Launcher {
             checkForExternalPackUpdates();
             addExecutableBitToTools();
 
+            ConfigManager.loadConfig(); // Load the config
             NewsManager.loadNews(); // Load the news
             reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher

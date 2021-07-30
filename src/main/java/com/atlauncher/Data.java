@@ -37,6 +37,8 @@ public final class Data {
     public static final List<AbstractAccount> ACCOUNTS = new LinkedList<>();
     public static AbstractAccount SELECTED_ACCOUNT = null; // Account using the Launcher
 
+    public static Map<String, Object> CONFIG = new HashMap<>();
+
     public static final List<News> NEWS = new LinkedList<>();
 
     public static final List<Pack> PACKS = new LinkedList<>();

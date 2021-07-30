@@ -32,6 +32,10 @@ public class CurseForgeUpdateManager {
     }
 
     public static void checkForUpdates() {
+        if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == false) {
+            return;
+        }
+
         PerformanceManager.start();
         LogManager.info("Checking for updates to CurseForge instances");
 

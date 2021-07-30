@@ -35,6 +35,10 @@ public class ModpacksChUpdateManager {
     }
 
     public static void checkForUpdates() {
+        if (ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == false) {
+            return;
+        }
+
         PerformanceManager.start();
         LogManager.info("Checking for updates to modpacks.ch instances");
 

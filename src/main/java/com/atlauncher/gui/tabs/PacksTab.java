@@ -52,6 +52,7 @@ import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddCurseForgePackDialog;
 import com.atlauncher.gui.dialogs.AddFTBPackDialog;
 import com.atlauncher.gui.panels.LoadingPanel;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 
@@ -167,10 +168,16 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        topPanel.add(addCurseButton);
-        topPanel.add(Box.createHorizontalStrut(5));
-        topPanel.add(addFTBPackButton);
-        topPanel.add(Box.createHorizontalGlue());
+        if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
+            topPanel.add(addCurseButton);
+            topPanel.add(Box.createHorizontalStrut(5));
+        }
+
+        if (ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == true) {
+            topPanel.add(addFTBPackButton);
+            topPanel.add(Box.createHorizontalGlue());
+        }
+
         topPanel.add(searchField);
         topPanel.add(Box.createHorizontalStrut(5));
         topPanel.add(searchButton);

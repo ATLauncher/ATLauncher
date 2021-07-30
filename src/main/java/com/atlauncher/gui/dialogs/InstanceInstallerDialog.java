@@ -69,6 +69,7 @@ import com.atlauncher.data.installables.MultiMCInstallable;
 import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
@@ -80,6 +81,7 @@ import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
@@ -415,7 +417,34 @@ public class InstanceInstallerDialog extends JDialog {
 
     private void setVanillaPackVersions(boolean showAll) {
         pack.versions = MinecraftManager.getMinecraftVersions().stream()
-                .filter(mv -> showAll || mv.type == instance.type).map(v -> {
+                .filter(mv -> showAll || mv.type == instance.type).filter(mv -> {
+                    if (mv.type == VersionManifestVersionType.EXPERIMENT
+                            && ConfigManager.getConfigItem("minecraft.experiment.enabled", true) == false) {
+                        return false;
+                    }
+
+                    if (mv.type == VersionManifestVersionType.SNAPSHOT
+                            && ConfigManager.getConfigItem("minecraft.snapshot.enabled", true) == false) {
+                        return false;
+                    }
+
+                    if (mv.type == VersionManifestVersionType.RELEASE
+                            && ConfigManager.getConfigItem("minecraft.release.enabled", true) == false) {
+                        return false;
+                    }
+
+                    if (mv.type == VersionManifestVersionType.OLD_BETA
+                            && ConfigManager.getConfigItem("minecraft.old_beta.enabled", true) == false) {
+                        return false;
+                    }
+
+                    if (mv.type == VersionManifestVersionType.OLD_ALPHA
+                            && ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true) == false) {
+                        return false;
+                    }
+
+                    return true;
+                }).map(v -> {
                     PackVersion packVersion = new PackVersion();
                     packVersion.version = v.id;
                     packVersion.minecraftVersion = v;
@@ -706,10 +735,18 @@ public class InstanceInstallerDialog extends JDialog {
             return;
         }
 
-        if (item.loaderType != null && item.loaderType.equalsIgnoreCase("forge")) {
-            loaderVersionLabel.setText(GetText.tr("Forge Version") + ": ");
-        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("fabric")) {
+        if (item.loaderType != null && item.loaderType.equalsIgnoreCase("fabric")) {
+            if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == false) {
+                return;
+            }
+
             loaderVersionLabel.setText(GetText.tr("Fabric Version") + ": ");
+        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("forge")) {
+            if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == false) {
+                return;
+            }
+
+            loaderVersionLabel.setText(GetText.tr("Forge Version") + ": ");
         } else {
             loaderVersionLabel.setText(GetText.tr("Loader Version") + ": ");
         }

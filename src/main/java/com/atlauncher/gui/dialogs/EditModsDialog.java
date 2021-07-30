@@ -56,6 +56,7 @@ import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -256,16 +257,19 @@ public class EditModsDialog extends JDialog {
         bottomPanel.add(addButton);
 
         if (instance.launcher.enableCurseForgeIntegration) {
-            JButton browseMods = new JButton(GetText.tr("Browse Mods"));
-            browseMods.addActionListener(e -> {
-                new AddModsDialog(this, instance);
+            if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
+                    || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+                            && this.instance.launcher.loaderVersion != null)) {
+                JButton browseMods = new JButton(GetText.tr("Browse Mods"));
+                browseMods.addActionListener(e -> {
+                    new AddModsDialog(this, instance);
 
-                loadMods();
+                    loadMods();
 
-                reloadPanels();
-
-            });
-            bottomPanel.add(browseMods);
+                    reloadPanels();
+                });
+                bottomPanel.add(browseMods);
+            }
 
             checkForUpdatesButton = new JButton(GetText.tr("Check For Updates"));
             checkForUpdatesButton.addActionListener(e -> checkForUpdates());

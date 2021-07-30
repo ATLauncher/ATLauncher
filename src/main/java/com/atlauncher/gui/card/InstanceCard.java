@@ -60,6 +60,7 @@ import com.atlauncher.gui.dialogs.InstanceExportDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -202,7 +203,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.setVisible(instance.isCurseForgePack()
                 || (instance.isModpacksChPack() && instance.launcher.modpacksChPackManifest.hasTag("FTB")));
 
-        if (instance.launcher.enableCurseForgeIntegration) {
+        if (instance.launcher.enableCurseForgeIntegration
+                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
+                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+                                && this.instance.launcher.loaderVersion != null))) {
             bottom.add(this.addButton);
         }
 
@@ -272,9 +276,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         editInstancePopupMenu.add(changeDescriptionMenuItem);
         editInstancePopupMenu.add(changeImageMenuItem);
         editInstancePopupMenu.addSeparator();
-        editInstancePopupMenu.add(addFabricMenuItem);
+
+        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true) {
+            editInstancePopupMenu.add(addFabricMenuItem);
+        }
         editInstancePopupMenu.add(removeFabricMenuItem);
-        editInstancePopupMenu.add(addForgeMenuItem);
+
+        if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true) {
+            editInstancePopupMenu.add(addForgeMenuItem);
+        }
         editInstancePopupMenu.add(removeForgeMenuItem);
 
         setEditInstanceMenuItemVisbility();

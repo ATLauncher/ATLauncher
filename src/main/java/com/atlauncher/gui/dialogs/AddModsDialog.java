@@ -52,6 +52,7 @@ import com.atlauncher.gui.card.ModrinthSearchHitCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
@@ -102,8 +103,14 @@ public final class AddModsDialog extends JDialog {
         this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        hostComboBox.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
-        hostComboBox.addItem(new ComboItem<>(ModPlatform.MODRINTH, "Modrinth"));
+        if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true) {
+            hostComboBox.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
+        }
+
+        if (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true) {
+            hostComboBox.addItem(new ComboItem<>(ModPlatform.MODRINTH, "Modrinth"));
+        }
+
         hostComboBox.setSelectedIndex(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? 0 : 1);
 
         if (instance.launcher.loaderVersion != null) {

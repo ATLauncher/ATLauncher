@@ -61,6 +61,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.ComboItem;
@@ -242,7 +243,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 reloadMinecraftVersionsTable();
             }
         });
-        minecraftVersionFilterPanel.add(minecraftVersionReleasesFilterCheckbox);
+        if (ConfigManager.getConfigItem("minecraft.release.enabled", true) == true) {
+            minecraftVersionFilterPanel.add(minecraftVersionReleasesFilterCheckbox);
+        }
 
         minecraftVersionExperimentsFilterCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -256,7 +259,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 reloadMinecraftVersionsTable();
             }
         });
-        minecraftVersionFilterPanel.add(minecraftVersionExperimentsFilterCheckbox);
+        if (ConfigManager.getConfigItem("minecraft.experiment.enabled", true) == true) {
+            minecraftVersionFilterPanel.add(minecraftVersionExperimentsFilterCheckbox);
+        }
 
         minecraftVersionSnapshotsFilterCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -270,7 +275,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 reloadMinecraftVersionsTable();
             }
         });
-        minecraftVersionFilterPanel.add(minecraftVersionSnapshotsFilterCheckbox);
+        if (ConfigManager.getConfigItem("minecraft.snapshot.enabled", true) == true) {
+            minecraftVersionFilterPanel.add(minecraftVersionSnapshotsFilterCheckbox);
+        }
 
         minecraftVersionBetasFilterCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -284,7 +291,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 reloadMinecraftVersionsTable();
             }
         });
-        minecraftVersionFilterPanel.add(minecraftVersionBetasFilterCheckbox);
+        if (ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true) == true) {
+            minecraftVersionFilterPanel.add(minecraftVersionBetasFilterCheckbox);
+        }
 
         minecraftVersionAlphasFilterCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -298,7 +307,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 reloadMinecraftVersionsTable();
             }
         });
-        minecraftVersionFilterPanel.add(minecraftVersionAlphasFilterCheckbox);
+        if (ConfigManager.getConfigItem("minecraft.old_beta.enabled", true) == true) {
+            minecraftVersionFilterPanel.add(minecraftVersionAlphasFilterCheckbox);
+        }
 
         minecraftVersionPanel.add(minecraftVersionFilterPanel);
 
@@ -338,8 +349,14 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
         loaderTypePanel.add(loaderTypeNoneRadioButton);
-        loaderTypePanel.add(loaderTypeFabricRadioButton);
-        loaderTypePanel.add(loaderTypeForgeRadioButton);
+
+        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true) {
+            loaderTypePanel.add(loaderTypeFabricRadioButton);
+        }
+
+        if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true) {
+            loaderTypePanel.add(loaderTypeForgeRadioButton);
+        }
 
         loaderTypeNoneRadioButton.addActionListener(e -> {
             selectedLoaderTypeChanged(null);
