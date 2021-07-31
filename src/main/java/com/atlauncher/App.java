@@ -425,7 +425,7 @@ public class App {
 
         LogManager.info("Java Path: " + settings.javaPath);
 
-        LogManager.info("64 Bit Java: " + OS.is64Bit());
+        LogManager.info("64 Bit Java: " + Java.is64Bit());
 
         int maxRam = OS.getMaximumRam();
         LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));

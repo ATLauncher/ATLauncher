@@ -47,6 +47,13 @@ public class Java {
     }
 
     /**
+     * Checks if the Java being used is 64 bit.
+     */
+    public static boolean is64Bit() {
+        return System.getProperty("sun.arch.data.model").contains("64");
+    }
+
+    /**
      * Get the Java version used to run Minecraft.
      *
      * @return the Java version used to run Minecraft

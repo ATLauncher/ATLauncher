@@ -110,7 +110,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         JPanel initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!OS.is64Bit()) {
+        if (!Java.is64Bit()) {
             initialMemoryPanel.add(initialMemoryLabelWarning);
         }
         initialMemoryPanel.add(initialMemoryLabel);
@@ -141,7 +141,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         JPanel maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!OS.is64Bit()) {
+        if (!Java.is64Bit()) {
             maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
                     .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
                     .build(), RESTART_BORDER));

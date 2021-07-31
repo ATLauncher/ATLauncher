@@ -10,7 +10,7 @@
             "cwd": "${workspaceFolder}/testLauncher",
             "preLaunchTask": "makeTestLauncherDirectory",
             "args": "--debug --debug-level 5 --disable-error-reporting --no-launcher-update",
-            
+
         },
         {
             "type": "java",

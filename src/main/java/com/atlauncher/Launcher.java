@@ -141,7 +141,7 @@ public class Launcher {
 
         PackManager.removeUnusedImages(); // remove unused pack images
 
-        if (OS.isWindows() && !OS.is64Bit() && OS.isWindows64Bit()) {
+        if (OS.isWindows() && !Java.is64Bit() && OS.is64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Running 32 Bit Java on 64 Bit Windows"))

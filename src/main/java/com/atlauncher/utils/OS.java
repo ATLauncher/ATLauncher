@@ -59,6 +59,7 @@ import com.atlauncher.utils.javafinder.JavaInfo;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OperatingSystem;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
@@ -277,17 +278,19 @@ public enum OS {
     }
 
     /**
-     * Checks if the Java being used is 64 bit.
+     * Checks if the OS is 64 bit.
      */
     public static boolean is64Bit() {
-        return System.getProperty("sun.arch.data.model").contains("64");
-    }
+        try {
+            SystemInfo systemInfo = OS.getSystemInfo();
+            OperatingSystem os = systemInfo.getOperatingSystem();
 
-    /**
-     * Checks if Windows is 64 bit.
-     */
-    public static boolean isWindows64Bit() {
-        return System.getenv("ProgramFiles(x86)") != null;
+            return os.getBitness() == 64;
+        } catch (Throwable ignored) {
+        }
+
+        // worse case fallback to checking the Java install
+        return Java.is64Bit();
     }
 
     /**
