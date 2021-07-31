@@ -13,3 +13,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with 64 bit OS not using correct runtime when using 32 bit Java
 
 ### Misc
+- Add in idea project files so there's a base for those using it

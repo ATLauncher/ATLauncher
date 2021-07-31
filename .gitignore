@@ -8,8 +8,6 @@ dist/
 run/
 
 # IDE Config
-.idea/
-*.iml
 .settings/
 .classpath
 .project

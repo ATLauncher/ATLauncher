@@ -218,6 +218,10 @@ task downloadNewerUniversalJavaApplicationStub(type: Download) {
     overwrite true
 }
 
+task createTestLauncherDir {
+    project.file('testLauncher/dev').mkdirs()
+}
+
 task createMacApp(type: Zip) {
     dependsOn createApp, shadowJar
     from("$buildDir/macApp") {

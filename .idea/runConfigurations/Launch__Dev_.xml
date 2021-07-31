@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Launch (Dev)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.atlauncher.App" />
+    <module name="ATLauncher.main" />
+    <option name="PROGRAM_PARAMETERS" value="--debug --debug-level 5 --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/testLauncher" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.atlauncher.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="createTestLauncherDir" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+    </method>
+  </configuration>
+</component>

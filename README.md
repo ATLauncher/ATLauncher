@@ -10,11 +10,11 @@ modpacks easily and quickly.
 
 ## Links
 
-- [ATLauncher Website](https://atlauncher.com)
-- [ATLauncher Discord](https://atl.pw/discord)
-- [ATLauncher Facebook](https://www.facebook.com/ATLauncher)
-- [ATLauncher Reddit](https://www.reddit.com/r/ATLauncher)
-- [ATLauncher Twitter](https://twitter.com/ATLauncher)
+-   [ATLauncher Website](https://atlauncher.com)
+-   [ATLauncher Discord](https://atl.pw/discord)
+-   [ATLauncher Facebook](https://www.facebook.com/ATLauncher)
+-   [ATLauncher Reddit](https://www.reddit.com/r/ATLauncher)
+-   [ATLauncher Twitter](https://twitter.com/ATLauncher)
 
 ## Contributing to ATLauncher
 
@@ -52,11 +52,18 @@ Alternatively you can run:
 ./gradlew run --args="--debug --debug-level 3 --working-dir=testLauncher"
 ```
 
-## Using VSCode
+Setting the `--working-dir=testLauncher` argument is necessary as it will ensure that the launchers files are not
+spewed in the root directory and are instead contained within a gitignored folder.
 
-This project is setup to use [VSCode](https://code.visualstudio.com/) for development. You're free to use any other IDE
-that you're accustomed to (if any), but by using VSCode, you get the benefit of predefined tasks and launch commands as
-well as a list of extensions recommended for the project.
+## Using an IDE
+
+This project is mainly setup and developed to use [VSCode](https://code.visualstudio.com/) for development. You're free
+to use any other IDE that you're accustomed to (if any), but by using VSCode, you get the benefit of predefined tasks
+and launch commands as well as a list of extensions recommended for the project.
+
+We also provide some base project files for [IntelliJ IDEA](https://www.jetbrains.com/idea/) so that if you use that,
+you should get access to our base project files which contain correct launch tasks for testing the application as well
+as tasks for running the UI/Unit tests.
 
 ## Checking for dependency updates
 
@@ -92,10 +99,10 @@ ATLauncher supports custom themes. The process is fairly straight forward, but m
 First you must create a `MyThemeName.java` in the `src/main/java/com/atlauncher/themes/` directory. Your theme should
 extend one of the base ATLauncher themes depending on what you need:
 
-- `Dark` is the default theme and is a dark theme. It's a good place to start with some defaults for new dark themes.
-- `Light` is a light theme. It's a good place to start with some defaults for new light themes.
-- `ATLauncherLaf` is a base class which every theme MUST at some point extend. It provides some defaults including our
-  brand colours and some defaults. This shouldn't be extended from unless you need absolute power.
+-   `Dark` is the default theme and is a dark theme. It's a good place to start with some defaults for new dark themes.
+-   `Light` is a light theme. It's a good place to start with some defaults for new light themes.
+-   `ATLauncherLaf` is a base class which every theme MUST at some point extend. It provides some defaults including our
+    brand colours and some defaults. This shouldn't be extended from unless you need absolute power.
 
 Once you've created your class (look at other themes in the directory for an idea on what you can do), you'll need to
 create a properties file in the `src/main/resources/com/atlauncher/themes/` directory. This properties file is how you
@@ -108,12 +115,12 @@ Now you can open the launcher and then switch to your theme.
 We use a library called [FlatLaf](https://github.com/JFormDesigner/FlatLaf) to provide theme support. There are some
 good references listed below to see the default values for the themes and see what you can overwrite:
 
-- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLaf.properties>
-  - This file contains all the base properties for all themes
-- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLightLaf.properties>
-  - This file contains all the base properties for light themes
-- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatDarkLaf.properties>
-  - This file contains all the base properties for dark themes
+-   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLaf.properties>
+    -   This file contains all the base properties for all themes
+-   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLightLaf.properties>
+    -   This file contains all the base properties for light themes
+-   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatDarkLaf.properties>
+    -   This file contains all the base properties for dark themes
 
 ### IntelliJ theme.json Support
 

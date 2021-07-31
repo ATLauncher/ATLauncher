@@ -16,6 +16,12 @@
             }
         },
         {
+            "label": "createTestLauncherDir",
+            "type": "shell",
+            "command": "./gradlew createTestLauncherDir",
+            "problemMatcher": []
+        },
+        {
             "label": "generateTemplatePot",
             "type": "shell",
             "command": "./gradlew generatePots",
@@ -40,34 +46,6 @@
             "group": {
                 "kind": "test",
                 "isDefault": true
-            }
-        },
-        {
-            "label": "makeTestLauncherDirectory",
-            "type": "shell",
-            "linux": {
-                "command": "mkdir -p ./testLauncher"
-            },
-            "windows": {
-                "command": "cmd",
-                "args": [
-                    "/C",
-                    "if not exist .\\testLauncher mkdir .\\testLauncher"
-                ]
-            }
-        },
-        {
-            "label": "makeTestLauncherDevDirectory",
-            "type": "shell",
-            "linux": {
-                "command": "mkdir -p ./testLauncher/dev"
-            },
-            "windows": {
-                "command": "cmd",
-                "args": [
-                    "/C",
-                    "if not exist .\\testLauncher\\dev mkdir .\\testLauncher\\dev"
-                ]
             }
         }
     ]
