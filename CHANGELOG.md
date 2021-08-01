@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in launcher config to be able to toggle and disable things without a launcher update
+- Add initial Quilt support
 
 ### Fixes
 - Update the LaunchServer.bat script to make it "simpler" to change Java path

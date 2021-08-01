@@ -46,8 +46,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
-            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.CURSEFORGE_HOST,
-            Constants.MODRINTH_HOST, Constants.MODPACKS_CH_HOST };
+            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.QUILT_HOST,
+            Constants.CURSEFORGE_HOST, Constants.MODRINTH_HOST, Constants.MODPACKS_CH_HOST };
 
     public NetworkCheckerToolPanel() {
         super(GetText.tr("Network Checker"));
@@ -146,6 +146,15 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                 results.append("Tracert to " + Constants.FORGE_HOST + " was ")
                         .append(Utils.traceRoute(Constants.FORGE_HOST)).append("\n\n----------------\n\n");
+                dialog.doneTask();
+
+                // Connection to Quilt CDN
+                results.append("Ping results to " + Constants.QUILT_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.QUILT_HOST));
+                dialog.doneTask();
+
+                results.append("Tracert to " + Constants.QUILT_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.QUILT_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Resolution of key services

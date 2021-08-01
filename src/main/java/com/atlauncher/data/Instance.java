@@ -1257,6 +1257,40 @@ public class Instance extends MinecraftVersion {
             manifest.components.add(forgeMappingsComponent);
         }
 
+        // quilt loader
+        if (launcher.loaderVersion.type.equals("Quilt")) {
+            // mappings
+            MultiMCComponent quiltMappingsComponent = new MultiMCComponent();
+            quiltMappingsComponent.cachedName = "Intermediary Mappings";
+
+            quiltMappingsComponent.cachedRequires = new ArrayList<>();
+            MultiMCRequire minecraftRequire = new MultiMCRequire();
+            minecraftRequire.equals = id;
+            minecraftRequire.uid = "net.minecraft";
+            quiltMappingsComponent.cachedRequires.add(minecraftRequire);
+
+            quiltMappingsComponent.cachedVersion = id;
+            quiltMappingsComponent.cachedVolatile = true;
+            quiltMappingsComponent.dependencyOnly = true;
+            quiltMappingsComponent.uid = "org.quiltmc.intermediary";
+            quiltMappingsComponent.version = id;
+            manifest.components.add(quiltMappingsComponent);
+
+            // loader
+            MultiMCComponent quiltLoaderComponent = new MultiMCComponent();
+            quiltLoaderComponent.cachedName = "Fabric Loader";
+
+            quiltLoaderComponent.cachedRequires = new ArrayList<>();
+            MultiMCRequire intermediaryRequire = new MultiMCRequire();
+            intermediaryRequire.uid = "org.quiltmc.intermediary";
+            quiltLoaderComponent.cachedRequires.add(intermediaryRequire);
+
+            quiltLoaderComponent.cachedVersion = launcher.loaderVersion.version;
+            quiltLoaderComponent.uid = "org.quiltmc.quilt-loader";
+            quiltLoaderComponent.version = launcher.loaderVersion.version;
+            manifest.components.add(quiltLoaderComponent);
+        }
+
         // create temp directory to put this in
         Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
         FileUtils.createDirectory(tempDir);

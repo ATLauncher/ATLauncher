@@ -626,6 +626,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 .filter(c -> c.uid.equalsIgnoreCase("net.minecraftforge")).findFirst().orElse(null);
         MultiMCComponent fabricLoaderComponent = multiMCManifest.components.stream()
                 .filter(c -> c.uid.equalsIgnoreCase("net.fabricmc.fabric-loader")).findFirst().orElse(null);
+        MultiMCComponent quiltLoaderComponent = multiMCManifest.components.stream()
+                .filter(c -> c.uid.equalsIgnoreCase("org.quiltmc.quilt-loader")).findFirst().orElse(null);
 
         if (forgeComponent != null) {
             String forgeVersionString = forgeComponent.version;
@@ -658,6 +660,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("loader", fabricVersionString);
             packVersion.loader.metadata = loaderMeta;
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+        } else if (quiltLoaderComponent != null) {
+            String quiltVersionString = quiltLoaderComponent.version;
+
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", minecraftVersion);
+            loaderMeta.put("loader", quiltVersionString);
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader";
         }
 
         hideSubProgressBar();

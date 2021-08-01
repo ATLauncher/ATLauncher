@@ -102,6 +102,10 @@ public class Constants {
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
     public static final String FABRIC_HOST = "maven.fabricmc.net";
 
+    // Quilt domains, endpoints, etc
+    public static final String QUILT_MAVEN = "https://maven.quiltmc.org/repository/release/";
+    public static final String QUILT_HOST = "maven.quiltmc.org";
+
     // Minecraft domains, endpoints, etc
     public static final String LAUNCHER_META_MINECRAFT = "https://launchermeta.mojang.com";
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
