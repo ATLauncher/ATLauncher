@@ -12,11 +12,12 @@
         <ul>
             <li>Allows quick and easy install of modpacks, no more messing around trying to install mods</li>
             <li>A range of different packs, and more being added all the time</li>
+            <li>Automatically use the correct version of Java without having to worry about messing around with different Java installs</li>
             <li>Multiple instances. Install a pack as many times as you like without messing up a previous install</li>
             <li>Multiple accounts allow you to login as different users from the one install</li>
             <li>Private instances. This allows you to only install instances under your account so people can't mess up your worlds</li>
             <li>1 click backup of your saves</li>
-            <li>Easy server creation from within the Launcher</li>
+            <li>Easily create and run servers for modpacks from within the Launcher</li>
             <li>Install packs from CurseForge and FTB</li>
             <li>Mod management for instances, including auto download and installation of mods, maps and resource packs from CurseForge and Modrinth</li>
             <li>Support for both Mojang and Microsoft accounts</li>
