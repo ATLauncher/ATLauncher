@@ -713,6 +713,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("loader", loaderVersion.version);
             packVersion.loader.metadata = loaderMeta;
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+        } else if (loaderVersion != null && loaderVersion.isQuilt()) {
+            packVersion.loader = new com.atlauncher.data.json.Loader();
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", version.minecraftVersion.id);
+            loaderMeta.put("loader", loaderVersion.version);
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader";
         }
 
         hideSubProgressBar();

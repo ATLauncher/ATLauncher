@@ -73,6 +73,7 @@ import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
+import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackLink;
 import com.atlauncher.data.modpacksch.ModpacksChPackLinkType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
@@ -747,6 +748,12 @@ public class InstanceInstallerDialog extends JDialog {
             }
 
             loaderVersionLabel.setText(GetText.tr("Forge Version") + ": ");
+        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("quilt")) {
+            if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == false) {
+                return;
+            }
+
+            loaderVersionLabel.setText(GetText.tr("Quilt Version") + ": ");
         } else {
             loaderVersionLabel.setText(GetText.tr("Loader Version") + ": ");
         }
@@ -771,6 +778,8 @@ public class InstanceInstallerDialog extends JDialog {
                     loaderVersions.addAll(FabricLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isForge()) {
                     loaderVersions.addAll(ForgeLoader.getChoosableVersions(item.minecraftVersion.id));
+                } else if (this.instance.launcher.loaderVersion.isQuilt()) {
+                    loaderVersions.addAll(QuiltLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else {
                     return;
                 }

@@ -115,6 +115,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem removeFabricMenuItem = new JMenuItem(GetText.tr("Remove Fabric"));
     private final JMenuItem addForgeMenuItem = new JMenuItem(GetText.tr("Add Forge"));
     private final JMenuItem removeForgeMenuItem = new JMenuItem(GetText.tr("Remove Forge"));
+    private final JMenuItem addQuiltMenuItem = new JMenuItem(GetText.tr("Add Quilt"));
+    private final JMenuItem removeQuiltMenuItem = new JMenuItem(GetText.tr("Remove Quilt"));
     private final DropDownButton editInstanceButton = new DropDownButton(GetText.tr("Edit Instance"),
             editInstancePopupMenu);
 
@@ -287,6 +289,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeForgeMenuItem);
 
+        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true) {
+            editInstancePopupMenu.add(addQuiltMenuItem);
+        }
+        editInstancePopupMenu.add(removeQuiltMenuItem);
+
         setEditInstanceMenuItemVisbility();
 
         reinstallMenuItem.addActionListener(e -> instance.startReinstall());
@@ -309,6 +316,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.addLoader(LoaderType.FORGE);
             setEditInstanceMenuItemVisbility();
         });
+        addQuiltMenuItem.addActionListener(e -> {
+            instance.addLoader(LoaderType.QUILT);
+            setEditInstanceMenuItemVisbility();
+        });
         removeFabricMenuItem.addActionListener(e -> {
             instance.removeLoader();
             setEditInstanceMenuItemVisbility();
@@ -317,15 +328,22 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.removeLoader();
             setEditInstanceMenuItemVisbility();
         });
+        removeQuiltMenuItem.addActionListener(e -> {
+            instance.removeLoader();
+            setEditInstanceMenuItemVisbility();
+        });
     }
 
     private void setEditInstanceMenuItemVisbility() {
         addFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
+        addQuiltMenuItem.setVisible(instance.launcher.loaderVersion == null);
         removeFabricMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
         removeForgeMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
+        removeQuiltMenuItem
+                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
     }
 
     private void validatePlayable() {

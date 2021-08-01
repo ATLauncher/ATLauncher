@@ -91,6 +91,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
+import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthMod;
@@ -1891,7 +1892,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void addLoader(LoaderType loaderType) {
-        Analytics.sendEvent(loaderType == LoaderType.FORGE ? 1 : 2, launcher.pack + " - " + launcher.version,
+        Analytics.sendEvent(loaderType.getAnalyticsValue(), launcher.pack + " - " + launcher.version,
                 "AddLoader", getAnalyticsCategory());
 
         ProgressDialog<List<LoaderVersion>> progressDialog = new ProgressDialog<>(
@@ -1902,6 +1903,8 @@ public class Instance extends MinecraftVersion {
                 progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
             } else if (loaderType == LoaderType.FORGE) {
                 progressDialog.setReturnValue(ForgeLoader.getChoosableVersions(id));
+            } else if (loaderType == LoaderType.QUILT) {
+                progressDialog.setReturnValue(QuiltLoader.getChoosableVersions(id));
             }
 
             progressDialog.doneTask();
@@ -2004,7 +2007,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void removeLoader() {
-        Analytics.sendEvent(launcher.loaderVersion.isForge() ? 1 : 2, launcher.pack + " - " + launcher.version,
+        Analytics.sendEvent(launcher.loaderVersion.getAnalyticsValue(), launcher.pack + " - " + launcher.version,
                 "RemoveLoader", getAnalyticsCategory());
         String loaderType = launcher.loaderVersion.type;
 

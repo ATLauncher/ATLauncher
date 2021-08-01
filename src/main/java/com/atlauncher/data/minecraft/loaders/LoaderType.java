@@ -35,4 +35,23 @@ public enum LoaderType {
             return "Forge";
         }
     },
+
+    @SerializedName("quilt")
+    QUILT {
+        public String toString() {
+            return "Quilt";
+        }
+    },;
+
+    public Integer getAnalyticsValue() {
+        if (this == FORGE) {
+            return 1;
+        }
+
+        if (this == FABRIC) {
+            return 2;
+        }
+
+        return 3;
+    }
 }

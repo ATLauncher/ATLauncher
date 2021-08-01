@@ -56,6 +56,10 @@ public class LoaderVersion {
         return this.type.equalsIgnoreCase("Forge");
     }
 
+    public boolean isQuilt() {
+        return this.type.equalsIgnoreCase("Quilt");
+    }
+
     public String toString() {
         if (this.recommended) {
             return this.version + " (Recommended)";
@@ -94,5 +98,17 @@ public class LoaderVersion {
         }
 
         return "forge";
+    }
+
+    public Integer getAnalyticsValue() {
+        if (isForge()) {
+            return 1;
+        }
+
+        if (isFabric()) {
+            return 2;
+        }
+
+        return 3;
     }
 }
