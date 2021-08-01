@@ -222,6 +222,11 @@ public class App {
     public static String packShareCodeToInstall = null;
 
     /**
+     * Config overrides.
+     */
+    public static String configOverride = null;
+
+    /**
      * This sets a pack to auto launch on startup
      */
     public static String autoLaunch = null;
@@ -834,6 +839,7 @@ public class App {
         parser.accepts("proxy-type").withRequiredArg().ofType(String.class);
         parser.accepts("proxy-host").withRequiredArg().ofType(String.class);
         parser.accepts("proxy-port").withRequiredArg().ofType(Integer.class);
+        parser.accepts("config-override").withRequiredArg().ofType(String.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
@@ -950,6 +956,12 @@ public class App {
                     LogManager.logStackTrace("Connection could not be established to proxy at socket [" + sa + "]", e);
                 }
             });
+        }
+
+        if (options.has("config-override")) {
+            configOverride = (String) options.valueOf("config-override");
+
+            LogManager.warn("Config overridden: " + configOverride);
         }
     }
 }

@@ -38,6 +38,7 @@ public final class Data {
     public static AbstractAccount SELECTED_ACCOUNT = null; // Account using the Launcher
 
     public static Map<String, Object> CONFIG = new HashMap<>();
+    public static Map<String, Object> CONFIG_OVERRIDES = new HashMap<>();
 
     public static final List<News> NEWS = new LinkedList<>();
 

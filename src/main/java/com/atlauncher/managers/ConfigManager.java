@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -41,14 +42,60 @@ public class ConfigManager {
      * TODO: make this not shit. It's pretty shit
      */
     public static <T> T getConfigItem(String key, T defaultValue) {
-        if (Data.CONFIG == null) {
+        if (hasConfigItem(key, Data.CONFIG_OVERRIDES)) {
+            return getConfigItem(key, defaultValue, Data.CONFIG_OVERRIDES);
+        }
+
+        return getConfigItem(key, defaultValue, Data.CONFIG);
+    }
+
+    private static boolean hasConfigItem(String key, Map<String, Object> source) {
+        if (source == null) {
+            return false;
+        }
+
+        try {
+            String[] keyParts = key.split("\\.");
+
+            if (source == null) {
+                return false;
+            }
+
+            if (keyParts.length == 1) {
+                return source.containsKey(keyParts[0]);
+            }
+
+            Map<String, Object> secondLevel = (Map<String, Object>) source.get(keyParts[0]);
+
+            if (secondLevel == null) {
+                return false;
+            }
+
+            if (keyParts.length == 2) {
+                return secondLevel.containsKey(keyParts[1]);
+            }
+
+            Map<String, Object> thirdLevel = (Map<String, Object>) secondLevel.get(keyParts[1]);
+
+            if (thirdLevel == null) {
+                return false;
+            }
+            return thirdLevel.containsKey(keyParts[2]);
+        } catch (Throwable t) {
+            LogManager.logStackTrace(String.format("Error checking if config value for key '%s' exists", key), t);
+            return false;
+        }
+    }
+
+    private static <T> T getConfigItem(String key, T defaultValue, Map<String, Object> source) {
+        if (source == null) {
             return defaultValue;
         }
 
         try {
             String[] keyParts = key.split("\\.");
 
-            Object data = Data.CONFIG.get(keyParts[0]);
+            Object data = source.get(keyParts[0]);
 
             if (keyParts.length == 1) {
                 return (T) data;
@@ -75,9 +122,11 @@ public class ConfigManager {
     public static void loadConfig() {
         PerformanceManager.start();
         LogManager.debug("Loading config");
+
+        java.lang.reflect.Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+
         try {
-            java.lang.reflect.Type type = new TypeToken<Map<String, Object>>() {
-            }.getType();
             File fileDir = FileSystem.JSON.resolve("config.json").toFile();
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
@@ -87,6 +136,15 @@ public class ConfigManager {
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
             LogManager.logStackTrace(e);
         }
+
+        if (App.configOverride != null) {
+            try {
+                Data.CONFIG_OVERRIDES = Gsons.DEFAULT.fromJson(App.configOverride, type);
+            } catch (JsonIOException | JsonSyntaxException e) {
+                LogManager.logStackTrace("Failed to read in config overrides", e);
+            }
+        }
+
         LogManager.debug("Finished loading config");
         PerformanceManager.end();
     }
