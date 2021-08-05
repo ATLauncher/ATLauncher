@@ -40,6 +40,7 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
@@ -226,8 +227,11 @@ public class QuiltLoader implements Loader {
         List<QuiltMetaVersion> versions = Download.build()
                 .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s", minecraft)).asType(type);
 
-        return versions.stream().map(version -> new LoaderVersion(version.loader.version, false, "Quilt"))
-                .collect(Collectors.toList());
+        List<String> disabledVersions = ConfigManager.getConfigItem("loaders.quilt.disabledVersions",
+                new ArrayList<String>());
+
+        return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
+                .map(version -> new LoaderVersion(version.loader.version, false, "Quilt")).collect(Collectors.toList());
     }
 
     @Override

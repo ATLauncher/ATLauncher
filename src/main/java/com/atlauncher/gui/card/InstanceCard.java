@@ -29,6 +29,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -279,17 +280,23 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         editInstancePopupMenu.add(changeImageMenuItem);
         editInstancePopupMenu.addSeparator();
 
-        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true) {
+        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true
+                && !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
+                        .contains(instance.id)) {
             editInstancePopupMenu.add(addFabricMenuItem);
         }
         editInstancePopupMenu.add(removeFabricMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true) {
+        if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true
+                && !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
+                        .contains(instance.id)) {
             editInstancePopupMenu.add(addForgeMenuItem);
         }
         editInstancePopupMenu.add(removeForgeMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true) {
+        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true
+                && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
+                        .contains(instance.id)) {
             editInstancePopupMenu.add(addQuiltMenuItem);
         }
         editInstancePopupMenu.add(removeQuiltMenuItem);

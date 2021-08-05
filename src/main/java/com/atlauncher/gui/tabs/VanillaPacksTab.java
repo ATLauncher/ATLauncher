@@ -467,6 +467,16 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 descriptionField.setText(defaultValue);
             }
 
+            loaderTypeFabricRadioButton.setVisible(
+                    !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
+                            .contains(newSelectedMinecraftVersion));
+            loaderTypeForgeRadioButton.setVisible(
+                    !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
+                            .contains(newSelectedMinecraftVersion));
+            loaderTypeQuiltRadioButton.setVisible(
+                    !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
+                            .contains(newSelectedMinecraftVersion));
+
             // refresh the loader versions if we have one selected
             LoaderType selectedLoaderType = getSelectedLoader();
             if (selectedLoaderType != null) {

@@ -40,6 +40,7 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
@@ -228,7 +229,11 @@ public class FabricLoader implements Loader {
                     .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft))
                     .asTypeWithThrow(type);
 
-            return versions.stream().map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
+            List<String> disabledVersions = ConfigManager.getConfigItem("loaders.fabric.disabledVersions",
+                    new ArrayList<String>());
+
+            return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
+                    .map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             return new ArrayList<>();

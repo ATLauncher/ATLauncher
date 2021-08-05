@@ -156,22 +156,50 @@ public class MinecraftManager {
 
     public static List<VersionManifestVersion> getFilteredMinecraftVersions(
             List<VersionManifestVersionType> filterTypes) {
-        return Data.MINECRAFT.values().stream().filter(mv -> filterTypes.contains(mv.type))
-                .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
-                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
-                }).reversed()).collect(Collectors.toList());
+        List<String> disabledVersions = new ArrayList<>();
+
+        filterTypes.forEach(ft -> {
+            disabledVersions.addAll(ConfigManager.getConfigItem(
+                    String.format("minecraft.%s.disabledVersions", ft.getValue()), new ArrayList<String>()));
+        });
+
+        return Data.MINECRAFT.values().stream().filter(mv -> {
+            if (disabledVersions.contains(mv.id)) {
+                return false;
+            }
+
+            return filterTypes.contains(mv.type);
+        }).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+            return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+        }).reversed()).collect(Collectors.toList());
     }
 
     public static List<VersionManifestVersion> getFilteredMinecraftVersions(VersionManifestVersionType filterType) {
-        return Data.MINECRAFT.values().stream().filter(mv -> mv.type == filterType)
-                .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
-                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
-                }).reversed()).collect(Collectors.toList());
+        List<String> disabledVersions = ConfigManager.getConfigItem(
+                String.format("minecraft.%s.disabledVersions", filterType.getValue()), new ArrayList<String>());
+
+        return Data.MINECRAFT.values().stream().filter(mv -> {
+            if (disabledVersions.contains(mv.id)) {
+                return false;
+            }
+
+            return mv.type == filterType;
+        }).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+            return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+        }).reversed()).collect(Collectors.toList());
     }
 
     public static List<VersionManifestVersion> getMinecraftVersions() {
-        return Data.MINECRAFT.values().stream().sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
-            return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
-        }).reversed()).collect(Collectors.toList());
+        List<String> disabledVersions = new ArrayList<>();
+
+        for (VersionManifestVersionType vt : VersionManifestVersionType.values()) {
+            disabledVersions.addAll(ConfigManager.getConfigItem(
+                    String.format("minecraft.%s.disabledVersions", vt.getValue()), new ArrayList<String>()));
+        }
+
+        return Data.MINECRAFT.values().stream().filter(mv -> !disabledVersions.contains(mv.id))
+                .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+                }).reversed()).collect(Collectors.toList());
     }
 }

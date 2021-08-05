@@ -37,6 +37,7 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.FileUtils;
@@ -289,9 +290,12 @@ public class ForgeLoader implements Loader {
                     .setUrl(String.format("%sforge-versions/%s", Constants.API_BASE_URL, minecraft))
                     .asTypeWithThrow(type);
 
-            return data
-                    .getData().stream().map(version -> new LoaderVersion(version.version, version.rawVersion,
-                            version.recommended, "Forge", version.installerSize, version.installerSha1Hash))
+            List<String> disabledVersions = ConfigManager.getConfigItem("loaders.forge.disabledVersions",
+                    new ArrayList<String>());
+
+            return data.getData().stream().filter(fv -> !disabledVersions.contains(fv.version))
+                    .map(version -> new LoaderVersion(version.version, version.rawVersion, version.recommended, "Forge",
+                            version.installerSize, version.installerSha1Hash))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             return new ArrayList<LoaderVersion>();
