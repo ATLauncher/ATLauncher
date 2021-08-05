@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Update the LaunchServer.bat script to make it "simpler" to change Java path
 - Issue with 64 bit OS not using correct runtime when using 32 bit Java
+- Checkbox insets on CommandsSettingsTab
 
 ### Misc
 - Add in idea project files so there's a base for those using it

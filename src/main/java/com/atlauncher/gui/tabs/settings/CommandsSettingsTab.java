@@ -52,6 +52,7 @@ public class CommandsSettingsTab extends AbstractSettingsTab implements ActionLi
         add(enableCommandsLabel, gbc);
 
         nextColumn();
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
 
         enableCommands = new JCheckBox();
         enableCommands.setSelected(App.settings.enableCommands);
@@ -138,7 +139,7 @@ public class CommandsSettingsTab extends AbstractSettingsTab implements ActionLi
 
     private void nextColumn() {
         gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
     }
 
