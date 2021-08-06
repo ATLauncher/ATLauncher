@@ -47,6 +47,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
@@ -198,7 +199,7 @@ public class EditModsDialog extends JDialog {
 
         JButton addButton = new JButton(GetText.tr("Add Mod"));
         addButton.addActionListener(e -> {
-            String[] modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
+            String[] modTypes = new String[] { "Mods Folder", "Resource Pack", "Shader Pack", "Inside Minecraft.jar" };
 
             FileChooserDialog fcd = new FileChooserDialog(this, GetText.tr("Add Mod"), GetText.tr("Mod"),
                     GetText.tr("Add"), GetText.tr("Type of Mod"), modTypes);
@@ -220,7 +221,17 @@ public class EditModsDialog extends JDialog {
                         if (typeTemp.equalsIgnoreCase("Mods Folder")) {
                             type = com.atlauncher.data.Type.mods;
                         } else if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                            type = com.atlauncher.data.Type.jar;
+                            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Add As Mod?"))
+                                    .setContent(new HTMLBuilder().text(GetText.tr(
+                                            "Adding as Inside Minecraft.jar is usually not what you want and will likely cause issues.<br/><br/>If you're adding mods this is usually not correct. Do you want to add this as a mod instead?"))
+                                            .build())
+                                    .setType(DialogManager.WARNING).show();
+
+                            if (ret != 0) {
+                                type = com.atlauncher.data.Type.jar;
+                            } else {
+                                type = com.atlauncher.data.Type.mods;
+                            }
                         } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
                             type = com.atlauncher.data.Type.coremods;
                         } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {

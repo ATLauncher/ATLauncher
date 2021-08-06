@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
@@ -74,7 +75,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             Type type;
             File instanceFile;
 
-            String[] modTypes = new String[] { "Mods Folder", "Inside Minecraft.jar", "Resource Pack", "Shader Pack" };
+            String[] modTypes = new String[] { "Mods Folder", "Resource Pack", "Shader Pack", "Inside Minecraft.jar" };
 
             FileTypeDialog fcd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding Mods"), GetText.tr("Add"),
                     GetText.tr("Type"), modTypes);
@@ -86,8 +87,19 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             String typeTemp = fcd.getSelectorValue();
 
             if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
-                type = Type.jar;
-                instanceFile = dialog.instance.getRoot().resolve("jarmods").toFile();
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Add As Mod?"))
+                        .setContent(new HTMLBuilder().text(GetText.tr(
+                                "Adding as Inside Minecraft.jar is usually not what you want and will likely cause issues.<br/><br/>If you're adding mods this is usually not correct. Do you want to add this as a mod instead?"))
+                                .build())
+                        .setType(DialogManager.WARNING).show();
+
+                if (ret != 0) {
+                    type = Type.jar;
+                    instanceFile = dialog.instance.getRoot().resolve("jarmods").toFile();
+                } else {
+                    type = Type.mods;
+                    instanceFile = dialog.instance.getRoot().resolve("mods").toFile();
+                }
             } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
                 type = Type.coremods;
                 instanceFile = dialog.instance.getRoot().resolve("coremods").toFile();
