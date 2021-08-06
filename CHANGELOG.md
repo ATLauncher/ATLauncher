@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Checkbox insets on CommandsSettingsTab
 - Issue with checking for updates/reinstalling a mod without a loader causing errors
 - Change error when cannot open archive to show as a warning instead
+- Instance title format not working correctly
 
 ### Misc
 - Add in idea project files so there's a base for those using it
