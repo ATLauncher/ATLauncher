@@ -348,11 +348,13 @@ public class DisableableMod implements Serializable {
 
             // filter out mods that are explicitely for Forge/Fabric and not our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersion.contains("Forge") && instance.launcher.loaderVersion.isFabric()) {
+                if (cf.gameVersion.contains("Forge") && instance.launcher.loaderVersion != null
+                        && !instance.launcher.loaderVersion.isForge()) {
                     return false;
                 }
 
-                if (cf.gameVersion.contains("Fabric") && !instance.launcher.loaderVersion.isFabric()) {
+                if (cf.gameVersion.contains("Fabric") && instance.launcher.loaderVersion != null
+                        && !instance.launcher.loaderVersion.isFabric()) {
                     return false;
                 }
 

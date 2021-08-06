@@ -238,11 +238,11 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             // filter out mods that are explicitely for Forge/Fabric and not our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersion.contains("Forge") && loaderVersion.isFabric()) {
+                if (cf.gameVersion.contains("Forge") && loaderVersion != null && loaderVersion.isFabric()) {
                     return false;
                 }
 
-                if (cf.gameVersion.contains("Fabric") && !loaderVersion.isFabric()) {
+                if (cf.gameVersion.contains("Fabric") && loaderVersion != null && !loaderVersion.isFabric()) {
                     return false;
                 }
 
