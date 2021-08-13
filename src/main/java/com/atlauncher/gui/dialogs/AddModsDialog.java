@@ -333,7 +333,7 @@ public final class AddModsDialog extends JDialog {
                         setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     } else if (this.instance.launcher.loaderVersion.isForge()) {
-                        setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
+                        setCurseForgeMods(CurseForgeApi.searchModsForForge(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     } else {
                         setCurseForgeMods(CurseForgeApi.searchMods(versionToSearchFor, query, page,
