@@ -332,6 +332,9 @@ public final class AddModsDialog extends JDialog {
                     if (this.instance.launcher.loaderVersion.isFabric()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    } else if (this.instance.launcher.loaderVersion.isForge()) {
+                        setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     } else {
                         setCurseForgeMods(CurseForgeApi.searchMods(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
@@ -357,7 +360,7 @@ public final class AddModsDialog extends JDialog {
                 if (this.instance.launcher.loaderVersion.isFabric()) {
                     setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
-                } else {
+                } else if (this.instance.launcher.loaderVersion.isForge()) {
                     setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }

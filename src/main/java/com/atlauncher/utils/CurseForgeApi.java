@@ -48,11 +48,11 @@ public class CurseForgeApi {
     }
 
     public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
-            int categoryId, String sort) {
+            int modLoaderType, String sort) {
         try {
             String url = String.format(
-                    "%s/addon/search?gameId=432&categoryId=%d&sectionId=%s&searchFilter=%s&sort=%s&sortDescending=true&pageSize=%d&index=%d",
-                    Constants.CURSEFORGE_API_URL, categoryId, sectionId,
+                    "%s/addon/search?gameId=432&modLoaderType=%d&sectionId=%s&searchFilter=%s&sort=%s&sortDescending=true&pageSize=%d&index=%d",
+                    Constants.CURSEFORGE_API_URL, modLoaderType, sectionId,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), sort.replace(" ", ""),
                     Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
 
@@ -90,7 +90,12 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchModsForFabric(String gameVersion, String query, int page, String sort) {
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
-                Constants.CURSEFORGE_FABRIC_CATEGORY_ID, sort);
+                Constants.CURSEFORGE_FABRIC_MODLOADER_ID, sort);
+    }
+
+    public static List<CurseForgeProject> searchModsForForge(String gameVersion, String query, int page, String sort) {
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
+                Constants.CURSEFORGE_FORGE_MODLOADER_ID, sort);
     }
 
     public static List<CurseForgeFile> getFilesForProject(int projectId) {

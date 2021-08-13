@@ -72,7 +72,8 @@ public class Constants {
     // CurseForge domains, endpoints, config, etc
     public static final String CURSEFORGE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
     public static final String CURSEFORGE_HOST = "addons-ecs.forgesvc.net";
-    public static final int CURSEFORGE_FABRIC_CATEGORY_ID = 4780;
+    public static final int CURSEFORGE_FORGE_MODLOADER_ID = 1;
+    public static final int CURSEFORGE_FABRIC_MODLOADER_ID = 4;
     public static final int CURSEFORGE_PAGINATION_SIZE = 40;
     public static final int CURSEFORGE_FABRIC_MOD_ID = 306612;
     public static final int CURSEFORGE_JUMPLOADER_MOD_ID = 361988;

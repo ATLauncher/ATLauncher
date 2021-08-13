@@ -17,6 +17,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with checking for updates/reinstalling a mod without a loader causing errors
 - Change error when cannot open archive to show as a warning instead
 - Instance title format not working correctly
+- Add mods screen not showing Fabric mods anymore [#499]
 
 ### Misc
 - Add in idea project files so there's a base for those using it
