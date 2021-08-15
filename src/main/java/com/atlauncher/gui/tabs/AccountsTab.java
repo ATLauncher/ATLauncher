@@ -470,7 +470,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             rightButton.setText(GetText.tr("Delete"));
         }
 
-        usernameLabel.setText(GetText.tr("Username/Email") + ":");
+        usernameLabel.setText(GetText.tr("Email") + ":");
         passwordLabel.setText(GetText.tr("Password") + ":");
         rememberLabel.setText(GetText.tr("Remember Password") + ":");
         updateSkin.setText(GetText.tr("Reload Skin"));
