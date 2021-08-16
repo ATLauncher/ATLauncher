@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Add user agent to paste upload
+- Add system out messages to the launchers console
 
 ### Misc

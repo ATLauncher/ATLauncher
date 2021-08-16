@@ -18,6 +18,7 @@
 package com.atlauncher.managers;
 
 import java.io.CharArrayWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -30,6 +31,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.thread.LoggingThread;
+import com.atlauncher.utils.SystemOutInterceptor;
 
 public final class LogManager {
     private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<>(128);
@@ -37,6 +39,15 @@ public final class LogManager {
 
     public static void start() {
         new LoggingThread(queue).start();
+
+        redirectSystemOutLogs();
+    }
+
+    private static void redirectSystemOutLogs() {
+        PrintStream origOut = System.out;
+        PrintStream interceptor = new SystemOutInterceptor(origOut);
+
+        System.setOut(interceptor);
     }
 
     /**
