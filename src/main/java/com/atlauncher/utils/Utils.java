@@ -205,6 +205,7 @@ public class Utils {
             urlParameters += "text=" + URLEncoder.encode(log, "ISO-8859-1");
             URL url = new URL(Constants.PASTE_API_URL);
             URLConnection conn = url.openConnection();
+            conn.addRequestProperty("User-Agent", Network.USER_AGENT);
             conn.setDoOutput(true);
             OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
             writer.write(urlParameters);
