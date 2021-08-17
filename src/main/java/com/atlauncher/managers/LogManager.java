@@ -45,9 +45,10 @@ public final class LogManager {
 
     private static void redirectSystemOutLogs() {
         PrintStream origOut = System.out;
-        PrintStream interceptor = new SystemOutInterceptor(origOut);
+        PrintStream origErr = System.err;
 
-        System.setOut(interceptor);
+        System.setOut(new SystemOutInterceptor(origOut, LogType.DEBUG));
+        System.setErr(new SystemOutInterceptor(origErr, LogType.ERROR));
     }
 
     /**

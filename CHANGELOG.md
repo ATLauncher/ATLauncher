@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue with checking mods on CurseForge causing a NPE
+- System out interceptor not working for errors or showing info
 
 ### Misc

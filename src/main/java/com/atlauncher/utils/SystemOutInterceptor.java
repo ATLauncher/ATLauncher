@@ -20,17 +20,26 @@ package com.atlauncher.utils;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.managers.LogManager;
 
 public class SystemOutInterceptor extends PrintStream {
-    public SystemOutInterceptor(OutputStream out) {
+    private final LogType logType;
+
+    public SystemOutInterceptor(OutputStream out, LogType type) {
         super(out, true);
+
+        logType = type;
     }
 
     @Override
     public void print(String s) {
         super.print(s);
 
-        LogManager.debug(s);
+        if (logType == LogType.ERROR) {
+            LogManager.error(s);
+        } else {
+            LogManager.debug(s);
+        }
     }
 }
