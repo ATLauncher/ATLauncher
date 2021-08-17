@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -37,6 +38,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
@@ -72,6 +74,7 @@ public final class AddModsDialog extends JDialog {
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JLabel platformMessageLabel = new JLabel();
     private final JComboBox<ComboItem<ModPlatform>> hostComboBox = new JComboBox<ComboItem<ModPlatform>>();
     private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
@@ -112,6 +115,13 @@ public final class AddModsDialog extends JDialog {
         }
 
         hostComboBox.setSelectedIndex(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? 0 : 1);
+
+        String platformMessage = ConfigManager.getConfigItem(String.format("platforms.%s.message",
+                App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? "curseforge" : "modrinth"), null);
+        if (platformMessage != null) {
+            platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
+        }
+        platformMessageLabel.setVisible(platformMessage != null);
 
         if (instance.launcher.loaderVersion != null) {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
@@ -207,7 +217,8 @@ public final class AddModsDialog extends JDialog {
         mainPanel.add(this.topPanel, BorderLayout.NORTH);
         mainPanel.add(this.jscrollPane, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout());
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel bottomButtonsPanel = new JPanel(new FlowLayout());
 
         prevButton = new JButton("<<");
         prevButton.setEnabled(false);
@@ -217,8 +228,12 @@ public final class AddModsDialog extends JDialog {
         nextButton.setEnabled(false);
         nextButton.addActionListener(e -> goToNextPage());
 
-        bottomPanel.add(prevButton);
-        bottomPanel.add(nextButton);
+        bottomButtonsPanel.add(prevButton);
+        bottomButtonsPanel.add(nextButton);
+
+        platformMessageLabel.setForeground(Color.YELLOW);
+        bottomPanel.add(platformMessageLabel, BorderLayout.NORTH);
+        bottomPanel.add(bottomButtonsPanel, BorderLayout.CENTER);
 
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);
@@ -228,12 +243,16 @@ public final class AddModsDialog extends JDialog {
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                     .getValue() == ModPlatform.CURSEFORGE;
 
+            String platformMessage = null;
+
             sortComboBox.removeAllItems();
             if (isCurseForge) {
+                platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
                 sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
                 sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
                 sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
             } else {
+                platformMessage = ConfigManager.getConfigItem("platforms.modrinth.message", null);
                 sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
                 sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
                 sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
@@ -241,6 +260,11 @@ public final class AddModsDialog extends JDialog {
             }
 
             sectionComboBox.setVisible(isCurseForge);
+
+            if (platformMessage != null) {
+                platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
+            }
+            platformMessageLabel.setVisible(platformMessage != null);
 
             if (searchField.getText().isEmpty()) {
                 loadDefaultMods();

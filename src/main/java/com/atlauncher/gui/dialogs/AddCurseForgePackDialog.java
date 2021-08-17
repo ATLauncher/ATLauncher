@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -35,12 +36,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.card.CurseForgeProjectCard;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseForgePacksPanel;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
@@ -54,6 +57,7 @@ public final class AddCurseForgePackDialog extends JDialog {
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private JLabel platformMessageLabel = null;
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
 
     private JScrollPane jscrollPane;
@@ -69,6 +73,11 @@ public final class AddCurseForgePackDialog extends JDialog {
         this.setMinimumSize(new Dimension(620, 500));
         this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        String platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
+        if (platformMessage != null) {
+            platformMessageLabel = new JLabel(new HTMLBuilder().center().text(platformMessage).build());
+        }
 
         sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
         sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
@@ -108,7 +117,8 @@ public final class AddCurseForgePackDialog extends JDialog {
         mainPanel.add(this.topPanel, BorderLayout.NORTH);
         mainPanel.add(this.jscrollPane, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout());
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel bottomButtonsPanel = new JPanel(new FlowLayout());
 
         prevButton = new JButton("<<");
         prevButton.setEnabled(false);
@@ -118,8 +128,14 @@ public final class AddCurseForgePackDialog extends JDialog {
         nextButton.setEnabled(false);
         nextButton.addActionListener(e -> goToNextPage());
 
-        bottomPanel.add(prevButton);
-        bottomPanel.add(nextButton);
+        bottomButtonsPanel.add(prevButton);
+        bottomButtonsPanel.add(nextButton);
+
+        if (platformMessageLabel != null) {
+            platformMessageLabel.setForeground(Color.YELLOW);
+            bottomPanel.add(platformMessageLabel, BorderLayout.NORTH);
+        }
+        bottomPanel.add(bottomButtonsPanel, BorderLayout.CENTER);
 
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);

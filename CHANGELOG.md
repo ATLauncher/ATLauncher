@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.6.3
 
 ### New Features
+- Add messages in launcher config for mod/modpack platforms
 
 ### Fixes
 - Add user agent to paste upload
