@@ -1935,9 +1935,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
                     if (foundProjects != null) {
-                        fingerprintResponse.exactMatches.stream()
-                                .filter(em -> murmurHashes.containsKey(em.file.packageFingerprint))
-                                .forEach(foundMod -> {
+                        fingerprintResponse.exactMatches.stream().filter(em -> em != null && em.file != null
+                                && murmurHashes.containsKey(em.file.packageFingerprint)).forEach(foundMod -> {
                                     DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint);
 
                                     // add CurseForge information
