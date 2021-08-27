@@ -437,6 +437,10 @@ public class App {
 
         LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
 
+        if (OS.isMac()) {
+            LogManager.info("Using Mac App? " + (OS.isUsingMacApp() ? "Yes" : "No"));
+        }
+
         try {
             SystemInfo systemInfo = OS.getSystemInfo();
             HardwareAbstractionLayer hal = systemInfo.getHardware();

@@ -10,3 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Print out if user is using Mac app during startup
