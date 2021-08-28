@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Show error when logging into Microsoft accounts from a country XBL is not available/banned
 
 ### Misc
 - Print out if user is using Mac app during startup

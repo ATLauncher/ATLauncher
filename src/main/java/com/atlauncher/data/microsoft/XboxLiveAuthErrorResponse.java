@@ -45,6 +45,10 @@ public class XboxLiveAuthErrorResponse {
             return GetText.tr("Child accounts cannot login without being part of a family.");
         }
 
+        if (xErr == 2148916235l) {
+            return GetText.tr("Account is from a country where Xbox Live is banned/not available.");
+        }
+
         return null;
     }
 
