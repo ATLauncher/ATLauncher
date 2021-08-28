@@ -255,8 +255,10 @@ public final class AddFTBPackDialog extends JDialog {
             contentPanel.setLayout(new WrapLayout());
 
             packs.forEach(ftbPack -> {
-                contentPanel.add(new FTBPackCard(this, ftbPack), gbc);
-                gbc.gridy++;
+                if (!ftbPack.status.equals("error")) {
+                    contentPanel.add(new FTBPackCard(this, ftbPack), gbc);
+                    gbc.gridy++;
+                }
             });
         }
 

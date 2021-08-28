@@ -41,6 +41,10 @@ public class ModpacksChPackManifest {
     public List<ModpacksChPackTag> tags;
 
     public boolean hasTag(String tag) {
+        if (tags == null) {
+            return false;
+        }
+
         return tags.stream().map(t -> t.name).anyMatch(tag::equals);
     }
 

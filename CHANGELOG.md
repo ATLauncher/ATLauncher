@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Show error when logging into Microsoft accounts from a country XBL is not available/banned
+- The FTB packs dialog failing when browsing packs with an error
 
 ### Misc
 - Print out if user is using Mac app during startup
