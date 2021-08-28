@@ -11,3 +11,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Print out if user is using Mac app during startup
+- Show warning when downloaded file doesn't match the hash but we ignore failures

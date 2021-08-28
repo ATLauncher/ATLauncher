@@ -498,8 +498,19 @@ public final class Download {
         // download the file to disk
         this.downloadDirect();
 
-        // check if the hash matches (or they're ignored and file isn't 0 bytes)
-        if ((this.ignoreFailures && this.to.toFile().length() != 0) || hashMatches()) {
+        boolean hashMatches = hashMatches();
+
+        // if hash matches we're good
+        if (hashMatches) {
+            return true;
+        }
+
+        // if hash doesn't match but we're ignoring failures, then pass it if not 0 in
+        // size and log a warning
+        if (this.ignoreFailures && this.to.toFile().length() != 0) {
+            LogManager
+                    .warn(String.format("%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
+                            this.to.getFileName(), this.to.toFile().length()));
             return true;
         }
 
