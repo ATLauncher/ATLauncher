@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Show better error after user has migrated their Mojang account to a Microsoft one
 
 ### Misc

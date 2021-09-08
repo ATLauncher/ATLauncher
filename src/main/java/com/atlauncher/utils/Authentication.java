@@ -28,6 +28,8 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
+import org.mini2Dx.gettext.GetText;
+
 public class Authentication {
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
@@ -43,7 +45,13 @@ public class Authentication {
                 auth.logIn();
                 response.setAuth(auth);
             } catch (AuthenticationException e) {
-                response.setErrorMessage(e.getMessage());
+                if (e.getMessage().contains("410")) {
+                    response.setErrorMessage(GetText.tr(
+                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
+                } else {
+                    response.setErrorMessage(e.getMessage());
+                }
+
                 LogManager.error("Authentication failed");
             }
         }
@@ -76,7 +84,13 @@ public class Authentication {
                 response.setOffline();
                 LogManager.error("Authentication servers unavailable");
             } catch (AuthenticationException e) {
-                response.setErrorMessage(e.getMessage());
+                if (e.getMessage().contains("410")) {
+                    response.setErrorMessage(GetText.tr(
+                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
+                } else {
+                    response.setErrorMessage(e.getMessage());
+                }
+
                 LogManager.error("Authentication failed");
             }
         }
