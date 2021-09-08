@@ -3,11 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.6.6
+## 3.4.6.7
 
 ### New Features
 
 ### Fixes
-- Show better error after user has migrated their Mojang account to a Microsoft one
 
 ### Misc
