@@ -212,7 +212,7 @@ public class MojangAccount extends AbstractAccount {
             response = Authentication.login(this, false);
         }
 
-        if (response == null || response.hasError()) {
+        if (response == null || (response.hasError() && !response.isOffline())) {
             LogManager.error("Access token is NOT valid! Will attempt to get another one!");
 
             if (!this.remember) {
