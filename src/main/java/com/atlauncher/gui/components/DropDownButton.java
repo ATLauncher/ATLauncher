@@ -22,6 +22,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
@@ -34,6 +35,10 @@ public class DropDownButton extends JButton {
     private final JPopupMenu popupMenu;
 
     public DropDownButton(String label, JPopupMenu popupMenu) {
+        this(label, popupMenu, false, null);
+    }
+
+    public DropDownButton(String label, JPopupMenu popupMenu, boolean isSeparated, MouseListener l) {
         super(label);
         this.popupMenu = popupMenu;
 
@@ -43,9 +48,13 @@ public class DropDownButton extends JButton {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                popupMenu.setPreferredSize(new Dimension(Math.max(getWidth(), popupMenu.getPreferredSize().width),
-                        popupMenu.getPreferredSize().height));
-                popupMenu.show(DropDownButton.this, 0, getHeight());
+                if (isSeparated && e.getX() <= getWidth() - 25 && l != null) {
+                    l.mousePressed(e);
+                } else {
+                    popupMenu.setPreferredSize(new Dimension(Math.max(getWidth(), popupMenu.getPreferredSize().width),
+                            popupMenu.getPreferredSize().height));
+                    popupMenu.show(DropDownButton.this, 0, getHeight());
+                }
             }
         });
     }

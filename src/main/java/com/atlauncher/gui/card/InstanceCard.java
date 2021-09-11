@@ -24,7 +24,6 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -82,7 +81,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
-    private final JButton playButton = new JButton(GetText.tr("Play"));
     private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
     private final JButton updateButton = new JButton(GetText.tr("Update"));
     private final JButton renameButton = new JButton(GetText.tr("Rename"));
@@ -94,6 +92,17 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
+
+    private final JPopupMenu playPopupMenu = new JPopupMenu();
+    private final JMenuItem playOnlinePlayMenuItem = new JMenuItem(GetText.tr("Play Online"));
+    private final JMenuItem playOfflinePlayMenuItem = new JMenuItem(GetText.tr("Play Offline"));
+    private final DropDownButton playButton = new DropDownButton(GetText.tr("Play"), playPopupMenu, true,
+            new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    play(false);
+                }
+            });
 
     private final JPopupMenu backupPopupMenu = new JPopupMenu();
     private final JMenuItem normalBackupMenuItem = new JMenuItem(GetText.tr("Normal Backup"));
@@ -172,6 +181,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.exportButton);
         bottom.add(this.getHelpButton);
 
+        setupPlayPopupMenus();
         setupButtonPopupMenus();
 
         // check it can be exported
@@ -238,7 +248,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         this.addActionListeners();
         this.addMouseListeners();
-        this.validatePlayable();
+    }
+
+    private void setupPlayPopupMenus() {
+        playOnlinePlayMenuItem.addActionListener(e -> {
+            play(false);
+        });
+        playPopupMenu.add(playOnlinePlayMenuItem);
+
+        playOfflinePlayMenuItem.addActionListener(e -> {
+            play(true);
+        });
+        playPopupMenu.add(playOfflinePlayMenuItem);
     }
 
     private void setupButtonPopupMenus() {
@@ -353,74 +374,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
     }
 
-    private void validatePlayable() {
-        if (!instance.launcher.isPlayable) {
-            for (ActionListener al : playButton.getActionListeners()) {
-                playButton.removeActionListener(al);
-            }
-            playButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
-                    .setContent(GetText
-                            .tr("Cannot play instance as it's corrupted. Please reinstall, update or delete it."))
-                    .setType(DialogManager.ERROR).show());
-            for (ActionListener al : backupButton.getActionListeners()) {
-                backupButton.removeActionListener(al);
-            }
-            backupButton.addActionListener(e -> DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
-                    .setContent(GetText
-                            .tr("Cannot backup instance as it's corrupted. Please reinstall, update or delete it."))
-                    .setType(DialogManager.ERROR).show());
-        }
-    }
-
     private void addActionListeners() {
-        this.playButton.addActionListener(e -> {
-            if (!App.settings.ignoreJavaOnInstanceLaunch && instance.launcher.java != null
-                    && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown")
-                    && !instance.launcher.java.conforms()) {
-                DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}",
-                                "<br/><br/>", instance.launcher.java.getVersionString())).build())
-                        .setType(DialogManager.ERROR).show();
-                return;
-            }
-
-            if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
-                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
-                        .setContent(new HTMLBuilder().center().text(GetText
-                                .tr("An update is available for this instance.<br/><br/>Do you want to update now?"))
-                                .build())
-                        .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
-
-                if (ret == 0) {
-                    if (AccountManager.getSelectedAccount() == null) {
-                        DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                                .setContent(GetText.tr("Cannot update pack as you have no account selected."))
-                                .setType(DialogManager.ERROR).show();
-                    } else {
-                        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
-                                "UpdateFromPlay", instance.getAnalyticsCategory());
-                        instance.update();
-                    }
-                } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
-                    if (ret == 2) {
-                        instance.ignoreUpdate();
-                    }
-
-                    if (!App.launcher.minecraftLaunched) {
-                        if (instance.launch()) {
-                            App.launcher.setMinecraftLaunched(true);
-                        }
-                    }
-                }
-            } else {
-                if (!App.launcher.minecraftLaunched) {
-                    if (instance.launch()) {
-                        App.launcher.setMinecraftLaunched(true);
-                    }
-                }
-            }
-        });
         this.reinstallButton.addActionListener(e -> {
             instance.startReinstall();
         });
@@ -488,49 +442,69 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
     }
 
+    private void play(boolean offline) {
+        if (!instance.launcher.isPlayable) {
+            DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
+                    .setContent(GetText
+                            .tr("Cannot play instance as it's corrupted. Please reinstall, update or delete it."))
+                    .setType(DialogManager.ERROR).show();
+            return;
+        }
+
+        if (!App.settings.ignoreJavaOnInstanceLaunch && instance.launcher.java != null
+                && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown") && !instance.launcher.java.conforms()) {
+            DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}",
+                            "<br/><br/>", instance.launcher.java.getVersionString())).build())
+                    .setType(DialogManager.ERROR).show();
+            return;
+        }
+
+        if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr(
+                                    "An update is available for this instance.<br/><br/>Do you want to update now?"))
+                            .build())
+                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
+
+            if (ret == 0) {
+                if (AccountManager.getSelectedAccount() == null) {
+                    DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                            .setContent(GetText.tr("Cannot update pack as you have no account selected."))
+                            .setType(DialogManager.ERROR).show();
+                } else {
+                    Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateFromPlay",
+                            instance.getAnalyticsCategory());
+                    instance.update();
+                }
+            } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
+                if (ret == 2) {
+                    instance.ignoreUpdate();
+                }
+
+                if (!App.launcher.minecraftLaunched) {
+                    if (instance.launch()) {
+                        App.launcher.setMinecraftLaunched(true);
+                    }
+                }
+            }
+        } else {
+            if (!App.launcher.minecraftLaunched) {
+                if (instance.launch(offline)) {
+                    App.launcher.setMinecraftLaunched(true);
+                }
+            }
+        }
+    }
+
     private void addMouseListeners() {
         this.image.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2) {
-                    if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
-                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "An update is available for this instance.<br/><br/>Do you want to update now?"))
-                                        .build())
-                                .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
-
-                        if (ret == 0) {
-                            if (AccountManager.getSelectedAccount() == null) {
-                                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                                        .setContent(GetText.tr("Cannot update pack as you have no account selected."))
-                                        .setType(DialogManager.ERROR).show();
-                            } else {
-                                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
-                                        "UpdateFromPlay", instance.getAnalyticsCategory());
-                                instance.update();
-                            }
-                        } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                            if (!App.launcher.minecraftLaunched) {
-                                if (instance.launch()) {
-                                    App.launcher.setMinecraftLaunched(true);
-                                }
-                            }
-                        } else if (ret == 2) {
-                            instance.ignoreUpdate();
-                            if (!App.launcher.minecraftLaunched) {
-                                if (instance.launch()) {
-                                    App.launcher.setMinecraftLaunched(true);
-                                }
-                            }
-                        }
-                    } else {
-                        if (!App.launcher.minecraftLaunched) {
-                            if (instance.launch()) {
-                                App.launcher.setMinecraftLaunched(true);
-                            }
-                        }
-                    }
+                    play(false);
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
 

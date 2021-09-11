@@ -48,12 +48,13 @@ import com.mojang.util.UUIDTypeAdapter;
 
 public class MCLauncher {
 
-    public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir) throws Exception {
-        return launch(account, instance, null, nativesTempDir.toFile());
+    public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir, String username)
+            throws Exception {
+        return launch(account, instance, null, nativesTempDir.toFile(), username);
     }
 
-    public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir)
-            throws Exception {
+    public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
+            String username) throws Exception {
         String props = "[]";
 
         if (!response.isOffline()) {
@@ -61,15 +62,15 @@ public class MCLauncher {
             props = gson.toJson(response.getAuth().getUserProperties());
         }
 
-        return launch(account, instance, props, nativesTempDir.toFile());
+        return launch(account, instance, props, nativesTempDir.toFile(), username);
     }
 
-    private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir)
-            throws Exception {
-        List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath());
+    private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
+            String username) throws Exception {
+        List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(), username);
 
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
-                + censorArguments(arguments, account, props));
+                + censorArguments(arguments, account, props, username));
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
@@ -78,7 +79,7 @@ public class MCLauncher {
     }
 
     private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
-            String nativesDir) {
+            String nativesDir, String username) {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
@@ -227,7 +228,7 @@ public class MCLauncher {
         String classpath = cpb.toString();
 
         for (String argument : instance.arguments.jvmAsStringList()) {
-            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath));
+            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
         }
 
         if (OS.isWindows() && !arguments
@@ -249,7 +250,7 @@ public class MCLauncher {
         arguments.add(instance.getMainClass());
 
         for (String argument : instance.arguments.gameAsStringList()) {
-            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath));
+            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
         }
 
         if (App.settings.maximiseMinecraft) {
@@ -264,10 +265,10 @@ public class MCLauncher {
     }
 
     private static String replaceArgument(String incomingArgument, Instance instance, AbstractAccount account,
-            String props, String nativesDir, String classpath) {
+            String props, String nativesDir, String classpath, String username) {
         String argument = incomingArgument;
 
-        argument = argument.replace("${auth_player_name}", account.minecraftUsername);
+        argument = argument.replace("${auth_player_name}", username);
         argument = argument.replace("${profile_name}", instance.getName());
         argument = argument.replace("${user_properties}", Optional.ofNullable(props).orElse("[]"));
         argument = argument.replace("${version_name}", instance.getMinecraftVersion());
@@ -290,7 +291,8 @@ public class MCLauncher {
         return argument;
     }
 
-    private static String censorArguments(List<String> arguments, AbstractAccount account, String props) {
+    private static String censorArguments(List<String> arguments, AbstractAccount account, String props,
+            String username) {
         String argsString = arguments.toString();
 
         if (!LogManager.showDebug) {
@@ -298,7 +300,7 @@ public class MCLauncher {
                 argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
             }
 
-            argsString = argsString.replace(account.minecraftUsername, "REDACTED");
+            argsString = argsString.replace(username, "REDACTED");
             argsString = argsString.replace(account.uuid, "REDACTED");
         }
 

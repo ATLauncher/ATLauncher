@@ -186,4 +186,15 @@ public final class DialogManager {
 
         return -1;
     }
+
+    public String showInput(String defaultValue) {
+        try {
+            return (String) JOptionPane.showInputDialog(this.getParent(), this.content, this.title, this.type,
+                    this.icon, null, defaultValue);
+        } catch (Exception e) {
+            LogManager.logStackTrace(e, false);
+        }
+
+        return null;
+    }
 }
