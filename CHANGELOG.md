@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow exporting all instances
 
 ### Fixes
+- Don't check mods on CurseForge if none were installed
 
 ### Misc

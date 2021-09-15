@@ -153,7 +153,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public List<Mod> allMods;
     public List<Mod> selectedMods;
     public List<Mod> unselectedMods = new ArrayList<>();
-    public List<DisableableMod> modsInstalled;
+    public List<DisableableMod> modsInstalled = new ArrayList<>();
 
     public boolean assetsMapToResources = false;
 
@@ -807,7 +807,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             this.selectedMods = this.allMods;
         }
 
-        modsInstalled = new ArrayList<>();
         for (com.atlauncher.data.json.Mod mod : this.selectedMods) {
             String file = mod.getFile();
 
@@ -1905,7 +1904,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void checkModsOnCurseForge() {
-        if (App.settings.dontCheckModsOnCurseForge) {
+        if (App.settings.dontCheckModsOnCurseForge || this.modsInstalled.size() == 0) {
             return;
         }
 
