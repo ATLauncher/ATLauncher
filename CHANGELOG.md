@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.7.1
 
 ### New Features
+- Allow exporting all instances
 
 ### Fixes
 

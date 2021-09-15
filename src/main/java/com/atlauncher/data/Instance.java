@@ -1171,7 +1171,7 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
-        return canEditInstance();
+        return true;
     }
 
     public boolean canEditInstance() {
