@@ -3,13 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.7.1
+## 3.4.7.2
 
 ### New Features
-- Allow exporting all instances
 
 ### Fixes
-- Don't check mods on CurseForge if none were installed
-- A couple analytics events with wrong category on instance launch
 
 ### Misc
