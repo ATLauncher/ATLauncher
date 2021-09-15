@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Don't check mods on CurseForge if none were installed
+- A couple analytics events with wrong category on instance launch
 
 ### Misc

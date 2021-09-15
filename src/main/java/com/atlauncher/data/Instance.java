@@ -640,7 +640,8 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
-        Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, "Play", getAnalyticsCategory());
+        Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, offline ? "PlayOffline" : "Play",
+                getAnalyticsCategory());
 
         Thread launcher = new Thread(() -> {
             try {
@@ -1783,6 +1784,10 @@ public class Instance extends MinecraftVersion {
 
         if (isModrinthImport()) {
             return "ModrinthImport";
+        }
+
+        if (isMultiMcImport()) {
+            return "MultiMcImport";
         }
 
         if (isVanillaInstance()) {
