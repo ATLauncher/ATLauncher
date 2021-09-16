@@ -113,6 +113,15 @@ public class InstanceManager {
                         instance.save();
                     }
 
+                    if (instance.launcher.account != null
+                            && !AccountManager.isAccountByName(instance.launcher.account)) {
+                        LogManager.warn(
+                                String.format("No account with name of %s, so setting instance account back to default",
+                                        instance.launcher.account));
+                        instance.launcher.account = null;
+                        instance.save();
+                    }
+
                     Data.INSTANCES.add(instance);
                 }
             } catch (Exception e2) {

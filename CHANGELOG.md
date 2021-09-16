@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Launching an instance with a non valid account set causing it to not launch
 
 ### Misc
