@@ -1,0 +1,10 @@
+{
+  "name": "@atlauncher/atlauncher-label-cleanup",
+  "version": "1.0.0",
+  "main": "action.js",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.5.0",
+    "@actions/github": "^5.0.0"
+  }
+}

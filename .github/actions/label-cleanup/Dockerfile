@@ -1,13 +1,10 @@
-FROM andrius/alpine-ruby
+FROM node:16-alpine
 
-RUN apk update && \
-    apk upgrade && \
-    apk add bash curl-dev ruby-dev build-base git ruby ruby-io-console ruby-bundler ruby-json ruby-rdoc && \
-    rm -rf /var/cache/apk/*
+WORKDIR /action
 
-COPY entrypoint.sh /entrypoint.sh
-COPY action.rb /action.rb
+COPY package.json /action/package.json
+RUN npm install
 
-RUN chmod +x /entrypoint.sh
+COPY . /action
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT [ "node", "/action/action.js" ]
