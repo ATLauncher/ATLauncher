@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Getting instance image not catching all exceptions and failing to load
 
 ### Misc
