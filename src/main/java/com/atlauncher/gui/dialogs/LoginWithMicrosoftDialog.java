@@ -221,6 +221,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 String error = xboxLiveAuthErrorResponse.getErrorMessageForCode();
 
                 if (error != null) {
+                    LogManager.warn(error);
                     DialogManager.okDialog().setTitle(GetText.tr("Error logging into Xbox Live"))
                             .setContent(new HTMLBuilder().center().text(error).build()).setType(DialogManager.ERROR)
                             .show();

@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Getting instance image not catching all exceptions and failing to load
+- Log the warning received when logging in with Microsoft account to the launchers console
 
 ### Misc
