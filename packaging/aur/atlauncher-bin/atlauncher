@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # fix for users of special IM modules
-unset XMODIFIERS GTK_IM_MODULE QT_IM_MODULE
+#unset XMODIFIERS GTK_IM_MODULE QT_IM_MODULE
 
 mkdir -p "${HOME}/.local/share/atlauncher"
 cd "${HOME}/.local/share/atlauncher"
