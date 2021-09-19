@@ -24,20 +24,92 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
+import com.atlauncher.data.nickymoe.SlugResponse;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+
 public class ImportPackUtils {
     public static boolean loadFromUrl(String url) {
+        if (url.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
+            return loadFromCurseForgeUrl(url);
+        }
+
         return loadFromUrl(new Download().setUrl(url).downloadTo(FileSystem.TEMP.resolve("import.zip")), null, null);
+    }
+
+    public static boolean loadFromCurseForgeUrl(String url) {
+        if (!url.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
+            LogManager.error("Cannot install as the url was not a CurseForge modpack url");
+            return false;
+        }
+
+        Pattern pattern = Pattern.compile(
+                "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
+        Matcher matcher = pattern.matcher(url);
+
+        if (!matcher.find() || matcher.groupCount() < 2) {
+            LogManager.error("Cannot install as the url was not a valid Curse modpack url");
+            return false;
+        }
+
+        String packSlug = matcher.group(1);
+        Integer projectId = null;
+        Integer fileId = null;
+
+        LogManager.info(matcher.groupCount() + "");
+
+        if (matcher.groupCount() == 2 && matcher.group(2) != null) {
+            fileId = Integer.parseInt(matcher.group(2));
+        }
+
+        LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
+
+        SlugResponse modInfo = new Download()
+                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                        "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
+                                + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
+                .setUrl("https://curse.nikky.moe/graphql").asClass(SlugResponse.class);
+
+        projectId = modInfo.data.addons.get(0).id;
+
+        if (fileId == null) {
+            fileId = modInfo.data.addons.get(0).defaultFileId;
+        }
+
+        if (projectId == null || fileId == null) {
+            LogManager.error(
+                    "Cannot install as the id's couldn't be found. Try using a specific files install link instead.");
+            return false;
+        }
+
+        LogManager.debug("Resolved to project id " + projectId + " and file id of " + fileId);
+
+        CurseForgeFile curseFile = CurseForgeApi.getFileForProject(projectId, fileId);
+        Path tempZip = FileSystem.TEMP.resolve(curseFile.fileName);
+
+        try {
+            new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip).size(curseFile.fileLength)
+                    .fingerprint(curseFile.packageFingerprint).downloadFile();
+        } catch (IOException e) {
+            LogManager.error("Failed to download modpack file from Curse");
+            return false;
+        }
+
+        return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
     }
 
     public static boolean loadFromUrl(Download download, Integer projectId, Integer fileId) {

@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.7.3
 
 ### New Features
+- Add back ability to import a CurseForge modpack from a curseforge.com url
 
 ### Fixes
 - Getting instance image not catching all exceptions and failing to load
