@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.7.4
 
 ### New Features
+- Ignore some new tracking arguments when launching new snapshots
 
 ### Fixes
 - Launching Minecraft with MSA account not passing correct user_type param

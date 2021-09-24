@@ -47,6 +47,15 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
 public class MCLauncher {
+    public static final List<String> IGNORED_ARGUMENTS = new ArrayList<String>() {
+        {
+            // these seem to be tracking/telemetry things
+            add("--clientId");
+            add("${clientid}");
+            add("--xuid");
+            add("${auth_xuid}");
+        }
+    };
 
     public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir, String username)
             throws Exception {
@@ -228,6 +237,10 @@ public class MCLauncher {
         String classpath = cpb.toString();
 
         for (String argument : instance.arguments.jvmAsStringList()) {
+            if (IGNORED_ARGUMENTS.contains(argument)) {
+                continue;
+            }
+
             arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
         }
 
@@ -250,6 +263,10 @@ public class MCLauncher {
         arguments.add(instance.getMainClass());
 
         for (String argument : instance.arguments.gameAsStringList()) {
+            if (IGNORED_ARGUMENTS.contains(argument)) {
+                continue;
+            }
+
             arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
         }
 
