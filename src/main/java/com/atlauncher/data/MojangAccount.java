@@ -93,7 +93,6 @@ public class MojangAccount extends AbstractAccount {
         this.remember = remember;
         this.clientToken = clientToken;
         this.store = store;
-        this.type = "mojang";
     }
 
     @Override
@@ -202,6 +201,11 @@ public class MojangAccount extends AbstractAccount {
     @Override
     public String getSessionToken() {
         return String.format("token:%s:%s", this.getAccessToken(), this.getUUIDNoDashes());
+    }
+
+    @Override
+    public String getUserType() {
+        return "mojang";
     }
 
     public LoginResponse login() {

@@ -282,7 +282,7 @@ public class MCLauncher {
         argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
         argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
         argument = argument.replace("${natives_directory}", nativesDir);
-        argument = argument.replace("${user_type}", account.type);
+        argument = argument.replace("${user_type}", account.getUserType());
         argument = argument.replace("${auth_session}", account.getSessionToken());
         argument = argument.replace("${library_directory}", FileSystem.LIBRARIES.toAbsolutePath().toString());
         argument = argument.replace("${classpath}", classpath);

@@ -78,7 +78,6 @@ public class MicrosoftAccount extends AbstractAccount {
         this.minecraftUsername = profile.name;
         this.uuid = profile.id;
         this.username = loginResponse.username;
-        this.type = "Xbox";
         this.mustLogin = false;
 
         this.accessTokenExpiresAt = new Date();
@@ -93,6 +92,11 @@ public class MicrosoftAccount extends AbstractAccount {
     @Override
     public String getSessionToken() {
         return accessToken;
+    }
+
+    @Override
+    public String getUserType() {
+        return "msa";
     }
 
     @Override

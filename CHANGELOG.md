@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Launching Minecraft with MSA account not passing correct user_type param
 
 ### Misc
