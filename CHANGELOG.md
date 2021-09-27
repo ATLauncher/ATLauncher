@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Ignore some new tracking arguments when launching new snapshots
+- Add in View Mod and File buttons when adding mods from CurseForge or Modrinth [#509]
 
 ### Fixes
 - Launching Minecraft with MSA account not passing correct user_type param

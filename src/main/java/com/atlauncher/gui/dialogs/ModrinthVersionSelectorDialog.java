@@ -45,6 +45,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ModrinthApi;
+import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -56,6 +57,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private String installedVersionId = null;
 
     private JButton addButton;
+    private JButton viewModButton;
+    private JButton viewFileButton;
     private JLabel versionsLabel;
     private JLabel installedJLabel;
     private JComboBox<ModrinthVersion> versionsDropdown;
@@ -113,6 +116,12 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         addButton = new JButton(GetText.tr("Add"));
         addButton.setEnabled(false);
 
+        viewModButton = new JButton(GetText.tr("View Mod"));
+        viewModButton.setEnabled(false);
+
+        viewFileButton = new JButton(GetText.tr("View File"));
+        viewFileButton.setEnabled(false);
+
         // Top Panel Stuff
         JPanel top = new JPanel(new BorderLayout());
         // #. {0} is the name of the mod we're installing
@@ -159,9 +168,21 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             dispose();
         });
 
+        viewModButton.addActionListener(e -> {
+            OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug));
+        });
+
+        viewFileButton.addActionListener(e -> {
+            ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
+
+            OS.openWebBrowser(String.format("https://modrinth.com/mod/%s/version/%s", mod.slug, version.id));
+        });
+
         JButton cancel = new JButton(GetText.tr("Cancel"));
         cancel.addActionListener(e -> dispose());
         bottom.add(addButton);
+        bottom.add(viewModButton);
+        bottom.add(viewFileButton);
         bottom.add(cancel);
 
         add(top, BorderLayout.NORTH);
@@ -241,6 +262,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             versionsLabel.setVisible(true);
             versionsDropdown.setVisible(true);
             addButton.setEnabled(true);
+            viewModButton.setEnabled(true);
+            viewFileButton.setEnabled(true);
             versionsDropdown.setEnabled(true);
         };
 
