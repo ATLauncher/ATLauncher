@@ -11,5 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Launching Minecraft with MSA account not passing correct user_type param
+- Fix server backups not being created
 
 ### Misc
+- Remove confirmation popup when making a server backup

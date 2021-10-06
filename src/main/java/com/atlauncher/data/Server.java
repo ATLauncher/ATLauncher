@@ -23,20 +23,26 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -123,6 +129,31 @@ public class Server {
             }
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to launch server", e);
+        }
+    }
+
+    public void backup() {
+        Analytics.sendEvent(pack + " - " + version, "Backup", "Server");
+
+        Timestamp timestamp = new Timestamp(new Date().getTime());
+        String time = timestamp.toString().replaceAll("[^0-9]", "_");
+        String filename = "Server-" + getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
+        Path backupZip = FileSystem.BACKUPS.resolve(filename);
+
+        ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Backing Up {0}", name));
+        progressDialog.addThread(new Thread(() -> {
+            boolean success = ArchiveUtils.createZip(getRoot(), backupZip);
+
+            progressDialog.setReturnValue(success);
+            progressDialog.close();
+        }));
+        progressDialog.start();
+
+        if (progressDialog.getReturnValue()) {
+            App.TOASTER.pop(GetText.tr("Backup is complete"));
+            LogManager.info(String.format("Backup complete and stored at %s", backupZip.toString()));
+        } else {
+            App.TOASTER.popError(GetText.tr("Error making backup"));
         }
     }
 

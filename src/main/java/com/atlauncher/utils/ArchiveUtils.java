@@ -100,14 +100,14 @@ public class ArchiveUtils {
         return contents;
     }
 
-    public static void extract(Path archivePath, Path extractToPath) {
-        extract(archivePath, extractToPath, name -> name);
+    public static boolean extract(Path archivePath, Path extractToPath) {
+        return extract(archivePath, extractToPath, name -> name);
     }
 
-    public static void extract(Path archivePath, Path extractToPath, NameMapper nameMapper) {
+    public static boolean extract(Path archivePath, Path extractToPath, NameMapper nameMapper) {
         try {
             ZipUtil.unpack(archivePath.toFile(), extractToPath.toFile(), nameMapper);
-            return;
+            return true;
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LogManager.error("Failed to extract " + archivePath.toAbsolutePath());
@@ -155,19 +155,20 @@ public class ArchiveUtils {
             }
         } catch (Exception e) {
             LogManager.logStackTrace(e);
+            return false;
         }
 
-        return;
+        return true;
     }
 
-    public static void createZip(Path pathToCompress, Path archivePath) {
-        createZip(pathToCompress, archivePath, name -> name);
+    public static boolean createZip(Path pathToCompress, Path archivePath) {
+        return createZip(pathToCompress, archivePath, name -> name);
     }
 
-    public static void createZip(Path pathToCompress, Path archivePath, NameMapper nameMapper) {
+    public static boolean createZip(Path pathToCompress, Path archivePath, NameMapper nameMapper) {
         try {
             ZipUtil.pack(pathToCompress.toFile(), archivePath.toFile(), nameMapper);
-            return;
+            return true;
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LogManager.error("Failed to create zip " + archivePath.toAbsolutePath() + " from "
@@ -214,8 +215,9 @@ public class ArchiveUtils {
             });
         } catch (Exception e) {
             LogManager.logStackTrace(e);
+            return false;
         }
 
-        return;
+        return true;
     }
 }
