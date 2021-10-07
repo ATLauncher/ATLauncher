@@ -22,6 +22,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +78,10 @@ public class MCLauncher {
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
             String username) throws Exception {
-        List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(), username);
+        List<String> rawArguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(), username);
+        String wrapperCommand = "zsh -c %\"command\"%"; // Test command
+        List<String> arguments = wrapArguments(wrapperCommand, rawArguments);
+        LogManager.info(arguments.toString());
 
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));
@@ -85,6 +90,33 @@ public class MCLauncher {
         processBuilder.redirectErrorStream(true);
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();
+    }
+
+    private static List<String> wrapArguments(String wrapperCommand, List<String> args) {
+        List<String> wrapArgs = new LinkedList<String>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
+
+        // wrapper not set
+        if (wrapArgs.isEmpty())
+            return args;
+
+        String wrapArgsKey = "%command%";
+        int commandIndex = wrapArgs.indexOf(wrapArgsKey);
+        if (commandIndex >= 0) {
+            wrapArgs.remove(commandIndex);
+            wrapArgs.addAll(commandIndex, args);
+            return wrapArgs;
+        }
+
+        // make args as a whole string, useful in the case of ''
+        String wrapArgsAsWholeStringKey = "%\"command\"%";
+        commandIndex = wrapArgs.indexOf(wrapArgsAsWholeStringKey);
+        if (commandIndex >= 0) {
+            wrapArgs.set(commandIndex, "'" + String.join("' '", args) + "'");
+            return wrapArgs;
+        }
+
+        // failback to wrap command
+        return wrapArgs;
     }
 
     private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
