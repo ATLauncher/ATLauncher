@@ -661,6 +661,11 @@ public class Instance extends MinecraftVersion {
                         .orElse(App.settings.preLaunchCommand);
                 String postExitCommand = Optional.ofNullable(this.launcher.postExitCommand)
                         .orElse(App.settings.postExitCommand);
+                String wrapperCommand = Optional.ofNullable(this.launcher.wrapperCommand)
+                        .orElse(App.settings.wrapperCommand);
+                if (!enableCommands) {
+                    wrapperCommand = null;
+                }
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
@@ -705,7 +710,7 @@ public class Instance extends MinecraftVersion {
                         }
                     }
 
-                    process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir, username);
+                    process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir, wrapperCommand, username);
                 } else if (account instanceof MicrosoftAccount) {
                     MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
 
@@ -746,7 +751,7 @@ public class Instance extends MinecraftVersion {
                         }
                     }
 
-                    process = MCLauncher.launch(microsoftAccount, this, nativesTempDir, username);
+                    process = MCLauncher.launch(microsoftAccount, this, nativesTempDir, wrapperCommand, username);
                 }
 
                 if (process == null) {

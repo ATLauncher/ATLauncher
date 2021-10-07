@@ -64,6 +64,7 @@ public class InstanceLauncher {
     public Boolean enableCommands = null;
     public String preLaunchCommand = null;
     public String postExitCommand = null;
+    public String wrapperCommand = null;
 
     public boolean isDev;
     public boolean isPlayable;

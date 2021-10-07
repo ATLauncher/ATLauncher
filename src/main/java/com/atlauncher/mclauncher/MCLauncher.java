@@ -59,13 +59,13 @@ public class MCLauncher {
         }
     };
 
-    public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir, String username)
-            throws Exception {
-        return launch(account, instance, null, nativesTempDir.toFile(), username);
+    public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir,
+            String wrapperCommand, String username) throws Exception {
+        return launch(account, instance, null, nativesTempDir.toFile(), wrapperCommand, username);
     }
 
     public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
-            String username) throws Exception {
+            String wrapperCommand, String username) throws Exception {
         String props = "[]";
 
         if (!response.isOffline()) {
@@ -73,15 +73,14 @@ public class MCLauncher {
             props = gson.toJson(response.getAuth().getUserProperties());
         }
 
-        return launch(account, instance, props, nativesTempDir.toFile(), username);
+        return launch(account, instance, props, nativesTempDir.toFile(), wrapperCommand, username);
     }
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
-            String username) throws Exception {
-        List<String> rawArguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(), username);
-        String wrapperCommand = "zsh -c %\"command\"%"; // Test command
-        List<String> arguments = wrapArguments(wrapperCommand, rawArguments);
-        LogManager.info(arguments.toString());
+            String wrapperCommand, String username) throws Exception {
+        List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(), username);
+        if (wrapperCommand != null && !wrapperCommand.isBlank())
+            arguments = wrapArguments(wrapperCommand, arguments);
 
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));

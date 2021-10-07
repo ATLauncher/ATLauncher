@@ -36,6 +36,7 @@ import org.mini2Dx.gettext.GetText;
 public class CommandsSettingsTab extends AbstractSettingsTab implements ActionListener {
     private final JTextField preLaunchCommand;
     private final JTextField postExitCommand;
+    private final JTextField wrapperCommand;
 
     private final JCheckBox enableCommands;
 
@@ -92,6 +93,21 @@ public class CommandsSettingsTab extends AbstractSettingsTab implements ActionLi
         nextRow();
         // endregion
 
+        // region Wrapper command
+        JLabelWithHover wrapperCommandLabel = new JLabelWithHover(GetText.tr("Wrapper command") + ":", HELP_ICON,
+                GetText.tr(
+                        "Wrapper command allow launcher using an extra wapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
+        add(wrapperCommandLabel, gbc);
+
+        nextColumn();
+
+        wrapperCommand = new JTextField(App.settings.wrapperCommand, 32);
+        wrapperCommand.setPreferredSize(new Dimension(516, 24));
+        add(wrapperCommand, gbc);
+
+        nextRow();
+        // endregion
+
         // region Information text pane
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -123,11 +139,13 @@ public class CommandsSettingsTab extends AbstractSettingsTab implements ActionLi
     private void disableCommands() {
         preLaunchCommand.setEnabled(false);
         postExitCommand.setEnabled(false);
+        wrapperCommand.setEnabled(false);
     }
 
     private void enableCommands() {
         preLaunchCommand.setEnabled(true);
         postExitCommand.setEnabled(true);
+        wrapperCommand.setEnabled(true);
     }
 
     private void nextRow() {
@@ -152,6 +170,7 @@ public class CommandsSettingsTab extends AbstractSettingsTab implements ActionLi
         App.settings.enableCommands = enableCommands.isSelected();
         App.settings.preLaunchCommand = nullIfEmpty(preLaunchCommand.getText());
         App.settings.postExitCommand = nullIfEmpty(postExitCommand.getText());
+        App.settings.wrapperCommand = nullIfEmpty(wrapperCommand.getText());
     }
 
     private String nullIfEmpty(String str) {

@@ -1083,6 +1083,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 instanceLauncher.postExitCommand = multiMCManifest.config.postExitCommand;
                 instanceLauncher.enableCommands = true;
             }
+            if (multiMCManifest.config.wrapperCommand != null && !multiMCManifest.config.wrapperCommand.isEmpty()) {
+                instanceLauncher.wrapperCommand = multiMCManifest.config.wrapperCommand;
+                instanceLauncher.enableCommands = true;
+            }
         }
 
         if (instanceLauncher.curseForgeManifest != null) {
