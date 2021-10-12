@@ -79,8 +79,9 @@ public class MCLauncher {
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
             String wrapperCommand, String username) throws Exception {
         List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(), username);
-        if (wrapperCommand != null && !wrapperCommand.isBlank())
+        if (wrapperCommand != null && !wrapperCommand.isEmpty()) {
             arguments = wrapArguments(wrapperCommand, arguments);
+        }
 
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));
@@ -95,8 +96,9 @@ public class MCLauncher {
         List<String> wrapArgs = new LinkedList<String>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
 
         // wrapper not set
-        if (wrapArgs.isEmpty())
+        if (wrapArgs.isEmpty()) {
             return args;
+        }
 
         String wrapArgsKey = "%command%";
         int commandIndex = wrapArgs.indexOf(wrapArgsKey);

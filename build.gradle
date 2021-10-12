@@ -204,7 +204,9 @@ artifacts {
 }
 
 test {
-    jvmArgs '--add-opens=java.base/sun.security.x509=ALL-UNNAMED'
+    if (JavaVersion.current().isJava9Compatible()) {
+        jvmArgs '--add-opens=java.base/sun.security.x509=ALL-UNNAMED'
+    }
 }
 
 task copyArtifacts(type: Copy) {

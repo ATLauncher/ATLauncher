@@ -96,7 +96,7 @@ public class CommandsSettingsTab extends AbstractSettingsTab implements ActionLi
         // region Wrapper command
         JLabelWithHover wrapperCommandLabel = new JLabelWithHover(GetText.tr("Wrapper command") + ":", HELP_ICON,
                 GetText.tr(
-                        "Wrapper command allow launcher using an extra wapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
+                        "Wrapper command allow launcher using an extra wrapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
         add(wrapperCommandLabel, gbc);
 
         nextColumn();
