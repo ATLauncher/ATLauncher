@@ -913,6 +913,10 @@ public class Instance extends MinecraftVersion {
                 }
             } catch (Exception e1) {
                 LogManager.logStackTrace(e1);
+                App.launcher.setMinecraftLaunched(false);
+                if (App.launcher.getParent() != null) {
+                    App.launcher.getParent().setVisible(true);
+                }
             }
         });
         launcher.start();
