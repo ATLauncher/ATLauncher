@@ -29,6 +29,7 @@ public class MultiMCInstanceConfig {
     public String javaArguments;
     public String preLaunchCommand;
     public String postExitCommand;
+    public String wrapperCommand;
 
     public MultiMCInstanceConfig(Properties props) {
         name = props.getProperty("name");
@@ -63,6 +64,9 @@ public class MultiMCInstanceConfig {
 
         if (props.getProperty("PostExitCommand") != null) {
             postExitCommand = props.getProperty("PostExitCommand");
+        }
+        if (props.getProperty("WrapperCommand") != null) {
+            wrapperCommand = props.getProperty("WrapperCommand");
         }
     }
 }

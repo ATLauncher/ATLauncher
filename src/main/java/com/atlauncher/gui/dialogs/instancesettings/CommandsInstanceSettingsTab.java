@@ -46,6 +46,7 @@ public class CommandsInstanceSettingsTab extends JPanel {
     private final JComboBox<ComboItem<Boolean>> enableCommands;
     private final JTextField preLaunchCommand;
     private final JTextField postExitCommand;
+    private final JTextField wrapperCommand;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
@@ -132,6 +133,28 @@ public class CommandsInstanceSettingsTab extends JPanel {
 
         add(postExitCommand, gbc);
 
+        // wrapper command
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover wrapperCommandLabel = new JLabelWithHover(GetText.tr("Wrapper command") + ":", HELP_ICON,
+                GetText.tr(
+                        "Wrapper command allow launcher using an extra wapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
+        add(wrapperCommandLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        wrapperCommand = new JTextField(App.settings.wrapperCommand, 32);
+        wrapperCommand.setPreferredSize(new Dimension(516, 24));
+
+        if (this.instance.launcher.wrapperCommand != null) {
+            wrapperCommand.setText(this.instance.launcher.wrapperCommand);
+        }
+
+        add(wrapperCommand, gbc);
+
         // Parameter Information
         gbc.gridx = 0;
         gbc.gridy++;
@@ -171,6 +194,7 @@ public class CommandsInstanceSettingsTab extends JPanel {
 
         preLaunchCommand.setEnabled(fieldsEnabled);
         postExitCommand.setEnabled(fieldsEnabled);
+        wrapperCommand.setEnabled(fieldsEnabled);
     }
 
     private String nullIfEmpty(String str) {
@@ -184,6 +208,7 @@ public class CommandsInstanceSettingsTab extends JPanel {
         this.instance.launcher.enableCommands = ((ComboItem<Boolean>) enableCommands.getSelectedItem()).getValue();
         this.instance.launcher.preLaunchCommand = nullIfEmpty(preLaunchCommand.getText());
         this.instance.launcher.postExitCommand = nullIfEmpty(postExitCommand.getText());
+        this.instance.launcher.wrapperCommand = nullIfEmpty(wrapperCommand.getText());
     }
 
 }

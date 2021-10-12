@@ -121,6 +121,7 @@ public class Settings {
     public boolean enableCommands = false;
     public String preLaunchCommand = null;
     public String postExitCommand = null;
+    public String wrapperCommand = null;
 
     public void convert(Properties properties) {
         String importedDateFormat = properties.getProperty("dateformat");

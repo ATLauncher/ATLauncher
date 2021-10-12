@@ -203,6 +203,10 @@ artifacts {
     archives file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.zip').replace('libs', 'distributions'))
 }
 
+test {
+    jvmArgs '--add-opens=java.base/sun.security.x509=ALL-UNNAMED'
+}
+
 task copyArtifacts(type: Copy) {
     dependsOn build
     from shadowJar
