@@ -116,7 +116,8 @@ public class MCLauncher {
             return wrapArgs;
         }
 
-        // failback to wrap command
+        // failback to wrap command with the rest of the arguments added in
+        wrapArgs.addAll(args);
         return wrapArgs;
     }
 
