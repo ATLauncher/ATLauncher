@@ -3,9 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.7.5
+## 3.4.8.0
 
 ### New Features
+- Add in wrapper command to allow wrapping of the command used to launcher Minecraft [#511] (thanks to @xz-dev)
 
 ### Fixes
 - Servers created with Fabric loader >= 0.12.0 not launching [#513]
