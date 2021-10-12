@@ -31,6 +31,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -52,6 +53,7 @@ public class FabricLoader implements Loader {
     protected FabricMetaVersion version;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
+    private Pattern manifestPattern = Pattern.compile("META-INF/[^/]+\\.(SF|DSA|RSA|EC)");
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
@@ -175,7 +177,8 @@ public class FabricLoader implements Loader {
                     try (FileInputStream is = new FileInputStream(f); JarInputStream jis = new JarInputStream(is)) {
                         JarEntry entry;
                         while ((entry = jis.getNextJarEntry()) != null) {
-                            if (!addedEntries.contains(entry.getName())) {
+                            if (!addedEntries.contains(entry.getName())
+                                    && !manifestPattern.matcher(entry.getName()).matches()) {
                                 JarEntry newEntry = new JarEntry(entry.getName());
                                 zipOutputStream.putNextEntry(newEntry);
 

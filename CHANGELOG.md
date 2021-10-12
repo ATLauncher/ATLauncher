@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Servers created with Fabric loader >= 0.12.0 not launching [#513]
 
 ### Misc
