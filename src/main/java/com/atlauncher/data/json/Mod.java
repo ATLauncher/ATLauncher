@@ -21,18 +21,15 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
+import java.util.logging.LogManager;
 
-import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.annotations.SerializedName;
 
@@ -345,7 +342,7 @@ public class Mod {
     }
 
     public boolean hasGroup() {
-        return this.group != null && !this.group.isEmpty();
+        return this.group != null && !this.group.isBlank();
     }
 
     public boolean hasLinked() {
