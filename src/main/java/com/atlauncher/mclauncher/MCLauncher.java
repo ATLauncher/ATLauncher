@@ -18,6 +18,7 @@
 package com.atlauncher.mclauncher;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -83,6 +84,8 @@ public class MCLauncher {
             arguments = wrapArguments(wrapperCommand, arguments);
         }
 
+        logInstanceInformation(instance);
+
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
@@ -90,6 +93,27 @@ public class MCLauncher {
         processBuilder.redirectErrorStream(true);
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
         return processBuilder.start();
+    }
+
+    private static void logInstanceInformation(Instance instance) {
+        try {
+            if (instance.launcher.loaderVersion != null) {
+                LogManager.info(String.format("Loader: %s %s", instance.launcher.loaderVersion.type,
+                        instance.launcher.loaderVersion.version));
+            }
+
+            if (instance.ROOT.resolve("mods").toFile().listFiles().length != 0) {
+                LogManager.info("Mods:");
+                Files.walk(instance.ROOT.resolve("mods"))
+                        .filter(file -> Files.isRegularFile(file)
+                                && (file.toString().endsWith(".jar") || file.toString().endsWith(".zip")))
+                        .forEach(file -> {
+                            LogManager.info(
+                                    " - " + file.toString().replace(instance.ROOT.resolve("mods").toString(), ""));
+                        });
+            }
+        } catch (IOException ignored) {
+        }
     }
 
     private static List<String> wrapArguments(String wrapperCommand, List<String> args) {

@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in wrapper command to allow wrapping of the command used to launcher Minecraft [#511] (thanks to @xz-dev)
+- Add list of mods and loader info when launching an instance [#510]
 
 ### Fixes
 - Servers created with Fabric loader >= 0.12.0 not launching [#513]
