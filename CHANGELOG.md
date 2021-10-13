@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Servers created with Fabric loader >= 0.12.0 not launching [#513]
 - Failure to launch Minecraft causing the main frame to not show itself again
+- Searching not working when a pack has no description
 
 ### Misc

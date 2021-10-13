@@ -212,8 +212,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
             String searchText = this.searchField.getText();
 
             if (!searchText.isEmpty()) {
-                return Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                        .matcher(pack.getDescription()).find()
+                return (pack.getDescription() != null
+                        && Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
+                                .matcher(pack.getDescription()).find())
                         || Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(pack.getName())
                                 .find();
             }
