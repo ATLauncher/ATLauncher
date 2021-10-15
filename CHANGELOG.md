@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Failure to launch Minecraft causing the main frame to not show itself again
 - Searching not working when a pack has no description
 - Pre/post launch commands not being exported to MultiMC format [#512]
+- Update flatlaf packages to fix issue with jawt loading [#505]
 
 ### Misc
 - Remove dependency on pack200 [#516]
