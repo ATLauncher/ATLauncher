@@ -65,7 +65,6 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.formdev:flatlaf:1.4'
     implementation 'com.formdev:flatlaf-extras:1.4'
-    implementation 'com.github.pack200:pack200:d5fd0807d6'
     implementation 'com.github.oshi:oshi-core:5.8.0'
     implementation 'net.freeutils:jlhttp:2.6'
     implementation 'joda-time:joda-time:2.10.10'

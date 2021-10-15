@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -54,7 +53,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -62,7 +60,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -90,7 +87,6 @@ import com.google.gson.reflect.TypeToken;
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 
-import io.pack200.Pack200;
 import net.iharder.Base64;
 
 public class Utils {
@@ -1282,18 +1278,6 @@ public class Utils {
         return bytes;
     }
 
-    public static void unXZPackFile(File inputFile, File outputFile) throws IOException {
-        File packFile = new File(inputFile.getAbsolutePath().substring(0, inputFile.getAbsolutePath().length() - 3));
-        LogManager.debug("unXZPackFile " + inputFile.getAbsolutePath() + " : " + packFile.getAbsolutePath() + " : "
-                + outputFile.getAbsolutePath());
-
-        unXZFile(inputFile, packFile);
-        unpackFile(packFile, outputFile);
-
-        Utils.delete(inputFile);
-        Utils.delete(packFile);
-    }
-
     public static void unLzmaFile(File input, File output) {
         if (output.exists()) {
             Utils.delete(output);
@@ -1360,44 +1344,6 @@ public class Utils {
         if (xzis != null) {
             xzis.close();
         }
-    }
-
-    /*
-     * From: http://atl.pw/1
-     */
-    public static void unpackFile(File input, File output) throws IOException {
-        if (output.exists()) {
-            Utils.delete(output);
-        }
-
-        byte[] decompressed = readFile(input);
-
-        if (decompressed == null) {
-            LogManager.error("unpackFile: While reading in " + input.getName() + " the file returned null");
-            return;
-        }
-
-        String end = new String(decompressed, decompressed.length - 4, 4);
-        if (!end.equals("SIGN")) {
-            LogManager.error("unpackFile: Unpacking failed, signature missing " + end);
-            return;
-        }
-
-        int x = decompressed.length;
-        int len = ((decompressed[x - 8] & 0xFF)) | ((decompressed[x - 7] & 0xFF) << 8)
-                | ((decompressed[x - 6] & 0xFF) << 16) | ((decompressed[x - 5] & 0xFF) << 24);
-        byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
-        FileOutputStream jarBytes = new FileOutputStream(output);
-        JarOutputStream jos = new JarOutputStream(jarBytes);
-
-        Pack200.newUnpacker().unpack(new ByteArrayInputStream(decompressed), jos);
-
-        jos.putNextEntry(new JarEntry("checksums.sha1"));
-        jos.write(checksums);
-        jos.closeEntry();
-
-        jos.close();
-        jarBytes.close();
     }
 
     private static String getMACAdressHash() {

@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Searching not working when a pack has no description
 
 ### Misc
+- Remove dependency on pack200 [#516]
