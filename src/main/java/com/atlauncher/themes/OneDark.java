@@ -22,7 +22,7 @@ public class OneDark extends Dark {
     public static boolean install() {
         instance = new OneDark();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

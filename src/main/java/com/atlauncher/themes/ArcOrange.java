@@ -22,7 +22,7 @@ public class ArcOrange extends Light {
     public static boolean install() {
         instance = new ArcOrange();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

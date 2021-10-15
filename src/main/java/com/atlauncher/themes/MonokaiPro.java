@@ -22,7 +22,7 @@ public class MonokaiPro extends Dark {
     public static boolean install() {
         instance = new MonokaiPro();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class DraculaContrast extends Dark {
     public static boolean install() {
         instance = new DraculaContrast();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

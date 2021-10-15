@@ -22,7 +22,7 @@ public class HiberbeeDark extends Dark {
     public static boolean install() {
         instance = new HiberbeeDark();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

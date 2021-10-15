@@ -22,7 +22,7 @@ public class MaterialPalenightContrast extends Dark {
     public static boolean install() {
         instance = new MaterialPalenightContrast();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

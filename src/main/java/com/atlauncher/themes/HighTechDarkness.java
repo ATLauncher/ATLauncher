@@ -22,7 +22,7 @@ public class HighTechDarkness extends Dark {
     public static boolean install() {
         instance = new HighTechDarkness();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

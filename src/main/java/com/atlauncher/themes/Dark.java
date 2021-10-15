@@ -22,7 +22,7 @@ public class Dark extends ATLauncherLaf {
     public static boolean install() {
         instance = new Dark();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

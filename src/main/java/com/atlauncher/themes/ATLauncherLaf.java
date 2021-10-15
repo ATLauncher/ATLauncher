@@ -43,7 +43,7 @@ public class ATLauncherLaf extends FlatLaf {
     public static boolean install() {
         instance = new ATLauncherLaf();
 
-        return install(instance);
+        return setup(instance);
     }
 
     public static ATLauncherLaf getInstance() {

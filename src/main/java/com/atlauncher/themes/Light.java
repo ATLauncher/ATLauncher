@@ -22,7 +22,7 @@ public class Light extends ATLauncherLaf {
     public static boolean install() {
         instance = new Light();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

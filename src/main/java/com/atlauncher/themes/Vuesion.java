@@ -22,7 +22,7 @@ public class Vuesion extends Dark {
     public static boolean install() {
         instance = new Vuesion();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override

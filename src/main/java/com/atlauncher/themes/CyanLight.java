@@ -22,7 +22,7 @@ public class CyanLight extends Light {
     public static boolean install() {
         instance = new CyanLight();
 
-        return install(instance);
+        return setup(instance);
     }
 
     @Override
