@@ -19,3 +19,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Misc
 - Remove dependency on pack200 [#516]
 - Update dependencies and gradle wrapper
+- Fix the Java dependency on AUR packages

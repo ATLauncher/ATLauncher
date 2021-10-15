@@ -11,7 +11,7 @@ modpacks easily and quickly."
 arch=('any')
 url="https://atlauncher.com/"
 license=('GPL3')
-depends=('java-runtime=8' 'openal')
+depends=('java-runtime>=8' 'openal')
 makedepends=('unzip')
 provides=('atlauncher')
 conflicts=('atlauncher')
