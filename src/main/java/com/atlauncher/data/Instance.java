@@ -1375,7 +1375,10 @@ public class Instance extends MinecraftVersion {
                 Optional.ofNullable(launcher.initialMemory).orElse(App.settings.initialMemory) + "");
         instanceCfg.setProperty("MinecraftWinHeight", App.settings.windowHeight + "");
         instanceCfg.setProperty("MinecraftWinWidth", App.settings.windowWidth + "");
-        instanceCfg.setProperty("OverrideCommands", "false");
+        instanceCfg.setProperty("OverrideCommands",
+                launcher.postExitCommand != null || launcher.preLaunchCommand != null || launcher.wrapperCommand != null
+                        ? "true"
+                        : "false");
         instanceCfg.setProperty("OverrideConsole", "false");
         instanceCfg.setProperty("OverrideJava", launcher.javaPath == null ? "false" : "true");
         instanceCfg.setProperty("OverrideJavaArgs", launcher.javaArguments == null ? "false" : "true");
@@ -1385,13 +1388,16 @@ public class Instance extends MinecraftVersion {
         instanceCfg.setProperty("OverrideNativeWorkarounds", "false");
         instanceCfg.setProperty("OverrideWindow", "false");
         instanceCfg.setProperty("PermGen", Optional.ofNullable(launcher.permGen).orElse(App.settings.metaspace) + "");
-        instanceCfg.setProperty("PostExitCommand", "");
-        instanceCfg.setProperty("PreLaunchCommand", "");
+        instanceCfg.setProperty("PostExitCommand",
+                Optional.ofNullable(launcher.postExitCommand).orElse(App.settings.postExitCommand) + "");
+        instanceCfg.setProperty("PreLaunchCommand",
+                Optional.ofNullable(launcher.preLaunchCommand).orElse(App.settings.preLaunchCommand) + "");
         instanceCfg.setProperty("ShowConsole", "false");
         instanceCfg.setProperty("ShowConsoleOnError", "true");
         instanceCfg.setProperty("UseNativeGLFW", "false");
         instanceCfg.setProperty("UseNativeOpenAL", "false");
-        instanceCfg.setProperty("WrapperCommand", "");
+        instanceCfg.setProperty("WrapperCommand",
+                Optional.ofNullable(launcher.wrapperCommand).orElse(App.settings.wrapperCommand) + "");
         instanceCfg.setProperty("iconKey", iconKey);
         instanceCfg.setProperty("name", launcher.name);
         instanceCfg.setProperty("lastLaunchTime", "");

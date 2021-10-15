@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Servers created with Fabric loader >= 0.12.0 not launching [#513]
 - Failure to launch Minecraft causing the main frame to not show itself again
 - Searching not working when a pack has no description
+- Pre/post launch commands not being exported to MultiMC format [#512]
 
 ### Misc
 - Remove dependency on pack200 [#516]
