@@ -6,7 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.8.0
 
 ### New Features
-- Add in wrapper command to allow wrapping of the command used to launcher Minecraft [#511] (thanks to @xz-dev)
+- Add in wrapper command to allow wrapping of the command used to launch Minecraft [#511] (thanks to @xz-dev)
 - Add list of mods and loader info when launching an instance [#510]
 
 ### Fixes
