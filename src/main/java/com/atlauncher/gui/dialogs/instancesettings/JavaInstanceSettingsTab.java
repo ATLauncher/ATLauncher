@@ -249,7 +249,17 @@ public class JavaInstanceSettingsTab extends JPanel {
             chooser.setAcceptAllFileFilterUsed(false);
 
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                javaPath.setText(chooser.getSelectedFile().getAbsolutePath());
+                File selectedPath = chooser.getSelectedFile();
+                File jPath = new File(selectedPath, "bin");
+                File javaExe = new File(selectedPath, "java.exe");
+                File javaExecutable = new File(selectedPath, "java");
+
+                // user selected the bin dir
+                if (!jPath.exists() && (javaExe.exists() || javaExecutable.exists())) {
+                    javaPath.setText(selectedPath.getParent().toString());
+                } else {
+                    javaPath.setText(selectedPath.getAbsolutePath());
+                }
             }
         });
 

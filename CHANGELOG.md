@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't allow initial memory to exceed maximum memory [#517]
 
 ### Fixes
+- When selecting the bin folder of a Java install, correctly parse that for the launcher
 
 ### Misc
