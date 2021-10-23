@@ -39,6 +39,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
@@ -125,6 +127,16 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         initialMemory = new JSpinner(initialMemoryModel);
         ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
+        initialMemory.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSpinner s = (JSpinner) e.getSource();
+                // if initial memory is larger than maximum memory, make initial memory match
+                if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
+                    initialMemory.setValue(maximumMemory.getValue());
+                }
+            }
+        });
         add(initialMemory, gbc);
 
         // Maximum Memory Settings
@@ -158,6 +170,16 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         maximumMemory = new JSpinner(maximumMemoryModel);
         ((JSpinner.DefaultEditor) maximumMemory.getEditor()).getTextField().setColumns(5);
+        maximumMemory.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSpinner s = (JSpinner) e.getSource();
+                // if initial memory is larger than maximum memory, make initial memory match
+                if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
+                    initialMemory.setValue(s.getValue());
+                }
+            }
+        });
         add(maximumMemory, gbc);
 
         // Perm Gen Settings

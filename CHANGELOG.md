@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.8.2
 
 ### New Features
+- Don't allow initial memory to exceed maximum memory [#517]
 
 ### Fixes
 

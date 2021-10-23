@@ -393,16 +393,19 @@ public class Settings {
     }
 
     private void validateMemory() {
+        boolean needToSave = false;
         int systemMemory = OS.getMaximumRam();
 
         if (systemMemory != 0 && initialMemory > systemMemory) {
             LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
                     + "MB is available to use!");
             initialMemory = 512;
+            needToSave = true;
         } else if (initialMemory > maximumMemory) {
             LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory which is more than "
                     + maximumMemory + "MB set for the maximum memory!");
             initialMemory = 512;
+            needToSave = true;
         }
 
         if (systemMemory != 0 && maximumMemory > systemMemory) {
@@ -411,9 +414,15 @@ public class Settings {
 
             if (OS.is64Bit()) {
                 maximumMemory = Math.min((systemMemory / 1000) * 512, 8192);
+                needToSave = true;
             } else {
                 maximumMemory = 1024;
+                needToSave = true;
             }
+        }
+
+        if (needToSave) {
+            save();
         }
     }
 
@@ -456,15 +465,15 @@ public class Settings {
             Type type = Type.HTTP;
 
             switch (this.proxyType) {
-                case "HTTP":
-                    type = Type.HTTP;
-                    break;
-                case "SOCKS":
-                    type = Type.SOCKS;
-                    break;
-                case "DIRECT":
-                    type = Type.DIRECT;
-                    break;
+            case "HTTP":
+                type = Type.HTTP;
+                break;
+            case "SOCKS":
+                type = Type.SOCKS;
+                break;
+            case "DIRECT":
+                type = Type.DIRECT;
+                break;
             }
 
             proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));
