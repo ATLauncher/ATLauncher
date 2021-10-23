@@ -60,8 +60,8 @@ public class Settings {
     // General
     public String language = "English";
     public String theme = Constants.DEFAULT_THEME_CLASS;
-    public String dateFormat = "dd/MM/yyyy";
-    public String instanceTitleFormat = "dd/MM/yyyy";
+    public String dateFormat = Constants.DATE_FORMATS[0];
+    public String instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
     public int selectedTabOnStartup = 0;
     public boolean sortPacksAlphabetically = false;
     public Boolean showPackNameAndVersion = null;
