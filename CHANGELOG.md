@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Default instance title format setting being invalid
+- Error reporting throwing a NPE when message was null
 
 ### Misc

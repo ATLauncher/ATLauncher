@@ -67,7 +67,7 @@ public final class ErrorReporting {
         if (!disable) {
             client = Sentry.init(Constants.SENTRY_DSN);
             client.addShouldSendEventCallback(event -> {
-                if (sentEvents.contains(event.getMessage())) {
+                if (event == null || event.getMessage() == null || sentEvents.contains(event.getMessage())) {
                     return false;
                 }
 
