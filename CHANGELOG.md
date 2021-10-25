@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Don't allow initial memory to exceed maximum memory [#517]
+- Log the applications arguments when booting
 
 ### Fixes
 - When selecting the bin folder of a Java install, correctly parse that for the launcher

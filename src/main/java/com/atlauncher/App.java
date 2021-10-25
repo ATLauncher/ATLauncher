@@ -341,7 +341,7 @@ public class App {
         }
 
         // log out the system information to the console
-        logSystemInformation();
+        logSystemInformation(args);
 
         // Check to make sure the user can load the launcher
         launcher.checkIfWeCanLoad();
@@ -417,8 +417,11 @@ public class App {
         }
     }
 
-    private static void logSystemInformation() {
+    private static void logSystemInformation(String[] args) {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
+
+        LogManager.info(String.format("App Arguments: %s",
+                Gsons.DEFAULT_SLIM.toJson(args)));
 
         LogManager.info(String.format("JVM Arguments: %s",
                 Gsons.DEFAULT_SLIM.toJson(ManagementFactory.getRuntimeMXBean().getInputArguments())));
