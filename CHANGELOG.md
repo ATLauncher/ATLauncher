@@ -8,6 +8,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Don't allow initial memory to exceed maximum memory [#517]
 - Log the applications arguments when booting
+- Add in a command line option to print help (`--help`)
+- Allow the `--launch` parameter to work with an instances name as well as directory name
 
 ### Fixes
 - When selecting the bin folder of a Java install, correctly parse that for the launcher
