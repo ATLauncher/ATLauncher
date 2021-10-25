@@ -420,8 +420,7 @@ public class App {
     private static void logSystemInformation(String[] args) {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
-        LogManager.info(String.format("App Arguments: %s",
-                Gsons.DEFAULT_SLIM.toJson(args)));
+        LogManager.info(String.format("App Arguments: %s", Gsons.DEFAULT_SLIM.toJson(args)));
 
         LogManager.info(String.format("JVM Arguments: %s",
                 Gsons.DEFAULT_SLIM.toJson(ManagementFactory.getRuntimeMXBean().getInputArguments())));
@@ -485,7 +484,8 @@ public class App {
             return;
         }
 
-        if ((Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
+        if (Files.exists(FileSystem.BASE_DIR)
+                && (Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
                 && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
             matched = true;
 
@@ -888,12 +888,7 @@ public class App {
 
         if (options.has("working-dir")) {
             Path workingDirTemp = Paths.get(String.valueOf(options.valueOf("working-dir")));
-            if (Files.exists(workingDirTemp) && Files.isDirectory(workingDirTemp)) {
-                LogManager.debug("Working directory set to " + workingDirTemp + "!");
-                workingDir = workingDirTemp;
-            } else {
-                LogManager.error("Cannot set working directory to " + workingDirTemp + " as it doesn't exist!");
-            }
+            workingDir = workingDirTemp;
         }
 
         if (options.has("base-launcher-domain")) {

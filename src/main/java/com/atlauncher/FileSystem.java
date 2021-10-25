@@ -154,6 +154,8 @@ public final class FileSystem {
     }
 
     private static void createDirectories() {
+        FileUtils.createDirectory(BASE_DIR);
+
         FileUtils.createDirectory(BACKUPS);
         FileUtils.createDirectory(CACHE);
         FileUtils.createDirectory(INSTANCES);

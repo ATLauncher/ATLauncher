@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - When selecting the bin folder of a Java install, correctly parse that for the launcher
+- Launcher not loading if cmd working directory doesn't exist [#518]
 
 ### Misc
