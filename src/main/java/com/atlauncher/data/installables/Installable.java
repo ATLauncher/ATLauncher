@@ -43,6 +43,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
+import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -72,6 +73,8 @@ public abstract class Installable {
     public ModpacksChPackManifest modpacksChPackManifest;
     public MultiMCManifest multiMCManifest;
     public Path multiMCExtractedPath;
+    public TechnicModpack technicModpack;
+    public Path technicModpackExtractedPath;
 
     public abstract Pack getPack();
 
@@ -156,8 +159,8 @@ public abstract class Installable {
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
                 isServer, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest, curseExtractedPath,
-                modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
-                multiMCExtractedPath) {
+                modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest, multiMCExtractedPath,
+                technicModpack, technicModpackExtractedPath) {
 
             protected void done() {
                 Boolean success = false;
@@ -259,6 +262,10 @@ public abstract class Installable {
 
                 if (this.multiMCExtractedPath != null) {
                     FileUtils.deleteDirectory(this.multiMCExtractedPath);
+                }
+
+                if (this.technicModpackExtractedPath != null) {
+                    FileUtils.deleteDirectory(this.technicModpackExtractedPath);
                 }
 
                 dialog.dispose();

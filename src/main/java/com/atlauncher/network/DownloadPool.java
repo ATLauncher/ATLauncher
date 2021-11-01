@@ -85,6 +85,7 @@ public final class DownloadPool extends LinkedList<Download> {
                     }
                 } else {
                     dl.copy();
+                    dl.runPostProcessors();
                 }
             });
         }

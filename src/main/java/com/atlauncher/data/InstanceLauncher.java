@@ -30,6 +30,7 @@ import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
+import com.atlauncher.data.technic.TechnicModpack;
 import com.google.gson.annotations.SerializedName;
 
 @Json
@@ -79,6 +80,7 @@ public class InstanceLauncher {
     public ModrinthModpackManifest modrinthManifest;
     public ModpacksChPackManifest modpacksChPackManifest;
     public ModpacksChPackVersionManifest modpacksChPackVersionManifest;
+    public TechnicModpack technicModpack;
 
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();

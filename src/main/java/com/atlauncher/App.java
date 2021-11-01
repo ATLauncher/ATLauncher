@@ -854,16 +854,16 @@ public class App {
                 .ofType(String.class);
         parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
 
-        try {
-            parser.printHelpOn(System.out);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
 
         if (options.has("help")) {
+            try {
+                parser.printHelpOn(System.out);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
             System.exit(0);
         }
 

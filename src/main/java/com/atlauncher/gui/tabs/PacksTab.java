@@ -51,6 +51,7 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.PackCard;
 import com.atlauncher.gui.dialogs.AddCurseForgePackDialog;
 import com.atlauncher.gui.dialogs.AddFTBPackDialog;
+import com.atlauncher.gui.dialogs.AddTechnicPackDialog;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.PackManager;
@@ -63,8 +64,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JButton addButton = new JButton(GetText.tr("Add Pack"));
-    private final JButton addCurseButton = new JButton(GetText.tr("Add CurseForge Pack"));
+    private final JButton addCurseForgeButton = new JButton(GetText.tr("Add CurseForge Pack"));
     private final JButton addFTBPackButton = new JButton(GetText.tr("Add FTB Pack"));
+    private final JButton addTechnicPackButton = new JButton(GetText.tr("Add Technic Pack"));
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton expandAllButton = new JButton(GetText.tr("Expand All"));
     private final JButton collapseAllButton = new JButton(GetText.tr("Collapse All"));
@@ -133,8 +135,9 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
                 }
             }
         });
-        this.addCurseButton.addActionListener(e -> new AddCurseForgePackDialog());
+        this.addCurseForgeButton.addActionListener(e -> new AddCurseForgePackDialog());
         this.addFTBPackButton.addActionListener(e -> new AddFTBPackDialog());
+        this.addTechnicPackButton.addActionListener(e -> new AddTechnicPackDialog());
         this.clearButton.addActionListener(e -> {
             searchField.setText("");
             refresh();
@@ -168,16 +171,34 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+        boolean firstItemAdded = false;
+
         if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
-            topPanel.add(addCurseButton);
-            topPanel.add(Box.createHorizontalStrut(5));
+            if (!firstItemAdded) {
+                firstItemAdded = true;
+            }
+            topPanel.add(addCurseForgeButton);
         }
 
         if (ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == true) {
+            if (!firstItemAdded) {
+                firstItemAdded = true;
+            } else {
+                topPanel.add(Box.createHorizontalStrut(5));
+            }
             topPanel.add(addFTBPackButton);
-            topPanel.add(Box.createHorizontalGlue());
         }
 
+        if (ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true) {
+            if (!firstItemAdded) {
+                firstItemAdded = true;
+            } else {
+                topPanel.add(Box.createHorizontalStrut(5));
+            }
+            topPanel.add(addTechnicPackButton);
+        }
+
+        topPanel.add(Box.createHorizontalGlue());
         topPanel.add(searchField);
         topPanel.add(Box.createHorizontalStrut(5));
         topPanel.add(searchButton);
@@ -285,7 +306,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     @Override
     public void onRelocalization() {
         addButton.setText(GetText.tr("Add Pack"));
-        addCurseButton.setText(GetText.tr("Add CurseForge Pack"));
+        addCurseForgeButton.setText(GetText.tr("Add CurseForge Pack"));
         addFTBPackButton.setText(GetText.tr("Add FTB Pack"));
         clearButton.setText(GetText.tr("Clear"));
         expandAllButton.setText(GetText.tr("Expand All"));

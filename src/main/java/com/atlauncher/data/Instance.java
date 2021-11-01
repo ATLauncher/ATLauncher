@@ -1775,6 +1775,10 @@ public class Instance extends MinecraftVersion {
         return launcher.modpacksChPackManifest != null && launcher.modpacksChPackVersionManifest != null;
     }
 
+    public boolean isTechnicPack() {
+        return launcher.technicModpack != null;
+    }
+
     public boolean isVanillaInstance() {
         return launcher.vanillaInstance;
     }

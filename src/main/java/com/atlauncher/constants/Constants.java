@@ -93,6 +93,11 @@ public class Constants {
     public static final String MODPACKS_CH_HOST = "api.modpacks.ch";
     public static final int MODPACKS_CH_PAGINATION_SIZE = 20;
 
+    // Technic domains, endpoints, config, etc
+    public static final String TECHNIC_API_URL = "https://api.technicpack.net";
+    public static final String TECHNIC_HOST = "api.technicpack.net";
+    public static final int TECHNIC_PAGINATION_SIZE = 40;
+
     // Forge domains, endpoints, etc
     public static final String FORGE_MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge";
     public static final String FORGE_PROMOTIONS_FILE = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";

@@ -42,6 +42,7 @@ import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.dialogs.AddCurseForgePackDialog;
 import com.atlauncher.gui.dialogs.AddFTBPackDialog;
+import com.atlauncher.gui.dialogs.AddTechnicPackDialog;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.InstanceManager;
@@ -82,6 +83,9 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         JButton addFTBPackButton = new JButton(GetText.tr("Add FTB Pack"));
         addFTBPackButton.addActionListener(e -> new AddFTBPackDialog());
 
+        JButton addTechnicPackButton = new JButton(GetText.tr("Add Technic Pack"));
+        addTechnicPackButton.addActionListener(e -> new AddTechnicPackDialog());
+
         searchField = new JTextField(16);
         if (keepFilters) {
             searchField.setText(this.searchText);
@@ -114,16 +118,36 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         topPanel.add(importButton);
         topPanel.add(Box.createHorizontalStrut(5));
 
+        boolean firstItemAdded = false;
+
         if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
+            if (!firstItemAdded) {
+                firstItemAdded = true;
+            } else {
+                topPanel.add(Box.createHorizontalStrut(5));
+            }
             topPanel.add(addCurseForgePackButton);
-            topPanel.add(Box.createHorizontalStrut(5));
         }
 
         if (ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == true) {
+            if (!firstItemAdded) {
+                firstItemAdded = true;
+            } else {
+                topPanel.add(Box.createHorizontalStrut(5));
+            }
             topPanel.add(addFTBPackButton);
-            topPanel.add(Box.createHorizontalGlue());
         }
 
+        if (ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true) {
+            if (!firstItemAdded) {
+                firstItemAdded = true;
+            } else {
+                topPanel.add(Box.createHorizontalStrut(5));
+            }
+            topPanel.add(addTechnicPackButton);
+        }
+
+        topPanel.add(Box.createHorizontalGlue());
         topPanel.add(searchField);
         topPanel.add(Box.createHorizontalStrut(5));
         topPanel.add(searchButton);

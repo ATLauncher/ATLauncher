@@ -58,6 +58,7 @@ public final class Download {
     public Path extractedTo;
     public Path copyTo;
     private boolean ignoreFailures = false;
+    private boolean deleteAfterExtract = false;
     private String hash;
     private Long fingerprint = null;
     public long size = -1L;
@@ -213,6 +214,12 @@ public final class Download {
 
     public Download ignoreFailures() {
         this.ignoreFailures = true;
+
+        return this;
+    }
+
+    public Download deleteAfterExtract() {
+        this.deleteAfterExtract = true;
 
         return this;
     }
@@ -676,7 +683,7 @@ public final class Download {
         }
     }
 
-    private void runPostProcessors() {
+    public void runPostProcessors() {
         if (this.response != null) {
             this.response.close();
         }
@@ -685,6 +692,10 @@ public final class Download {
             FileUtils.createDirectory(this.unzipTo);
 
             ArchiveUtils.extract(this.to, this.unzipTo);
+
+            if (this.deleteAfterExtract) {
+                FileUtils.delete(this.to);
+            }
         }
 
         if (Files.exists(this.to) && this.executable) {

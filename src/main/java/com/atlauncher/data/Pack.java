@@ -32,6 +32,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
@@ -55,6 +56,7 @@ public class Pack {
     public String description;
     public CurseForgeProject curseForgeProject;
     public ModpacksChPackManifest modpacksChPack;
+    public TechnicModpack technicModpack;
     public String discordInviteURL = null;
     public String supportURL = null;
     public String websiteURL = null;

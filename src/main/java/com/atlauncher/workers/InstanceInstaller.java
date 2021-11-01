@@ -19,6 +19,7 @@ package com.atlauncher.workers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -94,6 +95,9 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
+import com.atlauncher.data.technic.TechnicModpack;
+import com.atlauncher.data.technic.TechnicModpackAsset;
+import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.InstanceManager;
@@ -107,6 +111,7 @@ import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
@@ -137,6 +142,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public ModpacksChPackVersionManifest modpacksChPackVersionManifest;
     public final MultiMCManifest multiMCManifest;
     public final Path multiMCExtractedPath;
+    public final TechnicModpack technicModpack;
+    public TechnicSolderModpackManifest technicSolderModpackManifest;
+    public final Path technicModpackExtractedPath;
+    public List<Mod> technicSolderModsToDownload = new ArrayList<>();
 
     public boolean isReinstall;
     public boolean isServer;
@@ -172,7 +181,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             boolean isReinstall, boolean isServer, boolean saveMods, String shareCode, boolean showModsChooser,
             LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest, Path curseForgeExtractedPath,
             ModpacksChPackManifest modpacksChPackManifest, ModrinthModpackManifest modrinthManifest,
-            Path modrinthExtractedPath, MultiMCManifest multiMCManifest, Path multiMCExtractedPath) {
+            Path modrinthExtractedPath, MultiMCManifest multiMCManifest, Path multiMCExtractedPath,
+            TechnicModpack technicModpack, Path technicModpackExtractedPath) {
         this.name = name;
         this.pack = pack;
         this.version = version;
@@ -198,6 +208,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.modrinthExtractedPath = modrinthExtractedPath;
         this.multiMCManifest = multiMCManifest;
         this.multiMCExtractedPath = multiMCExtractedPath;
+        this.technicModpack = technicModpack;
+        this.technicModpackExtractedPath = technicModpackExtractedPath;
     }
 
     public void setInstance(Instance instance) {
@@ -230,6 +242,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 generatePackVersionFromModpacksCh();
             } else if (multiMCManifest != null) {
                 generatePackVersionFromMultiMC();
+            } else if (technicModpack != null) {
+                if (technicModpack.solder != null) {
+                    generatePackVersionFromTechnicSolder();
+                } else {
+                    generatePackVersionFromTechnicZip();
+                }
             } else if (pack.vanillaInstance) {
                 generatePackVersionForVanilla();
             } else {
@@ -534,6 +552,173 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 .collect(Collectors.toList());
 
         hideSubProgressBar();
+    }
+
+    private void generatePackVersionFromTechnicSolder() throws Exception {
+        addPercent(5);
+        fireTask(GetText.tr("Generating Pack Version Definition From Technic Solder"));
+        fireSubProgressUnknown();
+
+        String minecraftVersion = technicModpack.minecraft;
+        String forgeVersion = null;
+
+        technicSolderModpackManifest = TechnicApi.getSolderModpackManifest(technicModpack.solder, technicModpack.name,
+                this.version.version);
+
+        if (technicSolderModpackManifest.forge != null) {
+            forgeVersion = technicSolderModpackManifest.forge;
+        }
+
+        if (technicSolderModpackManifest.minecraft != null) {
+            minecraftVersion = technicSolderModpackManifest.minecraft;
+        }
+
+        if (minecraftVersion == null) {
+            throw new Exception("Minecraft version couldn't be found.");
+        }
+
+        this.packVersion = new Version();
+        packVersion.version = this.version.version;
+        packVersion.minecraft = minecraftVersion;
+        packVersion.enableCurseForgeIntegration = true;
+        packVersion.enableEditingMods = true;
+
+        if (technicSolderModpackManifest.memory != null) {
+            try {
+                packVersion.memory = Integer.parseInt(technicSolderModpackManifest.memory);
+            } catch (NumberFormatException ignored) {
+
+            }
+        }
+
+        this.version.minecraftVersion = MinecraftManager.getMinecraftVersion(packVersion.minecraft);
+
+        if (forgeVersion != null) {
+            packVersion.loader = new com.atlauncher.data.json.Loader();
+
+            java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
+            }.getType();
+
+            APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersion)).asType(type);
+
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", packVersion.minecraft);
+            loaderMeta.put("version", forgeVersionInfo.getData().version);
+            loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
+            loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
+            loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
+            packVersion.loader.metadata = loaderMeta;
+
+            if (Utils.matchVersion(packVersion.minecraft, "1.13", false, true)) {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.Forge113Loader";
+            } else {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
+            }
+        }
+
+        technicSolderModsToDownload.addAll(technicSolderModpackManifest.mods.parallelStream()
+                .map(file -> file.convertToMod()).collect(Collectors.toList()));
+
+        downloadTechnicSolderMods();
+
+        getLoaderInformationFromTechnicModpack(this.root);
+
+        hideSubProgressBar();
+    }
+
+    private void generatePackVersionFromTechnicZip() throws Exception {
+        addPercent(5);
+        fireTask(GetText.tr("Generating Pack Version Definition From Technic Zip"));
+        fireSubProgressUnknown();
+
+        if (technicModpack.minecraft == null) {
+            throw new Exception("Minecraft version couldn't be found.");
+        }
+
+        this.packVersion = new Version();
+        packVersion.version = this.version.version;
+        packVersion.minecraft = technicModpack.minecraft;
+        packVersion.enableCurseForgeIntegration = true;
+        packVersion.enableEditingMods = true;
+
+        this.version.minecraftVersion = MinecraftManager.getMinecraftVersion(packVersion.minecraft);
+
+        getLoaderInformationFromTechnicModpack(technicModpackExtractedPath);
+
+        hideSubProgressBar();
+    }
+
+    private void getLoaderInformationFromTechnicModpack(Path basePath) {
+        Path versionJsonPath = basePath.resolve("bin/version.json");
+        Path modpackJarPath = basePath.resolve("bin/modpack.jar");
+
+        MinecraftVersion versionJson = null;
+
+        if (Files.exists(versionJsonPath)) {
+            try (FileReader fileReader = new FileReader(versionJsonPath.toFile())) {
+                versionJson = Gsons.DEFAULT.fromJson(fileReader, MinecraftVersion.class);
+            } catch (Throwable t) {
+                LogManager.logStackTrace("Error reading in version.json", t);
+            }
+
+            FileUtils.delete(versionJsonPath);
+        }
+
+        if (Files.exists(modpackJarPath) && ArchiveUtils.archiveContainsFile(modpackJarPath, "version.json")) {
+            versionJson = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
+                    MinecraftVersion.class);
+
+            FileUtils.delete(modpackJarPath);
+        }
+
+        if (versionJson != null && versionJson.libraries != null) {
+            Optional<Library> forgeLibrary = versionJson.libraries.stream()
+                    .filter(l -> l.name.startsWith("net.minecraftforge:forge:")
+                            || l.name.startsWith("net.minecraftforge:minecraftforge:"))
+                    .findFirst();
+            Optional<Library> fabricLibrary = versionJson.libraries.stream()
+                    .filter(l -> l.name.startsWith("net.fabricmc:fabric-loader:")).findFirst();
+
+            if (forgeLibrary.isPresent() || fabricLibrary.isPresent()) {
+                packVersion.loader = new com.atlauncher.data.json.Loader();
+
+                if (forgeLibrary.isPresent()) {
+                    String forgeLibraryName = forgeLibrary.get().name;
+                    String forgeVersionString = forgeLibraryName.substring(forgeLibraryName.lastIndexOf(":") + 1);
+
+                    java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
+                    }.getType();
+
+                    APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
+                            .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString))
+                            .asType(type);
+
+                    Map<String, Object> loaderMeta = new HashMap<>();
+                    loaderMeta.put("minecraft", packVersion.minecraft);
+                    loaderMeta.put("version", forgeVersionInfo.getData().version);
+                    loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
+                    loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
+                    loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
+                    packVersion.loader.metadata = loaderMeta;
+
+                    if (Utils.matchVersion(packVersion.minecraft, "1.13", false, true)) {
+                        packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.Forge113Loader";
+                    } else {
+                        packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
+                    }
+                } else if (fabricLibrary.isPresent()) {
+                    String fabricLibraryName = fabricLibrary.get().name;
+                    String fabricVersionString = fabricLibraryName.substring(fabricLibraryName.lastIndexOf(":") + 1);
+
+                    Map<String, Object> loaderMeta = new HashMap<>();
+                    loaderMeta.put("minecraft", packVersion.minecraft);
+                    loaderMeta.put("loader", fabricVersionString);
+                    packVersion.loader.metadata = loaderMeta;
+                    packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+                }
+            }
+        }
     }
 
     private void generatePackVersionFromModrinthManifest() throws Exception {
@@ -911,6 +1096,42 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
             }
         }
+
+        if (this.technicModpack != null && this.technicModpack.solder == null) {
+            if (Files.exists(technicModpackExtractedPath.resolve("mods"))) {
+                try (Stream<Path> list = Files.list(technicModpackExtractedPath.resolve("mods"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
+                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            if (Files.exists(technicModpackExtractedPath.resolve("mods/" + packVersion.minecraft))) {
+                try (Stream<Path> list = Files
+                        .list(technicModpackExtractedPath.resolve("mods/" + packVersion.minecraft))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
+                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            if (Files.exists(technicModpackExtractedPath.resolve("mods/ic2"))) {
+                try (Stream<Path> list = Files.list(technicModpackExtractedPath.resolve("mods/ic2"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
+                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+        }
     }
 
     private DisableableMod convertPathToDisableableMod(Path p, Type t) {
@@ -1022,6 +1243,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return false;
         }
 
+        cleanDirectories();
+        if (isCancelled()) {
+            return false;
+        }
+
         // Copy over common configs if any
         if (FileSystem.COMMON.toFile().listFiles().length != 0) {
             Utils.copyDirectory(FileSystem.COMMON.toFile(), this.root.toFile());
@@ -1032,6 +1258,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         installServerBootScripts();
 
         return true;
+    }
+
+    private void cleanDirectories() {
+        if (technicModpack != null) {
+            Path binPath = this.root.resolve("bin");
+
+            if (binPath.toFile().listFiles().length == 0) {
+                FileUtils.deleteDirectory(binPath);
+            }
+        }
     }
 
     private void saveInstanceJson() {
@@ -1710,6 +1946,72 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         hideSubProgressBar();
     }
 
+    private void downloadTechnicSolderMods() {
+        addPercent(25);
+
+        if (technicSolderModsToDownload.size() == 0) {
+            return;
+        }
+
+        fireTask(GetText.tr("Downloading Mods"));
+        fireSubProgressUnknown();
+
+        OkHttpClient httpClient = Network.createProgressClient(this);
+        DownloadPool pool = new DownloadPool();
+
+        technicSolderModsToDownload.stream().forEach(mod -> {
+            com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                    .setUrl(mod.getDownloadUrl()).downloadTo(FileSystem.DOWNLOADS.resolve(mod.getFile()))
+                    .unzipTo(this.root).deleteAfterExtract().size(mod.filesize).withInstanceInstaller(this)
+                    .withHttpClient(httpClient);
+
+            if (mod.md5 != null) {
+                download = download.hash(mod.md5);
+            }
+
+            pool.add(download);
+        });
+
+        DownloadPool smallPool = pool.downsize();
+
+        this.setTotalBytes(smallPool.totalSize());
+        this.fireSubProgress(0);
+
+        smallPool.downloadAll();
+
+        if (Files.exists(this.root.resolve("mods"))) {
+            try (Stream<Path> list = Files.list(this.root.resolve("mods"))) {
+                this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p)).filter(
+                        p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
+                        .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        if (Files.exists(this.root.resolve("mods/" + packVersion.minecraft))) {
+            try (Stream<Path> list = Files.list(this.root.resolve("mods/" + packVersion.minecraft))) {
+                this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p)).filter(
+                        p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
+                        .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        if (Files.exists(this.root.resolve("mods/ic2"))) {
+            try (Stream<Path> list = Files.list(this.root.resolve("mods/ic2"))) {
+                this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p)).filter(
+                        p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
+                        .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        hideSubProgressBar();
+    }
+
     private void installLegacyJavaFixer() {
         addPercent(5);
 
@@ -1842,6 +2144,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireTask(GetText.tr("Copying " + minecraftFolder + " folder"));
             Utils.copyDirectory(this.multiMCExtractedPath.resolve(minecraftFolder + "/").toFile(), this.root.toFile(),
                     false);
+        } else if (technicModpack != null) {
+            if (technicModpackExtractedPath != null) {
+                fireSubProgressUnknown();
+                fireTask(GetText.tr("Copying modpack.zip files"));
+                Utils.copyDirectory(this.technicModpackExtractedPath.toFile(), this.root.toFile(), false);
+            }
         } else if (!pack.vanillaInstance) {
             fireTask(GetText.tr("Downloading Configs"));
 
@@ -1902,6 +2210,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
                 this.setTotalBytes(art.size);
+                imageDownload.downloadFile();
+            }
+        } else if (technicModpack != null) {
+            fireTask(GetText.tr("Downloading Instance Image"));
+            TechnicModpackAsset logo = this.technicModpack.logo;
+
+            if (logo != null) {
+                com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build().setUrl(logo.url)
+                        .downloadTo(root.resolve("instance.png")).withInstanceInstaller(this)
+                        .withHttpClient(Network.createProgressClient(this));
+
+                if (logo.md5 != null) {
+                    imageDownload = imageDownload.hash(logo.md5);
+                }
+
                 imageDownload.downloadFile();
             }
         }
@@ -2447,6 +2770,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     public void fireTask(String name) {
+        LogManager.debug("Instance Installer: " + name);
         firePropertyChange("doing", null, name);
     }
 
