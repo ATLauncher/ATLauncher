@@ -214,7 +214,11 @@ public class MCLauncher {
         }
 
         // add minecraft client jar last
-        cpb.append(instance.getMinecraftJar().getAbsolutePath());
+        if (instance.usesCleanedMinecraftJar()) {
+            cpb.append(instance.getCleanedMinecraftJar().getAbsolutePath());
+        } else {
+            cpb.append(instance.getMinecraftJar().getAbsolutePath());
+        }
 
         List<String> arguments = new ArrayList<>();
 

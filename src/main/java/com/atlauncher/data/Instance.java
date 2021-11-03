@@ -379,6 +379,11 @@ public class Instance extends MinecraftVersion {
         return FileSystem.LIBRARIES.resolve(String.format("net/minecraft/client/%1$s/client-%1$s.jar", this.id));
     }
 
+    public Path getCleanedMinecraftJarLibraryPath() {
+        return FileSystem.LIBRARIES
+                .resolve(String.format("net/minecraft/client/%1$s/client-%1$s-cleaned.jar", this.id));
+    }
+
     /**
      * This will prepare the instance for launch. It will download the assets,
      * Minecraft jar and libraries, as well as organise the libraries, ready to be
@@ -564,6 +569,24 @@ public class Instance extends MinecraftVersion {
 
         progressDialog.doneTask();
 
+        if (usesCleanedMinecraftJar()) {
+            progressDialog.setLabel(GetText.tr("Deleting META-INF Entries"));
+
+            if (!getCleanedMinecraftJar().exists()) {
+                Path cleanedJarTempFile = FileSystem.TEMP.resolve(String.format("%s-cleaned.jar", this.id));
+                boolean success = Utils.stripMetaInf(getMinecraftJar(), cleanedJarTempFile.toFile());
+
+                if (!success) {
+                    LogManager.error("Failed to string meta-inf from minecraft.jar");
+                    return false;
+                }
+
+                FileUtils.copyFile(cleanedJarTempFile, getCleanedMinecraftJarLibraryPath(), true);
+            }
+        }
+
+        progressDialog.doneTask();
+
         return true;
     }
 
@@ -647,7 +670,7 @@ public class Instance extends MinecraftVersion {
             LogManager.logStackTrace(e2, false);
         }
 
-        ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 5,
+        ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 6,
                 GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
@@ -1730,6 +1753,10 @@ public class Instance extends MinecraftVersion {
         return getMinecraftJarLibraryPath().toFile();
     }
 
+    public File getCleanedMinecraftJar() {
+        return getCleanedMinecraftJarLibraryPath().toFile();
+    }
+
     public String getName() {
         return launcher.name;
     }
@@ -2126,5 +2153,11 @@ public class Instance extends MinecraftVersion {
                             .build())
                     .setType(DialogManager.ERROR).show();
         }
+    }
+
+    public boolean usesCleanedMinecraftJar() {
+        File binFolder = getBinDirectory();
+
+        return binFolder.exists() && binFolder.listFiles().length != 0;
     }
 }

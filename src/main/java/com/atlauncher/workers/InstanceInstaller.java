@@ -567,14 +567,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireSubProgressUnknown();
 
         String minecraftVersion = technicModpack.minecraft;
-        String forgeVersion = null;
 
         technicSolderModpackManifest = TechnicApi.getSolderModpackManifest(technicModpack.solder, technicModpack.name,
                 this.version.version);
-
-        if (technicSolderModpackManifest.forge != null) {
-            forgeVersion = technicSolderModpackManifest.forge;
-        }
 
         if (technicSolderModpackManifest.minecraft != null) {
             minecraftVersion = technicSolderModpackManifest.minecraft;
@@ -599,30 +594,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         this.version.minecraftVersion = MinecraftManager.getMinecraftVersion(packVersion.minecraft);
-
-        if (forgeVersion != null) {
-            packVersion.loader = new com.atlauncher.data.json.Loader();
-
-            java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-            }.getType();
-
-            APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
-                    .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersion)).asType(type);
-
-            Map<String, Object> loaderMeta = new HashMap<>();
-            loaderMeta.put("minecraft", packVersion.minecraft);
-            loaderMeta.put("version", forgeVersionInfo.getData().version);
-            loaderMeta.put("rawVersion", forgeVersionInfo.getData().rawVersion);
-            loaderMeta.put("installerSize", forgeVersionInfo.getData().installerSize);
-            loaderMeta.put("installerSha1", forgeVersionInfo.getData().installerSha1Hash);
-            packVersion.loader.metadata = loaderMeta;
-
-            if (Utils.matchVersion(packVersion.minecraft, "1.13", false, true)) {
-                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.Forge113Loader";
-            } else {
-                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.forge.ForgeLoader";
-            }
-        }
 
         technicSolderModsToDownload.addAll(technicSolderModpackManifest.mods.parallelStream()
                 .map(file -> file.convertToMod()).collect(Collectors.toList()));
