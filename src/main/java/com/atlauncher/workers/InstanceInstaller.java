@@ -271,6 +271,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             prepareFilesystem();
 
+            // we don't know the loader information until we download the mods
+            if (technicModpack != null && technicModpack.solder != null) {
+                downloadTechnicSolderMods();
+
+                getLoaderInformationFromTechnicModpack(this.root);
+            }
+
             if (this.packVersion.loader != null && this.packVersion.loader.className != null) {
                 this.loader = this.packVersion.getLoader().getLoader(this.temp.resolve("loader").toFile(), this,
                         this.loaderVersion);
@@ -619,10 +626,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         technicSolderModsToDownload.addAll(technicSolderModpackManifest.mods.parallelStream()
                 .map(file -> file.convertToMod()).collect(Collectors.toList()));
-
-        downloadTechnicSolderMods();
-
-        getLoaderInformationFromTechnicModpack(this.root);
 
         hideSubProgressBar();
     }
@@ -1289,7 +1292,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.pack = this.pack.name;
         instanceLauncher.description = this.pack.description;
         instanceLauncher.packId = this.pack.id;
-        instanceLauncher.externaPackId = this.pack.externalId;
+        instanceLauncher.externalPackId = this.pack.externalId;
         instanceLauncher.version = this.packVersion.version;
         instanceLauncher.java = this.packVersion.java;
         instanceLauncher.enableCurseForgeIntegration = this.packVersion.enableCurseForgeIntegration;
@@ -1307,6 +1310,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instanceLauncher.modrinthManifest = modrinthManifest;
         instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
         instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
+        instanceLauncher.technicModpack = technicModpack;
         instanceLauncher.vanillaInstance = this.pack.vanillaInstance;
 
         if (multiMCManifest != null) {

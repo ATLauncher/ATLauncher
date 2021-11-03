@@ -512,7 +512,15 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     private void handleTechnicInstall(Object object) {
-        technicModpack = TechnicApi.getModpackBySlug(((TechnicModpackSlim) object).slug);
+        String slug;
+
+        if (object instanceof TechnicModpack) {
+            slug = ((TechnicModpack) object).name;
+        } else {
+            slug = ((TechnicModpackSlim) object).slug;
+        }
+
+        technicModpack = TechnicApi.getModpackBySlug(slug);
 
         pack = new Pack();
         pack.externalId = technicModpack.id;

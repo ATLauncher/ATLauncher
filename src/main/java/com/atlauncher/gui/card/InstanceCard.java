@@ -214,7 +214,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
 
         this.openWebsite.setVisible(instance.isCurseForgePack()
-                || (instance.isModpacksChPack() && instance.launcher.modpacksChPackManifest.hasTag("FTB")));
+                || (instance.isModpacksChPack() && instance.launcher.modpacksChPackManifest.hasTag("FTB"))
+                || instance.isTechnicPack());
 
         if (instance.launcher.enableCurseForgeIntegration
                 && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
@@ -410,7 +411,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openWebsite.addActionListener(
                 e -> OS.openWebBrowser(instance.isCurseForgePack() ? instance.launcher.curseForgeProject.websiteUrl
-                        : instance.launcher.modpacksChPackManifest.getWebsiteUrl()));
+                        : (instance.isModpacksChPack() ? instance.launcher.modpacksChPackManifest.getWebsiteUrl() : instance.launcher.technicModpack.platformUrl)));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings",

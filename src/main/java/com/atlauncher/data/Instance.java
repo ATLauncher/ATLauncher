@@ -1193,7 +1193,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean canEditInstance() {
-        if (getPack() != null || isCurseForgePack() || isModpacksChPack()) {
+        if (getPack() != null || isCurseForgePack() || isModpacksChPack() || isTechnicPack()) {
             return false;
         }
 
@@ -1787,17 +1787,21 @@ public class Instance extends MinecraftVersion {
         return launcher.technicModpack != null;
     }
 
+    public boolean isTechnicSolderPack() {
+        return launcher.technicModpack != null && launcher.technicModpack.solder != null;
+    }
+
     public boolean isVanillaInstance() {
         return launcher.vanillaInstance;
     }
 
     public boolean isExternalPack() {
         return isOldCurseForgePack() || isCurseForgePack() || isModpacksChPack() || isModrinthImport()
-                || isMultiMcImport();
+                || isMultiMcImport() || isTechnicPack();
     }
 
     public boolean isUpdatableExternalPack() {
-        return isExternalPack() && (isModpacksChPack() || isCurseForgePack());
+        return isExternalPack() && (isModpacksChPack() || isCurseForgePack() || isTechnicSolderPack());
     }
 
     public String getAnalyticsCategory() {
@@ -1807,6 +1811,14 @@ public class Instance extends MinecraftVersion {
 
         if (isModpacksChPack()) {
             return "ModpacksChInstance";
+        }
+
+        if (isTechnicSolderPack()) {
+            return "TechnicSolderInstance";
+        }
+
+        if (isTechnicPack()) {
+            return "TechnicInstance";
         }
 
         if (isModrinthImport()) {

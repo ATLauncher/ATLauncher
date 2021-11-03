@@ -39,7 +39,10 @@ public class InstanceLauncher {
     public String pack;
     public String description;
     public Integer packId;
-    public Integer externaPackId;
+
+    @SerializedName(value = "externalPackId", alternate = { "externaPackId" })
+    public Integer externalPackId;
+
     public String version;
     public String hash;
 
