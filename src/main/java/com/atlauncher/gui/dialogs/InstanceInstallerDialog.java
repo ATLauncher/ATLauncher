@@ -775,10 +775,10 @@ public class InstanceInstallerDialog extends JDialog {
             versionsDropDown.setEnabled(false);
         }
 
-        if (multiMCManifest != null) {
+        if (multiMCManifest != null || (technicModpack != null && technicModpack.solder == null)) {
             gbc.gridx--;
-            versionLabel.setVisible(multiMCManifest == null);
-            versionsDropDown.setVisible(multiMCManifest == null);
+            versionLabel.setVisible(false);
+            versionsDropDown.setVisible(false);
         }
 
         return gbc;
