@@ -2593,10 +2593,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void installServerBootScripts() throws Exception {
-        boolean shouldInstallServerScripts = this.loaderVersion == null
-                || this.loaderVersion.shouldInstallServerScripts();
-
-        if (!isServer || !shouldInstallServerScripts) {
+        if (!isServer || (this.loaderVersion != null && !this.loaderVersion.shouldInstallServerScripts())) {
             return;
         }
 
