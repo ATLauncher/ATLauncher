@@ -248,6 +248,10 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft("XBL3.0 x=" + xblUhs + ";" + xblXsts);
 
+        if (loginResponse == null) {
+            throw new Exception("Failed to login to Minecraft");
+        }
+
         Profile profile = null;
 
         try {
