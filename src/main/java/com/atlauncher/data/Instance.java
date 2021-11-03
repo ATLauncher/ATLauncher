@@ -210,9 +210,6 @@ public class Instance extends MinecraftVersion {
                     return false;
                 }
 
-                System.out.println(solderModpack.latest);
-                System.out.println(launcher.version);
-
                 return !solderModpack.latest.equals(launcher.version);
             }
         } else {
