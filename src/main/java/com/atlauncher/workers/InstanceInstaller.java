@@ -2020,7 +2020,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void installLegacyJavaFixer() {
         addPercent(5);
 
-        if (this.allMods.size() == 0 || !Utils.matchVersion(minecraftVersion.id, "1.6", true, true)) {
+        if ((this.technicModpack == null && this.allMods.size() == 0)
+                || !Utils.matchVersion(minecraftVersion.id, "1.6", true, true)) {
             return;
         }
 
