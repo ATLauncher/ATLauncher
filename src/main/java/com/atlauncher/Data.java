@@ -32,6 +32,7 @@ import com.atlauncher.data.curseforge.CurseForgeProjectLatestFile;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
+import com.atlauncher.data.technic.TechnicSolderModpack;
 
 public final class Data {
     public static final List<AbstractAccount> ACCOUNTS = new LinkedList<>();
@@ -59,4 +60,7 @@ public final class Data {
 
     // Modpacks.ch instance update checking
     public static final Map<Instance, ModpacksChPackVersion> MODPACKS_CH_INSTANCE_LATEST_VERSION = new HashMap<>();
+
+    // Technic Solder instance update checking
+    public static final Map<Instance, TechnicSolderModpack> TECHNIC_SOLDER_INSTANCE_LATEST_VERSION = new HashMap<>();
 }
