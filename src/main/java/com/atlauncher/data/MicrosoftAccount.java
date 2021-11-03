@@ -263,7 +263,7 @@ public class MicrosoftAccount extends AbstractAccount {
         return "XBL3.0 x=" + xstsAuth.displayClaims.xui.get(0).uhs + ";" + xstsAuth.token;
     }
 
-    public boolean ensureAccessTokenValid() {
+    public boolean ensureAccountIsLoggedIn() {
         boolean hasCancelled = false;
         while (mustLogin) {
             int ret = DialogManager.okCancelDialog().setTitle(GetText.tr("You Must Login Again"))
@@ -279,6 +279,14 @@ public class MicrosoftAccount extends AbstractAccount {
         }
 
         if (hasCancelled) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean ensureAccessTokenValid() {
+        if (!ensureAccountIsLoggedIn()) {
             return false;
         }
 

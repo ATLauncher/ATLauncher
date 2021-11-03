@@ -571,6 +571,14 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
+        // if Microsoft account must login again, then make sure to do that
+        if (account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {
+            if (!((MicrosoftAccount) account).ensureAccountIsLoggedIn()) {
+                LogManager.info("You must login to your account before continuing.");
+                return false;
+            }
+        }
+
         String playerName = account.minecraftUsername;
 
         if (offline) {
