@@ -253,12 +253,12 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         try {
             profile = MicrosoftAuthAPI.getMcProfile(loginResponse.accessToken);
         } catch (DownloadException e) {
-            DialogManager.okDialog().setTitle(GetText.tr("Minecraft Has Not Been Purchased"))
+            DialogManager.okDialog().setTitle(GetText.tr("Minecraft Profile Not Found"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."))
+                            "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're a Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
                             .build())
                     .setType(DialogManager.ERROR).show();
-            throw new Exception("Account does not own Minecraft");
+            throw new Exception("Minecraft Profile not found");
         }
 
         if (profile == null) {

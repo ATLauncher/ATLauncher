@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
@@ -29,6 +30,7 @@ import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 
 import org.mini2Dx.gettext.GetText;
@@ -190,6 +192,14 @@ public class MicrosoftAccount extends AbstractAccount {
                     return false;
                 }
 
+                // make sure they have a Minecraft profile before saving logins
+                if (!checkAndUpdateProfile(loginResponse.accessToken)) {
+                    mustLogin = true;
+                    AccountManager.saveAccounts();
+
+                    return false;
+                }
+
                 this.accessToken = loginResponse.accessToken;
                 this.username = loginResponse.username;
 
@@ -206,6 +216,45 @@ public class MicrosoftAccount extends AbstractAccount {
             LogManager.logStackTrace("Exception refreshing accessToken", e);
             return false;
         }
+
+        return true;
+    }
+
+    /**
+     * This will check the user has a Minecraft profile (Game Pass subscribers will
+     * not until first login of the Minecraft Launcher).
+     *
+     * If an account doesn't have a Minecraft profile, then they either don't own
+     * Minecraft Java edition, or their Game Pass subscription has expired and no
+     * longer has a profile.
+     *
+     * @param accessToken
+     */
+    private boolean checkAndUpdateProfile(String accessToken) {
+        Profile profile = null;
+
+        try {
+            profile = MicrosoftAuthAPI.getMcProfile(accessToken);
+        } catch (DownloadException e) {
+            LogManager.error("Minecraft Profile not found");
+            DialogManager.okDialog().setTitle(GetText.tr("Minecraft Profile Not Found"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're a Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+            return false;
+        } catch (Exception e) {
+            LogManager.logStackTrace("Failed to get Minecraft profile", e);
+            return false;
+        }
+
+        if (profile == null) {
+            LogManager.error("Failed to get Minecraft profile");
+            return false;
+        }
+
+        this.minecraftUsername = profile.name;
+        this.uuid = profile.id;
 
         return true;
     }
