@@ -52,6 +52,7 @@ import javax.swing.JTextField;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.Network;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
@@ -554,20 +555,29 @@ public class InstanceInstallerDialog extends JDialog {
 
             Collections.reverse(pack.versions);
         } else {
-            final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading modpack.zip"), 0,
+            final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading modpack.zip"), 1,
                     GetText.tr("Downloading modpack.zip"), "Aborting Downloading modpack.zip");
             Path tempZip = FileSystem.TEMP.resolve("technic-" + technicModpack.name + "-modpack.zip");
             Path unzipLocation = FileSystem.TEMP.resolve("technic-" + technicModpack.name);
 
             dialog.addThread(new Thread(() -> {
                 try {
-                    new Download().setUrl(technicModpack.url).downloadTo(tempZip).unzipTo(unzipLocation).downloadFile();
+                    Download download = new Download().setUrl(technicModpack.url).downloadTo(tempZip)
+                            .unzipTo(unzipLocation).withHttpClient(Network.createProgressClient(dialog));
+
+                    if (download.needToDownload()) {
+                        dialog.setTotalBytes(download.getFilesize());
+
+                        download.downloadFile();
+                    }
+
                     dialog.setReturnValue(true);
                 } catch (IOException e) {
                     LogManager.logStackTrace("Error downloading technic modpack.zip", e);
                     dialog.setReturnValue(false);
                 }
 
+                dialog.doneTask();
                 dialog.close();
             }));
 
