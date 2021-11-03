@@ -28,7 +28,6 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
-import com.atlauncher.data.microsoft.Store;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.network.Download;
 
@@ -119,16 +118,9 @@ public class MicrosoftAuthAPI {
         return loginResponse;
     }
 
-    public static Store getMcEntitlements(String accessToken) {
-        Store store = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_STORE_URL)
-                .header("Authorization", "Bearer " + accessToken).asClass(Store.class);
-
-        return store;
-    }
-
-    public static Profile getMcProfile(String accessToken) {
+    public static Profile getMcProfile(String accessToken) throws IOException {
         Profile profile = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_PROFILE_URL)
-                .header("Authorization", "Bearer " + accessToken).asClass(Profile.class);
+                .header("Authorization", "Bearer " + accessToken).asClassWithThrow(Profile.class);
 
         return profile;
     }

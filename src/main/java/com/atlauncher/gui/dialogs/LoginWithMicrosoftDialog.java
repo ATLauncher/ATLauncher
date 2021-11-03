@@ -41,7 +41,6 @@ import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
-import com.atlauncher.data.microsoft.Store;
 import com.atlauncher.data.microsoft.XboxLiveAuthErrorResponse;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.panels.LoadingPanel;
@@ -249,12 +248,11 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         LoginResponse loginResponse = MicrosoftAuthAPI.loginToMinecraft("XBL3.0 x=" + xblUhs + ";" + xblXsts);
 
-        Store store = MicrosoftAuthAPI.getMcEntitlements(loginResponse.accessToken);
+        Profile profile = null;
 
-        LogManager.info(Gsons.DEFAULT.toJson(store));
-
-        if (!(store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
-                && store.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
+        try {
+            profile = MicrosoftAuthAPI.getMcProfile(loginResponse.accessToken);
+        } catch (DownloadException e) {
             DialogManager.okDialog().setTitle(GetText.tr("Minecraft Has Not Been Purchased"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."))
@@ -262,8 +260,6 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                     .setType(DialogManager.ERROR).show();
             throw new Exception("Account does not own Minecraft");
         }
-
-        Profile profile = MicrosoftAuthAPI.getMcProfile(loginResponse.accessToken);
 
         if (profile == null) {
             throw new Exception("Failed to get Minecraft profile");

@@ -149,7 +149,6 @@ public class Constants {
     public static final String MICROSOFT_XBL_AUTH_TOKEN_URL = "https://user.auth.xboxlive.com/user/authenticate";
     public static final String MICROSOFT_XSTS_AUTH_TOKEN_URL = "https://xsts.auth.xboxlive.com/xsts/authorize";
     public static final String MICROSOFT_MINECRAFT_LOGIN_URL = "https://api.minecraftservices.com/authentication/login_with_xbox";
-    public static final String MICROSOFT_MINECRAFT_STORE_URL = "https://api.minecraftservices.com/entitlements/mcstore";
     public static final String MICROSOFT_MINECRAFT_PROFILE_URL = "https://api.minecraftservices.com/minecraft/profile";
 
     public static void setBaseLauncherDomain(String baseLauncherDomain) {

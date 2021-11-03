@@ -101,7 +101,14 @@ public class MicrosoftAccount extends AbstractAccount {
 
     @Override
     public String getCurrentUsername() {
-        Profile profile = MicrosoftAuthAPI.getMcProfile(accessToken);
+        Profile profile = null;
+
+        try {
+            profile = MicrosoftAuthAPI.getMcProfile(accessToken);
+        } catch (Exception e) {
+            LogManager.error("Error getting Minecraft profile");
+            return null;
+        }
 
         if (profile == null) {
             LogManager.error("Error getting Minecraft profile");
@@ -118,7 +125,14 @@ public class MicrosoftAccount extends AbstractAccount {
 
     @Override
     public String getSkinUrl() {
-        Profile profile = MicrosoftAuthAPI.getMcProfile(accessToken);
+        Profile profile = null;
+
+        try {
+            profile = MicrosoftAuthAPI.getMcProfile(accessToken);
+        } catch (Exception e) {
+            LogManager.error("Error getting Minecraft profile");
+            return null;
+        }
 
         if (profile == null) {
             LogManager.error("Error getting Minecraft profile");
