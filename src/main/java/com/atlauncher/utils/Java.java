@@ -62,41 +62,44 @@ public class Java {
         if (App.settings.usingCustomJavaPath) {
             File folder = new File(App.settings.javaPath, "bin/");
 
-            ProcessBuilder processBuilder = new ProcessBuilder(getPathToMinecraftJavaExecutable(), "-version");
-            processBuilder.directory(folder.getAbsoluteFile());
-            processBuilder.redirectErrorStream(true);
-
-            String version = "Unknown";
-
-            try {
-                Process process = processBuilder.start();
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    String line;
-                    Pattern p = Pattern.compile("(java|openjdk) version \"([^\"]*)\"");
-
-                    while ((line = br.readLine()) != null) {
-                        // Extract version information
-                        Matcher m = p.matcher(line);
-
-                        if (m.find()) {
-                            version = m.group(2);
-                            break;
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-
-            if (version.equals("Unknown")) {
-                LogManager.warn("Cannot get Java version from the output of \"" + getPathToSystemJavaExecutable()
-                        + " -version\"");
-            }
-
-            return version;
+            return getVersionForJavaPath(folder);
         } else {
             return OS.getPreferredJava(Java.getInstalledJavas()).version;
         }
+    }
+
+    private static String getVersionForJavaPath(File folder) {
+        ProcessBuilder processBuilder = new ProcessBuilder(getPathToMinecraftJavaExecutable(), "-version");
+        processBuilder.directory(folder.getAbsoluteFile());
+        processBuilder.redirectErrorStream(true);
+
+        String version = "Unknown";
+
+        try {
+            Process process = processBuilder.start();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                Pattern p = Pattern.compile("(java|openjdk) version \"([^\"]*)\"");
+
+                while ((line = br.readLine()) != null) {
+                    // Extract version information
+                    Matcher m = p.matcher(line);
+
+                    if (m.find()) {
+                        version = m.group(2);
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (version.equals("Unknown")) {
+            LogManager.warn("Cannot get Java version from the output of \"" + folder.getAbsolutePath() + " -version\"");
+        }
+
+        return version;
     }
 
     /**
@@ -202,6 +205,16 @@ public class Java {
      */
     public static boolean isJava9() {
         return getMinecraftJavaVersionNumber() == 9;
+    }
+
+    /**
+     * Checks whether Metaspace should be used instead of PermGen. This is the case
+     * for Java 8 and above.
+     *
+     * @return whether Metaspace should be used instead of PermGen
+     */
+    public static boolean useMetaspace(String path) {
+        return parseJavaVersionNumber(getMinecraftJavaVersion()) > 8;
     }
 
     /**

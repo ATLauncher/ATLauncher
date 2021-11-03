@@ -17,5 +17,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Launcher not loading if cmd working directory doesn't exist [#518]
 - Logins not working for Microsoft accounts using game pass
 - Installer not working on Forge versions older than 10.x
+- Issue with MetaSpace arguments applying incorrectly to custom instance Java versions
 
 ### Misc

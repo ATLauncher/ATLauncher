@@ -248,13 +248,13 @@ public class MCLauncher {
 
         if (OS.getMaximumRam() != 0 && permGen < instance.getPermGen()
                 && (OS.getMaximumRam() / 8) < instance.getPermGen()) {
-            if (Java.useMetaspace()) {
+            if (Java.useMetaspace(javaPath)) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (Java.useMetaspace()) {
+            if (Java.useMetaspace(javaPath)) {
                 arguments.add("-XX:MetaspaceSize=" + permGen + "M");
             } else {
                 arguments.add("-XX:PermSize=" + permGen + "M");
