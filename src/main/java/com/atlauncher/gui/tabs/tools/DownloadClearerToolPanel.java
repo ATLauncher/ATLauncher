@@ -51,6 +51,12 @@ public class DownloadClearerToolPanel extends AbstractToolPanel implements Actio
             Analytics.sendEvent("DownloadClearer", "Run", "Tool");
 
             for (File file : FileSystem.DOWNLOADS.toFile().listFiles()) {
+                if (!file.equals(FileSystem.TECHNIC_DOWNLOADS.toFile())) {
+                    Utils.delete(file);
+                }
+            }
+
+            for (File file : FileSystem.TECHNIC_DOWNLOADS.toFile().listFiles()) {
                 Utils.delete(file);
             }
 

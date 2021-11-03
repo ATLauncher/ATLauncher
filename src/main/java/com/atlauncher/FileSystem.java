@@ -58,6 +58,7 @@ public final class FileSystem {
     public static final Path LIBRARIES = BASE_DIR.resolve("libraries");
 
     public static final Path DOWNLOADS = BASE_DIR.resolve("downloads");
+    public static final Path TECHNIC_DOWNLOADS = DOWNLOADS.resolve("technic");
     public static final Path INSTANCES = BASE_DIR.resolve("instances");
     public static final Path SERVERS = BASE_DIR.resolve("servers");
     public static final Path TEMP = BASE_DIR.resolve("temp");
@@ -183,6 +184,7 @@ public final class FileSystem {
         FileUtils.createDirectory(RESOURCES_VIRTUAL_LEGACY);
 
         FileUtils.createDirectory(DOWNLOADS);
+        FileUtils.createDirectory(TECHNIC_DOWNLOADS);
         FileUtils.createDirectory(FAILED_DOWNLOADS);
     }
 

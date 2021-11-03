@@ -1961,9 +1961,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         technicSolderModsToDownload.stream().forEach(mod -> {
             com.atlauncher.network.Download download = new com.atlauncher.network.Download()
-                    .setUrl(mod.getDownloadUrl()).downloadTo(FileSystem.DOWNLOADS.resolve(mod.getFile()))
-                    .unzipTo(this.root).deleteAfterExtract().size(mod.filesize).withInstanceInstaller(this)
-                    .withHttpClient(httpClient);
+                    .setUrl(mod.getDownloadUrl())
+                    .downloadTo(FileSystem.TECHNIC_DOWNLOADS
+                            .resolve(String.format("%s/%s", technicModpack.name, mod.getFile())))
+                    .unzipTo(this.root).size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient);
 
             if (mod.md5 != null) {
                 download = download.hash(mod.md5);
