@@ -69,6 +69,7 @@ public class JavaInstanceSettingsTab extends JPanel {
     private JTextField javaPath;
     private JTextArea javaParameters;
     private JComboBox<ComboItem<Boolean>> useJavaProvidedByMinecraft;
+    private JComboBox<ComboItem<Boolean>> disableLegacyLaunching;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
@@ -416,6 +417,36 @@ public class JavaInstanceSettingsTab extends JPanel {
         });
 
         add(useJavaProvidedByMinecraft, gbc);
+
+        // Disable Legacy Launching
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover disableLegacyLaunchingLabel = new JLabelWithHover(GetText.tr("Disable Legacy Launching") + "?",
+                HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr(
+                        "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
+                        .build());
+        add(disableLegacyLaunchingLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        disableLegacyLaunching = new JComboBox<>();
+        disableLegacyLaunching.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+        disableLegacyLaunching.addItem(new ComboItem<>(true, GetText.tr("Yes")));
+        disableLegacyLaunching.addItem(new ComboItem<>(false, GetText.tr("No")));
+
+        if (instance.launcher.disableLegacyLaunching == null) {
+            disableLegacyLaunching.setSelectedIndex(0);
+        } else if (instance.launcher.disableLegacyLaunching) {
+            disableLegacyLaunching.setSelectedIndex(1);
+        } else {
+            disableLegacyLaunching.setSelectedIndex(2);
+        }
+
+        add(disableLegacyLaunching, gbc);
     }
 
     private Integer getIfNotNull(Integer value, Integer defaultValue) {
@@ -442,6 +473,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         String javaParameters = this.javaParameters.getText();
         Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem())
                 .getValue();
+        Boolean disableLegacyLaunchingVal = ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
 
         this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);
         this.instance.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
@@ -458,6 +490,7 @@ public class JavaInstanceSettingsTab extends JPanel {
                 : javaParameters);
 
         this.instance.launcher.useJavaProvidedByMinecraft = useJavaProvidedByMinecraftVal;
+        this.instance.launcher.disableLegacyLaunching = disableLegacyLaunchingVal;
     }
 
 }

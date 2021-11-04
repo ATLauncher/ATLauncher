@@ -19,6 +19,8 @@ package com.atlauncher.mclauncher;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +42,7 @@ import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.mclauncher.legacy.LegacyMCLauncher;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -111,6 +114,12 @@ public class MCLauncher {
                             LogManager.info(
                                     " - " + file.toString().replace(instance.ROOT.resolve("mods").toString(), ""));
                         });
+            }
+
+            if (instance.shouldUseLegacyLaunch() && Optional.ofNullable(instance.launcher.disableLegacyLaunching)
+                    .orElse(App.settings.disableLegacyLaunching)) {
+                LogManager.warn(
+                        "Legacy launching disabled. If you have issues with Minecraft, please enable this setting again");
             }
         } catch (IOException ignored) {
         }
@@ -207,6 +216,24 @@ public class MCLauncher {
             cpb.append(instance.getCustomMinecraftJar().getAbsolutePath());
         } else {
             cpb.append(instance.getMinecraftJar().getAbsolutePath());
+        }
+
+        if (instance.usesLegacyLaunch()) {
+            cpb.append(File.pathSeparator);
+
+            File thisFile = new File(MCLauncher.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            String pathh = null;
+            try {
+                pathh = thisFile.getCanonicalPath();
+                pathh = URLDecoder.decode(pathh, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                pathh = System.getProperty("java.class.path");
+                LogManager.logStackTrace(e);
+            } catch (IOException e) {
+                pathh = System.getProperty("java.class.path");
+                LogManager.logStackTrace(e);
+            }
+            cpb.append(pathh);
         }
 
         List<String> arguments = new ArrayList<>();
@@ -311,22 +338,40 @@ public class MCLauncher {
             arguments.add(cpb.toString());
         }
 
-        arguments.add(instance.getMainClass());
-
-        for (String argument : instance.arguments.gameAsStringList()) {
-            if (IGNORED_ARGUMENTS.contains(argument)) {
-                continue;
+        if (instance.usesLegacyLaunch()) {
+            arguments.add(LegacyMCLauncher.class.getCanonicalName());
+            // Start or passed in arguments
+            arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
+            arguments.add(username); // Username
+            arguments.add(account.getSessionToken()); // Session
+            arguments.add(instance.getName()); // Instance Name
+            arguments.add(App.settings.windowWidth + ""); // Window Width
+            arguments.add(App.settings.windowHeight + ""); // Window Height
+            if (App.settings.maximiseMinecraft) {
+                arguments.add("true"); // Maximised
+            } else {
+                arguments.add("false"); // Not Maximised
             }
-
-            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
+        } else {
+            arguments.add(instance.getMainClass());
         }
 
-        if (App.settings.maximiseMinecraft) {
-            arguments.add("--width=" + OS.getMaximumWindowWidth());
-            arguments.add("--height=" + OS.getMaximumWindowHeight());
-        } else {
-            arguments.add("--width=" + App.settings.windowWidth);
-            arguments.add("--height=" + App.settings.windowHeight);
+        if (!instance.usesLegacyLaunch()) {
+            for (String argument : instance.arguments.gameAsStringList()) {
+                if (IGNORED_ARGUMENTS.contains(argument)) {
+                    continue;
+                }
+
+                arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
+            }
+
+            if (App.settings.maximiseMinecraft) {
+                arguments.add("--width=" + OS.getMaximumWindowWidth());
+                arguments.add("--height=" + OS.getMaximumWindowHeight());
+            } else {
+                arguments.add("--width=" + App.settings.windowWidth);
+                arguments.add("--height=" + App.settings.windowHeight);
+            }
         }
 
         return arguments;

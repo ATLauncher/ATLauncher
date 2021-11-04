@@ -87,6 +87,7 @@ import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
@@ -2157,5 +2158,24 @@ public class Instance extends MinecraftVersion {
 
     public boolean usesCustomMinecraftJar() {
         return Files.exists(getRoot().resolve("bin/modpack.jar"));
+    }
+
+    public boolean shouldUseLegacyLaunch() {
+        try {
+            String[] versionParts = id.split("\\.", 3);
+
+            return Integer.parseInt(versionParts[0]) == 1 && Integer.parseInt(versionParts[1]) < 6;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean usesLegacyLaunch() {
+        if (type != VersionManifestVersionType.RELEASE
+                || Optional.ofNullable(launcher.disableLegacyLaunching).orElse(App.settings.disableLegacyLaunching)) {
+            return false;
+        }
+
+        return shouldUseLegacyLaunch();
     }
 }

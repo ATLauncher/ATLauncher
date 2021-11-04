@@ -91,6 +91,7 @@ public class Settings {
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
     public boolean useJavaProvidedByMinecraft = true;
+    public boolean disableLegacyLaunching = false;
 
     // Network
     public int concurrentConnections = 8;

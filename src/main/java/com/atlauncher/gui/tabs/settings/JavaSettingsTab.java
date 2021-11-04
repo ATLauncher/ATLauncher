@@ -88,6 +88,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JCheckBox ignoreJavaOnInstanceLaunch;
     private final JLabelWithHover useJavaProvidedByMinecraftLabel;
     private final JCheckBox useJavaProvidedByMinecraft;
+    private final JLabelWithHover disableLegacyLaunchingLabel;
+    private final JCheckBox disableLegacyLaunching;
 
     public JavaSettingsTab() {
         int systemRam = OS.getSystemRam();
@@ -457,6 +459,25 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             }
         });
         add(useJavaProvidedByMinecraft, gbc);
+
+        // Disable Legacy Launching
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        disableLegacyLaunchingLabel = new JLabelWithHover(GetText.tr("Disable Legacy Launching") + "?", HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr(
+                        "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
+                        .build());
+        add(disableLegacyLaunchingLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        disableLegacyLaunching = new JCheckBox();
+        disableLegacyLaunching.setSelected(App.settings.disableLegacyLaunching);
+        add(disableLegacyLaunching, gbc);
     }
 
     public boolean isValidJavaPath() {
@@ -494,6 +515,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.maximiseMinecraft = startMinecraftMaximised.isSelected();
         App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
         App.settings.useJavaProvidedByMinecraft = useJavaProvidedByMinecraft.isSelected();
+        App.settings.disableLegacyLaunching = disableLegacyLaunching.isSelected();
     }
 
     @Override
@@ -549,6 +571,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.useJavaProvidedByMinecraftLabel.setText(GetText.tr("Use Java Provided By Minecraft") + "?");
         this.useJavaProvidedByMinecraftLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
                 "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
+                .build());
+
+        this.disableLegacyLaunchingLabel.setText(GetText.tr("Disable Legacy Launching") + "?");
+        this.disableLegacyLaunchingLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
+                "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
                 .build());
     }
 
