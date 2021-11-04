@@ -206,16 +206,18 @@ public class MCLauncher {
         File[] libraryFiles = binFolder.listFiles();
         if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
             for (File file : libraryFiles) {
-                LogManager.info("Added in custom library " + file.getName());
+                if (!file.getName().equalsIgnoreCase("minecraft.jar")) {
+                    LogManager.info("Added in custom library " + file.getName());
 
-                cpb.append(file);
-                cpb.append(File.pathSeparator);
+                    cpb.append(file);
+                    cpb.append(File.pathSeparator);
+                }
             }
         }
 
         // add minecraft client jar last
-        if (instance.usesCleanedMinecraftJar()) {
-            cpb.append(instance.getCleanedMinecraftJar().getAbsolutePath());
+        if (instance.usesCustomMinecraftJar()) {
+            cpb.append(instance.getCustomMinecraftJar().getAbsolutePath());
         } else {
             cpb.append(instance.getMinecraftJar().getAbsolutePath());
         }

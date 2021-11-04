@@ -379,9 +379,8 @@ public class Instance extends MinecraftVersion {
         return FileSystem.LIBRARIES.resolve(String.format("net/minecraft/client/%1$s/client-%1$s.jar", this.id));
     }
 
-    public Path getCleanedMinecraftJarLibraryPath() {
-        return FileSystem.LIBRARIES
-                .resolve(String.format("net/minecraft/client/%1$s/client-%1$s-cleaned.jar", this.id));
+    public Path getCustomMinecraftJarLibraryPath() {
+        return ROOT.resolve(String.format("bin/minecraft.jar", this.id));
     }
 
     /**
@@ -569,19 +568,18 @@ public class Instance extends MinecraftVersion {
 
         progressDialog.doneTask();
 
-        if (usesCleanedMinecraftJar()) {
-            progressDialog.setLabel(GetText.tr("Deleting META-INF Entries"));
+        if (usesCustomMinecraftJar()) {
+            progressDialog.setLabel(GetText.tr("Creating custom minecraft.jar"));
 
-            if (!getCleanedMinecraftJar().exists()) {
-                Path cleanedJarTempFile = FileSystem.TEMP.resolve(String.format("%s-cleaned.jar", this.id));
-                boolean success = Utils.stripMetaInf(getMinecraftJar(), cleanedJarTempFile.toFile());
+            if (Files.exists(getCustomMinecraftJarLibraryPath())) {
+                FileUtils.delete(getCustomMinecraftJarLibraryPath());
+            }
 
-                if (!success) {
-                    LogManager.error("Failed to string meta-inf from minecraft.jar");
-                    return false;
-                }
+            boolean success = Utils.stripMetaInf(getMinecraftJar(), getCustomMinecraftJar());
 
-                FileUtils.copyFile(cleanedJarTempFile, getCleanedMinecraftJarLibraryPath(), true);
+            if (!success) {
+                LogManager.error("Failed to strip meta-inf from minecraft.jar");
+                return false;
             }
         }
 
@@ -952,6 +950,9 @@ public class Instance extends MinecraftVersion {
                 }
                 if (Files.isDirectory(nativesTempDir)) {
                     FileUtils.deleteDirectory(nativesTempDir);
+                }
+                if (usesCustomMinecraftJar() && Files.exists(getCustomMinecraftJarLibraryPath())) {
+                    FileUtils.delete(getCustomMinecraftJarLibraryPath());
                 }
                 if (!App.settings.keepLauncherOpen) {
                     System.exit(0);
@@ -1753,8 +1754,8 @@ public class Instance extends MinecraftVersion {
         return getMinecraftJarLibraryPath().toFile();
     }
 
-    public File getCleanedMinecraftJar() {
-        return getCleanedMinecraftJarLibraryPath().toFile();
+    public File getCustomMinecraftJar() {
+        return getCustomMinecraftJarLibraryPath().toFile();
     }
 
     public String getName() {
@@ -2155,7 +2156,7 @@ public class Instance extends MinecraftVersion {
         }
     }
 
-    public boolean usesCleanedMinecraftJar() {
+    public boolean usesCustomMinecraftJar() {
         File binFolder = getBinDirectory();
 
         return binFolder.exists() && binFolder.listFiles().length != 0;

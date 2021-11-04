@@ -53,7 +53,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -884,9 +883,6 @@ public class Utils {
      * @return true, if successful
      */
     public static boolean stripMetaInf(File minecraftJar, File outputJar) {
-        List<String> filesToStrip = Arrays.asList(new String[] { "META-INF/MOJANG_C.DSA", "META-INF/MOJANG_C.SF",
-                "META-INF/CODESIGN.RSA", "META-INF/CODESIGN.SF" });
-
         try (FileInputStream is = new FileInputStream(minecraftJar);
                 JarInputStream jis = new JarInputStream(is);
                 FileOutputStream fos = new FileOutputStream(outputJar);
@@ -894,7 +890,7 @@ public class Utils {
                 JarFile jarFile = new JarFile(minecraftJar)) {
             JarEntry entry;
             while ((entry = jis.getNextJarEntry()) != null) {
-                if (filesToStrip.contains(entry.getName())) {
+                if (entry.getName().contains("META-INF")) {
                     continue;
                 }
 
