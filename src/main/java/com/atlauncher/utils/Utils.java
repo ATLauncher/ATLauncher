@@ -56,8 +56,10 @@ import java.security.Key;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -874,6 +876,74 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static boolean combineJars(File mainJar, File jarToAdd, File outputJar) {
+        try (FileInputStream is = new FileInputStream(mainJar);
+                JarInputStream jis = new JarInputStream(is);
+                JarFile jarFile = new JarFile(mainJar);
+
+                FileInputStream is2 = new FileInputStream(jarToAdd);
+                JarInputStream jis2 = new JarInputStream(is2);
+                JarFile jarFile2 = new JarFile(jarToAdd);
+
+                FileOutputStream fos = new FileOutputStream(outputJar);
+                JarOutputStream jos = new JarOutputStream(fos)) {
+            Set<String> entriesAdded = new HashSet<>();
+            JarEntry entry;
+            while ((entry = jis2.getNextJarEntry()) != null) {
+                if (entry.getName().contains("META-INF")) {
+                    continue;
+                }
+
+                InputStream jfis = jarFile2.getInputStream(entry);
+
+                JarEntry newEntry = new JarEntry(entry.getName());
+                jos.putNextEntry(newEntry);
+                entriesAdded.add(entry.getName());
+
+                byte[] buffer = new byte[8192];
+
+                int r;
+                while ((r = jis2.read(buffer, 0, buffer.length)) >= 0) {
+                    jos.write(buffer, 0, r);
+                }
+
+                jfis.close();
+                jos.flush();
+                jos.closeEntry();
+            }
+
+            while ((entry = jis.getNextJarEntry()) != null) {
+                if (entry.getName().contains("META-INF") || entriesAdded.contains(entry.getName())) {
+                    continue;
+                }
+
+                InputStream jfis = jarFile.getInputStream(entry);
+
+                JarEntry newEntry = new JarEntry(entry.getName());
+                jos.putNextEntry(newEntry);
+                entriesAdded.add(entry.getName());
+
+                byte[] buffer = new byte[8192];
+
+                int r;
+                while ((r = jis.read(buffer, 0, buffer.length)) >= 0) {
+                    jos.write(buffer, 0, r);
+                }
+
+                jfis.close();
+                jos.flush();
+                jos.closeEntry();
+            }
+
+        } catch (Exception e) {
+            LogManager.logStackTrace(e);
+
+            return false;
+        }
+
+        return true;
     }
 
     /**

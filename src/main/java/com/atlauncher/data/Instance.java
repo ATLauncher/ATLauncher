@@ -575,10 +575,9 @@ public class Instance extends MinecraftVersion {
                 FileUtils.delete(getCustomMinecraftJarLibraryPath());
             }
 
-            boolean success = Utils.stripMetaInf(getMinecraftJar(), getCustomMinecraftJar());
-
-            if (!success) {
-                LogManager.error("Failed to strip meta-inf from minecraft.jar");
+            if (!Utils.combineJars(getMinecraftJar(), getRoot().resolve("bin/modpack.jar").toFile(),
+                    getCustomMinecraftJar())) {
+                LogManager.error("Failed to combine jars into custom minecraft.jar");
                 return false;
             }
         }
@@ -2157,8 +2156,6 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean usesCustomMinecraftJar() {
-        File binFolder = getBinDirectory();
-
-        return binFolder.exists() && binFolder.listFiles().length != 0;
+        return Files.exists(getRoot().resolve("bin/modpack.jar"));
     }
 }
