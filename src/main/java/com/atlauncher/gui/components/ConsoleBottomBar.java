@@ -32,6 +32,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
@@ -81,16 +82,27 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         });
         uploadLogButton.addActionListener(e -> {
             String result;
-            try {
-                result = App.TASKPOOL.submit(new PasteUpload()).get();
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-                return;
-            } catch (ExecutionException ex) {
-                LogManager.logStackTrace("Exception while uploading paste", ex);
-                return;
-            }
-            if (result.contains(Constants.PASTE_CHECK_URL)) {
+            final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Uploading Logs"), 0,
+                    GetText.tr("Uploading Logs"), "Aborting Uploading Logs", App.console);
+
+            dialog.addThread(new Thread(() -> {
+                try {
+                    dialog.setReturnValue(App.TASKPOOL.submit(new PasteUpload()).get());
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                    dialog.setReturnValue(null);
+                } catch (ExecutionException ex) {
+                    LogManager.logStackTrace("Exception while uploading paste", ex);
+                    dialog.setReturnValue(null);
+                }
+
+                dialog.close();
+            }));
+
+            dialog.start();
+            result = dialog.getReturnValue();
+
+            if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
                 Analytics.sendEvent("UploadLog", "Launcher");
                 App.TOASTER.pop("Log uploaded and link copied to clipboard");
                 LogManager.info("Log uploaded and link copied to clipboard: " + result);

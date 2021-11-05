@@ -59,7 +59,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         setIconImage(Utils.getImage("/assets/image/icon.png"));
         setSize(300, 100);
         setTitle(title);
-        setLocationRelativeTo(App.launcher.getParent());
+        setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
         setResizable(false);
 
