@@ -128,9 +128,9 @@ public class JavaInstanceSettingsTab extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSpinner s = (JSpinner) e.getSource();
-                // if initial memory is larger than maximum memory, make initial memory match
+                // if initial memory is larger than maximum memory, make maximum memory match
                 if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
-                    initialMemory.setValue(maximumMemory.getValue());
+                    maximumMemory.setValue((Integer) s.getValue());
                 }
             }
         });
