@@ -551,6 +551,8 @@ public class InstanceInstallerDialog extends JDialog {
                 PackVersion packVersion = new PackVersion();
                 packVersion.version = v;
                 packVersion.isRecommended = v.equalsIgnoreCase(technicSolderModpack.recommended);
+                packVersion._technicRecommended = v.equalsIgnoreCase(technicSolderModpack.recommended);
+                packVersion._technicLatest = v.equalsIgnoreCase(technicSolderModpack.latest);
                 return packVersion;
             }).collect(Collectors.toList());
 
