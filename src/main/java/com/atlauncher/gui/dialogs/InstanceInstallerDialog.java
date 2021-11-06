@@ -211,7 +211,8 @@ public class InstanceInstallerDialog extends JDialog {
         // Top Panel Stuff
         JPanel top = new JPanel();
         top.add(new JLabel(((isReinstall) ? (isUpdate ? GetText.tr("Updating") : GetText.tr("Reinstalling"))
-                : GetText.tr("Installing")) + " " + pack.getName()));
+                : GetText.tr("Installing")) + " " + pack.getName()
+                + (isReinstall ? GetText.tr(" (Current Version: {0})", instance.launcher.version) : "")));
 
         // Middle Panel Stuff
         middle = new JPanel();

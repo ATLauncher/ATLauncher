@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow the `--launch` parameter to work with an instances name as well as directory name
 - Add Technic modpack support [#477]
 - Add progress dialog when uploading a paste
+- Add current installed version when reinstalling/updating an instance
 
 ### Fixes
 - When selecting the bin folder of a Java install, correctly parse that for the launcher
