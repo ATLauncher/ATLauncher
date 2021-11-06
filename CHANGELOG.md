@@ -19,5 +19,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Logins not working for Microsoft accounts using game pass
 - Installer not working on Forge versions older than 10.x
 - Issue with MetaSpace arguments applying incorrectly to custom instance Java versions
+- Don't copy resource files if we don't need to on launch/install
 
 ### Misc

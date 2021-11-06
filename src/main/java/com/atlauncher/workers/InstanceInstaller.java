@@ -1453,7 +1453,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Downloading Resources"));
+        fireTask(GetText.tr("Organising Resources"));
         fireSubProgressUnknown();
         this.totalBytes = this.downloadedBytes = 0;
 
@@ -1484,6 +1484,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         DownloadPool smallPool = pool.downsize();
 
         if (smallPool.size() != 0) {
+            fireTask(GetText.tr("Downloading Resources"));
             this.setTotalBytes(smallPool.totalSize());
             this.fireSubProgress(0);
             smallPool.downloadAll();
@@ -1491,18 +1492,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         // copy resources to instance
         if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
-            fireTask(GetText.tr("Copying Resources"));
+            fireTask(GetText.tr("Organising Resources"));
             fireSubProgressUnknown();
 
             index.objects.forEach((key, object) -> {
                 String filename = object.hash.substring(0, 2) + "/" + object.hash;
 
                 Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+                Path assetPath = index.mapToResources ? this.root.resolve("resources/" + key)
+                        : FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key);
 
-                if (index.mapToResources) {
-                    FileUtils.copyFile(downloadedFile, this.root.resolve("resources/" + key), true);
-                } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key), true);
+                if (!Files.exists(assetPath)) {
+                    FileUtils.copyFile(downloadedFile, assetPath, true);
                 }
             });
         }

@@ -507,7 +507,7 @@ public class Instance extends MinecraftVersion {
         progressDialog.doneTask();
 
         // organise assets
-        progressDialog.setLabel(GetText.tr("Downloading Resources"));
+        progressDialog.setLabel(GetText.tr("Organising Resources"));
         MojangAssetIndex assetIndex = this.assetIndex;
 
         AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
@@ -529,21 +529,27 @@ public class Instance extends MinecraftVersion {
 
         DownloadPool smallPool = pool.downsize();
 
-        progressDialog.setTotalBytes(smallPool.totalSize());
+        if (smallPool.size() != 0) {
+            progressDialog.setLabel(GetText.tr("Downloading Resources"));
 
-        smallPool.downloadAll();
+            progressDialog.setTotalBytes(smallPool.totalSize());
+
+            smallPool.downloadAll();
+        }
 
         // copy resources to instance
         if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            progressDialog.setLabel(GetText.tr("Organising Resources"));
+
             index.objects.forEach((key, object) -> {
                 String filename = object.hash.substring(0, 2) + "/" + object.hash;
 
                 Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
+                Path assetPath = index.mapToResources ? this.ROOT.resolve("resources/" + key)
+                        : FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key);
 
-                if (index.mapToResources) {
-                    FileUtils.copyFile(downloadedFile, this.getRoot().resolve("resources/" + key), true);
-                } else if (assetIndex.id.equalsIgnoreCase("legacy")) {
-                    FileUtils.copyFile(downloadedFile, FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key), true);
+                if (!Files.exists(assetPath)) {
+                    FileUtils.copyFile(downloadedFile, assetPath, true);
                 }
             });
         }
