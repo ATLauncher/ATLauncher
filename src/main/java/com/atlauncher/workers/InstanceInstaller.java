@@ -144,7 +144,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public final Path multiMCExtractedPath;
     public final TechnicModpack technicModpack;
     public TechnicSolderModpackManifest technicSolderModpackManifest;
-    public final Path technicModpackExtractedPath;
+    public Path technicModpackExtractedPath;
     public List<Mod> technicSolderModsToDownload = new ArrayList<>();
 
     public boolean isReinstall;
@@ -182,7 +182,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest, Path curseForgeExtractedPath,
             ModpacksChPackManifest modpacksChPackManifest, ModrinthModpackManifest modrinthManifest,
             Path modrinthExtractedPath, MultiMCManifest multiMCManifest, Path multiMCExtractedPath,
-            TechnicModpack technicModpack, Path technicModpackExtractedPath) {
+            TechnicModpack technicModpack) {
         this.name = name;
         this.pack = pack;
         this.version = version;
@@ -209,7 +209,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.multiMCManifest = multiMCManifest;
         this.multiMCExtractedPath = multiMCExtractedPath;
         this.technicModpack = technicModpack;
-        this.technicModpackExtractedPath = technicModpackExtractedPath;
     }
 
     public void setInstance(Instance instance) {
@@ -602,6 +601,24 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void generatePackVersionFromTechnicZip() throws Exception {
+        addPercent(5);
+        fireTask(GetText.tr("Downloading modpack.zip"));
+        fireSubProgressUnknown();
+
+        Path tempZip = FileSystem.TEMP.resolve("technic-" + technicModpack.name + "-modpack.zip");
+        Path unzipLocation = FileSystem.TEMP.resolve("technic-" + technicModpack.name);
+        OkHttpClient httpClient = Network.createProgressClient(this);
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(technicModpack.url)
+                .downloadTo(tempZip).unzipTo(unzipLocation).withInstanceInstaller(this).withHttpClient(httpClient);
+
+        if (download.needToDownload()) {
+            this.setTotalBytes(download.getFilesize());
+
+            download.downloadFile();
+        }
+
+        technicModpackExtractedPath = unzipLocation;
+
         addPercent(5);
         fireTask(GetText.tr("Generating Pack Version Definition From Technic Zip"));
         fireSubProgressUnknown();

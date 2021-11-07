@@ -57,7 +57,7 @@ import com.atlauncher.managers.NewsManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.ServerManager;
-import com.atlauncher.managers.TechnicSolderUpdateManager;
+import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.Java;
@@ -344,8 +344,8 @@ public class Launcher {
             if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
                 CurseForgeUpdateManager.checkForUpdates();
             }
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isTechnicSolderPack())) {
-                TechnicSolderUpdateManager.checkForUpdates();
+            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isTechnicPack())) {
+                TechnicModpackUpdateManager.checkForUpdates();
             }
         });
         updateThread.start();

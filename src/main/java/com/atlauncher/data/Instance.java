@@ -103,6 +103,7 @@ import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -117,7 +118,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.managers.TechnicSolderUpdateManager;
+import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
@@ -204,14 +205,24 @@ public class Instance extends MinecraftVersion {
                 CurseForgeProjectLatestFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(this);
 
                 return latestVersion != null && latestVersion.id != this.launcher.curseForgeFile.id;
-            } else if (isTechnicSolderPack()) {
-                TechnicSolderModpack solderModpack = Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(this);
+            } else if (isTechnicPack()) {
+                if (isTechnicSolderPack()) {
+                    TechnicSolderModpack technicSolderModpack = Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(this);
 
-                if (solderModpack == null) {
-                    return false;
+                    if (technicSolderModpack == null) {
+                        return false;
+                    }
+
+                    return !technicSolderModpack.latest.equals(launcher.version);
+                } else {
+                    TechnicModpack technicModpack = Data.TECHNIC_INSTANCE_LATEST_VERSION.get(this);
+
+                    if (technicModpack == null) {
+                        return false;
+                    }
+
+                    return !technicModpack.version.equals(launcher.version);
                 }
-
-                return !solderModpack.latest.equals(launcher.version);
             }
         } else {
             Pack pack = this.getPack();
@@ -321,8 +332,12 @@ public class Instance extends MinecraftVersion {
                 version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
             } else if (isCurseForgePack()) {
                 version = Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id);
-            } else if (isTechnicSolderPack()) {
-                version = TechnicSolderUpdateManager.getUpToDateSolderModpack(this).latest;
+            } else if (isTechnicPack()) {
+                if (isTechnicSolderPack()) {
+                    version = TechnicModpackUpdateManager.getUpToDateSolderModpack(this).latest;
+                } else {
+                    version = TechnicModpackUpdateManager.getUpToDateModpack(this).version;
+                }
             } else {
                 return;
             }
@@ -350,8 +365,12 @@ public class Instance extends MinecraftVersion {
                 return hasUpdateBeenIgnored(Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id));
             } else if (isCurseForgePack()) {
                 return hasUpdateBeenIgnored(Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id));
-            } else if (isTechnicSolderPack()) {
-                return hasUpdateBeenIgnored(TechnicSolderUpdateManager.getUpToDateSolderModpack(this).latest);
+            } else if (isTechnicPack()) {
+                if (isTechnicSolderPack()) {
+                    return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateSolderModpack(this).latest);
+                } else {
+                    return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateModpack(this).version);
+                }
             }
 
             return false;
@@ -1849,7 +1868,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isUpdatableExternalPack() {
-        return isExternalPack() && (isModpacksChPack() || isCurseForgePack() || isTechnicSolderPack());
+        return isExternalPack() && (isModpacksChPack() || isCurseForgePack() || isTechnicPack());
     }
 
     public String getAnalyticsCategory() {

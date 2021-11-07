@@ -31,7 +31,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,9 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.Network;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
@@ -93,7 +90,6 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.network.Download;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.TechnicApi;
@@ -345,7 +341,6 @@ public class InstanceInstallerDialog extends JDialog {
                     installable = new TechnicModpackInstallable(pack, packVersion, loaderVersion);
 
                     installable.technicModpack = technicModpack;
-                    installable.technicModpackExtractedPath = extractedPath;
                 } else if (instance != null && instance.launcher.vanillaInstance) {
                     installable = new VanillaInstallable(packVersion.minecraftVersion, loaderVersion,
                             instance.launcher.description);
@@ -558,44 +553,8 @@ public class InstanceInstallerDialog extends JDialog {
 
             Collections.reverse(pack.versions);
         } else {
-            final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading modpack.zip"), 1,
-                    GetText.tr("Downloading modpack.zip"), "Aborting Downloading modpack.zip");
-            Path tempZip = FileSystem.TEMP.resolve("technic-" + technicModpack.name + "-modpack.zip");
-            Path unzipLocation = FileSystem.TEMP.resolve("technic-" + technicModpack.name);
-
-            dialog.addThread(new Thread(() -> {
-                try {
-                    Download download = new Download().setUrl(technicModpack.url).downloadTo(tempZip)
-                            .unzipTo(unzipLocation).withHttpClient(Network.createProgressClient(dialog));
-
-                    if (download.needToDownload()) {
-                        dialog.setTotalBytes(download.getFilesize());
-
-                        download.downloadFile();
-                    }
-
-                    dialog.setReturnValue(true);
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Error downloading technic modpack.zip", e);
-                    dialog.setReturnValue(false);
-                }
-
-                dialog.doneTask();
-                dialog.close();
-            }));
-
-            dialog.start();
-
-            if (!dialog.getReturnValue()) {
-                setVisible(false);
-                dispose();
-                return;
-            }
-
-            extractedPath = unzipLocation;
-
             PackVersion packVersion = new PackVersion();
-            packVersion.version = "1";
+            packVersion.version = technicModpack.version;
             pack.versions = Collections.singletonList(packVersion);
         }
 
@@ -778,7 +737,7 @@ public class InstanceInstallerDialog extends JDialog {
             versionsDropDown.setEnabled(false);
         }
 
-        if (multiMCManifest != null || (technicModpack != null && technicModpack.solder == null)) {
+        if (multiMCManifest != null) {
             gbc.gridx--;
             versionLabel.setVisible(false);
             versionsDropDown.setVisible(false);

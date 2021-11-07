@@ -74,7 +74,6 @@ public abstract class Installable {
     public MultiMCManifest multiMCManifest;
     public Path multiMCExtractedPath;
     public TechnicModpack technicModpack;
-    public Path technicModpackExtractedPath;
 
     public abstract Pack getPack();
 
@@ -160,7 +159,7 @@ public abstract class Installable {
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
                 isServer, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest, curseExtractedPath,
                 modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest, multiMCExtractedPath,
-                technicModpack, technicModpackExtractedPath) {
+                technicModpack) {
 
             protected void done() {
                 Boolean success = false;

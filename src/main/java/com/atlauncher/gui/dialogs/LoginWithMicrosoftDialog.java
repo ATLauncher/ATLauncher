@@ -259,7 +259,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         } catch (DownloadException e) {
             DialogManager.okDialog().setTitle(GetText.tr("Minecraft Profile Not Found"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're a Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
+                            "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're an Xbox Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
                             .build())
                     .setType(DialogManager.ERROR).show();
             throw new Exception("Minecraft Profile not found");
