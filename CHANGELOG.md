@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add Technic modpack support [#477]
 - Add progress dialog when uploading a paste
 - Add current installed version when reinstalling/updating an instance
+- Add error reporting config/ignored messages to config
 
 ### Fixes
 - When selecting the bin folder of a Java install, correctly parse that for the launcher

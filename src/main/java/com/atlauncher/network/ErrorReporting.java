@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
 
 import io.sentry.Sentry;
@@ -34,37 +35,10 @@ import io.sentry.event.BreadcrumbBuilder;
 public final class ErrorReporting {
     public static SentryClient client;
     public static List<String> sentEvents = new ArrayList<>();
-
     public static List<String> ignoredMessages = new ArrayList<>();
 
-    static {
-        ignoredMessages.add("Network is unreachable: connect");
-        ignoredMessages.add("Permission denied: connect");
-        ignoredMessages.add("Connection timed out: connect");
-        ignoredMessages.add("Connection refused: connect");
-        ignoredMessages.add("failed to delete");
-        ignoredMessages.add("failed to rename");
-        ignoredMessages.add("Failed to connect to");
-        ignoredMessages.add("Connection reset");
-        ignoredMessages.add("timeout");
-        ignoredMessages.add("Read timed out");
-        ignoredMessages.add("Access is denied");
-        ignoredMessages.add("request wasn't successful");
-        ignoredMessages.add("There is not enough space on the disk");
-        ignoredMessages.add("The system cannot find the file specified");
-        ignoredMessages.add("being used by another process");
-        ignoredMessages.add("The cloud file provider is not running");
-        ignoredMessages.add("Name or service not known");
-        ignoredMessages.add("Received fatal alert: handshake_failure");
-        ignoredMessages.add("not verified (no certificates)");
-        ignoredMessages.add("No such host is known");
-        ignoredMessages.add("nodename nor servname provided, or not known");
-        ignoredMessages.add("NoSuchFileException");
-        ignoredMessages.add("Account does not own Minecraft");
-    }
-
-    public static void init(boolean disable) {
-        if (!disable) {
+    public static void enable() {
+        if (client == null) {
             client = Sentry.init(Constants.SENTRY_DSN);
             client.addShouldSendEventCallback(event -> {
                 if (event == null || event.getMessage() == null || sentEvents.contains(event.getMessage())) {
@@ -78,10 +52,37 @@ public final class ErrorReporting {
                 sentEvents.add(event.getMessage());
                 return true;
             });
+            client.setEnvironment(ErrorReporting.getEnvironmentName());
             client.setRelease(Constants.VERSION.toStringForLogging());
             client.addTag("java.version", Java.getLauncherJavaVersion());
             client.addTag("os.name", System.getProperty("os.name"));
             client.addTag("os.version", System.getProperty("os.version"));
+        }
+    }
+
+    private static String getEnvironmentName() {
+        try {
+            if (ErrorReporting.class.getResource("").getProtocol().equals("file")) {
+                return "development";
+            }
+        } catch (Exception ignored) {
+        }
+
+        if (!Constants.VERSION.isReleaseStream()) {
+            return "staging";
+        }
+
+        return "production";
+    }
+
+    public static void disable() {
+        if (client != null) {
+            try {
+                Sentry.close();
+                client = null;
+            } catch (Exception e) {
+                LogManager.logStackTrace("Error disabling error reporting", e);
+            }
         }
     }
 

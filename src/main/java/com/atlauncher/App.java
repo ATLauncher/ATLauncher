@@ -263,8 +263,10 @@ public class App {
         // Parse all the command line arguments
         parseCommandLineArguments(args);
 
-        // Initialize the error reporting
-        ErrorReporting.init(disableErrorReporting);
+        // Initialize the error reporting unless disabled by command line
+        if (!disableErrorReporting) {
+            ErrorReporting.enable();
+        }
 
         // check the launcher has been 'installed' correctly
         checkInstalledCorrectly();

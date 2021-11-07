@@ -23,12 +23,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.network.ErrorReporting;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -145,7 +147,27 @@ public class ConfigManager {
             }
         }
 
+        afterConfigLoaded();
+
         LogManager.debug("Finished loading config");
         PerformanceManager.end();
+    }
+
+    private static void afterConfigLoaded() {
+        if (ConfigManager.getConfigItem("errorReporting.enabled", true) == true) {
+            ErrorReporting.ignoredMessages.clear();
+            ErrorReporting.ignoredMessages
+                    .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<String>()));
+
+            // not initiated, so start it up
+            if (ErrorReporting.client == null) {
+                ErrorReporting.enable();
+            }
+        }
+
+        // error reporting disabled, but we have a client initated, so close it
+        if (ConfigManager.getConfigItem("errorReporting.enabled", true) == false && ErrorReporting.client != null) {
+            ErrorReporting.disable();
+        }
     }
 }
