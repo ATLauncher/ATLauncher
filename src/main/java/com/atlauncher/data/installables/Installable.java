@@ -59,6 +59,7 @@ public abstract class Installable {
     public boolean isUpdate = false;
     public boolean isReinstall = false;
     public boolean addingLoader = false;
+    public boolean changingLoader = false;
     public boolean removingLoader = false;
     public boolean saveMods = false;
     public Instance instance;
@@ -157,9 +158,9 @@ public abstract class Installable {
         boolean saveMods = !isServer && isReinstall && this.saveMods;
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
-                isServer, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest, curseExtractedPath,
-                modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest, multiMCExtractedPath,
-                technicModpack) {
+                isServer, changingLoader, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest,
+                curseExtractedPath, modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
+                multiMCExtractedPath, technicModpack) {
 
             protected void done() {
                 Boolean success = false;
@@ -269,7 +270,7 @@ public abstract class Installable {
 
                 dialog.dispose();
 
-                if (!addingLoader && !removingLoader) {
+                if (!addingLoader && !changingLoader && !removingLoader) {
                     DialogManager.okDialog().setTitle(title).setContent(new HTMLBuilder().center().text(text).build())
                             .setType(type).show();
                 }
@@ -369,6 +370,10 @@ public abstract class Installable {
 
         if (addingLoader) {
             return GetText.tr("Adding {0} {1}", getLoaderVersion().type, getLoaderVersion().version);
+        }
+
+        if (changingLoader) {
+            return GetText.tr("Installing {0} {1}", getLoaderVersion().type, getLoaderVersion().version);
         }
 
         if (isReinstall) {

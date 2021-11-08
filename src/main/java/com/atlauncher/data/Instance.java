@@ -2020,90 +2020,61 @@ public class Instance extends MinecraftVersion {
         }
     }
 
+    public void changeLoaderVersion() {
+        Analytics.sendEvent(launcher.loaderVersion.getAnalyticsValue(), launcher.pack + " - " + launcher.version,
+                "ChangeLoaderVersion", getAnalyticsCategory());
+
+        LoaderVersion loaderVersion = showLoaderVersionSelector(launcher.loaderVersion.getLoaderType());
+
+        if (loaderVersion == null) {
+            return;
+        }
+
+        boolean success = false;
+
+        try {
+            Installable installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(id), loaderVersion,
+                    launcher.description);
+            installable.instance = this;
+            installable.instanceName = launcher.name;
+            installable.isReinstall = true;
+            installable.changingLoader = true;
+            installable.isServer = false;
+            installable.saveMods = true;
+
+            success = installable.startInstall();
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (success) {
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Installed", launcher.loaderVersion.getLoaderType()))
+                    .setContent(
+                            new HTMLBuilder().center()
+                                    .text(GetText.tr("{0} {1} has been installed.",
+                                            launcher.loaderVersion.getLoaderType(), loaderVersion.version))
+                                    .build())
+                    .setType(DialogManager.INFO).show();
+        } else {
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Installed", launcher.loaderVersion.getLoaderType()))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("{0} has not been installed. Check the console for more information.",
+                                    launcher.loaderVersion.getLoaderType()))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+        }
+    }
+
     public void addLoader(LoaderType loaderType) {
         Analytics.sendEvent(loaderType.getAnalyticsValue(), launcher.pack + " - " + launcher.version, "AddLoader",
                 getAnalyticsCategory());
 
-        ProgressDialog<List<LoaderVersion>> progressDialog = new ProgressDialog<>(
-                GetText.tr("Checking For {0} Versions", loaderType), 0,
-                GetText.tr("Checking For {0} Versions", loaderType));
-        progressDialog.addThread(new Thread(() -> {
-            if (loaderType == LoaderType.FABRIC) {
-                progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
-            } else if (loaderType == LoaderType.FORGE) {
-                progressDialog.setReturnValue(ForgeLoader.getChoosableVersions(id));
-            } else if (loaderType == LoaderType.QUILT) {
-                progressDialog.setReturnValue(QuiltLoader.getChoosableVersions(id));
-            }
+        LoaderVersion loaderVersion = showLoaderVersionSelector(loaderType);
 
-            progressDialog.doneTask();
-            progressDialog.close();
-        }));
-        progressDialog.start();
-
-        List<LoaderVersion> loaderVersions = progressDialog.getReturnValue();
-
-        if (loaderVersions == null || loaderVersions.size() == 0) {
-            DialogManager.okDialog().setTitle(GetText.tr("No Versions Available For {0}", loaderType))
-                    .setContent(new HTMLBuilder().center().text(
-                            GetText.tr("{0} has not been installed as there are no versions available.", loaderType))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+        if (loaderVersion == null) {
             return;
         }
 
-        JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
-
-        int loaderVersionLength = 0;
-
-        // ensures that font width is taken into account
-        for (LoaderVersion version : loaderVersions) {
-            loaderVersionLength = Math.max(loaderVersionLength,
-                    loaderVersionsDropDown.getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString())
-                            + 25);
-        }
-
-        loaderVersions.forEach(
-                version -> loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(version, version.toString())));
-
-        if (loaderType == LoaderType.FORGE) {
-            Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
-                    .findFirst();
-
-            if (recommendedVersion.isPresent()) {
-                loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
-            }
-        }
-
-        // ensures that the dropdown is at least 200 px wide
-        loaderVersionLength = Math.max(200, loaderVersionLength);
-
-        // ensures that there is a maximum width of 400 px to prevent overflow
-        loaderVersionLength = Math.min(400, loaderVersionLength);
-
-        loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        Box box = Box.createHorizontalBox();
-        box.add(new JLabel(GetText.tr("Select {0} Version To Install", loaderType)));
-        box.add(Box.createHorizontalGlue());
-
-        panel.add(box);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(loaderVersionsDropDown);
-        panel.add(Box.createVerticalStrut(20));
-
-        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), panel,
-                GetText.tr("Installing {0}", loaderType), JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.INFORMATION_MESSAGE);
-
-        if (ret != 0) {
-            return;
-        }
-
-        LoaderVersion loaderVersion = ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue();
         boolean success = false;
 
         try {
@@ -2133,6 +2104,104 @@ public class Instance extends MinecraftVersion {
                             .build())
                     .setType(DialogManager.ERROR).show();
         }
+    }
+
+    private LoaderVersion showLoaderVersionSelector(LoaderType loaderType) {
+        ProgressDialog<List<LoaderVersion>> progressDialog = new ProgressDialog<>(
+                GetText.tr("Checking For {0} Versions", loaderType), 0,
+                GetText.tr("Checking For {0} Versions", loaderType));
+        progressDialog.addThread(new Thread(() -> {
+            if (loaderType == LoaderType.FABRIC) {
+                progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
+            } else if (loaderType == LoaderType.FORGE) {
+                progressDialog.setReturnValue(ForgeLoader.getChoosableVersions(id));
+            } else if (loaderType == LoaderType.QUILT) {
+                progressDialog.setReturnValue(QuiltLoader.getChoosableVersions(id));
+            }
+
+            progressDialog.doneTask();
+            progressDialog.close();
+        }));
+        progressDialog.start();
+
+        List<LoaderVersion> loaderVersions = progressDialog.getReturnValue();
+
+        if (loaderVersions == null || loaderVersions.size() == 0) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Versions Available For {0}", loaderType))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("{0} has not been {1} as there are no versions available.", loaderType,
+                                    launcher.loaderVersion == null ? GetText.tr("installed") : GetText.tr("changed")))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+            return null;
+        }
+
+        JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
+
+        int loaderVersionLength = 0;
+
+        // ensures that font width is taken into account
+        for (LoaderVersion version : loaderVersions) {
+            loaderVersionLength = Math.max(loaderVersionLength, loaderVersionsDropDown
+                    .getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toStringWithCurrent(this)) + 25);
+        }
+
+        loaderVersions.forEach(version -> loaderVersionsDropDown
+                .addItem(new ComboItem<LoaderVersion>(version, version.toStringWithCurrent(this))));
+
+        if (loaderType == LoaderType.FORGE) {
+            Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
+                    .findFirst();
+
+            if (recommendedVersion.isPresent()) {
+                loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
+            }
+        }
+
+        if (launcher.loaderVersion != null) {
+            String loaderVersionString = launcher.loaderVersion.version;
+
+            for (int i = 0; i < loaderVersionsDropDown.getItemCount(); i++) {
+                LoaderVersion loaderVersion = ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getItemAt(i))
+                        .getValue();
+
+                if (loaderVersion.version.equals(loaderVersionString)) {
+                    loaderVersionsDropDown.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+
+        // ensures that the dropdown is at least 200 px wide
+        loaderVersionLength = Math.max(200, loaderVersionLength);
+
+        // ensures that there is a maximum width of 400 px to prevent overflow
+        loaderVersionLength = Math.min(400, loaderVersionLength);
+
+        loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        Box box = Box.createHorizontalBox();
+        box.add(new JLabel(GetText.tr("Select {0} Version To Install", loaderType)));
+        box.add(Box.createHorizontalGlue());
+
+        panel.add(box);
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(loaderVersionsDropDown);
+        panel.add(Box.createVerticalStrut(20));
+
+        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), panel,
+                launcher.loaderVersion == null ? GetText.tr("Installing {0}", loaderType)
+                        : GetText.tr("Changing {0} Version", loaderType),
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+        if (ret != 0) {
+            return null;
+        }
+
+        return ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue();
     }
 
     public void removeLoader() {

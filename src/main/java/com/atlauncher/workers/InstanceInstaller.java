@@ -149,6 +149,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public boolean isReinstall;
     public boolean isServer;
+    public boolean changingLoader;
     public boolean instanceIsCorrupt;
     public boolean saveMods;
 
@@ -178,16 +179,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public boolean success;
 
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
-            boolean isReinstall, boolean isServer, boolean saveMods, String shareCode, boolean showModsChooser,
-            LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest, Path curseForgeExtractedPath,
-            ModpacksChPackManifest modpacksChPackManifest, ModrinthModpackManifest modrinthManifest,
-            Path modrinthExtractedPath, MultiMCManifest multiMCManifest, Path multiMCExtractedPath,
-            TechnicModpack technicModpack) {
+            boolean isReinstall, boolean isServer, boolean changingLoader, boolean saveMods, String shareCode,
+            boolean showModsChooser, LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest,
+            Path curseForgeExtractedPath, ModpacksChPackManifest modpacksChPackManifest,
+            ModrinthModpackManifest modrinthManifest, Path modrinthExtractedPath, MultiMCManifest multiMCManifest,
+            Path multiMCExtractedPath, TechnicModpack technicModpack) {
         this.name = name;
         this.pack = pack;
         this.version = version;
         this.isReinstall = isReinstall;
         this.isServer = isServer;
+        this.changingLoader = changingLoader;
         this.saveMods = saveMods;
         this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
@@ -231,6 +233,47 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         try {
+
+            if (changingLoader) {
+                generatePackVersionForVanilla();
+
+                downloadMinecraftVersionJson();
+
+                this.loader = this.packVersion.getLoader().getLoader(this.temp.resolve("loader").toFile(), this,
+                        this.loaderVersion);
+
+                downloadLoader();
+                if (isCancelled()) {
+                    return success(false);
+                }
+
+                determineMainClass();
+                determineArguments();
+
+                downloadLibraries();
+                if (isCancelled()) {
+                    return success(false);
+                }
+
+                organiseLibraries();
+                if (isCancelled()) {
+                    return success(false);
+                }
+
+                installLoader();
+                if (isCancelled()) {
+                    return success(false);
+                }
+
+                if (!this.isServer) {
+                    saveInstanceJson();
+                } else {
+                    saveServerJson();
+                }
+
+                return success(true);
+            }
+
             if (curseForgeManifest != null) {
                 generatePackVersionFromCurseForgeManifest();
             } else if (pack.curseForgeProject != null) {
@@ -1276,53 +1319,58 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instance.mainClass = this.mainClass;
         instance.arguments = this.arguments;
 
-        instanceLauncher.name = this.name;
-        instanceLauncher.pack = this.pack.name;
-        instanceLauncher.description = this.pack.description;
-        instanceLauncher.packId = this.pack.id;
-        instanceLauncher.externalPackId = this.pack.externalId;
-        instanceLauncher.version = this.packVersion.version;
-        instanceLauncher.java = this.packVersion.java;
-        instanceLauncher.enableCurseForgeIntegration = this.packVersion.enableCurseForgeIntegration;
-        instanceLauncher.enableEditingMods = this.packVersion.enableEditingMods;
         instanceLauncher.loaderVersion = this.loaderVersion;
-        instanceLauncher.isDev = this.version.isDev;
-        instanceLauncher.isPlayable = true;
-        instanceLauncher.mods = this.modsInstalled;
-        instanceLauncher.requiredMemory = this.packVersion.memory;
-        instanceLauncher.requiredPermGen = this.packVersion.permGen;
-        instanceLauncher.assetsMapToResources = this.assetsMapToResources;
-        instanceLauncher.curseForgeProject = this.pack.curseForgeProject;
-        instanceLauncher.curseForgeFile = this.version._curseForgeFile;
-        instanceLauncher.multiMCManifest = multiMCManifest;
-        instanceLauncher.modrinthManifest = modrinthManifest;
-        instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
-        instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
-        instanceLauncher.technicModpack = technicModpack;
-        instanceLauncher.vanillaInstance = this.pack.vanillaInstance;
 
-        if (multiMCManifest != null) {
-            if (multiMCManifest.config.preLaunchCommand != null && !multiMCManifest.config.preLaunchCommand.isEmpty()) {
-                instanceLauncher.preLaunchCommand = multiMCManifest.config.preLaunchCommand;
-                instanceLauncher.enableCommands = true;
+        if (!changingLoader) {
+            instanceLauncher.name = this.name;
+            instanceLauncher.pack = this.pack.name;
+            instanceLauncher.description = this.pack.description;
+            instanceLauncher.packId = this.pack.id;
+            instanceLauncher.externalPackId = this.pack.externalId;
+            instanceLauncher.version = this.packVersion.version;
+            instanceLauncher.java = this.packVersion.java;
+            instanceLauncher.enableCurseForgeIntegration = this.packVersion.enableCurseForgeIntegration;
+            instanceLauncher.enableEditingMods = this.packVersion.enableEditingMods;
+            instanceLauncher.isDev = this.version.isDev;
+            instanceLauncher.isPlayable = true;
+            instanceLauncher.mods = this.modsInstalled;
+            instanceLauncher.requiredMemory = this.packVersion.memory;
+            instanceLauncher.requiredPermGen = this.packVersion.permGen;
+            instanceLauncher.assetsMapToResources = this.assetsMapToResources;
+            instanceLauncher.curseForgeProject = this.pack.curseForgeProject;
+            instanceLauncher.curseForgeFile = this.version._curseForgeFile;
+            instanceLauncher.multiMCManifest = multiMCManifest;
+            instanceLauncher.modrinthManifest = modrinthManifest;
+            instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
+            instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;
+            instanceLauncher.technicModpack = technicModpack;
+            instanceLauncher.vanillaInstance = this.pack.vanillaInstance;
+
+            if (multiMCManifest != null) {
+                if (multiMCManifest.config.preLaunchCommand != null
+                        && !multiMCManifest.config.preLaunchCommand.isEmpty()) {
+                    instanceLauncher.preLaunchCommand = multiMCManifest.config.preLaunchCommand;
+                    instanceLauncher.enableCommands = true;
+                }
+
+                if (multiMCManifest.config.postExitCommand != null
+                        && !multiMCManifest.config.postExitCommand.isEmpty()) {
+                    instanceLauncher.postExitCommand = multiMCManifest.config.postExitCommand;
+                    instanceLauncher.enableCommands = true;
+                }
+                if (multiMCManifest.config.wrapperCommand != null && !multiMCManifest.config.wrapperCommand.isEmpty()) {
+                    instanceLauncher.wrapperCommand = multiMCManifest.config.wrapperCommand;
+                    instanceLauncher.enableCommands = true;
+                }
             }
 
-            if (multiMCManifest.config.postExitCommand != null && !multiMCManifest.config.postExitCommand.isEmpty()) {
-                instanceLauncher.postExitCommand = multiMCManifest.config.postExitCommand;
-                instanceLauncher.enableCommands = true;
+            if (instanceLauncher.curseForgeManifest != null) {
+                instanceLauncher.curseForgeManifest = null;
             }
-            if (multiMCManifest.config.wrapperCommand != null && !multiMCManifest.config.wrapperCommand.isEmpty()) {
-                instanceLauncher.wrapperCommand = multiMCManifest.config.wrapperCommand;
-                instanceLauncher.enableCommands = true;
+
+            if (this.version.isDev) {
+                instanceLauncher.hash = this.version.hash;
             }
-        }
-
-        if (instanceLauncher.curseForgeManifest != null) {
-            instanceLauncher.curseForgeManifest = null;
-        }
-
-        if (this.version.isDev) {
-            instanceLauncher.hash = this.version.hash;
         }
 
         instance.launcher = instanceLauncher;

@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.9.1
 
 ### New Features
+- Add new button to update loader version for instances
 
 ### Fixes
 - Use Edit Instance button for all instances

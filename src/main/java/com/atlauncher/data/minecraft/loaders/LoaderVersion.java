@@ -18,6 +18,8 @@
 package com.atlauncher.data.minecraft.loaders;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.json.Loader;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 
 public class LoaderVersion {
     public String version;
@@ -66,6 +68,18 @@ public class LoaderVersion {
         }
 
         return this.version;
+    }
+
+    public LoaderType getLoaderType() {
+        if (isFabric()) {
+            return LoaderType.FABRIC;
+        }
+
+        if (isQuilt()) {
+            return LoaderType.QUILT;
+        }
+
+        return LoaderType.FORGE;
     }
 
     public String toStringWithCurrent(Instance instance) {
