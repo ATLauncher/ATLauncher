@@ -81,9 +81,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
-    private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
     private final JButton updateButton = new JButton(GetText.tr("Update"));
-    private final JButton renameButton = new JButton(GetText.tr("Rename"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton exportButton = new JButton(GetText.tr("Export"));
     private final JButton addButton = new JButton(GetText.tr("Add Mods"));
@@ -170,10 +168,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         top.add(this.playButton);
-        top.add(this.reinstallButton);
         top.add(this.updateButton);
         top.add(this.editInstanceButton);
-        top.add(this.renameButton);
         top.add(this.backupButton);
         top.add(this.settingsButton);
 
@@ -187,12 +183,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         // check it can be exported
         this.exportButton.setVisible(instance.canBeExported());
 
-        // vanilla instances do some things different
-        this.editInstanceButton.setVisible(instance.canEditInstance());
-        this.renameButton.setVisible(!instance.canEditInstance());
-        this.reinstallButton.setVisible(!instance.canEditInstance());
-        this.updateButton.setVisible(!instance.canEditInstance());
-
         // if not an ATLauncher pack, a system pack or has no urls, don't show the links
         // button
         if (instance.getPack() == null || instance.getPack().system || (instance.getPack().discordInviteURL == null
@@ -201,7 +191,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
 
         if (!instance.isUpdatable()) {
-            this.reinstallButton.setVisible(instance.isUpdatable());
             this.updateButton.setVisible(instance.isUpdatable());
         }
 
@@ -290,9 +279,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         fullBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.FULL));
         backupPopupMenu.add(fullBackupMenuItem);
 
-        if (instance.canEditInstance()) {
-            setupEditInstanceButton();
-        }
+        setupEditInstanceButton();
     }
 
     private void setupEditInstanceButton() {
@@ -376,9 +363,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void addActionListeners() {
-        this.reinstallButton.addActionListener(e -> {
-            instance.startReinstall();
-        });
         this.updateButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
@@ -390,9 +374,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Update",
                     instance.getAnalyticsCategory());
             instance.update();
-        });
-        this.renameButton.addActionListener(e -> {
-            instance.startRename();
         });
         this.addButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
@@ -687,9 +668,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     @Override
     public void onRelocalization() {
         this.playButton.setText(GetText.tr("Play"));
-        this.reinstallButton.setText(GetText.tr("Reinstall"));
         this.updateButton.setText(GetText.tr("Update"));
-        this.renameButton.setText(GetText.tr("Rename"));
         this.backupButton.setText(GetText.tr("Backup"));
         this.deleteButton.setText(GetText.tr("Delete"));
         this.addButton.setText(GetText.tr("Add Mods"));

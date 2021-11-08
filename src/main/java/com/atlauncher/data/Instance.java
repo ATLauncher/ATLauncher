@@ -1255,14 +1255,6 @@ public class Instance extends MinecraftVersion {
         return true;
     }
 
-    public boolean canEditInstance() {
-        if (getPack() != null || isCurseForgePack() || isModpacksChPack() || isTechnicPack()) {
-            return false;
-        }
-
-        return true;
-    }
-
     public boolean export(String name, String version, String author, InstanceExportFormat format, String saveTo,
             List<String> overrides) {
         if (format == InstanceExportFormat.CURSEFORGE) {
