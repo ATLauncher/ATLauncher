@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
+import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
@@ -192,6 +194,14 @@ public class MicrosoftAccount extends AbstractAccount {
                     return false;
                 }
 
+                Entitlements entitlements = MicrosoftAuthAPI.getEntitlements(loginResponse.accessToken);
+
+                if (!(entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
+                        && entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
+                    LogManager.error("This account doesn't have a valid purchase of Minecraft");
+                    return false;
+                }
+
                 // make sure they have a Minecraft profile before saving logins
                 if (!checkAndUpdateProfile(loginResponse.accessToken)) {
                     mustLogin = true;
@@ -200,6 +210,7 @@ public class MicrosoftAccount extends AbstractAccount {
                     return false;
                 }
 
+                this.mustLogin = false;
                 this.accessToken = loginResponse.accessToken;
                 this.username = loginResponse.username;
 

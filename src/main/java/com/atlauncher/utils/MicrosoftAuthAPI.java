@@ -22,9 +22,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
@@ -108,7 +110,8 @@ public class MicrosoftAuthAPI {
 
     public static LoginResponse loginToMinecraft(String xstsToken) {
         Map<Object, Object> data = new HashMap<Object, Object>();
-        data.put("identityToken", xstsToken);
+        data.put("xtoken", xstsToken);
+        data.put("platform", "PC_LAUNCHER");
 
         LoginResponse loginResponse = Download.build().setUrl(Constants.MICROSOFT_MINECRAFT_LOGIN_URL)
                 .header("Content-Type", "application/json").header("Accept", "application/json")
@@ -116,6 +119,16 @@ public class MicrosoftAuthAPI {
                 .asClass(LoginResponse.class);
 
         return loginResponse;
+    }
+
+    public static Entitlements getEntitlements(String accessToken) {
+        Entitlements entitlementsResponse = Download.build()
+                .setUrl(String.format("%s?requestId=%s", Constants.MICROSOFT_MINECRAFT_ENTITLEMENTS_URL,
+                        UUID.randomUUID()))
+                .header("Authorization", "Bearer " + accessToken).header("Content-Type", "application/json")
+                .header("Accept", "application/json").asClass(Entitlements.class);
+
+        return entitlementsResponse;
     }
 
     public static Profile getMcProfile(String accessToken) throws IOException {
