@@ -211,6 +211,20 @@ public class MCLauncher {
             cpb.append(File.pathSeparator);
         });
 
+        File binFolder = instance.getBinDirectory();
+        File[] libraryFiles = binFolder.listFiles();
+        if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
+            for (File file : libraryFiles) {
+                if (!file.getName().equalsIgnoreCase("minecraft.jar")
+                        && !file.getName().equalsIgnoreCase("modpack.jar")) {
+                    LogManager.info("Added in custom library " + file.getName());
+
+                    cpb.append(file);
+                    cpb.append(File.pathSeparator);
+                }
+            }
+        }
+
         // add minecraft client jar last
         if (instance.usesCustomMinecraftJar()) {
             cpb.append(instance.getCustomMinecraftJar().getAbsolutePath());

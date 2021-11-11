@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Use Edit Instance button for all instances
 - Use new Microsoft account login endpoint and add entitlement checks back in
+- Issues launching old instances using bin folder for libraries
 
 ### Misc
