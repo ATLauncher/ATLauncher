@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use new Microsoft account login endpoint and add entitlement checks back in
 - Issues launching old instances using bin folder for libraries
 - Launcher trying to download libraries it cannot during launch
+- Error reporting not staying disabled when disabled from command line
 
 ### Misc

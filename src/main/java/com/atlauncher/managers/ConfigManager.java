@@ -154,7 +154,7 @@ public class ConfigManager {
     }
 
     private static void afterConfigLoaded() {
-        if (ConfigManager.getConfigItem("errorReporting.enabled", true) == true) {
+        if (!App.disableErrorReporting && ConfigManager.getConfigItem("errorReporting.enabled", true) == true) {
             ErrorReporting.ignoredMessages.clear();
             ErrorReporting.ignoredMessages
                     .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<String>()));
