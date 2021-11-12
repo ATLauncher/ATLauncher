@@ -34,7 +34,6 @@ jobs:
 
       - name: Run UI Tests
         uses: GabrielBB/xvfb-action@v1
-        continue-on-error: true
         with:
           run: ./gradlew test --tests ui.*
   build:
