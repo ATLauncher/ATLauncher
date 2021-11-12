@@ -26,17 +26,17 @@
 
 # These files are binary and should be left untouched
 # (binary is a macro for -text -diff)
-*.class         binary
-*.dll           binary
-*.ear           binary
-*.gif           binary
-*.ico           binary
-*.jar           binary
-*.jpg           binary
-*.jpeg          binary
-*.png           binary
-*.so            binary
-*.war           binary
+*.class binary
+*.dll   binary
+*.ear   binary
+*.gif   binary
+*.ico   binary
+*.jar   binary
+*.jpg   binary
+*.jpeg  binary
+*.png   binary
+*.so    binary
+*.war   binary
 
 # These are explicitly windows files and should use crlf
-*.bat           text eol=crlf
+*.bat   text eol=crlf

@@ -1,0 +1,3 @@
+# These test files need to be lf as they're used as direct mocks
+*.json  text eol=lf
+*.xml   text eol=lf
