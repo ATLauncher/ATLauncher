@@ -1,0 +1,65 @@
+{
+  "useGraphql": {
+    "loaderVersions": false,
+    "news": false
+  },
+  "minecraft": {
+    "experiment": {
+      "enabled": true,
+      "disabledVersions": []
+    },
+    "snapshot": {
+      "enabled": true,
+      "disabledVersions": []
+    },
+    "release": {
+      "enabled": true,
+      "disabledVersions": []
+    },
+    "old_alpha": {
+      "enabled": true,
+      "disabledVersions": []
+    },
+    "old_beta": {
+      "enabled": true,
+      "disabledVersions": []
+    }
+  },
+  "loaders": {
+    "fabric": {
+      "enabled": true,
+      "disabledMinecraftVersions": [],
+      "disabledVersions": []
+    },
+    "forge": {
+      "enabled": true,
+      "disabledMinecraftVersions": [],
+      "disabledVersions": []
+    },
+    "quilt": {
+      "enabled": true,
+      "disabledMinecraftVersions": [],
+      "disabledVersions": []
+    }
+  },
+  "platforms": {
+    "curseforge": {
+      "modsEnabled": true,
+      "modpacksEnabled": true
+    },
+    "modpacksch": {
+      "modpacksEnabled": true
+    },
+    "modrinth": {
+      "modsEnabled": true,
+      "modpacksEnabled": true
+    },
+    "technic": {
+      "modpacksEnabled": true
+    }
+  },
+  "errorReporting": {
+    "enabled": true,
+    "ignoredMessages": []
+  }
+}

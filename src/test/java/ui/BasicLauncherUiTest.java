@@ -68,7 +68,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         JTextComponentFixture passwordField = this.frame.textBox("passwordField");
         passwordField.requireVisible().requireEditable();
 
-        MockHelper.mockJson(mockServer, "POST", "authserver.mojang.com", "/authenticate", "login-success.js");
+        MockHelper.mockMojangLogin(mockServer, "POST", "authserver.mojang.com", "/authenticate", "login-success.json");
         MockHelper.mockJson(mockServer, "GET", "sessionserver.mojang.com",
                 "/session/minecraft/profile/e50e5b562ca3c41f35631867a7cb14c5", "profile.json");
         MockHelper.mockPng(mockServer, "GET", "textures.minecraft.net",
@@ -101,7 +101,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         MockHelper.mockCdnJson(mockServer, "GET", "/containers/atl/packs/VanillaMinecraft/versions/1.16.4/Configs.json",
                 "vanilla-1-16-4-configs.json");
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
-                "/v1/packages/3c33166875193f50f446a0730960208fcbf9f96c/1.16.4.json", "1.16.4.json");
+                "/v1/packages/8c72b5155010a100c70a558c6a7bef3e923c8525/1.16.4.json", "1.16.4.json");
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
                 "/v1/packages/f8e11ca03b475dd655755b945334c7a0ac2c3b43/1.16.json", "1.16.json");
         MockHelper.mockPng(mockServer, "GET", "resources.download.minecraft.net",

@@ -18,5 +18,5 @@
 package ui.mocks;
 
 public enum ResponseType {
-    PNG, JAVASCRIPT, JSON, JAR, TXT, XML
+    PNG, MOJANG_LOGIN, JSON, JAR, TXT, XML
 }
