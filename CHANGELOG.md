@@ -17,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Fix the UI tests not running on Java >= 15
+- Fix UI tests not mocking everything correctly
