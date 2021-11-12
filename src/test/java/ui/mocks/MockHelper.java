@@ -49,6 +49,7 @@ public class MockHelper {
         mockedFilePaths.put("users.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/users.json"));
         mockedFilePaths.put("packsnew.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/packsnew.json"));
         mockedFilePaths.put("version.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/version.json"));
+        mockedFilePaths.put("config.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/config.json"));
     }
 
     public static void mockFilesJson(ClientAndServer mockServer) {
@@ -96,6 +97,13 @@ public class MockHelper {
             version.size = (int) Files.size(mockedFilePaths.get("version.json"));
             version.sha1 = Hashing.sha1(mockedFilePaths.get("version.json")).toString();
             downloadableFiles.add(version);
+
+            DownloadableFile config = new DownloadableFile();
+            config.name = "config.json";
+            config.folder = "json";
+            config.size = (int) Files.size(mockedFilePaths.get("config.json"));
+            config.sha1 = Hashing.sha1(mockedFilePaths.get("config.json")).toString();
+            downloadableFiles.add(config);
         } catch (IOException e) {
             e.printStackTrace();
         }

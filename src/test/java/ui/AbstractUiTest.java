@@ -113,6 +113,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         MockHelper.mockFileResponse(mockServer, "users.json");
         MockHelper.mockFileResponse(mockServer, "packsnew.json");
         MockHelper.mockFileResponse(mockServer, "version.json");
+        MockHelper.mockFileResponse(mockServer, "config.json");
 
         // files from Minecraft servers
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com", "/mc/game/version_manifest.json",

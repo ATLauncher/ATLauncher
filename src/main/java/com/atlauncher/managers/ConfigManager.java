@@ -105,11 +105,19 @@ public class ConfigManager {
 
             Map<String, Object> secondLevel = (Map<String, Object>) data;
 
+            if (secondLevel == null) {
+                return defaultValue;
+            }
+
             if (keyParts.length == 2) {
                 return (T) secondLevel.get(keyParts[1]);
             }
 
             Map<String, Object> thirdLevel = (Map<String, Object>) secondLevel.get(keyParts[1]);
+
+            if (thirdLevel == null) {
+                return defaultValue;
+            }
 
             return (T) thirdLevel.get(keyParts[2]);
         } catch (Throwable t) {
