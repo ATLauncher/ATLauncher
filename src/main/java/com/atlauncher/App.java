@@ -284,6 +284,9 @@ public class App {
         // Load the settings from json, convert old properties config and validate it
         loadSettings();
 
+        // inject any certs into the keystore that we need (Let's Encrypt for example)
+        Java.injectNeededCerts();
+
         // after settings have loaded, then allow all ssl certs if required
         if (allowAllSslCerts) {
             Network.allowAllSslCerts();
@@ -336,9 +339,6 @@ public class App {
 
         // log out the system information to the console
         logSystemInformation(args);
-
-        // Check to make sure the user can load the launcher
-        launcher.checkIfWeCanLoad();
 
         LogManager.info("Showing splash screen and loading everything");
         launcher.loadEverything(); // Loads everything that needs to be loaded
@@ -421,8 +421,8 @@ public class App {
         SwingUtilities.invokeLater(
                 () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
-        LogManager.info("Java Version: " + String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(),
-                Java.getLauncherJavaVersion()));
+        LogManager.info("Java Version: "
+                + String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
 
         LogManager.info("Java Path: " + settings.javaPath);
 

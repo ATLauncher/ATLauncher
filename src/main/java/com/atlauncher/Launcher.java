@@ -92,21 +92,6 @@ public class Launcher {
     private Process minecraftProcess = null; // The process minecraft is running on
     public boolean minecraftLaunched = false; // If Minecraft has been Launched
 
-    public void checkIfWeCanLoad() {
-        if (!Java.isUsingJavaSupportingLetsEncrypt()) {
-            LogManager.warn("You're using an old version of Java that will not work!");
-
-            DialogManager.optionDialog().setTitle(GetText.tr("Unsupported Java Version"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "You're using an unsupported version of Java. You need to upgrade your Java to at minimum Java 8 version 141.<br/><br/>The launcher will not start until you do this.<br/><br/>If you're seeing this message even after installing a newer version, you may need to uninstall the old version first.<br/><br/>Click ok to open the Java download page and close the launcher."))
-                            .build())
-                    .addOption(GetText.tr("Ok")).setType(DialogManager.ERROR).show();
-
-            OS.openWebBrowser("https://atl.pw/java8download");
-            System.exit(0);
-        }
-    }
-
     public void loadEverything() {
         PerformanceManager.start();
         if (hasUpdatedFiles()) {

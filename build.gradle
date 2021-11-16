@@ -53,6 +53,7 @@ dependencies {
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation 'org.zeroturnaround:zt-zip:1.14'
     implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+    implementation 'com.squareup.okhttp3:okhttp-tls:4.9.2'
     implementation 'net.mikehardy:google-analytics-java:2.0.11'
     implementation 'io.sentry:sentry:1.7.30'
     implementation 'org.mini2Dx:gettext-lib:1.10.1'

@@ -18,6 +18,7 @@
 package com.atlauncher;
 
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,7 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Response;
+import okhttp3.tls.HandshakeCertificates;
 
 public final class Network {
     public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
@@ -100,6 +102,17 @@ public final class Network {
             return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener)).build();
         }).build();
+    }
+
+    public static void addTrustedCertificate(X509Certificate certificate) {
+        HandshakeCertificates certificates = new HandshakeCertificates.Builder().addPlatformTrustedCertificates()
+                .addTrustedCertificate(certificate).build();
+
+        CLIENT = CLIENT.newBuilder().sslSocketFactory(certificates.sslSocketFactory(), certificates.trustManager())
+                .build();
+
+        CACHED_CLIENT = CACHED_CLIENT.newBuilder()
+                .sslSocketFactory(certificates.sslSocketFactory(), certificates.trustManager()).build();
     }
 
     public static void allowAllSslCerts() {

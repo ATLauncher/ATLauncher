@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with PermSize option being used on custom Java paths in some cases [#520]
 - Wrong Java version warning not working and displaying correctly
 - Remove tools and the old getMemory tool
+- Inject Lets Encrypt certificate on Java 8 < 141
 
 ### Misc
 - Clean up Java utility class to clean up references to "Minecraft" Java concept
