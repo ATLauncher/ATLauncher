@@ -69,7 +69,8 @@ public class Java {
     }
 
     private static String getVersionForJavaPath(File folder) {
-        ProcessBuilder processBuilder = new ProcessBuilder(getPathToMinecraftJavaExecutable(), "-version");
+        String executablePath = Java.getPathToJavaExecutable(folder.toPath());
+        ProcessBuilder processBuilder = new ProcessBuilder(executablePath, "-version");
         processBuilder.directory(folder.getAbsoluteFile());
         processBuilder.redirectErrorStream(true);
 
@@ -94,6 +95,8 @@ public class Java {
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
+
+        LogManager.debug(String.format("Got version \"%s\" for Java at path \"%s\"", version, executablePath));
 
         if (version.equals("Unknown")) {
             LogManager.warn("Cannot get Java version from the output of \"" + folder.getAbsolutePath() + " -version\"");
@@ -214,7 +217,15 @@ public class Java {
      * @return whether Metaspace should be used instead of PermGen
      */
     public static boolean useMetaspace(String path) {
-        return parseJavaVersionNumber(getMinecraftJavaVersion()) > 8;
+        String version = getVersionForJavaPath(new File(path));
+
+        // if we fail to get the version, assume it's Java 8 or newer since it's more
+        // likely these days
+        if (version.equals("Unknown")) {
+            return true;
+        }
+
+        return parseJavaVersionNumber(version) >= 8;
     }
 
     /**
