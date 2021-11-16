@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Wrong Java version warning not working and displaying correctly
 - Remove tools and the old getMemory tool
 - Inject Lets Encrypt certificate on Java 8 < 141
+- Not all Forge libraries using our mirror
 
 ### Misc
 - Clean up Java utility class to clean up references to "Minecraft" Java concept

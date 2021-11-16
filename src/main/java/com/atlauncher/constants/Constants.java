@@ -103,6 +103,7 @@ public class Constants {
     public static final String FORGE_PROMOTIONS_FILE = "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json";
     public static final String FORGE_MAVEN_BASE = "https://maven.minecraftforge.net/";
     public static final String FORGE_HOST = "maven.minecraftforge.net";
+    public static final String FORGE_OLD_MAVEN_BASE = "https://files.minecraftforge.net/maven/";
 
     // Fabric domains, endpoints, etc
     public static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
