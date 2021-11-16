@@ -65,7 +65,6 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
@@ -462,12 +461,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             return;
         }
 
-        if (!App.settings.ignoreJavaOnInstanceLaunch && instance.launcher.java != null
-                && !Java.getMinecraftJavaVersion().equalsIgnoreCase("Unknown") && !instance.launcher.java.conforms()) {
+        if (!App.settings.ignoreJavaOnInstanceLaunch && instance.shouldShowWrongJavaWarning()) {
             DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}",
-                            "<br/><br/>", instance.launcher.java.getVersionString())).build())
+                            instance.launcher.java.getVersionString())).build())
                     .setType(DialogManager.ERROR).show();
             return;
         }

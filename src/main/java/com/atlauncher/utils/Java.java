@@ -68,7 +68,7 @@ public class Java {
         }
     }
 
-    private static String getVersionForJavaPath(File folder) {
+    public static String getVersionForJavaPath(File folder) {
         String executablePath = Java.getPathToJavaExecutable(folder.toPath());
         ProcessBuilder processBuilder = new ProcessBuilder(executablePath, "-version");
         processBuilder.directory(folder.getAbsoluteFile());
@@ -152,16 +152,6 @@ public class Java {
      */
     public static int getMinecraftJavaVersionNumber() {
         return parseJavaVersionNumber(getMinecraftJavaVersion());
-    }
-
-    /**
-     * Get the Java versions used by the Launcher and Minecraft as a string.
-     *
-     * @return the Java versions used by the Launcher and Minecraft as a string
-     */
-    public static String getActualJavaVersion() {
-        return String.format("Launcher: Java %d (%s), Minecraft: Java %d (%s)", getLauncherJavaVersionNumber(),
-                getLauncherJavaVersion(), getMinecraftJavaVersionNumber(), getMinecraftJavaVersion());
     }
 
     /**

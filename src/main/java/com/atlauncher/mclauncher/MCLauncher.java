@@ -38,7 +38,6 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.managers.LogManager;
@@ -165,24 +164,12 @@ public class MCLauncher {
         int initialMemory = Optional.ofNullable(instance.launcher.initialMemory).orElse(App.settings.initialMemory);
         int maximumMemory = Optional.ofNullable(instance.launcher.maximumMemory).orElse(App.settings.maximumMemory);
         int permGen = Optional.ofNullable(instance.launcher.permGen).orElse(App.settings.metaspace);
-        String javaPath = Optional.ofNullable(instance.launcher.javaPath).orElse(App.settings.javaPath);
         String javaArguments = Optional.ofNullable(instance.launcher.javaArguments).orElse(App.settings.javaParameters);
+        String javaPath = instance.getJavaPath();
 
-        // are we using Mojangs provided runtime?
-        if (instance.javaVersion != null && Optional.ofNullable(instance.launcher.useJavaProvidedByMinecraft)
-                .orElse(App.settings.useJavaProvidedByMinecraft)) {
-            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
-                    .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
-
-            if (OS.isMac()) {
-                runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
-            }
-
-            if (Files.isDirectory(runtimeDirectory)) {
-                javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
-                        instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
-            }
+        if (instance.isUsingJavaRuntime()) {
+            LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
+                    instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
         }
 
         File jarMods = instance.getJarModsDirectory();

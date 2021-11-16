@@ -127,6 +127,7 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
@@ -2264,5 +2265,48 @@ public class Instance extends MinecraftVersion {
         }
 
         return shouldUseLegacyLaunch();
+    }
+
+    public boolean isUsingJavaRuntime() {
+        return javaVersion != null && Optional.ofNullable(launcher.useJavaProvidedByMinecraft)
+                .orElse(App.settings.useJavaProvidedByMinecraft);
+    }
+
+    public String getJavaPath() {
+        String javaPath = Optional.ofNullable(launcher.javaPath).orElse(App.settings.javaPath);
+
+        // are we using Mojangs provided runtime?
+        if (isUsingJavaRuntime()) {
+            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                    .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+
+            if (OS.isMac()) {
+                runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
+            }
+
+            if (Files.isDirectory(runtimeDirectory)) {
+                javaPath = runtimeDirectory.toAbsolutePath().toString();
+                LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
+                        javaVersion.component, javaVersion.majorVersion, javaPath));
+            }
+        }
+
+        return javaPath;
+    }
+
+    public boolean shouldShowWrongJavaWarning() {
+        if (launcher.java == null) {
+            return false;
+        }
+
+        String javaVersion = Java.getVersionForJavaPath(new File(getJavaPath()));
+
+        if (javaVersion.equalsIgnoreCase("Unknown")) {
+            return false;
+        }
+
+        int majorJavaVersion = Java.parseJavaVersionNumber(javaVersion);
+
+        return !launcher.java.conforms(majorJavaVersion);
     }
 }
