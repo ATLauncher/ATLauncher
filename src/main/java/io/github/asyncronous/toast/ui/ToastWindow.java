@@ -17,8 +17,6 @@ import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.UIManager;
 
-import com.atlauncher.utils.Java;
-
 import io.github.asyncronous.toast.ToasterConstants;
 import io.github.asyncronous.toast.thread.ToastAnimator;
 
@@ -39,9 +37,8 @@ public final class ToastWindow extends JWindow {
         this.MESSAGE.setWrapStyleWord(true);
         this.MESSAGE.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
-        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && Java.isJava7OrAbove(false)
-                && GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-                        .isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT)) {
+        if (!((Boolean) UIManager.get(ToasterConstants.OPAQUE)) && GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice().isWindowTranslucencySupported(WindowTranslucency.TRANSLUCENT)) {
             this.setOpacity((Float) UIManager.get(ToasterConstants.OPACITY));
         }
 

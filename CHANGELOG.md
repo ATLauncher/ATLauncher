@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Wrong Java version warning not working and displaying correctly
 
 ### Misc
+- Clean up Java utility class to clean up references to "Minecraft" Java concept

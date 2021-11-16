@@ -29,7 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -51,21 +50,6 @@ public class Java {
      */
     public static boolean is64Bit() {
         return System.getProperty("sun.arch.data.model").contains("64");
-    }
-
-    /**
-     * Get the Java version used to run Minecraft.
-     *
-     * @return the Java version used to run Minecraft
-     */
-    public static String getMinecraftJavaVersion() {
-        if (App.settings.usingCustomJavaPath) {
-            File folder = new File(App.settings.javaPath, "bin/");
-
-            return getVersionForJavaPath(folder);
-        } else {
-            return OS.getPreferredJava(Java.getInstalledJavas()).version;
-        }
     }
 
     public static String getVersionForJavaPath(File folder) {
@@ -145,59 +129,17 @@ public class Java {
         return parseJavaVersionNumber(getLauncherJavaVersion());
     }
 
-    /**
-     * Get the major Java version used to run Minecraft.
-     *
-     * @return the major Java version used to run Minecraft
-     */
-    public static int getMinecraftJavaVersionNumber() {
-        return parseJavaVersionNumber(getMinecraftJavaVersion());
-    }
-
-    /**
-     * Checks if the user is using Java 7 or above.
-     *
-     * @return true if the user is using Java 7 or above else false
-     */
-    public static boolean isJava7OrAbove(boolean checkCustomPath) {
-        int version = checkCustomPath ? getMinecraftJavaVersionNumber() : getLauncherJavaVersionNumber();
-        return version >= 7 || version == -1;
-    }
-
     public static boolean isSystemJavaNewerThanJava8() {
         return getLauncherJavaVersionNumber() >= 9;
     }
 
-    public static boolean isMinecraftJavaNewerThanJava8() {
-        return getMinecraftJavaVersionNumber() >= 9;
-    }
-
     /**
-     * Checks if the user is using exactly Java 8.
-     *
-     * @return true if the user is using exactly Java 8
-     */
-    public static boolean isJava8() {
-        return getMinecraftJavaVersionNumber() == 8;
-    }
-
-    /**
-     * Checks if the user is using Java 8 or newer or if on Java 7 at least version
-     * 151 or if on Java 8 at least version 141 or newer.
+     * Checks if the user is using Java 8 or newer or on Java 8 at least version 141
+     * or newer.
      */
     public static boolean isUsingJavaSupportingLetsEncrypt() {
         return getLauncherJavaVersionNumber() > 8
-                || (getLauncherJavaVersionNumber() == 7 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 151)
                 || (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 141);
-    }
-
-    /**
-     * Checks if the user is using exactly Java 9.
-     *
-     * @return true if the user is using exactly Java 9
-     */
-    public static boolean isJava9() {
-        return getMinecraftJavaVersionNumber() == 9;
     }
 
     /**
@@ -218,28 +160,8 @@ public class Java {
         return parseJavaVersionNumber(version) >= 8;
     }
 
-    /**
-     * Checks whether Metaspace should be used instead of PermGen. This is the case
-     * for Java 8 and above.
-     *
-     * @return whether Metaspace should be used instead of PermGen
-     */
-    public static boolean useMetaspace() {
-        return getMinecraftJavaVersionNumber() >= 8;
-    }
-
     public static String getPathToSystemJavaExecutable() {
         String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-
-        if (OS.isWindows()) {
-            path += "w";
-        }
-
-        return path;
-    }
-
-    public static String getPathToMinecraftJavaExecutable() {
-        String path = App.settings.javaPath + File.separator + "bin" + File.separator + "java";
 
         if (OS.isWindows()) {
             path += "w";
