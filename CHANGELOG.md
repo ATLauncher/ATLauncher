@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with PermSize option being used on custom Java paths in some cases [#520]
 - Wrong Java version warning not working and displaying correctly
+- Remove tools and the old getMemory tool
 
 ### Misc
 - Clean up Java utility class to clean up references to "Minecraft" Java concept

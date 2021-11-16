@@ -46,7 +46,6 @@ public final class FileSystem {
     public static final Path SKINS = IMAGES.resolve("skins");
     public static final Path JSON = CONFIGS.resolve("json");
     public static final Path THEMES = CONFIGS.resolve("themes");
-    public static final Path TOOLS = CONFIGS.resolve("tools");
 
     public static final Path ASSETS = BASE_DIR.resolve("assets");
     public static final Path RESOURCES_LOG_CONFIGS = ASSETS.resolve("log_configs");
@@ -102,6 +101,10 @@ public final class FileSystem {
         if (Files.exists(CONFIGS.resolve("instancesdata"))) {
             FileUtils.delete(CONFIGS.resolve("instancesdata"));
         }
+
+        if (Files.exists(CONFIGS.resolve("tools"))) {
+            FileUtils.delete(CONFIGS.resolve("tools"));
+        }
     }
 
     private static void cleanTempDirectory() {
@@ -121,7 +124,6 @@ public final class FileSystem {
         renameDirectory(CONFIGS.resolve("Skins"), SKINS);
         renameDirectory(CONFIGS.resolve("JSON"), JSON);
         renameDirectory(CONFIGS.resolve("Themes"), THEMES);
-        renameDirectory(CONFIGS.resolve("Tools"), TOOLS);
     }
 
     private static void renameDirectory(Path from, Path to) {
@@ -174,7 +176,6 @@ public final class FileSystem {
         FileUtils.createDirectory(SKINS);
         FileUtils.createDirectory(JSON);
         FileUtils.createDirectory(THEMES);
-        FileUtils.createDirectory(TOOLS);
 
         FileUtils.createDirectory(ASSETS);
         FileUtils.createDirectory(RESOURCES_INDEXES);

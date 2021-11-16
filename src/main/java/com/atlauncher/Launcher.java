@@ -115,8 +115,6 @@ public class Launcher {
 
         checkForLauncherUpdate();
 
-        addExecutableBitToTools();
-
         ConfigManager.loadConfig(); // Load the config
 
         NewsManager.loadNews(); // Load the news
@@ -374,7 +372,6 @@ public class Launcher {
             }
             checkForLauncherUpdate();
             checkForExternalPackUpdates();
-            addExecutableBitToTools();
 
             ConfigManager.loadConfig(); // Load the config
             NewsManager.loadNews(); // Load the news
@@ -426,20 +423,6 @@ public class Launcher {
             }
         }
         LogManager.debug("Finished checking for launcher update");
-        PerformanceManager.end();
-    }
-
-    private void addExecutableBitToTools() {
-        PerformanceManager.start();
-        File[] files = FileSystem.TOOLS.toFile().listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (!file.canExecute()) {
-                    LogManager.info("Executable bit being set on " + file.getName());
-                    file.setExecutable(true);
-                }
-            }
-        }
         PerformanceManager.end();
     }
 
