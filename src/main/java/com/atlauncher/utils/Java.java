@@ -231,7 +231,8 @@ public class Java {
      */
     public static void injectNeededCerts() {
         // Java 8 > 141 supports ISRG Root X1 so no need to inject
-        if (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 141) {
+        if (getLauncherJavaVersionNumber() > 8
+                || (getLauncherJavaVersionNumber() == 8 && parseJavaBuildVersion(getLauncherJavaVersion()) >= 141)) {
             return;
         }
 
