@@ -1,0 +1,25 @@
+name: 'Close Support Requests'
+
+on:
+  issues:
+    types: [labeled, unlabeled, reopened]
+
+permissions:
+  issues: write
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dessant/support-requests@v2
+        with:
+          github-token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          support-label: 'support'
+          issue-comment: >
+            :wave: @{issue-author}, we use the issue tracker exclusively
+            for bug reports and feature requests with the launcher itself.
+            However, this issue appears to be a support request. Please visit
+            our [Discord Server](https://atl.pw/discord) to get support.
+          close-issue: true
+          lock-issue: false
+          issue-lock-reason: 'off-topic'
