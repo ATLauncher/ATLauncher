@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove tools and the old getMemory tool
 - Inject Lets Encrypt certificate on Java 8 < 141
 - Not all Forge libraries using our mirror
+- If the Java runtime doesn't exist for a Minecraft version, force refresh them
 
 ### Misc
 - Clean up Java utility class to clean up references to "Minecraft" Java concept

@@ -106,16 +106,25 @@ public class MinecraftManager {
         }
     }
 
+    public static void loadJavaRuntimes() {
+        loadJavaRuntimes(false);
+    }
+
     /**
      * Loads info about the java runtimes for Minecraft
      */
-    public static void loadJavaRuntimes() {
+    public static void loadJavaRuntimes(boolean force) {
         PerformanceManager.start();
         LogManager.debug("Loading Java runtimes");
 
         try {
-            Data.JAVA_RUNTIMES = Download.build().cached().setUrl(Constants.MINECRAFT_JAVA_RUNTIME_URL)
-                    .asClassWithThrow(JavaRuntimes.class);
+            Download download = Download.build().setUrl(Constants.MINECRAFT_JAVA_RUNTIME_URL);
+
+            if (!force) {
+                download = download.cached();
+            }
+
+            Data.JAVA_RUNTIMES = download.asClassWithThrow(JavaRuntimes.class);
         } catch (IOException e) {
             // safe to ignore, we'll just not use it
             LogManager.logStackTrace(e);

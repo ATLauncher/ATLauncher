@@ -469,6 +469,13 @@ public class Instance extends MinecraftVersion {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
             String runtimeSystemString = JavaRuntimes.getSystem();
 
+            // if the runtime isn't found, try a force refresh of them
+            if (!runtimesForSystem.containsKey(javaVersion.component)) {
+                MinecraftManager.loadJavaRuntimes(true);
+
+                runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
+            }
+
             if (runtimesForSystem.containsKey(javaVersion.component)) {
                 progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}", javaVersion.majorVersion));
 
