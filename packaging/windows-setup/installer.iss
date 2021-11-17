@@ -1,11 +1,14 @@
 #define MyAppName "ATLauncher"
 #define MyAppURL "https://atlauncher.com"
+#define MyAppVersion "1.0.0.0"
 
 [Setup]
 AppId={{2F5FDA11-45A5-4CC3-8E51-5E11E2481697}
 AppName={#MyAppName}
 AppVerName={#MyAppName}
 AppPublisher={#MyAppName}
+AppVersion={#MyAppVersion}
+VersionInfoVersion={#MyAppVersion}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
@@ -22,7 +25,7 @@ Compression=lzma
 SolidCompression=yes
 OutputBaseFilename={#MyAppName}-setup
 UninstallDisplayIcon={app}\{#MyAppName}.exe
-UninstallDisplayName={#MyAppName}
+UninstallDisplayName={#MyAppName} Setup
 WizardStyle=modern
 ChangesAssociations=yes
 

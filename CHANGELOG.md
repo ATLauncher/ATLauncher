@@ -17,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Clean up Java utility class to clean up references to "Minecraft" Java concept
+- Add version and change name of uninstall record for the setup exe
