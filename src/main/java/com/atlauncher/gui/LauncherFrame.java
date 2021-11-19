@@ -43,9 +43,10 @@ import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
+import com.atlauncher.gui.tabs.FeaturedPacksTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
@@ -199,18 +200,17 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         PerformanceManager.start("vanillaPacksTab");
         VanillaPacksTab vanillaPacksTab = new VanillaPacksTab();
-        App.launcher.setVanillaPacksPanel(vanillaPacksTab);
         PerformanceManager.end("vanillaPacksTab");
 
         PerformanceManager.start("featuredPacksTab");
-        PacksTab featuredPacksTab = new PacksTab(true);
+        FeaturedPacksTab featuredPacksTab = new FeaturedPacksTab(true);
         App.launcher.setFeaturedPacksPanel(featuredPacksTab);
         PerformanceManager.end("featuredPacksTab");
 
-        PerformanceManager.start("packsTab");
-        PacksTab packsTab = new PacksTab(false);
-        App.launcher.setPacksPanel(packsTab);
-        PerformanceManager.end("packsTab");
+        PerformanceManager.start("packsBrowserTab");
+        PacksBrowserTab packsBrowserTab = new PacksBrowserTab();
+        App.launcher.setPacksBrowserPanel(packsBrowserTab);
+        PerformanceManager.end("packsBrowserTab");
 
         PerformanceManager.start("instancesTab");
         InstancesTab instancesTab = new InstancesTab();
@@ -234,7 +234,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         SettingsTab settingsTab = new SettingsTab();
         PerformanceManager.end("settingsTab");
 
-        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsTab, instancesTab,
+        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsBrowserTab, instancesTab,
                 serversTab, accountsTab, toolsTab, settingsTab });
 
         tabbedPane.setFont(App.THEME.getTabFont());

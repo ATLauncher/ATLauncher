@@ -221,7 +221,7 @@ public class AccountManager {
             App.settings.lastAccount = account.username;
         }
         App.launcher.refreshFeaturedPacksPanel();
-        App.launcher.refreshPacksPanel();
+        App.launcher.refreshPacksBrowserPanel();
         App.launcher.reloadInstancesPanel();
         App.launcher.reloadServersPanel();
         com.atlauncher.evnt.manager.AccountManager.post();

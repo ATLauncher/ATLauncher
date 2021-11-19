@@ -60,7 +60,7 @@ import com.atlauncher.network.Analytics;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class PacksTab extends JPanel implements Tab, RelocalizationListener {
+public final class FeaturedPacksTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JButton addButton = new JButton(GetText.tr("Add Pack"));
@@ -80,7 +80,7 @@ public final class PacksTab extends JPanel implements Tab, RelocalizationListene
     private final List<Pack> packs = new LinkedList<>();
     private final List<PackCard> cards = new LinkedList<>();
 
-    public PacksTab(boolean isFeatured) {
+    public FeaturedPacksTab(boolean isFeatured) {
         super(new BorderLayout());
         setName(isFeatured ? "featuredPacksPanel" : "packsPanel");
         this.isFeatured = isFeatured;

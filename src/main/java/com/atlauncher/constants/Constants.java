@@ -74,7 +74,7 @@ public class Constants {
     public static final String CURSEFORGE_HOST = "addons-ecs.forgesvc.net";
     public static final int CURSEFORGE_FORGE_MODLOADER_ID = 1;
     public static final int CURSEFORGE_FABRIC_MODLOADER_ID = 4;
-    public static final int CURSEFORGE_PAGINATION_SIZE = 40;
+    public static final int CURSEFORGE_PAGINATION_SIZE = 20;
     public static final int CURSEFORGE_FABRIC_MOD_ID = 306612;
     public static final int CURSEFORGE_JUMPLOADER_MOD_ID = 361988;
     public static final int CURSEFORGE_MODS_SECTION_ID = 6;
@@ -86,7 +86,7 @@ public class Constants {
     public static final String MODRINTH_API_URL = "https://api.modrinth.com/api/v1";
     public static final String MODRINTH_HOST = "api.modrinth.com";
     public static final String MODRINTH_FABRIC_MOD_ID = "P7dR8mSH";
-    public static final int MODRINTH_PAGINATION_SIZE = 40;
+    public static final int MODRINTH_PAGINATION_SIZE = 20;
 
     // Modpacks.ch domains, endpoints, config, etc
     public static final String MODPACKS_CH_API_URL = "https://api.modpacks.ch/public";
@@ -96,7 +96,7 @@ public class Constants {
     // Technic domains, endpoints, config, etc
     public static final String TECHNIC_API_URL = "https://api.technicpack.net";
     public static final String TECHNIC_HOST = "api.technicpack.net";
-    public static final int TECHNIC_PAGINATION_SIZE = 40;
+    public static final int TECHNIC_PAGINATION_SIZE = 20;
 
     // Forge domains, endpoints, etc
     public static final String FORGE_MAVEN = "https://maven.minecraftforge.net/net/minecraftforge/forge";

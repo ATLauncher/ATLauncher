@@ -97,7 +97,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 App.settings.save();
                 SettingsManager.post();
                 if (reloadPacksPanel) {
-                    App.launcher.reloadPacksPanel();
+                    App.launcher.reloadPacksBrowserPanel();
                 }
                 if (reloadInstancesPanel) {
                     App.launcher.reloadInstancesPanel();

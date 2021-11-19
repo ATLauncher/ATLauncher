@@ -41,7 +41,8 @@ import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.PacksBrowserTab;
+import com.atlauncher.gui.tabs.FeaturedPacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.VanillaPacksTab;
 import com.atlauncher.managers.AccountManager;
@@ -81,9 +82,8 @@ public class Launcher {
     private InstancesTab instancesPanel; // The instances panel
     private ServersTab serversPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
-    private VanillaPacksTab vanillaPacksPanel; // The vanilla packs panel
-    private PacksTab featuredPacksPanel; // The featured packs panel
-    private PacksTab packsPanel; // The packs panel
+    private FeaturedPacksTab featuredPacksPanel; // The featured packs panel
+    private PacksBrowserTab packsBrowserPanel; // The packs browser panel
 
     // Update thread
     private Thread updateThread;
@@ -363,7 +363,7 @@ public class Launcher {
             reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher
             reloadFeaturedPacksPanel(); // Reload packs panel
-            reloadPacksPanel(); // Reload packs panel
+            reloadPacksBrowserPanel();// Reload packs browser panel
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
             InstanceManager.loadInstances(); // Load the users installed Instances
             reloadInstancesPanel(); // Reload instances panel
@@ -463,30 +463,21 @@ public class Launcher {
     }
 
     /**
-     * Sets the panel used for Vanilla Packs
-     *
-     * @param vanillaPacksPanel Vanilla Packs Panel
-     */
-    public void setVanillaPacksPanel(VanillaPacksTab vanillaPacksPanel) {
-        this.vanillaPacksPanel = vanillaPacksPanel;
-    }
-
-    /**
      * Sets the panel used for Featured Packs
      *
      * @param featuredPacksPanel Featured Packs Panel
      */
-    public void setFeaturedPacksPanel(PacksTab featuredPacksPanel) {
+    public void setFeaturedPacksPanel(FeaturedPacksTab featuredPacksPanel) {
         this.featuredPacksPanel = featuredPacksPanel;
     }
 
     /**
-     * Sets the panel used for Packs
+     * Sets the panel used for the Packs Browser
      *
-     * @param packsPanel Packs Panel
+     * @param packsBrowserPanel Packs Browser Panel
      */
-    public void setPacksPanel(PacksTab packsPanel) {
-        this.packsPanel = packsPanel;
+    public void setPacksBrowserPanel(PacksBrowserTab packsBrowserPanel) {
+        this.packsBrowserPanel = packsBrowserPanel;
     }
 
     /**
@@ -520,17 +511,17 @@ public class Launcher {
     }
 
     /**
-     * Reloads the panel used for Packs
+     * Reloads the panel used for the Packs browser
      */
-    public void reloadPacksPanel() {
-        this.packsPanel.reload(); // Reload the instances panel
+    public void reloadPacksBrowserPanel() {
+        this.packsBrowserPanel.reload(); // Reload the packs browser panel
     }
 
     /**
-     * Refreshes the panel used for Packs
+     * Refreshes the panel used for  thePacks browser
      */
-    public void refreshPacksPanel() {
-        this.packsPanel.refresh(); // Refresh the instances panel
+    public void refreshPacksBrowserPanel() {
+        this.packsBrowserPanel.refresh(); // Refresh the packs browser panel
     }
 
     public void showKillMinecraft(Process minecraft) {

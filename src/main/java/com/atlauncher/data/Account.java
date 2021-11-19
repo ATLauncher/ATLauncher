@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.gui.tabs.PacksTab;
+import com.atlauncher.gui.tabs.FeaturedPacksTab;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
@@ -81,7 +81,7 @@ public class Account implements Serializable {
     public transient boolean isReal;
 
     /**
-     * The pack names this account has collapsed in the {@link PacksTab}, if any.
+     * The pack names this account has collapsed in the {@link FeaturedPacksTab}, if any.
      */
     public List<String> collapsedPacks;
 
