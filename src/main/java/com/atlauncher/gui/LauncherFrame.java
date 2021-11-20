@@ -203,7 +203,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         PerformanceManager.end("vanillaPacksTab");
 
         PerformanceManager.start("featuredPacksTab");
-        FeaturedPacksTab featuredPacksTab = new FeaturedPacksTab(true);
+        FeaturedPacksTab featuredPacksTab = new FeaturedPacksTab();
         App.launcher.setFeaturedPacksPanel(featuredPacksTab);
         PerformanceManager.end("featuredPacksTab");
 
