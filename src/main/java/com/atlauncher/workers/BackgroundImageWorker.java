@@ -33,10 +33,14 @@ import com.atlauncher.network.Download;
 public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
     private final JLabel label;
     private final String url;
+    private final int width;
+    private final int height;
 
-    public BackgroundImageWorker(JLabel label, String url) {
+    public BackgroundImageWorker(JLabel label, String url, int width, int height) {
         this.label = label;
         this.url = url;
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -51,7 +55,7 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
 
         if (Files.exists(path)) {
             BufferedImage image = ImageIO.read(path.toFile());
-            label.setIcon(new ImageIcon(image.getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+            label.setIcon(new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
             label.setVisible(true);
         }
 

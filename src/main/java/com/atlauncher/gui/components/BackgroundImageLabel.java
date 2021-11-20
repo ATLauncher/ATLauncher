@@ -27,13 +27,13 @@ import com.atlauncher.workers.BackgroundImageWorker;
 
 @SuppressWarnings("serial")
 public final class BackgroundImageLabel extends JLabel {
-    public BackgroundImageLabel(String url) {
+    public BackgroundImageLabel(String url, int width, int height) {
         setIcon(Utils.getIconImage("/assets/image/no-icon.png"));
         setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         setVisible(false);
 
         if (Optional.ofNullable(url).isPresent()) {
-            new BackgroundImageWorker(this, url).execute();
+            new BackgroundImageWorker(this, url, width, height).execute();
         }
     }
 }

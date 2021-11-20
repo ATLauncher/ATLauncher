@@ -106,7 +106,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
 
         Optional<CurseForgeAttachment> attachment = mod.attachments.stream().filter(a -> a.isDefault).findFirst();
         if (attachment.isPresent()) {
-            new BackgroundImageWorker(icon, attachment.get().thumbnailUrl).execute();
+            new BackgroundImageWorker(icon, attachment.get().thumbnailUrl, 60, 60).execute();
         }
     }
 }

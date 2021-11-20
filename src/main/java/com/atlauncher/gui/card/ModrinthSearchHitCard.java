@@ -80,7 +80,7 @@ public final class ModrinthSearchHitCard extends JPanel {
         setBorder(border);
 
         if (mod.iconUrl != null && !mod.iconUrl.isEmpty()) {
-            new BackgroundImageWorker(icon, mod.iconUrl).execute();
+            new BackgroundImageWorker(icon, mod.iconUrl, 60, 60).execute();
         }
     }
 }

@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
@@ -68,8 +69,9 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
 
         JSplitPane splitter = new JSplitPane();
 
-        BackgroundImageLabel imageLabel = new BackgroundImageLabel(imageUrl);
+        BackgroundImageLabel imageLabel = new BackgroundImageLabel(imageUrl, 150, 150);
         imageLabel.setPreferredSize(new Dimension(300, 150));
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         splitter.setLeftComponent(imageLabel);
 
         JPanel actionsPanel = new JPanel(new BorderLayout());
