@@ -21,8 +21,8 @@ import com.atlauncher.annot.Json;
 
 @Json
 public class Java {
-    private int min = 0;
-    private int max = 0;
+    private final int min = 0;
+    private final int max = 0;
 
     public int getMin() {
         return this.min;

@@ -61,7 +61,7 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class JavaInstanceSettingsTab extends JPanel {
-    private Instance instance;
+    private final Instance instance;
 
     private JSpinner initialMemory;
     private JSpinner maximumMemory;

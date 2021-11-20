@@ -67,7 +67,7 @@ public final class Download {
     private OkHttpClient httpClient = Network.CLIENT;
     private RequestBody post = null;
     private CacheControl cacheControl = null;
-    private Map<String, String> headers = new HashMap<String, String>();
+    private final Map<String, String> headers = new HashMap<String, String>();
 
     // generated on/after request
     public Response response;

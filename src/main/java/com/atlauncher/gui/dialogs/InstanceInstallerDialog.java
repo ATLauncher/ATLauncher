@@ -80,6 +80,7 @@ import com.atlauncher.data.modpacksch.ModpacksChPackLinkType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
+import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicModpackSlim;
@@ -114,22 +115,22 @@ public class InstanceInstallerDialog extends JDialog {
     private MultiMCManifest multiMCManifest = null;
     private TechnicModpack technicModpack = null;
 
-    private JPanel middle;
-    private JButton install;
-    private JTextField nameField;
+    private final JPanel middle;
+    private final JButton install;
+    private final JTextField nameField;
     private JComboBox<PackVersion> versionsDropDown;
     private JLabel loaderVersionLabel;
     private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown;
     private final List<LoaderVersion> loaderVersions = new ArrayList<>();
 
-    private JLabel showAllMinecraftVersionsLabel = new JLabel(GetText.tr("Show All"));
-    private JCheckBox showAllMinecraftVersionsCheckbox = new JCheckBox();
+    private final JLabel showAllMinecraftVersionsLabel = new JLabel(GetText.tr("Show All"));
+    private final JCheckBox showAllMinecraftVersionsCheckbox = new JCheckBox();
 
     private JLabel saveModsLabel;
     private JCheckBox saveModsCheckbox;
     private final boolean isUpdate;
     private final PackVersion autoInstallVersion;
-    private Path extractedPath;
+    private final Path extractedPath;
 
     public InstanceInstallerDialog(CurseForgeManifest manifest, Path curseExtractedPath) {
         this(manifest, false, false, null, null, false, curseExtractedPath, App.launcher.getParent());
@@ -638,8 +639,15 @@ public class InstanceInstallerDialog extends JDialog {
         packVersion.version = "1";
 
         try {
-            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(multiMCManifest.components.stream()
-                    .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst().get().version);
+            Optional<MultiMCComponent> minecraftVersionComponent = multiMCManifest.components.stream()
+                .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
+
+            if (!minecraftVersionComponent.isPresent()) {
+                LogManager.error("No net.minecraft component present in manifest");
+                return;
+            }
+
+            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(minecraftVersionComponent.get().version);
         } catch (InvalidMinecraftVersion e) {
             LogManager.error(e.getMessage());
             return;

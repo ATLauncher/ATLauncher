@@ -48,7 +48,7 @@ public class RenameInstanceDialog extends JDialog {
 
     private JTextField instanceName;
 
-    private Instance instance;
+    private final Instance instance;
 
     public RenameInstanceDialog(Instance instance) {
         this(instance, App.launcher.getParent());

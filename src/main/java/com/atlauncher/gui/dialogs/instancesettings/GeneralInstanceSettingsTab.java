@@ -38,7 +38,7 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class GeneralInstanceSettingsTab extends JPanel {
-    private Instance instance;
+    private final Instance instance;
 
     private JComboBox<ComboItem<String>> account;
     private JComboBox<ComboItem<Boolean>> enableDiscordIntegration;

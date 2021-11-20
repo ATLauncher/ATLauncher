@@ -64,7 +64,7 @@ public enum OS {
 
     private static int memory = 0;
     private static SystemInfo systemInfo = null;
-    private static Integer memoryFromTool = null;
+    private static final Integer memoryFromTool = null;
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();

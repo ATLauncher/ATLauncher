@@ -180,7 +180,7 @@ public class CommandExecutor {
 
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
+                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
                         instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
             }
         }

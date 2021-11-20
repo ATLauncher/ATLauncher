@@ -59,8 +59,8 @@ import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
-    private static HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
-    private static VirtualHost host = server.getVirtualHost(null);
+    private static final HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
+    private static final VirtualHost host = server.getVirtualHost(null);
 
     private MicrosoftAccount account = null;
 
@@ -177,7 +177,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             }
 
             // if forced to relogin, then make sure they logged into correct account
-            if (account != null && this.account != null && account.username != this.account.username) {
+            if (account != null && this.account != null && !account.username.equals(this.account.username)) {
                 DialogManager.okDialog().setTitle(GetText.tr("Incorrect account"))
                         .setContent(
                                 GetText.tr("Logged into incorrect account. Please login again on the Accounts tab."))

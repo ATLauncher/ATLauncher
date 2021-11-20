@@ -44,7 +44,6 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.FeaturedPacksTab;
 import com.atlauncher.gui.tabs.ServersTab;
-import com.atlauncher.gui.tabs.VanillaPacksTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.managers.ConfigManager;

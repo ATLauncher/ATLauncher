@@ -58,7 +58,7 @@ public class InstanceV1 implements Cloneable {
     /**
      * The name of the Instance.
      */
-    private String name;
+    private final String name;
 
     /**
      * The name of the Pack this instance is for.
@@ -74,12 +74,12 @@ public class InstanceV1 implements Cloneable {
     /**
      * The UUID of the user who installed this if it's set to be for that user only.
      */
-    private String userLock;
+    private final String userLock;
 
     /**
      * The version installed for this Instance.
      */
-    private String version;
+    private final String version;
 
     /**
      * The hash of this instance if it's a dev version.
@@ -89,17 +89,17 @@ public class InstanceV1 implements Cloneable {
     /**
      * The version of Minecraft that this Instance uses.
      */
-    private String minecraftVersion;
+    private final String minecraftVersion;
 
     /**
      * The version type that this instance uses.
      */
-    private String versionType;
+    private final String versionType;
 
     /**
      * The java requirements for this instance.
      */
-    private Java java;
+    private final Java java;
 
     /**
      * If this version allows Curse mod integration.
@@ -116,7 +116,7 @@ public class InstanceV1 implements Cloneable {
     /**
      * The loader version chosen to be installed for this instance.
      */
-    private LoaderVersion loaderVersion;
+    private final LoaderVersion loaderVersion;
 
     /**
      * The minimum RAM/memory recommended for this Instance by the pack developer/s.
@@ -197,18 +197,18 @@ public class InstanceV1 implements Cloneable {
      *
      * @see com.atlauncher.data.Pack
      */
-    private transient Pack realPack;
+    private final transient Pack realPack;
 
     /**
      * If this Instance was installed from a development version of the Pack.
      */
-    private boolean isDev;
+    private final boolean isDev;
 
     /**
      * If this Instance is playable or not. It may become unplayable after a failed
      * update or if files are found corrupt.
      */
-    private boolean isPlayable;
+    private final boolean isPlayable;
 
     /**
      * List of DisableableMod objects for the mods in the Instance.
@@ -223,7 +223,7 @@ public class InstanceV1 implements Cloneable {
      */
     private List<String> ignoredUpdates;
 
-    private InstanceSettings settings = null;
+    private final InstanceSettings settings = null;
 
     public transient Path ROOT;
 

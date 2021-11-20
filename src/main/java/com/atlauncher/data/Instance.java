@@ -401,7 +401,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public Path getCustomMinecraftJarLibraryPath() {
-        return ROOT.resolve(String.format("bin/minecraft.jar", this.id));
+        return ROOT.resolve("bin/minecraft.jar");
     }
 
     /**
@@ -2293,7 +2293,7 @@ public class Instance extends MinecraftVersion {
 
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %n) at path %s",
+                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
                         javaVersion.component, javaVersion.majorVersion, javaPath));
             }
         }

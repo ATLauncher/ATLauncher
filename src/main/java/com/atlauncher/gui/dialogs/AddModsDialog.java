@@ -66,7 +66,7 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
-    private Instance instance;
+    private final Instance instance;
 
     private boolean updating = false;
 

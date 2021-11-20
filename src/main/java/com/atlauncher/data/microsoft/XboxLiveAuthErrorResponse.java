@@ -36,16 +36,16 @@ public class XboxLiveAuthErrorResponse {
     public String redirect;
 
     public String getErrorMessageForCode() {
-        if (xErr == 2148916233l) {
+        if (xErr == 2148916233L) {
             return GetText.tr(
                     "Account doesn't have an Xbox account.<br/><br/>Please create one by logging into minecraft.net before trying to login again.");
         }
 
-        if (xErr == 2148916238l) {
+        if (xErr == 2148916238L) {
             return GetText.tr("Child accounts cannot login without being part of a family.");
         }
 
-        if (xErr == 2148916235l) {
+        if (xErr == 2148916235L) {
             return GetText.tr("Account is from a country where Xbox Live is banned/not available.");
         }
 
@@ -53,7 +53,7 @@ public class XboxLiveAuthErrorResponse {
     }
 
     public String getBrowserLinkForCode() {
-        if (xErr == 2148916233l) {
+        if (xErr == 2148916233L) {
             return "https://minecraft.net/login";
         }
 

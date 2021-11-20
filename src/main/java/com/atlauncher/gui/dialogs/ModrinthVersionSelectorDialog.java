@@ -53,7 +53,7 @@ import org.mini2Dx.gettext.GetText;
 public class ModrinthVersionSelectorDialog extends JDialog {
     private int filesLength = 0;
     private final ModrinthMod mod;
-    private Instance instance;
+    private final Instance instance;
     private String installedVersionId = null;
 
     private JButton addButton;

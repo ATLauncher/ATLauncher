@@ -53,7 +53,7 @@ public class FabricLoader implements Loader {
     protected FabricMetaVersion version;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
-    private Pattern manifestPattern = Pattern.compile("META-INF/[^/]+\\.(SF|DSA|RSA|EC)");
+    private final Pattern manifestPattern = Pattern.compile("META-INF/[^/]+\\.(SF|DSA|RSA|EC)");
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,

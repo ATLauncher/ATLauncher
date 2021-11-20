@@ -59,7 +59,7 @@ import org.mini2Dx.gettext.GetText;
 public class CurseForgeProjectFileSelectorDialog extends JDialog {
     private int filesLength = 0;
     private final CurseForgeProject mod;
-    private Instance instance;
+    private final Instance instance;
     private Integer installedFileId = null;
 
     private final JPanel dependenciesPanel = new JPanel(new FlowLayout());

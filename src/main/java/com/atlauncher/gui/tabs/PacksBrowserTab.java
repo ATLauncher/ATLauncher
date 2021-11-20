@@ -55,26 +55,26 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener {
-    private JPanel actionsPanel = new JPanel();
-    private JPanel categoriesPanel = new JPanel();
-    private JLabel categoriesLabel = new JLabel();
-    private JComboBox<ComboItem<Integer>> categoriesComboBox = new JComboBox<>();
-    private JPanel sortPanel = new JPanel();
-    private JLabel sortLabel = new JLabel();
-    private JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
-    private JPanel spacer = new JPanel();
-    private JTextField searchField = new JTextField();
-    private JButton searchButton = new JButton();
+    private final JPanel actionsPanel = new JPanel();
+    private final JPanel categoriesPanel = new JPanel();
+    private final JLabel categoriesLabel = new JLabel();
+    private final JComboBox<ComboItem<Integer>> categoriesComboBox = new JComboBox<>();
+    private final JPanel sortPanel = new JPanel();
+    private final JLabel sortLabel = new JLabel();
+    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
+    private final JPanel spacer = new JPanel();
+    private final JTextField searchField = new JTextField();
+    private final JButton searchButton = new JButton();
 
-    private JTabbedPane platformTabbedPane = new JTabbedPane();
-    private PackBrowserPlatformPanel atlauncherPacksPanel = new ATLauncherPacksPanel();
-    private PackBrowserPlatformPanel curseForgePacksPanel = new CurseForgePacksPanel();
-    private PackBrowserPlatformPanel ftbPacksPanel = new FTBPacksPanel();
-    private PackBrowserPlatformPanel modrinthPacksPanel = new ModrinthPacksPanel();
-    private PackBrowserPlatformPanel technicPacksPanel = new TechnicPacksPanel();
+    private final JTabbedPane platformTabbedPane = new JTabbedPane();
+    private final PackBrowserPlatformPanel atlauncherPacksPanel = new ATLauncherPacksPanel();
+    private final PackBrowserPlatformPanel curseForgePacksPanel = new CurseForgePacksPanel();
+    private final PackBrowserPlatformPanel ftbPacksPanel = new FTBPacksPanel();
+    private final PackBrowserPlatformPanel modrinthPacksPanel = new ModrinthPacksPanel();
+    private final PackBrowserPlatformPanel technicPacksPanel = new TechnicPacksPanel();
 
     private JScrollPane scrollPane;
-    private JPanel contentPanel = new JPanel();
+    private final JPanel contentPanel = new JPanel();
 
     private boolean loading = false;
     private int page = 1;

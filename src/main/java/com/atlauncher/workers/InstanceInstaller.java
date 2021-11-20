@@ -830,8 +830,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             throw new Exception("Format is version " + multiMCManifest.formatVersion + " which I cannot install");
         }
 
-        String minecraftVersion = multiMCManifest.components.stream()
-                .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst().get().version;
+        Optional<MultiMCComponent> minecraftVersionComponent = multiMCManifest.components.stream()
+            .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
+
+        if (!minecraftVersionComponent.isPresent()) {
+            throw new Exception("No net.minecraft component present in manifest");
+        }
+
+        String minecraftVersion = minecraftVersionComponent.get().version;
 
         this.packVersion = new Version();
         packVersion.version = "1";

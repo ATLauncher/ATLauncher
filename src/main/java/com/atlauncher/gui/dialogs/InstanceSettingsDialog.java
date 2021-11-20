@@ -43,14 +43,14 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class InstanceSettingsDialog extends JDialog {
-    private Instance instance;
+    private final Instance instance;
 
     private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
     private final JPanel bottomPanel = new JPanel();
 
-    private GeneralInstanceSettingsTab generalInstanceSettingsTab;
-    private JavaInstanceSettingsTab javaInstanceSettingsTab;
-    private CommandsInstanceSettingsTab commandsInstanceSettingsTab;
+    private final GeneralInstanceSettingsTab generalInstanceSettingsTab;
+    private final JavaInstanceSettingsTab javaInstanceSettingsTab;
+    private final CommandsInstanceSettingsTab commandsInstanceSettingsTab;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));

@@ -47,9 +47,9 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class CurseForgeFileDependencyCard extends JPanel {
-    private Window parent;
+    private final Window parent;
     private final CurseForgeFileDependency dependency;
-    private Instance instance;
+    private final Instance instance;
 
     public CurseForgeFileDependencyCard(Window parent, CurseForgeFileDependency dependency, Instance instance) {
         this.parent = parent;

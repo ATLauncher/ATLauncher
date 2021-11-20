@@ -74,35 +74,35 @@ import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class VanillaPacksTab extends JPanel implements Tab {
-    private List<VersionManifestVersionType> minecraftVersionTypeFilters = new ArrayList<>(
+    private final List<VersionManifestVersionType> minecraftVersionTypeFilters = new ArrayList<>(
             Arrays.asList(VersionManifestVersionType.RELEASE));
     private String selectedMinecraftVersion = null;
 
-    private JTextField nameField = new JTextField(32);
+    private final JTextField nameField = new JTextField(32);
     private boolean nameFieldDirty = false;
 
-    private JTextArea descriptionField = new JTextArea(2, 40);
+    private final JTextArea descriptionField = new JTextArea(2, 40);
     private boolean descriptionFieldDirty = false;
 
-    private JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(GetText.tr("Releases"));
-    private JCheckBox minecraftVersionExperimentsFilterCheckbox = new JCheckBox(GetText.tr("Experiments"));
-    private JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(GetText.tr("Snapshots"));
-    private JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox(GetText.tr("Betas"));
-    private JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox(GetText.tr("Alphas"));
+    private final JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(GetText.tr("Releases"));
+    private final JCheckBox minecraftVersionExperimentsFilterCheckbox = new JCheckBox(GetText.tr("Experiments"));
+    private final JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(GetText.tr("Snapshots"));
+    private final JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox(GetText.tr("Betas"));
+    private final JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox(GetText.tr("Alphas"));
 
     private JTable minecraftVersionTable;
     private DefaultTableModel minecraftVersionTableModel;
 
-    private ButtonGroup loaderTypeButtonGroup = new ButtonGroup();
-    private JRadioButton loaderTypeNoneRadioButton = new JRadioButton(GetText.tr("None"));
-    private JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
-    private JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
-    private JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
+    private final ButtonGroup loaderTypeButtonGroup = new ButtonGroup();
+    private final JRadioButton loaderTypeNoneRadioButton = new JRadioButton(GetText.tr("None"));
+    private final JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
+    private final JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
+    private final JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
 
-    private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
+    private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
 
-    private JButton createServerButton = new JButton(GetText.tr("Create Server"));
-    private JButton createInstanceButton = new JButton(GetText.tr("Create Instance"));
+    private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
+    private final JButton createInstanceButton = new JButton(GetText.tr("Create Instance"));
 
     public VanillaPacksTab() {
         super(new BorderLayout());

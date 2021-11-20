@@ -706,7 +706,6 @@ public class Utils {
     /**
      * Replace text.
      *
-     * @param originalFile    the original file
      * @param destinationFile the destination file
      * @param replaceThis     the replace this
      * @param withThis        the with this
