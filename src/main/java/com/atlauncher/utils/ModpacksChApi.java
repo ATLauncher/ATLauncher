@@ -17,6 +17,7 @@
  */
 package com.atlauncher.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -41,6 +42,10 @@ public class ModpacksChApi {
 
         ModpacksChPackList packList = Download.build().setUrl(url).asType(ModpacksChPackList.class);
 
+        if (packList.status.equals("error")) {
+            return new ArrayList<>();
+        }
+
         List<Integer> packsToShow = packList.packs.stream().skip((page - 1) * Constants.MODPACKS_CH_PAGINATION_SIZE)
                 .limit(Constants.MODPACKS_CH_PAGINATION_SIZE).collect(Collectors.toList());
 
@@ -58,6 +63,10 @@ public class ModpacksChApi {
         ModpacksChPackList packList = Download.build()
                 .setUrl(String.format("%s/modpack/%s/50", Constants.MODPACKS_CH_API_URL, sort))
                 .asType(ModpacksChPackList.class);
+
+        if (packList.status.equals("error")) {
+            return new ArrayList<>();
+        }
 
         List<Integer> packsToShow = packList.packs.stream().skip((page - 1) * Constants.MODPACKS_CH_PAGINATION_SIZE)
                 .limit(Constants.MODPACKS_CH_PAGINATION_SIZE).collect(Collectors.toList());

@@ -88,7 +88,9 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
         if (count == 0) {
             contentPanel.add(
-                    new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time.")), gbc);
+                    new NilCard(GetText
+                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                    gbc);
         }
     }
 

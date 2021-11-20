@@ -41,8 +41,11 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, category);
 
         if (packs.size() == 0) {
+            contentPanel.removeAll();
             contentPanel.add(
-                    new NilCard(GetText.tr("There are no packs to display.\n\nPlease check back another time.")), gbc);
+                    new NilCard(GetText
+                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                    gbc);
             return;
         }
 

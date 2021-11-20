@@ -222,6 +222,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         loading = true;
         page = 1;
 
+        // disable the tabs
+        platformTabbedPane.setEnabled(false);
+
         // remove category and sort values
         categoriesComboBox.removeAllItems();
         sortComboBox.removeAllItems();
@@ -256,6 +259,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         if (selectedPanel.hasPagination()) {
             loading = true;
+            platformTabbedPane.setEnabled(false);
             page += 1;
 
             Analytics.sendEvent(page, "Next", "Navigation", selectedPanel.getAnalyticsCategory());
@@ -279,6 +283,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                     @Override
                     public void run() {
                         loading = false;
+                        platformTabbedPane.setEnabled(true);
                     }
                 });
 
@@ -291,7 +296,11 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private void executeSearch() {
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
 
+        loading = true;
         page = 1;
+
+        // disable the tabs
+        platformTabbedPane.setEnabled(false);
 
         if (!searchField.getText().isEmpty()) {
             Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
@@ -326,6 +335,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                     }
 
                     loading = false;
+                    platformTabbedPane.setEnabled(true);
                 }
             });
 
