@@ -47,7 +47,6 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
     public abstract void loadMorePacks(JPanel contentPanel, Integer category, String sort, String search, int page);
 
     public void load(JPanel contentPanel, Integer category, String sort, String search, int page) {
-        System.out.println("load");
         // remove all components on the content panel
         contentPanel.removeAll();
 

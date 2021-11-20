@@ -45,11 +45,11 @@ import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
 import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.ModrinthPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.PackBrowserPlatformPanel;
+import com.atlauncher.gui.panels.packbrowser.PacksBrowserTabTitlePanel;
 import com.atlauncher.gui.panels.packbrowser.TechnicPacksPanel;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -166,27 +166,29 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         platformTabbedPane.setTabPlacement(SwingConstants.LEFT);
 
-        platformTabbedPane.addTab("ATLauncher", Utils.getIconImage("/assets/image/modpack-platform/atlauncher.png"),
-                atlauncherPacksPanel);
+        int index = 0;
+
+        platformTabbedPane.add(atlauncherPacksPanel);
+        platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("ATLauncher"));
 
         if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
-            platformTabbedPane.addTab("CurseForge", Utils.getIconImage("/assets/image/modpack-platform/curseforge.png"),
-                    curseForgePacksPanel);
+            platformTabbedPane.add(curseForgePacksPanel);
+            platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("CurseForge"));
         }
 
         if (ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == true) {
-            platformTabbedPane.addTab("FTB", Utils.getIconImage("/assets/image/modpack-platform/ftb.png"),
-                    ftbPacksPanel);
+            platformTabbedPane.add(ftbPacksPanel);
+            platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("FTB"));
         }
 
         if (ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true) {
-            platformTabbedPane.addTab("Modrinth", Utils.getIconImage("/assets/image/modpack-platform/modrinth.png"),
-                    modrinthPacksPanel);
+            platformTabbedPane.add(modrinthPacksPanel);
+            platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("Modrinth"));
         }
 
         if (ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true) {
-            platformTabbedPane.addTab("Technic", Utils.getIconImage("/assets/image/modpack-platform/technic.png"),
-                    technicPacksPanel);
+            platformTabbedPane.add(technicPacksPanel);
+            platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("Technic"));
         }
 
         platformTabbedPane.addChangeListener(e -> {
