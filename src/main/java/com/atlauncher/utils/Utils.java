@@ -1626,6 +1626,34 @@ public class Utils {
         return "";
     }
 
+    public static String runProcess(Path workingDir, String... command) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.directory(workingDir.toFile());
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+
+            try {
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+            } finally {
+                br.close();
+            }
+
+            return sb.toString().trim();
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return "";
+    }
+
     public static boolean isAcceptedModFile(File file) {
         return isAcceptedModFile(file.getName());
     }

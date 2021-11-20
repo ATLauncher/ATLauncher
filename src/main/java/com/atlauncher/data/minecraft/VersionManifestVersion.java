@@ -36,4 +36,11 @@ public class VersionManifestVersion {
         // check if the release is after 1.2.5 release time
         return parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2012-03-28T22:00:00+00:00"));
     }
+
+    public boolean hasInitSettings() {
+        DateTime parsedReleaseTime = ISODateTimeFormat.dateTimeParser().parseDateTime(releaseTime);
+
+        // check if the release is after 18w48a release time
+        return parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2018-11-28T13:11:38+00:00"));
+    }
 }

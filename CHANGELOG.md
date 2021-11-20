@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in a new packs browser containing all platforms packs in one place
+- Run `-initSettings` with the server jar to generate eula.txt and server.properties [#523]
 
 ### Fixes
 - Issue with PermSize option being used on custom Java paths in some cases [#520]

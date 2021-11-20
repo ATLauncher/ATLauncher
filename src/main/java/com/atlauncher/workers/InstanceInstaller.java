@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -111,6 +112,8 @@ import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
@@ -158,6 +161,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public Loader loader;
     public com.atlauncher.data.json.Version packVersion;
+    public VersionManifestVersion minecraftVersionManifest = null;
     public MinecraftVersion minecraftVersion;
 
     public List<Mod> allMods;
@@ -335,6 +339,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             if (isCancelled()) {
                 return success(false);
+            }
+
+            if (this.isServer && minecraftVersionManifest != null && minecraftVersionManifest.hasInitSettings()) {
+                initServerSettings();
             }
 
             if (!this.isServer) {
@@ -831,7 +839,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         Optional<MultiMCComponent> minecraftVersionComponent = multiMCManifest.components.stream()
-            .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
+                .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
 
         if (!minecraftVersionComponent.isPresent()) {
             throw new Exception("No net.minecraft component present in manifest");
@@ -955,13 +963,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Downloading Minecraft Definition"));
         fireSubProgressUnknown();
 
-        VersionManifestVersion minecraftVersion = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
+        minecraftVersionManifest = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
 
-        String[] urlParts = minecraftVersion.url.split("/");
+        String[] urlParts = minecraftVersionManifest.url.split("/");
         String sha1 = urlParts[urlParts.length - 2];
 
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().cached()
-                .setUrl(minecraftVersion.url).downloadTo(this.temp.resolve("minecraft.json"));
+                .setUrl(minecraftVersionManifest.url).downloadTo(this.temp.resolve("minecraft.json"));
 
         if (sha1.length() == 40) {
             download = download.hash(sha1);
@@ -1395,6 +1403,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         App.launcher.reloadInstancesPanel();
+    }
+
+    private void initServerSettings() {
+        new Thread(() -> {
+            try {
+                String output = Utils.runProcess(root, Java.getPathToJavaExecutable(Paths.get(OS.getJavaHome())),
+                        "-jar", getMinecraftJar().getAbsolutePath(), "--initSettings");
+                LogManager.debug("initServerSettings output");
+                LogManager.debug(output);
+            } catch (Throwable ignored) {
+            }
+        }).start();
     }
 
     private void saveServerJson() {
