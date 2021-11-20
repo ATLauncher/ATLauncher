@@ -380,14 +380,6 @@ public class Settings {
             javaPath = OS.getDefaultJavaPath();
         }
 
-        // TODO: figure out why this nonsense is here
-        if (OS.isUsingMacApp()) {
-            File oracleJava = new File("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java");
-            if (oracleJava.exists() && oracleJava.canExecute()) {
-                javaPath = "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home";
-            }
-        }
-
         // now validate the java path actually exists
         if (!new File(javaPath, "bin" + File.separator + "java" + (OS.isWindows() ? ".exe" : "")).exists()) {
             LogManager.warn("Custom Java Path Is Incorrect! Defaulting to valid value!");

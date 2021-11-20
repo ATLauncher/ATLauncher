@@ -589,13 +589,10 @@ public class Instance extends MinecraftVersion {
         // extract natives to a temp dir
         boolean useSystemGlfw = Optional.ofNullable(launcher.useSystemGlfw).orElse(App.settings.useSystemGlfw);
         boolean useSystemOpenAl = Optional.ofNullable(launcher.useSystemOpenAl).orElse(App.settings.useSystemOpenAl);
-        System.out.println(useSystemGlfw);
-        System.out.println(useSystemOpenAl);
         this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
             if (library.hasNativeForOS()) {
                 if ((library.name.contains("glfw") && useSystemGlfw)
                         || (library.name.contains("openal") && useSystemOpenAl)) {
-                    System.out.println(library.name);
                     return;
                 }
 
