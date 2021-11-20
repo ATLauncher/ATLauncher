@@ -18,7 +18,7 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -90,7 +90,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<Integer, String> getCategoryFields() {
-        Map<Integer, String> categoryFields = new HashMap<>();
+        Map<Integer, String> categoryFields = new LinkedHashMap<>();
 
         CurseForgeApi.getCategoriesForModpacks().stream().forEach(c -> categoryFields.put(c.id, c.name));
 
@@ -104,7 +104,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<String, String> getSortFields() {
-        Map<String, String> sortFields = new HashMap<>();
+        Map<String, String> sortFields = new LinkedHashMap<>();
 
         sortFields.put("Popularity", GetText.tr("Popularity"));
         sortFields.put("LastUpdated", GetText.tr("Last Updated"));

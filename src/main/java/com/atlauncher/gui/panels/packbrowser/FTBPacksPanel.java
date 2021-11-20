@@ -18,7 +18,7 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -101,7 +101,7 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<Integer, String> getCategoryFields() {
-        return new HashMap<>();
+        return new LinkedHashMap<>();
     }
 
     @Override
@@ -111,7 +111,7 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<String, String> getSortFields() {
-        Map<String, String> sortFields = new HashMap<>();
+        Map<String, String> sortFields = new LinkedHashMap<>();
 
         sortFields.put("popular/plays", GetText.tr("Most Popular"));
         sortFields.put("popular/installs", GetText.tr("Most Installed"));

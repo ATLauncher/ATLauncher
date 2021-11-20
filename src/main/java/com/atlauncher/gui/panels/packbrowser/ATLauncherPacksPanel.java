@@ -18,7 +18,7 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +109,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<Integer, String> getCategoryFields() {
-        return new HashMap<>();
+        return new LinkedHashMap<>();
     }
 
     @Override
@@ -119,7 +119,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<String, String> getSortFields() {
-        return new HashMap<>();
+        return new LinkedHashMap<>();
     }
 
     @Override

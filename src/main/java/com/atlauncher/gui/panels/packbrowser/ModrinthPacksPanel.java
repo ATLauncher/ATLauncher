@@ -17,7 +17,7 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.JLabel;
@@ -51,7 +51,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<Integer, String> getCategoryFields() {
-        return new HashMap<>();
+        return new LinkedHashMap<>();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<String, String> getSortFields() {
-        return new HashMap<>();
+        return new LinkedHashMap<>();
     }
 
     @Override
