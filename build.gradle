@@ -67,6 +67,7 @@ dependencies {
     implementation 'net.freeutils:jlhttp:2.6'
     implementation 'joda-time:joda-time:2.10.12'
     implementation 'org.apache.commons:commons-compress:1.21'
+    implementation 'org.commonmark:commonmark:0.18.0'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'

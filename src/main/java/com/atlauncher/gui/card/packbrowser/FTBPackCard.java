@@ -25,11 +25,13 @@ import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.HyperlinkEvent;
 
 import com.atlauncher.App;
 import com.atlauncher.data.modpacksch.ModpacksChPackArt;
@@ -42,6 +44,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
@@ -99,17 +102,19 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
         // tag present, so we should hide the button for packs without the tag.
         websiteButton.setVisible(pack.hasTag("FTB"));
 
-        JTextArea descArea = new JTextArea();
-        descArea.setText(pack.description);
-        descArea.setLineWrap(true);
+        JEditorPane descArea = new JEditorPane("text/html",
+                String.format("<html>%s</html>", Markdown.render(pack.description)));
         descArea.setEditable(false);
-        descArea.setHighlighter(null);
-        descArea.setWrapStyleWord(true);
-        descArea.setCaretPosition(0);
+        descArea.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                OS.openWebBrowser(e.getURL());
+            }
+        });
 
-        actionsPanel.add(descArea, BorderLayout.CENTER);
+        actionsPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         actionsPanel.add(buttonsPanel, BorderLayout.SOUTH);
-        actionsPanel.setPreferredSize(new Dimension(actionsPanel.getPreferredSize().width, 155));
+        actionsPanel.setPreferredSize(new Dimension(0, 155));
 
         add(splitter, BorderLayout.CENTER);
     }
