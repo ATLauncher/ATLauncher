@@ -23,8 +23,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.FeaturedPacksTab;
+import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 

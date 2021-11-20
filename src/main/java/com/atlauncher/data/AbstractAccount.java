@@ -30,8 +30,8 @@ import javax.swing.ImageIcon;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.FeaturedPacksTab;
+import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;

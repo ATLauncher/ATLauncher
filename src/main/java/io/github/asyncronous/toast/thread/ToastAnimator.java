@@ -1,11 +1,12 @@
 package io.github.asyncronous.toast.thread;
 
-import io.github.asyncronous.toast.Toaster;
-import io.github.asyncronous.toast.ui.ToastWindow;
+import java.awt.Rectangle;
 
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import java.awt.Rectangle;
+
+import io.github.asyncronous.toast.Toaster;
+import io.github.asyncronous.toast.ui.ToastWindow;
 
 /**
  * The main Toaster animation class, controls the entire window - location, whether or not to display, etc...
