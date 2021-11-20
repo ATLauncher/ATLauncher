@@ -195,6 +195,12 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         }
 
         platformTabbedPane.addChangeListener(e -> {
+            PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
+                    .getSelectedComponent();
+
+            // send analytics page view
+            Analytics.sendScreenView(selectedPanel.getPlatformName() + " Platform Packs");
+
             afterTabChange();
         });
 
