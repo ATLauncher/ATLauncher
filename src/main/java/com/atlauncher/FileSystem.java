@@ -36,6 +36,7 @@ public final class FileSystem {
     public static final Path LOGS = BASE_DIR.resolve("logs");
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
     public static final Path CACHE = BASE_DIR.resolve("cache");
+    public static final Path REMOTE_IMAGE_CACHE = CACHE.resolve("remote_image");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
     public static final Path MINECRAFT_RUNTIMES = RUNTIMES.resolve("minecraft");
@@ -161,6 +162,7 @@ public final class FileSystem {
 
         FileUtils.createDirectory(BACKUPS);
         FileUtils.createDirectory(CACHE);
+        FileUtils.createDirectory(REMOTE_IMAGE_CACHE);
         FileUtils.createDirectory(INSTANCES);
         FileUtils.createDirectory(LIBRARIES);
         FileUtils.createDirectory(LOADERS);

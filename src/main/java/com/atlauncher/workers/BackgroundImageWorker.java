@@ -19,12 +19,16 @@ package com.atlauncher.workers;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
+
+import com.atlauncher.FileSystem;
+import com.atlauncher.network.Download;
 
 public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
     private final JLabel label;
@@ -37,9 +41,19 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
 
     @Override
     protected ImageIcon doInBackground() throws Exception {
-        BufferedImage image = ImageIO.read(new URL(this.url));
-        label.setIcon(new ImageIcon(image.getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
-        label.setVisible(true);
+        Path path = FileSystem.REMOTE_IMAGE_CACHE.resolve(this.url.replaceAll("[^A-Za-z0-9]", ""));
+
+        Download download = Download.build().setUrl(this.url).downloadTo(path);
+
+        if (!Files.exists(path)) {
+            download.downloadFile();
+        }
+
+        if (Files.exists(path)) {
+            BufferedImage image = ImageIO.read(path.toFile());
+            label.setIcon(new ImageIcon(image.getScaledInstance(60, 60, Image.SCALE_SMOOTH)));
+            label.setVisible(true);
+        }
 
         return null;
     }
