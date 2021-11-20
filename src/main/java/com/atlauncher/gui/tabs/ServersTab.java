@@ -63,14 +63,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
     public void loadContent(boolean keepFilters) {
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        clearButton = new JButton(GetText.tr("Clear"));
-        clearButton.addActionListener(e -> {
-            searchBox.setText("");
-            reload();
-        });
-        topPanel.add(clearButton);
+        topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         searchBox = new JTextField(16);
         if (keepFilters) {
@@ -92,6 +85,13 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             reload();
         });
         topPanel.add(searchButton);
+
+        clearButton = new JButton(GetText.tr("Clear"));
+        clearButton.addActionListener(e -> {
+            searchBox.setText("");
+            reload();
+        });
+        topPanel.add(clearButton);
 
         add(topPanel, BorderLayout.NORTH);
 

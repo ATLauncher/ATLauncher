@@ -57,14 +57,15 @@ import org.mini2Dx.gettext.GetText;
 public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel actionsPanel = new JPanel();
     private final JPanel categoriesPanel = new JPanel();
-    private final JLabel categoriesLabel = new JLabel();
+    private final JLabel categoriesLabel = new JLabel(GetText.tr("Category:"));
     private final JComboBox<ComboItem<Integer>> categoriesComboBox = new JComboBox<>();
     private final JPanel sortPanel = new JPanel();
-    private final JLabel sortLabel = new JLabel();
+    private final JLabel sortLabel = new JLabel(GetText.tr("Sort:"));
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
     private final JPanel spacer = new JPanel();
-    private final JTextField searchField = new JTextField();
-    private final JButton searchButton = new JButton();
+    private final JTextField searchField = new JTextField(16);
+    private final JButton searchButton = new JButton(GetText.tr("Search"));
+    private final JButton clearButton = new JButton(GetText.tr("Clear"));
 
     private final JTabbedPane platformTabbedPane = new JTabbedPane();
     private final PackBrowserPlatformPanel atlauncherPacksPanel = new ATLauncherPacksPanel();
@@ -93,7 +94,6 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                 .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
 
         categoriesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
-        categoriesLabel.setText(GetText.tr("Category:"));
         categoriesPanel.add(categoriesLabel);
         categoriesPanel.add(categoriesComboBox);
         actionsPanel.add(categoriesPanel);
@@ -106,7 +106,6 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         });
 
         sortPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
-        sortLabel.setText(GetText.tr("Sort:"));
         sortPanel.add(sortLabel);
         sortPanel.add(sortComboBox);
         actionsPanel.add(sortPanel);
@@ -120,7 +119,6 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         actionsPanel.add(spacer);
 
-        searchField.setColumns(15);
         searchField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -130,11 +128,16 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         });
         actionsPanel.add(searchField);
 
-        searchButton.setText(GetText.tr("Search"));
         searchButton.addActionListener(e -> {
             executeSearch();
         });
         actionsPanel.add(searchButton);
+
+        clearButton.addActionListener(e -> {
+            searchField.setText("");
+            executeSearch();
+        });
+        actionsPanel.add(clearButton);
 
         add(actionsPanel, BorderLayout.NORTH);
 
@@ -282,7 +285,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         page = 1;
 
-        Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
+        if (!searchField.getText().isEmpty()) {
+            Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
+        }
 
         // load in the content for the platform
         load(true);
@@ -335,5 +340,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     @Override
     public void onRelocalization() {
+        searchButton.setText(GetText.tr("Search"));
+        clearButton.setText(GetText.tr("Clear"));
+        categoriesLabel.setText(GetText.tr("Category:"));
+        sortLabel.setText(GetText.tr("Sort:"));
     }
 }
