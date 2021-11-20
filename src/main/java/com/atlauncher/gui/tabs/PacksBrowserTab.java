@@ -228,10 +228,12 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         // add in categories combo box items if the platform supports it
         if (selectedPanel.hasCategories()) {
-            categoriesComboBox.addItem(new ComboItem<Integer>(null, GetText.tr("All Categories")));
-            for (Map.Entry<Integer, String> entry : selectedPanel.getCategoryFields().entrySet()) {
-                categoriesComboBox.addItem(new ComboItem<Integer>(entry.getKey(), entry.getValue()));
-            }
+            new Thread(() -> {
+                categoriesComboBox.addItem(new ComboItem<Integer>(null, GetText.tr("All Categories")));
+                for (Map.Entry<Integer, String> entry : selectedPanel.getCategoryFields().entrySet()) {
+                    categoriesComboBox.addItem(new ComboItem<Integer>(entry.getKey(), entry.getValue()));
+                }
+            }).start();
         }
 
         // add in sort combo box items if the platform supports it
