@@ -94,8 +94,8 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
         buttonsPanel.add(websiteButton);
 
         // The Feed The Beast website only displays modpacks with the 'FTB'
-        // tag present, so we should disable the view button for packs without.
-        websiteButton.setEnabled(pack.hasTag("FTB"));
+        // tag present, so we should hide the button for packs without the tag.
+        websiteButton.setVisible(pack.hasTag("FTB"));
 
         JTextArea descArea = new JTextArea();
         descArea.setText(pack.description);
