@@ -70,6 +70,8 @@ public class InstanceLauncher {
     public String preLaunchCommand = null;
     public String postExitCommand = null;
     public String wrapperCommand = null;
+    public Boolean useSystemGlfw = null;
+    public Boolean useSystemOpenAl = null;
 
     public boolean isDev;
     public boolean isPlayable;

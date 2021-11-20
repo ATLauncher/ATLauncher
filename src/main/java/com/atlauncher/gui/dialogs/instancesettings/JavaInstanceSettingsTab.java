@@ -70,6 +70,8 @@ public class JavaInstanceSettingsTab extends JPanel {
     private JTextArea javaParameters;
     private JComboBox<ComboItem<Boolean>> useJavaProvidedByMinecraft;
     private JComboBox<ComboItem<Boolean>> disableLegacyLaunching;
+    private JComboBox<ComboItem<Boolean>> useSystemGlfw;
+    private JComboBox<ComboItem<Boolean>> useSystemOpenAl;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
@@ -447,6 +449,62 @@ public class JavaInstanceSettingsTab extends JPanel {
         }
 
         add(disableLegacyLaunching, gbc);
+
+        // Use System GLFW
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover useSystemGlfwLabel = new JLabelWithHover(GetText.tr("Use System GLFW") + "?", HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr("Use the systems install for GLFW native library."))
+                        .build());
+        add(useSystemGlfwLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        useSystemGlfw = new JComboBox<>();
+        useSystemGlfw.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+        useSystemGlfw.addItem(new ComboItem<>(true, GetText.tr("Yes")));
+        useSystemGlfw.addItem(new ComboItem<>(false, GetText.tr("No")));
+
+        if (instance.launcher.useSystemGlfw == null) {
+            useSystemGlfw.setSelectedIndex(0);
+        } else if (instance.launcher.useSystemGlfw) {
+            useSystemGlfw.setSelectedIndex(1);
+        } else {
+            useSystemGlfw.setSelectedIndex(2);
+        }
+
+        add(useSystemGlfw, gbc);
+
+        // Use System OpenAL
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover useSystemOpenAlLabel = new JLabelWithHover(GetText.tr("Use System OpenAL") + "?", HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr("Use the systems install for OpenAL native library."))
+                        .build());
+        add(useSystemOpenAlLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        useSystemOpenAl = new JComboBox<>();
+        useSystemOpenAl.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+        useSystemOpenAl.addItem(new ComboItem<>(true, GetText.tr("Yes")));
+        useSystemOpenAl.addItem(new ComboItem<>(false, GetText.tr("No")));
+
+        if (instance.launcher.useSystemOpenAl == null) {
+            useSystemOpenAl.setSelectedIndex(0);
+        } else if (instance.launcher.useSystemOpenAl) {
+            useSystemOpenAl.setSelectedIndex(1);
+        } else {
+            useSystemOpenAl.setSelectedIndex(2);
+        }
+
+        add(useSystemOpenAl, gbc);
     }
 
     private Integer getIfNotNull(Integer value, Integer defaultValue) {
@@ -474,6 +532,8 @@ public class JavaInstanceSettingsTab extends JPanel {
         Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem())
                 .getValue();
         Boolean disableLegacyLaunchingVal = ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
+        Boolean useSystemGlfwVal = ((ComboItem<Boolean>) useSystemGlfw.getSelectedItem()).getValue();
+        Boolean useSystemOpenAlVal = ((ComboItem<Boolean>) useSystemOpenAl.getSelectedItem()).getValue();
 
         this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);
         this.instance.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
@@ -491,6 +551,8 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         this.instance.launcher.useJavaProvidedByMinecraft = useJavaProvidedByMinecraftVal;
         this.instance.launcher.disableLegacyLaunching = disableLegacyLaunchingVal;
+        this.instance.launcher.useSystemGlfw = useSystemGlfwVal;
+        this.instance.launcher.useSystemOpenAl = useSystemOpenAlVal;
     }
 
 }

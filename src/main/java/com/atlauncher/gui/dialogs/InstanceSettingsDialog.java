@@ -82,7 +82,7 @@ public class InstanceSettingsDialog extends JDialog {
 
     private void setupComponents() {
         setSize(800, 450);
-        setMinimumSize(new Dimension(800, 450));
+        setMinimumSize(new Dimension(800, 600));
         setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
         setResizable(false);

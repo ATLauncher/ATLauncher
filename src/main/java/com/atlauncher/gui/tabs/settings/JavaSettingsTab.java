@@ -90,6 +90,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JCheckBox useJavaProvidedByMinecraft;
     private final JLabelWithHover disableLegacyLaunchingLabel;
     private final JCheckBox disableLegacyLaunching;
+    private final JLabelWithHover useSystemGlfwLabel;
+    private final JCheckBox useSystemGlfw;
+    private final JLabelWithHover useSystemOpenAlLabel;
+    private final JCheckBox useSystemOpenAl;
 
     public JavaSettingsTab() {
         int systemRam = OS.getSystemRam();
@@ -478,6 +482,40 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         disableLegacyLaunching = new JCheckBox();
         disableLegacyLaunching.setSelected(App.settings.disableLegacyLaunching);
         add(disableLegacyLaunching, gbc);
+
+        // Use System GLFW
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        useSystemGlfwLabel = new JLabelWithHover(GetText.tr("Use System GLFW") + "?", HELP_ICON, new HTMLBuilder()
+                .center().text(GetText.tr("Use the systems install for GLFW native library.")).build());
+        add(useSystemGlfwLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        useSystemGlfw = new JCheckBox();
+        useSystemGlfw.setSelected(App.settings.useSystemGlfw);
+        add(useSystemGlfw, gbc);
+
+        // Use System OpenAL
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        useSystemOpenAlLabel = new JLabelWithHover(GetText.tr("Use System OpenAL") + "?", HELP_ICON, new HTMLBuilder()
+                .center().text(GetText.tr("Use the systems install for OpenAL native library.")).build());
+        add(useSystemOpenAlLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        useSystemOpenAl = new JCheckBox();
+        useSystemOpenAl.setSelected(App.settings.useSystemOpenAl);
+        add(useSystemOpenAl, gbc);
     }
 
     public boolean isValidJavaPath() {
@@ -516,6 +554,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
         App.settings.useJavaProvidedByMinecraft = useJavaProvidedByMinecraft.isSelected();
         App.settings.disableLegacyLaunching = disableLegacyLaunching.isSelected();
+        App.settings.useSystemGlfw = useSystemGlfw.isSelected();
+        App.settings.useSystemOpenAl = useSystemOpenAl.isSelected();
     }
 
     @Override
