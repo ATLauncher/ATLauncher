@@ -8,7 +8,7 @@ permissions:
   issues: write
 
 jobs:
-  action:
+  close-support-requests:
     runs-on: ubuntu-latest
     steps:
       - uses: dessant/support-requests@v2
