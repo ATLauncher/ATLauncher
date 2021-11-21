@@ -29,6 +29,7 @@ import javax.swing.SwingWorker;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.network.Download;
+import com.atlauncher.network.DownloadException;
 
 public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
     private final JLabel label;
@@ -50,14 +51,18 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
         Download download = Download.build().setUrl(this.url).downloadTo(path);
 
         if (!Files.exists(path)) {
-            download.downloadFile();
+            try {
+                download.downloadFile();
+            } catch (DownloadException ignored) {
+            }
         }
 
         if (Files.exists(path)) {
             BufferedImage image = ImageIO.read(path.toFile());
             label.setIcon(new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
-            label.setVisible(true);
         }
+
+        label.setVisible(true);
 
         return null;
     }

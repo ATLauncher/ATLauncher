@@ -63,11 +63,13 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
         RelocalizationManager.addListener(this);
 
         String imageUrl = null;
-        Optional<ModpacksChPackArt> art = pack.art.stream()
-                .filter(a -> a.type == ModpacksChPackArtType.LOGO || a.type == ModpacksChPackArtType.SQUARE)
-                .sorted(Comparator.comparingInt((ModpacksChPackArt a) -> a.updated).reversed()).findFirst();
-        if (art.isPresent()) {
-            imageUrl = art.get().url;
+        if (pack.art != null) {
+            Optional<ModpacksChPackArt> art = pack.art.stream()
+                    .filter(a -> a.type == ModpacksChPackArtType.LOGO || a.type == ModpacksChPackArtType.SQUARE)
+                    .sorted(Comparator.comparingInt((ModpacksChPackArt a) -> a.updated).reversed()).findFirst();
+            if (art.isPresent()) {
+                imageUrl = art.get().url;
+            }
         }
 
         JSplitPane splitter = new JSplitPane();

@@ -23,6 +23,10 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 public class Markdown {
     public static String render(String text) {
+        if (text == null) {
+            return "";
+        }
+
         Parser parser = Parser.builder().build();
         Node document = parser.parse(text);
         HtmlRenderer renderer = HtmlRenderer.builder().sanitizeUrls(true).escapeHtml(true).build();

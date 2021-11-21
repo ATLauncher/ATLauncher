@@ -495,11 +495,13 @@ public class InstanceInstallerDialog extends JDialog {
         pack.name = modpacksChPackManifest.name;
         pack.description = modpacksChPackManifest.description;
 
-        ModpacksChPackLink link = modpacksChPackManifest.links.stream()
-                .filter(l -> l.type == ModpacksChPackLinkType.WEBSITE).findFirst().orElse(null);
+        if (modpacksChPackManifest.links != null) {
+            ModpacksChPackLink link = modpacksChPackManifest.links.stream()
+                    .filter(l -> l.type == ModpacksChPackLinkType.WEBSITE).findFirst().orElse(null);
 
-        if (link != null) {
-            pack.websiteURL = link.link;
+            if (link != null) {
+                pack.websiteURL = link.link;
+            }
         }
 
         pack.modpacksChPack = modpacksChPackManifest;

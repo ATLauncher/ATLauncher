@@ -34,6 +34,8 @@ public final class BackgroundImageLabel extends JLabel {
 
         if (Optional.ofNullable(url).isPresent()) {
             new BackgroundImageWorker(this, url, width, height).execute();
+        } else {
+            setVisible(true);
         }
     }
 }
