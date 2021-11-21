@@ -529,7 +529,18 @@ public class InstanceInstallerDialog extends JDialog {
             slug = ((TechnicModpackSlim) object).slug;
         }
 
-        technicModpack = TechnicApi.getModpackBySlug(slug);
+        final ProgressDialog<TechnicModpack> technicModpackDialog = new ProgressDialog<>(
+                GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                "Aborting Getting Modpack Details");
+
+        technicModpackDialog.addThread(new Thread(() -> {
+            technicModpackDialog.setReturnValue(TechnicApi.getModpackBySlug(slug));
+
+            technicModpackDialog.close();
+        }));
+
+        technicModpackDialog.start();
+        technicModpack = technicModpackDialog.getReturnValue();
 
         pack = new Pack();
         pack.externalId = technicModpack.id;
