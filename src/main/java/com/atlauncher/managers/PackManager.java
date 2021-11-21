@@ -123,8 +123,6 @@ public class PackManager {
                 AccountManager.getSelectedAccount().collapsedPacks.remove(pack.getName());
             }
             AccountManager.saveAccounts();
-            App.launcher.reloadFeaturedPacksPanel();
-            App.launcher.reloadPacksBrowserPanel();
         }
     }
 

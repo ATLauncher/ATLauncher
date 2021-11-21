@@ -83,7 +83,6 @@ public class ServerManager {
                 AccountManager.getSelectedAccount().collapsedServers.remove(server.name);
             }
             AccountManager.saveAccounts();
-            App.launcher.reloadServersPanel();
         }
     }
 
