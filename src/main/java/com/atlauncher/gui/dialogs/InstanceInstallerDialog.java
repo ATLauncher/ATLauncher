@@ -400,7 +400,18 @@ public class InstanceInstallerDialog extends JDialog {
         pack.websiteURL = curseForgeProject.websiteUrl;
         pack.curseForgeProject = curseForgeProject;
 
-        List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
+        final ProgressDialog<List<CurseForgeFile>> dialog = new ProgressDialog<>(GetText.tr("Getting Versions"), 0,
+                GetText.tr("Getting Versions"), "Aborting Getting Versions");
+
+        dialog.addThread(new Thread(() -> {
+            dialog.setReturnValue(CurseForgeApi.getFilesForProject(curseForgeProject.id));
+
+            dialog.close();
+        }));
+
+        dialog.start();
+
+        List<CurseForgeFile> files = dialog.getReturnValue();
 
         pack.versions = files.stream().sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed())
                 .map(f -> {
@@ -640,14 +651,15 @@ public class InstanceInstallerDialog extends JDialog {
 
         try {
             Optional<MultiMCComponent> minecraftVersionComponent = multiMCManifest.components.stream()
-                .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
+                    .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
 
             if (!minecraftVersionComponent.isPresent()) {
                 LogManager.error("No net.minecraft component present in manifest");
                 return;
             }
 
-            packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(minecraftVersionComponent.get().version);
+            packVersion.minecraftVersion = MinecraftManager
+                    .getMinecraftVersion(minecraftVersionComponent.get().version);
         } catch (InvalidMinecraftVersion e) {
             LogManager.error(e.getMessage());
             return;

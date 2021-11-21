@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Not all Forge libraries using our mirror
 - If the Java runtime doesn't exist for a Minecraft version, force refresh them
 - Issue with collapsing/expanding instances lagging when there's more than a couple
+- The UI halting when hitting new instance on CurseForge pack
 
 ### Misc
 - Clean up Java utility class to clean up references to "Minecraft" Java concept
