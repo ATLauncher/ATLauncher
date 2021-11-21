@@ -174,6 +174,11 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
     }
 
     @Override
+    public String getAnalyticsScreenViewName() {
+        return "Instances";
+    }
+
+    @Override
     public void onRelocalization() {
         clearButton.setText(GetText.tr("Clear"));
         searchButton.setText(GetText.tr("Search"));

@@ -709,4 +709,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     public String getTitle() {
         return GetText.tr("Vanilla Packs");
     }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "Vanilla Packs";
+    }
 }

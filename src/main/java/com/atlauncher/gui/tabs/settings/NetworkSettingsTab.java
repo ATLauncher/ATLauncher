@@ -283,6 +283,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     }
 
     @Override
+    public String getAnalyticsScreenViewName() {
+        return "Network";
+    }
+
+    @Override
     public void onRelocalization() {
         this.concurrentConnectionsLabel.setText(GetText.tr("Concurrent Connections") + ":");
         this.concurrentConnectionsLabel.setToolTipText("<html>"

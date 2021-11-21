@@ -114,6 +114,11 @@ public class NewsTab extends JPanel implements Tab {
         return GetText.tr("News");
     }
 
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "News";
+    }
+
     private final class ContextMenu extends JPopupMenu {
 
         public ContextMenu() {

@@ -61,4 +61,9 @@ public class ToolsTab extends JPanel implements Tab {
     public String getTitle() {
         return GetText.tr("Tools");
     }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "Tools";
+    }
 }

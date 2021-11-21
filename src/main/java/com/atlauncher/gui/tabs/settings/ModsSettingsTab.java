@@ -156,4 +156,9 @@ public class ModsSettingsTab extends AbstractSettingsTab {
     public String getTitle() {
         return GetText.tr("Mods");
     }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "Mods";
+    }
 }

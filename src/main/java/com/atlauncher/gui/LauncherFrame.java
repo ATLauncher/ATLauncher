@@ -245,11 +245,11 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         tabbedPane.setSelectedIndex(App.settings.selectedTabOnStartup);
 
         tabbedPane.addChangeListener(e -> {
-            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle());
+            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
             TabChangeManager.post();
         });
 
-        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle());
+        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
     }
 
     @Override

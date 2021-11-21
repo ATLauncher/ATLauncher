@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Analytics events for new pack browser not being fully correct
+- Analytics events for tabs being translated and not being correct for tabs within tabs
 
 ### Misc

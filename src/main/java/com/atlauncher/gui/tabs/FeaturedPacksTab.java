@@ -142,6 +142,11 @@ public final class FeaturedPacksTab extends JPanel implements Tab, Relocalizatio
     }
 
     @Override
+    public String getAnalyticsScreenViewName() {
+        return "Featured Packs";
+    }
+
+    @Override
     public void onRelocalization() {
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no packs to display.\n\nPlease check back another time."));

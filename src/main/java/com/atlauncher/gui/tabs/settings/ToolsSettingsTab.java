@@ -107,6 +107,11 @@ public class ToolsSettingsTab extends AbstractSettingsTab implements Relocalizat
     }
 
     @Override
+    public String getAnalyticsScreenViewName() {
+        return "Tools";
+    }
+
+    @Override
     public void onRelocalization() {
         this.enableServerCheckerLabel.setText(GetText.tr("Enable Server Checker") + "?");
         this.enableServerCheckerLabel.setToolTipText(GetText

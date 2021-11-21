@@ -166,6 +166,11 @@ public class CommandsSettingsTab extends AbstractSettingsTab implements ActionLi
         return GetText.tr("Commands");
     }
 
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "Commands";
+    }
+
     public void save() {
         App.settings.enableCommands = enableCommands.isSelected();
         App.settings.preLaunchCommand = nullIfEmpty(preLaunchCommand.getText());

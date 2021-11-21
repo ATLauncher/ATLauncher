@@ -461,6 +461,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     }
 
     @Override
+    public String getAnalyticsScreenViewName() {
+        return "Accounts";
+    }
+
+    @Override
     public void onRelocalization() {
         if (accountsComboBox.getSelectedIndex() == 0) {
             leftButton.setText(GetText.tr("Add"));

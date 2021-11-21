@@ -564,6 +564,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     @Override
+    public String getAnalyticsScreenViewName() {
+        return "Java/Minecraft";
+    }
+
+    @Override
     public void onRelocalization() {
         this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
                 "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))

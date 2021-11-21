@@ -117,15 +117,19 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             }
         });
 
-        tabbedPane.addChangeListener(
-                e -> Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings"));
-
-        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getTitle() + " Settings");
+        tabbedPane.addChangeListener(e -> Analytics
+                .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
     }
 
     @Override
     public String getTitle() {
         return GetText.tr("Settings");
+    }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        // since this is the default, this is the main view name
+        return "General Settings";
     }
 
     @Override

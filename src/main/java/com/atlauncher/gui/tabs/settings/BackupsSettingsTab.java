@@ -95,4 +95,9 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
     public String getTitle() {
         return GetText.tr("Backups");
     }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "Backups";
+    }
 }

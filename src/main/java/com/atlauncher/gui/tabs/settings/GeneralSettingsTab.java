@@ -480,4 +480,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     public String getTitle() {
         return GetText.tr("General");
     }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "General";
+    }
 }

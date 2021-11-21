@@ -153,4 +153,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
     public String getTitle() {
         return GetText.tr("Logging");
     }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "Logging";
+    }
 }

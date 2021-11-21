@@ -367,6 +367,12 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     }
 
     @Override
+    public String getAnalyticsScreenViewName() {
+        // since this is the default, this is the main view name
+        return "ATLauncher Platform Packs";
+    }
+
+    @Override
     public void onRelocalization() {
         searchButton.setText(GetText.tr("Search"));
         clearButton.setText(GetText.tr("Clear"));

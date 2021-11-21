@@ -19,4 +19,6 @@ package com.atlauncher.gui.tabs;
 
 public interface Tab {
     String getTitle();
+
+    String getAnalyticsScreenViewName();
 }
