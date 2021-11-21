@@ -54,7 +54,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton modsButton = new JButton(GetText.tr("View Mods"));
-    private final JButton removePackButton = new JButton(GetText.tr("Remove"));
     private final Pack pack;
 
     public ATLauncherPackCard(final Pack pack) {
@@ -102,8 +101,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
             bottom.add(this.modsButton);
         }
 
-        bottom.add(this.removePackButton);
-
         JTextArea descArea = new JTextArea();
         descArea.setText(pack.getDescription());
         descArea.setLineWrap(true);
@@ -129,10 +126,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
             this.createServerButton.setVisible(false);
         }
 
-        if (!this.pack.isSemiPublic() || this.pack.isTester()) {
-            this.removePackButton.setVisible(false);
-        }
-
         if (this.pack.system) {
             actionsPanel.add(top, BorderLayout.SOUTH);
             actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -150,7 +143,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "Install", "Pack");
+                Analytics.sendEvent(pack.getName(), "Install", "ATLauncherPack");
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -161,7 +154,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "ServerInstall", "Pack");
+                Analytics.sendEvent(pack.getName(), "ServerInstall", "ATLauncherPack");
                 new InstanceInstallerDialog(pack, true);
             }
         });
@@ -177,13 +170,8 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         Constants.SERVERS_LIST_PACK, pack.getSafeName())));
 
         this.modsButton.addActionListener(e -> {
-            Analytics.sendEvent(pack.getName(), "ViewMods", "Pack");
+            Analytics.sendEvent(pack.getName(), "ViewMods", "ATLauncherPack");
             new ViewModsDialog(pack).setVisible(true);
-        });
-
-        this.removePackButton.addActionListener(e -> {
-            Analytics.sendEvent(pack.getName(), "Remove", "Pack");
-            PackManager.removePack(pack.getCode());
         });
     }
 
@@ -195,6 +183,5 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
         this.websiteButton.setText(GetText.tr("Website"));
         this.serversButton.setText(GetText.tr("Servers"));
         this.modsButton.setText(GetText.tr("View Mods"));
-        this.removePackButton.setText(GetText.tr("Remove"));
     }
 }

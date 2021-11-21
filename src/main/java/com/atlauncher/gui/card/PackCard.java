@@ -38,7 +38,6 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
@@ -53,7 +52,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton modsButton = new JButton(GetText.tr("View Mods"));
-    private final JButton removePackButton = new JButton(GetText.tr("Remove"));
     private final Pack pack;
 
     public PackCard(final Pack pack) {
@@ -98,8 +96,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             bottom.add(this.modsButton);
         }
 
-        bottom.add(this.removePackButton);
-
         JTextArea descArea = new JTextArea();
         descArea.setText(pack.getDescription());
         descArea.setLineWrap(true);
@@ -125,10 +121,6 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
             this.createServerButton.setVisible(false);
         }
 
-        if (!this.pack.isSemiPublic() || this.pack.isTester()) {
-            this.removePackButton.setVisible(false);
-        }
-
         if (this.pack.system) {
             actionsPanel.add(top, BorderLayout.SOUTH);
             actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -146,7 +138,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "Install", "Pack");
+                Analytics.sendEvent(pack.getName(), "Install", "FeaturedPack");
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -157,7 +149,7 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "ServerInstall", "Pack");
+                Analytics.sendEvent(pack.getName(), "ServerInstall", "FeaturedPack");
                 new InstanceInstallerDialog(pack, true);
             }
         });
@@ -173,13 +165,8 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
                         Constants.SERVERS_LIST_PACK, pack.getSafeName())));
 
         this.modsButton.addActionListener(e -> {
-            Analytics.sendEvent(pack.getName(), "ViewMods", "Pack");
+            Analytics.sendEvent(pack.getName(), "ViewMods", "FeaturedPack");
             new ViewModsDialog(pack).setVisible(true);
-        });
-
-        this.removePackButton.addActionListener(e -> {
-            Analytics.sendEvent(pack.getName(), "Remove", "Pack");
-            PackManager.removePack(pack.getCode());
         });
     }
 
@@ -191,6 +178,5 @@ public class PackCard extends CollapsiblePanel implements RelocalizationListener
         this.websiteButton.setText(GetText.tr("Website"));
         this.serversButton.setText(GetText.tr("Servers"));
         this.modsButton.setText(GetText.tr("View Mods"));
-        this.removePackButton.setText(GetText.tr("Remove"));
     }
 }

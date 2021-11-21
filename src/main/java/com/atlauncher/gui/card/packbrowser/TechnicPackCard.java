@@ -74,7 +74,7 @@ public class TechnicPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.name, "Install", "FTBPack");
+                Analytics.sendEvent(pack.name, "Install", "TechnicPack");
                 new InstanceInstallerDialog(pack);
             }
         });
