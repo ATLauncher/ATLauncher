@@ -100,7 +100,12 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         categoriesComboBox.addActionListener(e -> {
             if (!loading) {
+                loading = true;
                 page = 1;
+
+                // disable the tabs
+                platformTabbedPane.setEnabled(false);
+
                 load(true);
             }
         });
@@ -112,7 +117,12 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         sortComboBox.addActionListener(e -> {
             if (!loading) {
+                loading = true;
                 page = 1;
+
+                // disable the tabs
+                platformTabbedPane.setEnabled(false);
+
                 load(true);
             }
         });
