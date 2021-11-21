@@ -156,7 +156,6 @@ public class InstanceManager {
             AccountManager.getSelectedAccount().collapsedInstances.remove(instance.launcher.name);
         }
         AccountManager.saveAccounts();
-        App.launcher.reloadInstancesPanel();
     }
 
     public static void removeInstance(Instance instance) {
