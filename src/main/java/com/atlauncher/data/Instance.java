@@ -308,7 +308,8 @@ public class Instance extends MinecraftVersion {
                 return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
             } catch (Exception e) {
                 LogManager.logStackTrace(
-                        "Error creating scaled image from the custom image of instance " + this.launcher.name, e);
+                        "Error creating scaled image from the custom image of instance " + this.launcher.name, e,
+                        false);
             }
         }
 

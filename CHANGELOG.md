@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Remove remote error reporting when pack image couldn't be loaded
 
 ### Misc
