@@ -327,6 +327,10 @@ public class DisableableMod implements Serializable {
         if (isFromCurseForge()) {
             List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
 
+            if (curseForgeFiles == null) {
+                return false;
+            }
+
             Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
                     .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
