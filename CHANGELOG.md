@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.10.2
 
 ### New Features
+- Add in exo-open to options when launching server and show dialog when cant be launched [#391]
 
 ### Fixes
 - Remove remote error reporting when pack image couldn't be loaded

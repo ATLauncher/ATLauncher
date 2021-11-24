@@ -98,11 +98,27 @@ public class Server {
                 arguments.add(getRoot().resolve("LaunchServer.bat").toString());
                 arguments.add(args);
             } else if (OS.isLinux()) {
-                // this only covers Gnome like systems, will need to monitor user reports for
-                // alternatives
-                arguments.add("x-terminal-emulator");
-                arguments.add("-e");
-                arguments.add(getRoot().resolve("LaunchServer.sh").toString() + " " + args);
+                // use some best guesses for some terminal programs if in path
+                if (Utils.executableInPath("x-terminal-emulator")) {
+                    arguments.add("x-terminal-emulator");
+                    arguments.add("-e");
+
+                    arguments.add(getRoot().resolve("LaunchServer.sh").toString() + " " + args);
+                } else if (Utils.executableInPath("exo-open")) {
+                    arguments.add("exo-open");
+                    arguments.add("--launch");
+                    arguments.add("TerminalEmulator");
+                    arguments.add("--working-directory");
+                    arguments.add(getRoot().toAbsolutePath().toString());
+                    arguments.add("./LaunchServer.sh " + args);
+                } else {
+                    DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "The server couldn't be launched as we don't know how to launcher it.<br/><br/>Please open the server folder and run the LaunchServer.sh file manually."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                    return;
+                }
             } else if (OS.isMac()) {
                 // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
                 // :(
