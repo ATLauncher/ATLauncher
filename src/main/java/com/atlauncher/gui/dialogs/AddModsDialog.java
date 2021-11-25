@@ -510,7 +510,29 @@ public final class AddModsDialog extends JDialog {
                 ModrinthSearchHit castMod = (ModrinthSearchHit) mod;
 
                 contentPanel.add(new ModrinthSearchHitCard(castMod, e -> {
-                    ModrinthMod modrinthMod = ModrinthApi.getMod(castMod.modId);
+                    final ProgressDialog<ModrinthMod> modrinthProjectLookupDialog = new ProgressDialog<>(
+                            GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
+                            "Aborting Getting Mod Information");
+
+                    modrinthProjectLookupDialog.addThread(new Thread(() -> {
+                        modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getMod(castMod.modId));
+
+                        modrinthProjectLookupDialog.close();
+                    }));
+
+                    modrinthProjectLookupDialog.start();
+
+                    ModrinthMod modrinthMod = modrinthProjectLookupDialog.getReturnValue();
+
+                    if (modrinthMod == null) {
+                        DialogManager.okDialog().setTitle(GetText.tr("Error Getting Mod Information"))
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "There was an error getting mod information from Modrinth. Please try again later."))
+                                        .build())
+                                .setType(DialogManager.ERROR).show();
+                        return;
+                    }
+
                     Analytics.sendEvent(castMod.title, "Add", "ModrinthMod");
                     new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
                 }), gbc);
