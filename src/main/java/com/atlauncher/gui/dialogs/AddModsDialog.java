@@ -55,6 +55,7 @@ import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
@@ -167,7 +168,29 @@ public final class AddModsDialog extends JDialog {
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                     .getValue() == ModPlatform.CURSEFORGE;
             if (isCurseForge) {
-                CurseForgeProject mod = CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID);
+                final ProgressDialog<CurseForgeProject> curseForgeProjectLookupDialog = new ProgressDialog<>(
+                        GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
+                        "Aborting Getting Fabric API Information");
+
+                curseForgeProjectLookupDialog.addThread(new Thread(() -> {
+                    curseForgeProjectLookupDialog
+                            .setReturnValue(CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID));
+
+                    curseForgeProjectLookupDialog.close();
+                }));
+
+                curseForgeProjectLookupDialog.start();
+
+                CurseForgeProject mod = curseForgeProjectLookupDialog.getReturnValue();
+
+                if (mod == null) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting Fabric API Information"))
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "There was an error getting Fabric API information from CurseForge. Please try again later."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                    return;
+                }
 
                 Analytics.sendEvent("AddFabricApi", "CurseForgeMod");
                 new CurseForgeProjectFileSelectorDialog(mod, instance);
@@ -180,7 +203,28 @@ public final class AddModsDialog extends JDialog {
                     installFabricApiButton.setVisible(false);
                 }
             } else {
-                ModrinthMod mod = ModrinthApi.getMod(Constants.MODRINTH_FABRIC_MOD_ID);
+                final ProgressDialog<ModrinthMod> modrinthProjectLookupDialog = new ProgressDialog<>(
+                        GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
+                        "Aborting Getting Fabric API Information");
+
+                modrinthProjectLookupDialog.addThread(new Thread(() -> {
+                    modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getMod(Constants.MODRINTH_FABRIC_MOD_ID));
+
+                    modrinthProjectLookupDialog.close();
+                }));
+
+                modrinthProjectLookupDialog.start();
+
+                ModrinthMod mod = modrinthProjectLookupDialog.getReturnValue();
+
+                if (mod == null) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting Fabric API Information"))
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "There was an error getting Fabric API information from Modrinth. Please try again later."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                    return;
+                }
 
                 Analytics.sendEvent("AddFabricApi", "ModrinthMod");
                 new ModrinthVersionSelectorDialog(mod, instance);
