@@ -133,4 +133,9 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
         return true;
     }
+
+    @Override
+    public String getPlatformMessage() {
+        return null;
+    }
 }

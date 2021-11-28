@@ -29,6 +29,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.FTBPackCard;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.utils.ModpacksChApi;
 
 import org.mini2Dx.gettext.GetText;
@@ -127,5 +128,10 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    @Override
+    public String getPlatformMessage() {
+        return ConfigManager.getConfigItem("platforms.modpacksch.message", null);
     }
 }

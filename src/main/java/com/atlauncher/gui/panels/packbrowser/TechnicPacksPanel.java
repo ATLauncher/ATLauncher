@@ -29,6 +29,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.technic.TechnicModpackSlim;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.TechnicPackCard;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.utils.TechnicApi;
 
 import org.mini2Dx.gettext.GetText;
@@ -109,5 +110,10 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return false;
+    }
+
+    @Override
+    public String getPlatformMessage() {
+        return ConfigManager.getConfigItem("platforms.technic.message", null);
     }
 }

@@ -30,6 +30,8 @@ import org.mini2Dx.gettext.GetText;
 public abstract class PackBrowserPlatformPanel extends JPanel {
     public abstract String getPlatformName();
 
+    public abstract String getPlatformMessage();
+
     public abstract String getAnalyticsCategory();
 
     public abstract boolean hasCategories();

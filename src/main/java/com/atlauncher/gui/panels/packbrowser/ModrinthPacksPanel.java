@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.atlauncher.managers.ConfigManager;
+
 public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     @Override
     protected void loadPacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
@@ -67,5 +69,10 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    @Override
+    public String getPlatformMessage() {
+        return ConfigManager.getConfigItem("platforms.modrinth.message", null);
     }
 }

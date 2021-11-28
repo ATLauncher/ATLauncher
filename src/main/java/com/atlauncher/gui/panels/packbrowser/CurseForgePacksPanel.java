@@ -29,6 +29,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.CurseForgePackCard;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.utils.CurseForgeApi;
 
 import org.mini2Dx.gettext.GetText;
@@ -119,5 +120,10 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    @Override
+    public String getPlatformMessage() {
+        return ConfigManager.getConfigItem("platforms.curseforge.message", null);
     }
 }

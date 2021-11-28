@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.AdjustmentEvent;
@@ -38,6 +39,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
@@ -66,6 +68,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
+
+    private final JPanel platformMessageJPanel = new JPanel(new BorderLayout());
+    private final JLabel platformMessageJLabel = new JLabel();
 
     private final JTabbedPane platformTabbedPane = new JTabbedPane();
     private final PackBrowserPlatformPanel atlauncherPacksPanel = new ATLauncherPacksPanel();
@@ -155,6 +160,10 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         contentPanel.setLayout(new GridBagLayout());
 
+        // platform message panel
+        platformMessageJLabel.setForeground(Color.YELLOW);
+        platformMessageJPanel.add(platformMessageJLabel, BorderLayout.CENTER);
+
         // scrollpane
 
         scrollPane = new JScrollPane(contentPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -223,6 +232,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private void afterTabChange() {
         // add the scrollPane to the newly selected panel
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
+        selectedPanel.add(platformMessageJPanel, BorderLayout.NORTH);
         selectedPanel.add(scrollPane, BorderLayout.CENTER);
 
         // clear search
@@ -259,6 +269,10 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         // hide sort/category if not needed
         categoriesPanel.setVisible(selectedPanel.hasCategories());
         sortPanel.setVisible(selectedPanel.hasSort());
+
+        String platformMessage = selectedPanel.getPlatformMessage();
+        platformMessageJPanel.setVisible(platformMessage != null);
+        platformMessageJLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
 
         // load in the content for the platform
         load(true);

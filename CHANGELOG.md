@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in exo-open to options when launching server and show dialog when cant be launched [#391]
 - Show progress dialog when using the Install Fabric API button when adding mods to an instance
 - Show progress dialog when adding a mod from modrinth to an instance
+- Add in platform message from config to packs browser
 
 ### Fixes
 - Remove remote error reporting when pack image couldn't be loaded
