@@ -118,6 +118,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
@@ -411,8 +412,10 @@ public class Instance extends MinecraftVersion {
      * played.
      */
     public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir) {
+        PerformanceManager.start();
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
+        PerformanceManager.start("Downloading Minecraft");
         try {
             progressDialog.setLabel(GetText.tr("Downloading Minecraft"));
             com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
@@ -427,10 +430,14 @@ public class Instance extends MinecraftVersion {
             progressDialog.doneTask();
         } catch (IOException e) {
             LogManager.logStackTrace(e);
+            PerformanceManager.end("Downloading Minecraft");
+            PerformanceManager.end();
             return false;
         }
+        PerformanceManager.end("Downloading Minecraft");
 
         // download libraries
+        PerformanceManager.start("Downloading Libraries");
         progressDialog.setLabel(GetText.tr("Downloading Libraries"));
         DownloadPool librariesPool = new DownloadPool();
 
@@ -463,8 +470,10 @@ public class Instance extends MinecraftVersion {
         smallLibrariesPool.downloadAll();
 
         progressDialog.doneTask();
+        PerformanceManager.end("Downloading Libraries");
 
         // download Java runtime
+        PerformanceManager.start("Java Runtime");
         if (javaVersion != null && Data.JAVA_RUNTIMES != null && Optional
                 .ofNullable(launcher.useJavaProvidedByMinecraft).orElse(App.settings.useJavaProvidedByMinecraft)) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
@@ -534,8 +543,10 @@ public class Instance extends MinecraftVersion {
             }
         }
         progressDialog.doneTask();
+        PerformanceManager.end("Java Runtime");
 
         // organise assets
+        PerformanceManager.start("Organising Resources 1");
         progressDialog.setLabel(GetText.tr("Organising Resources"));
         MojangAssetIndex assetIndex = this.assetIndex;
 
@@ -565,9 +576,11 @@ public class Instance extends MinecraftVersion {
 
             smallPool.downloadAll();
         }
+        PerformanceManager.end("Organising Resources 1");
 
         // copy resources to instance
         if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+            PerformanceManager.start("Organising Resources 2");
             progressDialog.setLabel(GetText.tr("Organising Resources"));
 
             index.objects.forEach((key, object) -> {
@@ -581,6 +594,7 @@ public class Instance extends MinecraftVersion {
                     FileUtils.copyFile(downloadedFile, assetPath, true);
                 }
             });
+            PerformanceManager.end("Organising Resources 2");
         }
 
         progressDialog.doneTask();
@@ -588,6 +602,7 @@ public class Instance extends MinecraftVersion {
         progressDialog.setLabel(GetText.tr("Organising Libraries"));
 
         // extract natives to a temp dir
+        PerformanceManager.start("Extracting Natives");
         boolean useSystemGlfw = Optional.ofNullable(launcher.useSystemGlfw).orElse(App.settings.useSystemGlfw);
         boolean useSystemOpenAl = Optional.ofNullable(launcher.useSystemOpenAl).orElse(App.settings.useSystemOpenAl);
         this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
@@ -610,8 +625,10 @@ public class Instance extends MinecraftVersion {
         });
 
         progressDialog.doneTask();
+        PerformanceManager.end("Extracting Natives");
 
         if (usesCustomMinecraftJar()) {
+            PerformanceManager.start("Creating custom minecraft.jar");
             progressDialog.setLabel(GetText.tr("Creating custom minecraft.jar"));
 
             if (Files.exists(getCustomMinecraftJarLibraryPath())) {
@@ -621,12 +638,16 @@ public class Instance extends MinecraftVersion {
             if (!Utils.combineJars(getMinecraftJar(), getRoot().resolve("bin/modpack.jar").toFile(),
                     getCustomMinecraftJar())) {
                 LogManager.error("Failed to combine jars into custom minecraft.jar");
+                PerformanceManager.end("Creating custom minecraft.jar");
+                PerformanceManager.end();
                 return false;
             }
+            PerformanceManager.end("Creating custom minecraft.jar");
         }
 
         progressDialog.doneTask();
 
+        PerformanceManager.end();
         return true;
     }
 
