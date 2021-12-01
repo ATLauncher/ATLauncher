@@ -15,5 +15,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Remove remote error reporting when pack image couldn't be loaded
 - Checking for mod update on CurseForge having issue when it no longer exists
+- Remove MaxPermSize from server launch scripts
 
 ### Misc
