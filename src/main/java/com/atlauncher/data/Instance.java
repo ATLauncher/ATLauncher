@@ -149,9 +149,11 @@ public class Instance extends MinecraftVersion {
     public transient Path ROOT;
 
     private Instant lastPlayed;
+    private long numPlays;
 
     public Instance(MinecraftVersion version) {
         setValues(version);
+        this.numPlays = 0;
         this.lastPlayed = Instant.EPOCH;
     }
 
@@ -1034,6 +1036,7 @@ public class Instance extends MinecraftVersion {
         });
 
         this.setLastPlayed(Instant.now());
+        this.incrementNumberOfPlays();
         this.save();
 
         launcher.start();
@@ -1846,6 +1849,22 @@ public class Instance extends MinecraftVersion {
         settings.javaArguments = launcher.javaArguments;
 
         return settings;
+    }
+
+    public void setNumberOfPlays(final long val){
+        this.numPlays = val;
+    }
+
+    public long incrementNumberOfPlays(){
+        return this.numPlays++;
+    }
+
+    public long decrementNumberOfPlays(){
+        return this.numPlays--;
+    }
+
+    public long getNumberOfPlays(){
+        return this.numPlays;
     }
 
     public void setLastPlayed(final Instant ts){

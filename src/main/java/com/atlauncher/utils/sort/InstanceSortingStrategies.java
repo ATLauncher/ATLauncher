@@ -34,6 +34,28 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy{
             }
             return 0;
         }
+    },
+    BY_NUMBER_OF_PLAYS_ASC("By Number of Plays (Asc)"){
+        @Override
+        public int compare(Instance lhs, Instance rhs){
+            if(lhs.getNumberOfPlays() < rhs.getNumberOfPlays()){
+                return -1;
+            } else if(lhs.getNumberOfPlays() > rhs.getNumberOfPlays()){
+                return +1;
+            }
+            return 0;
+        }
+    },
+    BY_NUMBER_OF_PLAYS("By Number of Plays (Desc)"){
+        @Override
+        public int compare(Instance lhs, Instance rhs){
+            if(lhs.getNumberOfPlays() > rhs.getNumberOfPlays()){
+                return -1;
+            } else if(lhs.getNumberOfPlays() < rhs.getNumberOfPlays()){
+                return +1;
+            }
+            return 0;
+        }
     };
 
     private final String name;
