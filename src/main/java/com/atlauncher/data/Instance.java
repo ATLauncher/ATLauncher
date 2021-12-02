@@ -152,6 +152,7 @@ public class Instance extends MinecraftVersion {
 
     public Instance(MinecraftVersion version) {
         setValues(version);
+        this.lastPlayed = Instant.EPOCH;
     }
 
     public void setValues(MinecraftVersion version) {
@@ -1853,6 +1854,10 @@ public class Instance extends MinecraftVersion {
 
     public Instant getLastPlayed(){
         return this.lastPlayed;
+    }
+
+    public Instant getLastPlayedOrEpoch(){
+        return this.lastPlayed != null ? this.lastPlayed : Instant.EPOCH;
     }
 
     public String getMainClass() {

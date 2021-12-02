@@ -28,6 +28,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -58,7 +59,8 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener,
     private JButton searchButton;
 
     private JComboBox<InstanceSortingStrategy> sortingStrategyComboBox;
-    private InstanceSortingStrategy sortingStrategy = InstanceSortingStrategies.BY_NAME;
+
+    private AtomicReference<InstanceSortingStrategy> sortingStrategy = new AtomicReference<>(InstanceSortingStrategies.BY_NAME);
 
     private String searchText = null;
 
@@ -67,8 +69,6 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener,
     private int currentPosition = 0;
 
     private NilCard nilCard;
-
-    private final List<InstanceCard> cards = new LinkedList<>();
 
     public InstancesTab() {
         setLayout(new BorderLayout());
@@ -110,7 +110,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener,
         });
 
         this.sortingStrategyComboBox = new JComboBox<>(InstanceSortingStrategies.values());
-        this.sortingStrategyComboBox.setSelectedItem(this.sortingStrategy);
+        this.sortingStrategyComboBox.setSelectedItem(this.sortingStrategy.get());
         this.sortingStrategyComboBox.addItemListener(this);
 
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
@@ -145,11 +145,10 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener,
         if(keepFilters){
             InstanceManager.getInstancesSorted().stream()
                 .filter(this.createFilter())
-                .sorted(this.sortingStrategy)
-                .forEach(this.createInstanceCard(gbc));
+                .sorted(this.sortingStrategy.get())
+                .forEachOrdered(this.createInstanceCard(gbc));
         } else{
-            InstanceManager.getInstancesSorted().stream()
-                .sorted(this.sortingStrategy)
+            InstanceManager.getInstancesSorted()
                 .forEach(this.createInstanceCard(gbc));
         }
 
@@ -218,7 +217,7 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener,
         if(e.getStateChange() == ItemEvent.SELECTED){
             InstanceSortingStrategy strategy = (InstanceSortingStrategy)e.getItem();
             LogManager.info("using " + strategy.getName() + " sorting strategy");
-            this.sortingStrategy = strategy;
+            this.sortingStrategy.set(strategy);
             this.loadContent(true);
         }
     }

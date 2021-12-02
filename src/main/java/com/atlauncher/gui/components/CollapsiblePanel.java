@@ -28,6 +28,10 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -126,6 +130,11 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         } catch (Throwable t) {
             title = instance.launcher.name;
         }
+
+        final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            .withLocale( Locale.US)
+            .withZone(ZoneId.systemDefault());
+        title += " - Last Played: " + formatter.format(instance.getLastPlayedOrEpoch());
 
         if (instance.launcher.isPlayable) {
             arrow.setText(title);
