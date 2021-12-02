@@ -22,35 +22,43 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import com.atlauncher.utils.sort.SortingStrategy;
 import org.mini2Dx.gettext.GetText;
 
-public class InstancesTab extends JPanel implements Tab, RelocalizationListener {
+public class InstancesTab extends JPanel implements Tab, RelocalizationListener, ItemListener{
     private static final long serialVersionUID = -969812552965390610L;
     private JButton clearButton;
     private JTextField searchField;
     private JButton searchButton;
+
+    private JComboBox<InstanceSortingStrategy> sortingStrategyComboBox;
+    private InstanceSortingStrategy sortingStrategy = InstanceSortingStrategies.BY_NAME;
 
     private String searchText = null;
 
@@ -59,6 +67,8 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
     private int currentPosition = 0;
 
     private NilCard nilCard;
+
+    private final List<InstanceCard> cards = new LinkedList<>();
 
     public InstancesTab() {
         setLayout(new BorderLayout());
@@ -99,6 +109,10 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
             reload();
         });
 
+        this.sortingStrategyComboBox = new JComboBox<>(InstanceSortingStrategies.values());
+        this.sortingStrategyComboBox.setSelectedItem(this.sortingStrategy);
+        this.sortingStrategyComboBox.addItemListener(this);
+
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         topPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -109,6 +123,8 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         topPanel.add(searchButton);
         topPanel.add(Box.createHorizontalStrut(5));
         topPanel.add(clearButton);
+        topPanel.add(Box.createHorizontalStrut(5));
+        topPanel.add(this.sortingStrategyComboBox);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -126,26 +142,16 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        InstanceManager.getInstancesSorted().forEach(instance -> {
-            if (keepFilters) {
-                boolean showInstance = true;
-
-                if (searchText != null) {
-                    if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                            .matcher(instance.launcher.name).find()) {
-                        showInstance = false;
-                    }
-                }
-
-                if (showInstance) {
-                    panel.add(new InstanceCard(instance), gbc);
-                    gbc.gridy++;
-                }
-            } else {
-                panel.add(new InstanceCard(instance), gbc);
-                gbc.gridy++;
-            }
-        });
+        if(keepFilters){
+            InstanceManager.getInstancesSorted().stream()
+                .filter(this.createFilter())
+                .sorted(this.sortingStrategy)
+                .forEach(this.createInstanceCard(gbc));
+        } else{
+            InstanceManager.getInstancesSorted().stream()
+                .sorted(this.sortingStrategy)
+                .forEach(this.createInstanceCard(gbc));
+        }
 
         if (panel.getComponentCount() == 0) {
             nilCard = new NilCard(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
@@ -153,6 +159,25 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
         }
 
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(currentPosition));
+    }
+
+    private Predicate<Instance> searchTextFilter(){
+        final Pattern searchTextPattern = Pattern.compile(Pattern.quote(this.searchText), Pattern.CASE_INSENSITIVE);
+        return (val)->searchTextPattern.matcher(val.launcher.name).find();
+    }
+
+    private Predicate<Instance> createFilter(){
+        if(this.searchText == null){
+            return (val)->true;
+        }
+        return this.searchTextFilter();
+    }
+
+    private Consumer<Instance> createInstanceCard(final GridBagConstraints gbc){
+        return (val)->{
+            panel.add(new InstanceCard(val), gbc);
+            gbc.gridy++;
+        };
     }
 
     public void reload() {
@@ -185,6 +210,16 @@ public class InstancesTab extends JPanel implements Tab, RelocalizationListener 
 
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
+        }
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e){
+        if(e.getStateChange() == ItemEvent.SELECTED){
+            InstanceSortingStrategy strategy = (InstanceSortingStrategy)e.getItem();
+            LogManager.info("using " + strategy.getName() + " sorting strategy");
+            this.sortingStrategy = strategy;
+            this.loadContent(true);
         }
     }
 }
