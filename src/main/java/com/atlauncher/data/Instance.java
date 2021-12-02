@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -146,6 +147,8 @@ public class Instance extends MinecraftVersion {
     public InstanceLauncher launcher;
 
     public transient Path ROOT;
+
+    private Instant lastPlayed;
 
     public Instance(MinecraftVersion version) {
         setValues(version);
@@ -1028,6 +1031,10 @@ public class Instance extends MinecraftVersion {
                 }
             }
         });
+
+        this.setLastPlayed(Instant.now());
+        this.save();
+
         launcher.start();
         return true;
     }
@@ -1838,6 +1845,14 @@ public class Instance extends MinecraftVersion {
         settings.javaArguments = launcher.javaArguments;
 
         return settings;
+    }
+
+    public void setLastPlayed(final Instant ts){
+        this.lastPlayed = ts;
+    }
+
+    public Instant getLastPlayed(){
+        return this.lastPlayed;
     }
 
     public String getMainClass() {

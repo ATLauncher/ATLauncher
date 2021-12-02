@@ -18,14 +18,10 @@
 package com.atlauncher;
 
 import java.awt.Color;
+import java.time.Instant;
 import java.util.Date;
 
-import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.AccountTypeAdapter;
-import com.atlauncher.data.ColorTypeAdapter;
-import com.atlauncher.data.DateTypeAdapter;
-import com.atlauncher.data.PackVersion;
-import com.atlauncher.data.PackVersionTypeAdapter;
+import com.atlauncher.data.*;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponseTypeAdapter;
 import com.atlauncher.data.minecraft.Arguments;
@@ -56,6 +52,7 @@ public final class Gsons {
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter()).setPrettyPrinting().create();
 
     public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
+            .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
             .registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
