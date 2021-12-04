@@ -98,7 +98,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                     GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
                 Analytics.sendEvent("UpdateData", "Launcher");
-                App.launcher.updateData();
+                App.launcher.updateData(true);
                 dialog.close();
             }));
             dialog.start();

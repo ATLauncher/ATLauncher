@@ -334,12 +334,16 @@ public class Launcher {
     }
 
     public void updateData() {
+        updateData(false);
+    }
+
+    public void updateData(boolean force) {
         if (checkForUpdatedFiles()) {
             reloadLauncherData();
         }
 
-        MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
-        MinecraftManager.loadJavaRuntimes(); // Load info about the different java runtimes
+        MinecraftManager.loadMinecraftVersions(force); // Load info about the different Minecraft versions
+        MinecraftManager.loadJavaRuntimes(force); // Load info about the different java runtimes
     }
 
     public void reloadLauncherData() {

@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issues with Technic packs using newer Forge versions not installing
+- Make the Update Data button on the launcher force update Minecraft and Runtime info
 
 ### Misc

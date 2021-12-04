@@ -44,10 +44,14 @@ import com.google.gson.reflect.TypeToken;
 import org.joda.time.format.ISODateTimeFormat;
 
 public class MinecraftManager {
+    public static void loadMinecraftVersions() {
+        loadMinecraftVersions(false);
+    }
+
     /**
      * Loads info about the different Minecraft versions
      */
-    public static void loadMinecraftVersions() {
+    public static void loadMinecraftVersions(boolean force) {
         PerformanceManager.start();
         LogManager.debug("Loading Minecraft versions");
 
@@ -57,8 +61,14 @@ public class MinecraftManager {
         Path manifestPath = FileSystem.JSON.resolve("version_manifest.json");
 
         try {
-            versionManifest = Download.build().cached().setUrl(Constants.MINECRAFT_VERSION_MANIFEST_URL)
-                    .downloadTo(manifestPath).asClassWithThrow(VersionManifest.class);
+            Download download = Download.build().setUrl(Constants.MINECRAFT_VERSION_MANIFEST_URL)
+                    .downloadTo(manifestPath);
+
+            if (!force) {
+                download = download.cached();
+            }
+
+            versionManifest = download.asClassWithThrow(VersionManifest.class);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
 
