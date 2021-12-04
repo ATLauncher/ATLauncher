@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issues with Technic packs using newer Forge versions not installing
 
 ### Misc

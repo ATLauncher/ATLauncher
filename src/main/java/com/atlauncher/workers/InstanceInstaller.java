@@ -691,7 +691,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         hideSubProgressBar();
     }
 
-    private void getLoaderInformationFromTechnicModpack(Path basePath) {
+    private void getLoaderInformationFromTechnicModpack(Path basePath) throws Exception {
         Path versionJsonPath = basePath.resolve("bin/version.json");
         Path modpackJarPath = basePath.resolve("bin/modpack.jar");
 
@@ -699,17 +699,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (Files.exists(versionJsonPath)) {
             try (FileReader fileReader = new FileReader(versionJsonPath.toFile())) {
-                versionJson = Gsons.DEFAULT.fromJson(fileReader, MinecraftVersion.class);
-            } catch (Throwable t) {
-                LogManager.logStackTrace("Error reading in version.json", t);
+                versionJson = Gsons.MINECRAFT.fromJson(fileReader, MinecraftVersion.class);
+            } catch (Exception e) {
+                LogManager.error("Error reading in version.json");
+                throw e;
             }
 
             FileUtils.delete(versionJsonPath);
         }
 
         if (Files.exists(modpackJarPath) && ArchiveUtils.archiveContainsFile(modpackJarPath, "version.json")) {
-            versionJson = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
-                    MinecraftVersion.class);
+            try {
+                versionJson = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
+                        MinecraftVersion.class);
+            } catch (Exception e) {
+                LogManager.error("Error reading in version.json from modpack.jar");
+                throw e;
+            }
 
             FileUtils.delete(modpackJarPath);
         }
@@ -1312,7 +1318,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (technicModpack != null) {
             Path binPath = this.root.resolve("bin");
 
-            if (binPath.toFile().listFiles().length == 0) {
+            if (binPath.toFile().exists() && binPath.toFile().listFiles().length == 0) {
                 FileUtils.deleteDirectory(binPath);
             }
         }
