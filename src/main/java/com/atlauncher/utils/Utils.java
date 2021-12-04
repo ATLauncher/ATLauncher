@@ -75,7 +75,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
@@ -97,6 +97,12 @@ public class Utils {
     public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW,
             StandardOpenOption.WRITE);
     public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
+
+    public static JScrollPane wrapInVerticalScroller(final JPanel panel, final int scrollUnits){
+        final JScrollPane scroller = new JScrollPane(panel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.getVerticalScrollBar().setUnitIncrement(scrollUnits);
+        return scroller;
+    }
 
     public static String error(Throwable t) {
         StringBuilder builder = new StringBuilder();
