@@ -30,6 +30,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -39,7 +40,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
@@ -149,6 +150,19 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
         });
 
         this.createServerButton.addActionListener(e -> {
+            // user has no instances, they may not be aware this is not how to play
+            if (InstanceManager.getInstances().size() == 0) {
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are you sure you want to create a server?"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                                .build())
+                        .setType(DialogManager.QUESTION).show();
+
+                if (ret != 0) {
+                    return;
+                }
+            }
+
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))

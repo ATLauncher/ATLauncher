@@ -51,6 +51,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
@@ -63,6 +64,8 @@ import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.ComboItem;
@@ -662,6 +665,20 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         createServerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // user has no instances, they may not be aware this is not how to play
+                if (InstanceManager.getInstances().size() == 0) {
+                    int ret = DialogManager.yesNoDialog()
+                            .setTitle(GetText.tr("Are you sure you want to create a server?"))
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                                    .build())
+                            .setType(DialogManager.QUESTION).show();
+
+                    if (ret != 0) {
+                        return;
+                    }
+                }
+
                 install(true);
             }
         });
