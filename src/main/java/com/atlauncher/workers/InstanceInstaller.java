@@ -86,6 +86,7 @@ import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ATLauncherApiForgeVersion;
+import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackArt;
 import com.atlauncher.data.modpacksch.ModpacksChPackArtType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
@@ -449,6 +450,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             if (loaderVersion.id.startsWith("forge-")) {
                 String forgeVersionString = loaderVersion.id.replace("forge-", "");
+
+                if (forgeVersionString.equals("recommended")) {
+                    forgeVersionString = ForgeLoader.getRecommendedVersion(curseForgeManifest.minecraft.version);
+
+                    // if recommended version is null, use latest
+                    if (forgeVersionString == null) {
+                        forgeVersionString = ForgeLoader.getLatestVersion(curseForgeManifest.minecraft.version);
+                    }
+                } else if (forgeVersionString.equals("latest")) {
+                    forgeVersionString = ForgeLoader.getLatestVersion(curseForgeManifest.minecraft.version);
+                }
 
                 java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
                 }.getType();

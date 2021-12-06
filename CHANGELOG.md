@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with CurseForge packs using forge-recommended or forge-latest failing to install
 
 ### Misc
