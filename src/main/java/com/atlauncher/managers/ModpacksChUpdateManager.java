@@ -24,12 +24,18 @@ import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 
 import okhttp3.CacheControl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModpacksChUpdateManager {
+    private static final Logger LOG = LogManager.getLogger(ModpacksChUpdateManager.class);
+
     public static ModpacksChPackVersion getLatestVersion(Instance instance) {
         return Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(instance);
     }
@@ -40,7 +46,7 @@ public class ModpacksChUpdateManager {
         }
 
         PerformanceManager.start();
-        LogManager.info("Checking for updates to modpacks.ch instances");
+        LOG.info("Checking for updates to modpacks.ch instances");
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream().filter(
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)

@@ -11,14 +11,18 @@ import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 
 import io.github.asyncronous.toast.ui.ToastWindow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Static class to allow easier use of toaster notifications
  */
 public final class Toaster {
+    private static final Logger LOG = LogManager.getLogger(Toaster.class);
+
     private static Toaster instance;
 
     public static Toaster instance() {
@@ -131,7 +135,7 @@ public final class Toaster {
         try {
             return ImageIO.read(stream);
         } catch (IOException ex) {
-            LogManager.logStackTrace("Failed to load Toaster image", ex);
+            LOG.error("Failed to load Toaster image", ex);
             return null;
         }
     }

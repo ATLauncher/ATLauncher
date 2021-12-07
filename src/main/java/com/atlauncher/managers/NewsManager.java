@@ -32,8 +32,12 @@ import com.atlauncher.data.News;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class NewsManager {
+public class NewsManager{
+    private static final Logger LOG = LogManager.getLogger(NewsManager.class);
 
     /**
      * Get the News for the Launcher
@@ -49,7 +53,7 @@ public class NewsManager {
      */
     public static void loadNews() {
         PerformanceManager.start();
-        LogManager.debug("Loading news");
+        LOG.debug("Loading news");
         Data.NEWS.clear();
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
@@ -61,9 +65,9 @@ public class NewsManager {
             Data.NEWS.addAll(Gsons.DEFAULT.fromJson(in, type));
             in.close();
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error: ", e);
         }
-        LogManager.debug("Finished loading news");
+        LOG.debug("Finished loading news");
         PerformanceManager.end();
     }
 

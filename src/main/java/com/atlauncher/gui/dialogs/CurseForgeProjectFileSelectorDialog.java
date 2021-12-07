@@ -49,14 +49,18 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.CurseForgeFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.OS;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @SuppressWarnings("serial")
 public class CurseForgeProjectFileSelectorDialog extends JDialog {
+    private static final Logger LOG = LogManager.getLogger(CurseForgeProjectFileSelectorDialog.class);
+
     private int filesLength = 0;
     private final CurseForgeProject mod;
     private final Instance instance;
@@ -280,7 +284,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                             .filter(v -> v.gameVersions.stream()
                                     .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                 } catch (InvalidMinecraftVersion e) {
-                    LogManager.logStackTrace(e);
+                    LOG.error("error", e);
                 }
             }
 

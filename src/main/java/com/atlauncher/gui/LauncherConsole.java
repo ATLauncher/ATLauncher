@@ -41,12 +41,15 @@ import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
+import org.slf4j.LoggerFactory;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener {
+public class LauncherConsole extends JFrame implements RelocalizationListener{
+    private static final Logger LOG = LogManager.getLogger(LauncherConsole.class);
 
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
@@ -70,7 +73,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                         App.settings.consoleSize.width, App.settings.consoleSize.height);
             }
         } catch (Exception e) {
-            LogManager.logStackTrace("Error setting custom remembered window size settings", e);
+            LOG.error("Error setting custom remembered window size settings", e);
         }
 
         console = new Console();
@@ -156,10 +159,10 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     }
 
     public void setupLanguage() {
-        LogManager.debug("Setting up language for console");
+        LOG.debug("Setting up language for console");
         copy.setText(GetText.tr("Copy"));
         bottomBar.setupLanguage();
-        LogManager.debug("Finished setting up language for console");
+        LOG.debug("Finished setting up language for console");
     }
 
     public void clearConsole() {

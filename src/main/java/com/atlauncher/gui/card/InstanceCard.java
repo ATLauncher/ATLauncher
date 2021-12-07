@@ -60,20 +60,24 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p/>
  * Class for displaying instances in the Instance Tab
  */
 @SuppressWarnings("serial")
-public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
+public class InstanceCard extends CollapsiblePanel implements RelocalizationListener{
+    private static final Logger LOG = LogManager.getLogger(InstanceCard.class);
+
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
@@ -587,10 +591,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                                 clipboard.setContents(text, null);
 
                                 App.TOASTER.pop(GetText.tr("Share code copied to clipboard"));
-                                LogManager.info("Share code copied to clipboard");
+                                LOG.info("Share code copied to clipboard");
                             }
                         } catch (IOException ex) {
-                            LogManager.logStackTrace("API call failed", ex);
+                            LOG.error("API call failed", ex);
                         }
                     });
                     shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)

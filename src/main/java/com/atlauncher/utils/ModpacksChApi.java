@@ -26,7 +26,6 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.modpacksch.ModpacksChPackList;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionModsManifest;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 
 import okhttp3.CacheControl;

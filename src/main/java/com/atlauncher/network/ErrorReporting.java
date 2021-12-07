@@ -17,20 +17,20 @@
  */
 package com.atlauncher.network;
 
+import com.atlauncher.constants.Constants;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.Utils;
+import io.sentry.Sentry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.atlauncher.constants.Constants;
-import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.Java;
-import com.atlauncher.utils.Utils;
-
-import io.sentry.Breadcrumb;
-import io.sentry.Sentry;
-import io.sentry.SentryLevel;
-
 public final class ErrorReporting {
+    private static final Logger LOG = LogManager.getLogger(ErrorReporting.class);
+
     public static List<String> sentEvents = new ArrayList<>();
     public static List<String> ignoredMessages = new ArrayList<>();
     public static boolean sentryInitialised = false;
@@ -85,7 +85,7 @@ public final class ErrorReporting {
             try {
                 Sentry.close();
             } catch (Exception e) {
-                LogManager.logStackTrace("Error disabling error reporting", e);
+                LOG.error(MarkerManager.getMarker("NoReporting"), "Error disabling error reporting", e);
             }
 
             sentryInitialised = false;

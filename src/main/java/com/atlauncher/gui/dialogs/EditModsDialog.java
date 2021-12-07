@@ -68,7 +68,6 @@ import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
@@ -77,7 +76,11 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class EditModsDialog extends JDialog {
+    private static final Logger LOG = LogManager.getLogger(EditModsDialog.class);
     private static final long serialVersionUID = 7004414192679481818L;
 
     public Instance instance;
@@ -347,7 +350,6 @@ public class EditModsDialog extends JDialog {
                 mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
             }
         }
-
         return mod;
     }
 
@@ -367,7 +369,7 @@ public class EditModsDialog extends JDialog {
                                                 && mod.file.equals(file.getFileName().toString())))
                         .collect(Collectors.toList()));
             } catch (IOException e) {
-                LogManager.logStackTrace("Error scanning missing mods", e);
+                LOG.error("Error scanning missing mods", e);
             }
         }
 
@@ -394,7 +396,7 @@ public class EditModsDialog extends JDialog {
                                                             .getFile(instance.ROOT, instance.id).toPath());
                                     murmurHashes.put(hash, dm);
                                 } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
+                                    LOG.error(t);
                                 }
                             });
 
@@ -432,7 +434,7 @@ public class EditModsDialog extends JDialog {
                                                     dm.description = curseForgeProject.summary;
                                                 }
 
-                                                LogManager.debug("Found matching mod from CurseForge called "
+                                                LOG.debug("Found matching mod from CurseForge called "
                                                         + dm.curseForgeFile.displayName);
                                             });
                                 }
@@ -454,7 +456,7 @@ public class EditModsDialog extends JDialog {
                                                             .getFile(instance.ROOT, instance.id).toPath())
                                             .toString(), dm);
                                 } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
+                                    LOG.error(t);
                                 }
                             });
 
@@ -489,8 +491,7 @@ public class EditModsDialog extends JDialog {
                                                 dm.description = project.description;
                                             }
 
-                                            LogManager
-                                                    .debug(String.format(
+                                            LOG.debug(String.format(
                                                             "Found matching mod from Modrinth called %s with file %s",
                                                             project.title, version.name));
                                         }
@@ -501,7 +502,7 @@ public class EditModsDialog extends JDialog {
                     }
                 }
 
-                mods.forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
+                mods.forEach(mod -> LOG.info("Found extra mod with name of " + mod.file));
                 instance.launcher.mods.addAll(mods);
                 instance.save();
                 progressDialog.close();
@@ -526,7 +527,7 @@ public class EditModsDialog extends JDialog {
         }).collect(Collectors.toList());
 
         if (removedMods.size() != 0) {
-            removedMods.forEach(mod -> LogManager.info("Mod no longer in filesystem: " + mod.file));
+            removedMods.forEach(mod -> LOG.info("Mod no longer in filesystem: {}", mod.file));
             instance.launcher.mods.removeAll(removedMods);
             instance.save();
         }

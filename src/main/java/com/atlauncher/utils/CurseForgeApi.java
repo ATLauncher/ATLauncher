@@ -35,18 +35,22 @@ import com.atlauncher.data.curseforge.CurseForgeCoreApiResponse;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
 
 import okhttp3.CacheControl;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Various utility methods for interacting with the CurseForge API.
  */
 public class CurseForgeApi {
+    private static final Logger LOG = LogManager.getLogger(CurseForgeApi.class);
+
     public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page, int modLoaderType,
             String sort) {
         return searchCurseForge(null, sectionId, query, page, modLoaderType, sort);
@@ -93,7 +97,7 @@ public class CurseForgeApi {
                 return response.data;
             }
         } catch (UnsupportedEncodingException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         return null;
@@ -224,7 +228,7 @@ public class CurseForgeApi {
                 return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
             }
         } catch (Throwable t) {
-            LogManager.logStackTrace("Error trying to get CurseForge projects as map", t);
+            LOG.error("Error trying to get CurseForge projects as map", t);
         }
 
         return null;

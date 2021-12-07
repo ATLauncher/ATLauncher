@@ -48,7 +48,6 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
@@ -59,18 +58,23 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import okhttp3.OkHttpClient;
 
 public class Launcher {
+    private static final Logger LOG = LogManager.getLogger(Launcher.class);
+
     // Holding update data
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
@@ -121,7 +125,7 @@ public class Launcher {
         PackManager.removeUnusedImages(); // remove unused pack images
 
         if (OS.isWindows() && !Java.is64Bit() && OS.is64Bit()) {
-            LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
+            LOG.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Running 32 Bit Java on 64 Bit Windows"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -148,7 +152,7 @@ public class Launcher {
             this.latestLauncherVersion = Gsons.DEFAULT
                     .fromJson(new FileReader(FileSystem.JSON.resolve("version.json").toFile()), LauncherVersion.class);
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
-            LogManager.logStackTrace("Exception when loading latest launcher version!", e);
+            LOG.error("Exception when loading latest launcher version!", e);
         }
 
         return this.latestLauncherVersion != null && Constants.VERSION.needsUpdate(this.latestLauncherVersion);
@@ -167,7 +171,7 @@ public class Launcher {
                 toget = "jar";
             }
             File newFile = FileSystem.TEMP.resolve(saveAs).toFile();
-            LogManager.info("Downloading Launcher Update");
+            LOG.info("Downloading Launcher Update");
             Analytics.sendEvent("Update", "Launcher");
 
             ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Launcher Update"), 1,
@@ -182,7 +186,7 @@ public class Launcher {
                 try {
                     download.downloadFile();
                 } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to download update", e);
+                    LOG.error("Failed to download update", e);
                     progressDialog.setReturnValue(false);
                     progressDialog.close();
                     return;
@@ -198,7 +202,7 @@ public class Launcher {
                 runUpdate(path, newFile.getAbsolutePath());
             }
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("Error downloading update", e);
         }
     }
 
@@ -222,12 +226,12 @@ public class Launcher {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(arguments);
 
-        LogManager.info("Running launcher update with command " + arguments);
+        LOG.info("Running launcher update with command " + arguments);
 
         try {
             processBuilder.start();
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
+        } catch (IOException e){
+            LOG.error("failed to start the launcher:", e);
         }
 
         System.exit(0);
@@ -246,7 +250,8 @@ public class Launcher {
                 this.launcherFiles = com.atlauncher.network.Download.build().cached()
                         .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER)).asType(type);
             } catch (Exception e) {
-                LogManager.logStackTrace("Error loading in file hashes!", e);
+                LOG.error("Error loading in file hashes!", e);
+                ErrorReporting.reportError(e);
                 return null;
             }
         }
@@ -278,7 +283,7 @@ public class Launcher {
         }));
         progressDialog.start();
 
-        LogManager.info("Finished downloading updated files!");
+        LOG.info("Finished downloading updated files!");
     }
 
     public boolean checkForUpdatedFiles() {
@@ -296,7 +301,7 @@ public class Launcher {
      * differ from what the user has
      */
     public boolean hasUpdatedFiles() {
-        LogManager.info("Checking for updated files!");
+        LOG.info("Checking for updated files!");
         List<com.atlauncher.network.Download> downloads = getLauncherFiles();
 
         if (downloads == null) {
@@ -374,7 +379,7 @@ public class Launcher {
     private void checkForLauncherUpdate() {
         PerformanceManager.start();
 
-        LogManager.debug("Checking for launcher update");
+        LOG.debug("Checking for launcher update");
         if (launcherHasUpdate()) {
             if (App.noLauncherUpdate) {
                 int ret = DialogManager.okDialog().setTitle("Launcher Update Available")
@@ -404,7 +409,8 @@ public class Launcher {
                 System.exit(0);
             }
         }
-        LogManager.debug("Finished checking for launcher update");
+
+        LOG.debug("Finished checking for launcher update");
         PerformanceManager.end();
     }
 
@@ -511,7 +517,7 @@ public class Launcher {
 
     public void killMinecraft() {
         if (this.minecraftProcess != null) {
-            LogManager.error("Killing Minecraft");
+            LOG.error("Killing Minecraft");
 
             if (App.discordInitialized) {
                 DiscordRPC.discordClearPresence();
@@ -520,7 +526,7 @@ public class Launcher {
             this.minecraftProcess.destroy();
             this.minecraftProcess = null;
         } else {
-            LogManager.error("Cannot kill Minecraft as there is no instance open!");
+            LOG.error("Cannot kill Minecraft as there is no instance open!");
         }
     }
 }

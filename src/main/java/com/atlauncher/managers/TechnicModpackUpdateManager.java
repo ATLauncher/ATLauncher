@@ -27,8 +27,13 @@ import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.TechnicApi;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TechnicModpackUpdateManager {
+    private static final Logger LOG = LogManager.getLogger(TechnicModpackUpdateManager.class);
+
     public static TechnicModpack getUpToDateModpack(Instance instance) {
         return Data.TECHNIC_INSTANCE_LATEST_VERSION.get(instance);
     }
@@ -43,7 +48,7 @@ public class TechnicModpackUpdateManager {
         }
 
         PerformanceManager.start();
-        LogManager.info("Checking for updates to Technic Modpack instances");
+        LOG.info("Checking for updates to Technic Modpack instances");
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
                 .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).map(i -> {

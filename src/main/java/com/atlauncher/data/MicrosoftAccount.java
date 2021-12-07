@@ -30,13 +30,16 @@ import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 public class MicrosoftAccount extends AbstractAccount {
+    private static final Logger LOG = LogManager.getLogger(MicrosoftAccount.class);
+
     /**
      * Auto generated serial.
      */
@@ -109,12 +112,12 @@ public class MicrosoftAccount extends AbstractAccount {
         try {
             profile = MicrosoftAuthAPI.getMcProfile(accessToken);
         } catch (Exception e) {
-            LogManager.error("Error getting Minecraft profile");
+            LOG.error("Error getting Minecraft profile");
             return null;
         }
 
         if (profile == null) {
-            LogManager.error("Error getting Minecraft profile");
+            LOG.error("Error getting Minecraft profile");
             return null;
         }
 
@@ -133,12 +136,12 @@ public class MicrosoftAccount extends AbstractAccount {
         try {
             profile = MicrosoftAuthAPI.getMcProfile(accessToken);
         } catch (Exception e) {
-            LogManager.error("Error getting Minecraft profile");
+            LOG.error("Error getting Minecraft profile");
             return null;
         }
 
         if (profile == null) {
-            LogManager.error("Error getting Minecraft profile");
+            LOG.error("Error getting Minecraft profile");
             return null;
         }
 
@@ -153,13 +156,13 @@ public class MicrosoftAccount extends AbstractAccount {
     public boolean refreshAccessToken(boolean force) {
         try {
             if (force || new Date().after(this.oauthToken.expiresAt)) {
-                LogManager.info("Oauth token expired. Attempting to refresh");
+                LOG.info("Oauth token expired. Attempting to refresh");
                 OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.refreshAccessToken(oauthToken.refreshToken);
 
                 if (oauthTokenResponse == null) {
                     mustLogin = true;
                     AccountManager.saveAccounts();
-                    LogManager.error("Failed to refresh accessToken");
+                    LOG.error("Failed to refresh accessToken");
                     return false;
                 }
 
@@ -169,14 +172,14 @@ public class MicrosoftAccount extends AbstractAccount {
             }
 
             if (force || new Date().after(this.xstsAuth.notAfter)) {
-                LogManager.info("xsts auth expired. Attempting to get new auth");
+                LOG.info("xsts auth expired. Attempting to get new auth");
                 XboxLiveAuthResponse xboxLiveAuthResponse = MicrosoftAuthAPI.getXBLToken(this.oauthToken.accessToken);
                 this.xstsAuth = MicrosoftAuthAPI.getXstsToken(xboxLiveAuthResponse.token);
 
                 if (xstsAuth == null) {
                     mustLogin = true;
                     AccountManager.saveAccounts();
-                    LogManager.error("Failed to get XBLToken");
+                    LOG.error("Failed to get XBLToken");
                     return false;
                 }
 
@@ -189,7 +192,7 @@ public class MicrosoftAccount extends AbstractAccount {
                 if (loginResponse == null) {
                     mustLogin = true;
                     AccountManager.saveAccounts();
-                    LogManager.error("Failed to login to Minecraft");
+                    LOG.error("Failed to login to Minecraft");
                     return false;
                 }
 
@@ -197,7 +200,7 @@ public class MicrosoftAccount extends AbstractAccount {
 
                 if (!(entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
                         && entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
-                    LogManager.error("This account doesn't have a valid purchase of Minecraft");
+                    LOG.error("This account doesn't have a valid purchase of Minecraft");
                     return false;
                 }
 
@@ -223,7 +226,7 @@ public class MicrosoftAccount extends AbstractAccount {
             mustLogin = true;
             AccountManager.saveAccounts();
 
-            LogManager.logStackTrace("Exception refreshing accessToken", e);
+            LOG.error("Exception refreshing accessToken", e);
             return false;
         }
 
@@ -246,7 +249,7 @@ public class MicrosoftAccount extends AbstractAccount {
         try {
             profile = MicrosoftAuthAPI.getMcProfile(accessToken);
         } catch (DownloadException e) {
-            LogManager.error("Minecraft Profile not found");
+            LOG.error("Minecraft Profile not found");
             DialogManager.okDialog().setTitle(GetText.tr("Minecraft Profile Not Found"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're an Xbox Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
@@ -254,12 +257,12 @@ public class MicrosoftAccount extends AbstractAccount {
                     .setType(DialogManager.ERROR).show();
             return false;
         } catch (Exception e) {
-            LogManager.logStackTrace("Failed to get Minecraft profile", e);
+            LOG.error("Failed to get Minecraft profile", e);
             return false;
         }
 
         if (profile == null) {
-            LogManager.error("Failed to get Minecraft profile");
+            LOG.error("Failed to get Minecraft profile");
             return false;
         }
 
@@ -304,12 +307,12 @@ public class MicrosoftAccount extends AbstractAccount {
             return true;
         }
 
-        LogManager.info("Access Token has expired. Attempting to refresh it.");
+        LOG.info("Access Token has expired. Attempting to refresh it.");
 
         try {
             return refreshAccessToken();
         } catch (Exception e) {
-            LogManager.logStackTrace("Exception while attempting to refresh access token", e);
+            LOG.error("Exception while attempting to refresh access token", e);
         }
 
         return false;

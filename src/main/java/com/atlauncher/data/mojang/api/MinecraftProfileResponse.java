@@ -21,10 +21,14 @@ import java.io.IOException;
 import java.util.List;
 
 import com.atlauncher.annot.Json;
-import com.atlauncher.managers.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Json
 public class MinecraftProfileResponse {
+    private static final Logger LOG = LogManager.getLogger(MinecraftProfileResponse.class);
+
     private String id;
     private String name;
     private List<UserPropertyRaw> properties;
@@ -47,7 +51,7 @@ public class MinecraftProfileResponse {
                 try {
                     return property.parse();
                 } catch (IOException e) {
-                    LogManager.logStackTrace("Error parsing user property " + name + " for username " + name, e);
+                    LOG.error("Error parsing user property " + name + " for username " + name, e);
                 }
             }
         }
