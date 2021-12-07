@@ -38,7 +38,9 @@
         <Logger name="com.atlauncher" level="INFO">
             <AppenderRef ref="LogToRollingFile"/>
             <Appenderref ref="LogToLauncherConsole"/>
+            <AppenderRef ref="LogToReporter"/>
         </Logger>
+
         <Root level="error">
             <AppenderRef ref="LogToConsole"/>
         </Root>

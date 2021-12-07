@@ -247,7 +247,6 @@ public class App {
      */
     public static void main(String[] args) {
         LoggingUtils.redirectSystemOutLogs();
-
         PASSED_ARGS = args;
 
         // Parse all the command line arguments
