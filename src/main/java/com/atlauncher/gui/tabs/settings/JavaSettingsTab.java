@@ -90,6 +90,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JCheckBox useJavaProvidedByMinecraft;
     private final JLabelWithHover disableLegacyLaunchingLabel;
     private final JCheckBox disableLegacyLaunching;
+    private final JLabelWithHover enableLog4jExploitFixLabel;
+    private final JCheckBox enableLog4jExploitFix;
     private final JLabelWithHover useSystemGlfwLabel;
     private final JCheckBox useSystemGlfw;
     private final JLabelWithHover useSystemOpenAlLabel;
@@ -483,6 +485,25 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         disableLegacyLaunching.setSelected(App.settings.disableLegacyLaunching);
         add(disableLegacyLaunching, gbc);
 
+        // Enable Log4J Exploit Fix
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        enableLog4jExploitFixLabel = new JLabelWithHover(GetText.tr("Enable Log4J Exploit Fix") + "?", HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr(
+                        "This adds an argument to the launching of Minecraft to fix the Log4J exploit found in December 2021.<br/><br/>this shouldn't be disabled unless you know what you're doing."))
+                        .build());
+        add(enableLog4jExploitFixLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        enableLog4jExploitFix = new JCheckBox();
+        enableLog4jExploitFix.setSelected(App.settings.enableLog4jExploitFix);
+        add(enableLog4jExploitFix, gbc);
+
         // Use System GLFW
 
         gbc.gridx = 0;
@@ -554,6 +575,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
         App.settings.useJavaProvidedByMinecraft = useJavaProvidedByMinecraft.isSelected();
         App.settings.disableLegacyLaunching = disableLegacyLaunching.isSelected();
+        App.settings.enableLog4jExploitFix = enableLog4jExploitFix.isSelected();
         App.settings.useSystemGlfw = useSystemGlfw.isSelected();
         App.settings.useSystemOpenAl = useSystemOpenAl.isSelected();
     }
@@ -621,6 +643,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.disableLegacyLaunchingLabel.setText(GetText.tr("Disable Legacy Launching") + "?");
         this.disableLegacyLaunchingLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
                 "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
+                .build());
+
+        this.enableLog4jExploitFixLabel.setText(GetText.tr("Enable Log4J Exploit Fix") + "?");
+        this.enableLog4jExploitFixLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
+                "This adds an argument to the launching of Minecraft to fix the Log4J exploit found in December 2021.<br/><br/>this shouldn't be disabled unless you know what you're doing."))
                 .build());
     }
 

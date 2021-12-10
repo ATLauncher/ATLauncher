@@ -92,6 +92,7 @@ public class Settings {
     public boolean ignoreJavaOnInstanceLaunch = false;
     public boolean useJavaProvidedByMinecraft = true;
     public boolean disableLegacyLaunching = false;
+    public boolean enableLog4jExploitFix = true;
     public boolean useSystemGlfw = false;
     public boolean useSystemOpenAl = false;
 
@@ -460,15 +461,15 @@ public class Settings {
             Type type = Type.HTTP;
 
             switch (this.proxyType) {
-            case "HTTP":
-                type = Type.HTTP;
-                break;
-            case "SOCKS":
-                type = Type.SOCKS;
-                break;
-            case "DIRECT":
-                type = Type.DIRECT;
-                break;
+                case "HTTP":
+                    type = Type.HTTP;
+                    break;
+                case "SOCKS":
+                    type = Type.SOCKS;
+                    break;
+                case "DIRECT":
+                    type = Type.DIRECT;
+                    break;
             }
 
             proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));
