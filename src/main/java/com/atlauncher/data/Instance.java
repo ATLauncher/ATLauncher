@@ -85,6 +85,7 @@ import com.atlauncher.data.minecraft.JavaRuntimeManifest;
 import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.data.minecraft.LoggingFile;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -447,6 +448,7 @@ public class Instance extends MinecraftVersion {
         } catch (Exception e) {
             // ignored
         }
+        progressDialog.doneTask();
         PerformanceManager.end("Grabbing Latest Manifest");
 
         PerformanceManager.start("Downloading Minecraft");
@@ -469,6 +471,35 @@ public class Instance extends MinecraftVersion {
             return false;
         }
         PerformanceManager.end("Downloading Minecraft");
+
+        if (logging != null) {
+            PerformanceManager.start("Downloading Logging Config");
+            try {
+                progressDialog.setLabel(GetText.tr("Downloading Logging Config"));
+
+                LoggingFile loggingFile = logging.client.file;
+
+                com.atlauncher.network.Download loggerDownload = com.atlauncher.network.Download.build().cached()
+                        .setUrl(loggingFile.url).hash(loggingFile.sha1)
+                        .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
+                        .withHttpClient(httpClient);
+
+                if (loggerDownload.needToDownload()) {
+                    progressDialog.setTotalBytes(loggingFile.size);
+                    loggerDownload.downloadFile();
+                }
+
+                progressDialog.doneTask();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                PerformanceManager.end("Downloading Logging Config");
+                PerformanceManager.end();
+                return false;
+            }
+            PerformanceManager.end("Downloading Logging Config");
+        } else {
+            progressDialog.doneTask();
+        }
 
         // download libraries
         PerformanceManager.start("Downloading Libraries");
