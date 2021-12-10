@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.10.5
 
 ### New Features
+- Download latest Minecraft manifest on launch
 
 ### Fixes
 

@@ -87,6 +87,7 @@ import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -153,10 +154,16 @@ public class Instance extends MinecraftVersion {
 
     public void setValues(MinecraftVersion version) {
         this.id = version.id;
+        this.libraries = version.libraries;
+        this.mainClass = version.mainClass;
+        this.minecraftArguments = version.minecraftArguments;
+        this.arguments = version.arguments;
+        setUpdatedValues(version);
+    }
+
+    public void setUpdatedValues(MinecraftVersion version) {
         this.complianceLevel = version.complianceLevel;
         this.javaVersion = version.javaVersion;
-        this.arguments = version.arguments;
-        this.minecraftArguments = version.minecraftArguments;
         this.type = version.type;
         this.time = version.time;
         this.releaseTime = version.releaseTime;
@@ -164,10 +171,8 @@ public class Instance extends MinecraftVersion {
         this.assetIndex = version.assetIndex;
         this.assets = version.assets;
         this.downloads = version.downloads;
-        this.logging = version.logging;
-        this.libraries = version.libraries;
         this.rules = version.rules;
-        this.mainClass = version.mainClass;
+        this.logging = version.logging;
     }
 
     public String getSafeName() {
@@ -414,6 +419,35 @@ public class Instance extends MinecraftVersion {
     public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir) {
         PerformanceManager.start();
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
+
+        // make sure latest manifest is being used
+        PerformanceManager.start("Grabbing Latest Manifest");
+        try {
+            progressDialog.setLabel(GetText.tr("Grabbing Latest Manifest"));
+            VersionManifestVersion minecraftVersionManifest = MinecraftManager
+                    .getMinecraftVersion(id);
+
+            String[] urlParts = minecraftVersionManifest.url.split("/");
+            String sha1 = urlParts[urlParts.length - 2];
+
+            com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
+                    .cached()
+                    .setUrl(minecraftVersionManifest.url).withHttpClient(httpClient);
+
+            if (sha1.length() == 40) {
+                download = download.hash(sha1);
+            }
+
+            MinecraftVersion minecraftVersion = download.asClass(MinecraftVersion.class);
+
+            if (minecraftVersion != null) {
+                setUpdatedValues(minecraftVersion);
+                save();
+            }
+        } catch (Exception e) {
+            // ignored
+        }
+        PerformanceManager.end("Grabbing Latest Manifest");
 
         PerformanceManager.start("Downloading Minecraft");
         try {
@@ -731,7 +765,7 @@ public class Instance extends MinecraftVersion {
             LogManager.logStackTrace(e2, false);
         }
 
-        ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 6,
+        ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 7,
                 GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
