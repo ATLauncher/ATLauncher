@@ -967,6 +967,7 @@ public class Instance extends MinecraftVersion {
                 App.launcher.showKillMinecraft(process);
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
+                StringBuilder sb = new StringBuilder();
                 BufferedReader br = new BufferedReader(isr);
                 String line;
                 int detectedError = 0;
@@ -1000,6 +1001,28 @@ public class Instance extends MinecraftVersion {
                             line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
                         }
                     }
+
+                    if (line.contains("log4j:")) {
+                        try {
+                            // start of a new event so clear string builder
+                            if (line.contains("<log4j:Event>")) {
+                                sb.setLength(0);
+                            }
+
+                            sb.append(line);
+
+                            // end of the xml object so parse it
+                            if (line.contains("</log4j:Event>")) {
+                                LogManager.minecraftLog4j(sb.toString());
+                                sb.setLength(0);
+                            }
+
+                            continue;
+                        } catch (Exception e) {
+                            // ignored
+                        }
+                    }
+
                     LogManager.minecraft(line);
                 }
                 App.launcher.hideKillMinecraft();

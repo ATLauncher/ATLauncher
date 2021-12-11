@@ -39,6 +39,7 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.mclauncher.legacy.LegacyMCLauncher;
@@ -291,6 +292,16 @@ public class MCLauncher {
         }
 
         arguments.add("-Dfml.log.level=" + App.settings.forgeLoggingLevel);
+
+        if (instance.logging != null && instance.logging.client != null) {
+            LoggingClient loggingClient = instance.logging.client;
+
+            Path loggingClientPath = FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingClient.file.id);
+
+            if (Files.exists(loggingClientPath)) {
+                arguments.add(loggingClient.getCompiledArgument());
+            }
+        }
 
         if (OS.isMac()) {
             arguments.add("-Dapple.laf.useScreenMenuBar=true");
