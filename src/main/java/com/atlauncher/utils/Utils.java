@@ -132,13 +132,13 @@ public class Utils {
 
     public static File getOSStorageDir() {
         switch (OS.getOS()) {
-        case WINDOWS:
-            return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
-        case OSX:
-            return new File(System.getProperty("user.home"),
-                    "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
-        default:
-            return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+            case WINDOWS:
+                return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+            case OSX:
+                return new File(System.getProperty("user.home"),
+                        "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
+            default:
+                return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -723,6 +723,30 @@ public class Utils {
             if (line.contains(replaceThis)) {
                 line = line.replace(replaceThis, withThis);
             }
+            writer1.write(line);
+            writer1.write(System.getProperty("line.separator"));
+            line = br.readLine();
+        }
+        writer1.flush();
+        writer1.close();
+        br.close();
+    }
+
+    /**
+     * Write resource to file.
+     *
+     * @param destinationFile the destination file
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static void writeResourceToFile(InputStream fs, File destinationFile)
+            throws IOException {
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(fs));
+
+        FileWriter writer1 = new FileWriter(destinationFile);
+
+        String line = br.readLine();
+        while (line != null) {
             writer1.write(line);
             writer1.write(System.getProperty("line.separator"));
             line = br.readLine();

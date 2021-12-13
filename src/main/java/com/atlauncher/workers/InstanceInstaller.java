@@ -1444,6 +1444,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.version = this.packVersion.version;
         server.isDev = this.version.isDev;
         server.mods = this.modsInstalled;
+        server.isPatchedForLog4Shell = true;
 
         if (this.version.isDev) {
             server.hash = this.version.hash;
@@ -2690,6 +2691,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         File tmpBatFile = new File(this.temp.toFile(), "LaunchServer.bat");
         File tmpShFile = new File(this.temp.toFile(), "LaunchServer.sh");
         File tmpCommandFile = new File(this.temp.toFile(), "LaunchServer.command");
+        File tmp1BatFile = new File(this.temp.toFile(), "LaunchServer1.bat");
+        File tmp1ShFile = new File(this.temp.toFile(), "LaunchServer1.sh");
+        File tmp1CommandFile = new File(this.temp.toFile(), "LaunchServer1.command");
 
         // write out the server jar filename
         Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), tmpBatFile,
@@ -2700,14 +2704,43 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 "%%SERVERJAR%%", getServerJar());
 
         // replace/remove the server arguments (if any)
-        Utils.replaceText(new FileInputStream(tmpBatFile), batFile, "%%ARGUMENTS%%", this.packVersion.serverArguments);
-        Utils.replaceText(new FileInputStream(tmpShFile), shFile, "%%ARGUMENTS%%", this.packVersion.serverArguments);
-        Utils.replaceText(new FileInputStream(tmpCommandFile), commandFile, "%%ARGUMENTS%%",
+        Utils.replaceText(new FileInputStream(tmpBatFile), tmp1BatFile, "%%ARGUMENTS%%",
                 this.packVersion.serverArguments);
+        Utils.replaceText(new FileInputStream(tmpShFile), tmp1ShFile, "%%ARGUMENTS%%",
+                this.packVersion.serverArguments);
+        Utils.replaceText(new FileInputStream(tmpCommandFile), tmp1CommandFile, "%%ARGUMENTS%%",
+                this.packVersion.serverArguments);
+
+        // replace/remove the logging arguments for Log4Shell exploit (if any)
+        String log4ShellArguments = this.getLog4ShellArguments();
+        Utils.replaceText(new FileInputStream(tmp1BatFile), batFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
+        Utils.replaceText(new FileInputStream(tmp1ShFile), shFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
+        Utils.replaceText(new FileInputStream(tmp1CommandFile), commandFile, "%%LOG4SHELLARGUMENTS%%",
+                log4ShellArguments);
 
         batFile.setExecutable(true);
         shFile.setExecutable(true);
         commandFile.setExecutable(true);
+    }
+
+    private String getLog4ShellArguments() throws Exception {
+        StringBuilder arguments = new StringBuilder();
+
+        if (minecraftVersionManifest.isLog4ShellExploitable()) {
+            arguments.append("-Dlog4j2.formatMsgNoLookups=true");
+
+            if (loaderVersion != null && loaderVersion.isForge()) {
+                Utils.writeResourceToFile(App.class.getResourceAsStream(minecraftVersionManifest.getLog4JFileForge()),
+                        root.resolve("log4j2.xml").toFile());
+            } else {
+                Utils.writeResourceToFile(App.class.getResourceAsStream(minecraftVersionManifest.getLog4JFile()),
+                        root.resolve("log4j2.xml").toFile());
+            }
+
+            arguments.append(" -Dlog4j.configurationFile=log4j2.xml");
+        }
+
+        return arguments.toString();
     }
 
     public String getServerJar() {

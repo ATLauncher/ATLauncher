@@ -56,6 +56,7 @@ public class Server {
     public Integer packId;
     public String version;
     public String hash;
+    public boolean isPatchedForLog4Shell = false;
 
     public boolean isDev;
     public List<DisableableMod> mods = new ArrayList<>();
@@ -86,6 +87,19 @@ public class Server {
     }
 
     public void launch(String args, boolean close) {
+        if (!isPatchedForLog4Shell) {
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Server Is Vulnerable"))
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "This server is currently vulnerable to the Log4Shell exploit.<br/><br/>For your safety, and of those on your server, please delete and recreate this server.<br/><br/>Do you still want to launch the server (not recommended)?"))
+                            .center().build())
+                    .setType(DialogManager.ERROR)
+                    .show();
+
+            if (ret != DialogManager.YES_OPTION) {
+                return;
+            }
+        }
+
         LogManager.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 

@@ -43,4 +43,53 @@ public class VersionManifestVersion {
         // check if the release is after 18w48a release time
         return parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2018-11-28T13:11:38+00:00"));
     }
+
+    public boolean isLog4ShellExploitable() {
+        DateTime parsedReleaseTime = ISODateTimeFormat.dateTimeParser().parseDateTime(releaseTime);
+
+        // check if the release is after 1.7 and before 1.18.1 release time
+        return parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2013-10-21T15:04:05+00:00"))
+                && parsedReleaseTime
+                        .isBefore(ISODateTimeFormat.dateTimeParser().parseDateTime("2021-12-09T08:23:00+00:00"));
+    }
+
+    public String getLog4JFile() {
+        DateTime parsedReleaseTime = ISODateTimeFormat.dateTimeParser().parseDateTime(releaseTime);
+
+        // 1.7 to 1.11.2
+        if (parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2013-10-21T15:04:05+00:00"))
+                && parsedReleaseTime
+                        .isBefore(ISODateTimeFormat.dateTimeParser().parseDateTime("2016-12-20T09:29:12+00:00"))) {
+            return "/server-scripts/logging-configs/vanilla-1.7.xml";
+        }
+
+        return "/server-scripts/logging-configs/vanilla-1.12.xml";
+    }
+
+    public String getLog4JFileForge() {
+        DateTime parsedReleaseTime = ISODateTimeFormat.dateTimeParser().parseDateTime(releaseTime);
+
+        // 1.7 to 1.12
+        if (parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2013-10-21T15:04:05+00:00"))
+                && parsedReleaseTime
+                        .isBefore(ISODateTimeFormat.dateTimeParser().parseDateTime("2017-06-01T13:50:27+00:00"))) {
+            return "/server-scripts/logging-configs/forge-1.7.xml";
+        }
+
+        // 1.12 to 1.12.2
+        if (parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2017-06-01T13:50:27+00:00"))
+                && parsedReleaseTime
+                        .isBefore(ISODateTimeFormat.dateTimeParser().parseDateTime("2017-09-17T08:39:46+00:00"))) {
+            return "/server-scripts/logging-configs/forge-1.12.xml";
+        }
+
+        // 1.13 to 1.16.3
+        if (parsedReleaseTime.isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime("2018-07-17T15:11:46+00:00"))
+                && parsedReleaseTime
+                        .isBefore(ISODateTimeFormat.dateTimeParser().parseDateTime("2020-09-11T13:42:37+00:00"))) {
+            return "/server-scripts/logging-configs/forge-1.13.xml";
+        }
+
+        return "/server-scripts/logging-configs/vanilla-1.16.4.xml";
+    }
 }

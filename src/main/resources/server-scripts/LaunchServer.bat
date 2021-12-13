@@ -29,6 +29,6 @@ if $SYSTEM_os_arch==x86 (
 echo Launching %%SERVERJAR%% with '%mem%' max memory, jvm args '%jvmargs%' and arguments '%*'
 
 :: add nogui to the end of this line to disable the gui ::
-%javapath% -Xmx%mem% %jvm_args% %%ARGUMENTS%% -jar %%SERVERJAR%% %*
+%javapath% -Xmx%mem% %jvm_args% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %*
 PAUSE
 

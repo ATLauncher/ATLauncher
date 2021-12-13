@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- The Log4Shell exploit not being patched on servers being created
 
 ### Misc
