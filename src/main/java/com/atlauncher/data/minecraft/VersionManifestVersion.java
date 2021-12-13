@@ -90,6 +90,6 @@ public class VersionManifestVersion {
             return "/server-scripts/logging-configs/forge-1.13.xml";
         }
 
-        return "/server-scripts/logging-configs/vanilla-1.16.4.xml";
+        return "/server-scripts/logging-configs/forge-1.16.4.xml";
     }
 }

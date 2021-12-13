@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -1320,6 +1321,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         restoreSelectFiles();
+
+        writeLog4j2XmlFileIfNeeded();
+
+        writeLog4ShellExploitArgumentsForForgeScripts();
 
         installServerBootScripts();
 
@@ -2723,12 +2728,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         commandFile.setExecutable(true);
     }
 
-    private String getLog4ShellArguments() throws Exception {
-        StringBuilder arguments = new StringBuilder();
+    private void writeLog4ShellExploitArgumentsForForgeScripts() throws Exception {
+        if (!isServer || (this.loaderVersion != null && this.loaderVersion.shouldInstallServerScripts())) {
+            return;
+        }
 
+        if (Files.exists(root.resolve("user_jvm_args.txt")) && minecraftVersionManifest.isLog4ShellExploitable()) {
+            Files.write(root.resolve("user_jvm_args.txt"),
+                    (System.lineSeparator() + this.getLog4ShellArguments()).getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        }
+    }
+
+    private void writeLog4j2XmlFileIfNeeded() throws Exception {
         if (minecraftVersionManifest.isLog4ShellExploitable()) {
-            arguments.append("-Dlog4j2.formatMsgNoLookups=true");
-
             if (loaderVersion != null && loaderVersion.isForge()) {
                 Utils.writeResourceToFile(App.class.getResourceAsStream(minecraftVersionManifest.getLog4JFileForge()),
                         root.resolve("log4j2.xml").toFile());
@@ -2736,11 +2749,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 Utils.writeResourceToFile(App.class.getResourceAsStream(minecraftVersionManifest.getLog4JFile()),
                         root.resolve("log4j2.xml").toFile());
             }
+        }
+    }
 
-            arguments.append(" -Dlog4j.configurationFile=log4j2.xml");
+    private String getLog4ShellArguments() throws Exception {
+        if (minecraftVersionManifest.isLog4ShellExploitable()) {
+            return "-Dlog4j2.formatMsgNoLookups=true -Dlog4j.configurationFile=log4j2.xml";
         }
 
-        return arguments.toString();
+        return "";
     }
 
     public String getServerJar() {
