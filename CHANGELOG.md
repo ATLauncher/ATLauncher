@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Update Log4J packages within ATLauncher itself [#537]
 
 ### Misc
