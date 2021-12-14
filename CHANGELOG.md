@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Dates for which log4j2 config to use being wrong
 
 ### Misc
