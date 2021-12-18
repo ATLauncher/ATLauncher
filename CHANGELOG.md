@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Server log4j2.xml files being written for instances
 - Some zip files not importing
+- Libraries being added to the launch command twice
 
 ### Misc
 - Remove the temporary log4j command line argument fix as no longer necessary

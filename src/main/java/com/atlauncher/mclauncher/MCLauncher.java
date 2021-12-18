@@ -187,9 +187,13 @@ public class MCLauncher {
                 library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
                 .forEach(library -> {
-                    cpb.append(
-                            FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile().getAbsolutePath());
-                    cpb.append(File.pathSeparator);
+                    String path = FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile()
+                            .getAbsolutePath();
+
+                    if (cpb.indexOf(path) == -1) {
+                        cpb.append(path);
+                        cpb.append(File.pathSeparator);
+                    }
                 });
 
         instance.libraries.stream().filter(Library::hasNativeForOS).forEach(library -> {
