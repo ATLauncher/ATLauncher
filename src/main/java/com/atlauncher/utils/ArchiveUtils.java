@@ -34,6 +34,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
@@ -50,10 +51,10 @@ public class ArchiveUtils {
         boolean found = false;
 
         try (InputStream is = Files.newInputStream(archivePath);
-                ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
+                ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
             ArchiveEntry entry = null;
-            while ((entry = ais.getNextEntry()) != null) {
-                if (!ais.canReadEntryData(entry)) {
+            while ((entry = zais.getNextEntry()) != null) {
+                if (!zais.canReadEntryData(entry)) {
                     continue;
                 }
 
@@ -114,10 +115,10 @@ public class ArchiveUtils {
         }
 
         try (InputStream is = Files.newInputStream(archivePath);
-                ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
+                ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
             ArchiveEntry entry = null;
-            while ((entry = ais.getNextEntry()) != null) {
-                if (!ais.canReadEntryData(entry)) {
+            while ((entry = zais.getNextEntry()) != null) {
+                if (!zais.canReadEntryData(entry)) {
                     continue;
                 }
 
@@ -149,7 +150,7 @@ public class ArchiveUtils {
                         throw new IOException("Failed to create directory " + parent);
                     }
                     try (OutputStream o = Files.newOutputStream(f.toPath())) {
-                        IOUtils.copy(ais, o);
+                        IOUtils.copy(zais, o);
                     }
                 }
             }
