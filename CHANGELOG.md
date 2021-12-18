@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Server log4j2.xml files being written for instances
 
 ### Misc
+- Remove the temporary log4j command line argument fix as no longer necessary

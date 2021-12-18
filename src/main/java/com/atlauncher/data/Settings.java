@@ -92,7 +92,6 @@ public class Settings {
     public boolean ignoreJavaOnInstanceLaunch = false;
     public boolean useJavaProvidedByMinecraft = true;
     public boolean disableLegacyLaunching = false;
-    public boolean enableLog4jExploitFix = true;
     public boolean useSystemGlfw = false;
     public boolean useSystemOpenAl = false;
 

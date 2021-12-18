@@ -70,7 +70,6 @@ public class JavaInstanceSettingsTab extends JPanel {
     private JTextArea javaParameters;
     private JComboBox<ComboItem<Boolean>> useJavaProvidedByMinecraft;
     private JComboBox<ComboItem<Boolean>> disableLegacyLaunching;
-    private JComboBox<ComboItem<Boolean>> enableLog4jExploitFix;
     private JComboBox<ComboItem<Boolean>> useSystemGlfw;
     private JComboBox<ComboItem<Boolean>> useSystemOpenAl;
 
@@ -451,36 +450,6 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         add(disableLegacyLaunching, gbc);
 
-        // Enable Log4J Explit Fix
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover enableLog4jExploitFixLabel = new JLabelWithHover(GetText.tr("Enable Log4J Exploit Fix") + "?",
-                HELP_ICON,
-                new HTMLBuilder().center().text(GetText.tr(
-                        "This adds an argument to the launching of Minecraft to fix the Log4J exploit found in December 2021.<br/><br/>this shouldn't be disabled unless you know what you're doing."))
-                        .build());
-        add(enableLog4jExploitFixLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        enableLog4jExploitFix = new JComboBox<>();
-        enableLog4jExploitFix.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
-        enableLog4jExploitFix.addItem(new ComboItem<>(true, GetText.tr("Yes")));
-        enableLog4jExploitFix.addItem(new ComboItem<>(false, GetText.tr("No")));
-
-        if (instance.launcher.enableLog4jExploitFix == null) {
-            enableLog4jExploitFix.setSelectedIndex(0);
-        } else if (instance.launcher.enableLog4jExploitFix) {
-            enableLog4jExploitFix.setSelectedIndex(1);
-        } else {
-            enableLog4jExploitFix.setSelectedIndex(2);
-        }
-
-        add(enableLog4jExploitFix, gbc);
-
         // Use System GLFW
         gbc.gridx = 0;
         gbc.gridy++;
@@ -563,7 +532,6 @@ public class JavaInstanceSettingsTab extends JPanel {
         Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem())
                 .getValue();
         Boolean disableLegacyLaunchingVal = ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
-        Boolean enableLog4jExploitFixVal = ((ComboItem<Boolean>) enableLog4jExploitFix.getSelectedItem()).getValue();
         Boolean useSystemGlfwVal = ((ComboItem<Boolean>) useSystemGlfw.getSelectedItem()).getValue();
         Boolean useSystemOpenAlVal = ((ComboItem<Boolean>) useSystemOpenAl.getSelectedItem()).getValue();
 
@@ -583,7 +551,6 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         this.instance.launcher.useJavaProvidedByMinecraft = useJavaProvidedByMinecraftVal;
         this.instance.launcher.disableLegacyLaunching = disableLegacyLaunchingVal;
-        this.instance.launcher.enableLog4jExploitFix = enableLog4jExploitFixVal;
         this.instance.launcher.useSystemGlfw = useSystemGlfwVal;
         this.instance.launcher.useSystemOpenAl = useSystemOpenAlVal;
     }

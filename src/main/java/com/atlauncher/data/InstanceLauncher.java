@@ -66,7 +66,6 @@ public class InstanceLauncher {
     public Boolean enableDiscordIntegration = null;
     public Boolean useJavaProvidedByMinecraft = null;
     public Boolean disableLegacyLaunching = null;
-    public Boolean enableLog4jExploitFix = null;
     public Boolean enableCommands = null;
     public String preLaunchCommand = null;
     public String postExitCommand = null;
