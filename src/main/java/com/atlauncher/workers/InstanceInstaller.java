@@ -2741,6 +2741,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void writeLog4j2XmlFileIfNeeded() throws Exception {
+        if (!isServer) {
+            return;
+        }
+
         if (minecraftVersionManifest.isLog4ShellExploitable()) {
             if (loaderVersion != null && loaderVersion.isForge()) {
                 Utils.writeResourceToFile(App.class.getResourceAsStream(minecraftVersionManifest.getLog4JFileForge()),

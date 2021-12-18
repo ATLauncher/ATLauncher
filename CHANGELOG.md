@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Force upgrade Log4J libraries where needed to be 100% safe
 
 ### Fixes
+- Server log4j2.xml files being written for instances
 
 ### Misc
