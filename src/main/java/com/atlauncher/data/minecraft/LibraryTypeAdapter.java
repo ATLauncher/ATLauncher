@@ -33,10 +33,17 @@ public class LibraryTypeAdapter implements JsonDeserializer<Library> {
             throws JsonParseException {
         JsonObject object = json.getAsJsonObject();
 
+        Library library;
+
         if (object.has("checksums")) {
-            return new Gson().fromJson(object, ForgeLibrary.class);
+            library = new Gson().fromJson(object, ForgeLibrary.class);
+        } else {
+            library = new Gson().fromJson(object, Library.class);
         }
 
-        return new Gson().fromJson(object, Library.class);
+        // fix Log4J exploits
+        library.fixLog4jVersion();
+
+        return library;
     }
 }

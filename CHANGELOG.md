@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.10.11
 
 ### New Features
+- Force upgrade Log4J libraries where needed to be 100% safe
 
 ### Fixes
 
