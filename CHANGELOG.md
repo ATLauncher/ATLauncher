@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- The log4j patch upgrade upgrading to 2.16 from 2.0-beta9 when it shouldn't
 
 ### Misc

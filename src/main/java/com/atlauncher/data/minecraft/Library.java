@@ -92,7 +92,7 @@ public class Library {
         final String[] libraryParts = name.split(":");
 
         if (libraryParts[1].equals("log4j-api")) {
-            if (libraryParts[2].equals("2.0-beta9")) {
+            if (libraryParts[2].startsWith("2.0-beta9")) {
                 name = "org.apache.logging.log4j:log4j-api:2.0-beta9-fixed";
                 downloads.artifact.path = "org/apache/logging/log4j/log4j-api/2.0-beta9-fixed/log4j-api-2.0-beta9-fixed.jar";
                 downloads.artifact.sha1 = "b61eaf2e64d8b0277e188262a8b771bbfa1502b3";
@@ -104,7 +104,7 @@ public class Library {
                 downloads.artifact.size = 301892;
             }
         } else if (libraryParts[1].equals("log4j-core")) {
-            if (libraryParts[2].equals("2.0-beta9")) {
+            if (libraryParts[2].startsWith("2.0-beta9")) {
                 name = "org.apache.logging.log4j:log4j-core:2.0-beta9-fixed";
                 downloads.artifact.path = "org/apache/logging/log4j/log4j-core/2.0-beta9-fixed/log4j-core-2.0-beta9-fixed.jar";
                 downloads.artifact.sha1 = "677991ea2d7426f76309a73739cecf609679492c";
