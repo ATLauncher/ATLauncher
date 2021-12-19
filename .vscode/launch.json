@@ -13,6 +13,16 @@
         },
         {
             "type": "java",
+            "name": "Launch (Custom Config)",
+            "request": "launch",
+            "mainClass": "com.atlauncher.App",
+            "projectName": "ATLauncher",
+            "cwd": "${workspaceFolder}/testLauncher",
+            "preLaunchTask": "createTestLauncherDir",
+            "args": "--debug --debug-level 5 --disable-error-reporting --no-launcher-update --config \"{'platforms':{'curseforge':{'message':'CurseForge are currently having issues which may cause mods\/modpacks to not install. If you have issues, try again later. Check their socials for more information'}}}\"",
+        },
+        {
+            "type": "java",
             "name": "Launch (Dev)",
             "request": "launch",
             "mainClass": "com.atlauncher.App",
