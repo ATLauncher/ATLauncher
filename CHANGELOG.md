@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Using the install Fabric API button on add mods page not handling parent windows correctly
 
 ### Misc

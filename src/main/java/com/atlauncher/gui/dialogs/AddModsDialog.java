@@ -147,7 +147,7 @@ public final class AddModsDialog extends JDialog {
         this.loadDefaultMods();
 
         this.pack();
-        this.setLocationRelativeTo(App.launcher.getParent());
+        this.setLocationRelativeTo(parent);
         this.setVisible(true);
     }
 
@@ -193,7 +193,7 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.sendEvent("AddFabricApi", "CurseForgeMod");
-                new CurseForgeProjectFileSelectorDialog(mod, instance);
+                new CurseForgeProjectFileSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
@@ -227,7 +227,7 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.sendEvent("AddFabricApi", "ModrinthMod");
-                new ModrinthVersionSelectorDialog(mod, instance);
+                new ModrinthVersionSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
