@@ -1697,8 +1697,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             libraries.addAll(this.loader.getLibraries());
         }
 
-        // lastly the Minecraft libraries
-        if (this.loader == null || this.loader.useMinecraftLibraries()) {
+        // lastly the Minecraft libraries if not on server
+        if (!isServer && (this.loader == null || this.loader.useMinecraftLibraries())) {
             libraries.addAll(this.minecraftVersion.libraries);
         }
 
