@@ -71,6 +71,8 @@ jobs:
     runs-on: ubuntu-20.04
     needs: build
     if: ${{ github.ref == 'refs/heads/master' }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v2
 
@@ -130,17 +132,16 @@ jobs:
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
 
       - name: Create GitHub Release
-        uses: meeDamian/github-release@2.0
+        uses: softprops/action-gh-release@v1
         if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ steps.clean-version.outputs.replaced }}
-          commitish: master
+          tag_name: v${{ steps.clean-version.outputs.replaced }}
+          target_commitish: master
           name: ${{ steps.clean-version.outputs.replaced }}
           body: ${{ env.cleaned-changelog }}
           prerelease: false
-          allow_override: false
-          gzip: false
+          draft: false
           files: |
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
             ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
