@@ -153,9 +153,6 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
             }
         }
 
-        // fix Log4J exploits
-        library.fixLog4jVersion();
-
         return library;
     }
 }

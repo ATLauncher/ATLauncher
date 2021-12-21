@@ -41,9 +41,6 @@ public class LibraryTypeAdapter implements JsonDeserializer<Library> {
             library = new Gson().fromJson(object, Library.class);
         }
 
-        // fix Log4J exploits
-        library.fixLog4jVersion();
-
         return library;
     }
 }

@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Using the install Fabric API button on add mods page not handling parent windows correctly
+- Remove forceful Log4J upgrading on servers with Forge since they seem incompatable and they use Log4J xml anyway
 
 ### Misc
