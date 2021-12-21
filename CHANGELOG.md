@@ -3,13 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.10.13
+## 3.4.10.14
 
 ### New Features
 
 ### Fixes
-- Using the install Fabric API button on add mods page not handling parent windows correctly
-- Remove forceful Log4J upgrading on servers with Forge since they seem incompatable and they use Log4J xml anyway
-- Don't install Minecraft libraries on server installs since the jar is a fat one
 
 ### Misc
