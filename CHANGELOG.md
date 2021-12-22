@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Processing files from Forge loader on unix systems not working as intended
+- Issue running servers from the launcher that use Forge run.sh files
 
 ### Misc

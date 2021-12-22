@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -100,6 +101,17 @@ public class Server {
             }
         }
 
+        boolean usesRunSh = Files.exists(getRoot().resolve("run.sh"));
+        String serverScript = usesRunSh ? "run" : "LaunchServer";
+
+        if (OS.isWindows()) {
+            serverScript += ".bat";
+        } else if (OS.isLinux() || (OS.isMac() && usesRunSh)) {
+            serverScript += ".sh";
+        } else if (OS.isMac()) {
+            serverScript += ".command";
+        }
+
         LogManager.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 
@@ -109,7 +121,7 @@ public class Server {
                 arguments.add("/K");
                 arguments.add("start");
                 arguments.add("\"" + name + "\"");
-                arguments.add(getRoot().resolve("LaunchServer.bat").toString());
+                arguments.add(getRoot().resolve(serverScript).toString());
                 arguments.add(args);
             } else if (OS.isLinux()) {
                 // use some best guesses for some terminal programs if in path
@@ -117,18 +129,19 @@ public class Server {
                     arguments.add("x-terminal-emulator");
                     arguments.add("-e");
 
-                    arguments.add(getRoot().resolve("LaunchServer.sh").toString() + " " + args);
+                    arguments.add(getRoot().resolve(serverScript).toString() + " " + args);
                 } else if (Utils.executableInPath("exo-open")) {
                     arguments.add("exo-open");
                     arguments.add("--launch");
                     arguments.add("TerminalEmulator");
                     arguments.add("--working-directory");
                     arguments.add(getRoot().toAbsolutePath().toString());
-                    arguments.add("./LaunchServer.sh " + args);
+                    arguments.add(String.format("./%s %s", serverScript, args));
                 } else {
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "The server couldn't be launched as we don't know how to launcher it.<br/><br/>Please open the server folder and run the LaunchServer.sh file manually."))
+                                    "The server couldn't be launched as we don't know how to launcher it.<br/><br/>Please open the server folder and run the {0} file manually.",
+                                    serverScript))
                                     .build())
                             .setType(DialogManager.ERROR).show();
                     return;
@@ -139,7 +152,7 @@ public class Server {
                 arguments.add("open");
                 arguments.add("-a");
                 arguments.add("Terminal");
-                arguments.add(getRoot().resolve("LaunchServer.command").toString());
+                arguments.add(getRoot().resolve(serverScript).toString());
             }
 
             LogManager.info("Launching server with the following arguments: " + arguments.toString());
