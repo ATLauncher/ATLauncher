@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ModrinthModpackManifest {
-    public String formatVersion;
+    public int formatVersion;
     public String game;
     public String versionId;
     public String name;

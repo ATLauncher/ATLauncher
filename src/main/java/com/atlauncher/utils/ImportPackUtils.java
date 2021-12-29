@@ -216,7 +216,7 @@ public class ImportPackUtils {
                 return false;
             }
 
-            if (Integer.parseInt(manifest.formatVersion, 10) != 1) {
+            if (manifest.formatVersion != 1) {
                 LogManager.warn("Manifest is version " + manifest.formatVersion + " which may be an issue!");
             }
 
