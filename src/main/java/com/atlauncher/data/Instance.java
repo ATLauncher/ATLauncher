@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -149,8 +150,13 @@ public class Instance extends MinecraftVersion {
 
     public transient Path ROOT;
 
+    private Instant lastPlayed;
+    private long numPlays;
+
     public Instance(MinecraftVersion version) {
         setValues(version);
+        this.numPlays = 0;
+        this.lastPlayed = Instant.EPOCH;
     }
 
     public void setValues(MinecraftVersion version) {
@@ -1116,6 +1122,11 @@ public class Instance extends MinecraftVersion {
                 }
             }
         });
+
+        this.setLastPlayed(Instant.now());
+        this.incrementNumberOfPlays();
+        this.save();
+
         launcher.start();
         return true;
     }
@@ -1926,6 +1937,34 @@ public class Instance extends MinecraftVersion {
         settings.javaArguments = launcher.javaArguments;
 
         return settings;
+    }
+
+    public void setNumberOfPlays(final long val){
+        this.numPlays = val;
+    }
+
+    public long incrementNumberOfPlays(){
+        return this.numPlays++;
+    }
+
+    public long decrementNumberOfPlays(){
+        return this.numPlays--;
+    }
+
+    public long getNumberOfPlays(){
+        return this.numPlays;
+    }
+
+    public void setLastPlayed(final Instant ts){
+        this.lastPlayed = ts;
+    }
+
+    public Instant getLastPlayed(){
+        return this.lastPlayed;
+    }
+
+    public Instant getLastPlayedOrEpoch(){
+        return this.lastPlayed != null ? this.lastPlayed : Instant.EPOCH;
     }
 
     public String getMainClass() {
