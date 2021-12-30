@@ -1749,10 +1749,10 @@ public class Instance extends MinecraftVersion {
 
     public boolean exportAsModrinthZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
-        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        Path to = Paths.get(saveTo).resolve(name + ".mrpack");
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
 
-        manifest.formatVersion = "1";
+        manifest.formatVersion = 1;
         manifest.game = "minecraft";
         manifest.versionId = version;
         manifest.name = name;
@@ -1765,7 +1765,7 @@ public class Instance extends MinecraftVersion {
                     file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
 
                     file.hashes = new HashMap<>();
-                    file.hashes.put("sha512", Hashing.sha512(modPath).toString());
+                    file.hashes.put("sha1", Hashing.sha1(modPath).toString());
 
                     file.env = new HashMap<>();
                     file.env.put("client", "required");
@@ -1795,11 +1795,11 @@ public class Instance extends MinecraftVersion {
         Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
         FileUtils.createDirectory(tempDir);
 
-        // create manifest.json
-        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("index.json").toFile())) {
+        // create modrinth.index.json
+        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modrinth.index.json").toFile())) {
             Gsons.MINECRAFT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save index.json", e);
+            LogManager.logStackTrace("Failed to save modrinth.index.json", e);
 
             FileUtils.deleteDirectory(tempDir);
 

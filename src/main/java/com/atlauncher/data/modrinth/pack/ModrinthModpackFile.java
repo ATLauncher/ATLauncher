@@ -42,9 +42,7 @@ public class ModrinthModpackFile {
         mod.download = DownloadType.direct;
         mod.file = path.substring(path.lastIndexOf("/") + 1);
         mod.path = path.substring(0, path.lastIndexOf("/"));
-        mod.sha1 = hashes.containsKey("sha1") ? hashes.get("sha1") : null;
-        mod.sha512 = hashes.containsKey("sha512") ? hashes.get("sha512") : null;
-        mod.fingerprint = hashes.containsKey("murmur2") ? Long.parseLong(hashes.get("murmur2")) : null;
+        mod.sha1 = hashes.get("sha1");
         mod.name = path.replace("mods/", "").replace(".jar", "");
         mod.url = downloads.get(0);
         mod.type = getType();

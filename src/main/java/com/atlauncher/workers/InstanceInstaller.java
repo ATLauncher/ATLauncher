@@ -796,7 +796,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             throw new Exception("Cannot install as the manifest doesn't contain a minecraft dependency");
         }
 
-        if (Integer.parseInt(modrinthManifest.formatVersion, 10) != 1) {
+        if (modrinthManifest.formatVersion != 1) {
             LogManager.warn("Manifest is version " + modrinthManifest.formatVersion + " which may be an issue!");
         }
 
