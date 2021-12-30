@@ -18,76 +18,76 @@
 package com.atlauncher.utils.sort;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 
-public enum InstanceSortingStrategies implements InstanceSortingStrategy{
-    BY_NAME("By Name"){
+import org.mini2Dx.gettext.GetText;
+
+public enum InstanceSortingStrategies implements InstanceSortingStrategy, RelocalizationListener {
+    BY_NAME(GetText.tr("By Name")) {
         @Override
-        public int compare(Instance lhs, Instance rhs){
+        public int compare(Instance lhs, Instance rhs) {
             return lhs.getName().compareToIgnoreCase(rhs.getName());
         }
-    },
-    BY_LAST_PLAYED_ASC("By Last Played (Asc)"){
+
         @Override
-        public int compare(Instance lhs, Instance rhs){
+        public void onRelocalization() {
+            this.setName(GetText.tr("By Name"));
+        }
+    },
+    BY_LAST_PLAYED(GetText.tr("By Last Played")) {
+        @Override
+        public int compare(Instance lhs, Instance rhs) {
             long lhsEpoch = lhs.getLastPlayedOrEpoch().toEpochMilli();
             long rhsEpoch = rhs.getLastPlayedOrEpoch().toEpochMilli();
-            if(lhsEpoch < rhsEpoch){
+            if (lhsEpoch > rhsEpoch) {
                 return -1;
-            } else if(lhsEpoch > rhsEpoch){
+            } else if (lhsEpoch < rhsEpoch) {
                 return +1;
             }
             return 0;
         }
-    },
-    BY_LAST_PLAYED_DESC("By Last Played (Desc)"){
+
         @Override
-        public int compare(Instance lhs, Instance rhs){
-            long lhsEpoch = lhs.getLastPlayedOrEpoch().toEpochMilli();
-            long rhsEpoch = rhs.getLastPlayedOrEpoch().toEpochMilli();
-            if(lhsEpoch > rhsEpoch){
+        public void onRelocalization() {
+            this.setName(GetText.tr("By Last Played"));
+        }
+    },
+    BY_NUMBER_OF_PLAYS(GetText.tr("By Number of Plays")) {
+        @Override
+        public int compare(Instance lhs, Instance rhs) {
+            if (lhs.getNumberOfPlays() > rhs.getNumberOfPlays()) {
                 return -1;
-            } else if(lhsEpoch < rhsEpoch){
+            } else if (lhs.getNumberOfPlays() < rhs.getNumberOfPlays()) {
                 return +1;
             }
             return 0;
         }
-    },
-    BY_NUMBER_OF_PLAYS_ASC("By Number of Plays (Asc)"){
+
         @Override
-        public int compare(Instance lhs, Instance rhs){
-            if(lhs.getNumberOfPlays() < rhs.getNumberOfPlays()){
-                return -1;
-            } else if(lhs.getNumberOfPlays() > rhs.getNumberOfPlays()){
-                return +1;
-            }
-            return 0;
-        }
-    },
-    BY_NUMBER_OF_PLAYS("By Number of Plays (Desc)"){
-        @Override
-        public int compare(Instance lhs, Instance rhs){
-            if(lhs.getNumberOfPlays() > rhs.getNumberOfPlays()){
-                return -1;
-            } else if(lhs.getNumberOfPlays() < rhs.getNumberOfPlays()){
-                return +1;
-            }
-            return 0;
+        public void onRelocalization() {
+            this.setName(GetText.tr("By Number of Plays"));
         }
     };
 
-    private final String name;
+    private String name;
 
-    InstanceSortingStrategies(final String name){
+    InstanceSortingStrategies(final String name) {
+        this.name = name;
+        RelocalizationManager.addListener(this);
+    }
+
+    public void setName(final String name) {
         this.name = name;
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.name;
     }
 }
