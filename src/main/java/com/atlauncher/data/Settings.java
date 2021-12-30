@@ -39,6 +39,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
 public class Settings {
     // Launcher things
@@ -62,6 +63,7 @@ public class Settings {
     public String theme = Constants.DEFAULT_THEME_CLASS;
     public String dateFormat = Constants.DATE_FORMATS[0];
     public String instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
+    public InstanceSortingStrategies defaultInstanceSorting = InstanceSortingStrategies.BY_NAME;
     public int selectedTabOnStartup = 0;
     public boolean sortPacksAlphabetically = false;
     public Boolean showPackNameAndVersion = null;

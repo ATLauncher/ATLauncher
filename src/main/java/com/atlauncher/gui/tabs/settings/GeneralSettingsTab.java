@@ -41,6 +41,7 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -51,6 +52,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<String>> dateFormat;
     private final JComboBox<ComboItem<String>> instanceTitleFormat;
     private final JComboBox<ComboItem<Integer>> selectedTabOnStartup;
+    private final JComboBox<InstanceSortingStrategies> defaultInstanceSorting;
     private final JCheckBox sortPacksAlphabetically;
     private final JCheckBox keepLauncherOpen;
     private final JCheckBox enableConsole;
@@ -225,6 +227,26 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
 
         add(selectedTabOnStartup, gbc);
+
+        // Default instance sorting
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover defaultInstanceSortingLabel = new JLabelWithHover(GetText.tr("Default Tab") + ":", HELP_ICON,
+                GetText.tr("Which tab to have selected by default when opening the launcher."));
+
+        add(defaultInstanceSortingLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        defaultInstanceSorting = new JComboBox<>(InstanceSortingStrategies.values());
+        defaultInstanceSorting.setSelectedItem(App.settings.defaultInstanceSorting);
+
+        add(defaultInstanceSorting, gbc);
 
         // Sort Packs Alphabetically
 
@@ -450,6 +472,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.dateFormat = ((ComboItem<String>) dateFormat.getSelectedItem()).getValue();
         App.settings.instanceTitleFormat = ((ComboItem<String>) instanceTitleFormat.getSelectedItem()).getValue();
         App.settings.selectedTabOnStartup = ((ComboItem<Integer>) selectedTabOnStartup.getSelectedItem()).getValue();
+        App.settings.defaultInstanceSorting = (InstanceSortingStrategies) defaultInstanceSorting.getSelectedItem();
         App.settings.sortPacksAlphabetically = sortPacksAlphabetically.isSelected();
         App.settings.keepLauncherOpen = keepLauncherOpen.isSelected();
         App.settings.enableConsole = enableConsole.isSelected();

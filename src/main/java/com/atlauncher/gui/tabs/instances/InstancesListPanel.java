@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -62,7 +63,7 @@ public final class InstancesListPanel extends JPanel
 
     private final NilCard nilCard = createNilCard();
     private Pattern searchPattern;
-    private InstanceSortingStrategy sortingStrategy;
+    private InstanceSortingStrategy sortingStrategy = App.settings.defaultInstanceSorting;
     final InstancesTab parent;
 
     public InstancesListPanel(final InstancesTab parent) {

@@ -1103,6 +1103,7 @@ public class Instance extends MinecraftVersion {
                     backup();
                 }
                 if (App.settings.keepLauncherOpen) {
+                    App.launcher.reloadInstancesPanel();
                     App.launcher.updateData();
                 }
                 if (Files.isDirectory(nativesTempDir)) {
@@ -1939,31 +1940,31 @@ public class Instance extends MinecraftVersion {
         return settings;
     }
 
-    public void setNumberOfPlays(final long val){
+    public void setNumberOfPlays(final long val) {
         this.numPlays = val;
     }
 
-    public long incrementNumberOfPlays(){
+    public long incrementNumberOfPlays() {
         return this.numPlays++;
     }
 
-    public long decrementNumberOfPlays(){
+    public long decrementNumberOfPlays() {
         return this.numPlays--;
     }
 
-    public long getNumberOfPlays(){
+    public long getNumberOfPlays() {
         return this.numPlays;
     }
 
-    public void setLastPlayed(final Instant ts){
+    public void setLastPlayed(final Instant ts) {
         this.lastPlayed = ts;
     }
 
-    public Instant getLastPlayed(){
+    public Instant getLastPlayed() {
         return this.lastPlayed;
     }
 
-    public Instant getLastPlayedOrEpoch(){
+    public Instant getLastPlayedOrEpoch() {
         return this.lastPlayed != null ? this.lastPlayed : Instant.EPOCH;
     }
 

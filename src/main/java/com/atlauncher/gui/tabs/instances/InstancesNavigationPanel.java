@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
@@ -50,6 +51,10 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
         this.parent = parent;
         this.searchField = new InstancesSearchField(parent);
         this.sortingBox.setMaximumSize(new Dimension(190, 23));
+
+        if (App.settings.defaultInstanceSorting != InstanceSortingStrategies.BY_NAME) {
+            this.sortingBox.setSelectedItem(App.settings.defaultInstanceSorting);
+        }
 
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
