@@ -92,5 +92,6 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
         this.importButton.setText(GetText.tr("Import"));
         this.clearButton.setText(GetText.tr("Clear"));
         this.searchButton.setText(GetText.tr("Search"));
+        this.sortingBox.repaint();
     }
 }
