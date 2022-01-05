@@ -3,8 +3,32 @@ name: Application
 on: [push, pull_request]
 
 jobs:
+  ci:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Mark gradle wrapper as executable
+        run: chmod a+x gradlew
+
+      - name: Cache Gradle deps
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Check license headers
+        run: ./gradlew checkLicenses
   test:
     runs-on: ubuntu-20.04
+    needs: ci
     strategy:
       matrix:
         java-version: ["1.8", "1.9", "1.10", "1.11", "1.12", "1.13", "1.14", "1.15", "1.16", "1.17"]
@@ -37,9 +61,6 @@ jobs:
         continue-on-error: true
         with:
           run: ./gradlew test --tests ui.*
-
-      - name: Check license headers
-        run: ./gradlew checkLicenses
   build:
     runs-on: ubuntu-20.04
     needs: test
