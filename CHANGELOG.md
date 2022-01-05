@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Changes to the Modrinth pack format (thanks to @wafflecoffee)
+- Issue with LICENSEHEADER always using the current year causing issues building in a new year
 
 ### Misc
