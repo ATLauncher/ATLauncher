@@ -129,7 +129,7 @@ public class ImportPackUtils {
                 return loadCurseForgeFormat(file, null, null);
             }
 
-            if (ArchiveUtils.archiveContainsFile(file.toPath(), "index.json")) {
+            if (ArchiveUtils.archiveContainsFile(file.toPath(), "modrinth.index.json")) {
                 return loadModrinthFormat(file);
             }
 
@@ -194,8 +194,8 @@ public class ImportPackUtils {
     }
 
     public static boolean loadModrinthFormat(File file) {
-        if (!file.getName().endsWith(".zip")) {
-            LogManager.error("Cannot install as the file was not a zip file");
+        if (!file.getName().endsWith(".mrpack")) {
+            LogManager.error("Cannot install as the file was not a mrpack file");
             return false;
         }
 
@@ -203,7 +203,7 @@ public class ImportPackUtils {
 
         try {
             ModrinthModpackManifest manifest = Gsons.MINECRAFT
-                    .fromJson(ArchiveUtils.getFile(file.toPath(), "index.json"), ModrinthModpackManifest.class);
+                    .fromJson(ArchiveUtils.getFile(file.toPath(), "modrinth.index.json"), ModrinthModpackManifest.class);
 
             if (!manifest.game.equals("minecraft")) {
                 LogManager.error(

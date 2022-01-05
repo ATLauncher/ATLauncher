@@ -161,7 +161,7 @@ public class ImportInstanceDialog extends JDialog {
                 chooser.setFileFilter(new FileFilter() {
                     @Override
                     public String getDescription() {
-                        return "Modpack Export (.zip)";
+                        return "Modpack Export (.zip, .mrpack)";
                     }
 
                     @Override
@@ -170,7 +170,7 @@ public class ImportInstanceDialog extends JDialog {
                             return true;
                         }
 
-                        return f.getName().endsWith(".zip");
+                        return f.getName().endsWith(".zip") || f.getName().endsWith(".mrpack");
                     }
                 });
 
