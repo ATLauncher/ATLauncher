@@ -13,3 +13,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with LICENSEHEADER always using the current year causing issues building in a new year
 
 ### Misc
+- Don't check license validity when building

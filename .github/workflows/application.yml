@@ -37,6 +37,9 @@ jobs:
         continue-on-error: true
         with:
           run: ./gradlew test --tests ui.*
+
+      - name: Check license headers
+        run: ./gradlew checkLicenses
   build:
     runs-on: ubuntu-20.04
     needs: test

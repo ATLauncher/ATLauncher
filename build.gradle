@@ -247,6 +247,14 @@ clean.doFirst {
     delete "${projectDir}/dist"
 }
 
+project.afterEvaluate {
+    tasks.check {
+        dependsOn -= tasks.find {
+            it.name.equals("checkLicenses")
+        }
+    }
+}
+
 build.finalizedBy copyArtifacts
 shadowJar.dependsOn jar
 build.dependsOn createExe, createMacApp
