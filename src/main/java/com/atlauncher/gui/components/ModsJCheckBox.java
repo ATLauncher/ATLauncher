@@ -29,7 +29,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.modrinth.ModrinthDonationUrl;
-import com.atlauncher.data.modrinth.ModrinthMod;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ModsChooser;
@@ -144,7 +144,7 @@ public class ModsJCheckBox extends JCheckBox {
         }
 
         if (getDisableableMod().isFromModrinth()) {
-            ModrinthMod modrinthMod = getDisableableMod().modrinthMod;
+            ModrinthProject modrinthMod = getDisableableMod().modrinthProject;
 
             JMenuItem openOnModrinth = new JMenuItem(GetText.tr("Open On Modrinth"));
             openOnModrinth.addActionListener(

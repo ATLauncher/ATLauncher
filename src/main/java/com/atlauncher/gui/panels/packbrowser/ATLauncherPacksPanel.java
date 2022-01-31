@@ -58,7 +58,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    protected void loadPacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
         contentPanel.removeAll();
         this.packs.clear();
         this.cards.clear();
@@ -68,7 +68,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
         this.packs.stream().skip(this.cards.size()).limit(10)
                 .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
 
@@ -110,7 +110,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public Map<Integer, String> getCategoryFields() {
+    public Map<String, String> getCategoryFields() {
         return new LinkedHashMap<>();
     }
 

@@ -37,7 +37,7 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.modrinth.ModrinthMod;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.DialogManager;
@@ -52,7 +52,7 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class ModrinthVersionSelectorDialog extends JDialog {
     private int filesLength = 0;
-    private final ModrinthMod mod;
+    private final ModrinthProject mod;
     private final Instance instance;
     private String installedVersionId = null;
 
@@ -65,11 +65,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private final List<ModrinthVersion> versions = new ArrayList<>();
     private List<ModrinthVersion> versionsData;
 
-    public ModrinthVersionSelectorDialog(ModrinthMod mod, Instance instance) {
+    public ModrinthVersionSelectorDialog(ModrinthProject mod, Instance instance) {
         this(App.launcher.getParent(), mod, instance);
     }
 
-    public ModrinthVersionSelectorDialog(Window parent, ModrinthMod mod, Instance instance) {
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, Instance instance) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
@@ -78,7 +78,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         setupComponents();
     }
 
-    public ModrinthVersionSelectorDialog(Window parent, ModrinthMod mod, List<ModrinthVersion> versions,
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, List<ModrinthVersion> versions,
             Instance instance, String installedVersionId) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
@@ -90,7 +90,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         setupComponents();
     }
 
-    public ModrinthVersionSelectorDialog(Window parent, ModrinthMod mod, Instance instance, String installedVersionId) {
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, Instance instance,
+            String installedVersionId) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
@@ -197,7 +198,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
         Runnable r = () -> {
             if (this.versionsData == null) {
-                this.versionsData = ModrinthApi.getVersions(mod.versions);
+                this.versionsData = ModrinthApi.getVersions(mod.id);
             }
 
             Stream<ModrinthVersion> modrinthVersionsStream = this.versionsData.stream()

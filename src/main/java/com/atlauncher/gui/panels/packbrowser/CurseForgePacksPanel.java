@@ -38,7 +38,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, category);
 
         if (packs.size() == 0) {
@@ -68,7 +68,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort);
 
         for (CurseForgeProject pack : packs) {
@@ -93,10 +93,11 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public Map<Integer, String> getCategoryFields() {
-        Map<Integer, String> categoryFields = new LinkedHashMap<>();
+    public Map<String, String> getCategoryFields() {
+        Map<String, String> categoryFields = new LinkedHashMap<>();
 
-        CurseForgeApi.getCategoriesForModpacks().stream().forEach(c -> categoryFields.put(c.id, c.name));
+        CurseForgeApi.getCategoriesForModpacks().stream().forEach(c -> categoryFields.put(String.valueOf(
+                c.id), c.name));
 
         return categoryFields;
     }

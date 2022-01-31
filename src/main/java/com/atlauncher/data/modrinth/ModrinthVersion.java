@@ -24,8 +24,8 @@ import com.google.gson.annotations.SerializedName;
 public class ModrinthVersion {
     public String id;
 
-    @SerializedName("mod_id")
-    public String modId;
+    @SerializedName("project_id")
+    public String projectId;
 
     @SerializedName("author_id")
     public String authorId;
@@ -47,7 +47,7 @@ public class ModrinthVersion {
     public int downloads;
 
     @SerializedName("version_type")
-    public String versionType;
+    public ModrinthChannel versionType;
 
     public List<ModrinthFile> files;
 
@@ -63,8 +63,8 @@ public class ModrinthVersion {
     }
 
     public String toString() {
-        String releaseTypeString = this.versionType.equalsIgnoreCase("release") ? ""
-                : this.versionType.equalsIgnoreCase("beta") ? " (Beta)" : " (Alpha)";
-        return this.name + releaseTypeString;
+        String versionTypeString = this.versionType == ModrinthChannel.ALPHA ? "Alpha"
+                : this.versionType == ModrinthChannel.BETA ? "Beta" : "Release";
+        return String.format("%s (%s)", this.name, versionTypeString);
     }
 }

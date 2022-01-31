@@ -17,23 +17,66 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
+import java.awt.GridBagConstraints;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.modrinth.ModrinthSearchHit;
+import com.atlauncher.data.modrinth.ModrinthSearchResult;
+import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.card.packbrowser.ModrinthPackCard;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.utils.ModrinthApi;
+
+import org.apache.commons.text.WordUtils;
+import org.mini2Dx.gettext.GetText;
 
 public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
+    GridBagConstraints gbc = new GridBagConstraints();
+
     @Override
-    protected void loadPacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
+        ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(search, page - 1, sort);
+
+        if (searchResult.hits.size() == 0) {
+            contentPanel.removeAll();
+            contentPanel.add(
+                    new NilCard(GetText
+                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                    gbc);
+            return;
+        }
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        List<ModrinthPackCard> cards = searchResult.hits.stream().map(p -> new ModrinthPackCard(p))
+                .collect(Collectors.toList());
+
         contentPanel.removeAll();
-        contentPanel.add(new JLabel("modrinth"));
+
+        for (ModrinthPackCard card : cards) {
+            contentPanel.add(card, gbc);
+            gbc.gridy++;
+        }
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
+        ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(search, page - 1, sort);
+
+        for (ModrinthSearchHit pack : searchResult.hits) {
+            contentPanel.add(new ModrinthPackCard(pack), gbc);
+            gbc.gridy++;
+        }
     }
 
     @Override
@@ -48,12 +91,17 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public boolean hasCategories() {
-        return false;
+        return true;
     }
 
     @Override
-    public Map<Integer, String> getCategoryFields() {
-        return new LinkedHashMap<>();
+    public Map<String, String> getCategoryFields() {
+        Map<String, String> categoryFields = new LinkedHashMap<>();
+
+        ModrinthApi.getCategoriesForModpacks().stream()
+                .forEach(c -> categoryFields.put(c.name, WordUtils.capitalizeFully(c.name)));
+
+        return categoryFields;
     }
 
     @Override
@@ -63,7 +111,15 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public Map<String, String> getSortFields() {
-        return new LinkedHashMap<>();
+        Map<String, String> sortFields = new LinkedHashMap<>();
+
+        sortFields.put("relevance", GetText.tr("Relevance"));
+        sortFields.put("downloads", GetText.tr("Downloads"));
+        sortFields.put("follows", GetText.tr("Follows"));
+        sortFields.put("newest", GetText.tr("Newest"));
+        sortFields.put("updated", GetText.tr("Updated"));
+
+        return sortFields;
     }
 
     @Override

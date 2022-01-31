@@ -32,6 +32,7 @@ import com.atlauncher.data.curseforge.CurseForgeProjectLatestFile;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 
@@ -67,4 +68,7 @@ public final class Data {
 
     // Technic Solder instance update checking
     public static final Map<Instance, TechnicSolderModpack> TECHNIC_SOLDER_INSTANCE_LATEST_VERSION = new HashMap<>();
+
+    // Modrinth instance update checking
+    public static final Map<Instance, ModrinthVersion> MODRINTH_INSTANCE_LATEST_VERSION = new HashMap<>();
 }

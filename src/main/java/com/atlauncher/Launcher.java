@@ -53,6 +53,7 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
+import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -329,6 +330,9 @@ public class Launcher {
             if (InstanceManager.getInstances().stream().anyMatch(i -> i.isTechnicPack())) {
                 TechnicModpackUpdateManager.checkForUpdates();
             }
+            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModrinthPack())) {
+                ModrinthModpackUpdateManager.checkForUpdates();
+            }
         });
         updateThread.start();
     }
@@ -521,7 +525,7 @@ public class Launcher {
     }
 
     /**
-     * Refreshes the panel used for  thePacks browser
+     * Refreshes the panel used for thePacks browser
      */
     public void refreshPacksBrowserPanel() {
         this.packsBrowserPanel.refresh(); // Refresh the packs browser panel

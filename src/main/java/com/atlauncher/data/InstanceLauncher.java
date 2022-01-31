@@ -28,6 +28,8 @@ import com.atlauncher.data.json.Java;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
+import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
@@ -83,6 +85,8 @@ public class InstanceLauncher {
     public CurseForgeProject curseForgeProject;
     public CurseForgeFile curseForgeFile;
     public MultiMCManifest multiMCManifest;
+    public ModrinthProject modrinthProject;
+    public ModrinthVersion modrinthVersion;
     public ModrinthModpackManifest modrinthManifest;
     public ModpacksChPackManifest modpacksChPackManifest;
     public ModpacksChPackVersionManifest modpacksChPackVersionManifest;

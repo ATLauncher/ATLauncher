@@ -95,6 +95,7 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectFileType;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectTarget;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectTargetType;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
+import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
@@ -284,6 +285,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 generatePackVersionFromCurseForgeManifest();
             } else if (pack.curseForgeProject != null) {
                 generatePackVersionFromCurseForge();
+            } else if (pack.modrinthProject != null) {
+                generatePackVersionFromModrinth();
             } else if (modrinthManifest != null) {
                 generatePackVersionFromModrinthManifest();
             } else if (modpacksChPackManifest != null) {
@@ -541,6 +544,43 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         Files.delete(manifestFile);
 
         generatePackVersionFromCurseForgeManifest();
+
+        hideSubProgressBar();
+    }
+
+    private void generatePackVersionFromModrinth() throws Exception {
+        addPercent(5);
+
+        fireTask(GetText.tr("Downloading Manifest From Modrinth"));
+        fireSubProgressUnknown();
+
+        ModrinthFile file = version._modrinthVersion.getPrimaryFile();
+
+        Path manifestFile = this.temp.resolve(file.filename.toLowerCase());
+
+        com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build().setUrl(file.url)
+                .downloadTo(manifestFile).withInstanceInstaller(this)
+                .withHttpClient(Network.createProgressClient(this));
+
+        if (file.hashes != null && file.hashes.containsKey("sha512")) {
+            manifestDownload = manifestDownload.hash(file.hashes.get("sha512"));
+        } else if (file.hashes != null && file.hashes.containsKey("sha1")) {
+            manifestDownload = manifestDownload.hash(file.hashes.get("sha1"));
+        }
+
+        manifestDownload.downloadFile();
+
+        fireTask(GetText.tr("Extracting Manifest"));
+        fireSubProgressUnknown();
+
+        modrinthManifest = Gsons.MINECRAFT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "modrinth.index.json")),
+                ModrinthModpackManifest.class);
+        modrinthExtractedPath = this.temp.resolve("modrinthimport");
+
+        ArchiveUtils.extract(manifestFile, modrinthExtractedPath);
+        Files.delete(manifestFile);
+
+        generatePackVersionFromModrinthManifest();
 
         hideSubProgressBar();
     }
@@ -1377,6 +1417,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             instanceLauncher.curseForgeProject = this.pack.curseForgeProject;
             instanceLauncher.curseForgeFile = this.version._curseForgeFile;
             instanceLauncher.multiMCManifest = multiMCManifest;
+            instanceLauncher.modrinthProject = this.pack.modrinthProject;
+            instanceLauncher.modrinthVersion = this.version._modrinthVersion;
             instanceLauncher.modrinthManifest = modrinthManifest;
             instanceLauncher.modpacksChPackManifest = modpacksChPackManifest;
             instanceLauncher.modpacksChPackVersionManifest = modpacksChPackVersionManifest;

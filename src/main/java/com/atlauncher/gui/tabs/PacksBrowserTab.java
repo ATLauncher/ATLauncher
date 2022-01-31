@@ -60,7 +60,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private final JPanel actionsPanel = new JPanel();
     private final JPanel categoriesPanel = new JPanel();
     private final JLabel categoriesLabel = new JLabel(GetText.tr("Category:"));
-    private final JComboBox<ComboItem<Integer>> categoriesComboBox = new JComboBox<>();
+    private final JComboBox<ComboItem<String>> categoriesComboBox = new JComboBox<>();
     private final JPanel sortPanel = new JPanel();
     private final JLabel sortLabel = new JLabel(GetText.tr("Sort:"));
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
@@ -252,9 +252,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         // add in categories combo box items if the platform supports it
         if (selectedPanel.hasCategories()) {
             new Thread(() -> {
-                categoriesComboBox.addItem(new ComboItem<Integer>(null, GetText.tr("All Categories")));
-                for (Map.Entry<Integer, String> entry : selectedPanel.getCategoryFields().entrySet()) {
-                    categoriesComboBox.addItem(new ComboItem<Integer>(entry.getKey(), entry.getValue()));
+                categoriesComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Categories")));
+                for (Map.Entry<String, String> entry : selectedPanel.getCategoryFields().entrySet()) {
+                    categoriesComboBox.addItem(new ComboItem<String>(entry.getKey(), entry.getValue()));
                 }
             }).start();
         }
@@ -290,9 +290,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
             // load in the content for the platform
             new Thread(() -> {
-                Integer category = null;
+                String category = null;
                 if (selectedPanel.hasCategories()) {
-                    category = ((ComboItem<Integer>) categoriesComboBox.getSelectedItem()).getValue();
+                    category = ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue();
                 }
 
                 String sort = null;
@@ -338,9 +338,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
 
         new Thread(() -> {
-            Integer category = null;
+            String category = null;
             if (selectedPanel.hasCategories()) {
-                category = ((ComboItem<Integer>) categoriesComboBox.getSelectedItem()).getValue();
+                category = ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue();
             }
 
             String sort = null;

@@ -98,7 +98,7 @@ import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
-import com.atlauncher.data.modrinth.ModrinthMod;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
@@ -120,6 +120,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
+import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
@@ -237,6 +238,10 @@ public class Instance extends MinecraftVersion {
 
                     return !technicModpack.version.equals(launcher.version);
                 }
+            } else if (isModrinthPack()) {
+                ModrinthVersion latestVersion = Data.MODRINTH_INSTANCE_LATEST_VERSION.get(this);
+
+                return latestVersion != null && !latestVersion.id.equals(this.launcher.modrinthVersion.id);
             }
         } else {
             Pack pack = this.getPack();
@@ -353,6 +358,8 @@ public class Instance extends MinecraftVersion {
                 } else {
                     version = TechnicModpackUpdateManager.getUpToDateModpack(this).version;
                 }
+            } else if (isModrinthPack()) {
+                version = ModrinthModpackUpdateManager.getLatestVersion(this).id;
             } else {
                 return;
             }
@@ -386,6 +393,8 @@ public class Instance extends MinecraftVersion {
                 } else {
                     return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateModpack(this).version);
                 }
+            } else if (isModrinthPack()) {
+                return hasUpdateBeenIgnored(ModrinthModpackUpdateManager.getLatestVersion(this).id);
             }
 
             return false;
@@ -1270,7 +1279,7 @@ public class Instance extends MinecraftVersion {
         App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
     }
 
-    public void addFileFromModrinth(ModrinthMod mod, ModrinthVersion version, ProgressDialog dialog) {
+    public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ProgressDialog dialog) {
         ModrinthFile fileToDownload = version.getPrimaryFile();
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
@@ -1291,7 +1300,8 @@ public class Instance extends MinecraftVersion {
 
         // find mods with the same Modrinth id
         List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
-                installedMod -> installedMod.isFromModrinth() && installedMod.modrinthMod.id.equalsIgnoreCase(mod.id))
+                installedMod -> installedMod.isFromModrinth()
+                        && installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
                 .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
@@ -1313,7 +1323,8 @@ public class Instance extends MinecraftVersion {
 
         // remove any mods that are from the same mod from the master mod list
         this.launcher.mods = this.launcher.mods.stream().filter(
-                installedMod -> !installedMod.isFromModrinth() || !installedMod.modrinthMod.id.equalsIgnoreCase(mod.id))
+                installedMod -> !installedMod.isFromModrinth()
+                        || !installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
                 .collect(Collectors.toList());
 
         // add this mod
@@ -1997,7 +2008,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isModrinthImport() {
-        return launcher.modrinthManifest != null;
+        return launcher.modrinthManifest != null && launcher.modrinthProject == null;
     }
 
     public boolean isMultiMcImport() {
@@ -2006,6 +2017,11 @@ public class Instance extends MinecraftVersion {
 
     public boolean isModpacksChPack() {
         return launcher.modpacksChPackManifest != null && launcher.modpacksChPackVersionManifest != null;
+    }
+
+    public boolean isModrinthPack() {
+        return launcher.modrinthManifest != null && launcher.modrinthProject != null
+                && launcher.modrinthVersion != null;
     }
 
     public boolean isTechnicPack() {
@@ -2022,11 +2038,11 @@ public class Instance extends MinecraftVersion {
 
     public boolean isExternalPack() {
         return isOldCurseForgePack() || isCurseForgePack() || isModpacksChPack() || isModrinthImport()
-                || isMultiMcImport() || isTechnicPack();
+                || isMultiMcImport() || isTechnicPack() || isModrinthPack();
     }
 
     public boolean isUpdatableExternalPack() {
-        return isExternalPack() && (isModpacksChPack() || isCurseForgePack() || isTechnicPack());
+        return isExternalPack() && (isModpacksChPack() || isCurseForgePack() || isTechnicPack() || isModrinthPack());
     }
 
     public String getAnalyticsCategory() {
@@ -2044,6 +2060,10 @@ public class Instance extends MinecraftVersion {
 
         if (isTechnicPack()) {
             return "TechnicInstance";
+        }
+
+        if (isModrinthPack()) {
+            return "ModrinthPack";
         }
 
         if (isModrinthImport()) {
@@ -2472,5 +2492,13 @@ public class Instance extends MinecraftVersion {
         int majorJavaVersion = Java.parseJavaVersionNumber(javaVersion);
 
         return !launcher.java.conforms(majorJavaVersion);
+    }
+
+    public String getVersionOfPack() {
+        if (isModrinthPack()) {
+            return String.format("%s (%s)", launcher.modrinthVersion.name, launcher.modrinthVersion.versionNumber);
+        }
+
+        return launcher.version;
     }
 }

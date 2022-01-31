@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 import com.atlauncher.App;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.modrinth.ModrinthMod;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
@@ -75,13 +75,14 @@ public class DisableableMod implements Serializable {
     @SerializedName(value = "curseForgeFile", alternate = { "curseFile" })
     public CurseForgeFile curseForgeFile;
 
-    public ModrinthMod modrinthMod;
+    @SerializedName(value = "modrinthProject", alternate = { "modrinthMod" })
+    public ModrinthProject modrinthProject;
     public ModrinthVersion modrinthVersion;
 
     public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
             Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected,
             Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
-            CurseForgeFile curseForgeFile, ModrinthMod modrinthMod, ModrinthVersion modrinthVersion) {
+            CurseForgeFile curseForgeFile, ModrinthProject modrinthProject, ModrinthVersion modrinthVersion) {
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -97,7 +98,7 @@ public class DisableableMod implements Serializable {
         this.curseForgeFileId = curseForgeFileId;
         this.curseForgeProject = curseForgeProject;
         this.curseForgeFile = curseForgeFile;
-        this.modrinthMod = modrinthMod;
+        this.modrinthProject = modrinthProject;
         this.modrinthVersion = modrinthVersion;
     }
 
@@ -124,10 +125,11 @@ public class DisableableMod implements Serializable {
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, ModrinthMod modrinthMod,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected,
+            ModrinthProject modrinthProject,
             ModrinthVersion modrinthVersion) {
         this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, null,
-                null, null, null, modrinthMod, modrinthVersion);
+                null, null, null, modrinthProject, modrinthVersion);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
@@ -216,7 +218,7 @@ public class DisableableMod implements Serializable {
     }
 
     public boolean isFromModrinth() {
-        return this.modrinthMod != null && this.modrinthVersion != null;
+        return this.modrinthProject != null && this.modrinthVersion != null;
     }
 
     public String getFilename() {
@@ -383,8 +385,9 @@ public class DisableableMod implements Serializable {
             ProgressDialog<List<Object>> dialog = new ProgressDialog<>(GetText.tr("Checking For Update On Modrinth"), 0,
                     GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth", parent);
             dialog.addThread(new Thread(() -> {
-                ModrinthMod mod = ModrinthApi.getMod(modrinthMod.id);
-                List<ModrinthVersion> versions = ModrinthApi.getVersions(mod.versions);
+                ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
+                List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
+                        instance.launcher.loaderVersion);
 
                 Stream<ModrinthVersion> versionsStream = versions.stream()
                         .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
@@ -415,7 +418,7 @@ public class DisableableMod implements Serializable {
 
             List<Object> returns = dialog.getReturnValue();
 
-            new ModrinthVersionSelectorDialog(parent, (ModrinthMod) returns.get(0),
+            new ModrinthVersionSelectorDialog(parent, (ModrinthProject) returns.get(0),
                     (List<ModrinthVersion>) returns.get(1), instance, modrinthVersion.id);
         }
 
@@ -436,10 +439,10 @@ public class DisableableMod implements Serializable {
 
             new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
         } else if (isFromModrinth()) {
-            ProgressDialog<ModrinthMod> dialog = new ProgressDialog<>(GetText.tr("Getting Files From Modrinth"), 0,
+            ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(GetText.tr("Getting Files From Modrinth"), 0,
                     GetText.tr("Getting Files From Modrinth"), "Cancelled getting files from Modrinth", parent);
             dialog.addThread(new Thread(() -> {
-                dialog.setReturnValue(ModrinthApi.getMod(modrinthMod.id));
+                dialog.setReturnValue(ModrinthApi.getProject(modrinthProject.id));
                 dialog.close();
             }));
             dialog.start();

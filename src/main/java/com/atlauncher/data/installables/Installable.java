@@ -41,6 +41,7 @@ import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
@@ -69,6 +70,7 @@ public abstract class Installable {
     public boolean showModsChooser = true;
     public CurseForgeManifest curseForgeManifest;
     public Path curseExtractedPath;
+    public ModrinthProject modrinthProject;
     public ModrinthModpackManifest modrinthManifest;
     public Path modrinthExtractedPath;
     public ModpacksChPackManifest modpacksChPackManifest;

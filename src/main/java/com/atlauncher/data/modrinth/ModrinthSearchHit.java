@@ -22,8 +22,11 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 public class ModrinthSearchHit {
-    @SerializedName("mod_id")
-    public String modId;
+    @SerializedName("project_id")
+    public String projectId;
+
+    @SerializedName("project_type")
+    public ModrinthProjectType projectType = ModrinthProjectType.MOD;
 
     public String slug;
     public String author;
@@ -32,15 +35,10 @@ public class ModrinthSearchHit {
     public List<String> categories;
     public List<String> versions;
     public int downloads;
-
-    @SerializedName("page_url")
-    public String pageUrl;
+    public int follows;
 
     @SerializedName("icon_url")
     public String iconUrl;
-
-    @SerializedName("author_url")
-    public String authorUrl;
 
     @SerializedName("date_created")
     public String dateCreated;
@@ -54,10 +52,11 @@ public class ModrinthSearchHit {
     public String license;
 
     @SerializedName("client_side")
-    public String clientSide;
+    public ModrinthSide clientSide;
 
     @SerializedName("server_side")
-    public String serverSide;
+    public ModrinthSide serverSide;
 
-    public String host;
+    // TODO: what is this?
+    public List<Object> gallery;
 }

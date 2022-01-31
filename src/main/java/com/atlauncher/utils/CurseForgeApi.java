@@ -95,8 +95,9 @@ public class CurseForgeApi {
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page, 0, sort);
     }
 
-    public static List<CurseForgeProject> searchModPacks(String query, int page, String sort, Integer categoryId) {
-        return searchCurseForge(null, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, 0, sort, categoryId);
+    public static List<CurseForgeProject> searchModPacks(String query, int page, String sort, String categoryId) {
+        return searchCurseForge(null, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, 0, sort, Integer.parseInt(
+                categoryId));
     }
 
     public static List<CurseForgeProject> searchModPacks(String query, int page, String sort) {

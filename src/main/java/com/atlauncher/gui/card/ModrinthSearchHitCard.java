@@ -38,7 +38,6 @@ import com.atlauncher.workers.BackgroundImageWorker;
 
 import org.mini2Dx.gettext.GetText;
 
-@SuppressWarnings("serial")
 public final class ModrinthSearchHitCard extends JPanel {
     public ModrinthSearchHitCard(final ModrinthSearchHit mod, ActionListener al) {
         setLayout(new BorderLayout());
@@ -70,7 +69,9 @@ public final class ModrinthSearchHitCard extends JPanel {
 
         addButton.addActionListener(al);
 
-        viewButton.addActionListener(e -> OS.openWebBrowser(mod.pageUrl));
+        viewButton.addActionListener(e -> {
+            OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug));
+        });
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);

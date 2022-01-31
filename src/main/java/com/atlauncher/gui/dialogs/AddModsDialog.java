@@ -45,7 +45,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.modrinth.ModrinthMod;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -198,24 +198,25 @@ public final class AddModsDialog extends JDialog {
                 if (instance.launcher.mods.stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
                                 || (m.isFromModrinth()
-                                        && m.modrinthMod.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
+                                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
                     fabricApiWarningLabel.setVisible(false);
                     installFabricApiButton.setVisible(false);
                 }
             } else {
-                final ProgressDialog<ModrinthMod> modrinthProjectLookupDialog = new ProgressDialog<>(
+                final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
                         GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
                         "Aborting Getting Fabric API Information");
 
                 modrinthProjectLookupDialog.addThread(new Thread(() -> {
-                    modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getMod(Constants.MODRINTH_FABRIC_MOD_ID));
+                    modrinthProjectLookupDialog
+                            .setReturnValue(ModrinthApi.getProject(Constants.MODRINTH_FABRIC_MOD_ID));
 
                     modrinthProjectLookupDialog.close();
                 }));
 
                 modrinthProjectLookupDialog.start();
 
-                ModrinthMod mod = modrinthProjectLookupDialog.getReturnValue();
+                ModrinthProject mod = modrinthProjectLookupDialog.getReturnValue();
 
                 if (mod == null) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error Getting Fabric API Information"))
@@ -232,7 +233,7 @@ public final class AddModsDialog extends JDialog {
                 if (instance.launcher.mods.stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
                                 || (m.isFromModrinth()
-                                        && m.modrinthMod.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
+                                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
                     fabricApiWarningLabel.setVisible(false);
                     installFabricApiButton.setVisible(false);
                 }
@@ -243,7 +244,8 @@ public final class AddModsDialog extends JDialog {
 
         if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
                 .noneMatch(m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
-                        || m.isFromModrinth() && m.modrinthMod.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
+                        || m.isFromModrinth()
+                                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
         }
@@ -510,19 +512,19 @@ public final class AddModsDialog extends JDialog {
                 ModrinthSearchHit castMod = (ModrinthSearchHit) mod;
 
                 contentPanel.add(new ModrinthSearchHitCard(castMod, e -> {
-                    final ProgressDialog<ModrinthMod> modrinthProjectLookupDialog = new ProgressDialog<>(
+                    final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
                             GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
                             "Aborting Getting Mod Information");
 
                     modrinthProjectLookupDialog.addThread(new Thread(() -> {
-                        modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getMod(castMod.modId));
+                        modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getProject(castMod.projectId));
 
                         modrinthProjectLookupDialog.close();
                     }));
 
                     modrinthProjectLookupDialog.start();
 
-                    ModrinthMod modrinthMod = modrinthProjectLookupDialog.getReturnValue();
+                    ModrinthProject modrinthMod = modrinthProjectLookupDialog.getReturnValue();
 
                     if (modrinthMod == null) {
                         DialogManager.okDialog().setTitle(GetText.tr("Error Getting Mod Information"))

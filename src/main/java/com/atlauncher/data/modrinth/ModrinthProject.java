@@ -21,9 +21,13 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ModrinthMod {
+public class ModrinthProject {
     public String id;
     public String slug;
+
+    @SerializedName("project_type")
+    public ModrinthProjectType projectType = ModrinthProjectType.MOD;
+
     public String team;
     public String title;
     public String description;
@@ -34,17 +38,21 @@ public class ModrinthMod {
 
     public String published;
     public String updated;
-    public String status;
+    public ModrinthProjectStatus status;
+
+    @SerializedName("moderator_message")
+    public String moderatorMessage;
 
     public ModrinthLicense license;
 
     @SerializedName("client_side")
-    public String clientSide;
+    public ModrinthSide clientSide;
 
     @SerializedName("server_side")
-    public String serverSide;
+    public ModrinthSide serverSide;
 
     public int downloads;
+    public int followers;
 
     public List<String> categories;
     public List<String> versions;
@@ -66,4 +74,7 @@ public class ModrinthMod {
 
     @SerializedName("donation_urls")
     public List<ModrinthDonationUrl> donationUrls;
+
+    // TODO: what is this?
+    public List<Object> gallery;
 }

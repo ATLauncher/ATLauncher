@@ -36,7 +36,7 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
 
     public abstract boolean hasCategories();
 
-    public abstract Map<Integer, String> getCategoryFields();
+    public abstract Map<String, String> getCategoryFields();
 
     public abstract boolean hasSort();
 
@@ -44,11 +44,11 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
 
     public abstract boolean hasPagination();
 
-    protected abstract void loadPacks(JPanel contentPanel, Integer category, String sort, String search, int page);
+    protected abstract void loadPacks(JPanel contentPanel, String category, String sort, String search, int page);
 
-    public abstract void loadMorePacks(JPanel contentPanel, Integer category, String sort, String search, int page);
+    public abstract void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page);
 
-    public void load(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    public void load(JPanel contentPanel, String category, String sort, String search, int page) {
         // remove all components on the content panel
         contentPanel.removeAll();
 

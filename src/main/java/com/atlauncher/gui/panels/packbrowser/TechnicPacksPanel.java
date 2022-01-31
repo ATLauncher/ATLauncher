@@ -38,7 +38,7 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
         List<TechnicModpackSlim> packs;
 
         if (search == null || search.isEmpty()) {
@@ -73,7 +73,7 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, Integer category, String sort, String search, int page) {
+    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
         // no pagination on api
     }
 
@@ -93,7 +93,7 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public Map<Integer, String> getCategoryFields() {
+    public Map<String, String> getCategoryFields() {
         return new LinkedHashMap<>();
     }
 
