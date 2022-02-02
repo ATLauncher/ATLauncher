@@ -84,7 +84,7 @@ public class Constants {
     public static final int CURSEFORGE_WORLDS_SECTION_ID = 17;
 
     // Modrinth domains, endpoints, config, etc
-    public static final String MODRINTH_API_URL = "https://staging-api.modrinth.com/v2";
+    public static final String MODRINTH_API_URL = "https://api.modrinth.com/v2";
     public static final String MODRINTH_HOST = "api.modrinth.com";
     public static final String MODRINTH_FABRIC_MOD_ID = "P7dR8mSH";
     public static final int MODRINTH_PAGINATION_SIZE = 20;
