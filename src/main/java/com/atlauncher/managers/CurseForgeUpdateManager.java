@@ -18,6 +18,7 @@
 package com.atlauncher.managers;
 
 import java.util.Comparator;
+import java.util.Map;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
@@ -39,13 +40,22 @@ public class CurseForgeUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to CurseForge instances");
 
+        int[] projectIdsFound = Data.INSTANCES.parallelStream()
+                .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId())
+                .mapToInt(i -> i.launcher.curseForgeManifest != null
+                        ? i.launcher.curseForgeManifest.projectID
+                        : i.launcher.curseForgeProject.id)
+                .toArray();
+
+        Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
+
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
                 .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
                     boolean wasUpdated = false;
 
-                    CurseForgeProject curseForgeMod = CurseForgeApi.getProjectById(
-                            i.launcher.curseForgeManifest != null ? i.launcher.curseForgeManifest.projectID
-                                    : i.launcher.curseForgeProject.id);
+                    CurseForgeProject curseForgeMod = foundProjects.get(i.launcher.curseForgeManifest != null
+                            ? i.launcher.curseForgeManifest.projectID
+                            : i.launcher.curseForgeProject.id);
 
                     if (curseForgeMod == null) {
                         return false;
