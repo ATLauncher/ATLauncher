@@ -17,21 +17,7 @@
  */
 package com.atlauncher.data.curseforge;
 
-import com.google.gson.annotations.SerializedName;
-
-public class CurseForgeAttachment {
-    // in both legacy and core api
-    public int id;
-    public String description;
-    public String thumbnailUrl;
-    public String title;
-    public String url;
-
-    // renamed in core
-    @SerializedName(value = "modId", alternate = { "projectId" })
-    public int modId;
-
-    // removed in core
-    public Integer status = null;
-    public boolean isDefault = false;
+public class CurseForgeCoreApiResponse<T> {
+    public T data;
+    public CurseForgeCoreApiPagination pagination = null;
 }

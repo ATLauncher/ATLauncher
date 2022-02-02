@@ -17,21 +17,16 @@
  */
 package com.atlauncher.data.curseforge;
 
-import com.google.gson.annotations.SerializedName;
+// completely new to core api
+public class CurseForgeFileHash {
+    public String value;
+    public int algo;
 
-public class CurseForgeAttachment {
-    // in both legacy and core api
-    public int id;
-    public String description;
-    public String thumbnailUrl;
-    public String title;
-    public String url;
+    public boolean isSha1() {
+        return algo == 1;
+    }
 
-    // renamed in core
-    @SerializedName(value = "modId", alternate = { "projectId" })
-    public int modId;
-
-    // removed in core
-    public Integer status = null;
-    public boolean isDefault = false;
+    public boolean isMd5() {
+        return algo == 2;
+    }
 }

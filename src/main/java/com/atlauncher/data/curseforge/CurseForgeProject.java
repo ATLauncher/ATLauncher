@@ -17,50 +17,106 @@
  */
 package com.atlauncher.data.curseforge;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.json.ModType;
+import com.google.gson.annotations.SerializedName;
 
 public class CurseForgeProject {
+    // in both legacy and core api
     public int id;
     public String name;
     public List<CurseForgeAuthor> authors;
-    public List<CurseForgeAttachment> attachments;
-    public String websiteUrl;
     public int gameId;
     public String summary;
-    public int defaultFileId;
     public int downloadCount;
-    public List<CurseForgeProjectLatestFile> latestFiles;
+    public List<CurseForgeFile> latestFiles;
     public List<CurseForgeCategory> categories;
     public int status;
     public int primaryCategoryId;
-    public CurseForgeCategorySection categorySection;
     public String slug;
-    public List<CurseForgeGameVersionLatestFiles> gameVersionLatestFiles;
     public boolean isFeatured;
-    public float popularityScore;
-    public int gamePopularityRank;
-    public String primaryLanguage;
-    public String gameSlug;
-    public String gameName;
-    public String portalName;
     public String dateModified;
     public String dateCreated;
     public String dateReleased;
+
+    // new in core
+    public Map<String, String> links = new HashMap<>();
+    public CurseForgeAttachment logo = null;
+    public boolean allowModDistribution;
+
+    // renamed in core
+    @SerializedName(value = "screenshots", alternate = { "attachments" })
+    public List<CurseForgeAttachment> screenshots;
+
+    @SerializedName(value = "latestFilesIndexes", alternate = { "gameVersionLatestFiles" })
+    public List<CurseForgeGameVersionLatestFiles> latestFilesIndexes;
+
+    @SerializedName(value = "mainFileId", alternate = { "defaultFileId" })
+    public int mainFileId;
+
+    // removed in core
+    @Deprecated
+    public String websiteUrl;
+    @Deprecated
+    public CurseForgeCategorySection categorySection;
+    @Deprecated
+    public float popularityScore;
+    @Deprecated
+    public int gamePopularityRank;
+    @Deprecated
+    public String primaryLanguage;
+    @Deprecated
+    public String gameSlug;
+    @Deprecated
+    public String gameName;
+    @Deprecated
+    public String portalName;
+    @Deprecated
     public boolean isAvailable;
+    @Deprecated
     public boolean isExperimental;
 
     public ModType getModType() {
-        if (categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
+        if (getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return ModType.resourcepack;
         }
 
         return ModType.mods;
     }
 
+    public int getRootCategoryId() {
+        if (categorySection != null) {
+            return categorySection.gameCategoryId;
+        }
+
+        Optional<CurseForgeCategory> primaryCategory = categories.stream().filter(c -> c.id == primaryCategoryId)
+                .findFirst();
+
+        if (primaryCategory.isPresent()) {
+            return primaryCategory.get().classId;
+        }
+
+        return Constants.CURSEFORGE_MODS_SECTION_ID;
+    }
+
+    public Optional<CurseForgeAttachment> getLogo() {
+        if (logo != null) {
+            return Optional.ofNullable(logo);
+        }
+
+        return screenshots.stream().filter(a -> a.isDefault).findFirst();
+    }
+
     public boolean equals(Object object) {
         return id == ((CurseForgeProject) object).id;
+    }
+
+    public String getWebsiteUrl() {
+        return Optional.ofNullable(websiteUrl).orElseGet(() -> links.get("websiteUrl"));
     }
 }

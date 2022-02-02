@@ -78,6 +78,7 @@ public class ImportPackUtils {
 
         LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
 
+        // TODO: remove this and replace with lookup in CurseForge api
         SlugResponse modInfo = new Download()
                 .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
                         "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
@@ -203,7 +204,8 @@ public class ImportPackUtils {
 
         try {
             ModrinthModpackManifest manifest = Gsons.MINECRAFT
-                    .fromJson(ArchiveUtils.getFile(file.toPath(), "modrinth.index.json"), ModrinthModpackManifest.class);
+                    .fromJson(ArchiveUtils.getFile(file.toPath(), "modrinth.index.json"),
+                            ModrinthModpackManifest.class);
 
             if (!manifest.game.equals("minecraft")) {
                 LogManager.error(

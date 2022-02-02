@@ -22,5 +22,5 @@ import java.util.List;
 public class CurseForgeFingerprintedMod {
     public int id;
     public CurseForgeFile file;
-    public List<CurseForgeProjectLatestFile> latestFiles;
+    public List<CurseForgeFile> latestFiles;
 }

@@ -174,13 +174,13 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         });
 
         viewModButton.addActionListener(e -> {
-            OS.openWebBrowser(mod.websiteUrl);
+            OS.openWebBrowser(mod.getWebsiteUrl());
         });
 
         viewFileButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
-            OS.openWebBrowser(String.format("%s/files/%d", mod.websiteUrl, file.id));
+            OS.openWebBrowser(String.format("%s/files/%d", mod.getWebsiteUrl(), file.id));
         });
 
         filesDropdown.addActionListener(e -> {
@@ -194,7 +194,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
                         .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
                                 .noneMatch(installedMod -> installedMod.isFromCurseForge()
-                                        && installedMod.getCurseForgeModId() == dependency.addonId))
+                                        && installedMod.getCurseForgeModId() == dependency.modId))
                         .collect(Collectors.toList());
 
                 if (dependencies.size() != 0) {
@@ -242,8 +242,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                 curseForgeFilesStream = curseForgeFilesStream.filter(
-                        file -> mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
-                                || file.gameVersion.contains(this.instance.id));
+                        file -> mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
+                                || file.gameVersions.contains(this.instance.id));
             } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                 try {
                     List<String> minecraftVersionsToSearch = MinecraftManager
@@ -251,7 +251,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                             .collect(Collectors.toList());
 
                     curseForgeFilesStream = curseForgeFilesStream
-                            .filter(v -> v.gameVersion.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                            .filter(v -> v.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                 } catch (InvalidMinecraftVersion e) {
                     LogManager.logStackTrace(e);
                 }
@@ -259,11 +259,11 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             // filter out mods that are explicitely for Forge/Fabric and not our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersion.contains("Forge") && loaderVersion != null && loaderVersion.isFabric()) {
+                if (cf.gameVersions.contains("Forge") && loaderVersion != null && loaderVersion.isFabric()) {
                     return false;
                 }
 
-                if (cf.gameVersion.contains("Fabric") && loaderVersion != null && !loaderVersion.isFabric()) {
+                if (cf.gameVersions.contains("Fabric") && loaderVersion != null && !loaderVersion.isFabric()) {
                     return false;
                 }
 
@@ -293,7 +293,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
                     if (loaderVersion != null && !loaderVersion.isFabric()) {
                         // if it's Forge, and the gameVersion has "Fabric" then exclude it
-                        return version.gameVersion.contains("Fabric")
+                        return version.gameVersions.contains("Fabric")
                                 || (!displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
                                         && !displayName.contains("[fabric") && !fileName.contains("fabricmod"));
                     }

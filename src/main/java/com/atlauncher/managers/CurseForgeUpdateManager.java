@@ -22,12 +22,12 @@ import java.util.Comparator;
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.curseforge.CurseForgeProjectLatestFile;
 import com.atlauncher.utils.CurseForgeApi;
 
 public class CurseForgeUpdateManager {
-    public static CurseForgeProjectLatestFile getLatestVersion(Instance instance) {
+    public static CurseForgeFile getLatestVersion(Instance instance) {
         return Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance);
     }
 
@@ -51,8 +51,9 @@ public class CurseForgeUpdateManager {
                         return false;
                     }
 
-                    CurseForgeProjectLatestFile latestVersion = curseForgeMod.latestFiles.stream()
-                            .sorted(Comparator.comparingInt((CurseForgeProjectLatestFile file) -> file.id).reversed())
+                    CurseForgeFile latestVersion = curseForgeMod.latestFiles.stream()
+                            .sorted(Comparator.comparingInt((
+                                    CurseForgeFile file) -> file.id).reversed())
                             .findFirst().orElse(null);
 
                     if (latestVersion == null) {

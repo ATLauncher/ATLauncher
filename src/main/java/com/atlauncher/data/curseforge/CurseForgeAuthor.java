@@ -18,12 +18,8 @@
 package com.atlauncher.data.curseforge;
 
 public class CurseForgeAuthor {
+    // in both legacy and core api
+    public int id;
     public String name;
     public String url;
-    public int projectId;
-    public int id;
-    public int projectTitleId;
-    public String projectTitleTitle;
-    public int userId;
-    public int twitchId;
 }

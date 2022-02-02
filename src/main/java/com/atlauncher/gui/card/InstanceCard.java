@@ -418,7 +418,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openWebsite.addActionListener(
-                e -> OS.openWebBrowser(instance.isCurseForgePack() ? instance.launcher.curseForgeProject.websiteUrl
+                e -> OS.openWebBrowser(instance.isCurseForgePack() ? instance.launcher.curseForgeProject.getWebsiteUrl()
                         : (instance.isModpacksChPack() ? instance.launcher.modpacksChPackManifest.getWebsiteUrl()
                                 : instance.launcher.technicModpack.platformUrl)));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));

@@ -64,7 +64,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
     }
 
     private void setupComponents() {
-        CurseForgeProject mod = CurseForgeApi.getProjectById(dependency.addonId);
+        CurseForgeProject mod = CurseForgeApi.getProjectById(dependency.modId);
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
@@ -95,7 +95,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
             new CurseForgeProjectFileSelectorDialog(parent, mod, instance);
         });
 
-        viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
+        viewButton.addActionListener(e -> OS.openWebBrowser(mod.getWebsiteUrl()));
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
@@ -104,7 +104,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
 
-        Optional<CurseForgeAttachment> attachment = mod.attachments.stream().filter(a -> a.isDefault).findFirst();
+        Optional<CurseForgeAttachment> attachment = mod.getLogo();
         if (attachment.isPresent()) {
             new BackgroundImageWorker(icon, attachment.get().thumbnailUrl, 60, 60).execute();
         }

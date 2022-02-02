@@ -17,14 +17,29 @@
  */
 package com.atlauncher.data.curseforge;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CurseForgeCategory {
-    public int categoryId;
     public String name;
+    public String slug;
     public String url;
-    public String avatarUrl;
-    public int parentId;
-    public int rootId;
-    public int projectId;
-    public int avatarId;
+    public String dateModified;
     public int gameId;
+
+    // added in core
+    public boolean isClass = false;
+
+    // renamed in core
+    // in both legacy and core api
+    @SerializedName(value = "id", alternate = { "categoryId" })
+    public int id;
+
+    @SerializedName(value = "iconUrl", alternate = { "avatarUrl" })
+    public String avatarUrl;
+
+    @SerializedName(value = "parentCategoryId", alternate = { "parentId" })
+    public int parentCategoryId;
+
+    @SerializedName(value = "classId", alternate = { "rootId" })
+    public int classId;
 }

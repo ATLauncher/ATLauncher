@@ -17,17 +17,24 @@
  */
 package com.atlauncher.data.curseforge;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CurseForgeFileDependency {
-    public int id;
-    public int addonId;
-    public int type;
+    // in both legacy and core api
     public int fileId;
 
+    // renamed in core
+    @SerializedName(value = "modId", alternate = { "addonId" })
+    public int modId;
+
+    @SerializedName(value = "relationType", alternate = { "type" })
+    public int relationType;
+
     public boolean isRequired() {
-        return this.type == 3;
+        return this.relationType == 3;
     }
 
     public boolean isOptional() {
-        return this.type == 2;
+        return this.relationType == 2;
     }
 }

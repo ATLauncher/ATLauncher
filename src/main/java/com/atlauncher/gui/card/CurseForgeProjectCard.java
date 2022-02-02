@@ -72,7 +72,7 @@ public final class CurseForgeProjectCard extends JPanel {
 
         addButton.addActionListener(al);
 
-        viewButton.addActionListener(e -> OS.openWebBrowser(mod.websiteUrl));
+        viewButton.addActionListener(e -> OS.openWebBrowser(mod.getWebsiteUrl()));
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
@@ -81,7 +81,7 @@ public final class CurseForgeProjectCard extends JPanel {
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
 
-        Optional<CurseForgeAttachment> attachment = mod.attachments.stream().filter(a -> a.isDefault).findFirst();
+        Optional<CurseForgeAttachment> attachment = mod.getLogo();
         if (attachment.isPresent()) {
             new BackgroundImageWorker(icon, attachment.get().thumbnailUrl, 60, 60).execute();
         }

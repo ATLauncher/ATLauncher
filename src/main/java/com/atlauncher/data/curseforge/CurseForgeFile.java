@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data.curseforge;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -26,29 +27,41 @@ import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.MinecraftManager;
+import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.format.ISODateTimeFormat;
 
 public class CurseForgeFile {
+    // in both legacy and core api
     public int id;
+    public int gameId;
+    public boolean isAvailable;
     public String displayName;
     public String fileName;
-    public String fileDate;
-    public int fileLength;
     public int releaseType;
     public int fileStatus;
+    public String fileDate;
+    public int fileLength;
     public String downloadUrl;
-    public boolean isAlternate;
-    public int alternateFileId;
     public List<CurseForgeFileDependency> dependencies;
-    public boolean isAvailable;
+    public int alternateFileId;
     public List<CurseForgeFileModule> modules;
+    public boolean isServerPack;
+
+    // new in core
+    public List<CurseForgeFileHash> hashes = new ArrayList<>();
+    public int downloadCount;
+    public List<CurseForgeSortableGameVersion> sortableGameVersions = new ArrayList<>();
+
+    // renamed in core
+    @SerializedName(value = "gameVersions", alternate = { "gameVersion" })
+    public List<String> gameVersions;
+
+    @SerializedName(value = "fileFingerprint", alternate = { "packageFingerprint" })
     public long packageFingerprint;
-    public List<String> gameVersion;
-    public String gameVersionDateReleased;
-    public String installMetadata; // unsure of the type of this one, as no public example
-    public int serverPackFileId;
-    public boolean hasInstallScript;
+
+    @SerializedName(value = "modId", alternate = { "projectId" })
+    public int modId;
 
     public String toString() {
         String releaseTypeString = this.releaseType == 1 ? "" : this.releaseType == 2 ? " (Beta)" : " (Alpha)";
@@ -70,7 +83,7 @@ public class CurseForgeFile {
         mod.type = curseForgeProject.getModType();
         mod.url = downloadUrl;
         mod.version = displayName;
-        mod.website = curseForgeProject.websiteUrl;
+        mod.website = curseForgeProject.getWebsiteUrl();
         mod.curseForgeProject = curseForgeProject;
         mod.curseForgeFile = this;
 
@@ -79,19 +92,19 @@ public class CurseForgeFile {
 
     public String getGameVersion() {
         // CurseForge api returning no versions for some reason
-        if (gameVersion.size() == 0) {
+        if (gameVersions.size() == 0) {
             return null;
         }
 
         // only 1 version, so grab that
-        if (gameVersion.size() == 1) {
-            return gameVersion.get(0);
+        if (gameVersions.size() == 1) {
+            return gameVersions.get(0);
         }
 
         // if more than 1, we need to filter out non Minecraft versions (loaders for
         // instance) and then order them by Minecraft versions release date to make sure
         // we use the newest (SkyFactory 4 lists 3 Minecraft versions for some reason)
-        Optional<String> minecraftVersion = gameVersion.stream().filter(gv -> MinecraftManager.isMinecraftVersion(gv))
+        Optional<String> minecraftVersion = gameVersions.stream().filter(gv -> MinecraftManager.isMinecraftVersion(gv))
                 .map(gv -> {
                     try {
                         return MinecraftManager.getMinecraftVersion(gv);
@@ -104,6 +117,6 @@ public class CurseForgeFile {
                 }).reversed()).map(mv -> mv.id).findFirst();
 
         // worse case if nothing comes back, just grab the first item
-        return minecraftVersion.orElseGet(() -> gameVersion.get(0));
+        return minecraftVersion.orElseGet(() -> gameVersions.get(0));
     }
 }

@@ -17,8 +17,13 @@
  */
 package com.atlauncher.data.curseforge;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CurseForgeFileModule {
-    public String foldername;
+    // in both legacy and core api
     public long fingerprint;
-    public int type;
+
+    // renamed in core
+    @SerializedName(value = "name", alternate = { "foldername" })
+    public String name;
 }

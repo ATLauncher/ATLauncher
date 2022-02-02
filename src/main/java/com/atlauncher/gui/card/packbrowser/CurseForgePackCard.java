@@ -58,7 +58,7 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
         RelocalizationManager.addListener(this);
 
         String imageUrl = null;
-        Optional<CurseForgeAttachment> attachment = project.attachments.stream().filter(a -> a.isDefault).findFirst();
+        Optional<CurseForgeAttachment> attachment = project.getLogo();
         if (attachment.isPresent()) {
             imageUrl = attachment.get().thumbnailUrl;
         }
@@ -88,7 +88,7 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
         });
         buttonsPanel.add(newInstanceButton);
 
-        websiteButton.addActionListener(e -> OS.openWebBrowser(project.websiteUrl));
+        websiteButton.addActionListener(e -> OS.openWebBrowser(project.getWebsiteUrl()));
         buttonsPanel.add(websiteButton);
 
         JTextArea descArea = new JTextArea();

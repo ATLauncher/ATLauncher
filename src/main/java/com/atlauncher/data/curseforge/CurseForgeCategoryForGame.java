@@ -21,10 +21,11 @@ public class CurseForgeCategoryForGame {
     public int id;
     public String name;
     public String slug;
-    public String avatarUrl;
+    public String iconUrl;
     public String dateModified;
-    public Integer parentGameCategoryId = null;
-    public Integer rootGameCategoryId = null;
+    public Integer parentCategoryId = null;
+    public Integer classId = null;
     public int gameId;
     public String url;
+    public boolean isClass = false;
 }

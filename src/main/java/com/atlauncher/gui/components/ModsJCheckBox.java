@@ -137,7 +137,7 @@ public class ModsJCheckBox extends JCheckBox {
         if (getDisableableMod().hasFullCurseForgeInformation()) {
             JMenuItem openOnCurseForge = new JMenuItem(GetText.tr("Open On CurseForge"));
             openOnCurseForge
-                    .addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseForgeProject.websiteUrl));
+                    .addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseForgeProject.getWebsiteUrl()));
             contextMenu.add(openOnCurseForge);
 
             contextMenu.add(new JPopupMenu.Separator());

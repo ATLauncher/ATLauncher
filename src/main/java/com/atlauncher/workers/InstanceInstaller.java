@@ -104,6 +104,7 @@ import com.atlauncher.data.technic.TechnicModpackAsset;
 import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -503,16 +504,36 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
-        packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
-            CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
-                    .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
-            CurseForgeFile curseForgeFile = CurseForgeApi.getFileForProject(file.projectID, file.fileID);
+        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
 
-            Mod mod = curseForgeFile.convertToMod(curseForgeProject);
-            mod.optional = !file.required;
+        if (usingCoreApi) {
+            List<CurseForgeFile> filesFound = CurseForgeApi
+                    .getFiles(curseForgeManifest.files.stream().mapToInt(file -> file.fileID).toArray());
 
-            return mod;
-        }).collect(Collectors.toList());
+            packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
+                CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
+                        .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
+                CurseForgeFile curseForgeFile = filesFound.stream().filter(f -> f.id == file.fileID).findFirst()
+                        .orElseGet(() -> CurseForgeApi
+                                .getFileForProject(file.projectID, file.fileID));
+
+                Mod mod = curseForgeFile.convertToMod(curseForgeProject);
+                mod.optional = !file.required;
+
+                return mod;
+            }).collect(Collectors.toList());
+        } else {
+            packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
+                CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
+                        .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
+                CurseForgeFile curseForgeFile = CurseForgeApi.getFileForProject(file.projectID, file.fileID);
+
+                Mod mod = curseForgeFile.convertToMod(curseForgeProject);
+                mod.optional = !file.required;
+
+                return mod;
+            }).collect(Collectors.toList());
+        }
 
         hideSubProgressBar();
     }
@@ -573,7 +594,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();
 
-        modrinthManifest = Gsons.MINECRAFT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "modrinth.index.json")),
+        modrinthManifest = Gsons.MINECRAFT.fromJson(
+                new String(ArchiveUtils.getFile(manifestFile, "modrinth.index.json")),
                 ModrinthModpackManifest.class);
         modrinthExtractedPath = this.temp.resolve("modrinthimport");
 
@@ -2335,7 +2357,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (this.pack.curseForgeProject != null) {
             fireTask(GetText.tr("Downloading Instance Image"));
-            CurseForgeAttachment attachment = this.pack.curseForgeProject.attachments.stream().filter(a -> a.isDefault)
+            CurseForgeAttachment attachment = this.pack.curseForgeProject.screenshots.stream().filter(a -> a.isDefault)
                     .findFirst().orElse(null);
 
             if (attachment != null) {

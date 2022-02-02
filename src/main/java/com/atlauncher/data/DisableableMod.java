@@ -337,7 +337,7 @@ public class DisableableMod implements Serializable {
                     .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                curseForgeFilesStream = curseForgeFilesStream.filter(file -> file.gameVersion.contains(instance.id));
+                curseForgeFilesStream = curseForgeFilesStream.filter(file -> file.gameVersions.contains(instance.id));
             }
 
             if (App.settings.addModRestriction == AddModRestriction.LAX) {
@@ -346,7 +346,7 @@ public class DisableableMod implements Serializable {
                             .stream().map(mv -> mv.id).collect(Collectors.toList());
 
                     curseForgeFilesStream = curseForgeFilesStream.filter(
-                            file -> file.gameVersion.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                            file -> file.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                 } catch (InvalidMinecraftVersion e) {
                     LogManager.logStackTrace(e);
                 }
@@ -354,12 +354,12 @@ public class DisableableMod implements Serializable {
 
             // filter out mods that are explicitely for Forge/Fabric and not our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersion.contains("Forge") && instance.launcher.loaderVersion != null
+                if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
                         && !instance.launcher.loaderVersion.isForge()) {
                     return false;
                 }
 
-                if (cf.gameVersion.contains("Fabric") && instance.launcher.loaderVersion != null
+                if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
                         && !instance.launcher.loaderVersion.isFabric()) {
                     return false;
                 }

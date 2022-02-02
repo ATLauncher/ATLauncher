@@ -30,7 +30,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -39,7 +38,6 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;

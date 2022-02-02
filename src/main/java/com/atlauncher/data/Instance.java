@@ -73,7 +73,6 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.curseforge.CurseForgeProjectLatestFile;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
 import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
@@ -217,7 +216,7 @@ public class Instance extends MinecraftVersion {
 
                 return latestVersion != null && latestVersion.id != this.launcher.modpacksChPackVersionManifest.id;
             } else if (isCurseForgePack()) {
-                CurseForgeProjectLatestFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(this);
+                CurseForgeFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(this);
 
                 return latestVersion != null && latestVersion.id != this.launcher.curseForgeFile.id;
             } else if (isTechnicPack()) {
@@ -1219,9 +1218,9 @@ public class Instance extends MinecraftVersion {
 
     public void addFileFromCurse(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
-        Path finalLocation = mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
+        Path finalLocation = mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
                 ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
-                : (mod.categorySection.gameCategoryId == Constants.CURSEFORGE_WORLDS_SECTION_ID
+                : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID
                         ? this.getRoot().resolve("saves").resolve(file.fileName)
                         : this.getRoot().resolve("mods").resolve(file.fileName));
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
@@ -1230,7 +1229,7 @@ public class Instance extends MinecraftVersion {
 
         dialog.setTotalBytes(file.fileLength);
 
-        if (mod.categorySection.gameCategoryId == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
+        if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
             download = download.unzipTo(this.getRoot().resolve("saves"));
         } else {
             download = download.copyTo(finalLocation);
@@ -1268,8 +1267,8 @@ public class Instance extends MinecraftVersion {
 
         // add this mod
         this.launcher.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
-                mod.categorySection.gameCategoryId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
-                        : (mod.categorySection.gameCategoryId == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds
+                mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
+                        : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds
                                 : Type.mods),
                 null, mod.summary, false, true, true, mod, file));
 
@@ -1712,7 +1711,7 @@ public class Instance extends MinecraftVersion {
         StringBuilder sb = new StringBuilder("<ul>");
         this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
             if (mod.hasFullCurseForgeInformation()) {
-                sb.append("<li><a href=\"").append(mod.curseForgeProject.websiteUrl).append("\">").append(mod.name)
+                sb.append("<li><a href=\"").append(mod.curseForgeProject.getWebsiteUrl()).append("\">").append(mod.name)
                         .append("</a></li>");
             } else {
                 sb.append("<li>").append(mod.name).append("</li>");

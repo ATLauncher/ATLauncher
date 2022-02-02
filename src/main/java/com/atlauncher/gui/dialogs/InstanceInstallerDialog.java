@@ -409,7 +409,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         pack.externalId = curseForgeProject.id;
         pack.description = curseForgeProject.summary;
-        pack.websiteURL = curseForgeProject.websiteUrl;
+        pack.websiteURL = curseForgeProject.getWebsiteUrl();
         pack.curseForgeProject = curseForgeProject;
 
         final ProgressDialog<List<CurseForgeFile>> dialog = new ProgressDialog<>(GetText.tr("Getting Versions"), 0,
@@ -658,7 +658,7 @@ public class InstanceInstallerDialog extends JDialog {
         if (curseForgeManifest.projectID != null) {
             CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(curseForgeManifest.projectID);
 
-            curseForgeManifest.websiteUrl = curseForgeProject.websiteUrl;
+            curseForgeManifest.websiteUrl = curseForgeProject.getWebsiteUrl();
 
             pack.externalId = curseForgeManifest.projectID;
             pack.description = curseForgeProject.summary;
