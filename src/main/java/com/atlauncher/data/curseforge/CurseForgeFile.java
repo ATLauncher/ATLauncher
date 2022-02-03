@@ -87,6 +87,18 @@ public class CurseForgeFile {
         mod.curseForgeProject = curseForgeProject;
         mod.curseForgeFile = this;
 
+        Optional<CurseForgeFileHash> md5Hash = hashes.stream().filter(h -> h.isMd5())
+                .findFirst();
+        if (md5Hash.isPresent()) {
+            mod.md5 = md5Hash.get().value;
+        }
+
+        Optional<CurseForgeFileHash> sha1Hash = hashes.stream().filter(h -> h.isSha1())
+                .findFirst();
+        if (sha1Hash.isPresent()) {
+            mod.sha1 = sha1Hash.get().value;
+        }
+
         return mod;
     }
 

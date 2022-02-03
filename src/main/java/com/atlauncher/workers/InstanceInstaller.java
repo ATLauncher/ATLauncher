@@ -53,6 +53,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
@@ -548,8 +549,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build()
                 .setUrl(version._curseForgeFile.downloadUrl).downloadTo(manifestFile)
-                .size(version._curseForgeFile.fileLength).fingerprint(version._curseForgeFile.packageFingerprint)
-                .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
+                .size(version._curseForgeFile.fileLength);
+
+        Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isMd5())
+                .findFirst();
+        Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+                .findFirst();
+
+        if (md5Hash.isPresent()) {
+            manifestDownload = manifestDownload.hash(md5Hash.get().value);
+        } else if (sha1Hash.isPresent()) {
+            manifestDownload = manifestDownload.hash(sha1Hash.get().value);
+        } else {
+            manifestDownload = manifestDownload.fingerprint(version._curseForgeFile.packageFingerprint);
+        }
+
+        manifestDownload = manifestDownload.withInstanceInstaller(this)
+                .withHttpClient(Network.createProgressClient(this));
 
         this.setTotalBytes(version._curseForgeFile.fileLength);
         manifestDownload.downloadFile();
@@ -2067,14 +2083,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 download = download.ignoreFailures();
             }
 
-            if (mod.fingerprint != null) {
-                download = download.fingerprint(mod.fingerprint);
+            if (mod.md5 != null) {
+                download = download.hash(mod.md5);
             } else if (mod.sha1 != null) {
                 download = download.hash(mod.sha1);
             } else if (mod.sha512 != null) {
                 download = download.hash(mod.sha512);
-            } else if (mod.md5 != null) {
-                download = download.hash(mod.md5);
+            } else if (mod.fingerprint != null) {
+                download = download.fingerprint(mod.fingerprint);
             }
 
             pool.add(download);

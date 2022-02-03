@@ -23,6 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
@@ -103,8 +105,23 @@ public class ImportPackUtils {
         Path tempZip = FileSystem.TEMP.resolve(curseFile.fileName);
 
         try {
-            new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip).size(curseFile.fileLength)
-                    .fingerprint(curseFile.packageFingerprint).downloadFile();
+            Download download = new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip)
+                    .size(curseFile.fileLength);
+
+            Optional<CurseForgeFileHash> md5Hash = curseFile.hashes.stream().filter(h -> h.isMd5())
+                    .findFirst();
+            Optional<CurseForgeFileHash> sha1Hash = curseFile.hashes.stream().filter(h -> h.isSha1())
+                    .findFirst();
+
+            if (md5Hash.isPresent()) {
+                download = download.hash(md5Hash.get().value);
+            } else if (sha1Hash.isPresent()) {
+                download = download.hash(sha1Hash.get().value);
+            } else {
+                download = download.fingerprint(curseFile.packageFingerprint);
+            }
+
+            download.downloadFile();
         } catch (IOException e) {
             LogManager.error("Failed to download modpack file from Curse");
             return false;
