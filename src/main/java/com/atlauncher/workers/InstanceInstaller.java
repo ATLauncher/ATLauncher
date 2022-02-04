@@ -2373,8 +2373,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (this.pack.curseForgeProject != null) {
             fireTask(GetText.tr("Downloading Instance Image"));
-            CurseForgeAttachment attachment = this.pack.curseForgeProject.screenshots.stream().filter(a -> a.isDefault)
-                    .findFirst().orElse(null);
+            CurseForgeAttachment attachment = this.pack.curseForgeProject.getLogo().orElse(null);
 
             if (attachment != null) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build()
