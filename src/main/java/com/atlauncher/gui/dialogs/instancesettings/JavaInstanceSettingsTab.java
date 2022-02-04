@@ -73,6 +73,11 @@ public class JavaInstanceSettingsTab extends JPanel {
     private JComboBox<ComboItem<Boolean>> useSystemGlfw;
     private JComboBox<ComboItem<Boolean>> useSystemOpenAl;
 
+    private boolean initialMemoryWarningShown = false;
+    private boolean maximumMemoryHalfWarningShown = false;
+    private boolean maximumMemoryEightGBWarningShown = false;
+    private boolean permgenWarningShown = false;
+
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
     final ImageIcon WARNING_ICON = Utils.getIconImage(App.THEME.getIconPath("warning"));
@@ -134,6 +139,19 @@ public class JavaInstanceSettingsTab extends JPanel {
                 if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
                     maximumMemory.setValue((Integer) s.getValue());
                 }
+
+                if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
+                    initialMemoryWarningShown = true;
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                            .setType(DialogManager.WARNING)
+                            .setContent(GetText.tr(
+                                    "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
+                            .show();
+
+                    if (ret != 0) {
+                        initialMemory.setValue(512);
+                    }
+                }
             }
         });
         add(initialMemory, gbc);
@@ -172,6 +190,24 @@ public class JavaInstanceSettingsTab extends JPanel {
                 if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
                     initialMemory.setValue(s.getValue());
                 }
+
+                if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
+                    maximumMemoryEightGBWarningShown = true;
+                    DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                            .setType(DialogManager.WARNING)
+                            .setContent(GetText.tr(
+                                    "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
+                            .show();
+                } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
+                        && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
+                        && !maximumMemoryHalfWarningShown) {
+                    maximumMemoryHalfWarningShown = true;
+                    DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                            .setType(DialogManager.WARNING)
+                            .setContent(GetText.tr(
+                                    "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
+                            .show();
+                }
             }
         });
         add(maximumMemory, gbc);
@@ -194,6 +230,27 @@ public class JavaInstanceSettingsTab extends JPanel {
         permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
         permGen = new JSpinner(permGenModel);
         ((JSpinner.DefaultEditor) permGen.getEditor()).getTextField().setColumns(3);
+        permGen.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSpinner s = (JSpinner) e.getSource();
+                int permGenMaxRecommendedSize = (OS.is64Bit() ? 256 : 128);
+
+                if ((Integer) s.getValue() > permGenMaxRecommendedSize && !permgenWarningShown) {
+                    permgenWarningShown = true;
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                            .setType(DialogManager.WARNING)
+                            .setContent(GetText.tr(
+                                    "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
+                                    permGenMaxRecommendedSize))
+                            .show();
+
+                    if (ret != 0) {
+                        permGen.setValue(permGenMaxRecommendedSize);
+                    }
+                }
+            }
+        });
         add(permGen, gbc);
 
         // Java Path
