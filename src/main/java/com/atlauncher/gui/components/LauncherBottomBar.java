@@ -48,7 +48,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
-    private JButton updateData;
+    private JButton checkForUpdates;
     private JComboBox<AbstractAccount> username;
 
     public LauncherBottomBar() {
@@ -72,7 +72,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         leftSide.add(openFolder, gbc);
 
         gbc.gridx++;
-        leftSide.add(updateData, gbc);
+        leftSide.add(checkForUpdates, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
@@ -93,7 +93,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
     private void setupListeners() {
         toggleConsole.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
-        updateData.addActionListener(e -> {
+        checkForUpdates.addActionListener(e -> {
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updates"), 0,
                     GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
@@ -127,8 +127,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
         openFolder = new JButton(GetText.tr("Open Folder"));
 
-        updateData = new JButton(GetText.tr("Update Data"));
-        updateData.setName("updateData");
+        checkForUpdates = new JButton(GetText.tr("Check For Updates"));
+        checkForUpdates.setName("checkForUpdates");
 
         username = new JComboBox<>();
         username.setName("accountSelector");
@@ -169,7 +169,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         } else {
             toggleConsole.setText(GetText.tr("Show Console"));
         }
-        this.updateData.setText(GetText.tr("Update Data"));
+        this.checkForUpdates.setText(GetText.tr("Check For Updates"));
         this.openFolder.setText(GetText.tr("Open Folder"));
     }
 

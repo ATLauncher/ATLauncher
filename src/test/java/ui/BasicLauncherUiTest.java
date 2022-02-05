@@ -44,7 +44,7 @@ import ui.mocks.MockHelper;
 public class BasicLauncherUiTest extends AbstractUiTest {
     @Test
     public void testTheLauncherOpens() {
-        this.frame.button("updateData").requireVisible();
+        this.frame.button("checkForUpdates").requireVisible();
 
         JTabbedPaneFixture mainTabsFixture = this.frame.tabbedPane("mainTabs");
         mainTabsFixture.requireVisible();
