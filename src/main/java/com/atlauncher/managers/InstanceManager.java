@@ -160,7 +160,7 @@ public class InstanceManager {
 
     public static void removeInstance(Instance instance) {
         if (Data.INSTANCES.remove(instance)) {
-            FileUtils.deleteDirectory(instance.getRoot());
+            FileUtils.recycleDirectory(instance.getRoot());
             App.launcher.reloadInstancesPanel();
         }
     }

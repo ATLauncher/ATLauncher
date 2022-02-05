@@ -45,6 +45,7 @@ repositories {
 
 dependencies {
     implementation 'net.java.dev.jna:jna:5.9.0'
+    implementation 'net.java.dev.jna:jna-platform:5.9.0'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.mojang:authlib:1.5.21'

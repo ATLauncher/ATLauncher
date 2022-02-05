@@ -17,6 +17,7 @@
  */
 package com.atlauncher.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +51,25 @@ public class FileUtils {
         }
 
         return true;
+    }
+
+    public static boolean recycleDirectory(Path dir) {
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
+            LogManager.error("Cannot recycle directory " + dir + " as it doesn't exist or isn't a directory!");
+            return false;
+        }
+
+        com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+        if (fileUtils.hasTrash()) {
+            try {
+                fileUtils.moveToTrash(new File[] { dir.toFile() });
+                return true;
+            } catch (IOException e) {
+                return deleteDirectory(dir);
+            }
+        } else {
+            return deleteDirectory(dir);
+        }
     }
 
     public static boolean deleteDirectory(Path dir) {

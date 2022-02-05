@@ -428,8 +428,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             new InstanceSettingsDialog(instance);
         });
         this.deleteButton.addActionListener(e -> {
-            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete Instance"))
-                    .setContent(GetText.tr("Are you sure you want to delete this instance?"))
+            int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Instance"))
+                    .setContent(
+                            GetText.tr("Are you sure you want to delete the instance \"{0}\"?", instance.launcher.name))
                     .setType(DialogManager.ERROR).show();
 
             if (ret == DialogManager.YES_OPTION) {
