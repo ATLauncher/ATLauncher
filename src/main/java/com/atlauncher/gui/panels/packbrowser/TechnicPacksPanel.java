@@ -18,6 +18,7 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 import javax.swing.JPanel;
 
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.technic.TechnicModpackSlim;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.TechnicPackCard;
@@ -38,7 +41,8 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
         List<TechnicModpackSlim> packs;
 
         if (search == null || search.isEmpty()) {
@@ -47,7 +51,7 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
             packs = TechnicApi.searchModpacks(search).modpacks;
         }
 
-        if (packs.size() == 0) {
+        if (packs == null || packs.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(GetText
@@ -73,7 +77,8 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
         // no pagination on api
     }
 
@@ -105,6 +110,25 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public Map<String, String> getSortFields() {
         return new LinkedHashMap<>();
+    }
+
+    @Override
+    public boolean supportsMinecraftVersionFiltering() {
+        return false;
+    }
+
+    @Override
+    public List<VersionManifestVersionType> getSupportedMinecraftVersionTypesForFiltering() {
+        List<VersionManifestVersionType> supportedTypes = new ArrayList<>();
+
+        return supportedTypes;
+    }
+
+    @Override
+    public List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering() {
+        List<VersionManifestVersion> supportedTypes = new ArrayList<>();
+
+        return supportedTypes;
     }
 
     @Override

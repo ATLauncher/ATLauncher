@@ -60,8 +60,8 @@ public class CurseForgeApi {
         try {
             if (usingCoreApi) {
                 url = String.format(
-                        "%s/mods/search?gameId=432&modLoaderType=%d&classId=%s&searchFilter=%s&sortField=%s&sortOrder=desc&pageSize=%d&index=%d",
-                        Constants.CURSEFORGE_CORE_API_URL, modLoaderType, sectionId,
+                        "%s/mods/search?gameId=432&classId=%s&searchFilter=%s&sortField=%s&sortOrder=desc&pageSize=%d&index=%d",
+                        Constants.CURSEFORGE_CORE_API_URL, sectionId,
                         URLEncoder.encode(query, StandardCharsets.UTF_8.name()),
                         sort.replace(" ", ""),
                         Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
@@ -71,6 +71,10 @@ public class CurseForgeApi {
                         Constants.CURSEFORGE_API_URL, modLoaderType, sectionId,
                         URLEncoder.encode(query, StandardCharsets.UTF_8.name()), sort.replace(" ", ""),
                         Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
+            }
+
+            if (modLoaderType != 0) {
+                url += "&modLoaderType=" + modLoaderType;
             }
 
             if (gameVersion != null) {
@@ -91,7 +95,9 @@ public class CurseForgeApi {
 
                 CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
-                return response.data;
+                if (response != null) {
+                    return response.data;
+                }
             } else {
                 java.lang.reflect.Type type = new TypeToken<List<CurseForgeProject>>() {
                 }.getType();
@@ -122,15 +128,12 @@ public class CurseForgeApi {
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page, 0, sort);
     }
 
-    public static List<CurseForgeProject> searchModPacks(String query, int page, String sort, String categoryId) {
+    public static List<CurseForgeProject> searchModPacks(String query, int page, String sort, String categoryId,
+            String minecraftVersion) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        return searchCurseForge(null, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, 0, sort,
+        return searchCurseForge(minecraftVersion, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, 0, sort,
                 categoryIdParam);
-    }
-
-    public static List<CurseForgeProject> searchModPacks(String query, int page, String sort) {
-        return searchCurseForge(Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, 0, sort);
     }
 
     public static List<CurseForgeProject> searchModsForFabric(String gameVersion, String query, int page, String sort) {
@@ -162,13 +165,17 @@ public class CurseForgeApi {
 
             CurseForgeCoreApiResponse<List<CurseForgeFile>> response = download.asType(type);
 
-            return response.data;
+            if (response != null) {
+                return response.data;
+            }
         } else {
             java.lang.reflect.Type type = new TypeToken<List<CurseForgeFile>>() {
             }.getType();
 
             return download.asType(type);
         }
+
+        return null;
     }
 
     public static CurseForgeFile getFileForProject(int projectId, int fileId) {
@@ -190,10 +197,14 @@ public class CurseForgeApi {
 
             CurseForgeCoreApiResponse<CurseForgeFile> response = download.asType(type);
 
-            return response.data;
+            if (response != null) {
+                return response.data;
+            }
         } else {
             return download.asClass(CurseForgeFile.class);
         }
+
+        return null;
     }
 
     public static CurseForgeProject getProjectById(int projectId) {
@@ -215,10 +226,14 @@ public class CurseForgeApi {
 
             CurseForgeCoreApiResponse<CurseForgeProject> response = download.asType(type);
 
-            return response.data;
+            if (response != null) {
+                return response.data;
+            }
         } else {
             return download.asClass(CurseForgeProject.class);
         }
+
+        return null;
     }
 
     public static Map<Integer, CurseForgeProject> getProjectsAsMap(int[] addonIds) {
@@ -263,13 +278,17 @@ public class CurseForgeApi {
 
             CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
-            return response.data;
+            if (response != null) {
+                return response.data;
+            }
         } else {
             java.lang.reflect.Type type = new TypeToken<List<CurseForgeProject>>() {
             }.getType();
 
             return download.asType(type);
         }
+
+        return null;
     }
 
     public static List<CurseForgeFile> getFiles(int[] fileIds) {
@@ -288,7 +307,11 @@ public class CurseForgeApi {
 
         CurseForgeCoreApiResponse<List<CurseForgeFile>> response = download.asType(type);
 
-        return response.data;
+        if (response != null) {
+            return response.data;
+        }
+
+        return null;
     }
 
     public static CurseForgeFingerprint checkFingerprint(long murmurHash) {
@@ -324,10 +347,14 @@ public class CurseForgeApi {
 
             CurseForgeCoreApiResponse<CurseForgeFingerprint> response = download.asType(type);
 
-            return response.data;
+            if (response != null) {
+                return response.data;
+            }
         } else {
             return download.asClass(CurseForgeFingerprint.class);
         }
+
+        return null;
     }
 
     public static List<CurseForgeCategoryForGame> getCategories() {
@@ -349,13 +376,17 @@ public class CurseForgeApi {
 
             CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>> response = download.asType(type);
 
-            return response.data;
+            if (response != null) {
+                return response.data;
+            }
         } else {
             java.lang.reflect.Type type = new TypeToken<List<CurseForgeCategoryForGame>>() {
             }.getType();
 
             return download.asType(type);
         }
+
+        return null;
     }
 
     public static List<CurseForgeCategoryForGame> getCategoriesForModpacks() {

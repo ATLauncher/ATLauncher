@@ -18,6 +18,7 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 import javax.swing.JPanel;
 
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.gui.card.NilCard;
@@ -40,10 +43,12 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
-        ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(search, page - 1, sort);
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
+        ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
+                category);
 
-        if (searchResult.hits.size() == 0) {
+        if (searchResult == null || searchResult.hits.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(GetText
@@ -70,12 +75,16 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
-        ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(search, page - 1, sort);
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
+        ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
+                category);
 
-        for (ModrinthSearchHit pack : searchResult.hits) {
-            contentPanel.add(new ModrinthPackCard(pack), gbc);
-            gbc.gridy++;
+        if (searchResult != null) {
+            for (ModrinthSearchHit pack : searchResult.hits) {
+                contentPanel.add(new ModrinthPackCard(pack), gbc);
+                gbc.gridy++;
+            }
         }
     }
 
@@ -120,6 +129,27 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         sortFields.put("updated", GetText.tr("Updated"));
 
         return sortFields;
+    }
+
+    @Override
+    public boolean supportsMinecraftVersionFiltering() {
+        return true;
+    }
+
+    @Override
+    public List<VersionManifestVersionType> getSupportedMinecraftVersionTypesForFiltering() {
+        List<VersionManifestVersionType> supportedTypes = new ArrayList<>();
+
+        supportedTypes.add(VersionManifestVersionType.RELEASE);
+
+        return supportedTypes;
+    }
+
+    @Override
+    public List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering() {
+        List<VersionManifestVersion> supportedTypes = new ArrayList<>();
+
+        return supportedTypes;
     }
 
     @Override

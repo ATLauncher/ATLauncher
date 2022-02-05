@@ -18,6 +18,8 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,21 +32,30 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.ATLauncherPackCard;
 import com.atlauncher.managers.PackManager;
 
+import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
 public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     private final List<Pack> packs = new LinkedList<>();
     private final List<ATLauncherPackCard> cards = new LinkedList<>();
 
-    private void loadPacksToShow(String searchText) {
+    private void loadPacksToShow(String minecraftVersion, String searchText) {
         List<Pack> packs = App.settings.sortPacksAlphabetically ? PackManager.getPacksSortedAlphabetically(false)
                 : PackManager.getPacksSortedPositionally(false);
 
         this.packs.addAll(packs.stream().filter(Pack::canInstall).filter(pack -> {
+            if (minecraftVersion != null) {
+                return pack.versions.stream().anyMatch(pv -> pv.minecraftVersion.id.equals(minecraftVersion));
+            }
+
+            return true;
+        }).filter(pack -> {
             if (!searchText.isEmpty()) {
                 return (pack.getDescription() != null
                         && Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
@@ -58,17 +69,19 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
         contentPanel.removeAll();
         this.packs.clear();
         this.cards.clear();
-        loadPacksToShow(search);
+        loadPacksToShow(minecraftVersion, search);
 
-        loadMorePacks(contentPanel, category, sort, search, page);
+        loadMorePacks(contentPanel, minecraftVersion, category, sort, search, page);
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
         this.packs.stream().skip(this.cards.size()).limit(10)
                 .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
 
@@ -122,6 +135,32 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public Map<String, String> getSortFields() {
         return new LinkedHashMap<>();
+    }
+
+    @Override
+    public boolean supportsMinecraftVersionFiltering() {
+        return true;
+    }
+
+    @Override
+    public List<VersionManifestVersionType> getSupportedMinecraftVersionTypesForFiltering() {
+        List<VersionManifestVersionType> supportedTypes = new ArrayList<>();
+
+        return supportedTypes;
+    }
+
+    @Override
+    public List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering() {
+        List<VersionManifestVersion> minecraftVersions = new ArrayList<>();
+
+        PackManager.getPacks().stream().forEach(p -> {
+            minecraftVersions
+                    .addAll(p.versions.stream().map(v -> v.minecraftVersion).distinct().collect(Collectors.toList()));
+        });
+
+        return minecraftVersions.stream().distinct().sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+            return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+        }).reversed()).collect(Collectors.toList());
     }
 
     @Override

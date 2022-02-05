@@ -18,6 +18,7 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ import javax.swing.JPanel;
 
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.CurseForgePackCard;
 import com.atlauncher.managers.ConfigManager;
@@ -38,10 +41,12 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
-        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, category);
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
+        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, category,
+                minecraftVersion);
 
-        if (packs.size() == 0) {
+        if (packs == null || packs.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(GetText
@@ -68,12 +73,16 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
-        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort);
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
+        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, category,
+                minecraftVersion);
 
-        for (CurseForgeProject pack : packs) {
-            contentPanel.add(new CurseForgePackCard(pack), gbc);
-            gbc.gridy++;
+        if (packs != null) {
+            for (CurseForgeProject pack : packs) {
+                contentPanel.add(new CurseForgePackCard(pack), gbc);
+                gbc.gridy++;
+            }
         }
     }
 
@@ -116,6 +125,27 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         sortFields.put("TotalDownloads", GetText.tr("Total Downloads"));
 
         return sortFields;
+    }
+
+    @Override
+    public boolean supportsMinecraftVersionFiltering() {
+        return true;
+    }
+
+    @Override
+    public List<VersionManifestVersionType> getSupportedMinecraftVersionTypesForFiltering() {
+        List<VersionManifestVersionType> supportedTypes = new ArrayList<>();
+
+        supportedTypes.add(VersionManifestVersionType.RELEASE);
+
+        return supportedTypes;
+    }
+
+    @Override
+    public List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering() {
+        List<VersionManifestVersion> supportedTypes = new ArrayList<>();
+
+        return supportedTypes;
     }
 
     @Override

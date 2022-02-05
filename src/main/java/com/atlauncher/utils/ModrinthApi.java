@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -93,8 +94,10 @@ public class ModrinthApi {
         return searchModrinth(gameVersions, query, page, sort, "fabric", ModrinthProjectType.MOD);
     }
 
-    public static ModrinthSearchResult searchModPacks(String query, int page, String sort) {
-        return searchModrinth(null, query, page, sort, null, ModrinthProjectType.MODPACK);
+    public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
+            String category) {
+        return searchModrinth(Arrays.asList(minecraftVersion), query, page, sort,
+                category, ModrinthProjectType.MODPACK);
     }
 
     public static ModrinthProject getProject(String projectId) {

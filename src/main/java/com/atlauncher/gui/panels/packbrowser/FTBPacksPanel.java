@@ -18,6 +18,7 @@
 package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 import javax.swing.JPanel;
 
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.FTBPackCard;
@@ -38,7 +41,8 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String category, String sort, String search, int page) {
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
         List<ModpacksChPackManifest> packs;
 
         if (search == null || search.isEmpty()) {
@@ -47,7 +51,7 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
             packs = ModpacksChApi.searchModPacks(search, page);
         }
 
-        if (packs.size() == 0) {
+        if (packs == null || packs.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(GetText
@@ -73,7 +77,8 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page) {
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
         List<ModpacksChPackManifest> packs;
 
         if (search == null || search.isEmpty()) {
@@ -82,9 +87,11 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
             packs = ModpacksChApi.searchModPacks(search, page);
         }
 
-        for (ModpacksChPackManifest pack : packs) {
-            contentPanel.add(new FTBPackCard(pack), gbc);
-            gbc.gridy++;
+        if (packs != null) {
+            for (ModpacksChPackManifest pack : packs) {
+                contentPanel.add(new FTBPackCard(pack), gbc);
+                gbc.gridy++;
+            }
         }
     }
 
@@ -123,6 +130,25 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
         sortFields.put("featured", GetText.tr("Featured"));
 
         return sortFields;
+    }
+
+    @Override
+    public boolean supportsMinecraftVersionFiltering() {
+        return false;
+    }
+
+    @Override
+    public List<VersionManifestVersionType> getSupportedMinecraftVersionTypesForFiltering() {
+        List<VersionManifestVersionType> supportedTypes = new ArrayList<>();
+
+        return supportedTypes;
+    }
+
+    @Override
+    public List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering() {
+        List<VersionManifestVersion> supportedTypes = new ArrayList<>();
+
+        return supportedTypes;
     }
 
     @Override

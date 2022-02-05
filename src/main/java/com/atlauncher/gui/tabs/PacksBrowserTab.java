@@ -25,6 +25,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -40,6 +41,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
@@ -50,6 +52,7 @@ import com.atlauncher.gui.panels.packbrowser.PackBrowserPlatformPanel;
 import com.atlauncher.gui.panels.packbrowser.PacksBrowserTabTitlePanel;
 import com.atlauncher.gui.panels.packbrowser.TechnicPacksPanel;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 
@@ -58,6 +61,9 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel actionsPanel = new JPanel();
+    private final JPanel minecraftVersionPanel = new JPanel();
+    private final JLabel minecraftVersionLabel = new JLabel(GetText.tr("Minecraft Version:"));
+    private final JComboBox<ComboItem<String>> minecraftVersionComboBox = new JComboBox<>();
     private final JPanel categoriesPanel = new JPanel();
     private final JLabel categoriesLabel = new JLabel(GetText.tr("Category:"));
     private final JComboBox<ComboItem<String>> categoriesComboBox = new JComboBox<>();
@@ -97,6 +103,23 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         actionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         actionsPanel
                 .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
+
+        minecraftVersionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
+        minecraftVersionPanel.add(minecraftVersionLabel);
+        minecraftVersionPanel.add(minecraftVersionComboBox);
+        actionsPanel.add(minecraftVersionPanel);
+
+        minecraftVersionComboBox.addActionListener(e -> {
+            if (!loading) {
+                loading = true;
+                page = 1;
+
+                // disable the tabs
+                platformTabbedPane.setEnabled(false);
+
+                load(true);
+            }
+        });
 
         categoriesPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
         categoriesPanel.add(categoriesLabel);
@@ -245,9 +268,26 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         // disable the tabs
         platformTabbedPane.setEnabled(false);
 
-        // remove category and sort values
+        // remove minecraft version, category and sort values
+        minecraftVersionComboBox.removeAllItems();
         categoriesComboBox.removeAllItems();
         sortComboBox.removeAllItems();
+
+        // add in minecraft versions combo box items if the platform supports it
+        if (selectedPanel.supportsMinecraftVersionFiltering()) {
+            minecraftVersionComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Versions")));
+
+            List<VersionManifestVersion> versionsToShow = selectedPanel
+                    .getSupportedMinecraftVersionsForFiltering().size() != 0
+                            ? selectedPanel.getSupportedMinecraftVersionsForFiltering()
+                            : MinecraftManager
+                                    .getFilteredMinecraftVersions(
+                                            selectedPanel.getSupportedMinecraftVersionTypesForFiltering());
+
+            for (VersionManifestVersion mv : versionsToShow) {
+                minecraftVersionComboBox.addItem(new ComboItem<String>(mv.id, mv.id));
+            }
+        }
 
         // add in categories combo box items if the platform supports it
         if (selectedPanel.hasCategories()) {
@@ -266,7 +306,8 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             }
         }
 
-        // hide sort/category if not needed
+        // hide minecraft version/sort/category if not needed
+        minecraftVersionPanel.setVisible(selectedPanel.supportsMinecraftVersionFiltering());
         categoriesPanel.setVisible(selectedPanel.hasCategories());
         sortPanel.setVisible(selectedPanel.hasSort());
 
@@ -290,6 +331,11 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
             // load in the content for the platform
             new Thread(() -> {
+                String minecraftVersion = null;
+                if (selectedPanel.hasCategories()) {
+                    minecraftVersion = ((ComboItem<String>) minecraftVersionComboBox.getSelectedItem()).getValue();
+                }
+
                 String category = null;
                 if (selectedPanel.hasCategories()) {
                     category = ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue();
@@ -301,7 +347,8 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                 }
 
                 // load in the content for the platform
-                selectedPanel.loadMorePacks(contentPanel, category, sort, searchField.getText(), page);
+                selectedPanel.loadMorePacks(contentPanel, minecraftVersion, category, sort, searchField.getText(),
+                        page);
 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -338,6 +385,11 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
 
         new Thread(() -> {
+            String minecraftVersion = null;
+            if (selectedPanel.supportsMinecraftVersionFiltering()) {
+                minecraftVersion = ((ComboItem<String>) minecraftVersionComboBox.getSelectedItem()).getValue();
+            }
+
             String category = null;
             if (selectedPanel.hasCategories()) {
                 category = ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue();
@@ -349,7 +401,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             }
 
             // load in the content for the platform
-            selectedPanel.load(contentPanel, category, sort, searchField.getText(), page);
+            selectedPanel.load(contentPanel, minecraftVersion, category, sort, searchField.getText(), page);
 
             SwingUtilities.invokeLater(new Runnable() {
                 @Override

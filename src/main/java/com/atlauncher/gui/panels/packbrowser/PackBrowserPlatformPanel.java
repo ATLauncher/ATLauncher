@@ -19,10 +19,13 @@ package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.panels.LoadingPanel;
 
 import org.mini2Dx.gettext.GetText;
@@ -42,13 +45,22 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
 
     public abstract Map<String, String> getSortFields();
 
+    public abstract boolean supportsMinecraftVersionFiltering();
+
+    public abstract List<VersionManifestVersionType> getSupportedMinecraftVersionTypesForFiltering();
+
+    public abstract List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering();
+
     public abstract boolean hasPagination();
 
-    protected abstract void loadPacks(JPanel contentPanel, String category, String sort, String search, int page);
+    protected abstract void loadPacks(JPanel contentPanel, String minecraftVersion,
+            String category, String sort, String search, int page);
 
-    public abstract void loadMorePacks(JPanel contentPanel, String category, String sort, String search, int page);
+    public abstract void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            String search, int page);
 
-    public void load(JPanel contentPanel, String category, String sort, String search, int page) {
+    public void load(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+            int page) {
         // remove all components on the content panel
         contentPanel.removeAll();
 
@@ -61,7 +73,7 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
         contentPanel.add(new LoadingPanel(GetText.tr("Loading {0} Packs...", getPlatformName())), gbc);
 
         // load in the packs
-        loadPacks(contentPanel, category, sort, search, page);
+        loadPacks(contentPanel, minecraftVersion, category, sort, search, page);
     }
 
     public PackBrowserPlatformPanel() {
