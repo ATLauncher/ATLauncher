@@ -984,6 +984,8 @@ public class Instance extends MinecraftVersion {
                 String line;
                 int detectedError = 0;
 
+                String replaceUUID = account.uuid.replace("-", "");
+
                 while ((line = br.readLine()) != null) {
                     if (line.contains("java.lang.OutOfMemoryError")
                             || line.contains("There is insufficient memory for the Java Runtime Environment")) {
@@ -1009,6 +1011,7 @@ public class Instance extends MinecraftVersion {
                         line = line.replace(account.minecraftUsername, "**MINECRAFTUSERNAME**");
                         line = line.replace(account.username, "**MINECRAFTUSERNAME**");
                         line = line.replace(account.uuid, "**UUID**");
+                        line = line.replace(replaceUUID, "**UUID**");
                     }
 
                     if (account.getAccessToken() != null) {
