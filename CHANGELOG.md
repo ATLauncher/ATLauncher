@@ -18,5 +18,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Hitting check for updates in edit mods screen not showing a loader initially
 - Launching a server on Windows from a folder with a space not working [#544]
 - Account UUID without dashes not being censored in logs [#546]
+- Add some more protection to exceptions when logging out debug network logs
 
 ### Misc
