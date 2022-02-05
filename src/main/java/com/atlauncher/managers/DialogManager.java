@@ -56,7 +56,7 @@ public final class DialogManager {
     public List<String> options = new LinkedList<>();
     public Icon icon = null;
     public int lookAndFeel = DialogManager.DEFAULT_OPTION;
-    public Integer defaultOption = null;
+    public String defaultOption = null;
     public int type = DialogManager.QUESTION;
 
     private DialogManager(int dialogType) {
@@ -89,10 +89,14 @@ public final class DialogManager {
     }
 
     public static DialogManager yesNoDialog() {
+        return yesNoDialog(true);
+    }
+
+    public static DialogManager yesNoDialog(boolean yesDefault) {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(GetText.tr("Yes"), true);
-        dialog.addOption(GetText.tr("No"));
+        dialog.addOption(GetText.tr("Yes"), yesDefault);
+        dialog.addOption(GetText.tr("No"), !yesDefault);
 
         return dialog;
     }
@@ -132,7 +136,7 @@ public final class DialogManager {
         return this;
     }
 
-    public DialogManager setDefaultOption(int defaultOption) {
+    public DialogManager setDefaultOption(String defaultOption) {
         this.defaultOption = defaultOption;
         return this;
     }
@@ -146,7 +150,7 @@ public final class DialogManager {
         this.options.add(option);
 
         if (isDefault) {
-            this.defaultOption = this.options.size() - 1;
+            this.defaultOption = option;
         }
 
         return this;

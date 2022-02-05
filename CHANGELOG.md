@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Large memory usage when installing large CurseForge packs due to using murmur hashes [#493]
+- Default options on dialogs not being correct
 
 ### Misc

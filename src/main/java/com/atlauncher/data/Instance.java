@@ -774,12 +774,11 @@ public class Instance extends MinecraftVersion {
                 : this.launcher.maximumMemory;
         if ((maximumMemory < this.launcher.requiredMemory)
                 && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
-            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficient Ram"))
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Insufficient Ram"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?",
                             this.launcher.requiredMemory)).build())
-                    .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
-                    .setDefaultOption(DialogManager.YES_OPTION).show();
+                    .setType(DialogManager.ERROR).show();
 
             if (ret != 0) {
                 LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
@@ -789,12 +788,11 @@ public class Instance extends MinecraftVersion {
         }
         int permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
         if (permGen < this.launcher.requiredPermGen) {
-            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Insufficent Permgen"))
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Insufficent Permgen"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?",
                             this.launcher.requiredPermGen)).build())
-                    .setLookAndFeel(DialogManager.YES_NO_OPTION).setType(DialogManager.ERROR)
-                    .setDefaultOption(DialogManager.YES_OPTION).show();
+                    .setType(DialogManager.ERROR).show();
             if (ret != 0) {
                 LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
                 App.launcher.setMinecraftLaunched(false);
