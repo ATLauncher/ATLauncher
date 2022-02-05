@@ -238,7 +238,11 @@ public class CurseForgeApi {
 
     public static Map<Integer, CurseForgeProject> getProjectsAsMap(int[] addonIds) {
         try {
-            return getProjects(addonIds).stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
+            List<CurseForgeProject> projects = getProjects(addonIds);
+
+            if (projects != null) {
+                return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
+            }
         } catch (Throwable t) {
             LogManager.logStackTrace("Error trying to get CurseForge projects as map", t);
         }

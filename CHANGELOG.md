@@ -20,5 +20,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Account UUID without dashes not being censored in logs [#546]
 - Add some more protection to exceptions when logging out debug network logs
 - Change Update Data button to Check For Updates to make it clearer what it does
+- Some exceptions not being handled correctly when CurseForge api is having issues
 
 ### Misc

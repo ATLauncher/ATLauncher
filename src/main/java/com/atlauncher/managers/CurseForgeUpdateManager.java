@@ -49,41 +49,44 @@ public class CurseForgeUpdateManager {
 
         Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
-        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
-                .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
-                    boolean wasUpdated = false;
+        if (foundProjects != null) {
 
-                    CurseForgeProject curseForgeMod = foundProjects.get(i.launcher.curseForgeManifest != null
-                            ? i.launcher.curseForgeManifest.projectID
-                            : i.launcher.curseForgeProject.id);
+            boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
+                    .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
+                        boolean wasUpdated = false;
 
-                    if (curseForgeMod == null) {
-                        return false;
-                    }
+                        CurseForgeProject curseForgeMod = foundProjects.get(i.launcher.curseForgeManifest != null
+                                ? i.launcher.curseForgeManifest.projectID
+                                : i.launcher.curseForgeProject.id);
 
-                    CurseForgeFile latestVersion = curseForgeMod.latestFiles.stream()
-                            .sorted(Comparator.comparingInt((
-                                    CurseForgeFile file) -> file.id).reversed())
-                            .findFirst().orElse(null);
+                        if (curseForgeMod == null) {
+                            return false;
+                        }
 
-                    if (latestVersion == null) {
-                        return false;
-                    }
+                        CurseForgeFile latestVersion = curseForgeMod.latestFiles.stream()
+                                .sorted(Comparator.comparingInt((
+                                        CurseForgeFile file) -> file.id).reversed())
+                                .findFirst().orElse(null);
 
-                    // if there is a change to the latestversion for an instance (but not a first
-                    // time write), then refresh instances panel
-                    if (Data.CURSEFORGE_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
-                        wasUpdated = true;
-                    }
+                        if (latestVersion == null) {
+                            return false;
+                        }
 
-                    Data.CURSEFORGE_INSTANCE_LATEST_VERSION.put(i, latestVersion);
+                        // if there is a change to the latestversion for an instance (but not a first
+                        // time write), then refresh instances panel
+                        if (Data.CURSEFORGE_INSTANCE_LATEST_VERSION.containsKey(i)
+                                && Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                            wasUpdated = true;
+                        }
 
-                    return wasUpdated;
-                }).anyMatch(b -> b);
+                        Data.CURSEFORGE_INSTANCE_LATEST_VERSION.put(i, latestVersion);
 
-        if (refreshInstancesPanel) {
-            App.launcher.reloadInstancesPanel();
+                        return wasUpdated;
+                    }).anyMatch(b -> b);
+
+            if (refreshInstancesPanel) {
+                App.launcher.reloadInstancesPanel();
+            }
         }
 
         PerformanceManager.end();
