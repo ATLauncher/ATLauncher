@@ -327,60 +327,71 @@ public class DisableableMod implements Serializable {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
 
         if (isFromCurseForge()) {
-            List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
-
-            if (curseForgeFiles == null) {
-                return false;
-            }
-
-            Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
-                    .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
-
-            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                curseForgeFilesStream = curseForgeFilesStream.filter(file -> file.gameVersions.contains(instance.id));
-            }
-
-            if (App.settings.addModRestriction == AddModRestriction.LAX) {
-                try {
-                    List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
-                            .stream().map(mv -> mv.id).collect(Collectors.toList());
-
-                    curseForgeFilesStream = curseForgeFilesStream.filter(
-                            file -> file.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
-                } catch (InvalidMinecraftVersion e) {
-                    LogManager.logStackTrace(e);
-                }
-            }
-
-            // filter out mods that are explicitely for Forge/Fabric and not our loader
-            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
-                        && !instance.launcher.loaderVersion.isForge()) {
-                    return false;
-                }
-
-                if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
-                        && !instance.launcher.loaderVersion.isFabric()) {
-                    return false;
-                }
-
-                return true;
-            });
-
-            if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
-                return false;
-            }
-
-            ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(
+            ProgressDialog<Object> dialog = new ProgressDialog<>(
                     GetText.tr("Checking For Update On CurseForge"), 0, GetText.tr("Checking For Update On CurseForge"),
                     "Cancelled checking for update on CurseForge", parent);
             dialog.addThread(new Thread(() -> {
+                List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
+
+                if (curseForgeFiles == null) {
+                    dialog.setReturnValue(false);
+                    dialog.close();
+                    return;
+                }
+
+                Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
+                        .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+
+                if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                    curseForgeFilesStream = curseForgeFilesStream
+                            .filter(file -> file.gameVersions.contains(instance.id));
+                }
+
+                if (App.settings.addModRestriction == AddModRestriction.LAX) {
+                    try {
+                        List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
+                                .stream().map(mv -> mv.id).collect(Collectors.toList());
+
+                        curseForgeFilesStream = curseForgeFilesStream.filter(
+                                file -> file.gameVersions.stream()
+                                        .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                    } catch (InvalidMinecraftVersion e) {
+                        LogManager.logStackTrace(e);
+                    }
+                }
+
+                // filter out mods that are explicitely for Forge/Fabric and not our loader
+                curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                    if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
+                            && !instance.launcher.loaderVersion.isForge()) {
+                        return false;
+                    }
+
+                    if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
+                            && !instance.launcher.loaderVersion.isFabric()) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
+                    dialog.setReturnValue(false);
+                    dialog.close();
+                    return;
+                }
+
                 dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
                 dialog.close();
             }));
             dialog.start();
 
-            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
+            if (dialog.getReturnValue() instanceof Boolean) {
+                return ((Boolean) dialog.getReturnValue()) == true;
+            }
+
+            new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instance,
+                    curseForgeFileId);
         } else if (isFromModrinth()) {
             ProgressDialog<List<Object>> dialog = new ProgressDialog<>(GetText.tr("Checking For Update On Modrinth"), 0,
                     GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth", parent);
