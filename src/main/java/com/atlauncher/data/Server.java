@@ -122,7 +122,10 @@ public class Server {
                 arguments.add("start");
                 arguments.add("\"" + name + "\"");
                 arguments.add(getRoot().resolve(serverScript).toString());
-                arguments.add(args);
+
+                if (!args.isEmpty()) {
+                    arguments.add(args);
+                }
             } else if (OS.isLinux()) {
                 // use some best guesses for some terminal programs if in path
                 if (Utils.executableInPath("x-terminal-emulator")) {

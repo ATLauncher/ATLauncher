@@ -15,5 +15,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Large memory usage when installing large CurseForge packs due to using murmur hashes [#493]
 - Default options on dialogs not being correct
 - Hitting check for updates in edit mods screen not showing a loader initially
+- Launching a server on Windows from a folder with a space not working [#544]
 
 ### Misc
