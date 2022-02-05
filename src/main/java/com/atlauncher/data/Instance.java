@@ -1009,9 +1009,10 @@ public class Instance extends MinecraftVersion {
                         line = line.replace(account.minecraftUsername, "**MINECRAFTUSERNAME**");
                         line = line.replace(account.username, "**MINECRAFTUSERNAME**");
                         line = line.replace(account.uuid, "**UUID**");
-                        if (account.getAccessToken() != null) {
-                            line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                        }
+                    }
+
+                    if (account.getAccessToken() != null) {
+                        line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
                     }
 
                     if (line.contains("log4j:")) {
