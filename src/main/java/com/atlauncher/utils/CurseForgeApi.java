@@ -340,6 +340,10 @@ public class CurseForgeApi {
                             MediaType.get("application/json; charset=utf-8")));
         } else {
             url = String.format("%s/fingerprint", Constants.CURSEFORGE_API_URL);
+
+            download = download
+                    .post(RequestBody.create(Gsons.DEFAULT.toJson(murmurHashes),
+                            MediaType.get("application/json; charset=utf-8")));
         }
 
         download = download.setUrl(url)
