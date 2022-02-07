@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.11.1
 
 ### New Features
+- Add more items to the context menu of instances when right clicking the image
 
 ### Fixes
 

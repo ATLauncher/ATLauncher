@@ -116,6 +116,7 @@ import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
@@ -2168,6 +2169,63 @@ public class Instance extends MinecraftVersion {
     public void startRename() {
         Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Rename", getAnalyticsCategory());
         new RenameInstanceDialog(this);
+    }
+
+    public void startClone() {
+        String clonedName = JOptionPane.showInputDialog(App.launcher.getParent(),
+                GetText.tr("Enter a new name for this cloned instance."),
+                GetText.tr("Cloning Instance"), JOptionPane.INFORMATION_MESSAGE);
+
+        if (clonedName != null && clonedName.length() >= 1
+                && InstanceManager.getInstanceByName(clonedName) == null
+                && InstanceManager
+                        .getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
+                && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
+                        FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
+            Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Clone",
+                    getAnalyticsCategory());
+
+            final String newName = clonedName;
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
+                    GetText.tr("Cloning Instance. Please wait..."), null, App.launcher.getParent());
+            dialog.addThread(new Thread(() -> {
+                InstanceManager.cloneInstance(this, newName);
+                dialog.close();
+                App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
+            }));
+            dialog.start();
+        } else if (clonedName == null || clonedName.equals("")) {
+            LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+        } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+            LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+        } else if (Files
+                .exists(FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
+            LogManager.error(
+                    "Error Occurred While Cloning Instance! Folder Already Exists Rename It And Try Again!");
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+        } else {
+            LogManager.error(
+                    "Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+        }
     }
 
     public void startChangeDescription() {

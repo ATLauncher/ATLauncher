@@ -27,13 +27,11 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -41,7 +39,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -518,134 +515,59 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
-                    JMenuItem changeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
-                    rightClickMenu.add(changeDescriptionItem);
+                    JMenuItem playOnlineButton = new JMenuItem(GetText.tr("Play Online"));
+                    playOnlineButton.addActionListener(l -> {
+                        play(false);
+                    });
+                    rightClickMenu.add(playOnlineButton);
 
-                    JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
-                    rightClickMenu.add(changeImageItem);
+                    JMenuItem playOfflineButton = new JMenuItem(GetText.tr("Play Offline"));
+                    playOfflineButton.addActionListener(l -> {
+                        play(true);
+                    });
+                    rightClickMenu.add(playOnlineButton);
 
-                    JMenuItem cloneItem = new JMenuItem(GetText.tr("Clone"));
-                    rightClickMenu.add(cloneItem);
+                    rightClickMenu.addSeparator();
 
-                    JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
-                    rightClickMenu.add(shareCodeItem);
+                    JMenuItem reinstallItem = new JMenuItem(GetText.tr("Reinstall"));
+                    reinstallItem.addActionListener(l -> instance.startReinstall());
+                    reinstallItem.setVisible(instance.isUpdatable());
+                    rightClickMenu.add(reinstallItem);
 
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
-                    rightClickMenu.add(updateItem);
-
-                    changeDescriptionItem.setVisible(instance.canChangeDescription());
-
-                    shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
-                            && !instance.isExternalPack() && !instance.launcher.vanillaInstance
-                            && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
-
+                    updateItem.addActionListener(l -> instance.update());
                     updateItem.setVisible(instance.isUpdatable());
                     updateItem.setEnabled(instance.hasUpdate() && instance.launcher.isPlayable);
+                    rightClickMenu.add(updateItem);
 
-                    rightClickMenu.show(image, e.getX(), e.getY());
+                    rightClickMenu.addSeparator();
 
-                    changeDescriptionItem.addActionListener(e13 -> {
+                    JMenuItem renameItem = new JMenuItem(GetText.tr("Rename"));
+                    renameMenuItem.addActionListener(l -> instance.startRename());
+                    rightClickMenu.add(renameItem);
+
+                    JMenuItem changeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
+                    changeDescriptionItem.addActionListener(l -> {
                         instance.startChangeDescription();
                         descArea.setText(instance.launcher.description);
                     });
+                    changeDescriptionItem.setVisible(instance.canChangeDescription());
+                    rightClickMenu.add(changeDescriptionItem);
 
-                    changeImageItem.addActionListener(e13 -> {
+                    JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
+                    changeImageItem.addActionListener(l -> {
                         instance.startChangeImage();
                         image.setImage(instance.getImage().getImage());
                     });
+                    rightClickMenu.add(changeImageItem);
 
-                    cloneItem.addActionListener(e14 -> {
-                        String clonedName = JOptionPane.showInputDialog(App.launcher.getParent(),
-                                GetText.tr("Enter a new name for this cloned instance."),
-                                GetText.tr("Cloning Instance"), JOptionPane.INFORMATION_MESSAGE);
-                        if (clonedName != null && clonedName.length() >= 1
-                                && InstanceManager.getInstanceByName(clonedName) == null
-                                && InstanceManager
-                                        .getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                                && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
-                                        FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
-                            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Clone",
-                                    instance.getAnalyticsCategory());
-
-                            final String newName = clonedName;
-                            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
-                                    GetText.tr("Cloning Instance. Please wait..."), null, App.launcher.getParent());
-                            dialog.addThread(new Thread(() -> {
-                                InstanceManager.cloneInstance(instance, newName);
-                                dialog.close();
-                                App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
-                            }));
-                            dialog.start();
-                        } else if (clonedName == null || clonedName.equals("")) {
-                            LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
-                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                            .build())
-                                    .setType(DialogManager.ERROR).show();
-                        } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-                            LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
-                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                            .build())
-                                    .setType(DialogManager.ERROR).show();
-                        } else if (Files
-                                .exists(FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
-                            LogManager.error(
-                                    "Error Occurred While Cloning Instance! Folder Already Exists Rename It And Try Again!");
-                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                            .build())
-                                    .setType(DialogManager.ERROR).show();
-                        } else {
-                            LogManager.error(
-                                    "Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
-                            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
-                                            .build())
-                                    .setType(DialogManager.ERROR).show();
-                        }
+                    JMenuItem cloneItem = new JMenuItem(GetText.tr("Clone"));
+                    cloneItem.addActionListener(l -> {
+                        instance.startClone();
                     });
+                    rightClickMenu.add(cloneItem);
 
-                    updateItem.addActionListener(e12 -> {
-                        if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
-                            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
-                                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                            "An update is available for this instance.<br/><br/>Do you want to update now?"))
-                                            .build())
-                                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
-
-                            if (ret == 0) {
-                                if (AccountManager.getSelectedAccount() == null) {
-                                    DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                                            .setContent(
-                                                    GetText.tr("Cannot update pack as you have no account selected."))
-                                            .setType(DialogManager.ERROR).show();
-                                } else {
-                                    Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version,
-                                            "Update", instance.getAnalyticsCategory());
-                                    instance.update();
-                                }
-                            } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION) {
-                                if (!App.launcher.minecraftLaunched) {
-                                    if (instance.launch()) {
-                                        App.launcher.setMinecraftLaunched(true);
-                                    }
-                                }
-                            } else if (ret == 2) {
-                                instance.ignoreUpdate();
-                                if (!App.launcher.minecraftLaunched) {
-                                    if (instance.launch()) {
-                                        App.launcher.setMinecraftLaunched(true);
-                                    }
-                                }
-                            }
-                        }
-                    });
-
+                    JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
                     shareCodeItem.addActionListener(e1 -> {
                         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "MakeShareCode",
                                 instance.getAnalyticsCategory());
@@ -672,6 +594,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             LogManager.logStackTrace("API call failed", ex);
                         }
                     });
+                    shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
+                            && !instance.isExternalPack() && !instance.launcher.vanillaInstance
+                            && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
+                    rightClickMenu.add(shareCodeItem);
+
+                    rightClickMenu.show(image, e.getX(), e.getY());
                 }
             }
 
