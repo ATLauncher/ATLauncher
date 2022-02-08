@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add more items to the context menu of instances when right clicking the image
+- Support specific client overrides from the Modrinth modpack format
 
 ### Fixes
 

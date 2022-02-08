@@ -2280,6 +2280,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireSubProgressUnknown();
             fireTask(GetText.tr("Copying Overrides"));
             Utils.copyDirectory(this.modrinthExtractedPath.resolve("overrides").toFile(), this.root.toFile(), false);
+
+            if (isServer && Files.isDirectory(this.modrinthExtractedPath.resolve("server-overrides"))) {
+                Utils.copyDirectory(this.modrinthExtractedPath.resolve("server-overrides").toFile(), this.root.toFile(),
+                        false);
+            } else if (!isServer && Files.isDirectory(this.modrinthExtractedPath.resolve("client-overrides"))) {
+                Utils.copyDirectory(this.modrinthExtractedPath.resolve("client-overrides").toFile(), this.root.toFile(),
+                        false);
+            }
         } else if (modpacksChPackManifest != null) {
             fireSubProgressUnknown();
             fireTask(GetText.tr("Calculating Files To Download"));
