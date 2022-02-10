@@ -77,7 +77,7 @@ public class ImportInstanceDialog extends JDialog {
         middle.setLayout(new BorderLayout());
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
-                "Select an exported instance zip to import it.<br/>We currently support CurseForge, Modrinth and MultiMC exported zip files, as well as CurseForge.com links."))
+                "Select a zip/mrpack file to import it.<br/>We currently support CurseForge, Modrinth and MultiMC exported files/urls, as well as CurseForge.com links."))
                 .build());
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);
@@ -88,7 +88,7 @@ public class ImportInstanceDialog extends JDialog {
         gbc.gridy = 0;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabel urlLabel = new JLabel(GetText.tr("Url") + ": ");
+        JLabel urlLabel = new JLabel(GetText.tr("URL") + ": ");
         mainPanel.add(urlLabel, gbc);
 
         gbc.gridx++;

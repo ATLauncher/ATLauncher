@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Support specific client overrides from the Modrinth modpack format
 
 ### Fixes
+- Issues importing mrpack files
 
 ### Misc
