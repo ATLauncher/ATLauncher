@@ -318,11 +318,6 @@ public class CurseForgeApi {
         return null;
     }
 
-    public static CurseForgeFingerprint checkFingerprint(long murmurHash) {
-        Long[] hashes = { murmurHash };
-        return checkFingerprints(hashes);
-    }
-
     public static CurseForgeFingerprint checkFingerprints(Long[] murmurHashes) {
         boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
         String url;

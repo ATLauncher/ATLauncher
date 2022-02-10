@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issues importing mrpack files
+- Adding multiple mods to a pack or importing causing large number of fingerprint requests
 
 ### Misc

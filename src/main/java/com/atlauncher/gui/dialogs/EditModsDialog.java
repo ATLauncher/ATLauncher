@@ -29,7 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +53,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
-import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.gui.components.ModsJCheckBox;
@@ -339,34 +341,6 @@ public class EditModsDialog extends JDialog {
             }
         }
 
-        if (!App.settings.dontCheckModsOnCurseForge) {
-            try {
-                long murmurHash = Hashing.murmur(file.toPath());
-
-                LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
-
-                CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
-
-                if (fingerprintResponse != null && fingerprintResponse.exactMatches.size() == 1) {
-                    CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
-
-                    // add CurseForge information
-                    mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
-                    mod.curseForgeProjectId = foundMod.id;
-                    mod.curseForgeFile = foundMod.file;
-                    mod.curseForgeFileId = foundMod.file.id;
-
-                    mod.name = mod.curseForgeProject.name;
-                    mod.description = mod.curseForgeProject.summary;
-
-                    LogManager.debug("Found matching mod from CurseForge called " + mod.curseForgeProject.name
-                            + " with file named " + mod.curseForgeFile.displayName);
-                }
-            } catch (IOException e1) {
-                LogManager.logStackTrace(e1);
-            }
-        }
-
         return mod;
     }
 
@@ -389,6 +363,65 @@ public class EditModsDialog extends JDialog {
                     List<DisableableMod> mods = files.parallelStream()
                             .map(file -> generateMod(file.toFile(), com.atlauncher.data.Type.mods, true))
                             .collect(Collectors.toList());
+
+                    if (!App.settings.dontCheckModsOnCurseForge) {
+                        Map<Long, DisableableMod> murmurHashes = new HashMap<>();
+
+                        mods.stream()
+                                .filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
+                                .filter(dm -> dm.getFile(instance.ROOT, instance.id) != null).forEach(dm -> {
+                                    try {
+                                        long hash = Hashing
+                                                .murmur(dm.getFile(instance.ROOT, instance.id).toPath());
+                                        murmurHashes.put(hash, dm);
+                                    } catch (Throwable t) {
+                                        LogManager.logStackTrace(t);
+                                    }
+                                });
+
+                        if (murmurHashes.size() != 0) {
+                            CurseForgeFingerprint fingerprintResponse = CurseForgeApi
+                                    .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+
+                            if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
+                                int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
+                                        .toArray();
+
+                                if (projectIdsFound.length != 0) {
+                                    Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
+                                            .getProjectsAsMap(projectIdsFound);
+
+                                    if (foundProjects != null) {
+                                        fingerprintResponse.exactMatches.stream()
+                                                .filter(em -> em != null && em.file != null
+                                                        && murmurHashes.containsKey(em.file.packageFingerprint))
+                                                .forEach(foundMod -> {
+                                                    DisableableMod dm = murmurHashes
+                                                            .get(foundMod.file.packageFingerprint);
+
+                                                    // add CurseForge information
+                                                    dm.curseForgeProjectId = foundMod.id;
+                                                    dm.curseForgeFile = foundMod.file;
+                                                    dm.curseForgeFileId = foundMod.file.id;
+
+                                                    CurseForgeProject curseForgeProject = foundProjects
+                                                            .get(foundMod.id);
+
+                                                    if (curseForgeProject != null) {
+                                                        dm.curseForgeProject = curseForgeProject;
+                                                        dm.name = curseForgeProject.name;
+                                                        dm.description = curseForgeProject.summary;
+                                                    }
+
+                                                    LogManager.debug("Found matching mod from CurseForge called "
+                                                            + dm.curseForgeFile.displayName);
+                                                });
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     mods.forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
                     instance.launcher.mods.addAll(mods);
                     instance.save();

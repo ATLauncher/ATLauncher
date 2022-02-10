@@ -21,7 +21,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.swing.JComponent;
@@ -32,7 +35,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
-import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.gui.dialogs.EditModsDialog;
@@ -95,32 +98,34 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
                 if (ret != 0) {
                     type = Type.jar;
-                    instanceFile = dialog.instance.getRoot().resolve("jarmods").toFile();
+                    instanceFile = dialog.instance.ROOT.resolve("jarmods").toFile();
                 } else {
                     type = Type.mods;
-                    instanceFile = dialog.instance.getRoot().resolve("mods").toFile();
+                    instanceFile = dialog.instance.ROOT.resolve("mods").toFile();
                 }
             } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
                 type = Type.coremods;
-                instanceFile = dialog.instance.getRoot().resolve("coremods").toFile();
+                instanceFile = dialog.instance.ROOT.resolve("coremods").toFile();
             } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
                 type = Type.texturepack;
-                instanceFile = dialog.instance.getRoot().resolve("texturepacks").toFile();
+                instanceFile = dialog.instance.ROOT.resolve("texturepacks").toFile();
             } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
                 type = Type.resourcepack;
-                instanceFile = dialog.instance.getRoot().resolve("resourcepacks").toFile();
+                instanceFile = dialog.instance.ROOT.resolve("resourcepacks").toFile();
             } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
                 type = Type.shaderpack;
-                instanceFile = dialog.instance.getRoot().resolve("shaderpacks").toFile();
+                instanceFile = dialog.instance.ROOT.resolve("shaderpacks").toFile();
             } else {
                 type = Type.mods;
-                instanceFile = dialog.instance.getRoot().resolve("mods").toFile();
+                instanceFile = dialog.instance.ROOT.resolve("mods").toFile();
             }
 
             final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
                     GetText.tr("Copying Mods"), dialog);
 
             progressDialog.addThread(new Thread(() -> {
+                List<DisableableMod> modsAdded = new ArrayList<>();
+
                 for (Object item : data) {
                     File file = (File) item;
                     File copyTo = instanceFile;
@@ -133,7 +138,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     }
 
                     if (this.disabled) {
-                        copyTo = dialog.instance.getRoot().resolve("disabledmods").toFile();
+                        copyTo = dialog.instance.ROOT.resolve("disabledmods").toFile();
                     }
 
                     DisableableMod mod = new DisableableMod();
@@ -161,43 +166,75 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                         }
                     }
 
-                    if (!App.settings.dontCheckModsOnCurseForge) {
-                        try {
-                            long murmurHash = Hashing.murmur(file.toPath());
-
-                            LogManager.debug("File " + file.getName() + " has murmur hash of " + murmurHash);
-
-                            CurseForgeFingerprint fingerprintResponse = CurseForgeApi.checkFingerprint(murmurHash);
-
-                            if (fingerprintResponse.exactMatches.size() == 1) {
-                                CurseForgeFingerprintedMod foundMod = fingerprintResponse.exactMatches.get(0);
-
-                                // add CurseForge information
-                                mod.curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
-                                mod.curseForgeProjectId = foundMod.id;
-                                mod.curseForgeFile = foundMod.file;
-                                mod.curseForgeFileId = foundMod.file.id;
-
-                                mod.name = mod.curseForgeProject.name;
-                                mod.description = mod.curseForgeProject.summary;
-
-                                LogManager
-                                        .debug("Found matching mod from CurseForge called " + mod.curseForgeProject.name
-                                                + " with file named " + mod.curseForgeFile.displayName);
-                            }
-                        } catch (IOException e1) {
-                            LogManager.logStackTrace(e1);
-                        }
-                    }
-
                     if (!copyTo.exists()) {
                         copyTo.mkdirs();
                     }
 
                     if (Utils.copyFile(file, copyTo)) {
-                        dialog.instance.launcher.mods.add(mod);
+                        modsAdded.add(mod);
                     }
                 }
+
+                if (!App.settings.dontCheckModsOnCurseForge) {
+                    Map<Long, DisableableMod> murmurHashes = new HashMap<>();
+
+                    modsAdded.stream()
+                            .filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
+                            .filter(dm -> dm.getFile(dialog.instance.ROOT, dialog.instance.id) != null).forEach(dm -> {
+                                try {
+                                    long hash = Hashing
+                                            .murmur(dm.getFile(dialog.instance.ROOT, dialog.instance.id).toPath());
+                                    murmurHashes.put(hash, dm);
+                                } catch (Throwable t) {
+                                    LogManager.logStackTrace(t);
+                                }
+                            });
+
+                    if (murmurHashes.size() != 0) {
+                        CurseForgeFingerprint fingerprintResponse = CurseForgeApi
+                                .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+
+                        if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
+                            int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
+                                    .toArray();
+
+                            if (projectIdsFound.length != 0) {
+                                Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
+                                        .getProjectsAsMap(projectIdsFound);
+
+                                if (foundProjects != null) {
+                                    fingerprintResponse.exactMatches.stream()
+                                            .filter(em -> em != null && em.file != null
+                                                    && murmurHashes.containsKey(em.file.packageFingerprint))
+                                            .forEach(foundMod -> {
+                                                DisableableMod dm = murmurHashes
+                                                        .get(foundMod.file.packageFingerprint);
+
+                                                // add CurseForge information
+                                                dm.curseForgeProjectId = foundMod.id;
+                                                dm.curseForgeFile = foundMod.file;
+                                                dm.curseForgeFileId = foundMod.file.id;
+
+                                                CurseForgeProject curseForgeProject = foundProjects
+                                                        .get(foundMod.id);
+
+                                                if (curseForgeProject != null) {
+                                                    dm.curseForgeProject = curseForgeProject;
+                                                    dm.name = curseForgeProject.name;
+                                                    dm.description = curseForgeProject.summary;
+                                                }
+
+                                                LogManager.debug("Found matching mod from CurseForge called "
+                                                        + dm.curseForgeFile.displayName);
+                                            });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                dialog.instance.launcher.mods.addAll(modsAdded);
+
                 progressDialog.close();
             }));
             progressDialog.start();
