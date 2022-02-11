@@ -947,12 +947,15 @@ public class Instance extends MinecraftVersion {
                     return;
                 }
 
+                if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
+                        && App.settings.enableLogs) {
+                    App.TASKPOOL.execute(() -> {
+                        addPlay(this.launcher.version);
+                    });
+                }
+
                 if ((App.autoLaunch != null && App.closeLauncher)
                         || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
-                    if (App.settings.enableLogs) {
-                        addTimePlayed(1, this.launcher.version); // count the stats, just without time played
-                    }
-
                     System.exit(0);
                 }
 
@@ -1197,6 +1200,19 @@ public class Instance extends MinecraftVersion {
                 Utils.delete(report); // Delete the pending report since we've sent it
             }
         }
+    }
+
+    public String addPlay(String version) {
+        Map<String, Object> request = new HashMap<>();
+
+        request.put("version", version);
+
+        try {
+            return Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/play", request);
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+        return "Play Not Added!";
     }
 
     public String addTimePlayed(int time, String version) {
