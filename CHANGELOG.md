@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in play metric tracking for ATLauncher packs along side existing play time metrics
 
 ### Fixes
+- Issue with Modrinth moderator_message api field causing exceptions [#552]
 
 ### Misc

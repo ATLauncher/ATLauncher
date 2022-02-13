@@ -41,7 +41,7 @@ public class ModrinthProject {
     public ModrinthProjectStatus status;
 
     @SerializedName("moderator_message")
-    public String moderatorMessage;
+    public ModrinthModeratorMessage moderatorMessage;
 
     public ModrinthLicense license;
 
