@@ -367,6 +367,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setEditInstanceMenuItemVisbility() {
+        reinstallMenuItem.setVisible(instance.isUpdatable());
+
         addFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addQuiltMenuItem.setVisible(instance.launcher.loaderVersion == null);
@@ -527,7 +529,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     });
                     rightClickMenu.add(playOnlineButton);
 
-                    rightClickMenu.addSeparator();
+                    if (instance.isUpdatable()) {
+                        rightClickMenu.addSeparator();
+                    }
 
                     JMenuItem reinstallItem = new JMenuItem(GetText.tr("Reinstall"));
                     reinstallItem.addActionListener(l -> instance.startReinstall());

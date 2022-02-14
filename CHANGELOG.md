@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Reinstall menu item for instances showing when it's an import
 
 ### Misc
