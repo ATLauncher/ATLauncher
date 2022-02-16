@@ -251,19 +251,23 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                             .collect(Collectors.toList());
 
                     curseForgeFilesStream = curseForgeFilesStream
-                            .filter(v -> v.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                            .filter(v -> v.gameVersions.stream()
+                                    .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                 } catch (InvalidMinecraftVersion e) {
                     LogManager.logStackTrace(e);
                 }
             }
 
-            // filter out mods that are explicitely for Forge/Fabric and not our loader
+            // filter out mods that are explicitely for Forge/Fabric (but not dual loader)
+            // and not our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersions.contains("Forge") && loaderVersion != null && loaderVersion.isFabric()) {
+                if (cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Fabric") && loaderVersion != null
+                        && loaderVersion.isFabric()) {
                     return false;
                 }
 
-                if (cf.gameVersions.contains("Fabric") && loaderVersion != null && !loaderVersion.isFabric()) {
+                if (cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge") && loaderVersion != null
+                        && !loaderVersion.isFabric()) {
                     return false;
                 }
 
@@ -278,24 +282,27 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                         getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
             }
 
-            // try to filter out non compatable mods (Forge on Fabric and vice versa)
+            // try to filter out non compatable mods (Forge on Fabric and vice versa) if no loader gameVersions are set
             if (App.settings.addModRestriction == AddModRestriction.NONE) {
                 files.forEach(version -> filesDropdown.addItem(version));
             } else {
                 files.stream().filter(version -> {
-                    String fileName = version.fileName.toLowerCase();
-                    String displayName = version.displayName.toLowerCase();
+                    if (!version.gameVersions.contains("Forge") && !version.gameVersions.contains("Fabric")) {
+                        String fileName = version.fileName.toLowerCase();
+                        String displayName = version.displayName.toLowerCase();
 
-                    if (loaderVersion != null && loaderVersion.isFabric()) {
-                        return !displayName.contains("-forge-") && !displayName.contains("(forge)")
-                                && !displayName.contains("[forge") && !fileName.contains("forgemod");
-                    }
+                        if (loaderVersion != null && loaderVersion.isFabric()) {
+                            return !displayName.contains("-forge-") && !displayName.contains("(forge)")
+                                    && !displayName.contains("[forge") && !fileName.contains("forgemod");
+                        }
 
-                    if (loaderVersion != null && !loaderVersion.isFabric()) {
-                        // if it's Forge, and the gameVersion has "Fabric" then exclude it
-                        return version.gameVersions.contains("Fabric")
-                                || (!displayName.toLowerCase().contains("-fabric-") && !displayName.contains("(fabric)")
-                                        && !displayName.contains("[fabric") && !fileName.contains("fabricmod"));
+                        if (loaderVersion != null && !loaderVersion.isFabric()) {
+                            // if it's Forge, and the gameVersion has "Fabric" then exclude it
+                            return version.gameVersions.contains("Fabric")
+                                    || (!displayName.toLowerCase().contains("-fabric-")
+                                            && !displayName.contains("(fabric)")
+                                            && !displayName.contains("[fabric") && !fileName.contains("fabricmod"));
+                        }
                     }
 
                     return true;
