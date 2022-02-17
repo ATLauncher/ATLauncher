@@ -386,17 +386,18 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         new Thread(() -> {
             String minecraftVersion = null;
-            if (selectedPanel.supportsMinecraftVersionFiltering()) {
+            if (selectedPanel.supportsMinecraftVersionFiltering()
+                    && minecraftVersionComboBox.getSelectedItem() != null) {
                 minecraftVersion = ((ComboItem<String>) minecraftVersionComboBox.getSelectedItem()).getValue();
             }
 
             String category = null;
-            if (selectedPanel.hasCategories()) {
+            if (selectedPanel.hasCategories() && categoriesComboBox.getSelectedItem() != null) {
                 category = ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue();
             }
 
             String sort = null;
-            if (selectedPanel.hasSort()) {
+            if (selectedPanel.hasSort() && sortComboBox.getSelectedItem() != null) {
                 sort = ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue();
             }
 
