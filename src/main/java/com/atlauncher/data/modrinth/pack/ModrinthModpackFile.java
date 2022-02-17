@@ -50,7 +50,7 @@ public class ModrinthModpackFile {
         mod.url = downloads.get(0);
         mod.type = getType();
         mod.version = "";
-        mod.optional = env != null && (env.containsKey("client") && env.get("client").equalsIgnoreCase("optional"));
+        mod.optional = isServer ? serverEnv.equals("optional") : clientEnv.equals("optional");
 
         return mod;
     }

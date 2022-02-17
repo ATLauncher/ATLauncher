@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use Java runtime for servers and pass path in when running on Windows
 - Use Java runtime when intialising servers
 - Add ability to create servers for Modrinth packs
+- Support optional mods for Modrinth packs
 
 ### Fixes
 - Reinstall menu item for instances showing when it's an import
