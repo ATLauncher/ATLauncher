@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use Java runtime when intialising servers
 - Add ability to create servers for Modrinth packs
 - Support optional mods for Modrinth packs
+- Support importing Modrinth packs from Modrinth/vercel based website urls
 
 ### Fixes
 - Reinstall menu item for instances showing when it's an import

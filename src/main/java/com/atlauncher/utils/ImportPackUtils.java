@@ -33,6 +33,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
@@ -50,6 +51,12 @@ public class ImportPackUtils {
             return loadFromCurseForgeUrl(url);
         }
 
+        // support modrinth.com and the vercel preview deploys (TODO: probably remove
+        // after modpacks launch)
+        if (url.startsWith("https://modrinth.com/modpack") || url.contains("vercel.app/modpack")) {
+            return loadFromModrinthUrl(url);
+        }
+
         try {
             Path saveTo = FileSystem.TEMP.resolve(url.endsWith(".mrpack") ? "import.mrpack" : "import.zip");
 
@@ -60,83 +67,6 @@ public class ImportPackUtils {
             LogManager.error("Failed to download modpack file");
             return false;
         }
-    }
-
-    public static boolean loadFromModrinth(String url) {
-        if (!url.contains("modrinth.com") && !url.endsWith(".mrpack")) {
-            LogManager.error("Cannot install as the url was not a Modrinth modpack url");
-            return false;
-        }
-
-        Pattern pattern = Pattern.compile(
-                "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
-        Matcher matcher = pattern.matcher(url);
-
-        if (!matcher.find() || matcher.groupCount() < 2) {
-            LogManager.error("Cannot install as the url was not a valid Curse modpack url");
-            return false;
-        }
-
-        String packSlug = matcher.group(1);
-        Integer projectId = null;
-        Integer fileId = null;
-
-        LogManager.info(matcher.groupCount() + "");
-
-        if (matcher.groupCount() == 2 && matcher.group(2) != null) {
-            fileId = Integer.parseInt(matcher.group(2));
-        }
-
-        LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
-
-        // TODO: remove this and replace with lookup in CurseForge api
-        SlugResponse modInfo = new Download()
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
-                        "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
-                                + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
-                .setUrl("https://curse.nikky.moe/graphql").asClass(SlugResponse.class);
-
-        projectId = modInfo.data.addons.get(0).id;
-
-        if (fileId == null) {
-            fileId = modInfo.data.addons.get(0).defaultFileId;
-        }
-
-        if (projectId == null || fileId == null) {
-            LogManager.error(
-                    "Cannot install as the id's couldn't be found. Try using a specific files install link instead.");
-            return false;
-        }
-
-        LogManager.debug("Resolved to project id " + projectId + " and file id of " + fileId);
-
-        CurseForgeFile curseFile = CurseForgeApi.getFileForProject(projectId, fileId);
-        Path tempZip = FileSystem.TEMP.resolve(curseFile.fileName);
-
-        try {
-            Download download = new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip)
-                    .size(curseFile.fileLength);
-
-            Optional<CurseForgeFileHash> md5Hash = curseFile.hashes.stream().filter(h -> h.isMd5())
-                    .findFirst();
-            Optional<CurseForgeFileHash> sha1Hash = curseFile.hashes.stream().filter(h -> h.isSha1())
-                    .findFirst();
-
-            if (md5Hash.isPresent()) {
-                download = download.hash(md5Hash.get().value);
-            } else if (sha1Hash.isPresent()) {
-                download = download.hash(sha1Hash.get().value);
-            } else {
-                download = download.fingerprint(curseFile.packageFingerprint);
-            }
-
-            download.downloadFile();
-        } catch (IOException e) {
-            LogManager.error("Failed to download modpack file from Curse");
-            return false;
-        }
-
-        return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
     }
 
     public static boolean loadFromCurseForgeUrl(String url) {
@@ -150,7 +80,7 @@ public class ImportPackUtils {
         Matcher matcher = pattern.matcher(url);
 
         if (!matcher.find() || matcher.groupCount() < 2) {
-            LogManager.error("Cannot install as the url was not a valid Curse modpack url");
+            LogManager.error("Cannot install as the url was not a valid CurseForge modpack url");
             return false;
         }
 
@@ -158,7 +88,7 @@ public class ImportPackUtils {
         Integer projectId = null;
         Integer fileId = null;
 
-        LogManager.info(matcher.groupCount() + "");
+        LogManager.debug(matcher.groupCount() + "");
 
         if (matcher.groupCount() == 2 && matcher.group(2) != null) {
             fileId = Integer.parseInt(matcher.group(2));
@@ -209,11 +139,47 @@ public class ImportPackUtils {
 
             download.downloadFile();
         } catch (IOException e) {
-            LogManager.error("Failed to download modpack file from Curse");
+            LogManager.error("Failed to download modpack file from CurseForge");
             return false;
         }
 
         return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
+    }
+
+    public static boolean loadFromModrinthUrl(String url) {
+        if (!url.startsWith("https://modrinth.com/modpack") && !url.contains("vercel.app/modpack")) {
+            LogManager.error("Cannot install as the url was not a Modrinth modpack url");
+            return false;
+        }
+
+        Pattern pattern = Pattern
+                .compile("(?:modrinth\\.com|vercel.app)\\/modpack\\/([\\w-]+)");
+        Matcher matcher = pattern.matcher(url);
+
+        if (!matcher.find() || matcher.groupCount() < 1) {
+            LogManager.error("Cannot install as the url was not a valid Modrinth modpack url");
+            return false;
+        }
+
+        String packSlug = matcher.group(1);
+
+        LogManager.debug("Found pack with slug " + packSlug);
+
+        try {
+            ModrinthProject modrinthProject = ModrinthApi.getProject(packSlug);
+
+            if (modrinthProject == null) {
+                LogManager.info("Failed to get pack from Modrinth");
+                return false;
+            }
+
+            new InstanceInstallerDialog(modrinthProject);
+        } catch (Exception e) {
+            LogManager.logStackTrace("Failed to install Modrinth pack from URL", e);
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean loadFromFile(File file) {

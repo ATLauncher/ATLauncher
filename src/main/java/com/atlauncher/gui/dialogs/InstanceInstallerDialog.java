@@ -194,7 +194,7 @@ public class InstanceInstallerDialog extends JDialog {
             handleCurseForgeInstall(object);
         } else if (object instanceof ModpacksChPackManifest) {
             handleModpacksChInstall(object);
-        } else if (object instanceof ModrinthSearchHit) {
+        } else if (object instanceof ModrinthSearchHit || object instanceof ModrinthProject) {
             handleModrinthInstall(object);
         } else if (object instanceof TechnicModpackSlim) {
             handleTechnicInstall(object);
