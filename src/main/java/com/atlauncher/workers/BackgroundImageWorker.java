@@ -17,7 +17,7 @@
  */
 package com.atlauncher.workers;
 
-import java.awt.Image;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,7 +59,14 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
 
         if (Files.exists(path)) {
             BufferedImage image = ImageIO.read(path.toFile());
-            label.setIcon(new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+
+            BufferedImage thumbnail = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = thumbnail.createGraphics();
+            g.drawImage(image, 0, 0, width, height, null);
+            g.dispose();
+
+            label.setIcon(new ImageIcon(thumbnail));
+            thumbnail.flush();
         }
 
         label.setVisible(true);

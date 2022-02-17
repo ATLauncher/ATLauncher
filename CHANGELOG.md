@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Reinstall menu item for instances showing when it's an import
 - Issue with dual loader mods not showing mod versions on CurseForge
 - Issue when changing packs tab causing them to stop functioning
+- Issue with high non clearing memory usage when loading remote images
 
 ### Misc
