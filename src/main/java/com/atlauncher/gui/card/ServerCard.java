@@ -129,7 +129,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
         this.backupButton.addActionListener(e ->  server.backup());
         this.deleteButton.addActionListener(e -> {
-            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete Server"))
+            int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Server"))
                     .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)
                     .show();
 
