@@ -165,7 +165,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
 
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                        .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(pack.getName(), "ServerInstall", "ATLauncherPack");

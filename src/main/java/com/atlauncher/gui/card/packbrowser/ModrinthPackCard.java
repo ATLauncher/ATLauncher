@@ -30,6 +30,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -37,6 +38,7 @@ import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
@@ -45,6 +47,7 @@ import org.mini2Dx.gettext.GetText;
 @SuppressWarnings("serial")
 public class ModrinthPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
+    private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
     public ModrinthPackCard(final ModrinthSearchHit searchHit) {
@@ -77,10 +80,35 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                         .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(searchHit.title, "Install", "ModrinthPack");
-                new InstanceInstallerDialog(searchHit);
+                new InstanceInstallerDialog(searchHit, false);
             }
         });
         buttonsPanel.add(newInstanceButton);
+
+        createServerButton.addActionListener(e -> {
+            // user has no instances, they may not be aware this is not how to play
+            if (InstanceManager.getInstances().size() == 0) {
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are you sure you want to create a server?"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                                .build())
+                        .setType(DialogManager.QUESTION).show();
+
+                if (ret != 0) {
+                    return;
+                }
+            }
+
+            if (AccountManager.getSelectedAccount() == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create server as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
+            } else {
+                Analytics.sendEvent(searchHit.title, "ServerInstall", "ModrinthPack");
+                new InstanceInstallerDialog(searchHit, true);
+            }
+        });
+        buttonsPanel.add(createServerButton);
 
         websiteButton.addActionListener(
                 e -> OS.openWebBrowser(String.format("https://modrinth.com/modpack/%s", searchHit.slug)));

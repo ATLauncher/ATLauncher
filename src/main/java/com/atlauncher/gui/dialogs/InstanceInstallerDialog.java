@@ -154,6 +154,10 @@ public class InstanceInstallerDialog extends JDialog {
         this(object, false, false, null, null, true, null, App.launcher.getParent());
     }
 
+    public InstanceInstallerDialog(Object object, boolean isServer) {
+        this(object, false, isServer, null, null, true, null, App.launcher.getParent());
+    }
+
     public InstanceInstallerDialog(Window parent, Object object) {
         this(object, false, false, null, null, true, null, parent);
     }

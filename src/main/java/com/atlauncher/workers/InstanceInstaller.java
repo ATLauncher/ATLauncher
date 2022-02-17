@@ -920,7 +920,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
         }
 
-        packVersion.mods = modrinthManifest.files.parallelStream().map(file -> file.convertToMod())
+        packVersion.mods = modrinthManifest.files.parallelStream().map(file -> file.convertToMod(isServer))
                 .collect(Collectors.toList());
 
         hideSubProgressBar();

@@ -48,7 +48,7 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
     protected ImageIcon doInBackground() throws Exception {
         Path path = FileSystem.REMOTE_IMAGE_CACHE.resolve(this.url.replaceAll("[^A-Za-z0-9]", ""));
 
-        Download download = Download.build().setUrl(this.url).downloadTo(path);
+        Download download = Download.build().setUrl(this.url).ignoreFailures().downloadTo(path);
 
         if (!Files.exists(path)) {
             try {

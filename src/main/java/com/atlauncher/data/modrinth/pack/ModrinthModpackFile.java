@@ -34,11 +34,14 @@ public class ModrinthModpackFile {
         return ModType.mods;
     }
 
-    public Mod convertToMod() {
+    public Mod convertToMod(boolean isServer) {
         Mod mod = new Mod();
 
-        mod.client = env == null || (env.containsKey("client") && env.get("client").equalsIgnoreCase("required"));
-        mod.server = env == null || (env.containsKey("client") && env.get("client").equalsIgnoreCase("required"));
+        String clientEnv = env.containsKey("client") ? env.get("server") : "required";
+        String serverEnv = env.containsKey("server") ? env.get("server") : "required";
+
+        mod.client = !clientEnv.equals("unsupported");
+        mod.server = !serverEnv.equals("unsupported");
         mod.download = DownloadType.direct;
         mod.file = path.substring(path.lastIndexOf("/") + 1);
         mod.path = path.substring(0, path.lastIndexOf("/"));

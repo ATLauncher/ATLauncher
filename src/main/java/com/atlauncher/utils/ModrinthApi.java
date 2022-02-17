@@ -54,7 +54,7 @@ public class ModrinthApi {
                     Constants.MODRINTH_PAGINATION_SIZE, page * Constants.MODRINTH_PAGINATION_SIZE,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), index);
 
-            if (gameVersions != null) {
+            if (gameVersions != null && gameVersions.size() != 0) {
                 facets.add(
                         gameVersions.stream().map(gv -> String.format("versions:%s", gv)).collect(Collectors.toList()));
             }
@@ -96,7 +96,7 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
             String category) {
-        return searchModrinth(Arrays.asList(minecraftVersion), query, page, sort,
+        return searchModrinth(minecraftVersion == null ? null : Arrays.asList(minecraftVersion), query, page, sort,
                 category, ModrinthProjectType.MODPACK);
     }
 
