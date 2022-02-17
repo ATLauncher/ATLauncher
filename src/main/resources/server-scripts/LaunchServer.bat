@@ -16,6 +16,15 @@ set jvmargs=""
 
 :: Don't edit past this point ::
 
+set launchargs=%*
+:: Launcher can specify path to java using a custom token
+IF "%1"=="ATLcustomjava" (
+    for /f "tokens=2,* delims= " %%a in ("%*") do set launchargs=%%b
+
+    echo "Using launcher provided Java from %2"
+    SET javapath="%2"
+)
+
 if $SYSTEM_os_arch==x86 (
     echo OS is 32
     set mem=%memthirtytwo%
@@ -24,11 +33,14 @@ if $SYSTEM_os_arch==x86 (
     set mem=%memsixtyfour%
 )
 
+echo.
+echo Printing Java version, if the Java version doesn't show below, your java path is incorrect
 %javapath% -version
+echo.
 
-echo Launching %%SERVERJAR%% with '%mem%' max memory, jvm args '%jvmargs%' and arguments '%*'
+echo Launching %%SERVERJAR%% with '%mem%' max memory, jvm args '%jvmargs%' and arguments '%launchargs%'
 
 :: add nogui to the end of this line to disable the gui ::
-%javapath% -Xmx%mem% %jvm_args% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %*
+%javapath% -Xmx%mem% %jvm_args% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %launchargs%
 PAUSE
 

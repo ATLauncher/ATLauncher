@@ -37,6 +37,8 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.minecraft.JavaRuntimes;
+import com.atlauncher.data.minecraft.JavaVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -58,6 +60,8 @@ public class Server {
     public String version;
     public String hash;
     public boolean isPatchedForLog4Shell = false;
+
+    public JavaVersion javaVersion;
 
     public boolean isDev;
     public List<DisableableMod> mods = new ArrayList<>();
@@ -122,6 +126,20 @@ public class Server {
                 arguments.add("start");
                 arguments.add("\"" + name + "\"");
                 arguments.add(getRoot().resolve(serverScript).toString());
+
+                if (javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+                    Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                            .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+
+                    if (Files.isDirectory(runtimeDirectory)) {
+                        String javaPath = runtimeDirectory.toAbsolutePath().toString();
+                        LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
+                                javaVersion.component, javaVersion.majorVersion, javaPath));
+
+                        arguments.add("ATLcustomjava");
+                        arguments.add(javaPath + "\\bin\\java.exe");
+                    }
+                }
 
                 if (!args.isEmpty()) {
                     arguments.add(args);

@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.11.3
 
 ### New Features
+- Use Java runtime for servers and pass path in when running on Windows
 
 ### Fixes
 - Reinstall menu item for instances showing when it's an import

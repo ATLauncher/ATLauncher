@@ -1530,6 +1530,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.isDev = this.version.isDev;
         server.mods = this.modsInstalled;
         server.isPatchedForLog4Shell = true;
+        server.javaVersion = this.minecraftVersion.javaVersion;
 
         if (this.version.isDev) {
             server.hash = this.version.hash;
@@ -1968,7 +1969,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadRuntime() {
         addPercent(5);
 
-        if (isServer || minecraftVersion.javaVersion == null || Data.JAVA_RUNTIMES == null
+        if (minecraftVersion.javaVersion == null || Data.JAVA_RUNTIMES == null
                 || !App.settings.useJavaProvidedByMinecraft) {
             return;
         }
