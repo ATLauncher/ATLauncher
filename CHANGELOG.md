@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Use Java runtime for servers and pass path in when running on Windows
+- Use Java runtime when intialising servers
 
 ### Fixes
 - Reinstall menu item for instances showing when it's an import

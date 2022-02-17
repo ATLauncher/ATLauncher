@@ -101,8 +101,9 @@ public class Utils {
             StandardOpenOption.WRITE);
     public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
 
-    public static JScrollPane wrapInVerticalScroller(final JPanel panel, final int scrollUnits){
-        final JScrollPane scroller = new JScrollPane(panel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    public static JScrollPane wrapInVerticalScroller(final JPanel panel, final int scrollUnits) {
+        final JScrollPane scroller = new JScrollPane(panel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.getVerticalScrollBar().setUnitIncrement(scrollUnits);
         return scroller;
     }
@@ -1661,6 +1662,7 @@ public class Utils {
 
     public static String runProcess(Path workingDir, String... command) {
         try {
+            LogManager.debug(String.format("Running %s in %s", String.join(" ", command), workingDir.toString()));
             ProcessBuilder processBuilder = new ProcessBuilder(command);
             processBuilder.directory(workingDir.toFile());
             processBuilder.redirectErrorStream(true);

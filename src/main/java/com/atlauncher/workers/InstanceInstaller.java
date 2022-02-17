@@ -1511,7 +1511,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void initServerSettings() {
         new Thread(() -> {
             try {
-                String output = Utils.runProcess(root, Java.getPathToJavaExecutable(Paths.get(OS.getJavaHome())),
+                Path javaPath = Paths.get(OS.getJavaHome());
+                if (minecraftVersion.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+                    Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES
+                            .resolve(minecraftVersion.javaVersion.component)
+                            .resolve(JavaRuntimes.getSystem()).resolve(minecraftVersion.javaVersion.component);
+
+                    if (Files.isDirectory(runtimeDirectory)) {
+                        javaPath = runtimeDirectory.toAbsolutePath();
+                    }
+                }
+
+                String output = Utils.runProcess(root, Java.getPathToJavaExecutable(javaPath),
                         "-jar", getMinecraftJar().getAbsolutePath(), "--initSettings");
                 LogManager.debug("initServerSettings output");
                 LogManager.debug(output);
