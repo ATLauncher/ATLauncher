@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +66,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 
@@ -346,92 +348,100 @@ public class EditModsDialog extends JDialog {
 
     private void scanMissingMods() {
         PerformanceManager.start("EditModsDialog::scanMissingMods - CheckForAddedMods");
-        // first find the mods that have been added by the user manually
-        try (Stream<Path> stream = Files.list(instance.ROOT.resolve("mods"))) {
-            List<Path> files = stream
-                    .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
-                            file -> instance.launcher.mods.stream()
-                                    .noneMatch(mod -> mod.type == com.atlauncher.data.Type.mods
-                                            && mod.file.equals(file.getFileName().toString())))
-                    .collect(Collectors.toList());
 
-            if (files.size() != 0) {
-                final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
-                        GetText.tr("Scanning New Mods"), this);
+        // files to scan
+        List<Path> files = new ArrayList<>();
 
-                progressDialog.addThread(new Thread(() -> {
-                    List<DisableableMod> mods = files.parallelStream()
-                            .map(file -> generateMod(file.toFile(), com.atlauncher.data.Type.mods, true))
-                            .collect(Collectors.toList());
+        // find the mods that have been added by the user manually
+        for (Path path : Arrays.asList(instance.ROOT.resolve("mods"), instance.ROOT.resolve("disabledmods"))) {
+            try (Stream<Path> stream = Files.list(path)) {
+                files.addAll(stream
+                        .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
+                                file -> instance.launcher.mods.stream()
+                                        .noneMatch(mod -> mod.type == com.atlauncher.data.Type.mods
+                                                && mod.file.equals(file.getFileName().toString())))
+                        .collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error scanning missing mods", e);
+            }
+        }
 
-                    if (!App.settings.dontCheckModsOnCurseForge) {
-                        Map<Long, DisableableMod> murmurHashes = new HashMap<>();
+        if (files.size() != 0) {
+            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
+                    GetText.tr("Scanning New Mods"), this);
 
-                        mods.stream()
-                                .filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
-                                .filter(dm -> dm.getFile(instance.ROOT, instance.id) != null).forEach(dm -> {
-                                    try {
-                                        long hash = Hashing
-                                                .murmur(dm.getFile(instance.ROOT, instance.id).toPath());
-                                        murmurHashes.put(hash, dm);
-                                    } catch (Throwable t) {
-                                        LogManager.logStackTrace(t);
-                                    }
-                                });
+            progressDialog.addThread(new Thread(() -> {
+                List<DisableableMod> mods = files.parallelStream()
+                        .map(file -> generateMod(file.toFile(), com.atlauncher.data.Type.mods,
+                                file.getParent().equals(instance.ROOT.resolve("mods"))))
+                        .collect(Collectors.toList());
 
-                        if (murmurHashes.size() != 0) {
-                            CurseForgeFingerprint fingerprintResponse = CurseForgeApi
-                                    .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+                if (!App.settings.dontCheckModsOnCurseForge) {
+                    Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
-                            if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
-                                int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
-                                        .toArray();
+                    mods.stream()
+                            .filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
+                            .filter(dm -> dm.getFile(instance.ROOT, instance.id) != null).forEach(dm -> {
+                                try {
+                                    long hash = Hashing
+                                            .murmur(dm.disabled ? dm.getDisabledFile(instance).toPath() : dm
+                                                    .getFile(instance.ROOT, instance.id).toPath());
+                                    murmurHashes.put(hash, dm);
+                                } catch (Throwable t) {
+                                    LogManager.logStackTrace(t);
+                                }
+                            });
 
-                                if (projectIdsFound.length != 0) {
-                                    Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
-                                            .getProjectsAsMap(projectIdsFound);
+                    if (murmurHashes.size() != 0) {
+                        CurseForgeFingerprint fingerprintResponse = CurseForgeApi
+                                .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
-                                    if (foundProjects != null) {
-                                        fingerprintResponse.exactMatches.stream()
-                                                .filter(em -> em != null && em.file != null
-                                                        && murmurHashes.containsKey(em.file.packageFingerprint))
-                                                .forEach(foundMod -> {
-                                                    DisableableMod dm = murmurHashes
-                                                            .get(foundMod.file.packageFingerprint);
+                        if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
+                            int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
+                                    .toArray();
 
-                                                    // add CurseForge information
-                                                    dm.curseForgeProjectId = foundMod.id;
-                                                    dm.curseForgeFile = foundMod.file;
-                                                    dm.curseForgeFileId = foundMod.file.id;
+                            if (projectIdsFound.length != 0) {
+                                Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
+                                        .getProjectsAsMap(projectIdsFound);
 
-                                                    CurseForgeProject curseForgeProject = foundProjects
-                                                            .get(foundMod.id);
+                                if (foundProjects != null) {
+                                    fingerprintResponse.exactMatches.stream()
+                                            .filter(em -> em != null && em.file != null
+                                                    && murmurHashes.containsKey(em.file.packageFingerprint))
+                                            .forEach(foundMod -> {
+                                                DisableableMod dm = murmurHashes
+                                                        .get(foundMod.file.packageFingerprint);
 
-                                                    if (curseForgeProject != null) {
-                                                        dm.curseForgeProject = curseForgeProject;
-                                                        dm.name = curseForgeProject.name;
-                                                        dm.description = curseForgeProject.summary;
-                                                    }
+                                                // add CurseForge information
+                                                dm.curseForgeProjectId = foundMod.id;
+                                                dm.curseForgeFile = foundMod.file;
+                                                dm.curseForgeFileId = foundMod.file.id;
 
-                                                    LogManager.debug("Found matching mod from CurseForge called "
-                                                            + dm.curseForgeFile.displayName);
-                                                });
-                                    }
+                                                CurseForgeProject curseForgeProject = foundProjects
+                                                        .get(foundMod.id);
+
+                                                if (curseForgeProject != null) {
+                                                    dm.curseForgeProject = curseForgeProject;
+                                                    dm.name = curseForgeProject.name;
+                                                    dm.description = curseForgeProject.summary;
+                                                }
+
+                                                LogManager.debug("Found matching mod from CurseForge called "
+                                                        + dm.curseForgeFile.displayName);
+                                            });
                                 }
                             }
                         }
                     }
+                }
 
-                    mods.forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
-                    instance.launcher.mods.addAll(mods);
-                    instance.save();
-                    progressDialog.close();
-                }));
+                mods.forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
+                instance.launcher.mods.addAll(mods);
+                instance.save();
+                progressDialog.close();
+            }));
 
-                progressDialog.start();
-            }
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error scanning missing mods", e);
+            progressDialog.start();
         }
         PerformanceManager.end("EditModsDialog::scanMissingMods - CheckForAddedMods");
 
@@ -587,9 +597,11 @@ public class EditModsDialog extends JDialog {
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
                 this.instance.launcher.mods.remove(mod.getDisableableMod());
-                Utils.delete(
-                        (mod.getDisableableMod().isDisabled() ? mod.getDisableableMod().getDisabledFile(this.instance)
-                                : mod.getDisableableMod().getFile(this.instance)));
+                FileUtils.delete(
+                        (mod.getDisableableMod().isDisabled()
+                                ? mod.getDisableableMod().getDisabledFile(this.instance)
+                                : mod.getDisableableMod().getFile(this.instance)).toPath(),
+                        true);
                 enabledMods.remove(mod);
             }
         }
@@ -597,9 +609,11 @@ public class EditModsDialog extends JDialog {
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected()) {
                 this.instance.launcher.mods.remove(mod.getDisableableMod());
-                Utils.delete(
-                        (mod.getDisableableMod().isDisabled() ? mod.getDisableableMod().getDisabledFile(this.instance)
-                                : mod.getDisableableMod().getFile(this.instance)));
+                FileUtils.delete(
+                        (mod.getDisableableMod().isDisabled()
+                                ? mod.getDisableableMod().getDisabledFile(this.instance)
+                                : mod.getDisableableMod().getFile(this.instance)).toPath(),
+                        true);
                 disabledMods.remove(mod);
             }
         }
