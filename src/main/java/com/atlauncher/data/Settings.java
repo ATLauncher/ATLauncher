@@ -75,6 +75,7 @@ public class Settings {
     private boolean disableAddModRestrictions = false;
     public boolean disableCustomFonts = false;
     public boolean useNativeFilePicker = OS.isMac();
+    public boolean useRecycleBin = true;
 
     // Mods
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;

@@ -24,11 +24,16 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
+import com.atlauncher.App;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
 
 public class FileUtils {
     public static boolean delete(Path path) {
+        return delete(path, false);
+    }
+
+    public static boolean delete(Path path, boolean recycle) {
         if (!Files.exists(path)) {
             LogManager.error("Couldn't delete " + path + " as it doesn't exist!");
             return false;
@@ -37,6 +42,10 @@ public class FileUtils {
         if (Files.isSymbolicLink(path)) {
             LogManager.error("Not deleting " + path + " as it's a symlink!");
             return false;
+        }
+
+        if (recycle && App.settings.useRecycleBin) {
+            return recycle(path);
         }
 
         if (Files.isDirectory(path)) {
@@ -53,22 +62,22 @@ public class FileUtils {
         return true;
     }
 
-    public static boolean recycleDirectory(Path dir) {
-        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
-            LogManager.error("Cannot recycle directory " + dir + " as it doesn't exist or isn't a directory!");
+    private static boolean recycle(Path path) {
+        if (!Files.exists(path)) {
+            LogManager.error("Cannot recycle " + path + " as it doesn't exist.");
             return false;
         }
 
         com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
         if (fileUtils.hasTrash()) {
             try {
-                fileUtils.moveToTrash(new File[] { dir.toFile() });
+                fileUtils.moveToTrash(new File[] { path.toFile() });
                 return true;
             } catch (IOException e) {
-                return deleteDirectory(dir);
+                return delete(path, false);
             }
         } else {
-            return deleteDirectory(dir);
+            return delete(path, false);
         }
     }
 

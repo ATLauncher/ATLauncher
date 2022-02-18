@@ -62,6 +62,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JCheckBox disableCustomFonts;
     private final JCheckBox rememberWindowSizePosition;
     private final JCheckBox useNativeFilePicker;
+    private final JCheckBox useRecycleBin;
 
     public GeneralSettingsTab() {
         // Language
@@ -437,6 +438,26 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         useNativeFilePicker = new JCheckBox();
         useNativeFilePicker.setSelected(App.settings.useNativeFilePicker);
         add(useNativeFilePicker, gbc);
+
+        // Use recycle bin
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover useRecycleBinLabel = new JLabelWithHover(GetText.tr("Use Recycle Bin/Trash?"), HELP_ICON,
+                new HTMLBuilder().center().split(100)
+                        .text(GetText
+                                .tr("This will use your operating systems recycle bin/trash where possible when deleting files/instances/servers instead of just deleting them entirely, allowing you to recover files if you make a mistake or want to get them back."))
+                        .build());
+        add(useRecycleBinLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        useRecycleBin = new JCheckBox();
+        useRecycleBin.setSelected(App.settings.useRecycleBin);
+        add(useRecycleBin, gbc);
     }
 
     @SuppressWarnings("unchecked")
@@ -497,6 +518,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
 
         App.settings.useNativeFilePicker = useNativeFilePicker.isSelected();
+        App.settings.useRecycleBin = useRecycleBin.isSelected();
     }
 
     @Override

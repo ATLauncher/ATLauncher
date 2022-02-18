@@ -98,7 +98,7 @@ public class ServerManager {
 
     public static void removeServer(Server server) {
         if (Data.SERVERS.remove(server)) {
-            FileUtils.recycleDirectory(server.getRoot());
+            FileUtils.delete(server.getRoot(), true);
             App.launcher.reloadServersPanel();
         }
     }
