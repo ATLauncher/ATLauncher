@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.12.1
 
 ### New Features
+- Add button on Setup Dialog to open Privacy Policy
 
 ### Fixes
 

@@ -42,6 +42,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -63,7 +64,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         // #. {0} is the name of the launcher (ATLauncher)
         super(null, GetText.tr("{0} Setup", Constants.LAUNCHER_NAME), ModalityType.DOCUMENT_MODAL);
         this.requestFocus();
-        this.setSize(400, 250);
+        this.setSize(500, 250);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/icon.png"));
@@ -113,11 +114,21 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         middle.add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.insets = UIConstants.FLOW_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+
+        JPanel enableAnalyticsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, UIConstants.SPACING_LARGE, 0));
         enableAnalytics = new JCheckBox();
         enableAnalytics.setSelected(!App.disableAnalytics);
-        middle.add(enableAnalytics, gbc);
+        enableAnalyticsPanel.add(enableAnalytics);
+
+        JButton privacyPolicyButton = new JButton(GetText.tr("Open Privacy Policy"));
+        privacyPolicyButton.addActionListener(e -> {
+            OS.openWebBrowser("https://atlauncher.com/privacy-policy");
+        });
+        enableAnalyticsPanel.add(privacyPolicyButton);
+
+        middle.add(enableAnalyticsPanel, gbc);
 
         // Bottom Panel Stuff
         JPanel bottom = new JPanel();
