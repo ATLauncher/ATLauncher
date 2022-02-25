@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add button on Setup Dialog to open Privacy Policy
 
 ### Fixes
+- Some Java versions/distributions not being picked up by the exe [#400]
 
 ### Misc
