@@ -51,7 +51,7 @@ public class ModrinthVersion {
 
     public List<ModrinthFile> files;
 
-    public List<String> dependencies;
+    public List<ModrinthDependency> dependencies;
 
     @SerializedName("game_versions")
     public List<String> gameVersions;

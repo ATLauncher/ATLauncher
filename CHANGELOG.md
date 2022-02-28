@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Remove Vercel links from being valid from Modrinth imports
+- Modrinth packs using dependencies not installing
 
 ### Misc
