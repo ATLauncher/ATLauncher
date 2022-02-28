@@ -51,9 +51,7 @@ public class ImportPackUtils {
             return loadFromCurseForgeUrl(url);
         }
 
-        // support modrinth.com and the vercel preview deploys (TODO: probably remove
-        // after modpacks launch)
-        if (url.startsWith("https://modrinth.com/modpack") || url.contains("vercel.app/modpack")) {
+        if (url.startsWith("https://modrinth.com/modpack")) {
             return loadFromModrinthUrl(url);
         }
 
@@ -147,13 +145,13 @@ public class ImportPackUtils {
     }
 
     public static boolean loadFromModrinthUrl(String url) {
-        if (!url.startsWith("https://modrinth.com/modpack") && !url.contains("vercel.app/modpack")) {
+        if (!url.startsWith("https://modrinth.com/modpack")) {
             LogManager.error("Cannot install as the url was not a Modrinth modpack url");
             return false;
         }
 
         Pattern pattern = Pattern
-                .compile("(?:modrinth\\.com|vercel.app)\\/modpack\\/([\\w-]+)");
+                .compile("modrinth\\.com\\/modpack\\/([\\w-]+)");
         Matcher matcher = pattern.matcher(url);
 
         if (!matcher.find() || matcher.groupCount() < 1) {
