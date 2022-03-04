@@ -257,4 +257,22 @@ public class AccountManager {
         }
         return false;
     }
+
+    public static AbstractAccount getAccountByUUID(String uuid) {
+        for (AbstractAccount account : Data.ACCOUNTS) {
+            if (account.uuid.replace("-", "").equalsIgnoreCase(uuid)) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isAccountByUUID(String uuid) {
+        for (AbstractAccount account : Data.ACCOUNTS) {
+            if (account.uuid.replace("-", "").equalsIgnoreCase(uuid)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

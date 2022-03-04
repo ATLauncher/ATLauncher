@@ -859,25 +859,19 @@ public class Instance extends MinecraftVersion {
                         session = new LoginResponse(mojangAccount.username);
                         session.setOffline();
                     } else {
-                        LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
-                                GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
-                                "Aborted login to Minecraft!");
-                        loginDialog.addThread(new Thread(() -> {
-                            loginDialog.setReturnValue(mojangAccount.login());
-                            loginDialog.close();
-                        }));
-                        loginDialog.start();
+                        DialogManager.okDialog().setTitle(GetText.tr("Account Must Migrate"))
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "Mojang accounts no longer exist and must be migrated to a Microsoft account in order to continue playing.<br/><br/>Please visit https://minecraft.net/move and relogin to your account in the Accounts tab to continue to play."))
+                                        .build())
+                                .setType(DialogManager.ERROR).show();
 
-                        session = loginDialog.getReturnValue();
+                        App.launcher.setMinecraftLaunched(false);
 
-                        if (session == null) {
-                            App.launcher.setMinecraftLaunched(false);
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-                            return;
+                        if (App.launcher.getParent() != null) {
+                            App.launcher.getParent().setVisible(true);
                         }
+
+                        return;
                     }
 
                     if (enableCommands && preLaunchCommand != null) {
