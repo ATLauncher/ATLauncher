@@ -14,3 +14,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Modrinth packs using dependencies not installing
 
 ### Misc
+- Update Discord icon
