@@ -1,0 +1,17 @@
+{
+  "items": [
+    {
+      "name": "product_minecraft_bedrock"
+    },
+    {
+      "name": "game_minecraft_bedrock"
+    },
+    {
+      "name": "product_minecraft"
+    },
+    {
+      "name": "game_minecraft"
+    }
+  ],
+  "signature": "secret"
+}

@@ -1,0 +1,9 @@
+{
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "expires_at": "2022-03-04T15:23:31Z",
+  "scope": "XboxLive.signin XboxLive.offline_access",
+  "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJoaSI6Im5pY2UgdHJ5LCBub3RoaW5nIGhlcmUifQ.KpPfZ_Y7rcO6oFY6hJvV-Dyd7xVaxrb5NamrA64du0k",
+  "refresh_token": "eyJhbGciOiJIUzI1NiJ9.eyJoaSI6Im5pY2UgdHJ5LCBub3RoaW5nIGhlcmUifQ.KpPfZ_Y7rcO6oFY6hJvV-Dyd7xVaxrb5NamrA64du0k",
+  "user_id": "secret"
+}

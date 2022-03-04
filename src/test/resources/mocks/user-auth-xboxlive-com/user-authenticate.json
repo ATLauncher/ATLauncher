@@ -1,0 +1,12 @@
+{
+  "IssueInstant": "2022-03-04T14:25:02Z",
+  "NotAfter": "2022-03-18T14:25:02Z",
+  "Token": "eyJhbGciOiJIUzI1NiJ9.eyJoaSI6Im5pY2UgdHJ5LCBub3RoaW5nIGhlcmUifQ.KpPfZ_Y7rcO6oFY6hJvV-Dyd7xVaxrb5NamrA64du0k",
+  "DisplayClaims": {
+    "xui": [
+      {
+        "uhs": "23423423423423423"
+      }
+    ]
+  }
+}

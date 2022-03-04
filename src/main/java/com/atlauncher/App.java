@@ -224,6 +224,12 @@ public class App {
     public static String autoLaunch = null;
 
     /**
+     * This is if the launcher is running automated. Should only be used when
+     * running the automated UI tests
+     */
+    public static boolean automated = false;
+
+    /**
      * This is the Settings instance which holds all the users settings.
      */
     public static Settings settings;
@@ -855,6 +861,9 @@ public class App {
         parser.accepts("proxy-port", "The port of the proxy to use.").withRequiredArg().ofType(Integer.class);
         parser.accepts("config-override", "A JSON string to override the launchers config.").withRequiredArg()
                 .ofType(String.class);
+        parser.accepts("automated",
+                "If the launcher is running automated. Should only be used when running the automated UI tests")
+                .withOptionalArg().ofType(Boolean.class);
         parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
 
         OptionSet options = parser.parse(args);
@@ -903,6 +912,11 @@ public class App {
         disableErrorReporting = options.has("disable-error-reporting");
         if (disableErrorReporting) {
             LogManager.debug("Disabling error reporting!");
+        }
+
+        automated = options.has("automated");
+        if (automated) {
+            LogManager.warn("Running under automated test suite!");
         }
 
         if (options.has("working-dir")) {

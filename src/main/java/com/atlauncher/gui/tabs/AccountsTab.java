@@ -160,6 +160,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener, 
         gbc.anchor = GridBagConstraints.CENTER;
         loginWithMicrosoftButton = new JButton(
                 Utils.getIconImage("/assets/image/ms-login-" + (App.THEME.isDark() ? "dark" : "light") + ".png"));
+        loginWithMicrosoftButton.setName("loginWithMicrosoftButton");
         loginWithMicrosoftButton.addActionListener(e -> {
             int numberOfAccountsBefore = AccountManager.getAccounts().size();
             new LoginWithMicrosoftDialog();

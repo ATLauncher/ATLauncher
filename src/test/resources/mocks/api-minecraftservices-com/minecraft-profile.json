@@ -1,0 +1,13 @@
+{
+  "id": "e7d501015f383003a85959995366a06a",
+  "name": "Example",
+  "skins": [
+    {
+      "id": "a02cfe99-5b97-4eff-ada6-1885d4384cfa",
+      "state": "ACTIVE",
+      "url": "http://textures.minecraft.net/texture/3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3",
+      "variant": "CLASSIC"
+    }
+  ],
+  "capes": []
+}
