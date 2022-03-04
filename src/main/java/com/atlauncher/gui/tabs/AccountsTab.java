@@ -18,7 +18,6 @@
 package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,13 +35,16 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.HyperlinkEvent;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
@@ -51,10 +53,11 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
-public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
+public class AccountsTab extends JPanel implements Tab, RelocalizationListener, ThemeListener {
     private static final long serialVersionUID = 2493791137600123223L;
 
     private JLabel userSkin;
@@ -155,8 +158,28 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         Insets BOTTOM_INSETS = new Insets(10, 0, 0, 0);
         gbc.insets = BOTTOM_INSETS;
         gbc.anchor = GridBagConstraints.CENTER;
-        JPanel buttons = new JPanel();
-        buttons.setLayout(new FlowLayout());
+        loginWithMicrosoftButton = new JButton(
+                Utils.getIconImage("/assets/image/ms-login-" + (App.THEME.isDark() ? "dark" : "light") + ".png"));
+        loginWithMicrosoftButton.addActionListener(e -> {
+            int numberOfAccountsBefore = AccountManager.getAccounts().size();
+            new LoginWithMicrosoftDialog();
+
+            if (numberOfAccountsBefore != AccountManager.getAccounts().size()) {
+                accountsComboBox.removeAllItems();
+                accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
+                for (AbstractAccount accountt : AccountManager.getAccounts()) {
+                    accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
+                }
+                accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
+            }
+        });
+        bottomPanel.add(loginWithMicrosoftButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.insets = BOTTOM_INSETS;
+        gbc.anchor = GridBagConstraints.CENTER;
         deleteButton = new JButton(GetText.tr("Delete"));
         deleteButton.setVisible(false);
         deleteButton.addActionListener(e -> {
@@ -177,23 +200,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 }
             }
         });
-        loginWithMicrosoftButton = new JButton(GetText.tr("Login with Microsoft"));
-        loginWithMicrosoftButton.addActionListener(e -> {
-            int numberOfAccountsBefore = AccountManager.getAccounts().size();
-            new LoginWithMicrosoftDialog();
-
-            if (numberOfAccountsBefore != AccountManager.getAccounts().size()) {
-                accountsComboBox.removeAllItems();
-                accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
-                for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                    accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
-                }
-                accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
-            }
-        });
-        buttons.add(deleteButton);
-        buttons.add(loginWithMicrosoftButton);
-        bottomPanel.add(buttons, gbc);
+        bottomPanel.add(deleteButton, gbc);
 
         rightPanel.add(topPanel, BorderLayout.NORTH);
         rightPanel.add(bottomPanel, BorderLayout.CENTER);
@@ -269,6 +276,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         add(infoPanel, BorderLayout.NORTH);
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
+
+        ThemeManager.addListener(this);
     }
 
     @Override
@@ -285,5 +294,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     public void onRelocalization() {
         deleteButton.setText(GetText.tr("Delete"));
         updateSkin.setText(GetText.tr("Reload Skin"));
+    }
+
+    @Override
+    public void onThemeChange() {
+        loginWithMicrosoftButton.setIcon(
+                Utils.getIconImage("/assets/image/ms-login-" + (App.THEME.isDark() ? "dark" : "light") + ".png"));
     }
 }
