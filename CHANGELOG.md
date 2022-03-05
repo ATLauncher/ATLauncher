@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Update Discord icon
+- Update all dependency version

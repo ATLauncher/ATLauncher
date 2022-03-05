@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.mini2Dx:gettext-gradle-plugin:1.10.1'
+        classpath 'org.mini2Dx:gettext-gradle-plugin:1.10.4'
     }
 }
 
@@ -15,12 +15,12 @@ plugins {
     id 'application'
 
     id 'org.cadixdev.licenser' version '0.6.1'
-    id 'com.adarshr.test-logger' version '3.0.0'
+    id 'com.adarshr.test-logger' version '3.2.0'
     id 'edu.sc.seis.macAppBundle' version '2.3.0'
     id 'edu.sc.seis.launch4j' version '2.5.2'
-    id 'de.undercouch.download' version '4.1.2'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
-    id 'com.github.ben-manes.versions' version '0.39.0'
+    id 'de.undercouch.download' version '5.0.1'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.ben-manes.versions' version '0.42.0'
 }
 
 apply plugin: 'org.mini2Dx.gettext'
@@ -44,39 +44,42 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.java.dev.jna:jna:5.9.0'
-    implementation 'net.java.dev.jna:jna-platform:5.9.0'
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'net.java.dev.jna:jna:5.10.0'
+    implementation 'net.java.dev.jna:jna-platform:5.10.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.mojang:authlib:1.5.21'
     implementation 'net.iharder:base64:2.3.9'
     implementation 'com.github.Vatuu:discord-rpc:1.6.2'
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation 'org.zeroturnaround:zt-zip:1.14'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
-    implementation 'com.squareup.okhttp3:okhttp-tls:4.9.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.okhttp3:okhttp-tls:4.9.3'
     implementation 'net.mikehardy:google-analytics-java:2.0.11'
     implementation 'io.sentry:sentry:1.7.30'
     implementation 'org.mini2Dx:gettext-lib:1.10.1'
     implementation 'org.apache.logging.log4j:log4j-api:2.16.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.16.0'
+    implementation 'org.mini2Dx:gettext-lib:1.10.4'
+    implementation 'org.apache.logging.log4j:log4j-api:2.17.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
     implementation 'com.sangupta:murmur:1.0.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.apache.commons:commons-text:1.9'
-    implementation 'com.formdev:flatlaf:1.6.1'
-    implementation 'com.formdev:flatlaf-extras:1.6.1'
-    implementation 'com.github.oshi:oshi-core:5.8.2'
+    implementation 'com.formdev:flatlaf:2.0.2'
+    implementation 'com.formdev:flatlaf-extras:2.0.2'
+    implementation 'com.github.oshi:oshi-core:6.1.4'
     implementation 'net.freeutils:jlhttp:2.6'
-    implementation 'joda-time:joda-time:2.10.12'
+    implementation 'joda-time:joda-time:2.10.13'
     implementation 'org.apache.commons:commons-compress:1.21'
-    implementation 'org.commonmark:commonmark:0.18.0'
+    implementation 'org.commonmark:commonmark:0.18.2'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.assertj:assertj-swing-junit:3.17.1'
-    testImplementation 'org.mock-server:mockserver-netty:5.11.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.1'
+    testImplementation 'org.mock-server:mockserver-netty:5.12.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
 }
 
 application {
@@ -254,6 +257,13 @@ project.afterEvaluate {
         dependsOn -= tasks.find {
             it.name.equals("checkLicenses")
         }
+    }
+}
+
+def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC'].any { it -> version.toUpperCase().contains(it) }}
+tasks.named("dependencyUpdates").configure {
+    rejectVersionIf {
+        shouldIgnoreUpdate(it.candidate.version)
     }
 }
 
