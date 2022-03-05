@@ -17,7 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,23 +24,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-
-import com.atlauncher.App;
 import com.atlauncher.Gsons;
-import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
-import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 public class MojangAccount extends AbstractAccount {
     /**
@@ -73,27 +61,6 @@ public class MojangAccount extends AbstractAccount {
      * This is the store for this username as returned by Mojang.
      */
     public Map<String, Object> store;
-
-    public MojangAccount(String username, String password, LoginResponse response, Boolean remember,
-            String clientToken) {
-        this(username, password, response.getAuth().getSelectedProfile().getName(),
-                response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken,
-                response.getAuth().saveForStorage());
-    }
-
-    public MojangAccount(String username, String password, String minecraftUsername, String uuid, Boolean remember,
-            String clientToken, Map<String, Object> store) {
-        this.username = username;
-        if (remember) {
-            this.password = password;
-            this.encryptedPassword = Utils.encrypt(password);
-        }
-        this.minecraftUsername = minecraftUsername;
-        this.uuid = uuid;
-        this.remember = remember;
-        this.clientToken = clientToken;
-        this.store = store;
-    }
 
     @Override
     public String getAccessToken() {
@@ -206,72 +173,5 @@ public class MojangAccount extends AbstractAccount {
     @Override
     public String getUserType() {
         return "mojang";
-    }
-
-    public LoginResponse login() {
-        LoginResponse response = null;
-
-        if (this.getAccessToken() != null) {
-            LogManager.info("Trying to login with access token!");
-            response = Authentication.login(this, false);
-        }
-
-        if (response == null || (response.hasError() && !response.isOffline())) {
-            LogManager.error("Access token is NOT valid! Will attempt to get another one!");
-
-            if (!this.remember) {
-                JPanel panel = new JPanel();
-                panel.setLayout(new BorderLayout());
-                JLabel passwordLabel = new JLabel(GetText.tr("Enter password for {0}", this.minecraftUsername));
-
-                JPasswordField passwordField = new JPasswordField();
-                panel.add(passwordLabel, BorderLayout.NORTH);
-                panel.add(passwordField, BorderLayout.CENTER);
-
-                int ret = DialogManager.confirmDialog().setTitle(GetText.tr("Enter Password")).setContent(panel).show();
-
-                if (ret == DialogManager.OK_OPTION) {
-                    if (passwordField.getPassword().length == 0) {
-                        LogManager.error("Aborting login for " + this.minecraftUsername + ", no password entered");
-                        App.launcher.setMinecraftLaunched(false);
-                        return null;
-                    }
-
-                    this.setPassword(new String(passwordField.getPassword()));
-                } else {
-                    LogManager.error("Aborting login for " + this.minecraftUsername);
-                    App.launcher.setMinecraftLaunched(false);
-                    return null;
-                }
-            }
-
-            response = Authentication.login(MojangAccount.this, true);
-        }
-
-        if (response.hasError() && !response.isOffline()) {
-            LogManager.error(response.getErrorMessage());
-
-            DialogManager
-                    .okDialog().setTitle(
-                            GetText.tr("Error Logging In"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr("Couldn't login to Minecraft servers")
-                            + "<br/><br/>" + response.getErrorMessage()).build())
-                    .setType(DialogManager.ERROR).show();
-
-            App.launcher.setMinecraftLaunched(false);
-            return null;
-        }
-
-        if (!response.isOffline() && !response.getAuth().canPlayOnline()) {
-            return null;
-        }
-
-        if (!response.isOffline()) {
-            this.uuid = response.getAuth().getSelectedProfile().getId().toString();
-            this.store = response.getAuth().saveForStorage();
-            AccountManager.saveAccounts();
-        }
-
-        return response;
     }
 }

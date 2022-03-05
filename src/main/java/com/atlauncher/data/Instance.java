@@ -870,12 +870,8 @@ public class Instance extends MinecraftVersion {
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
-                    LoginResponse session;
 
-                    if (offline) {
-                        session = new LoginResponse(mojangAccount.username);
-                        session.setOffline();
-                    } else {
+                    if (!offline) {
                         App.launcher.setMinecraftLaunched(false);
 
                         if (App.launcher.getParent() != null) {
@@ -899,7 +895,7 @@ public class Instance extends MinecraftVersion {
                         }
                     }
 
-                    process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir, wrapperCommand, username);
+                    process = MCLauncher.launch(mojangAccount, this, nativesTempDir, wrapperCommand, username);
                 } else if (account instanceof MicrosoftAccount) {
                     MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
 

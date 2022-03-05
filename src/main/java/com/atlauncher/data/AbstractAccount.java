@@ -39,7 +39,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
-import com.mojang.util.UUIDTypeAdapter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -68,7 +67,8 @@ public abstract class AbstractAccount implements Serializable {
     public String uuid;
 
     /**
-     * The pack names this account has collapsed in the {@link FeaturedPacksTab}, if any.
+     * The pack names this account has collapsed in the {@link FeaturedPacksTab}, if
+     * any.
      */
     public List<String> collapsedPacks = new ArrayList<>();
 
@@ -284,7 +284,10 @@ public abstract class AbstractAccount implements Serializable {
      * @return The real UUID for this Account
      */
     public UUID getRealUUID() {
-        return (this.uuid == null ? UUID.randomUUID() : UUIDTypeAdapter.fromString(this.uuid));
+        return (this.uuid == null ? UUID.randomUUID()
+                : UUID
+                        .fromString(
+                                this.uuid.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5")));
     }
 
     @Override
