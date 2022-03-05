@@ -52,9 +52,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Unit Tests
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: ./gradlew test --tests com.atlauncher.*
+        run: ./gradlew test --tests com.atlauncher.*
 
       - name: Run UI Tests
         uses: GabrielBB/xvfb-action@v1
