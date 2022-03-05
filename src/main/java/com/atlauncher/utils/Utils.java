@@ -1700,4 +1700,15 @@ public class Utils {
     public static boolean isAcceptedModFile(String filename) {
         return filename.endsWith(".jar") || filename.endsWith(".zip") || filename.endsWith(".litemod");
     }
+
+    public static boolean isDevelopment() {
+        try {
+            if (Utils.class.getResource("").getProtocol().equals("file")) {
+                return true;
+            }
+        } catch (Exception ignored) {
+        }
+
+        return false;
+    }
 }

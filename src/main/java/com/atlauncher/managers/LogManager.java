@@ -108,7 +108,7 @@ public final class LogManager {
             Analytics.sendException(t.getMessage());
 
             if (!(t instanceof LocalException) && sendRemote) {
-                ErrorReporting.reportError(t);
+                ErrorReporting.captureException(t);
             }
 
             t.printStackTrace(new PrintWriter(writer));

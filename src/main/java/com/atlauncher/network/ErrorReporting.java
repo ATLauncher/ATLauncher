@@ -18,54 +18,58 @@
 package com.atlauncher.network;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.Utils;
 
+import io.sentry.Breadcrumb;
 import io.sentry.Sentry;
-import io.sentry.SentryClient;
-import io.sentry.event.Breadcrumb;
-import io.sentry.event.BreadcrumbBuilder;
+import io.sentry.SentryLevel;
 
 public final class ErrorReporting {
-    public static SentryClient client;
     public static List<String> sentEvents = new ArrayList<>();
     public static List<String> ignoredMessages = new ArrayList<>();
+    public static boolean sentryInitialised = false;
 
     public static void enable() {
-        if (client == null) {
-            client = Sentry.init(Constants.SENTRY_DSN);
-            client.addShouldSendEventCallback(event -> {
-                if (event == null || event.getMessage() == null || sentEvents.contains(event.getMessage())) {
-                    return false;
-                }
+        if (!sentryInitialised) {
+            Sentry.init(options -> {
+                options.setDsn(Constants.SENTRY_DSN);
+                options.setBeforeSend((event, hint) -> {
+                    Throwable t = (Throwable) hint;
 
-                if (ignoredMessages.stream().anyMatch(m -> event.getMessage().contains(m))) {
-                    return false;
-                }
+                    if (t == null || t.getMessage() == null || sentEvents.contains(t.getMessage())) {
+                        return null;
+                    }
 
-                sentEvents.add(event.getMessage());
-                return true;
-            });
-            client.setEnvironment(ErrorReporting.getEnvironmentName());
-            client.setRelease(Constants.VERSION.toStringForLogging());
-            client.addTag("java.version", Java.getLauncherJavaVersion());
-            client.addTag("os.name", System.getProperty("os.name"));
-            client.addTag("os.version", System.getProperty("os.version"));
+                    if (ignoredMessages.stream().anyMatch(m -> t.getMessage().contains(m))) {
+                        return null;
+                    }
+
+                    sentEvents.add(t.getMessage());
+
+                    event.setServerName(null); // Don't send server names, they're useless
+                    return event;
+                });
+                options.setDebug(Utils.isDevelopment());
+                options.setEnvironment(ErrorReporting.getEnvironmentName());
+                options.setRelease(Constants.VERSION.toStringForLogging());
+                options.setTag("java.version", Java.getLauncherJavaVersion());
+                options.setTag("os.name", System.getProperty("os.name"));
+                options.setTag("os.version", System.getProperty("os.version"));
+            }, true);
+
+            sentryInitialised = true;
         }
     }
 
     private static String getEnvironmentName() {
-        try {
-            if (ErrorReporting.class.getResource("").getProtocol().equals("file")) {
-                return "development";
-            }
-        } catch (Exception ignored) {
+        if (Utils.isDevelopment()) {
+            return "development";
         }
 
         if (!Constants.VERSION.isReleaseStream()) {
@@ -76,104 +80,103 @@ public final class ErrorReporting {
     }
 
     public static void disable() {
-        if (client != null) {
+        if (sentryInitialised && Sentry.isEnabled()) {
             try {
                 Sentry.close();
-                client = null;
             } catch (Exception e) {
                 LogManager.logStackTrace("Error disabling error reporting", e);
             }
+
+            sentryInitialised = false;
         }
     }
 
-    public static void addExtra(String name, String value) {
-        if (client != null) {
-            client.getContext().addExtra(name, value);
+    public static void setExtra(String name, String value) {
+        if (sentryInitialised && Sentry.isEnabled()) {
+            Sentry.setExtra(name, value);
         }
     }
 
-    public static void addTag(String name, String value) {
-        if (client != null) {
-            client.getContext().addTag(name, value);
+    public static void setTag(String name, String value) {
+        if (sentryInitialised && Sentry.isEnabled()) {
+            Sentry.setTag(name, value);
         }
     }
 
-    public static void recordBreadcrumb(String message, Breadcrumb.Type type, Breadcrumb.Level level) {
-        if (client != null) {
-            client.getContext().recordBreadcrumb(
-                    new BreadcrumbBuilder().setMessage(message).setType(type).setLevel(level).build());
+    public static void addBreadcrumb(String message, String type, SentryLevel level) {
+        if (sentryInitialised && Sentry.isEnabled()) {
+            Breadcrumb breadcrumb = new Breadcrumb(message);
+            breadcrumb.setType(type);
+            breadcrumb.setLevel(level);
+
+            Sentry.addBreadcrumb(breadcrumb);
         }
     }
 
-    public static void recordBreadcrumb(Map<String, String> data, Breadcrumb.Type type, Breadcrumb.Level level) {
-        if (client != null) {
-            client.getContext()
-                    .recordBreadcrumb(new BreadcrumbBuilder().setData(data).setType(type).setLevel(level).build());
-        }
-    }
-
-    public static void recordBreadcrumb(String message, Breadcrumb.Level level) {
-        recordBreadcrumb(message, Breadcrumb.Type.DEFAULT, level);
+    public static void addBreadcrumb(String message, SentryLevel level) {
+        addBreadcrumb(message, "default", level);
     }
 
     public static void recordBreadcrumb(String message) {
-        recordBreadcrumb(message, Breadcrumb.Type.DEFAULT, Breadcrumb.Level.INFO);
+        addBreadcrumb(message, "default", SentryLevel.INFO);
     }
 
-    public static void recordNetworkRequest(String url, String timeTaken) {
-        if (client != null) {
-            Map<String, String> data = new HashMap<>();
+    public static void recordNetworkRequest(String url, String method, int statusCode, String timeTaken) {
+        if (sentryInitialised && Sentry.isEnabled()) {
+            Breadcrumb breadcrumb = new Breadcrumb();
+            breadcrumb.setType("default");
+            breadcrumb.setCategory("http");
+            breadcrumb.setLevel(SentryLevel.INFO);
+            breadcrumb.setData("url", url);
+            breadcrumb.setData("method", method);
+            breadcrumb.setData("status_code", statusCode);
+            breadcrumb.setData("timeTaken", timeTaken);
 
-            data.put("timeTaken", timeTaken);
-
-            client.getContext()
-                    .recordBreadcrumb(new BreadcrumbBuilder().setMessage(url).setType(Breadcrumb.Type.DEFAULT)
-                            .setLevel(Breadcrumb.Level.INFO).setCategory("http.request").setData(data).build());
+            Sentry.addBreadcrumb(breadcrumb);
         }
     }
 
     public static void recordPackInstall(String packName, String packVersion, LoaderVersion loader) {
-        if (client != null) {
-            Map<String, String> data = new HashMap<>();
-
-            data.put("pack.name", packName);
-            data.put("pack.version", packVersion);
+        if (sentryInitialised && Sentry.isEnabled()) {
+            Breadcrumb breadcrumb = new Breadcrumb("Started pack install");
+            breadcrumb.setType("user");
+            breadcrumb.setCategory("pack.install");
+            breadcrumb.setLevel(SentryLevel.INFO);
+            breadcrumb.setData("pack.name", packName);
+            breadcrumb.setData("pack.version", packVersion);
 
             if (loader != null) {
-                data.put("loader.version", loader.version);
-                data.put("loader.type", loader.type);
+                breadcrumb.setData("loader.version", loader.version);
+                breadcrumb.setData("loader.type", loader.type);
             }
 
-            client.getContext().recordBreadcrumb(
-                    new BreadcrumbBuilder().setMessage("Started pack install").setType(Breadcrumb.Type.USER)
-                            .setLevel(Breadcrumb.Level.INFO).setCategory("pack.install").setData(data).build());
+            Sentry.addBreadcrumb(breadcrumb);
         }
     }
 
     public static void recordInstancePlay(String packName, String packVersion, LoaderVersion loader,
             int instanceVersion) {
-        if (client != null) {
-            Map<String, String> data = new HashMap<>();
-
-            data.put("pack.name", packName);
-            data.put("pack.version", packVersion);
-            data.put("instance.version", instanceVersion + "");
+        if (sentryInitialised && Sentry.isEnabled()) {
+            Breadcrumb breadcrumb = new Breadcrumb("Playing instance");
+            breadcrumb.setType("user");
+            breadcrumb.setCategory("instance.play");
+            breadcrumb.setLevel(SentryLevel.INFO);
+            breadcrumb.setData("pack.name", packName);
+            breadcrumb.setData("pack.version", packVersion);
+            breadcrumb.setData("instance.version", instanceVersion + "");
 
             if (loader != null) {
-                data.put("loader.version", loader.version);
-                data.put("loader.type", loader.type);
+                breadcrumb.setData("loader.version", loader.version);
+                breadcrumb.setData("loader.type", loader.type);
             }
 
-            client.getContext()
-                    .recordBreadcrumb(new BreadcrumbBuilder().setMessage("Playing instance")
-                            .setType(Breadcrumb.Type.USER).setLevel(Breadcrumb.Level.INFO).setCategory("instance.play")
-                            .setData(data).build());
+            Sentry.addBreadcrumb(breadcrumb);
         }
     }
 
-    public static void reportError(Throwable t) {
-        if (client != null) {
-            client.sendException(t);
+    public static void captureException(Throwable t) {
+        if (sentryInitialised && Sentry.isEnabled()) {
+            Sentry.captureException(t, t);
         }
     }
 }
