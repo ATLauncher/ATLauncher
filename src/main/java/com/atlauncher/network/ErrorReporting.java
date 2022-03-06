@@ -46,7 +46,8 @@ public final class ErrorReporting {
                         return null;
                     }
 
-                    if (ignoredMessages.stream().anyMatch(m -> t.getMessage().contains(m))) {
+                    if (ignoredMessages.stream()
+                            .anyMatch(m -> t.getMessage().contains(m) || hint.getClass().toString().contains(m))) {
                         return null;
                     }
 

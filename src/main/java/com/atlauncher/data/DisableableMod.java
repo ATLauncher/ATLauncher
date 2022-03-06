@@ -400,6 +400,12 @@ public class DisableableMod implements Serializable {
                 List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
                         instance.launcher.loaderVersion);
 
+                if (versions == null) {
+                    dialog.setReturnValue(null);
+                    dialog.close();
+                    return;
+                }
+
                 Stream<ModrinthVersion> versionsStream = versions.stream()
                         .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 

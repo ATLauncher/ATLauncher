@@ -20,6 +20,7 @@ package com.atlauncher.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -395,12 +396,20 @@ public class CurseForgeApi {
     public static List<CurseForgeCategoryForGame> getCategoriesForModpacks() {
         List<CurseForgeCategoryForGame> categories = getCategories();
 
+        if (categories == null) {
+            return new ArrayList<>();
+        }
+
         return categories.stream().filter(c -> c.classId != null && c.classId == 4471)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
     public static List<CurseForgeCategoryForGame> getCategoriesForMods() {
         List<CurseForgeCategoryForGame> categories = getCategories();
+
+        if (categories == null) {
+            return new ArrayList<>();
+        }
 
         return categories.stream().filter(c -> c.classId != null && c.classId == 6)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());

@@ -12,7 +12,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Remove Vercel links from being valid from Modrinth imports
 - Modrinth packs using dependencies not installing
+- Fix some random errors seen popping up
 
 ### Misc
 - Update Discord icon
-- Update all dependency version
+- Update all dependency versions
