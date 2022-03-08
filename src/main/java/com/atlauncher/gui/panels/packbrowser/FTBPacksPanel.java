@@ -41,8 +41,8 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
-            int page) {
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search, int page) {
         List<ModpacksChPackManifest> packs;
 
         if (search == null || search.isEmpty()) {
@@ -77,8 +77,8 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
-            int page) {
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search, int page) {
         List<ModpacksChPackManifest> packs;
 
         if (search == null || search.isEmpty()) {
@@ -121,6 +121,11 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
+    public boolean supportsSortOrder() {
+        return false;
+    }
+
+    @Override
     public Map<String, String> getSortFields() {
         Map<String, String> sortFields = new LinkedHashMap<>();
 
@@ -130,6 +135,11 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
         sortFields.put("featured", GetText.tr("Featured"));
 
         return sortFields;
+    }
+
+    @Override
+    public Map<String, Boolean> getSortFieldsDefaultOrder() {
+        return new LinkedHashMap<>();
     }
 
     @Override

@@ -40,10 +40,13 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
 import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
@@ -55,21 +58,29 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener {
+public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener, ThemeListener {
     private final JPanel actionsPanel = new JPanel();
+
     private final JPanel minecraftVersionPanel = new JPanel();
     private final JLabel minecraftVersionLabel = new JLabel(GetText.tr("Minecraft Version:"));
     private final JComboBox<ComboItem<String>> minecraftVersionComboBox = new JComboBox<>();
+
     private final JPanel categoriesPanel = new JPanel();
     private final JLabel categoriesLabel = new JLabel(GetText.tr("Category:"));
     private final JComboBox<ComboItem<String>> categoriesComboBox = new JComboBox<>();
+
     private final JPanel sortPanel = new JPanel();
     private final JLabel sortLabel = new JLabel(GetText.tr("Sort:"));
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
+    private boolean sortDescending = true;
+    private final JButton ascendingSortButton = new JButton(Utils.getIconImage(App.THEME.getIconPath("ascending")));
+    private final JButton descendingSortButton = new JButton(Utils.getIconImage(App.THEME.getIconPath("descending")));
+
     private final JPanel spacer = new JPanel();
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
@@ -95,6 +106,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         super(new BorderLayout());
         setName("packsBrowserPanel");
         RelocalizationManager.addListener(this);
+        ThemeManager.addListener(this);
 
         initComponents();
     }
@@ -141,6 +153,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         sortPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
         sortPanel.add(sortLabel);
         sortPanel.add(sortComboBox);
+        sortPanel.add(ascendingSortButton);
+        sortPanel.add(descendingSortButton);
+        ascendingSortButton.setVisible(false);
         actionsPanel.add(sortPanel);
 
         sortComboBox.addActionListener(e -> {
@@ -150,6 +165,38 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
                 // disable the tabs
                 platformTabbedPane.setEnabled(false);
+
+                String newSort = ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue();
+
+                PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
+                        .getSelectedComponent();
+                sortDescending = selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true) == true;
+                ascendingSortButton.setVisible(!sortDescending);
+                descendingSortButton.setVisible(sortDescending);
+
+                load(true);
+            }
+        });
+
+        ascendingSortButton.addActionListener(e -> {
+            if (!loading) {
+                loading = true;
+
+                sortDescending = true;
+                ascendingSortButton.setVisible(!sortDescending);
+                descendingSortButton.setVisible(sortDescending);
+
+                load(true);
+            }
+        });
+
+        descendingSortButton.addActionListener(e -> {
+            if (!loading) {
+                loading = true;
+
+                sortDescending = false;
+                ascendingSortButton.setVisible(!sortDescending);
+                descendingSortButton.setVisible(sortDescending);
 
                 load(true);
             }
@@ -261,8 +308,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         // clear search
         searchField.setText("");
 
-        // reset page
+        // reset page and sort order
         loading = true;
+        sortDescending = true;
         page = 1;
 
         // disable the tabs
@@ -310,6 +358,8 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         minecraftVersionPanel.setVisible(selectedPanel.supportsMinecraftVersionFiltering());
         categoriesPanel.setVisible(selectedPanel.hasCategories());
         sortPanel.setVisible(selectedPanel.hasSort());
+        ascendingSortButton.setVisible(selectedPanel.supportsSortOrder() && !sortDescending);
+        descendingSortButton.setVisible(selectedPanel.supportsSortOrder() && sortDescending);
 
         String platformMessage = selectedPanel.getPlatformMessage();
         platformMessageJPanel.setVisible(platformMessage != null);
@@ -347,8 +397,8 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                 }
 
                 // load in the content for the platform
-                selectedPanel.loadMorePacks(contentPanel, minecraftVersion, category, sort, searchField.getText(),
-                        page);
+                selectedPanel.loadMorePacks(contentPanel, minecraftVersion, category, sort, sortDescending,
+                        searchField.getText(), page);
 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -402,7 +452,8 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             }
 
             // load in the content for the platform
-            selectedPanel.load(contentPanel, minecraftVersion, category, sort, searchField.getText(), page);
+            selectedPanel.load(contentPanel, minecraftVersion, category, sort, sortDescending, searchField.getText(),
+                    page);
 
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -445,5 +496,11 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         clearButton.setText(GetText.tr("Clear"));
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
+    }
+
+    @Override
+    public void onThemeChange() {
+        ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
+        descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));
     }
 }

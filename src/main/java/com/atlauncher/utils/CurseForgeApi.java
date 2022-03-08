@@ -54,12 +54,18 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
             int modLoaderType, String sort, Integer categoryId) {
+        return searchCurseForge(gameVersion, sectionId, query, page, modLoaderType, sort, true, categoryId);
+    }
+
+    public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
+            int modLoaderType, String sort, boolean sortDescending, Integer categoryId) {
         try {
             String url = String.format(
-                    "%s/mods/search?gameId=432&classId=%s&searchFilter=%s&sortField=%s&sortOrder=desc&pageSize=%d&index=%d",
+                    "%s/mods/search?gameId=432&classId=%s&searchFilter=%s&sortField=%s&sortOrder=%s&pageSize=%d&index=%d",
                     Constants.CURSEFORGE_CORE_API_URL, sectionId,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()),
                     sort.replace(" ", ""),
+                    sortDescending ? "desc" : "asc",
                     Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
 
             if (modLoaderType != 0) {
@@ -110,12 +116,13 @@ public class CurseForgeApi {
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page, 0, sort);
     }
 
-    public static List<CurseForgeProject> searchModPacks(String query, int page, String sort, String categoryId,
+    public static List<CurseForgeProject> searchModPacks(String query, int page, String sort, boolean sortDescending,
+            String categoryId,
             String minecraftVersion) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
         return searchCurseForge(minecraftVersion, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, 0, sort,
-                categoryIdParam);
+                sortDescending, categoryIdParam);
     }
 
     public static List<CurseForgeProject> searchModsForFabric(String gameVersion, String query, int page, String sort) {

@@ -45,6 +45,10 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
 
     public abstract Map<String, String> getSortFields();
 
+    public abstract Map<String, Boolean> getSortFieldsDefaultOrder();
+
+    public abstract boolean supportsSortOrder();
+
     public abstract boolean supportsMinecraftVersionFiltering();
 
     public abstract List<VersionManifestVersionType> getSupportedMinecraftVersionTypesForFiltering();
@@ -54,12 +58,13 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
     public abstract boolean hasPagination();
 
     protected abstract void loadPacks(JPanel contentPanel, String minecraftVersion,
-            String category, String sort, String search, int page);
+            String category, String sort, boolean sortDescending, String search, int page);
 
     public abstract void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            String search, int page);
+            boolean sortDescending, String search, int page);
 
-    public void load(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+    public void load(JPanel contentPanel, String minecraftVersion, String category, String sort, boolean sortDescending,
+            String search,
             int page) {
         // remove all components on the content panel
         contentPanel.removeAll();
@@ -73,7 +78,7 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
         contentPanel.add(new LoadingPanel(GetText.tr("Loading {0} Packs...", getPlatformName())), gbc);
 
         // load in the packs
-        loadPacks(contentPanel, minecraftVersion, category, sort, search, page);
+        loadPacks(contentPanel, minecraftVersion, category, sort, sortDescending, search, page);
     }
 
     public PackBrowserPlatformPanel() {

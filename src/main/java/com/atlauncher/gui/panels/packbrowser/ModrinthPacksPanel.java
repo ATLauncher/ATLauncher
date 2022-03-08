@@ -43,8 +43,8 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
-            int page) {
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search, int page) {
         ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
                 category);
 
@@ -75,8 +75,8 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
-            int page) {
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search, int page) {
         ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
                 category);
 
@@ -119,6 +119,11 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
+    public boolean supportsSortOrder() {
+        return false;
+    }
+
+    @Override
     public Map<String, String> getSortFields() {
         Map<String, String> sortFields = new LinkedHashMap<>();
 
@@ -129,6 +134,11 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         sortFields.put("updated", GetText.tr("Updated"));
 
         return sortFields;
+    }
+
+    @Override
+    public Map<String, Boolean> getSortFieldsDefaultOrder() {
+        return new LinkedHashMap<>();
     }
 
     @Override

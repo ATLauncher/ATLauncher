@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Remove ability to add new/relogin to Mojang accounts
 - Use image for login to Microsoft button
+- Add ability to change sort order for CurseForge
 
 ### Fixes
 - Remove Vercel links from being valid from Modrinth imports

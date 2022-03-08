@@ -41,9 +41,9 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
-            int page) {
-        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, category,
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search, int page) {
+        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, sortDescending, category,
                 minecraftVersion);
 
         if (packs == null || packs.size() == 0) {
@@ -73,9 +73,9 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
-            int page) {
-        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, category,
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search, int page) {
+        List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, sortDescending, category,
                 minecraftVersion);
 
         if (packs != null) {
@@ -125,6 +125,23 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         sortFields.put("TotalDownloads", GetText.tr("Total Downloads"));
 
         return sortFields;
+    }
+
+    @Override
+    public Map<String, Boolean> getSortFieldsDefaultOrder() {
+        // Sort field / if in descending order
+        Map<String, Boolean> sortFieldsOrder = new LinkedHashMap<>();
+
+        sortFieldsOrder.put("Popularity", true);
+        sortFieldsOrder.put("LastUpdated", true);
+        sortFieldsOrder.put("TotalDownloads", true);
+
+        return sortFieldsOrder;
+    }
+
+    @Override
+    public boolean supportsSortOrder() {
+        return true;
     }
 
     @Override

@@ -69,18 +69,20 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+    protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search,
             int page) {
         contentPanel.removeAll();
         this.packs.clear();
         this.cards.clear();
         loadPacksToShow(minecraftVersion, search);
 
-        loadMorePacks(contentPanel, minecraftVersion, category, sort, search, page);
+        loadMorePacks(contentPanel, minecraftVersion, category, sort, sortDescending, search, page);
     }
 
     @Override
-    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort, String search,
+    public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
+            boolean sortDescending, String search,
             int page) {
         this.packs.stream().skip(this.cards.size()).limit(10)
                 .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
@@ -135,6 +137,16 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public Map<String, String> getSortFields() {
         return new LinkedHashMap<>();
+    }
+
+    @Override
+    public Map<String, Boolean> getSortFieldsDefaultOrder() {
+        return new LinkedHashMap<>();
+    }
+
+    @Override
+    public boolean supportsSortOrder() {
+        return false;
     }
 
     @Override
