@@ -123,6 +123,8 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         sortFields.put("Popularity", GetText.tr("Popularity"));
         sortFields.put("LastUpdated", GetText.tr("Last Updated"));
         sortFields.put("TotalDownloads", GetText.tr("Total Downloads"));
+        sortFields.put("Name", GetText.tr("Name"));
+        sortFields.put("Featured", GetText.tr("Featured"));
 
         return sortFields;
     }
@@ -135,6 +137,8 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         sortFieldsOrder.put("Popularity", true);
         sortFieldsOrder.put("LastUpdated", true);
         sortFieldsOrder.put("TotalDownloads", true);
+        sortFieldsOrder.put("Name", false);
+        sortFieldsOrder.put("Featured", true);
 
         return sortFieldsOrder;
     }
