@@ -35,7 +35,6 @@ import com.atlauncher.data.curseforge.CurseForgeCoreApiResponse;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
@@ -55,24 +54,13 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
             int modLoaderType, String sort, Integer categoryId) {
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
-        String url;
-
         try {
-            if (usingCoreApi) {
-                url = String.format(
-                        "%s/mods/search?gameId=432&classId=%s&searchFilter=%s&sortField=%s&sortOrder=desc&pageSize=%d&index=%d",
-                        Constants.CURSEFORGE_CORE_API_URL, sectionId,
-                        URLEncoder.encode(query, StandardCharsets.UTF_8.name()),
-                        sort.replace(" ", ""),
-                        Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
-            } else {
-                url = String.format(
-                        "%s/addon/search?gameId=432&modLoaderType=%d&sectionId=%s&searchFilter=%s&sort=%s&sortDescending=true&pageSize=%d&index=%d",
-                        Constants.CURSEFORGE_API_URL, modLoaderType, sectionId,
-                        URLEncoder.encode(query, StandardCharsets.UTF_8.name()), sort.replace(" ", ""),
-                        Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
-            }
+            String url = String.format(
+                    "%s/mods/search?gameId=432&classId=%s&searchFilter=%s&sortField=%s&sortOrder=desc&pageSize=%d&index=%d",
+                    Constants.CURSEFORGE_CORE_API_URL, sectionId,
+                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()),
+                    sort.replace(" ", ""),
+                    Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
 
             if (modLoaderType != 0) {
                 url += "&modLoaderType=" + modLoaderType;
@@ -90,20 +78,13 @@ public class CurseForgeApi {
                     .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                     .setUrl(url);
 
-            if (usingCoreApi) {
-                java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {
-                }.getType();
+            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {
+            }.getType();
 
-                CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
+            CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
-                if (response != null) {
-                    return response.data;
-                }
-            } else {
-                java.lang.reflect.Type type = new TypeToken<List<CurseForgeProject>>() {
-                }.getType();
-
-                return download.asType(type);
+            if (response != null) {
+                return response.data;
             }
         } catch (UnsupportedEncodingException e) {
             LogManager.logStackTrace(e);
@@ -148,90 +129,54 @@ public class CurseForgeApi {
     }
 
     public static List<CurseForgeFile> getFilesForProject(int projectId) {
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
-        String url;
-
-        if (usingCoreApi) {
-            url = String.format("%s/mods/%d/files?pageSize=1000", Constants.CURSEFORGE_CORE_API_URL, projectId);
-        } else {
-            url = String.format("%s/addon/%d/files", Constants.CURSEFORGE_API_URL, projectId);
-        }
+        String url = String.format("%s/mods/%d/files?pageSize=1000", Constants.CURSEFORGE_CORE_API_URL, projectId);
 
         Download download = Download.build().setUrl(url)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        if (usingCoreApi) {
-            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeFile>>>() {
-            }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeFile>>>() {
+        }.getType();
 
-            CurseForgeCoreApiResponse<List<CurseForgeFile>> response = download.asType(type);
+        CurseForgeCoreApiResponse<List<CurseForgeFile>> response = download.asType(type);
 
-            if (response != null) {
-                return response.data;
-            }
-        } else {
-            java.lang.reflect.Type type = new TypeToken<List<CurseForgeFile>>() {
-            }.getType();
-
-            return download.asType(type);
+        if (response != null) {
+            return response.data;
         }
 
         return null;
     }
 
     public static CurseForgeFile getFileForProject(int projectId, int fileId) {
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
-        String url;
-
-        if (usingCoreApi) {
-            url = String.format("%s/mods/%d/files/%d", Constants.CURSEFORGE_CORE_API_URL, projectId, fileId);
-        } else {
-            url = String.format("%s/addon/%d/file/%d", Constants.CURSEFORGE_API_URL, projectId, fileId);
-        }
+        String url = String.format("%s/mods/%d/files/%d", Constants.CURSEFORGE_CORE_API_URL, projectId, fileId);
 
         Download download = Download.build().setUrl(url)
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
 
-        if (usingCoreApi) {
-            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFile>>() {
-            }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFile>>() {
+        }.getType();
 
-            CurseForgeCoreApiResponse<CurseForgeFile> response = download.asType(type);
+        CurseForgeCoreApiResponse<CurseForgeFile> response = download.asType(type);
 
-            if (response != null) {
-                return response.data;
-            }
-        } else {
-            return download.asClass(CurseForgeFile.class);
+        if (response != null) {
+            return response.data;
         }
 
         return null;
     }
 
     public static CurseForgeProject getProjectById(int projectId) {
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
-        String url;
-
-        if (usingCoreApi) {
-            url = String.format("%s/mods/%d", Constants.CURSEFORGE_CORE_API_URL, projectId);
-        } else {
-            url = String.format("%s/addon/%d", Constants.CURSEFORGE_API_URL, projectId);
-        }
+        String url = String.format("%s/mods/%d", Constants.CURSEFORGE_CORE_API_URL, projectId);
 
         Download download = Download.build().setUrl(url)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        if (usingCoreApi) {
-            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeProject>>() {
-            }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeProject>>() {
+        }.getType();
 
-            CurseForgeCoreApiResponse<CurseForgeProject> response = download.asType(type);
+        CurseForgeCoreApiResponse<CurseForgeProject> response = download.asType(type);
 
-            if (response != null) {
-                return response.data;
-            }
-        } else {
-            return download.asClass(CurseForgeProject.class);
+        if (response != null) {
+            return response.data;
         }
 
         return null;
@@ -252,45 +197,27 @@ public class CurseForgeApi {
     }
 
     public static List<CurseForgeProject> getProjects(int[] projectIds) {
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
-        String url;
-
         Download download = Download.build();
 
-        if (usingCoreApi) {
-            url = String.format("%s/mods", Constants.CURSEFORGE_CORE_API_URL);
+        String url = String.format("%s/mods", Constants.CURSEFORGE_CORE_API_URL);
 
-            Map<String, int[]> body = new HashMap<>();
-            body.put("modIds", projectIds);
+        Map<String, int[]> body = new HashMap<>();
+        body.put("modIds", projectIds);
 
-            download = download
-                    .post(RequestBody.create(Gsons.DEFAULT.toJson(body),
-                            MediaType.get("application/json; charset=utf-8")));
-        } else {
-            url = String.format("%s/addon", Constants.CURSEFORGE_API_URL);
-
-            download = download
-                    .post(RequestBody.create(Gsons.DEFAULT.toJson(projectIds),
-                            MediaType.get("application/json; charset=utf-8")));
-        }
+        download = download
+                .post(RequestBody.create(Gsons.DEFAULT.toJson(body),
+                        MediaType.get("application/json; charset=utf-8")));
 
         download = download.setUrl(url)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        if (usingCoreApi) {
-            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {
-            }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {
+        }.getType();
 
-            CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
+        CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
-            if (response != null) {
-                return response.data;
-            }
-        } else {
-            java.lang.reflect.Type type = new TypeToken<List<CurseForgeProject>>() {
-            }.getType();
-
-            return download.asType(type);
+        if (response != null) {
+            return response.data;
         }
 
         return null;
@@ -320,74 +247,45 @@ public class CurseForgeApi {
     }
 
     public static CurseForgeFingerprint checkFingerprints(Long[] murmurHashes) {
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
-        String url;
-
         Download download = Download.build();
 
-        if (usingCoreApi) {
-            url = String.format("%s/fingerprints", Constants.CURSEFORGE_CORE_API_URL);
+        String url = String.format("%s/fingerprints", Constants.CURSEFORGE_CORE_API_URL);
 
-            Map<String, Long[]> body = new HashMap<>();
-            body.put("fingerprints", murmurHashes);
+        Map<String, Long[]> body = new HashMap<>();
+        body.put("fingerprints", murmurHashes);
 
-            download = download
-                    .post(RequestBody.create(Gsons.DEFAULT.toJson(body),
-                            MediaType.get("application/json; charset=utf-8")));
-        } else {
-            url = String.format("%s/fingerprint", Constants.CURSEFORGE_API_URL);
-
-            download = download
-                    .post(RequestBody.create(Gsons.DEFAULT.toJson(murmurHashes),
-                            MediaType.get("application/json; charset=utf-8")));
-        }
+        download = download
+                .post(RequestBody.create(Gsons.DEFAULT.toJson(body),
+                        MediaType.get("application/json; charset=utf-8")));
 
         download = download.setUrl(url)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        if (usingCoreApi) {
-            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFingerprint>>() {
-            }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFingerprint>>() {
+        }.getType();
 
-            CurseForgeCoreApiResponse<CurseForgeFingerprint> response = download.asType(type);
+        CurseForgeCoreApiResponse<CurseForgeFingerprint> response = download.asType(type);
 
-            if (response != null) {
-                return response.data;
-            }
-        } else {
-            return download.asClass(CurseForgeFingerprint.class);
+        if (response != null) {
+            return response.data;
         }
 
         return null;
     }
 
     public static List<CurseForgeCategoryForGame> getCategories() {
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
-        String url;
-
-        if (usingCoreApi) {
-            url = String.format("%s/categories?gameId=432", Constants.CURSEFORGE_CORE_API_URL);
-        } else {
-            url = String.format("%s/category?gameId=432", Constants.CURSEFORGE_API_URL);
-        }
+        String url = String.format("%s/categories?gameId=432", Constants.CURSEFORGE_CORE_API_URL);
 
         Download download = Download.build().setUrl(url)
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
 
-        if (usingCoreApi) {
-            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>>>() {
-            }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>>>() {
+        }.getType();
 
-            CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>> response = download.asType(type);
+        CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>> response = download.asType(type);
 
-            if (response != null) {
-                return response.data;
-            }
-        } else {
-            java.lang.reflect.Type type = new TypeToken<List<CurseForgeCategoryForGame>>() {
-            }.getType();
-
-            return download.asType(type);
+        if (response != null) {
+            return response.data;
         }
 
         return null;

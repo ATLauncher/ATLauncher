@@ -20,14 +20,10 @@ package com.atlauncher.data.curseforge;
 import com.google.gson.annotations.SerializedName;
 
 public class CurseForgeGameVersionLatestFiles {
-    // in both legacy and core api
     public String gameVersion;
-
-    // new in core
     public int gameVersionTypeId;
     public int modLoader;
 
-    // renamed in core
     @SerializedName(value = "fileId", alternate = { "projectFileId" })
     public int fileId;
 

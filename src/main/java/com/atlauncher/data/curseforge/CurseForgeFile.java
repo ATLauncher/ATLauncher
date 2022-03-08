@@ -32,7 +32,6 @@ import com.google.gson.annotations.SerializedName;
 import org.joda.time.format.ISODateTimeFormat;
 
 public class CurseForgeFile {
-    // in both legacy and core api
     public int id;
     public int gameId;
     public boolean isAvailable;
@@ -48,12 +47,10 @@ public class CurseForgeFile {
     public List<CurseForgeFileModule> modules;
     public boolean isServerPack;
 
-    // new in core
     public List<CurseForgeFileHash> hashes = new ArrayList<>();
     public int downloadCount;
     public List<CurseForgeSortableGameVersion> sortableGameVersions = new ArrayList<>();
 
-    // renamed in core
     @SerializedName(value = "gameVersions", alternate = { "gameVersion" })
     public List<String> gameVersions;
 

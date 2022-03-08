@@ -47,7 +47,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
             Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.QUILT_HOST,
-            Constants.CURSEFORGE_HOST, Constants.MODRINTH_HOST, Constants.MODPACKS_CH_HOST };
+            Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST, Constants.MODPACKS_CH_HOST };
 
     public NetworkCheckerToolPanel() {
         super(GetText.tr("Network Checker"));
@@ -103,13 +103,13 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                         .append(Utils.traceRoute(Constants.API_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
-                // Connection to CurseForge API
-                results.append("Ping results to " + Constants.CURSEFORGE_HOST + " was ")
-                        .append(Utils.pingAddress(Constants.CURSEFORGE_HOST));
+                // Connection to CurseForge Core API
+                results.append("Ping results to " + Constants.CURSEFORGE_CORE_API_HOST + " was ")
+                        .append(Utils.pingAddress(Constants.CURSEFORGE_CORE_API_HOST));
                 dialog.doneTask();
 
-                results.append("Tracert to " + Constants.CURSEFORGE_HOST + " was ")
-                        .append(Utils.traceRoute(Constants.CURSEFORGE_HOST)).append("\n\n----------------\n\n");
+                results.append("Tracert to " + Constants.CURSEFORGE_CORE_API_HOST + " was ")
+                        .append(Utils.traceRoute(Constants.CURSEFORGE_CORE_API_HOST)).append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Connection to Modrinth API

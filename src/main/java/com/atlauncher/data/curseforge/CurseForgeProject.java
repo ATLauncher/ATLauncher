@@ -27,7 +27,6 @@ import com.atlauncher.data.json.ModType;
 import com.google.gson.annotations.SerializedName;
 
 public class CurseForgeProject {
-    // in both legacy and core api
     public int id;
     public String name;
     public List<CurseForgeAuthor> authors;
@@ -43,13 +42,10 @@ public class CurseForgeProject {
     public String dateModified;
     public String dateCreated;
     public String dateReleased;
-
-    // new in core
     public Map<String, String> links = new HashMap<>();
     public CurseForgeAttachment logo = null;
     public boolean allowModDistribution;
 
-    // renamed in core
     @SerializedName(value = "screenshots", alternate = { "attachments" })
     public List<CurseForgeAttachment> screenshots;
 
@@ -59,41 +55,15 @@ public class CurseForgeProject {
     @SerializedName(value = "mainFileId", alternate = { "defaultFileId" })
     public int mainFileId;
 
-    // removed in core
-    @Deprecated
-    public String websiteUrl;
-    @Deprecated
-    public CurseForgeCategorySection categorySection;
-    @Deprecated
-    public float popularityScore;
-    @Deprecated
-    public int gamePopularityRank;
-    @Deprecated
-    public String primaryLanguage;
-    @Deprecated
-    public String gameSlug;
-    @Deprecated
-    public String gameName;
-    @Deprecated
-    public String portalName;
-    @Deprecated
-    public boolean isAvailable;
-    @Deprecated
-    public boolean isExperimental;
-
     public ModType getModType() {
         if (getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return ModType.resourcepack;
         }
 
-        return ModType.mods;
+    return ModType.mods;
     }
 
     public int getRootCategoryId() {
-        if (categorySection != null) {
-            return categorySection.gameCategoryId;
-        }
-
         Optional<CurseForgeCategory> primaryCategory = categories.stream().filter(c -> c.id == primaryCategoryId)
                 .findFirst();
 
@@ -105,11 +75,7 @@ public class CurseForgeProject {
     }
 
     public Optional<CurseForgeAttachment> getLogo() {
-        if (logo != null) {
-            return Optional.ofNullable(logo);
-        }
-
-        return screenshots.stream().filter(a -> a.isDefault).findFirst();
+        return Optional.ofNullable(logo);
     }
 
     public boolean equals(Object object) {
@@ -117,6 +83,6 @@ public class CurseForgeProject {
     }
 
     public String getWebsiteUrl() {
-        return Optional.ofNullable(websiteUrl).orElseGet(() -> links.get("websiteUrl"));
+        return links.get("websiteUrl");
     }
 }

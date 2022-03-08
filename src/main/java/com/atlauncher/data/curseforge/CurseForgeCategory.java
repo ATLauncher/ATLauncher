@@ -25,12 +25,8 @@ public class CurseForgeCategory {
     public String url;
     public String dateModified;
     public int gameId;
-
-    // added in core
     public boolean isClass = false;
-
-    // renamed in core
-    // in both legacy and core api
+    
     @SerializedName(value = "id", alternate = { "categoryId" })
     public int id;
 

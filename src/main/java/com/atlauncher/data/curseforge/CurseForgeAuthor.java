@@ -18,7 +18,6 @@
 package com.atlauncher.data.curseforge;
 
 public class CurseForgeAuthor {
-    // in both legacy and core api
     public int id;
     public String name;
     public String url;

@@ -71,8 +71,7 @@ public class Constants {
 
     // CurseForge domains, endpoints, config, etc
     public static final String CURSEFORGE_CORE_API_URL = "https://api.atlauncher.com/v2/curseforge";
-    public static final String CURSEFORGE_API_URL = "https://addons-ecs.forgesvc.net/api/v2";
-    public static final String CURSEFORGE_HOST = "addons-ecs.forgesvc.net";
+    public static final String CURSEFORGE_CORE_API_HOST = "api.curseforge.com";
     public static final int CURSEFORGE_FORGE_MODLOADER_ID = 1;
     public static final int CURSEFORGE_FABRIC_MODLOADER_ID = 4;
     public static final int CURSEFORGE_PAGINATION_SIZE = 20;

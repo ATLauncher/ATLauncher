@@ -20,10 +20,8 @@ package com.atlauncher.data.curseforge;
 import com.google.gson.annotations.SerializedName;
 
 public class CurseForgeFileDependency {
-    // in both legacy and core api
     public int fileId;
 
-    // renamed in core
     @SerializedName(value = "modId", alternate = { "addonId" })
     public int modId;
 

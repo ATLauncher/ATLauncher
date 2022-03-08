@@ -105,7 +105,6 @@ import com.atlauncher.data.technic.TechnicModpackAsset;
 import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
-import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -505,36 +504,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
-        boolean usingCoreApi = ConfigManager.getConfigItem("platforms.curseforge.useCoreApi", false);
+        List<CurseForgeFile> filesFound = CurseForgeApi
+                .getFiles(curseForgeManifest.files.stream().mapToInt(file -> file.fileID).toArray());
 
-        if (usingCoreApi) {
-            List<CurseForgeFile> filesFound = CurseForgeApi
-                    .getFiles(curseForgeManifest.files.stream().mapToInt(file -> file.fileID).toArray());
+        packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
+            CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
+                    .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
+            CurseForgeFile curseForgeFile = filesFound.stream().filter(f -> f.id == file.fileID).findFirst()
+                    .orElseGet(() -> CurseForgeApi
+                            .getFileForProject(file.projectID, file.fileID));
 
-            packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
-                CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
-                        .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
-                CurseForgeFile curseForgeFile = filesFound.stream().filter(f -> f.id == file.fileID).findFirst()
-                        .orElseGet(() -> CurseForgeApi
-                                .getFileForProject(file.projectID, file.fileID));
+            Mod mod = curseForgeFile.convertToMod(curseForgeProject);
+            mod.optional = !file.required;
 
-                Mod mod = curseForgeFile.convertToMod(curseForgeProject);
-                mod.optional = !file.required;
-
-                return mod;
-            }).collect(Collectors.toList());
-        } else {
-            packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
-                CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
-                        .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
-                CurseForgeFile curseForgeFile = CurseForgeApi.getFileForProject(file.projectID, file.fileID);
-
-                Mod mod = curseForgeFile.convertToMod(curseForgeProject);
-                mod.optional = !file.required;
-
-                return mod;
-            }).collect(Collectors.toList());
-        }
+            return mod;
+        }).collect(Collectors.toList());
 
         hideSubProgressBar();
     }
