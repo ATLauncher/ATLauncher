@@ -53,7 +53,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<String>> instanceTitleFormat;
     private final JComboBox<ComboItem<Integer>> selectedTabOnStartup;
     private final JComboBox<InstanceSortingStrategies> defaultInstanceSorting;
-    private final JCheckBox sortPacksAlphabetically;
     private final JCheckBox keepLauncherOpen;
     private final JCheckBox enableConsole;
     private final JCheckBox enableTrayIcon;
@@ -248,26 +247,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         defaultInstanceSorting.setSelectedItem(App.settings.defaultInstanceSorting);
 
         add(defaultInstanceSorting, gbc);
-
-        // Sort Packs Alphabetically
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover sortPacksAlphabeticallyLabel = new JLabelWithHover(
-                GetText.tr("Sort Packs Alphabetically") + "?", HELP_ICON,
-                GetText.tr("If you want to sort the packs in the packs panel alphabetically by default or not."));
-        add(sortPacksAlphabeticallyLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        sortPacksAlphabetically = new JCheckBox();
-        if (App.settings.sortPacksAlphabetically) {
-            sortPacksAlphabetically.setSelected(true);
-        }
-        add(sortPacksAlphabetically, gbc);
 
         // Keep Launcher Open
 
@@ -472,10 +451,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         return !((ComboItem<String>) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme);
     }
 
-    public boolean needToReloadPacksPanel() {
-        return sortPacksAlphabetically.isSelected() != App.settings.sortPacksAlphabetically;
-    }
-
     public boolean needToReloadInstancesPanel() {
         return !(((ComboItem<String>) instanceTitleFormat.getSelectedItem()).getValue())
                 .equals(App.settings.instanceTitleFormat);
@@ -494,7 +469,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.instanceTitleFormat = ((ComboItem<String>) instanceTitleFormat.getSelectedItem()).getValue();
         App.settings.selectedTabOnStartup = ((ComboItem<Integer>) selectedTabOnStartup.getSelectedItem()).getValue();
         App.settings.defaultInstanceSorting = (InstanceSortingStrategies) defaultInstanceSorting.getSelectedItem();
-        App.settings.sortPacksAlphabetically = sortPacksAlphabetically.isSelected();
         App.settings.keepLauncherOpen = keepLauncherOpen.isSelected();
         App.settings.enableConsole = enableConsole.isSelected();
         App.settings.enableTrayMenu = enableTrayIcon.isSelected();

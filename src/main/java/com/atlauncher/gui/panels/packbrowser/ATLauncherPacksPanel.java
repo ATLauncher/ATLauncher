@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
-import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -45,9 +44,10 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     private final List<Pack> packs = new LinkedList<>();
     private final List<ATLauncherPackCard> cards = new LinkedList<>();
 
-    private void loadPacksToShow(String minecraftVersion, String searchText) {
-        List<Pack> packs = App.settings.sortPacksAlphabetically ? PackManager.getPacksSortedAlphabetically(false)
-                : PackManager.getPacksSortedPositionally(false);
+    private void loadPacksToShow(String minecraftVersion, String sort, boolean sortDescending, String searchText) {
+        List<Pack> packs = sort.equalsIgnoreCase("name") ? PackManager.getPacksSortedAlphabetically(false,
+                sortDescending)
+                : PackManager.getPacksSortedPositionally(false, sortDescending);
 
         this.packs.addAll(packs.stream().filter(Pack::canInstall).filter(pack -> {
             if (minecraftVersion != null) {
@@ -70,12 +70,11 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search,
-            int page) {
+            boolean sortDescending, String search, int page) {
         contentPanel.removeAll();
         this.packs.clear();
         this.cards.clear();
-        loadPacksToShow(minecraftVersion, search);
+        loadPacksToShow(minecraftVersion, sort, sortDescending, search);
 
         loadMorePacks(contentPanel, minecraftVersion, category, sort, sortDescending, search, page);
     }
@@ -131,22 +130,33 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public boolean hasSort() {
-        return false;
+        return true;
     }
 
     @Override
     public Map<String, String> getSortFields() {
-        return new LinkedHashMap<>();
+        Map<String, String> sortFields = new LinkedHashMap<>();
+
+        sortFields.put("popular", GetText.tr("Popularity"));
+        sortFields.put("name", GetText.tr("Name"));
+
+        return sortFields;
     }
 
     @Override
     public Map<String, Boolean> getSortFieldsDefaultOrder() {
-        return new LinkedHashMap<>();
+        // Sort field / if in descending order
+        Map<String, Boolean> sortFieldsOrder = new LinkedHashMap<>();
+
+        sortFieldsOrder.put("popular", false);
+        sortFieldsOrder.put("name", false);
+
+        return sortFieldsOrder;
     }
 
     @Override
     public boolean supportsSortOrder() {
-        return false;
+        return true;
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class PackManager {
      *
      * @return The Packs available in the Launcher sorted alphabetically
      */
-    public static List<Pack> getPacksSortedAlphabetically(boolean isFeatured) {
+    public static List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean sortDescending) {
         List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : Data.PACKS) {
@@ -83,7 +84,12 @@ public class PackManager {
             }
         }
 
-        packs.sort(Comparator.comparing(Pack::getName));
+        packs.sort(Comparator.comparing(p -> p.getName().toLowerCase()));
+
+        if (sortDescending) {
+            Collections.reverse(packs);
+        }
+
         return packs;
     }
 
@@ -92,7 +98,7 @@ public class PackManager {
      *
      * @return The Packs available in the Launcher sorted by position
      */
-    public static List<Pack> getPacksSortedPositionally(boolean isFeatured) {
+    public static List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean sortDescending) {
         List<Pack> packs = new LinkedList<>();
 
         for (Pack pack : Data.PACKS) {
@@ -108,6 +114,11 @@ public class PackManager {
         }
 
         packs.sort(Comparator.comparingInt(Pack::getPosition));
+
+        if (sortDescending) {
+            Collections.reverse(packs);
+        }
+
         return packs;
     }
 

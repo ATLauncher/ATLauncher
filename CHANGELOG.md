@@ -8,7 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Remove ability to add new/relogin to Mojang accounts
 - Use image for login to Microsoft button
-- Add ability to change sort order for CurseForge
+- Add ability to change sort order for ATLauncher and CurseForge packs
 - Add in Name and Featured sort fields for CurseForge [#554]
 
 ### Fixes
@@ -20,3 +20,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Update Discord icon
 - Update all dependency versions
 - Remove references to old CurseForge api
+- Remove old sort order setting for ATLauncher packs

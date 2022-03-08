@@ -170,9 +170,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
                 PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
                         .getSelectedComponent();
-                sortDescending = selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true) == true;
-                ascendingSortButton.setVisible(!sortDescending);
-                descendingSortButton.setVisible(sortDescending);
+                setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true) == true);
 
                 load(true);
             }
@@ -181,11 +179,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         ascendingSortButton.addActionListener(e -> {
             if (!loading) {
                 loading = true;
-
-                sortDescending = true;
-                ascendingSortButton.setVisible(!sortDescending);
-                descendingSortButton.setVisible(sortDescending);
-
+                setSortOrder(true);
                 load(true);
             }
         });
@@ -193,11 +187,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         descendingSortButton.addActionListener(e -> {
             if (!loading) {
                 loading = true;
-
-                sortDescending = false;
-                ascendingSortButton.setVisible(!sortDescending);
-                descendingSortButton.setVisible(sortDescending);
-
+                setSortOrder(false);
                 load(true);
             }
         });
@@ -308,9 +298,8 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         // clear search
         searchField.setText("");
 
-        // reset page and sort order
+        // reset page
         loading = true;
-        sortDescending = true;
         page = 1;
 
         // disable the tabs
@@ -354,6 +343,14 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             }
         }
 
+        if (selectedPanel.supportsSortOrder()) {
+            String newSort = ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue();
+
+            setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true) == true);
+        } else {
+            setSortOrder(true);
+        }
+
         // hide minecraft version/sort/category if not needed
         minecraftVersionPanel.setVisible(selectedPanel.supportsMinecraftVersionFiltering());
         categoriesPanel.setVisible(selectedPanel.hasCategories());
@@ -367,6 +364,12 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         // load in the content for the platform
         load(true);
+    }
+
+    private void setSortOrder(boolean sortDescending) {
+        this.sortDescending = sortDescending;
+        ascendingSortButton.setVisible(!sortDescending);
+        descendingSortButton.setVisible(sortDescending);
     }
 
     private void loadMorePacks() {

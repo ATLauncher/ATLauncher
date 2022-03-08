@@ -83,7 +83,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     && networkSettingsTab.canConnectWithProxy()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean themeChanged = generalSettingsTab.themeChanged();
-                boolean reloadPacksPanel = generalSettingsTab.needToReloadPacksPanel();
                 boolean reloadInstancesPanel = generalSettingsTab.needToReloadInstancesPanel();
                 boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                 generalSettingsTab.save();
@@ -96,9 +95,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 commandSettingsTab.save();
                 App.settings.save();
                 SettingsManager.post();
-                if (reloadPacksPanel) {
-                    App.launcher.reloadPacksBrowserPanel();
-                }
                 if (reloadInstancesPanel) {
                     App.launcher.reloadInstancesPanel();
                 }

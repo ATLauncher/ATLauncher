@@ -65,7 +65,6 @@ public class Settings {
     public String instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
     public InstanceSortingStrategies defaultInstanceSorting = InstanceSortingStrategies.BY_NAME;
     public int selectedTabOnStartup = 0;
-    public boolean sortPacksAlphabetically = false;
     public Boolean showPackNameAndVersion = null;
     public boolean keepLauncherOpen = true;
     public boolean enableConsole = true;
@@ -244,11 +243,6 @@ public class Settings {
         String importedIgnoreJavaOnInstanceLaunch = properties.getProperty("ignorejavaoninstancelaunch");
         if (importedIgnoreJavaOnInstanceLaunch != null) {
             ignoreJavaOnInstanceLaunch = Boolean.parseBoolean(importedIgnoreJavaOnInstanceLaunch);
-        }
-
-        String importedSortPacksAlphabetically = properties.getProperty("sortpacksalphabetically");
-        if (importedSortPacksAlphabetically != null) {
-            sortPacksAlphabetically = Boolean.parseBoolean(importedSortPacksAlphabetically);
         }
 
         String importedKeepLauncherOpen = properties.getProperty("keeplauncheropen");

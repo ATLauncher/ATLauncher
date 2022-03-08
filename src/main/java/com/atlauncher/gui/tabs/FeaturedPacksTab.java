@@ -75,8 +75,7 @@ public final class FeaturedPacksTab extends JPanel implements Tab, Relocalizatio
     }
 
     private void loadPacksToShow() {
-        List<Pack> packs = App.settings.sortPacksAlphabetically ? PackManager.getPacksSortedAlphabetically(true)
-                : PackManager.getPacksSortedPositionally(true);
+        List<Pack> packs = PackManager.getPacksSortedPositionally(true, false);
 
         this.packs.clear();
         this.packs.addAll(packs.stream().filter(Pack::canInstall).collect(Collectors.toList()));
