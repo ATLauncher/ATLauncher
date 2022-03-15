@@ -191,6 +191,10 @@ public final class DialogManager {
         return -1;
     }
 
+    public String showInput() {
+        return showInput("");
+    }
+
     public String showInput(String defaultValue) {
         try {
             return (String) JOptionPane.showInputDialog(this.getParent(), this.content, this.title, this.type,

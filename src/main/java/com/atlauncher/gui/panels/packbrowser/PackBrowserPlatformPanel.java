@@ -55,6 +55,10 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
 
     public abstract List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering();
 
+    public abstract boolean supportsManualAdding();
+
+    public abstract void addById(String id);
+
     public abstract boolean hasPagination();
 
     protected abstract void loadPacks(JPanel contentPanel, String minecraftVersion,

@@ -185,6 +185,13 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
         }).reversed()).collect(Collectors.toList());
     }
 
+    public boolean supportsManualAdding() {
+        return false;
+    }
+
+    public void addById(String id) {
+    }
+
     @Override
     public boolean hasPagination() {
         // already loaded in all the cards possible, so don't navigate

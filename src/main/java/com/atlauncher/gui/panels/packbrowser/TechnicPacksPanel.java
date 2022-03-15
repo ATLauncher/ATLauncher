@@ -146,6 +146,13 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
         return false;
     }
 
+    public boolean supportsManualAdding() {
+        return false;
+    }
+
+    public void addById(String id) {
+    }
+
     @Override
     public String getPlatformMessage() {
         return ConfigManager.getConfigItem("platforms.technic.message", null);

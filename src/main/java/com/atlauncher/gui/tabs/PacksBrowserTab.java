@@ -55,6 +55,7 @@ import com.atlauncher.gui.panels.packbrowser.PackBrowserPlatformPanel;
 import com.atlauncher.gui.panels.packbrowser.PacksBrowserTabTitlePanel;
 import com.atlauncher.gui.panels.packbrowser.TechnicPacksPanel;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
@@ -67,7 +68,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
-    private final JLabel minecraftVersionLabel = new JLabel(GetText.tr("Minecraft Version:"));
+    private final JLabel minecraftVersionLabel = new JLabel(GetText.tr("Minecraft:"));
     private final JComboBox<ComboItem<String>> minecraftVersionComboBox = new JComboBox<>();
 
     private final JPanel categoriesPanel = new JPanel();
@@ -85,6 +86,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private final JTextField searchField = new JTextField(16);
     private final JButton searchButton = new JButton(GetText.tr("Search"));
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
+    private final JButton addManuallyButton = new JButton(GetText.tr("Add Manually"));
 
     private final JPanel platformMessageJPanel = new JPanel(new BorderLayout());
     private final JLabel platformMessageJLabel = new JLabel();
@@ -213,6 +215,19 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             executeSearch();
         });
         actionsPanel.add(clearButton);
+
+        addManuallyButton.addActionListener(e -> {
+            PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
+                    .getSelectedComponent();
+
+            String id = DialogManager.okDialog().setTitle(GetText.tr("Add Pack By ID/Slug/URL"))
+                    .setContent(GetText.tr("Enter an ID/slug/url for a pack to add manually:")).showInput();
+
+            if (id != null && !id.isEmpty()) {
+                selectedPanel.addById(id);
+            }
+        });
+        actionsPanel.add(addManuallyButton);
 
         add(actionsPanel, BorderLayout.NORTH);
 
@@ -357,6 +372,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         sortPanel.setVisible(selectedPanel.hasSort());
         ascendingSortButton.setVisible(selectedPanel.supportsSortOrder() && !sortDescending);
         descendingSortButton.setVisible(selectedPanel.supportsSortOrder() && sortDescending);
+        addManuallyButton.setVisible(selectedPanel.supportsManualAdding());
 
         String platformMessage = selectedPanel.getPlatformMessage();
         platformMessageJPanel.setVisible(platformMessage != null);

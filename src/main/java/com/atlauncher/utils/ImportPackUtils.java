@@ -94,7 +94,7 @@ public class ImportPackUtils {
 
         LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
 
-        // TODO: remove this and replace with lookup in CurseForge api
+        // TODO: remove this and replace with lookup in CurseForge api when available
         SlugResponse modInfo = new Download()
                 .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
                         "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug

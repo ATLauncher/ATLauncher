@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
@@ -30,12 +32,22 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.data.nickymoe.SlugResponse;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.CurseForgePackCard;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.network.Download;
 import com.atlauncher.utils.CurseForgeApi;
 
 import org.mini2Dx.gettext.GetText;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
@@ -172,6 +184,73 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    public boolean supportsManualAdding() {
+        return true;
+    }
+
+    public void addById(String id) {
+
+        CurseForgeProject project = null;
+
+        if (id.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
+            Pattern pattern = Pattern.compile(
+                    "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
+            Matcher matcher = pattern.matcher(id);
+
+            if (!matcher.find() || matcher.groupCount() < 2) {
+                LogManager.error("Cannot install as the url was not a valid CurseForge modpack url");
+                return;
+            }
+
+            String packSlug = matcher.group(1);
+
+            // TODO: remove this and replace with lookup in CurseForge api when available
+            SlugResponse modInfo = new Download()
+                    .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                            "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
+                                    + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
+                    .setUrl("https://curse.nikky.moe/graphql").asClass(SlugResponse.class);
+
+            if (modInfo.data.addons.size() != 0) {
+                project = CurseForgeApi.getProjectById(modInfo.data.addons.get(0).id);
+            }
+        } else {
+            try {
+                project = CurseForgeApi.getProjectById(Integer.parseInt(id));
+            } catch (NumberFormatException e) {
+                // TODO: remove this and replace with lookup in CurseForge api when available
+                SlugResponse modInfo = new Download()
+                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                                "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + id
+                                        + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
+                        .setUrl("https://curse.nikky.moe/graphql").asClass(SlugResponse.class);
+
+                if (modInfo.data.addons.size() != 0) {
+                    project = CurseForgeApi.getProjectById(modInfo.data.addons.get(0).id);
+                }
+            }
+        }
+
+        if (project == null) {
+            DialogManager.okDialog().setType(DialogManager.ERROR).setTitle(GetText.tr("Pack Not Found"))
+                    .setContent(
+                            GetText.tr(
+                                    "A pack with that id/slug was not found. Please check the id/slug/url and try again."))
+                    .show();
+            return;
+        }
+
+        if (AccountManager.getSelectedAccount() == null) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                    .setType(DialogManager.ERROR).show();
+        } else {
+            Analytics.sendEvent(project.name, "InstallManual", getAnalyticsCategory());
+            Analytics.sendEvent(project.name, "Install", getAnalyticsCategory());
+            new InstanceInstallerDialog(project);
+        }
     }
 
     @Override

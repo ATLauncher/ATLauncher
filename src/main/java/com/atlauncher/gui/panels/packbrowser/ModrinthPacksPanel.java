@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
@@ -29,11 +31,17 @@ import javax.swing.JPanel;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.ModrinthPackCard;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ModrinthApi;
 
 import org.apache.commons.text.WordUtils;
@@ -165,6 +173,48 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    public boolean supportsManualAdding() {
+        return true;
+    }
+
+    public void addById(String id) {
+        String packLookup = id;
+
+        if (id.startsWith("https://modrinth.com/modpack")) {
+            Pattern pattern = Pattern
+                    .compile("modrinth\\.com\\/modpack\\/([\\w-]+)");
+            Matcher matcher = pattern.matcher(id);
+
+            if (!matcher.find() || matcher.groupCount() < 1) {
+                LogManager.error("Cannot install as the url was not a valid Modrinth modpack url");
+                return;
+            }
+
+            packLookup = matcher.group(1);
+        }
+
+        ModrinthProject project = ModrinthApi.getProject(packLookup);
+
+        if (project == null) {
+            DialogManager.okDialog().setType(DialogManager.ERROR).setTitle(GetText.tr("Pack Not Found"))
+                    .setContent(
+                            GetText.tr(
+                                    "A pack with that id/slug was not found. Please check the id/slug/url and try again."))
+                    .show();
+            return;
+        }
+
+        if (AccountManager.getSelectedAccount() == null) {
+            DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                    .setType(DialogManager.ERROR).show();
+        } else {
+            Analytics.sendEvent(project.title, "InstallManual", getAnalyticsCategory());
+            Analytics.sendEvent(project.title, "Install", getAnalyticsCategory());
+            new InstanceInstallerDialog(project);
+        }
     }
 
     @Override
