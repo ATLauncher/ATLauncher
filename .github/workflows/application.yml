@@ -63,6 +63,9 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     needs: test
+    outputs:
+      version: ${{ steps.version.outputs.text }}
+      clean-version: ${{ steps.clean-version.outputs.replaced }}
     steps:
       - uses: actions/checkout@v2
 
@@ -82,6 +85,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Read version
+        id: version
+        uses: pCYSl5EDgo/cat@cde404f088c582552b0fe4e24ecb3159445fde2a
+        with:
+          path: ./src/main/resources/version
+          trim: true
+
+      - name: Remove stream from version
+        id: clean-version
+        uses: frabert/replace-string-action@v1.2
+        with:
+          string: ${{ steps.version.outputs.text }}
+          pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
+          replace-with: '$1'
+
       - name: Build
         run: ./gradlew build -x test
 
@@ -93,7 +111,7 @@ jobs:
   release:
     runs-on: ubuntu-20.04
     needs: build
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' && !endsWith(needs.build.outputs.version, '.Beta') }}
     permissions:
       contents: write
     steps:
@@ -104,7 +122,7 @@ jobs:
 
       - name: Read changelog
         id: changelog
-        uses: pCYSl5EDgo/cat@master
+        uses: pCYSl5EDgo/cat@cde404f088c582552b0fe4e24ecb3159445fde2a
         with:
           path: ./CHANGELOG.md
 
@@ -127,48 +145,31 @@ jobs:
           cat fixed-changelog.md >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Read version
-        id: version
-        uses: pCYSl5EDgo/cat@master
-        with:
-          path: ./src/main/resources/version
-          trim: true
-
-      - name: Remove stream from version
-        id: clean-version
-        uses: frabert/replace-string-action@v1.2
-        with:
-          string: ${{ steps.version.outputs.text }}
-          pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
-          replace-with: '$1'
-
       - name: Create ATLauncher Version
         uses: ATLauncher/release-atlauncher-action@master
-        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         with:
           api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
-          version: ${{ steps.clean-version.outputs.replaced }}
+          version: ${{ needs.build.outputs.clean-version }}
           changelog: ${{ env.cleaned-changelog }}
           files: |
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
+            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
+            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
+            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
-        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: v${{ steps.clean-version.outputs.replaced }}
+          tag_name: v${{ needs.build.outputs.clean-version }}
           target_commitish: master
-          name: ${{ steps.clean-version.outputs.replaced }}
+          name: ${{ needs.build.outputs.clean-version }}
           body: ${{ env.cleaned-changelog }}
           prerelease: false
           draft: false
           files: |
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.exe
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.zip
-            ./ATLauncher/ATLauncher-${{ steps.clean-version.outputs.replaced }}.jar
+            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
+            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
+            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1
@@ -178,20 +179,18 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
           environment: production
-          version: "${{ steps.clean-version.outputs.replaced }}"
+          version: "${{ needs.build.outputs.clean-version }}"
 
       - name: Package up AUR versions
-        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           event-type: aur-publish
-          client-payload: '{"version": "${{ steps.clean-version.outputs.replaced }}"}'
+          client-payload: '{"version": "${{ needs.build.outputs.clean-version }}"}'
 
       - name: Update version
-        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         run: |
-          NEW_VERSION=`echo ${{ steps.clean-version.outputs.replaced }} | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'`
+          NEW_VERSION=`echo ${{ needs.build.outputs.clean-version }} | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'`
           cat <<EOF > CHANGELOG.md
           # Changelog
 
@@ -210,15 +209,13 @@ jobs:
 
       - name: Commit new version/CHANGELOG file
         uses: EndBug/add-and-commit@v7.0.0
-        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         with:
           add: 'CHANGELOG.md src/main/resources/version'
           message: 'chore: bump version'
 
       - name: Add comment, remove label and then close issues labeled with 'awaiting-release'
-        if: ${{ !endsWith(steps.version.outputs.text, '.Beta') }}
         uses: ./.github/actions/label-cleanup
         with:
           label: 'awaiting-release'
-          comment: 'This has been fixed with version ${{ steps.clean-version.outputs.replaced }}'
+          comment: 'This has been fixed with version ${{ needs.build.outputs.clean-version }}'
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
