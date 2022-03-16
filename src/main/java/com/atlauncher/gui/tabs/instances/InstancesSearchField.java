@@ -26,6 +26,9 @@ import javax.swing.JTextField;
 
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.network.Analytics;
+import com.formdev.flatlaf.icons.FlatSearchIcon;
+
+import org.mini2Dx.gettext.GetText;
 
 public final class InstancesSearchField extends JTextField implements KeyListener {
     private final InstancesTab parent;
@@ -36,6 +39,13 @@ public final class InstancesSearchField extends JTextField implements KeyListene
 
         this.setMaximumSize(new Dimension(190, 23));
         this.addKeyListener(this);
+        this.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        this.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
+        this.putClientProperty("JTextField.showClearButton", true);
+        this.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            setText("");
+            this.parent.fireSearchEvent(new InstancesSearchEvent(this, null));
+        });
     }
 
     public Pattern getSearchPattern() {

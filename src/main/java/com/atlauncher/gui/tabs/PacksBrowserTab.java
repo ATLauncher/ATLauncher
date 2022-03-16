@@ -60,6 +60,7 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
+import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -84,8 +85,6 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     private final JPanel spacer = new JPanel();
     private final JTextField searchField = new JTextField(16);
-    private final JButton searchButton = new JButton(GetText.tr("Search"));
-    private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton addManuallyButton = new JButton(GetText.tr("Add Manually"));
 
     private final JPanel platformMessageJPanel = new JPanel(new BorderLayout());
@@ -203,18 +202,14 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                 }
             }
         });
-        actionsPanel.add(searchField);
-
-        searchButton.addActionListener(e -> {
-            executeSearch();
-        });
-        actionsPanel.add(searchButton);
-
-        clearButton.addActionListener(e -> {
+        searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        searchField.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
+        searchField.putClientProperty("JTextField.showClearButton", true);
+        searchField.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
             searchField.setText("");
             executeSearch();
         });
-        actionsPanel.add(clearButton);
+        actionsPanel.add(searchField);
 
         addManuallyButton.addActionListener(e -> {
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
@@ -511,10 +506,10 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     @Override
     public void onRelocalization() {
-        searchButton.setText(GetText.tr("Search"));
-        clearButton.setText(GetText.tr("Clear"));
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
+
+        searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
     }
 
     @Override

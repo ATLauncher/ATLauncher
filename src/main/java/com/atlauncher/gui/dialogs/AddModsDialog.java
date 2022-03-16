@@ -62,6 +62,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
+import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -74,7 +75,6 @@ public final class AddModsDialog extends JDialog {
     private final JPanel contentPanel = new JPanel(new WrapLayout());
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
-    private final JButton searchButton = new JButton(GetText.tr("Search"));
     private final JLabel platformMessageLabel = new JLabel();
     private final JComboBox<ComboItem<ModPlatform>> hostComboBox = new JComboBox<ComboItem<ModPlatform>>();
     private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
@@ -116,6 +116,14 @@ public final class AddModsDialog extends JDialog {
         }
 
         hostComboBox.setSelectedIndex(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? 0 : 1);
+
+        searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        searchField.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
+        searchField.putClientProperty("JTextField.showClearButton", true);
+        searchField.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            searchField.setText("");
+            searchForMods();
+        });
 
         String platformMessage = ConfigManager.getConfigItem(String.format("platforms.%s.message",
                 App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? "curseforge" : "modrinth"), null);
@@ -160,7 +168,6 @@ public final class AddModsDialog extends JDialog {
 
         searchButtonsPanel.add(this.hostComboBox);
         searchButtonsPanel.add(this.searchField);
-        searchButtonsPanel.add(this.searchButton);
         searchButtonsPanel.add(this.sectionComboBox);
         searchButtonsPanel.add(this.sortComboBox);
 
@@ -341,8 +348,6 @@ public final class AddModsDialog extends JDialog {
         });
 
         this.searchField.addActionListener(e -> searchForMods());
-
-        this.searchButton.addActionListener(e -> searchForMods());
     }
 
     private void setLoading(boolean loading) {

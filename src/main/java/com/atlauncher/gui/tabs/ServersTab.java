@@ -25,7 +25,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -38,14 +37,13 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
+import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ServersTab extends JPanel implements Tab, RelocalizationListener {
-    private JButton clearButton;
     private JTextField searchBox;
-    private JButton searchButton;
 
     private String searchText = null;
 
@@ -77,21 +75,14 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
                 }
             }
         });
-        topPanel.add(searchBox);
-
-        searchButton = new JButton(GetText.tr("Search"));
-        searchButton.addActionListener(e -> {
-            Analytics.sendEvent(searchBox.getText(), "Search", "Server");
-            reload();
-        });
-        topPanel.add(searchButton);
-
-        clearButton = new JButton(GetText.tr("Clear"));
-        clearButton.addActionListener(e -> {
+        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
+        searchBox.putClientProperty("JTextField.showClearButton", true);
+        searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
             searchBox.setText("");
             reload();
         });
-        topPanel.add(clearButton);
+        topPanel.add(searchBox);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -162,8 +153,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
     @Override
     public void onRelocalization() {
-        clearButton.setText(GetText.tr("Clear"));
-        searchButton.setText(GetText.tr("Search"));
+        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
 
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));
