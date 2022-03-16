@@ -23,6 +23,7 @@ import java.io.IOException;
 public class DownloadException extends IOException {
     public Download download;
     public String response = null;
+    public Integer statusCode = null;
 
     public DownloadException(Download download) {
         super(download.url + " request wasn't successful: " + download.response);
@@ -32,6 +33,7 @@ public class DownloadException extends IOException {
         if (download.response != null) {
             try {
                 this.response = download.response.body().string();
+                this.statusCode = download.response.code();
             } catch (IOException e) {
                 e.printStackTrace();
             }

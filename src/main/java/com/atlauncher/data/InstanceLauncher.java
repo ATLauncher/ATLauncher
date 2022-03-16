@@ -92,6 +92,8 @@ public class InstanceLauncher {
     public ModpacksChPackVersionManifest modpacksChPackVersionManifest;
     public TechnicModpack technicModpack;
 
+    public boolean checkForUpdates = true;
+
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
     public boolean vanillaInstance = false;
