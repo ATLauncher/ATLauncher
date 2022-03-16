@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Modrinth packs using dependencies not installing
 - Fix some random errors seen popping up
 - Issue with Technic packs being removed trying to still check for updates
+- Detect Adoptium Java builds with JavaChecker
 
 ### Misc
 - Update Discord icon

@@ -56,7 +56,7 @@ public class JavaFinder {
 
                 PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java.exe");
 
-                String[] pathsToSearch = { "Java", "Amazon Corretto", "AdoptOpenJDK" };
+                String[] pathsToSearch = { "Java", "Amazon Corretto", "AdoptOpenJDK", "Eclipse Foundation" };
 
                 for (String searchPath : pathsToSearch) {
                     List<String> foundPaths = new ArrayList<>();
