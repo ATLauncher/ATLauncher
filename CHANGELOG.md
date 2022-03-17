@@ -19,6 +19,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix some random errors seen popping up
 - Issue with Technic packs being removed trying to still check for updates
 - Detect Adoptium Java builds with JavaChecker
+- New versions of Quilt using hashed library instead of intermediary and not working
 
 ### Misc
 - Update Discord icon

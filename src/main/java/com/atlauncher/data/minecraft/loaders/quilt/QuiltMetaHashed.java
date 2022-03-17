@@ -17,7 +17,7 @@
  */
 package com.atlauncher.data.minecraft.loaders.quilt;
 
-public class QuiltMetaIntermediary {
+public class QuiltMetaHashed {
     public String maven;
     public String version;
     public boolean stable;

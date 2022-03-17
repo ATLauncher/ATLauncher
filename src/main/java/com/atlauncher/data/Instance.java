@@ -1529,7 +1529,7 @@ public class Instance extends MinecraftVersion {
         if (launcher.loaderVersion.type.equals("Quilt")) {
             // mappings
             MultiMCComponent quiltMappingsComponent = new MultiMCComponent();
-            quiltMappingsComponent.cachedName = "Intermediary Mappings";
+            quiltMappingsComponent.cachedName = "Hashed Mappings";
 
             quiltMappingsComponent.cachedRequires = new ArrayList<>();
             MultiMCRequire minecraftRequire = new MultiMCRequire();
@@ -1540,7 +1540,7 @@ public class Instance extends MinecraftVersion {
             quiltMappingsComponent.cachedVersion = id;
             quiltMappingsComponent.cachedVolatile = true;
             quiltMappingsComponent.dependencyOnly = true;
-            quiltMappingsComponent.uid = "org.quiltmc.intermediary";
+            quiltMappingsComponent.uid = "org.quiltmc.hashed";
             quiltMappingsComponent.version = id;
             manifest.components.add(quiltMappingsComponent);
 
@@ -1549,9 +1549,9 @@ public class Instance extends MinecraftVersion {
             quiltLoaderComponent.cachedName = "Fabric Loader";
 
             quiltLoaderComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire intermediaryRequire = new MultiMCRequire();
-            intermediaryRequire.uid = "org.quiltmc.intermediary";
-            quiltLoaderComponent.cachedRequires.add(intermediaryRequire);
+            MultiMCRequire hashedRequire = new MultiMCRequire();
+            hashedRequire.uid = "org.quiltmc.hashed";
+            quiltLoaderComponent.cachedRequires.add(hashedRequire);
 
             quiltLoaderComponent.cachedVersion = launcher.loaderVersion.version;
             quiltLoaderComponent.uid = "org.quiltmc.quilt-loader";

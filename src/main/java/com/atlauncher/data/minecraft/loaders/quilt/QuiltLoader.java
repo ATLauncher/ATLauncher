@@ -100,7 +100,7 @@ public class QuiltLoader implements Loader {
         List<Library> libraries = new ArrayList<>();
 
         libraries.add(new QuiltLibrary(this.version.loader.maven));
-        libraries.add(new QuiltLibrary(this.version.intermediary.maven));
+        libraries.add(new QuiltLibrary(this.version.hashed.maven));
         libraries.addAll(this.version.launcherMeta.getLibraries(this.instanceInstaller.isServer));
 
         return libraries;

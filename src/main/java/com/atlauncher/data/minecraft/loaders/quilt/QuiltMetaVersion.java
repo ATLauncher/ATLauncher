@@ -17,8 +17,13 @@
  */
 package com.atlauncher.data.minecraft.loaders.quilt;
 
+import com.google.gson.annotations.SerializedName;
+
 public class QuiltMetaVersion {
     public QuiltMetaLoader loader;
-    public QuiltMetaIntermediary intermediary;
+
+    @SerializedName(value = "hashed", alternate = { "intermediary" })
+    public QuiltMetaHashed hashed;
+
     public QuiltMetaLauncherMeta launcherMeta;
 }
