@@ -314,7 +314,8 @@ public enum OS {
      * Checks if using Arm.
      */
     public static boolean isArm() {
-        return System.getProperty("os.arch").startsWith("arm");
+        return System.getProperty("os.arch").startsWith("arm")
+                || System.getProperty("os.arch").equalsIgnoreCase("aarch64");
     }
 
     public static boolean isMacArm() {
