@@ -492,7 +492,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         useJavaProvidedByMinecraftLabel = new JLabelWithHover(GetText.tr("Use Java Provided By Minecraft") + "?",
                 HELP_ICON,
                 new HTMLBuilder().center().text(GetText.tr(
-                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
+                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing.{0}",
+                        (OS.isArm() && !OS.isMacArm()) ? GetText.tr(
+                                "<br/><br/>This setting cannot be changed if using an ARM based computer as it's not compatable and will not be used.")
+                                : ""))
                         .build());
         add(useJavaProvidedByMinecraftLabel, gbc);
 
@@ -501,6 +504,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useJavaProvidedByMinecraft = new JCheckBox();
         useJavaProvidedByMinecraft.setSelected(App.settings.useJavaProvidedByMinecraft);
+        useJavaProvidedByMinecraft.setEnabled(!OS.isArm() || OS.isMacArm());
         useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {

@@ -20,6 +20,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with Technic packs being removed trying to still check for updates
 - Detect Adoptium Java builds with JavaChecker
 - New versions of Quilt using hashed library instead of intermediary and not working
+- Don't download/use Minecraft runtimes for Arm based machines (except M1)
 
 ### Misc
 - Update Discord icon

@@ -317,6 +317,10 @@ public enum OS {
         return System.getProperty("os.arch").startsWith("arm");
     }
 
+    public static boolean isMacArm() {
+        return OS.isMac() && OS.isArm();
+    }
+
     /**
      * Gets the architecture type of the system.
      */

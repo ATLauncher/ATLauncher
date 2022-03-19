@@ -554,7 +554,7 @@ public class Instance extends MinecraftVersion {
 
         // download Java runtime
         PerformanceManager.start("Java Runtime");
-        if (javaVersion != null && Data.JAVA_RUNTIMES != null && Optional
+        if (javaVersion != null && Data.JAVA_RUNTIMES != null && (!OS.isArm() || OS.isMacArm()) && Optional
                 .ofNullable(launcher.useJavaProvidedByMinecraft).orElse(App.settings.useJavaProvidedByMinecraft)) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
             String runtimeSystemString = JavaRuntimes.getSystem();

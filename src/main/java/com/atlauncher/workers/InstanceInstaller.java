@@ -1496,7 +1496,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         new Thread(() -> {
             try {
                 Path javaPath = Paths.get(OS.getJavaHome());
-                if (minecraftVersion.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+                if (minecraftVersion.javaVersion != null && (!OS.isArm() || OS.isMacArm())
+                        && App.settings.useJavaProvidedByMinecraft) {
                     Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES
                             .resolve(minecraftVersion.javaVersion.component)
                             .resolve(JavaRuntimes.getSystem()).resolve(minecraftVersion.javaVersion.component);
@@ -1965,7 +1966,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         addPercent(5);
 
         if (minecraftVersion.javaVersion == null || Data.JAVA_RUNTIMES == null
-                || !App.settings.useJavaProvidedByMinecraft) {
+                || (OS.isArm() && !OS.isMacArm()) || !App.settings.useJavaProvidedByMinecraft) {
             return;
         }
 
