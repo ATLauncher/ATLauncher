@@ -24,6 +24,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - aarch64 not being included as a valid ARM arch
 - Update OSX app icon [#502]
 - Log clearer tool NPE when folder doesn't exist
+- Issue with OSX not using runtime when running initServerSettings
 
 ### Misc
 - Update Discord icon

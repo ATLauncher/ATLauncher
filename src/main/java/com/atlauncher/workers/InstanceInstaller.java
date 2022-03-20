@@ -1502,6 +1502,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .resolve(minecraftVersion.javaVersion.component)
                             .resolve(JavaRuntimes.getSystem()).resolve(minecraftVersion.javaVersion.component);
 
+                    if (OS.isMac()) {
+                        runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
+                    }
+
                     if (Files.isDirectory(runtimeDirectory)) {
                         javaPath = runtimeDirectory.toAbsolutePath();
                     }
