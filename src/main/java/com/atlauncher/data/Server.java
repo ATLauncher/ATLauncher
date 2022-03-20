@@ -110,10 +110,8 @@ public class Server {
 
         if (OS.isWindows()) {
             serverScript += ".bat";
-        } else if (OS.isLinux() || (OS.isMac() && usesRunSh)) {
+        } else if (OS.isLinux() || OS.isMac()) {
             serverScript += ".sh";
-        } else if (OS.isMac()) {
-            serverScript += ".command";
         }
 
         LogManager.info("Starting server " + name);

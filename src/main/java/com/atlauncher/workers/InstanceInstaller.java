@@ -2789,40 +2789,30 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         File batFile = new File(this.root.toFile(), "LaunchServer.bat");
         File shFile = new File(this.root.toFile(), "LaunchServer.sh");
-        File commandFile = new File(this.root.toFile(), "LaunchServer.command");
         File tmpBatFile = new File(this.temp.toFile(), "LaunchServer.bat");
         File tmpShFile = new File(this.temp.toFile(), "LaunchServer.sh");
-        File tmpCommandFile = new File(this.temp.toFile(), "LaunchServer.command");
         File tmp1BatFile = new File(this.temp.toFile(), "LaunchServer1.bat");
         File tmp1ShFile = new File(this.temp.toFile(), "LaunchServer1.sh");
-        File tmp1CommandFile = new File(this.temp.toFile(), "LaunchServer1.command");
 
         // write out the server jar filename
         Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), tmpBatFile,
                 "%%SERVERJAR%%", getServerJar());
         Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), tmpShFile, "%%SERVERJAR%%",
                 getServerJar());
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.command"), tmpCommandFile,
-                "%%SERVERJAR%%", getServerJar());
 
         // replace/remove the server arguments (if any)
         Utils.replaceText(new FileInputStream(tmpBatFile), tmp1BatFile, "%%ARGUMENTS%%",
                 this.packVersion.serverArguments);
         Utils.replaceText(new FileInputStream(tmpShFile), tmp1ShFile, "%%ARGUMENTS%%",
                 this.packVersion.serverArguments);
-        Utils.replaceText(new FileInputStream(tmpCommandFile), tmp1CommandFile, "%%ARGUMENTS%%",
-                this.packVersion.serverArguments);
 
         // replace/remove the logging arguments for Log4Shell exploit (if any)
         String log4ShellArguments = this.getLog4ShellArguments();
         Utils.replaceText(new FileInputStream(tmp1BatFile), batFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
         Utils.replaceText(new FileInputStream(tmp1ShFile), shFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
-        Utils.replaceText(new FileInputStream(tmp1CommandFile), commandFile, "%%LOG4SHELLARGUMENTS%%",
-                log4ShellArguments);
 
         batFile.setExecutable(true);
         shFile.setExecutable(true);
-        commandFile.setExecutable(true);
     }
 
     private void writeLog4ShellExploitArgumentsForForgeScripts() throws Exception {

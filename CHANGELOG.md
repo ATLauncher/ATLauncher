@@ -32,3 +32,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove references to old CurseForge api
 - Remove old sort order setting for ATLauncher packs
 - Update Flatlaf version
+- Remove server script for OSX as can share the Linux one
