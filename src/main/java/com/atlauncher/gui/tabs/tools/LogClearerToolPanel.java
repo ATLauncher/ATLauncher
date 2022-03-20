@@ -20,6 +20,7 @@ package com.atlauncher.gui.tabs.tools;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Files;
 
 import javax.swing.JLabel;
 
@@ -50,8 +51,10 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
         if (e.getSource() == LAUNCH_BUTTON) {
             Analytics.sendEvent("LogClearer", "Run", "Tool");
 
-            for (File file : FileSystem.LOGS.resolve("old").toFile().listFiles()) {
-                Utils.delete(file);
+            if (Files.exists(FileSystem.LOGS.resolve("old"))) {
+                for (File file : FileSystem.LOGS.resolve("old").toFile().listFiles()) {
+                    Utils.delete(file);
+                }
             }
 
             DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))

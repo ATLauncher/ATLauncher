@@ -23,6 +23,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't download/use Minecraft runtimes for Arm based machines (except M1)
 - aarch64 not being included as a valid ARM arch
 - Update OSX app icon [#502]
+- Log clearer tool NPE when folder doesn't exist
 
 ### Misc
 - Update Discord icon
