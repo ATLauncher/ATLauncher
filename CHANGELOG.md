@@ -22,6 +22,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - New versions of Quilt using hashed library instead of intermediary and not working
 - Don't download/use Minecraft runtimes for Arm based machines (except M1)
 - aarch64 not being included as a valid ARM arch
+- Update OSX app icon [#502]
 
 ### Misc
 - Update Discord icon

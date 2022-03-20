@@ -638,7 +638,7 @@ public class App {
                 Method getApplication = util.getMethod("getApplication");
                 Object application = getApplication.invoke(util);
                 Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
-                setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon.png"));
+                setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon-osx.png"));
             } catch (Exception ex) {
                 LogManager.logStackTrace("Failed to set dock icon", ex);
             }
