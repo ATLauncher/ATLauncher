@@ -154,7 +154,7 @@ public class Server {
 
                     arguments.add(getRoot().resolve(serverScript).toString()
                             + (!usesRunSh && javaPath != null ? String.format(" ATLcustomjava %s",
-                                    javaPath + "/bin/java") : " ")
+                                    javaPath + "/bin/java ") : " ")
                             + args);
                 } else if (Utils.executableInPath("exo-open")) {
                     arguments.add("exo-open");
@@ -165,7 +165,7 @@ public class Server {
                     arguments.add(String.format(
                             "./%s %s%s", serverScript, (!usesRunSh && javaPath != null
                                     ? String.format(" ATLcustomjava %s",
-                                            javaPath + "/bin/java")
+                                            javaPath + "/bin/java ")
                                     : ""),
                             args));
                 } else {
