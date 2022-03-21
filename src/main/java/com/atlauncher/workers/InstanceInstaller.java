@@ -2596,8 +2596,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 FileUtils.deleteDirectory(this.root.resolve("bin"));
             }
 
-            if (instance == null
-                    || (!instance.launcher.vanillaInstance && Files.isDirectory(this.root.resolve("config")))) {
+            if (Files.isDirectory(this.root.resolve("config")) && (instance == null
+                    || !instance.launcher.vanillaInstance)) {
                 FileUtils.deleteDirectory(this.root.resolve("config"));
             }
 
@@ -2620,7 +2620,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             instance.getPackMods(com.atlauncher.data.Type.forge), true);
                 }
             } else {
-                FileUtils.deleteDirectory(this.root.resolve("mods"));
+                if (Files.isDirectory(this.root.resolve("mods"))) {
+                    FileUtils.deleteDirectory(this.root.resolve("mods"));
+                }
 
                 if (isReinstall && Files.isDirectory(this.root.resolve("jarmods"))) {
                     FileUtils.deleteDirectory(this.root.resolve("jarmods"));
@@ -2636,7 +2638,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     FileUtils.delete(this.root.resolve("resourcepacks/ResourcePack.zip"));
                 }
             } else {
-                FileUtils.deleteDirectory(this.root.resolve("libraries"));
+                if (Files.isDirectory(this.root.resolve("libraries"))) {
+                    FileUtils.deleteDirectory(this.root.resolve("libraries"));
+                }
             }
 
             if (isReinstall && this.packVersion.deletes != null) {
