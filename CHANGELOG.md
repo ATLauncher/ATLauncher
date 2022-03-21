@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in Name and Featured sort fields for CurseForge [#554]
 - Add ability to add a CurseForge/Modrinth pack from the packs browser by id/slug/url [#554]
 - Condense the search fields around the application to be inline and simpler
+- More advanced server script for Linux/OSX to mimick more closely the Windows one
 
 ### Fixes
 - Remove Vercel links from being valid from Modrinth imports

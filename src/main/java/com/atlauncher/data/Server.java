@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -117,6 +118,18 @@ public class Server {
         LogManager.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 
+        String javaPath = null;
+        if (!usesRunSh && javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                    .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+
+            if (Files.isDirectory(runtimeDirectory)) {
+                javaPath = runtimeDirectory.toAbsolutePath().toString();
+                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
+                        javaVersion.component, javaVersion.majorVersion, javaPath));
+            }
+        }
+
         try {
             if (OS.isWindows()) {
                 arguments.add("cmd");
@@ -125,18 +138,9 @@ public class Server {
                 arguments.add("\"" + name + "\"");
                 arguments.add(getRoot().resolve(serverScript).toString());
 
-                if (javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
-                    Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
-                            .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
-
-                    if (Files.isDirectory(runtimeDirectory)) {
-                        String javaPath = runtimeDirectory.toAbsolutePath().toString();
-                        LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                                javaVersion.component, javaVersion.majorVersion, javaPath));
-
-                        arguments.add("ATLcustomjava");
-                        arguments.add(javaPath + "\\bin\\java.exe");
-                    }
+                if (javaPath != null) {
+                    arguments.add("ATLcustomjava");
+                    arguments.add(javaPath + "\\bin\\java.exe");
                 }
 
                 if (!args.isEmpty()) {
@@ -148,14 +152,22 @@ public class Server {
                     arguments.add("x-terminal-emulator");
                     arguments.add("-e");
 
-                    arguments.add(getRoot().resolve(serverScript).toString() + " " + args);
+                    arguments.add(getRoot().resolve(serverScript).toString()
+                            + (!usesRunSh && javaPath != null ? String.format(" ATLcustomjava %s",
+                                    javaPath + "/bin/java") : " ")
+                            + args);
                 } else if (Utils.executableInPath("exo-open")) {
                     arguments.add("exo-open");
                     arguments.add("--launch");
                     arguments.add("TerminalEmulator");
                     arguments.add("--working-directory");
                     arguments.add(getRoot().toAbsolutePath().toString());
-                    arguments.add(String.format("./%s %s", serverScript, args));
+                    arguments.add(String.format(
+                            "./%s %s%s", serverScript, (!usesRunSh && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java")
+                                    : ""),
+                            args));
                 } else {
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -166,12 +178,39 @@ public class Server {
                     return;
                 }
             } else if (OS.isMac()) {
-                // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
-                // :(
+                String launchCommand = serverScript;
+
+                if (!usesRunSh) {
+                    // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
+                    // so create a temporary script, run it and then delete after
+                    List<String> launchScript = new ArrayList<>();
+
+                    launchScript.add("cd \"`dirname \"$0\"`\" ; ./LaunchServer.sh");
+
+                    if (javaPath != null) {
+                        launchScript.add("ATLcustomjava");
+                        launchScript.add(javaPath + "/jre.bundle/Contents/Home/bin/java");
+                    }
+
+                    launchScript.add(args);
+                    launchScript.add("; rm -f ./.launcherrun.sh");
+
+                    Path tempLaunchFile = getRoot().resolve(".launcherrun.sh");
+                    Files.write(tempLaunchFile, String.join(" ", launchScript).toString().getBytes(),
+                            StandardOpenOption.CREATE,
+                            StandardOpenOption.TRUNCATE_EXISTING);
+                    tempLaunchFile.toFile().setExecutable(true);
+
+                    LogManager.info(String.format("Running \"%s\" from \".launcherrun.sh\"",
+                            String.join(" ", launchScript)));
+
+                    launchCommand = "./.launcherrun.sh";
+                }
+
                 arguments.add("open");
                 arguments.add("-a");
                 arguments.add("Terminal");
-                arguments.add(getRoot().resolve(serverScript).toString());
+                arguments.add(launchCommand);
             }
 
             LogManager.info("Launching server with the following arguments: " + arguments.toString());

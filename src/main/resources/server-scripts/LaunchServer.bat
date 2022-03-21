@@ -34,7 +34,7 @@ if $SYSTEM_os_arch==x86 (
 )
 
 echo.
-echo Printing Java version, if the Java version doesn't show below, your java path is incorrect
+echo Printing Java version, if the Java version doesn't show below, your Java path is incorrect
 %javapath% -version
 echo.
 
