@@ -429,7 +429,9 @@ public class Launcher {
 
     public void setMinecraftLaunched(boolean launched) {
         this.minecraftLaunched = launched;
-        App.TRAY_MENU.setMinecraftLaunched(launched);
+        if (App.TRAY_MENU != null) {
+            App.TRAY_MENU.setMinecraftLaunched(launched);
+        }
     }
 
     /**

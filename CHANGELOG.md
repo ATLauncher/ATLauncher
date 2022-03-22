@@ -28,6 +28,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with OSX not using runtime when running initServerSettings
 - Issue with trying to delete directories that dont exist on server install
 - Graphical glitch when changing instance image [#560]
+- System tray menu not being themed
 
 ### Misc
 - Update Discord icon
