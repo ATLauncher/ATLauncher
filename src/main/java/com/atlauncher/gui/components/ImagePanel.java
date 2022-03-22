@@ -44,6 +44,8 @@ public final class ImagePanel extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
         Graphics2D g2 = (Graphics2D) g;
         g2.drawImage(this.image, 0, (this.getHeight() - 150) / 2, 300, 150, null);
     }

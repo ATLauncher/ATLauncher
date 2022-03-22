@@ -27,6 +27,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Log clearer tool NPE when folder doesn't exist
 - Issue with OSX not using runtime when running initServerSettings
 - Issue with trying to delete directories that dont exist on server install
+- Graphical glitch when changing instance image [#560]
 
 ### Misc
 - Update Discord icon
