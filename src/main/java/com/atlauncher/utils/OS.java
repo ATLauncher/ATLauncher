@@ -102,13 +102,13 @@ public enum OS {
      */
     public static Path storagePath() {
         switch (getOS()) {
-            case WINDOWS:
-                return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-            case OSX:
-                return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
-                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-            default:
-                return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+        case WINDOWS:
+            return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+        case OSX:
+            return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
+                    .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+        default:
+            return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -123,10 +123,6 @@ public enum OS {
      * This opens the users default browser to the given url.
      */
     public static void openWebBrowser(String url) {
-        if (App.automated) {
-            return;
-        }
-
         try {
             Analytics.sendOutboundLink(url);
             OS.openWebBrowser(new URI(url));
@@ -139,10 +135,6 @@ public enum OS {
      * This opens the users default browser to the given url.
      */
     public static void openWebBrowser(URL url) {
-        if (App.automated) {
-            return;
-        }
-
         try {
             OS.openWebBrowser(url.toURI());
         } catch (URISyntaxException e) {
@@ -154,10 +146,6 @@ public enum OS {
      * This opens the users default browser to the given uri.
      */
     public static void openWebBrowser(URI uri) {
-        if (App.automated) {
-            return;
-        }
-
         try {
             if (getOS() == LINUX && Utils.executableInPath("xdg-open")) {
                 Runtime.getRuntime().exec("xdg-open " + uri);
@@ -170,10 +158,6 @@ public enum OS {
     }
 
     public static void openFileExplorer(Path path) {
-        if (App.automated) {
-            return;
-        }
-
         openFileExplorer(path, false);
     }
 
@@ -181,10 +165,6 @@ public enum OS {
      * Opens the system file explorer to the given path.
      */
     public static void openFileExplorer(Path path, boolean toFile) {
-        if (App.automated) {
-            return;
-        }
-
         try {
             if ((toFile || !Files.isDirectory(path)) && OS.isWindows()) {
                 LogManager.info("/select," + path.toAbsolutePath());
@@ -559,27 +539,27 @@ public enum OS {
         String arch = "";
 
         switch (getOS()) {
-            case WINDOWS: {
-                name = "Windows NT " + getVersion();
+        case WINDOWS: {
+            name = "Windows NT " + getVersion();
 
-                if (OS.is64Bit()) {
-                    arch = "; Win64; x64";
-                }
-                break;
+            if (OS.is64Bit()) {
+                arch = "; Win64; x64";
             }
-            case OSX: {
-                // M1 machines still show Intel
-                name = String.format("Macintosh; Intel %s %s", getName(), getVersion().replaceAll(".", "_"));
-                break;
-            }
-            case LINUX: {
-                name = String.format("%s; Linux", getName());
+            break;
+        }
+        case OSX: {
+            // M1 machines still show Intel
+            name = String.format("Macintosh; Intel %s %s", getName(), getVersion().replaceAll(".", "_"));
+            break;
+        }
+        case LINUX: {
+            name = String.format("%s; Linux", getName());
 
-                if (OS.is64Bit()) {
-                    arch = "x86_64";
-                }
-                break;
+            if (OS.is64Bit()) {
+                arch = "x86_64";
             }
+            break;
+        }
         }
 
         return String.format("%s%s", name, arch);

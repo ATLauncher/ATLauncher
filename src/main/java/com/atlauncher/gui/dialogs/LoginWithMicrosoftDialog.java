@@ -37,9 +37,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
@@ -72,7 +70,6 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
     public LoginWithMicrosoftDialog(MicrosoftAccount account) {
         super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.DOCUMENT_MODAL);
-        setName("LoginWithMicrosoftDialog");
 
         this.account = account;
         this.setMinimumSize(new Dimension(400, 400));
@@ -172,27 +169,15 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
             LoginResponse loginResponse, Profile profile) throws Exception {
-        if (account != null || AccountManager.isAccountByUUID(profile.id)) {
-            AbstractAccount account = AccountManager.getAccountByUUID(profile.id);
-            if (account instanceof MojangAccount) {
-                MicrosoftAccount newAccount = new MicrosoftAccount(oauthTokenResponse, xstsAuthResponse, loginResponse,
-                        profile);
+        if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
+            MicrosoftAccount account = (MicrosoftAccount) AccountManager.getAccountByName(loginResponse.username);
 
-                AccountManager.removeAccount(account);
-                AccountManager.addAccount(newAccount);
-
-                return;
-            }
-
-            MicrosoftAccount microsoftAccount = (MicrosoftAccount) AccountManager.getAccountByUUID(profile.id);
-
-            if (microsoftAccount == null) {
+            if (account == null) {
                 return;
             }
 
             // if forced to relogin, then make sure they logged into correct account
-            if (microsoftAccount != null && this.account != null
-                    && !microsoftAccount.username.equals(this.account.username)) {
+            if (account != null && this.account != null && !account.username.equals(this.account.username)) {
                 DialogManager.okDialog().setTitle(GetText.tr("Incorrect account"))
                         .setContent(
                                 GetText.tr("Logged into incorrect account. Please login again on the Accounts tab."))
@@ -200,7 +185,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 return;
             }
 
-            microsoftAccount.update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
+            account.update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
             AccountManager.saveAccounts();
         } else {
             MicrosoftAccount account = new MicrosoftAccount(oauthTokenResponse, xstsAuthResponse, loginResponse,

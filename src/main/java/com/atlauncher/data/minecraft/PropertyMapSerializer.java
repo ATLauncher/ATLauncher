@@ -15,31 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.data.minecraft;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import java.lang.reflect.Type;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.mojang.authlib.properties.PropertyMap;
 
-import java.lang.reflect.Type;
-import java.time.Instant;
-
-public final class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
-    @Override
-    public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        Preconditions.checkArgument((json instanceof JsonPrimitive));
-        final long epochTime = json.getAsLong();
-        return Instant.ofEpochMilli(epochTime);
-    }
+public class PropertyMapSerializer implements JsonSerializer<PropertyMap> {
 
     @Override
-    public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context){
-        final long epochTime = src.toEpochMilli();
-        return new JsonPrimitive(epochTime);
+    public JsonElement serialize(PropertyMap src, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject out = new JsonObject();
+        for (String key : src.keySet()) {
+            JsonArray jsa = new JsonArray();
+            for (com.mojang.authlib.properties.Property p : src.get(key)) {
+                jsa.add(new JsonPrimitive(p.getValue()));
+            }
+            out.add(key, jsa);
+        }
+        return out;
     }
 }

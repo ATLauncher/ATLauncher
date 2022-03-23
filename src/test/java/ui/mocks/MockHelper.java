@@ -31,6 +31,8 @@ import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.utils.Hashing;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.mockserver.client.ForwardChainExpectation;
 import org.mockserver.integration.ClientAndServer;
@@ -129,6 +131,11 @@ public class MockHelper {
         mock(mockServer, method, host, path, responseFile, ResponseType.JSON);
     }
 
+    public static void mockMojangLogin(ClientAndServer mockServer, String method, String host, String path,
+            String responseFile) {
+        mock(mockServer, method, host, path, responseFile, ResponseType.MOJANG_LOGIN);
+    }
+
     public static void mockPng(ClientAndServer mockServer, String method, String host, String path,
             String responseFile) {
         mock(mockServer, method, host, path, responseFile, ResponseType.PNG);
@@ -159,22 +166,32 @@ public class MockHelper {
                     .when(HttpRequest.request().withMethod(method).withHeader("Host", host).withPath(path));
 
             switch (responseType) {
-                case PNG:
-                case XML:
-                case JAR:
-                case TXT:
-                    expectation.respond(HttpResponse.response().withStatusCode(200)
-                            .withHeader("Content-Type", getContentType(responseType))
-                            .withHeader("Content-Disposition",
-                                    "form-data; name=\"" + responseFile + "\"; filename=\"" + responseFile + "\"")
-                            .withBody(BinaryBody.binary(Files.readAllBytes(filePath))));
-                    break;
-                case JSON:
-                default:
-                    expectation.respond(
-                            HttpResponse.response().withStatusCode(200).withHeader("Content-Type", "application/json")
-                                    .withBody(new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8)));
-                    break;
+            case MOJANG_LOGIN:
+                expectation.respond(request -> {
+                    JsonObject requestBody = JsonParser.parseString(request.getBodyAsString()).getAsJsonObject();
+                    String clientToken = requestBody.get("clientToken").getAsString();
+
+                    return HttpResponse.response().withStatusCode(200).withHeader("Content-Type", "application/json")
+                            .withBody(new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8)
+                                    .replace("{{CLIENT_TOKEN}}", clientToken));
+                });
+                break;
+            case PNG:
+            case XML:
+            case JAR:
+            case TXT:
+                expectation.respond(HttpResponse.response().withStatusCode(200)
+                        .withHeader("Content-Type", getContentType(responseType))
+                        .withHeader("Content-Disposition",
+                                "form-data; name=\"" + responseFile + "\"; filename=\"" + responseFile + "\"")
+                        .withBody(BinaryBody.binary(Files.readAllBytes(filePath))));
+                break;
+            case JSON:
+            default:
+                expectation.respond(
+                        HttpResponse.response().withStatusCode(200).withHeader("Content-Type", "application/json")
+                                .withBody(new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8)));
+                break;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -183,17 +200,17 @@ public class MockHelper {
 
     private static String getContentType(ResponseType responseType) {
         switch (responseType) {
-            case JAR:
-                return "application/java-archive";
-            case XML:
-                return "application/xml";
-            case TXT:
-                return "plain/text";
-            case PNG:
-                return "image/png";
-            case JSON:
-            default:
-                return "application/json";
+        case JAR:
+            return "application/java-archive";
+        case XML:
+            return "application/xml";
+        case TXT:
+            return "plain/text";
+        case PNG:
+            return "image/png";
+        case JSON:
+        default:
+            return "application/json";
         }
     }
 }

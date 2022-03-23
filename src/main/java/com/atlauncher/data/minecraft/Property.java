@@ -15,8 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package ui.mocks;
+package com.atlauncher.data.minecraft;
 
-public enum ResponseType {
-    PNG, MOJANG_LOGIN, JSON, JAR, TXT, XML
+public class Property {
+
+    private String name;
+    private String value;
+
+    public String getKey() {
+        return this.name;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
 }

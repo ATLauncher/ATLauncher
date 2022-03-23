@@ -6,8 +6,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.13.0
 
 ### New Features
-- Remove ability to add new/relogin to Mojang accounts
-- Use image for login to Microsoft button
 - Add ability to change sort order for ATLauncher and CurseForge packs
 - Add in Name and Featured sort fields for CurseForge [#554]
 - Add ability to add a CurseForge/Modrinth pack from the packs browser by id/slug/url [#554]
