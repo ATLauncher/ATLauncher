@@ -142,6 +142,7 @@ import org.mini2Dx.gettext.GetText;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 @Json
@@ -1820,7 +1821,7 @@ public class Instance extends MinecraftVersion {
                     } else if (mod.isFromModrinth()) {
                         downloadUrl = mod.modrinthVersion.getPrimaryFile().url;
                     }
-                    file.downloads.add(downloadUrl);
+                    file.downloads.add(HttpUrl.get(downloadUrl).toString());
 
                     return file;
                 }).collect(Collectors.toList());

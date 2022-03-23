@@ -29,6 +29,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with trying to delete directories that dont exist on server install
 - Graphical glitch when changing instance image [#560]
 - System tray menu not being themed
+- Issue with exporting to Modrinth not url escaping downloads
 
 ### Misc
 - Update Discord icon
