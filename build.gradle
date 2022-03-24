@@ -136,7 +136,6 @@ gettext {
 license {
     header = project.file('LICENSEHEADER')
     include '**/*.java'
-    exclude 'de/zh32/**/*.java'
     exclude 'io/github/**/*.java'
     exclude 'net/minecraft/**/*.java'
     exclude 'com/atlauncher/gui/layouts/WrapLayout.java'

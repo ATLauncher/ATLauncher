@@ -23,13 +23,11 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import com.atlauncher.gui.tabs.tools.BlankToolPanel;
 import com.atlauncher.gui.tabs.tools.DebugModePanel;
 import com.atlauncher.gui.tabs.tools.DownloadClearerToolPanel;
 import com.atlauncher.gui.tabs.tools.LogClearerToolPanel;
 import com.atlauncher.gui.tabs.tools.NetworkCheckerToolPanel;
 import com.atlauncher.gui.tabs.tools.RuntimeDownloaderToolPanel;
-import com.atlauncher.gui.tabs.tools.ServerCheckerToolPanel;
 import com.atlauncher.gui.tabs.tools.SkinUpdaterToolPanel;
 
 import org.mini2Dx.gettext.GetText;
@@ -43,16 +41,14 @@ public class ToolsTab extends JPanel implements Tab {
 
         JPanel mainPanel = new JPanel();
 
-        mainPanel.setLayout(new GridLayout(4, 2, 10, 10));
+        mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
         mainPanel.add(new NetworkCheckerToolPanel());
-        mainPanel.add(new ServerCheckerToolPanel());
         mainPanel.add(new LogClearerToolPanel());
         mainPanel.add(new DebugModePanel());
         mainPanel.add(new RuntimeDownloaderToolPanel());
         mainPanel.add(new DownloadClearerToolPanel());
         mainPanel.add(new SkinUpdaterToolPanel());
-        mainPanel.add(new BlankToolPanel());
 
         add(mainPanel, BorderLayout.CENTER);
     }

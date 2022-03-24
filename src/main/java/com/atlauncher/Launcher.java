@@ -45,7 +45,6 @@ import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
@@ -121,8 +120,6 @@ public class Launcher {
 
         AccountManager.loadAccounts(); // Load the saved Accounts
 
-        CheckingServersManager.loadCheckingServers(); // Load the saved servers we're checking with the tool
-
         PackManager.removeUnusedImages(); // remove unused pack images
 
         if (OS.isWindows() && !Java.is64Bit() && OS.is64Bit()) {
@@ -138,10 +135,6 @@ public class Launcher {
                 OS.openWebBrowser("https://atlauncher.com/help/32bit/");
                 System.exit(0);
             }
-        }
-
-        if (App.settings.enableServerChecker) {
-            CheckingServersManager.startCheckingServers();
         }
 
         checkForExternalPackUpdates();

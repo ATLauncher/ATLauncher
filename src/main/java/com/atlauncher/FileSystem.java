@@ -64,7 +64,6 @@ public final class FileSystem {
     public static final Path TEMP = BASE_DIR.resolve("temp");
     public static final Path FAILED_DOWNLOADS = BASE_DIR.resolve("faileddownloads");
 
-    public static final Path CHECKING_SERVERS_JSON = CONFIGS.resolve("checkingservers.json");
     public static final Path USER_DATA = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
     public static final Path SETTINGS = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".json");

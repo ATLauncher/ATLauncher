@@ -37,8 +37,6 @@ import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
-import com.atlauncher.gui.tabs.settings.ToolsSettingsTab;
-import com.atlauncher.managers.CheckingServersManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.FlatLaf;
 
@@ -51,12 +49,11 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
     private final NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
     private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
-    private final ToolsSettingsTab toolsSettingsTab = new ToolsSettingsTab();
     private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
     private final CommandsSettingsTab commandSettingsTab = new CommandsSettingsTab();
     private final List<Tab> tabs = Arrays.asList(
             new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
-                    this.loggingSettingsTab, this.toolsSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
+                    this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
     private final JTabbedPane tabbedPane;
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 
@@ -84,22 +81,17 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean themeChanged = generalSettingsTab.themeChanged();
                 boolean reloadInstancesPanel = generalSettingsTab.needToReloadInstancesPanel();
-                boolean restartServerChecker = toolsSettingsTab.needToRestartServerChecker();
                 generalSettingsTab.save();
                 modsSettingsTab.save();
                 javaSettingsTab.save();
                 networkSettingsTab.save();
                 loggingSettingsTab.save();
-                toolsSettingsTab.save();
                 backupsSettingsTab.save();
                 commandSettingsTab.save();
                 App.settings.save();
                 SettingsManager.post();
                 if (reloadInstancesPanel) {
                     App.launcher.reloadInstancesPanel();
-                }
-                if (restartServerChecker) {
-                    CheckingServersManager.startCheckingServers();
                 }
                 if (themeChanged) {
                     Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");

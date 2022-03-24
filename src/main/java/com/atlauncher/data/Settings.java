@@ -114,10 +114,6 @@ public class Settings {
     public String analyticsClientId = UUID.randomUUID().toString();
     public boolean enableOpenEyeReporting = true;
 
-    // Tools
-    public boolean enableServerChecker = false;
-    public int serverCheckerWait = 5;
-
     // Backups
     public boolean enableAutomaticBackupAfterLaunch = false;
     public BackupMode backupMode = BackupMode.NORMAL;
@@ -260,19 +256,9 @@ public class Settings {
             enableAnalytics = Boolean.parseBoolean(importedEnableAnalytics);
         }
 
-        String importedEnableServerChecker = properties.getProperty("enableserverchecker");
-        if (importedEnableServerChecker != null) {
-            enableServerChecker = Boolean.parseBoolean(importedEnableServerChecker);
-        }
-
         String importedEnableOpenEyeReporting = properties.getProperty("enableopeneyereporting");
         if (importedEnableOpenEyeReporting != null) {
             enableOpenEyeReporting = Boolean.parseBoolean(importedEnableOpenEyeReporting);
-        }
-
-        String importedServerCheckerWait = properties.getProperty("servercheckerwait");
-        if (importedServerCheckerWait != null) {
-            serverCheckerWait = Integer.parseInt(importedServerCheckerWait);
         }
 
         String importedLastAccount = properties.getProperty("lastaccount");
@@ -311,8 +297,6 @@ public class Settings {
         validateWindowSize();
 
         validateProxy();
-
-        validateServerCheckerWait();
 
         validateConcurrentConnections();
 
@@ -471,14 +455,6 @@ public class Settings {
             proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));
         } else {
             proxy = Proxy.NO_PROXY;
-        }
-    }
-
-    private void validateServerCheckerWait() {
-        if (serverCheckerWait < 1 || serverCheckerWait > 30) {
-            LogManager.warn("Tried to set server checker wait to " + serverCheckerWait + " which is not "
-                    + "valid! Must be between 1 and 30. Setting back to default of 5!");
-            serverCheckerWait = 5;
         }
     }
 

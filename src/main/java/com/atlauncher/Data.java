@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.MinecraftServer;
 import com.atlauncher.data.News;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
@@ -53,9 +52,6 @@ public final class Data {
 
     public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
     public static JavaRuntimes JAVA_RUNTIMES = null;
-
-    // Tools related things
-    public static final List<MinecraftServer> CHECKING_SERVERS = new LinkedList<>();
 
     // CurseForge instance update checking
     public static final Map<Instance, CurseForgeFile> CURSEFORGE_INSTANCE_LATEST_VERSION = new HashMap<>();
