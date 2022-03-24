@@ -28,6 +28,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Graphical glitch when changing instance image [#560]
 - System tray menu not being themed
 - Issue with exporting to Modrinth not url escaping downloads
+- Don't require relogin for offline play
 
 ### Misc
 - Update Discord icon
