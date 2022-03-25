@@ -29,6 +29,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - System tray menu not being themed
 - Issue with exporting to Modrinth not url escaping downloads
 - Don't require relogin for offline play
+- Change hashing class to use Guava under the hood as it's much better memory wise [#558]
 
 ### Misc
 - Update Discord icon

@@ -380,7 +380,7 @@ public class Mod {
                 Utils.delete(fileLocation); // File exists but is corrupt, delete it
             } else if (this.download != DownloadType.direct) {
                 if (hasMD5()) {
-                    if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
+                    if (Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.md5))) {
                         return; // File already exists and matches hash, don't download it
                     } else {
                         Utils.delete(fileLocation); // File exists but is corrupt, delete it
@@ -507,7 +507,7 @@ public class Mod {
             return;
         }
 
-        if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.md5))) {
+        if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.md5))) {
             if (attempt < 5) {
                 Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                 downloadClient(installer, ++attempt); // download again
@@ -525,7 +525,7 @@ public class Mod {
                 Utils.delete(fileLocation); // File exists but is corrupt, delete it
             } else if (this.download != DownloadType.direct) {
                 if (this.hasServerMD5()) {
-                    if (Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
+                    if (Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.serverMD5))) {
                         return; // File already exists and matches hash, don't download it
                     } else {
                         Utils.delete(fileLocation); // File exists but is corrupt, delete it
@@ -636,7 +636,7 @@ public class Mod {
             return;
         }
 
-        if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.HashCode.fromString(this.serverMD5))) {
+        if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.serverMD5))) {
             if (attempt < 5) {
                 Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                 downloadServer(installer, ++attempt); // download again

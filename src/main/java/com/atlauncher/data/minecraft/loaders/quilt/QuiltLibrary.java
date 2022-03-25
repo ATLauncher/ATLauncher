@@ -28,6 +28,7 @@ import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
+import com.google.common.hash.HashCode;
 
 @Json
 public class QuiltLibrary extends Library {
@@ -45,7 +46,7 @@ public class QuiltLibrary extends Library {
         if (Files.exists(localLibraryPath)) {
             artifact.size = localLibraryPath.toFile().length();
 
-            Hashing.HashCode sha1 = Hashing.sha1(localLibraryPath);
+            HashCode sha1 = Hashing.sha1(localLibraryPath);
             if (sha1 != null) {
                 artifact.sha1 = sha1.toString();
             }

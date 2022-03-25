@@ -211,7 +211,7 @@ public class PackManager {
     public static boolean semiPublicPackExistsFromCode(String packCode) {
         for (Pack pack : Data.PACKS) {
             if (pack.isSemiPublic()) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
+                if (Hashing.toHashCode(pack.getCode()).equals(Hashing.md5(packCode))) {
                     return true;
                 }
             }
@@ -222,7 +222,7 @@ public class PackManager {
     public static Pack getSemiPublicPackByCode(String packCode) {
         for (Pack pack : Data.PACKS) {
             if (pack.isSemiPublic()) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
+                if (Hashing.toHashCode(pack.getCode()).equals(Hashing.md5(packCode))) {
                     return pack;
                 }
             }
@@ -234,7 +234,7 @@ public class PackManager {
     public static boolean addPack(String packCode) {
         for (Pack pack : Data.PACKS) {
             if (pack.isSemiPublic() && !canViewSemiPublicPackByCode(Hashing.md5(packCode).toString())) {
-                if (Hashing.HashCode.fromString(pack.getCode()).equals(Hashing.md5(packCode))) {
+                if (Hashing.toHashCode(pack.getCode()).equals(Hashing.md5(packCode))) {
                     if (pack.isTester()) {
                         return false;
                     }
@@ -251,7 +251,7 @@ public class PackManager {
 
     public static void removePack(String packCode) {
         for (String code : App.settings.addedPacks) {
-            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
+            if (Hashing.md5(code).equals(Hashing.toHashCode(packCode))) {
                 App.settings.addedPacks.remove(packCode);
                 App.settings.save();
                 App.launcher.refreshFeaturedPacksPanel();
@@ -307,7 +307,7 @@ public class PackManager {
 
     public static boolean canViewSemiPublicPackByCode(String packCode) {
         for (String code : App.settings.addedPacks) {
-            if (Hashing.md5(code).equals(Hashing.HashCode.fromString(packCode))) {
+            if (Hashing.md5(code).equals(Hashing.toHashCode(packCode))) {
                 return true;
             }
         }

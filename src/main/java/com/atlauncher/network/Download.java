@@ -37,6 +37,7 @@ import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+import com.google.common.hash.HashCode;
 import com.google.gson.Gson;
 
 import okhttp3.CacheControl;
@@ -422,11 +423,11 @@ public final class Download {
                     LogManager.error("Error getting murmur hash");
                     return false;
                 }
-            } else if (this.md5() && Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
+            } else if (this.md5() && Hashing.md5(this.to).equals(Hashing.toHashCode(this.getHash()))) {
                 return false;
-            } else if (this.sha512() && Hashing.sha512(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
+            } else if (this.sha512() && Hashing.sha512(this.to).equals(Hashing.toHashCode(this.getHash()))) {
                 return false;
-            } else if (Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()))) {
+            } else if (Hashing.sha1(this.to).equals(Hashing.toHashCode(this.getHash()))) {
                 return false;
             }
 
@@ -465,11 +466,11 @@ public final class Download {
                     return false;
                 }
             } else if (this.md5()) {
-                return Hashing.md5(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+                return Hashing.md5(this.to).equals(Hashing.toHashCode(this.getHash()));
             } else if (this.sha512()) {
-                return Hashing.sha512(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+                return Hashing.sha512(this.to).equals(Hashing.toHashCode(this.getHash()));
             } else {
-                return Hashing.sha1(this.to).equals(Hashing.HashCode.fromString(this.getHash()));
+                return Hashing.sha1(this.to).equals(Hashing.toHashCode(this.getHash()));
             }
         }
 
@@ -559,7 +560,7 @@ public final class Download {
                     } catch (IOException ignored) {
                     }
                 } else {
-                    Hashing.HashCode fileHash = Hashing.HashCode.EMPTY;
+                    HashCode fileHash = Hashing.EMPTY_HASH_CODE;
                     if (Files.exists(this.copyTo)) {
                         if (this.md5()) {
                             fileHash = Hashing.md5(this.copyTo);
@@ -570,7 +571,7 @@ public final class Download {
                         }
                     }
 
-                    if (!fileHash.equals(Hashing.HashCode.fromString(this.getHash()))) {
+                    if (!fileHash.equals(Hashing.toHashCode(this.getHash()))) {
                         this.copy();
                     }
                 }
@@ -607,14 +608,14 @@ public final class Download {
             FileUtils.createDirectory(this.to.getParent());
         }
 
-        Hashing.HashCode expected = null;
+        HashCode expected = null;
 
         if (this.fingerprint == null) {
-            expected = Hashing.HashCode.fromString(this.getHash());
+            expected = Hashing.toHashCode(this.getHash());
         }
 
         if ((this.ignoreFailures && this.to.toFile().length() != 0)
-                || (expected != null && expected.equals(Hashing.HashCode.EMPTY))) {
+                || (expected != null && expected.equals(Hashing.EMPTY_HASH_CODE))) {
             if (this.response.isSuccessful()) {
                 this.downloadDirect();
             }
@@ -658,7 +659,7 @@ public final class Download {
                     } catch (IOException ignored) {
                     }
                 } else {
-                    Hashing.HashCode fileHash2 = Hashing.HashCode.EMPTY;
+                    HashCode fileHash2 = Hashing.EMPTY_HASH_CODE;
                     if (Files.exists(this.copyTo)) {
                         if (this.md5()) {
                             fileHash2 = Hashing.md5(this.copyTo);
