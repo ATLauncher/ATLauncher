@@ -197,7 +197,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public Pack getPack() {
-        if (this.isExternalPack()) {
+        if (this.isExternalPack() || this.isVanillaInstance()) {
             return null;
         }
 

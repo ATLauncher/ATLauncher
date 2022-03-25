@@ -30,6 +30,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with exporting to Modrinth not url escaping downloads
 - Don't require relogin for offline play
 - Change hashing class to use Guava under the hood as it's much better memory wise [#558]
+- The Instance classes getPack call not excluding vanilla packs
 
 ### Misc
 - Update Discord icon
