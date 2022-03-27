@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add ability to add a CurseForge/Modrinth pack from the packs browser by id/slug/url [#554]
 - Condense the search fields around the application to be inline and simpler
 - More advanced server script for Linux/OSX to mimick more closely the Windows one
+- Add menu item to open launcher folder to system tray
 
 ### Fixes
 - Remove Vercel links from being valid from Modrinth imports

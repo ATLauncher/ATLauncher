@@ -24,33 +24,34 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.ConsoleCloseListener;
 import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.utils.OS;
 
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, ConsoleOpenListener {
 
-    private final JMenuItem killMCButton = new JMenuItem();
-    private final JMenuItem tcButton = new JMenuItem();
-    private final JMenuItem quitButton = new JMenuItem();
+    private final JMenuItem killMinecraftButton = new JMenuItem(GetText.tr("Kill Minecraft"));
+    private final JMenuItem toggleConsoleButton = new JMenuItem(GetText.tr("Toggle Console"));
+    private final JMenuItem openLauncherFolderButton = new JMenuItem(GetText.tr("Open Launcher Folder"));
+    private final JMenuItem quitButton = new JMenuItem(GetText.tr("Quit"));
 
     public TrayMenu() {
         super();
 
         this.setMinecraftLaunched(false);
 
-        this.killMCButton.setText(GetText.tr("Kill Minecraft"));
-        this.tcButton.setText(GetText.tr("Toggle console"));
-        this.quitButton.setText(GetText.tr("Quit"));
-
-        this.add(this.killMCButton);
-        this.add(this.tcButton);
+        this.add(this.killMinecraftButton);
+        this.add(this.toggleConsoleButton);
+        this.addSeparator();
+        this.add(this.openLauncherFolderButton);
         this.addSeparator();
         this.add(this.quitButton);
 
@@ -61,7 +62,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
     }
 
     private void addActionListeners() {
-        this.killMCButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
+        this.killMinecraftButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             if (App.launcher.minecraftLaunched) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -74,7 +75,10 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
                 }
             }
         }));
-        this.tcButton.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
+        this.toggleConsoleButton.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
+        this.openLauncherFolderButton.addActionListener(e -> {
+            OS.openFileExplorer(FileSystem.BASE_DIR);
+        });
         this.quitButton.addActionListener(e -> {
             try {
                 if (SystemTray.isSupported()) {
@@ -87,17 +91,17 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
         });
     }
 
-    public void setMinecraftLaunched(boolean l) {
-        this.killMCButton.setEnabled(l);
+    public void setMinecraftLaunched(boolean launched) {
+        this.killMinecraftButton.setVisible(launched);
     }
 
     @Override
     public void onConsoleClose() {
-        this.tcButton.setText(GetText.tr("Show Console"));
+        this.toggleConsoleButton.setText(GetText.tr("Show Console"));
     }
 
     @Override
     public void onConsoleOpen() {
-        this.tcButton.setText(GetText.tr("Hide Console"));
+        this.toggleConsoleButton.setText(GetText.tr("Hide Console"));
     }
 }
