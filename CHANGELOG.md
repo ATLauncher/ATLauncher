@@ -11,3 +11,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Remove old references to V1 instance format
+- Add Pair class to simplify some Object casting

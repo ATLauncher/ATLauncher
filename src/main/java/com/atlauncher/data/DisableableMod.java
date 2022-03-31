@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +43,7 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
@@ -393,7 +393,8 @@ public class DisableableMod implements Serializable {
             new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instance,
                     curseForgeFileId);
         } else if (isFromModrinth()) {
-            ProgressDialog<List<Object>> dialog = new ProgressDialog<>(GetText.tr("Checking For Update On Modrinth"), 0,
+            ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
+                    GetText.tr("Checking For Update On Modrinth"), 0,
                     GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth", parent);
             dialog.addThread(new Thread(() -> {
                 ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
@@ -420,11 +421,7 @@ public class DisableableMod implements Serializable {
                     return;
                 }
 
-                List<Object> returns = new ArrayList<>();
-                returns.add(mod);
-                returns.add(versions);
-
-                dialog.setReturnValue(returns);
+                dialog.setReturnValue(new Pair<ModrinthProject, List<ModrinthVersion>>(mod, versions));
                 dialog.close();
             }));
             dialog.start();
@@ -433,10 +430,9 @@ public class DisableableMod implements Serializable {
                 return false;
             }
 
-            List<Object> returns = dialog.getReturnValue();
+            Pair<ModrinthProject, List<ModrinthVersion>> pair = dialog.getReturnValue();
 
-            new ModrinthVersionSelectorDialog(parent, (ModrinthProject) returns.get(0),
-                    (List<ModrinthVersion>) returns.get(1), instance, modrinthVersion.id);
+            new ModrinthVersionSelectorDialog(parent, pair.left(), pair.right(), instance, modrinthVersion.id);
         }
 
         return true;
