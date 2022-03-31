@@ -68,7 +68,8 @@ public abstract class AbstractAccount implements Serializable {
     public String uuid;
 
     /**
-     * The pack names this account has collapsed in the {@link FeaturedPacksTab}, if any.
+     * The pack names this account has collapsed in the {@link FeaturedPacksTab}, if
+     * any.
      */
     public List<String> collapsedPacks = new ArrayList<>();
 
@@ -153,7 +154,7 @@ public abstract class AbstractAccount implements Serializable {
             this.skinUpdating = true;
             final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
             LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Downloading Skin"), 0,
+            final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading Skin"), 0,
                     GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
                     "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             final UUID uid = this.getRealUUID();
@@ -218,7 +219,7 @@ public abstract class AbstractAccount implements Serializable {
                 dialog.close();
             }));
             dialog.start();
-            if (!(Boolean) dialog.getReturnValue()) {
+            if (!dialog.getReturnValue()) {
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
                         .setContent(GetText.tr("Error downloading skin. Please try again later!"))
                         .setType(DialogManager.ERROR).show();

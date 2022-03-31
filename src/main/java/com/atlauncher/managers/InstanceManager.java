@@ -29,7 +29,6 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.InstanceV1;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
@@ -60,7 +59,6 @@ public class InstanceManager {
             File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
-            boolean converted = false;
 
             try {
                 try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
@@ -72,58 +70,36 @@ public class InstanceManager {
                         instance = null;
                         throw new JsonSyntaxException("Error parsing instance.json as Instance");
                     }
-                } catch (JsonIOException | JsonSyntaxException ignored) {
-                    try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
-                        InstanceV1 instanceV1 = Gsons.DEFAULT.fromJson(fileReader, InstanceV1.class);
-                        instanceV1.ROOT = instanceDir.toPath();
-                        instanceV1.convert();
-
-                        instance = instanceV1.convertToNewFormat(instanceDir.toPath());
-                        Utils.copyFile(new File(instanceDir, "instance.json"),
-                                new File(instanceDir, "instance-v1-backup.json"), true);
-                        converted = true;
-                        LogManager.debug("Converted V1 instance from " + instanceDir);
-                    } catch (JsonIOException | JsonSyntaxException e) {
-                        converted = false;
-                        LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
-                        continue;
-                    }
-                }
-
-                if (instance == null) {
-                    LogManager.error("Failed to load instance in the folder " + instanceDir);
+                } catch (JsonIOException | JsonSyntaxException e) {
+                    LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                     continue;
-                } else {
-                    if (converted) {
-                        instance.save();
-                    }
-
-                    if (instance.launcher.curseForgeManifest != null
-                            && instance.launcher.curseForgeManifest.projectID != null
-                            && instance.launcher.curseForgeManifest.fileID != null) {
-                        LogManager.info(String.format("Converting instance \"%s\" CurseForge information",
-                                instance.launcher.name));
-                        instance.launcher.curseForgeProject = CurseForgeApi
-                                .getProjectById(instance.launcher.curseForgeManifest.projectID);
-                        instance.launcher.curseForgeFile = CurseForgeApi.getFileForProject(
-                                instance.launcher.curseForgeManifest.projectID,
-                                instance.launcher.curseForgeManifest.fileID);
-                        instance.launcher.curseForgeManifest = null;
-
-                        instance.save();
-                    }
-
-                    if (instance.launcher.account != null
-                            && !AccountManager.isAccountByName(instance.launcher.account)) {
-                        LogManager.warn(
-                                String.format("No account with name of %s, so setting instance account back to default",
-                                        instance.launcher.account));
-                        instance.launcher.account = null;
-                        instance.save();
-                    }
-
-                    Data.INSTANCES.add(instance);
                 }
+
+                if (instance.launcher.curseForgeManifest != null
+                        && instance.launcher.curseForgeManifest.projectID != null
+                        && instance.launcher.curseForgeManifest.fileID != null) {
+                    LogManager.info(String.format("Converting instance \"%s\" CurseForge information",
+                            instance.launcher.name));
+                    instance.launcher.curseForgeProject = CurseForgeApi
+                            .getProjectById(instance.launcher.curseForgeManifest.projectID);
+                    instance.launcher.curseForgeFile = CurseForgeApi.getFileForProject(
+                            instance.launcher.curseForgeManifest.projectID,
+                            instance.launcher.curseForgeManifest.fileID);
+                    instance.launcher.curseForgeManifest = null;
+
+                    instance.save();
+                }
+
+                if (instance.launcher.account != null
+                        && !AccountManager.isAccountByName(instance.launcher.account)) {
+                    LogManager.warn(
+                            String.format("No account with name of %s, so setting instance account back to default",
+                                    instance.launcher.account));
+                    instance.launcher.account = null;
+                    instance.save();
+                }
+
+                Data.INSTANCES.add(instance);
             } catch (Exception e2) {
                 LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
                 continue;

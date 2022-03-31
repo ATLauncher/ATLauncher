@@ -1959,17 +1959,6 @@ public class Instance extends MinecraftVersion {
         return launcher.loaderVersion;
     }
 
-    public InstanceSettings getSettings() {
-        InstanceSettings settings = new InstanceSettings();
-        settings.initialMemory = launcher.initialMemory;
-        settings.maximumMemory = launcher.maximumMemory;
-        settings.permGen = launcher.permGen;
-        settings.javaPath = launcher.javaPath;
-        settings.javaArguments = launcher.javaArguments;
-
-        return settings;
-    }
-
     public void setNumberOfPlays(final long val) {
         this.numPlays = val;
     }
