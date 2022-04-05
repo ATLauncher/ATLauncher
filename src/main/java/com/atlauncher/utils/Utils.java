@@ -53,13 +53,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.util.Deque;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -91,6 +85,7 @@ import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.managers.LogManager;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.io.IOUtils;
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 
@@ -271,15 +266,23 @@ public class Utils {
      */
     @SuppressWarnings("resource")
     public static boolean copyFile(File from, File to, boolean withFilename) {
-        if (!from.isFile()) {
-            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
+        // Only check the file if it is not an uri
+        boolean isURI = false;
+        if (!from.toPath().startsWith("file:")) {
+            if (!from.isFile()) {
+                LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
                     + " it isn't a file");
-        }
-        if (!from.exists()) {
-            LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
+            }
+            if (!from.exists()) {
+                LogManager.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
                     + " it doesn't exist");
-            return false;
+                return false;
+            }
+        }else {
+            isURI = true;
         }
+        LogManager.info("Is URI?: " + isURI);
+
         if (!withFilename) {
             to = new File(to, from.getName());
         }
@@ -297,12 +300,21 @@ public class Utils {
         FileChannel source = null;
         FileChannel destination = null;
 
+        InputStream sourceStream = null;
+        OutputStream destinationStream = null;
+
         LogManager.debug("Copying file from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
 
         try {
-            source = new FileInputStream(from).getChannel();
-            destination = new FileOutputStream(to).getChannel();
-            destination.transferFrom(source, 0, source.size());
+            if (!isURI){
+                source = new FileInputStream(from).getChannel();
+                destination = new FileOutputStream(to).getChannel();
+                destination.transferFrom(source, 0, source.size());
+            } else {
+                sourceStream = ArchiveUtils.createStream(from.toPath());
+                destinationStream = new FileOutputStream(to);
+                IOUtils.copy(sourceStream, destinationStream);
+            }
         } catch (IOException e) {
             LogManager.logStackTrace(e);
             return false;
@@ -311,8 +323,15 @@ public class Utils {
                 if (source != null) {
                     source.close();
                 }
+                if (sourceStream!=null){
+                    sourceStream.close();
+                }
+
                 if (destination != null) {
                     destination.close();
+                }
+                if (destinationStream!=null){
+                    destinationStream.close();
                 }
             } catch (IOException e) {
                 LogManager.logStackTrace(e);
