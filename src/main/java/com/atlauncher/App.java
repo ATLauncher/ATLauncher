@@ -437,6 +437,10 @@ public class App {
             LogManager.info("Using Mac App? " + (OS.isUsingMacApp() ? "Yes" : "No"));
         }
 
+        if (OS.isUsingFlatpak()) {
+            LogManager.info("Using Flatpak!");
+        }
+
         try {
             SystemInfo systemInfo = OS.getSystemInfo();
             HardwareAbstractionLayer hal = systemInfo.getHardware();

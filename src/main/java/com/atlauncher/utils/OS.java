@@ -102,13 +102,13 @@ public enum OS {
      */
     public static Path storagePath() {
         switch (getOS()) {
-        case WINDOWS:
-            return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-        case OSX:
-            return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
-                    .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
-        default:
-            return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            case WINDOWS:
+                return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            case OSX:
+                return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+            default:
+                return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
         }
     }
 
@@ -117,6 +117,16 @@ public enum OS {
      */
     public static boolean isUsingMacApp() {
         return OS.isMac() && Files.isDirectory(FileSystem.BASE_DIR.getParent().resolve("MacOS"));
+    }
+
+    /**
+     * This checks to see if the user is using the Flatpak application.
+     *
+     * TODO: This is not a proper check. I don't know how to check, since this can
+     * be set to something else by the user, just want to test things for now.
+     */
+    public static boolean isUsingFlatpak() {
+        return OS.isLinux() && FileSystem.BASE_DIR.toString().contains(".var/app/com.atlauncher.ATLauncher");
     }
 
     /**
@@ -539,27 +549,27 @@ public enum OS {
         String arch = "";
 
         switch (getOS()) {
-        case WINDOWS: {
-            name = "Windows NT " + getVersion();
+            case WINDOWS: {
+                name = "Windows NT " + getVersion();
 
-            if (OS.is64Bit()) {
-                arch = "; Win64; x64";
+                if (OS.is64Bit()) {
+                    arch = "; Win64; x64";
+                }
+                break;
             }
-            break;
-        }
-        case OSX: {
-            // M1 machines still show Intel
-            name = String.format("Macintosh; Intel %s %s", getName(), getVersion().replaceAll(".", "_"));
-            break;
-        }
-        case LINUX: {
-            name = String.format("%s; Linux", getName());
+            case OSX: {
+                // M1 machines still show Intel
+                name = String.format("Macintosh; Intel %s %s", getName(), getVersion().replaceAll(".", "_"));
+                break;
+            }
+            case LINUX: {
+                name = String.format("%s; Linux", getName());
 
-            if (OS.is64Bit()) {
-                arch = "x86_64";
+                if (OS.is64Bit()) {
+                    arch = "x86_64";
+                }
+                break;
             }
-            break;
-        }
         }
 
         return String.format("%s%s", name, arch);

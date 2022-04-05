@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Running the app via Flatpak not allowing selecting files outside the sandbox [#564]
 
 ### Misc
 - Remove old references to V1 instance format
