@@ -126,7 +126,9 @@ public enum OS {
      * be set to something else by the user, just want to test things for now.
      */
     public static boolean isUsingFlatpak() {
-        return OS.isLinux() && FileSystem.BASE_DIR.toString().contains(".var/app/com.atlauncher.ATLauncher");
+        File f = new File("/.flatpak-info");
+        boolean isFlatpak = f.exists();
+        return OS.isLinux() && isFlatpak;
     }
 
     /**

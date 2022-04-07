@@ -20,6 +20,7 @@ package com.atlauncher.dbus;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,10 +65,14 @@ public class DBusUtils {
                             if (response.intValue() == 0) {
                                 System.out.println("Screenshot successfull");
                                 Variant vuris = results.get("uris");
-                                String[] uris = (String[]) vuris.getValue();
+                                ArrayList<String> uris = (ArrayList<String>) vuris.getValue();
                                 System.out.printf("uris: %s%n", uris);
 
-                                queue.add(Optional.of(uris));
+                                if (uris != null){
+                                    queue.add(Optional.of(uris.toArray(new String[uris.size()])));
+                                } else {
+                                    queue.add(Optional.empty());
+                                }
                             } else {
                                 System.out.printf("Failed: response=%s%n", response);
                                 queue.add(Optional.empty());
