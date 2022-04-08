@@ -18,9 +18,9 @@
 package com.atlauncher.dbus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +31,6 @@ import com.atlauncher.managers.LogManager;
 
 import org.freedesktop.dbus.DBusMap;
 import org.freedesktop.dbus.DBusMatchRule;
-import org.freedesktop.dbus.DBusPath;
 import org.freedesktop.dbus.connections.impl.DBusConnection;
 import org.freedesktop.dbus.interfaces.DBusSigHandler;
 import org.freedesktop.dbus.messages.DBusSignal;
@@ -42,7 +41,6 @@ public class DBusUtils {
     public static File[] selectFiles() {
         try {
             DBusConnection bus = DBusConnection.getConnection(DBusConnection.DBusBusType.SESSION);
-            System.out.printf("Unique name: %s%n", bus.getUniqueName());
 
             String token = UUID.randomUUID().toString().replaceAll("-", "");
             String sender = bus.getUniqueName().substring(1).replace('.', '_');
@@ -53,28 +51,22 @@ public class DBusUtils {
             bus.addGenericSigHandler(matchRule, new DBusSigHandler<DBusSignal>() {
                 @Override
                 public void handle(DBusSignal t) {
-                    System.out.println("--- signal received ---");
-                    System.out.println(t);
                     if (path.equals(t.getPath())) {
                         try {
                             Object[] params = t.getParameters();
-                            System.out.printf("params: size=%d%n", params.length);
                             UInt32 response = (UInt32) params[0];
-                            DBusMap<String, Variant> results = (DBusMap) params[1];
+                            DBusMap<String, Variant<ArrayList<String>>> results = (DBusMap) params[1];
 
                             if (response.intValue() == 0) {
-                                System.out.println("Screenshot successfull");
-                                Variant vuris = results.get("uris");
-                                ArrayList<String> uris = (ArrayList<String>) vuris.getValue();
-                                System.out.printf("uris: %s%n", uris);
+                                Variant<ArrayList<String>> vuris = results.get("uris");
+                                ArrayList<String> uris = vuris.getValue();
 
-                                if (uris != null){
+                                if (uris != null) {
                                     queue.add(Optional.of(uris.toArray(new String[uris.size()])));
                                 } else {
                                     queue.add(Optional.empty());
                                 }
                             } else {
-                                System.out.printf("Failed: response=%s%n", response);
                                 queue.add(Optional.empty());
                             }
 
@@ -86,20 +78,18 @@ public class DBusUtils {
                 }
             });
 
-            FileChooserInterface iface = bus.getRemoteObject("org.freedesktop.portal.Desktop",
+            FileChooserInterface fileChooserInterface = bus.getRemoteObject("org.freedesktop.portal.Desktop",
                     "/org/freedesktop/portal/desktop", FileChooserInterface.class);
+
             Map<String, Variant> options = new HashMap<>();
             options.put("directory", new Variant(Boolean.FALSE));
             options.put("handle_token", new Variant(token));
-            DBusPath result = iface.OpenFile("", "Pick File", options);
-            System.out.printf("       result: %s%n", result);
-            System.out.printf("expected path: %s%n", path);
+
+            fileChooserInterface.OpenFile("", "Pick File", options);
 
             Optional<String[]> selectedFiles = queue.take();
             if (selectedFiles.isPresent()) {
                 return Arrays.stream(selectedFiles.get()).map(f -> {
-                    System.out.println(f);
-
                     return new File(f);
                 }).toArray(size -> new File[selectedFiles.get().length]);
             }

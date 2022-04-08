@@ -40,7 +40,7 @@ public class DebugModePanel extends AbstractToolPanel {
                 .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.setEnabled(!LogManager.showDebug);
+        LAUNCH_BUTTON.setEnabled(!OS.isUsingFlatpak() && !LogManager.showDebug);
 
         if (!LogManager.showDebug) {
             LAUNCH_BUTTON.addMouseListener(new MouseAdapter() {

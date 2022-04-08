@@ -29,6 +29,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import javax.annotation.Nullable;
+
 import com.atlauncher.managers.LogManager;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -39,8 +41,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
-
-import javax.annotation.Nullable;
 
 public class ArchiveUtils {
     public static boolean archiveContainsFile(Path archivePath, String file) {
@@ -76,23 +76,24 @@ public class ArchiveUtils {
     /**
      * Creates an input stream from the provided path.
      * This will handle if the path is a URI.
+     *
      * @param archivePath Path to create an input stream for.
      * @return Input stream if successful, null otherwise
      */
-    public static @Nullable InputStream createStream(Path archivePath){
+    public static @Nullable InputStream createStream(Path archivePath) {
         InputStream is = null;
 
-        try{
+        try {
             if (archivePath.startsWith("file:")) {
                 is = new URL(archivePath.toString()).openStream();
             } else {
                 is = Files.newInputStream(archivePath);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
 
-        return  is;
+        return is;
     }
 
     public static String getFile(Path archivePath, String file) {
@@ -109,7 +110,7 @@ public class ArchiveUtils {
         try {
             InputStream is = createStream(archivePath);
             try (
-                ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
+                    ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
                 ArchiveEntry entry = null;
                 while ((entry = ais.getNextEntry()) != null) {
                     if (!ais.canReadEntryData(entry)) {
@@ -124,10 +125,9 @@ public class ArchiveUtils {
             } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
-
 
         return contents;
     }

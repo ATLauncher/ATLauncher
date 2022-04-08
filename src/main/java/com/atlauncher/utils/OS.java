@@ -121,14 +121,9 @@ public enum OS {
 
     /**
      * This checks to see if the user is using the Flatpak application.
-     *
-     * TODO: This is not a proper check. I don't know how to check, since this can
-     * be set to something else by the user, just want to test things for now.
      */
     public static boolean isUsingFlatpak() {
-        File f = new File("/.flatpak-info");
-        boolean isFlatpak = f.exists();
-        return OS.isLinux() && isFlatpak;
+        return OS.isLinux() && new File("/.flatpak-info").exists();
     }
 
     /**
