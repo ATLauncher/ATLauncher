@@ -84,7 +84,7 @@ public class ArchiveUtils {
         InputStream is = null;
 
         try {
-            if (archivePath.startsWith("file:")) {
+            if (archivePath.toString().startsWith("file:")) {
                 is = new URL(archivePath.toString()).openStream();
             } else {
                 is = Files.newInputStream(archivePath);

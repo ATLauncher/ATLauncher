@@ -274,7 +274,7 @@ public class Utils {
     public static boolean copyFile(File from, File to, boolean withFilename) {
         // Only check the file if it is not an uri
         boolean isURI = false;
-        if (!from.toPath().startsWith("file:")) {
+        if (!from.toString().startsWith("file:")) {
             if (!from.isFile()) {
                 LogManager
                         .error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
@@ -289,7 +289,6 @@ public class Utils {
         } else {
             isURI = true;
         }
-        LogManager.info("Is URI?: " + isURI);
 
         if (!withFilename) {
             to = new File(to, from.getName());
