@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.13.1
 
 ### New Features
+- Add in scanning of running processes in Windows for antivirus programs and log as warning
 
 ### Fixes
 - Running the app via Flatpak not allowing selecting files outside the sandbox [#564]

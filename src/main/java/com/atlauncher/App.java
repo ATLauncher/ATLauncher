@@ -88,6 +88,7 @@ import oshi.hardware.CentralProcessor;
 import oshi.hardware.GraphicsCard;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OSFileStore;
+import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
 
 /**
@@ -467,6 +468,16 @@ public class App {
             for (OSFileStore fileStore : os.getFileSystem().getFileStores(true)) {
                 LogManager.info(
                         "Disk: " + fileStore.getLabel() + " (" + fileStore.getFreeSpace() / 1048576 + " MB Free)");
+            }
+
+            if (OS.isWindows() && OS.isUsingAntivirus()) {
+                LogManager.warn(
+                        "A running antivirus process was found on your system. If you notice any issues running Minecraft or downloading files, please whitelist ATLauncher and it's folder in your antivirus program/s listed below.");
+
+                for (OSProcess process : OS.getAntivirusProcesses()) {
+                    LogManager.info(String.format("Process %s (running at %s)", process.getName(),
+                            process.getPath()));
+                }
             }
         } catch (Throwable t) {
             LogManager.logStackTrace(t);

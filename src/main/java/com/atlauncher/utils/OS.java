@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
@@ -57,13 +58,27 @@ import com.atlauncher.utils.javafinder.JavaInfo;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
+import oshi.software.os.OperatingSystem.ProcessSorting;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
 
     private static int memory = 0;
     private static SystemInfo systemInfo = null;
+    private static List<OSProcess> antivirusProcesses = null;
+
+    private static final List<String> WINDOWS_ANTIVIRUS_PROCESS_NAMES = Arrays.asList("AvastSvc", "AvastUI", "AVGSvc",
+            "AVGUI", "Avira.VpnService", "avgnt", "mbam", "avpui");
+    private static final List<String> WINDOWS_ANTIVIRUS_PROCESS_PATHS = Arrays.asList(
+            "C:\\Program Files\\Avast Software\\Avast\\AvastUI.exe", "C:\\Program Files\\AVG\\Antivirus\\AVGUI.exe",
+            "C:\\Program Files (x86)\\Avira\\Antivirus\\avgnt.exe",
+            "C:\\Program Files\\Malwarebytes\\Anti-Malware\\mbam.exe",
+            "C:\\Program Files (x86)\\Kaspersky Lab\\Kaspersky 21.5\\avpui.exe");
+    public static final Predicate<OSProcess> WINDOWS_ANTIVIRUS_PROCESS_FILTER = (
+            process) -> WINDOWS_ANTIVIRUS_PROCESS_NAMES.contains(process.getName())
+                    || WINDOWS_ANTIVIRUS_PROCESS_PATHS.contains(process.getPath());
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
@@ -570,5 +585,32 @@ public enum OS {
         }
 
         return String.format("%s%s", name, arch);
+    }
+
+    public static List<OSProcess> getAntivirusProcesses() {
+        if (isWindows()) {
+            if (antivirusProcesses == null) {
+                try {
+                    SystemInfo systemInfo = OS.getSystemInfo();
+                    OperatingSystem os = systemInfo.getOperatingSystem();
+
+                    antivirusProcesses = os.getProcesses(OS.WINDOWS_ANTIVIRUS_PROCESS_FILTER,
+                            ProcessSorting.PID_ASC, 0);
+                } catch (Throwable ignored) {
+                }
+            }
+
+            return antivirusProcesses;
+        }
+
+        return new ArrayList<>();
+    }
+
+    public static boolean isUsingAntivirus() {
+        if (isWindows()) {
+            return getAntivirusProcesses().size() != 0;
+        }
+
+        return false;
     }
 }
