@@ -17,8 +17,21 @@
  */
 package com.atlauncher.gui.tabs;
 
+/**
+ * Defines a tab that will display at the end of the UI
+ */
 public interface Tab {
+
+    /**
+     * Title to display to the user.
+     * If null is returned, the tab will not be displayed.
+     *
+     * @return Title to display, If null do not display
+     */
     String getTitle();
 
+    /**
+     * Provide the Analytics framework a developer identifiable name for the tab
+     */
     String getAnalyticsScreenViewName();
 }
