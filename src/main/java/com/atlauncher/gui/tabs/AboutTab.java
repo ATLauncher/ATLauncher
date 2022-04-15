@@ -17,15 +17,58 @@
  */
 package com.atlauncher.gui.tabs;
 
+import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * 14 / 04 / 2022
  */
 public class AboutTab extends JPanel implements Tab, RelocalizationListener {
+    private final JPanel info;
+    private final JTextPane textInfo;
+
+
+    private final JButton copyButton;
+
+    public AboutTab() {
+        setLayout(new BorderLayout());
+
+        textInfo = new JTextPane();
+        StringBuilder sb = new StringBuilder();
+        sb.append(Constants.LAUNCHER_NAME);
+        sb.append("\n");
+        sb.append(Constants.VERSION.toString());
+        sb.append("\n");
+        sb.append(System.getProperty("os.name"));
+        sb.append("\n");
+        sb.append(String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
+        textInfo.setText(sb.toString());
+        textInfo.setEditable(false);
+
+        info = new JPanel();
+        info.setLayout(new BorderLayout());
+        info.add(textInfo, BorderLayout.WEST);
+
+        copyButton = new JButton();
+        copyButton.setText(GetText.tr("Copy"));
+        copyButton.addActionListener(e -> {
+                OS.copyToClipboard("");
+            }
+        );
+        info.add(copyButton, BorderLayout.EAST);
+
+        this.add(info, BorderLayout.NORTH);
+
+        RelocalizationManager.addListener(this);
+    }
+
     @Override
     public void onRelocalization() {
         // TODO Request Ryan explain this to me
