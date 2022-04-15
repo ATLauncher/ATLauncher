@@ -43,6 +43,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.tabs.AboutTab;
 import com.atlauncher.gui.tabs.CreatePackTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
@@ -208,6 +209,11 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         SettingsTab settingsTab = new SettingsTab();
         this.tabs.put(UIConstants.LAUNCHER_SETTINGS_TAB, settingsTab);
         PerformanceManager.end("settingsTab");
+
+        PerformanceManager.start("aboutTab");
+        AboutTab aboutTab = new AboutTab();
+        PerformanceManager.end("aboutTab");
+        this.tabs.put(UIConstants.LAUNCHER_ABOUT_TAB, aboutTab);
 
         tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs.values()) {
