@@ -146,7 +146,6 @@ public enum OS {
      */
     public static void openWebBrowser(String url) {
         try {
-            Analytics.sendOutboundLink(url);
             OS.openWebBrowser(new URI(url));
         } catch (Exception e) {
             LogManager.logStackTrace("Error opening web browser!", e);
@@ -168,6 +167,7 @@ public enum OS {
      * This opens the users default browser to the given uri.
      */
     public static void openWebBrowser(URI uri) {
+        Analytics.sendOutboundLink(uri.toString());
         try {
             if (getOS() == LINUX && Utils.executableInPath("xdg-open")) {
                 Runtime.getRuntime().exec("xdg-open " + uri);

@@ -60,7 +60,7 @@ public class CurseForgeProject {
             return ModType.resourcepack;
         }
 
-    return ModType.mods;
+        return ModType.mods;
     }
 
     public int getRootCategoryId() {
@@ -84,5 +84,9 @@ public class CurseForgeProject {
 
     public String getWebsiteUrl() {
         return links.get("websiteUrl");
+    }
+
+    public boolean hasWebsiteUrl() {
+        return links.containsKey("websiteUrl");
     }
 }

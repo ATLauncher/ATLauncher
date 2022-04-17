@@ -2089,6 +2089,38 @@ public class Instance extends MinecraftVersion {
         return "Instance";
     }
 
+    public boolean hasWebsite() {
+        if (isCurseForgePack()) {
+            return launcher.curseForgeProject.hasWebsiteUrl();
+        }
+
+        if (isModpacksChPack()) {
+            return launcher.modpacksChPackManifest.hasTag("FTB");
+        }
+
+        return isModrinthPack() || isTechnicPack();
+    }
+
+    public String getWebsiteUrl() {
+        if (isCurseForgePack() && launcher.curseForgeProject.hasWebsiteUrl()) {
+            return launcher.curseForgeProject.getWebsiteUrl();
+        }
+
+        if (isModpacksChPack() && launcher.modpacksChPackManifest.hasTag("FTB")) {
+            return launcher.modpacksChPackManifest.getWebsiteUrl();
+        }
+
+        if (isModrinthPack()) {
+            return String.format("https://modrinth.com/modpack/%s", launcher.modrinthProject.slug);
+        }
+
+        if (isTechnicPack()) {
+            return launcher.technicModpack.platformUrl;
+        }
+
+        return null;
+    }
+
     public void update() {
         new InstanceInstallerDialog(this, true, false, null, null, true, null, App.launcher.getParent());
     }
