@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Running the app via Flatpak not allowing selecting files outside the sandbox [#564]
 - Error opening website of some instances [#567]
+- Typo on Don't Check Mods On CurseForge hover text [#570]
 
 ### Misc
 - Remove old references to V1 instance format

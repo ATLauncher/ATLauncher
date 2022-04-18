@@ -131,7 +131,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         JLabelWithHover dontCheckModsOnCurseForgeLabel = new JLabelWithHover(
                 GetText.tr("Don't Check Mods On CurseForge?"), HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "When installing packs or adding mods manually to instances, we check for the file on CurseForge to show more information about the mod as well as make updating easier. Disbaling this will mean you won't be able to update manually added mods from within the launcher but may solve some issues installing packs due to running out of memory."))
+                        "When installing packs or adding mods manually to instances, we check for the file on CurseForge to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher but may solve some issues installing packs due to running out of memory."))
                         .build());
         add(dontCheckModsOnCurseForgeLabel, gbc);
 
