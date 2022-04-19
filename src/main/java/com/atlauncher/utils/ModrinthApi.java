@@ -94,6 +94,11 @@ public class ModrinthApi {
         return searchModrinth(gameVersions, query, page, sort, "fabric", ModrinthProjectType.MOD);
     }
 
+    public static ModrinthSearchResult searchModsForQuilt(List<String> gameVersions, String query, int page,
+            String sort) {
+        return searchModrinth(gameVersions, query, page, sort, "quilt", ModrinthProjectType.MOD);
+    }
+
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
             String category) {
         return searchModrinth(minecraftVersion == null ? null : Arrays.asList(minecraftVersion), query, page, sort,
