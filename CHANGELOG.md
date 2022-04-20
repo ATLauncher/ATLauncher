@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Error opening website of some instances [#567]
 - Typo on Don't Check Mods On CurseForge hover text [#570]
 - Adding mods for Quilt based instances not working
+- Switch hashed library for intermediary when installing Quilt loader and enabled
 
 ### Misc
 - Remove old references to V1 instance format

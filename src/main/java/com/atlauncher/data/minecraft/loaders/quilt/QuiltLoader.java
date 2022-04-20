@@ -36,6 +36,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlauncher.FileSystem;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
@@ -100,7 +101,14 @@ public class QuiltLoader implements Loader {
         List<Library> libraries = new ArrayList<>();
 
         libraries.add(new QuiltLibrary(this.version.loader.maven));
-        libraries.add(new QuiltLibrary(this.version.hashed.maven));
+
+        if (ConfigManager.getConfigItem("loaders.quilt.switchHashedForIntermediary", true) == false) {
+            libraries.add(new QuiltLibrary(this.version.hashed.maven.replace("org.quiltmc:hashed",
+                    "net.fabricmc:intermediary"), Constants.FABRIC_MAVEN));
+        } else {
+            libraries.add(new QuiltLibrary(this.version.hashed.maven));
+        }
+
         libraries.addAll(this.version.launcherMeta.getLibraries(this.instanceInstaller.isServer));
 
         return libraries;
