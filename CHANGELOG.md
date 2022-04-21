@@ -3,21 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.13.1
+## 3.4.13.2
 
 ### New Features
-- Add in scanning of running processes in Windows for antivirus programs and log as warning
-- Add in support for new OSX Arm natives starting to be used in snapshot 22w16a and newer
-- Add in warning when browsing mods for Quilt based instances without QSL installed
 
 ### Fixes
-- Running the app via Flatpak not allowing selecting files outside the sandbox [#564]
-- Error opening website of some instances [#567]
-- Typo on Don't Check Mods On CurseForge hover text [#570]
-- Adding mods for Quilt based instances not working
-- Switch hashed library for intermediary when installing Quilt loader and enabled
-- Logic for when showing mod versions for other loaders when using Quilt
 
 ### Misc
-- Remove old references to V1 instance format
-- Add Pair class to simplify some Object casting
