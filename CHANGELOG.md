@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Typo on Don't Check Mods On CurseForge hover text [#570]
 - Adding mods for Quilt based instances not working
 - Switch hashed library for intermediary when installing Quilt loader and enabled
+- Logic for when showing mod versions for other loaders when using Quilt
 
 ### Misc
 - Remove old references to V1 instance format

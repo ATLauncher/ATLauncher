@@ -262,12 +262,12 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             // and not our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                 if (cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Fabric") && loaderVersion != null
-                        && loaderVersion.isFabric()) {
+                        && (loaderVersion.isFabric() || loaderVersion.isQuilt())) {
                     return false;
                 }
 
                 if (cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge") && loaderVersion != null
-                        && !loaderVersion.isFabric()) {
+                        && !loaderVersion.isFabric() && !loaderVersion.isQuilt()) {
                     return false;
                 }
 
@@ -282,7 +282,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                         getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
             }
 
-            // try to filter out non compatable mods (Forge on Fabric and vice versa) if no loader gameVersions are set
+            // try to filter out non compatable mods (Forge on Fabric and vice versa) if no
+            // loader gameVersions are set
             if (App.settings.addModRestriction == AddModRestriction.NONE) {
                 files.forEach(version -> filesDropdown.addItem(version));
             } else {
