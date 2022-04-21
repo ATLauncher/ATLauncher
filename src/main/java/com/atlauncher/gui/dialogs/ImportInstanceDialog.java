@@ -45,7 +45,6 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.dbus.DBusUtils;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ImportPackUtils;
@@ -136,14 +135,7 @@ public class ImportInstanceDialog extends JDialog {
 
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
-            if (OS.isUsingFlatpak()) {
-                File[] filesChosen = DBusUtils.selectFiles();
-
-                if (filesChosen.length != 0) {
-                    filePath.setText(filesChosen[0].getAbsolutePath());
-                    changeAddButtonStatus();
-                }
-            } else if (App.settings.useNativeFilePicker) {
+            if (App.settings.useNativeFilePicker) {
                 FileDialog fileDialog = new FileDialog(this, GetText.tr("Select file/s"), FileDialog.LOAD);
                 fileDialog.setFilenameFilter(new FilenameFilter() {
                     @Override

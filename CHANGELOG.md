@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- The changes made for dbus and flatpak file pickers causing issue installing Forge 1.16.5 [#564]
 
 ### Misc
