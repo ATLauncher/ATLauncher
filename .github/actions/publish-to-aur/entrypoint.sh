@@ -114,6 +114,9 @@ build() {
 push_package() {
     echo '::group::Pushing package to AUR'
 
+    # mark directory as safe for git
+    git config --global --add safe.directory /aur_repo
+
     # change to where repo is cloned
     cd /aur_repo
 
