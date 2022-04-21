@@ -77,6 +77,14 @@ public class Library {
         }
 
         if (OS.isMac() && this.natives != null && this.natives.containsKey("osx")) {
+            // if on ARM based Mac and there is a classifier for it, use it
+            if (this.downloads.classifiers.containsKey(this.natives.get("osx") + "-arm64") && OS.isMacArm()
+                    && OS.is64Bit()) {
+                return this.downloads.classifiers
+                        .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32") + "-arm64");
+            }
+
+            // else fall back to the standard natives, ARM based Macs can run in Rosetta
             return this.downloads.classifiers
                     .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"));
         }
