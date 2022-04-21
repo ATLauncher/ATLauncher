@@ -87,6 +87,14 @@ public final class AddModsDialog extends JDialog {
     private final JLabel fabricApiWarningLabel = new JLabel(
             "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
+    // #. Quilt Standard Libraries is the name of a mod, so should be left
+    private final JButton installQuiltStandardLibrariesButton = new JButton(
+            GetText.tr("Install Quilt Standard Libraries"));
+
+    // #. Quilt/Quilt Standard Libraries is the name of a mod, so should be left
+    private final JLabel quiltStandardLibrariesWarningLabel = new JLabel(
+            "<html><p align=\"center\" style=\"color: yellow\">Before installing Quilt mods, you should install Quilt Standard Libraries first!</p></html>");
+
     private JScrollPane jscrollPane;
     private JButton nextButton;
     private JButton prevButton;
@@ -247,6 +255,43 @@ public final class AddModsDialog extends JDialog {
             }
         });
 
+        this.installQuiltStandardLibrariesButton.addActionListener(e -> {
+            final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
+                    GetText.tr("Getting Quilt Standard Libaries Information"), 0,
+                    GetText.tr("Getting Quilt Standard Libaries Information"),
+                    "Aborting Getting Quilt Standard Libaries Information");
+
+            modrinthProjectLookupDialog.addThread(new Thread(() -> {
+                modrinthProjectLookupDialog
+                        .setReturnValue(ModrinthApi.getProject(Constants.MODRINTH_QSL_MOD_ID));
+
+                modrinthProjectLookupDialog.close();
+            }));
+
+            modrinthProjectLookupDialog.start();
+
+            ModrinthProject mod = modrinthProjectLookupDialog.getReturnValue();
+
+            if (mod == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("Error Getting Quilt Standard Libaries Information"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "There was an error getting Quilt Standard Libaries information from Modrinth. Please try again later."))
+                                .build())
+                        .setType(DialogManager.ERROR).show();
+                return;
+            }
+
+            Analytics.sendEvent("AddQuiltStandardLibraries", "ModrinthMod");
+            new ModrinthVersionSelectorDialog(this, mod, instance);
+
+            if (instance.launcher.mods.stream().anyMatch(
+                    m -> m.isFromModrinth()
+                            && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
+                quiltStandardLibrariesWarningLabel.setVisible(false);
+                installQuiltStandardLibrariesButton.setVisible(false);
+            }
+        });
+
         LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
         if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
@@ -255,6 +300,13 @@ public final class AddModsDialog extends JDialog {
                                 && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
+        }
+
+        if (loaderVersion != null && loaderVersion.isQuilt() && instance.launcher.mods.stream()
+                .noneMatch(m -> m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
+            this.topPanel.add(quiltStandardLibrariesWarningLabel, BorderLayout.CENTER);
+            this.topPanel.add(installQuiltStandardLibrariesButton, BorderLayout.EAST);
         }
 
         this.topPanel.add(searchButtonsPanel, BorderLayout.NORTH);

@@ -86,6 +86,7 @@ public class Constants {
     public static final String MODRINTH_API_URL = "https://api.modrinth.com/v2";
     public static final String MODRINTH_HOST = "api.modrinth.com";
     public static final String MODRINTH_FABRIC_MOD_ID = "P7dR8mSH";
+    public static final String MODRINTH_QSL_MOD_ID = "qvIfYCYJ";
     public static final int MODRINTH_PAGINATION_SIZE = 20;
 
     // Modpacks.ch domains, endpoints, config, etc

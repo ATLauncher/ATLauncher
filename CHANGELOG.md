@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Add in scanning of running processes in Windows for antivirus programs and log as warning
 - Add in support for new OSX Arm natives starting to be used in snapshot 22w16a and newer
+- Add in warning when browsing mods for Quilt based instances without QSL installed
 
 ### Fixes
 - Running the app via Flatpak not allowing selecting files outside the sandbox [#564]
