@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Allow importing MultiMC exports that don't use a folder as it's root
 
 ### Misc

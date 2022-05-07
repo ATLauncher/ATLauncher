@@ -101,7 +101,7 @@ public class ArchiveUtils {
             return new String(ZipUtil.unpackEntry(createStream(archivePath), file));
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
-            LogManager.warn(
+            LogManager.debug(
                     "Failed to get contents of file in " + archivePath.toAbsolutePath() + ". Trying fallback method");
         }
 

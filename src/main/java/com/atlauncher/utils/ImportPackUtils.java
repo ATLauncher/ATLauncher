@@ -194,6 +194,10 @@ public class ImportPackUtils {
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
+            if (ArchiveUtils.archiveContainsFile(file.toPath(), "mmc-pack.json")) {
+                return loadMultiMCFormat(tmpDir);
+            }
+
             if (tmpDir.toFile().list().length == 1
                     && ArchiveUtils.archiveContainsFile(file.toPath(), tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
                 return loadMultiMCFormat(tmpDir.resolve(tmpDir.toFile().list()[0]));
