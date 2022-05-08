@@ -145,17 +145,17 @@ jobs:
           cat fixed-changelog.md >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Create ATLauncher Version
-        uses: ATLauncher/release-atlauncher-action@master
-        timeout-minutes: 30
-        with:
-          api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
-          version: ${{ needs.build.outputs.clean-version }}
-          changelog: ${{ env.cleaned-changelog }}
-          files: |
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
+      # - name: Create ATLauncher Version
+      #   uses: ATLauncher/release-atlauncher-action@master
+      #   timeout-minutes: 30
+      #   with:
+      #     api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
+      #     version: ${{ needs.build.outputs.clean-version }}
+      #     changelog: ${{ env.cleaned-changelog }}
+      #     files: |
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
