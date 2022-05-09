@@ -36,6 +36,8 @@ public final class DebugLoggingInterceptor implements Interceptor {
         String debugLogMessage = request.toString();
         if (request.header("Authorization") != null) {
             debugLogMessage = debugLogMessage.replace(request.header("Authorization"), "REDACTED");
+        } else if (request.header("x-api-key") != null) {
+            debugLogMessage = debugLogMessage.replace(request.header("x-api-key"), "REDACTED");
         }
         LogManager.debug(debugLogMessage, 5);
 
