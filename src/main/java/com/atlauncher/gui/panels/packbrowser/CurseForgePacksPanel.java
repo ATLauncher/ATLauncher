@@ -205,31 +205,12 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
             }
 
             String packSlug = matcher.group(1);
-
-            // TODO: remove this and replace with lookup in CurseForge api when available
-            SlugResponse modInfo = new Download()
-                    .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
-                            "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
-                                    + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
-                    .setUrl("https://curse.nikky.moe/graphql").asClass(SlugResponse.class);
-
-            if (modInfo.data.addons.size() != 0) {
-                project = CurseForgeApi.getProjectById(modInfo.data.addons.get(0).id);
-            }
+            project = CurseForgeApi.getModPackBySlug(packSlug);
         } else {
             try {
                 project = CurseForgeApi.getProjectById(Integer.parseInt(id));
             } catch (NumberFormatException e) {
-                // TODO: remove this and replace with lookup in CurseForge api when available
-                SlugResponse modInfo = new Download()
-                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
-                                "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + id
-                                        + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
-                        .setUrl("https://curse.nikky.moe/graphql").asClass(SlugResponse.class);
-
-                if (modInfo.data.addons.size() != 0) {
-                    project = CurseForgeApi.getProjectById(modInfo.data.addons.get(0).id);
-                }
+                project = CurseForgeApi.getModPackBySlug(id);
             }
         }
 

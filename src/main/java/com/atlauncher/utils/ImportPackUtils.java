@@ -32,18 +32,15 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileHash;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
-import com.atlauncher.data.nickymoe.SlugResponse;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
-
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class ImportPackUtils {
     public static boolean loadFromUrl(String url) {
@@ -94,18 +91,9 @@ public class ImportPackUtils {
 
         LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
 
-        // TODO: remove this and replace with lookup in CurseForge api when available
-        SlugResponse modInfo = new Download()
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
-                        "{\"query\":\"{\\n  addons(gameId: 432, section: \\\"Modpacks\\\", slug: \\\"" + packSlug
-                                + "\\\") {\\n    id\\n    defaultFileId\\n  }\\n}\"}"))
-                .setUrl("https://curse.nikky.moe/graphql").asClass(SlugResponse.class);
-
-        projectId = modInfo.data.addons.get(0).id;
-
-        if (fileId == null) {
-            fileId = modInfo.data.addons.get(0).defaultFileId;
-        }
+        CurseForgeProject project = CurseForgeApi.getModPackBySlug(packSlug);
+        projectId = project.id;
+        fileId = project.mainFileId;
 
         if (projectId == null || fileId == null) {
             LogManager.error(

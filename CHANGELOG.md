@@ -8,5 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Embed CurseForge api key (with note) and use core apis directly
+- Use CurseForge Core api for slug lookups
 
 ### Misc
