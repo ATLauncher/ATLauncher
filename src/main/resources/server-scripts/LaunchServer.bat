@@ -35,12 +35,12 @@ if $SYSTEM_os_arch==x86 (
 
 echo.
 echo Printing Java version, if the Java version doesn't show below, your Java path is incorrect
-%javapath% -version
+"%javapath%" -version
 echo.
 
 echo Launching %%SERVERJAR%% with '%mem%' max memory, jvm args '%jvmargs%' and arguments '%launchargs%'
 
 :: add nogui to the end of this line to disable the gui ::
-%javapath% -Xmx%mem% %jvm_args% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %launchargs%
+"%javapath%" -Xmx%mem% %jvm_args% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %launchargs%
 PAUSE
 

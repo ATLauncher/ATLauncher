@@ -136,11 +136,13 @@ public class Server {
                 arguments.add("/K");
                 arguments.add("start");
                 arguments.add("\"" + name + "\"");
-                arguments.add(getRoot().resolve(serverScript).toString());
+                arguments.add("/D");
+                arguments.add("\"" + getRoot().toString() + "\"");
+                arguments.add(serverScript);
 
                 if (javaPath != null) {
                     arguments.add("ATLcustomjava");
-                    arguments.add(javaPath + "\\bin\\java.exe");
+                    arguments.add("\"" + javaPath + "\\bin\\java.exe" + "\"");
                 }
 
                 if (!args.isEmpty()) {
