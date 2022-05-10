@@ -18,7 +18,6 @@
 package com.atlauncher.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -36,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
@@ -85,7 +85,9 @@ public final class AddModsDialog extends JDialog {
 
     // #. Fabric/Fabric API is the name of a mod, so should be left untranslated
     private final JLabel fabricApiWarningLabel = new JLabel(
-            "<html><p align=\"center\" style=\"color: yellow\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
+            "<html><p align=\"center\" style=\"color: "
+                    + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
+                    + "\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
     // #. Quilt Standard Libraries is the name of a mod, so should be left
     private final JButton installQuiltStandardLibrariesButton = new JButton(
@@ -93,7 +95,9 @@ public final class AddModsDialog extends JDialog {
 
     // #. Quilt/Quilt Standard Libraries is the name of a mod, so should be left
     private final JLabel quiltStandardLibrariesWarningLabel = new JLabel(
-            "<html><p align=\"center\" style=\"color: yellow\">Before installing Quilt mods, you should install Quilt Standard Libraries first!</p></html>");
+            "<html><p align=\"center\" style=\"color: "
+                    + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
+                    + "\">Before installing Quilt mods, you should install Quilt Standard Libraries first!</p></html>");
 
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -336,7 +340,7 @@ public final class AddModsDialog extends JDialog {
         bottomButtonsPanel.add(prevButton);
         bottomButtonsPanel.add(nextButton);
 
-        platformMessageLabel.setForeground(Color.YELLOW);
+        platformMessageLabel.setForeground(UIManager.getColor("yellow"));
         bottomPanel.add(platformMessageLabel, BorderLayout.NORTH);
         bottomPanel.add(bottomButtonsPanel, BorderLayout.CENTER);
 

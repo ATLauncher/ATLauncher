@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Show Fabric mods when browsing Modrinth mods and using Quilt loader [#575]
 - Servers not launching when there is a space in the directory path [#577]
 - Move Featured Packs tab to a sub tab within the Packs tab [#572]
+- Some issues with light themes not being readable [#574]
 
 ### Misc
