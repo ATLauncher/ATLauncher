@@ -46,7 +46,7 @@ import okhttp3.CacheControl;
  */
 public class ModrinthApi {
     public static ModrinthSearchResult searchModrinth(List<String> gameVersions, String query, int page, String index,
-            String category, ModrinthProjectType projectType) {
+            List<String> categories, ModrinthProjectType projectType) {
         try {
             List<List<String>> facets = new ArrayList<>();
 
@@ -59,9 +59,9 @@ public class ModrinthApi {
                         gameVersions.stream().map(gv -> String.format("versions:%s", gv)).collect(Collectors.toList()));
             }
 
-            if (category != null) {
+            if (categories != null) {
                 List<String> categoryFacets = new ArrayList<>();
-                categoryFacets.add(String.format("categories:%s", category));
+                categories.forEach(c -> categoryFacets.add(String.format("categories:%s", c)));
                 facets.add(categoryFacets);
             }
 
@@ -86,23 +86,29 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModsForForge(List<String> gameVersions, String query, int page,
             String sort) {
-        return searchModrinth(gameVersions, query, page, sort, "forge", ModrinthProjectType.MOD);
+        return searchModrinth(gameVersions, query, page, sort, Arrays.asList("forge"), ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForFabric(List<String> gameVersions, String query, int page,
             String sort) {
-        return searchModrinth(gameVersions, query, page, sort, "fabric", ModrinthProjectType.MOD);
+        return searchModrinth(gameVersions, query, page, sort, Arrays.asList("fabric"), ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForQuilt(List<String> gameVersions, String query, int page,
             String sort) {
-        return searchModrinth(gameVersions, query, page, sort, "quilt", ModrinthProjectType.MOD);
+        return searchModrinth(gameVersions, query, page, sort, Arrays.asList("quilt"), ModrinthProjectType.MOD);
+    }
+
+    public static ModrinthSearchResult searchModsForQuiltOrFabric(List<String> gameVersions, String query, int page,
+            String sort) {
+        return searchModrinth(gameVersions, query, page, sort, Arrays.asList("quilt", "fabric"),
+                ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
             String category) {
         return searchModrinth(minecraftVersion == null ? null : Arrays.asList(minecraftVersion), query, page, sort,
-                category, ModrinthProjectType.MODPACK);
+                Arrays.asList(category), ModrinthProjectType.MODPACK);
     }
 
     public static ModrinthProject getProject(String projectId) {

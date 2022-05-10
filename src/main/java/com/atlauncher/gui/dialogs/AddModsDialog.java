@@ -489,7 +489,7 @@ public final class AddModsDialog extends JDialog {
                     setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (this.instance.launcher.loaderVersion.isQuilt()) {
-                    setModrinthMods(ModrinthApi.searchModsForQuilt(versionsToSearchFor, query, page,
+                    setModrinthMods(ModrinthApi.searchModsForQuiltOrFabric(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (this.instance.launcher.loaderVersion.isForge()) {
                     setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,

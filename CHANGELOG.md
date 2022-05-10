@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Remove api key header from network debug logger
+- Show Fabric mods when browsing Modrinth mods and using Quilt loader [#575]
 
 ### Misc
