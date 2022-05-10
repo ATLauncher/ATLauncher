@@ -107,6 +107,11 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
+    public boolean supportsSearch() {
+        return true;
+    }
+
+    @Override
     public boolean hasCategories() {
         return true;
     }

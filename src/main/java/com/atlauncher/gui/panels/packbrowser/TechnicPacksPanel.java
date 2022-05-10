@@ -93,6 +93,11 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
+    public boolean supportsSearch() {
+        return true;
+    }
+
+    @Override
     public boolean hasCategories() {
         return false;
     }

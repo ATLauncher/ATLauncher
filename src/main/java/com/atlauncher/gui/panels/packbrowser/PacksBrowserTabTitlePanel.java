@@ -27,15 +27,19 @@ import javax.swing.SwingConstants;
 import com.atlauncher.utils.Utils;
 
 public class PacksBrowserTabTitlePanel extends JPanel {
-    public PacksBrowserTabTitlePanel(String platform) {
+    public PacksBrowserTabTitlePanel(String platform, String icon) {
         setLayout(new BorderLayout());
         setBackground(new Color(0, 0, 0, 1));
         add(new JLabel(
-                Utils.getIconImage(String.format("/assets/image/modpack-platform/%s.png", platform.toLowerCase()))),
+                Utils.getIconImage(String.format("/assets/image/modpack-platform/%s.png", icon))),
                 BorderLayout.CENTER);
 
         JLabel title = new JLabel(platform);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         add(title, BorderLayout.SOUTH);
+    }
+
+    public PacksBrowserTabTitlePanel(String platform) {
+        this(platform, platform.toLowerCase());
     }
 }

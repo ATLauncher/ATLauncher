@@ -32,7 +32,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
-import com.atlauncher.data.nickymoe.SlugResponse;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.CurseForgePackCard;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -41,13 +40,9 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.network.Download;
 import com.atlauncher.utils.CurseForgeApi;
 
 import org.mini2Dx.gettext.GetText;
-
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
@@ -106,6 +101,11 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     @Override
     public String getAnalyticsCategory() {
         return "CurseForgePack";
+    }
+
+    @Override
+    public boolean supportsSearch() {
+        return true;
     }
 
     @Override

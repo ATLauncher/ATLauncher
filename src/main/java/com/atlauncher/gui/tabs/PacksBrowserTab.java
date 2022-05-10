@@ -47,6 +47,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.gui.panels.packbrowser.ATLauncherFeaturedPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
 import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
@@ -92,6 +93,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     private final JTabbedPane platformTabbedPane = new JTabbedPane();
     private final PackBrowserPlatformPanel atlauncherPacksPanel = new ATLauncherPacksPanel();
+    private final PackBrowserPlatformPanel atlauncherFeaturedPacksPanel = new ATLauncherFeaturedPacksPanel();
     private final PackBrowserPlatformPanel curseForgePacksPanel = new CurseForgePacksPanel();
     private final PackBrowserPlatformPanel ftbPacksPanel = new FTBPacksPanel();
     private final PackBrowserPlatformPanel modrinthPacksPanel = new ModrinthPacksPanel();
@@ -263,6 +265,10 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         platformTabbedPane.add(atlauncherPacksPanel);
         platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("ATLauncher"));
 
+        platformTabbedPane.add(atlauncherFeaturedPacksPanel);
+        platformTabbedPane.setTabComponentAt(index++,
+                new PacksBrowserTabTitlePanel("ATLauncher Featured", "atlauncher"));
+
         if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
             platformTabbedPane.add(curseForgePacksPanel);
             platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("CurseForge"));
@@ -362,6 +368,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         }
 
         // hide minecraft version/sort/category if not needed
+        searchField.setVisible(selectedPanel.supportsSearch());
         minecraftVersionPanel.setVisible(selectedPanel.supportsMinecraftVersionFiltering());
         categoriesPanel.setVisible(selectedPanel.hasCategories());
         sortPanel.setVisible(selectedPanel.hasSort());

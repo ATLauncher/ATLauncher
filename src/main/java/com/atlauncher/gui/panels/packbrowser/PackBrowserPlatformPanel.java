@@ -37,6 +37,8 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
 
     public abstract String getAnalyticsCategory();
 
+    public abstract boolean supportsSearch();
+
     public abstract boolean hasCategories();
 
     public abstract Map<String, String> getCategoryFields();

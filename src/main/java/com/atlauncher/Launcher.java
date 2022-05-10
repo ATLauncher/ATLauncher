@@ -39,7 +39,6 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.FeaturedPacksTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
@@ -81,7 +80,6 @@ public class Launcher {
     private InstancesTab instancesPanel; // The instances panel
     private ServersTab serversPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
-    private FeaturedPacksTab featuredPacksPanel; // The featured packs panel
     private PacksBrowserTab packsBrowserPanel; // The packs browser panel
 
     // Update thread
@@ -362,7 +360,6 @@ public class Launcher {
             NewsManager.loadNews(); // Load the news
             reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher
-            reloadFeaturedPacksPanel(); // Reload packs panel
             reloadPacksBrowserPanel();// Reload packs browser panel
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
             InstanceManager.loadInstances(); // Load the users installed Instances
@@ -465,15 +462,6 @@ public class Launcher {
     }
 
     /**
-     * Sets the panel used for Featured Packs
-     *
-     * @param featuredPacksPanel Featured Packs Panel
-     */
-    public void setFeaturedPacksPanel(FeaturedPacksTab featuredPacksPanel) {
-        this.featuredPacksPanel = featuredPacksPanel;
-    }
-
-    /**
      * Sets the panel used for the Packs Browser
      *
      * @param packsBrowserPanel Packs Browser Panel
@@ -496,20 +484,6 @@ public class Launcher {
      */
     public void reloadNewsPanel() {
         this.newsPanel.reload(); // Reload the news panel
-    }
-
-    /**
-     * Reloads the panel used for Featured Packs
-     */
-    public void reloadFeaturedPacksPanel() {
-        this.featuredPacksPanel.reload();
-    }
-
-    /**
-     * Refreshes the panel used for Featured Packs
-     */
-    public void refreshFeaturedPacksPanel() {
-        this.featuredPacksPanel.refresh();
     }
 
     /**

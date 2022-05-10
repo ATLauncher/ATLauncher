@@ -43,7 +43,6 @@ import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
-import com.atlauncher.gui.tabs.FeaturedPacksTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
@@ -202,11 +201,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         VanillaPacksTab vanillaPacksTab = new VanillaPacksTab();
         PerformanceManager.end("vanillaPacksTab");
 
-        PerformanceManager.start("featuredPacksTab");
-        FeaturedPacksTab featuredPacksTab = new FeaturedPacksTab();
-        App.launcher.setFeaturedPacksPanel(featuredPacksTab);
-        PerformanceManager.end("featuredPacksTab");
-
         PerformanceManager.start("packsBrowserTab");
         PacksBrowserTab packsBrowserTab = new PacksBrowserTab();
         App.launcher.setPacksBrowserPanel(packsBrowserTab);
@@ -234,7 +228,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         SettingsTab settingsTab = new SettingsTab();
         PerformanceManager.end("settingsTab");
 
-        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, featuredPacksTab, packsBrowserTab, instancesTab,
+        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, packsBrowserTab, instancesTab,
                 serversTab, accountsTab, toolsTab, settingsTab });
 
         tabbedPane.setFont(App.THEME.getTabFont());

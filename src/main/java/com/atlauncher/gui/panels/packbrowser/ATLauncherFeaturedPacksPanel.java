@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
@@ -40,28 +39,16 @@ import com.atlauncher.managers.PackManager;
 import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
-public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
+public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     private final List<Pack> packs = new LinkedList<>();
     private final List<ATLauncherPackCard> cards = new LinkedList<>();
 
     private void loadPacksToShow(String minecraftVersion, String sort, boolean sortDescending, String searchText) {
-        List<Pack> packs = sort.equalsIgnoreCase("name") ? PackManager.getPacksSortedAlphabetically(false,
-                sortDescending)
-                : PackManager.getPacksSortedPositionally(false, sortDescending);
+        List<Pack> packs = PackManager.getPacksSortedPositionally(true, false);
 
         this.packs.addAll(packs.stream().filter(Pack::canInstall).filter(pack -> {
             if (minecraftVersion != null) {
                 return pack.versions.stream().anyMatch(pv -> pv.minecraftVersion.id.equals(minecraftVersion));
-            }
-
-            return true;
-        }).filter(pack -> {
-            if (!searchText.isEmpty()) {
-                return (pack.getDescription() != null
-                        && Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                                .matcher(pack.getDescription()).find())
-                        || Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(pack.getName())
-                                .find();
             }
 
             return true;
@@ -83,8 +70,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
             boolean sortDescending, String search,
             int page) {
-        this.packs.stream().skip(this.cards.size()).limit(10)
-                .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
+        this.packs.stream().forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -103,24 +89,24 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
         if (count == 0) {
             contentPanel.add(
                     new NilCard(GetText
-                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                            .tr("There are no packs to display.")),
                     gbc);
         }
     }
 
     @Override
     public String getPlatformName() {
-        return "ATLauncher";
+        return "ATLauncher Featured";
     }
 
     @Override
     public String getAnalyticsCategory() {
-        return "Pack";
+        return "FeaturedPack";
     }
 
     @Override
     public boolean supportsSearch() {
-        return true;
+        return false;
     }
 
     @Override
@@ -135,15 +121,12 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public boolean hasSort() {
-        return true;
+        return false;
     }
 
     @Override
     public Map<String, String> getSortFields() {
         Map<String, String> sortFields = new LinkedHashMap<>();
-
-        sortFields.put("popular", GetText.tr("Popularity"));
-        sortFields.put("name", GetText.tr("Name"));
 
         return sortFields;
     }
@@ -153,20 +136,17 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
         // Sort field / if in descending order
         Map<String, Boolean> sortFieldsOrder = new LinkedHashMap<>();
 
-        sortFieldsOrder.put("popular", false);
-        sortFieldsOrder.put("name", false);
-
         return sortFieldsOrder;
     }
 
     @Override
     public boolean supportsSortOrder() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean supportsMinecraftVersionFiltering() {
-        return true;
+        return false;
     }
 
     @Override
@@ -199,12 +179,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public boolean hasPagination() {
-        // already loaded in all the cards possible, so don't navigate
-        if (this.packs.size() != 0 && this.cards.size() != 0 && this.packs.size() == this.cards.size()) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     @Override
