@@ -124,6 +124,9 @@ public class Settings {
     public String postExitCommand = null;
     public String wrapperCommand = null;
 
+    // "migrations"
+    public boolean hasFixedSelectedTabOnStartup_3_4_13_5 = false;
+
     public void convert(Properties properties) {
         String importedDateFormat = properties.getProperty("dateformat");
         if (importedDateFormat != null) {
@@ -288,6 +291,8 @@ public class Settings {
 
         validateWindowSettings();
 
+        validateSelectedTabOnStartup();
+
         validateDisableAddModRestrictions();
         validateDefaultModPlatform();
 
@@ -340,6 +345,18 @@ public class Settings {
         if (consolePosition != null
                 && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
             consolePosition = null;
+        }
+    }
+
+    private void validateSelectedTabOnStartup() {
+        if (!hasFixedSelectedTabOnStartup_3_4_13_5) {
+            hasFixedSelectedTabOnStartup_3_4_13_5 = true;
+
+            if (selectedTabOnStartup > 2) {
+                selectedTabOnStartup = selectedTabOnStartup - 1;
+            }
+
+            save();
         }
     }
 
