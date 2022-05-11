@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.json.ModType;
 import com.google.gson.annotations.SerializedName;
@@ -32,7 +33,9 @@ public class CurseForgeProject {
     public List<CurseForgeAuthor> authors;
     public int gameId;
     public String summary;
+    @ExcludeFromGsonSerialization
     public int downloadCount;
+    @ExcludeFromGsonSerialization
     public List<CurseForgeFile> latestFiles;
     public List<CurseForgeCategory> categories;
     public int status;
@@ -50,6 +53,7 @@ public class CurseForgeProject {
     public List<CurseForgeAttachment> screenshots;
 
     @SerializedName(value = "latestFilesIndexes", alternate = { "gameVersionLatestFiles" })
+    @ExcludeFromGsonSerialization
     public List<CurseForgeGameVersionLatestFiles> latestFilesIndexes;
 
     @SerializedName(value = "mainFileId", alternate = { "defaultFileId" })

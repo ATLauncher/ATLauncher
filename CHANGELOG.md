@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Remove caching of download urls from CurseForge as per ToS, also remove some others from json
 
 ### Misc

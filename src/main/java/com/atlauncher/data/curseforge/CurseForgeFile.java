@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -41,6 +42,7 @@ public class CurseForgeFile {
     public int fileStatus;
     public String fileDate;
     public int fileLength;
+    @ExcludeFromGsonSerialization
     public String downloadUrl;
     public List<CurseForgeFileDependency> dependencies;
     public int alternateFileId;
@@ -48,6 +50,7 @@ public class CurseForgeFile {
     public boolean isServerPack;
 
     public List<CurseForgeFileHash> hashes = new ArrayList<>();
+    @ExcludeFromGsonSerialization
     public int downloadCount;
     public List<CurseForgeSortableGameVersion> sortableGameVersions = new ArrayList<>();
 
