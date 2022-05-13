@@ -19,6 +19,7 @@ package com.atlauncher.data.modrinth;
 
 import java.util.List;
 
+import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.google.gson.annotations.SerializedName;
 
 public class ModrinthVersion {
@@ -30,6 +31,7 @@ public class ModrinthVersion {
     @SerializedName("author_id")
     public String authorId;
 
+    @ExcludeFromGsonSerialization
     public boolean featured;
     public String name;
 
@@ -44,6 +46,7 @@ public class ModrinthVersion {
     @SerializedName("date_published")
     public String datePublished;
 
+    @ExcludeFromGsonSerialization
     public int downloads;
 
     @SerializedName("version_type")
@@ -60,6 +63,12 @@ public class ModrinthVersion {
 
     public ModrinthFile getPrimaryFile() {
         return files.stream().filter(f -> f.primary).findFirst().orElse(files.get(0));
+    }
+
+    public ModrinthFile getFileBySha1(String sha1Hash) {
+        return files.stream()
+                .filter(f -> f.hashes.containsKey("sha1") && f.hashes.get("sha1").equalsIgnoreCase(sha1Hash))
+                .findFirst().orElse(getPrimaryFile());
     }
 
     public String toString() {

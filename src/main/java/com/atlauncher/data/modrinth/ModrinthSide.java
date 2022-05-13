@@ -21,11 +21,22 @@ import com.google.gson.annotations.SerializedName;
 
 public enum ModrinthSide {
     @SerializedName("required")
-    REQUIRED,
+    REQUIRED("required"),
 
     @SerializedName("optional")
-    OPTIONAL,
+    OPTIONAL("optional"),
 
     @SerializedName("unsupported")
-    UNSUPPORTED
+    UNSUPPORTED("unsupported");
+
+    private String name;
+
+    ModrinthSide(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

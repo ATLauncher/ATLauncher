@@ -133,6 +133,7 @@ import com.atlauncher.utils.CommandExecutor;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
@@ -1794,29 +1795,47 @@ public class Instance extends MinecraftVersion {
         Path to = Paths.get(saveTo).resolve(name + ".mrpack");
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
 
+        // for any mods not from Modrinth, scan for them on Modrinth
+        this.launcher.mods.stream()
+                .filter(m -> !m.disabled && !m.isFromModrinth()).forEach(mod -> {
+                    Path modPath = mod.getFile(this).toPath();
+
+                    ModrinthVersion modrinthVersion = ModrinthApi
+                            .getVersionFromSha1Hash(Hashing.sha1(modPath).toString());
+
+                    if (modrinthVersion != null) {
+                        mod.modrinthVersion = modrinthVersion;
+                        mod.modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
+                    }
+                });
+        this.save();
+
         manifest.formatVersion = 1;
         manifest.game = "minecraft";
         manifest.versionId = version;
         manifest.name = name;
         manifest.summary = this.launcher.description;
-        manifest.files = this.launcher.mods.stream()
+        manifest.files = this.launcher.mods.parallelStream()
                 .filter(m -> !m.disabled && m.isFromModrinth()).map(mod -> {
                     Path modPath = mod.getFile(this).toPath();
 
                     ModrinthModpackFile file = new ModrinthModpackFile();
                     file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
 
+                    String sha1Hash = Hashing.sha1(modPath).toString();
+
                     file.hashes = new HashMap<>();
-                    file.hashes.put("sha1", Hashing.sha1(modPath).toString());
+                    file.hashes.put("sha1", sha1Hash);
+                    file.hashes.put("sha512", Hashing.sha512(modPath).toString());
 
                     file.env = new HashMap<>();
-                    file.env.put("client", "required");
-                    file.env.put("server", "unsupported");
+                    file.env.put("client", mod.modrinthProject.clientSide.toString());
+                    file.env.put("server", mod.modrinthProject.serverSide.toString());
 
                     file.downloads = new ArrayList<>();
                     String downloadUrl = "";
                     if (mod.isFromModrinth()) {
-                        downloadUrl = mod.modrinthVersion.getPrimaryFile().url;
+                        downloadUrl = mod.modrinthVersion.getFileBySha1(sha1Hash).url;
                     }
                     file.downloads.add(HttpUrl.get(downloadUrl).toString());
 

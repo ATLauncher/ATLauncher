@@ -19,6 +19,7 @@ package com.atlauncher.data.modrinth;
 
 import java.util.List;
 
+import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.google.gson.annotations.SerializedName;
 
 public class ModrinthProject {
@@ -41,6 +42,7 @@ public class ModrinthProject {
     public ModrinthProjectStatus status;
 
     @SerializedName("moderator_message")
+    @ExcludeFromGsonSerialization
     public ModrinthModeratorMessage moderatorMessage;
 
     public ModrinthLicense license;
@@ -51,10 +53,13 @@ public class ModrinthProject {
     @SerializedName("server_side")
     public ModrinthSide serverSide;
 
+    @ExcludeFromGsonSerialization
     public int downloads;
+    @ExcludeFromGsonSerialization
     public int followers;
 
     public List<String> categories;
+    @ExcludeFromGsonSerialization
     public List<String> versions;
 
     @SerializedName("icon_url")

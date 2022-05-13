@@ -174,4 +174,19 @@ public class ModrinthApi {
         return categories.stream().filter(c -> c.projectType == ModrinthProjectType.MOD)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
+
+    public static ModrinthVersion getVersionFromSha1Hash(String hash) {
+        return getVersionFromHash(hash, "sha1");
+    }
+
+    public static ModrinthVersion getVersionFromSha512Hash(String hash) {
+        return getVersionFromHash(hash, "sha512");
+    }
+
+    private static ModrinthVersion getVersionFromHash(String hash, String algorithm) {
+        return Download.build()
+                .setUrl(String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash, algorithm))
+                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                .asType(ModrinthVersion.class);
+    }
 }
