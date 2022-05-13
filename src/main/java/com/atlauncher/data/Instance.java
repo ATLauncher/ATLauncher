@@ -72,6 +72,7 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
@@ -130,6 +131,7 @@ import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
+import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
@@ -1682,6 +1684,63 @@ public class Instance extends MinecraftVersion {
         Path to = Paths.get(saveTo).resolve(name + ".zip");
         CurseForgeManifest manifest = new CurseForgeManifest();
 
+        // for any mods not from CurseForge, scan for them on CurseForge
+        if (!App.settings.dontCheckModsOnCurseForge) {
+            Map<Long, DisableableMod> murmurHashes = new HashMap<>();
+
+            this.launcher.mods.stream()
+                    .filter(m -> !m.disabled && !m.isFromCurseForge())
+                    .forEach(dm -> {
+                        try {
+                            long hash = Hashing.murmur(dm.getFile(this.ROOT, this.id).toPath());
+                            murmurHashes.put(hash, dm);
+                        } catch (Throwable t) {
+                            LogManager.logStackTrace(t);
+                        }
+                    });
+
+            if (murmurHashes.size() != 0) {
+                CurseForgeFingerprint fingerprintResponse = CurseForgeApi
+                        .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+
+                if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
+                    int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
+                            .toArray();
+
+                    if (projectIdsFound.length != 0) {
+                        Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
+                                .getProjectsAsMap(projectIdsFound);
+
+                        if (foundProjects != null) {
+                            fingerprintResponse.exactMatches.stream()
+                                    .filter(em -> em != null && em.file != null
+                                            && murmurHashes.containsKey(em.file.packageFingerprint))
+                                    .forEach(foundMod -> {
+                                        DisableableMod dm = murmurHashes
+                                                .get(foundMod.file.packageFingerprint);
+
+                                        // add CurseForge information
+                                        dm.curseForgeProjectId = foundMod.id;
+                                        dm.curseForgeFile = foundMod.file;
+                                        dm.curseForgeFileId = foundMod.file.id;
+
+                                        CurseForgeProject curseForgeProject = foundProjects
+                                                .get(foundMod.id);
+
+                                        if (curseForgeProject != null) {
+                                            dm.curseForgeProject = curseForgeProject;
+                                        }
+
+                                        LogManager.debug("Found matching mod from CurseForge called "
+                                                + dm.curseForgeFile.displayName);
+                                    });
+                        }
+                    }
+                }
+            }
+        }
+        this.save();
+
         CurseForgeMinecraft minecraft = new CurseForgeMinecraft();
 
         List<CurseForgeModLoader> modLoaders = new ArrayList<>();
@@ -1806,6 +1865,8 @@ public class Instance extends MinecraftVersion {
                     if (modrinthVersion != null) {
                         mod.modrinthVersion = modrinthVersion;
                         mod.modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
+
+                        LogManager.debug("Found matching mod from Modrinth called " + modrinthVersion.name);
                     }
                 });
         this.save();
