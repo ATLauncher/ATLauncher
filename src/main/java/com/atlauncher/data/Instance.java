@@ -1800,7 +1800,7 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.summary = this.launcher.description;
         manifest.files = this.launcher.mods.stream()
-                .filter(m -> !m.disabled && (m.isFromCurseForge() || m.isFromModrinth())).map(mod -> {
+                .filter(m -> !m.disabled && m.isFromModrinth()).map(mod -> {
                     Path modPath = mod.getFile(this).toPath();
 
                     ModrinthModpackFile file = new ModrinthModpackFile();
@@ -1815,9 +1815,7 @@ public class Instance extends MinecraftVersion {
 
                     file.downloads = new ArrayList<>();
                     String downloadUrl = "";
-                    if (mod.isFromCurseForge()) {
-                        downloadUrl = mod.curseForgeFile.downloadUrl;
-                    } else if (mod.isFromModrinth()) {
+                    if (mod.isFromModrinth()) {
                         downloadUrl = mod.modrinthVersion.getPrimaryFile().url;
                     }
                     file.downloads.add(HttpUrl.get(downloadUrl).toString());
@@ -1864,8 +1862,8 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        // remove files that come from CurseForge/Modrinth or aren't disabled
-        launcher.mods.stream().filter(m -> !m.disabled && (m.isFromCurseForge() || m.isFromModrinth())).forEach(mod -> {
+        // remove files that come from Modrinth or aren't disabled
+        launcher.mods.stream().filter(m -> !m.disabled && m.isFromModrinth()).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
 
             if (file.exists()) {

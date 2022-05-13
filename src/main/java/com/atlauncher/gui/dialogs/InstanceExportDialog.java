@@ -265,11 +265,13 @@ public class InstanceExportDialog extends JDialog {
                     GetText.tr("Exporting Instance. Please wait..."), null, this);
 
             dialog.addThread(new Thread(() -> {
+                InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
+                        .getValue();
+
                 if (instance.export(name.getText(), version.getText(), author.getText(),
-                        ((ComboItem<InstanceExportFormat>) format.getSelectedItem()).getValue(), saveTo.getText(),
-                        overrides)) {
+                        exportFormat, saveTo.getText(), overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
-                    OS.openFileExplorer(Paths.get(saveTo.getText()).resolve(name.getText() + ".zip"), true);
+                    OS.openFileExplorer(Paths.get(saveTo.getText()).resolve(name.getText() + (exportFormat == InstanceExportFormat.MODRINTH ? ".mrpack" : ".zip")), true);
                 } else {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
                 }
