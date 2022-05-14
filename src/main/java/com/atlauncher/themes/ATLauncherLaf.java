@@ -162,4 +162,15 @@ public class ATLauncherLaf extends FlatLaf {
         // if no theme specific icon, then return path to where a general one should be
         return "/assets/icon/" + icon + ".png";
     }
+
+    public String getResourcePath(String path, String icon) {
+        // check for a theme specific icon first
+        String themeSpecificPath = "/assets/" + path + "/" + (isDark() ? "dark" : "light") + "/" + icon + ".png";
+        if (App.class.getResource(themeSpecificPath) != null) {
+            return themeSpecificPath;
+        }
+
+        // if no theme specific icon, then return path to where a general one should be
+        return "/assets/" + path + "/" + icon + ".png";
+    }
 }
