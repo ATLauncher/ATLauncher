@@ -10,11 +10,11 @@ modpacks easily and quickly.
 
 ## Links
 
-- [ATLauncher Website](https://atlauncher.com)
-- [ATLauncher Discord](https://atl.pw/discord)
-- [ATLauncher Facebook](https://www.facebook.com/ATLauncher)
-- [ATLauncher Reddit](https://www.reddit.com/r/ATLauncher)
-- [ATLauncher Twitter](https://twitter.com/ATLauncher)
+-   [ATLauncher Website](https://atlauncher.com)
+-   [ATLauncher Discord](https://atl.pw/discord)
+-   [ATLauncher Facebook](https://www.facebook.com/ATLauncher)
+-   [ATLauncher Reddit](https://www.reddit.com/r/ATLauncher)
+-   [ATLauncher Twitter](https://twitter.com/ATLauncher)
 
 ## Contributing to ATLauncher
 
@@ -99,9 +99,9 @@ ATLauncher supports custom themes. The process is fairly straight forward, but m
 First you must create a `MyThemeName.java` in the `src/main/java/com/atlauncher/themes/` directory. Your theme should
 extend one of the base ATLauncher themes depending on what you need:
 
-- `Dark` is the default theme and is a dark theme. It's a good place to start with some defaults for new dark themes.
-- `Light` is a light theme. It's a good place to start with some defaults for new light themes.
-- `ATLauncherLaf` is a base class which every theme MUST at some point extend. It provides some defaults including our
+-   `Dark` is the default theme and is a dark theme. It's a good place to start with some defaults for new dark themes.
+-   `Light` is a light theme. It's a good place to start with some defaults for new light themes.
+-   `ATLauncherLaf` is a base class which every theme MUST at some point extend. It provides some defaults including our
     brand colours and some defaults. This shouldn't be extended from unless you need absolute power.
 
 Once you've created your class (look at other themes in the directory for an idea on what you can do), you'll need to
@@ -115,12 +115,12 @@ Now you can open the launcher and then switch to your theme.
 We use a library called [FlatLaf](https://github.com/JFormDesigner/FlatLaf) to provide theme support. There are some
 good references listed below to see the default values for the themes and see what you can overwrite:
 
-- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLaf.properties>
-  - This file contains all the base properties for all themes
-- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLightLaf.properties>
-  - This file contains all the base properties for light themes
-- <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatDarkLaf.properties>
-  - This file contains all the base properties for dark themes
+-   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLaf.properties>
+    -   This file contains all the base properties for all themes
+-   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLightLaf.properties>
+    -   This file contains all the base properties for light themes
+-   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatDarkLaf.properties>
+    -   This file contains all the base properties for dark themes
 
 ### IntelliJ theme.json Support
 
@@ -149,7 +149,14 @@ To get started with the code and plug in your own data, you need to edit the
 By using this source code you don't get permissions to use our CDN/files/assets/modpacks. See the License section at the
 bottom for more.
 
-See below for explanations as to what each constant means.
+See below for explanations as to what some of the constant values mean.
+
+Note that this doesn't cover everything, most of them should be self explanatory, if not please stop by our
+[Discord](https://atl.pw/discord) and ask in the `#development` channel.
+
+Also pay special attention to the `CURSEFORGE_CORE_API_KEY` value. This is our CurseForge Core key, and you should seek
+out your own key for any forked projects. You can apply for a key through CurseForge through
+[this link](https://forms.monday.com/forms/dce5ccb7afda9a1c21dab1a1aa1d84eb).
 
 ### VERSION
 
