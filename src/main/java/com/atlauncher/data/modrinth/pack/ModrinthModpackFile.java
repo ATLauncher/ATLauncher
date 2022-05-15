@@ -29,6 +29,7 @@ public class ModrinthModpackFile {
     public Map<String, String> hashes;
     public Map<String, String> env;
     public List<String> downloads;
+    public Long fileSize = null;
 
     public ModType getType() {
         return ModType.mods;
@@ -51,6 +52,10 @@ public class ModrinthModpackFile {
         mod.type = getType();
         mod.version = "";
         mod.optional = isServer ? serverEnv.equals("optional") : clientEnv.equals("optional");
+
+        if (fileSize != null) {
+            mod.filesize = Math.toIntExact(fileSize);
+        }
 
         return mod;
     }

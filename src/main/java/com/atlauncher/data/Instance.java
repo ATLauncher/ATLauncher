@@ -1893,6 +1893,8 @@ public class Instance extends MinecraftVersion {
                     file.env.put("client", mod.modrinthProject.clientSide.toString());
                     file.env.put("server", mod.modrinthProject.serverSide.toString());
 
+                    file.fileSize = modPath.toFile().length();
+
                     file.downloads = new ArrayList<>();
                     String downloadUrl = "";
                     if (mod.isFromModrinth()) {

@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Update Modrinth icon and support dark and light modpack platform icons
+- Add missing fileSize from Modrinth modpack spec
 
 ### Misc
