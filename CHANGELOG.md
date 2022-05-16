@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Packs and exports for Modrinth using Quilt not working correctly
+- Installing mods from Modrinth packs/exports not using the client env correctly
 
 ### Misc
