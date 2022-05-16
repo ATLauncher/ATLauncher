@@ -589,6 +589,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             manifestDownload = manifestDownload.hash(file.hashes.get("sha1"));
         }
 
+        if (file.size != null && file.size != 0) {
+            manifestDownload = manifestDownload.size(file.size);
+        }
+
         manifestDownload.downloadFile();
 
         fireTask(GetText.tr("Extracting Manifest"));

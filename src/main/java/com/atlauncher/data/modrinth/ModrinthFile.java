@@ -24,4 +24,5 @@ public class ModrinthFile {
     public String url;
     public String filename;
     public boolean primary;
+    public Long size;
 }

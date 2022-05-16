@@ -1316,6 +1316,11 @@ public class Instance extends MinecraftVersion {
             download = download.hash(fileToDownload.hashes.get("sha1"));
         }
 
+        if (fileToDownload.size != null && fileToDownload.size != 0) {
+            dialog.setTotalBytes(fileToDownload.size);
+            download = download.size(fileToDownload.size);
+        }
+
         if (Files.exists(finalLocation)) {
             FileUtils.delete(finalLocation);
         }
