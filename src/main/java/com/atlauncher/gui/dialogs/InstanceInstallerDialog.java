@@ -707,6 +707,7 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         packVersion.hasLoader = modrinthManifest.dependencies.containsKey("fabric-loader")
+                || modrinthManifest.dependencies.containsKey("quilt-loader")
                 || modrinthManifest.dependencies.containsKey("forge");
 
         pack.versions = Collections.singletonList(packVersion);

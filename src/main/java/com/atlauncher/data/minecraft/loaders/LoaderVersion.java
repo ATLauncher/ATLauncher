@@ -108,6 +108,9 @@ public class LoaderVersion {
         if (this.isFabric()) {
             return "fabric-loader";
         }
+        if (this.isQuilt()) {
+            return "quilt-loader";
+        }
 
         return "forge";
     }
@@ -119,6 +122,10 @@ public class LoaderVersion {
 
         if (isFabric()) {
             return 2;
+        }
+
+        if (isQuilt()) {
+            return 4;
         }
 
         return 3;

@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Packs and exports for Modrinth using Quilt not working correctly
 
 ### Misc

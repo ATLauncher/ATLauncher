@@ -873,6 +873,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         packVersion.enableEditingMods = true;
 
         if (modrinthManifest.dependencies.containsKey("fabric-loader")
+                || modrinthManifest.dependencies.containsKey("quilt-loader")
                 || modrinthManifest.dependencies.containsKey("forge")) {
             packVersion.loader = new com.atlauncher.data.json.Loader();
 
@@ -882,6 +883,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 loaderMeta.put("loader", modrinthManifest.dependencies.get("fabric-loader"));
                 packVersion.loader.metadata = loaderMeta;
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+            } else if (modrinthManifest.dependencies.containsKey("quilt-loader")) {
+                Map<String, Object> loaderMeta = new HashMap<>();
+                loaderMeta.put("minecraft", packVersion.minecraft);
+                loaderMeta.put("loader", modrinthManifest.dependencies.get("quilt-loader"));
+                packVersion.loader.metadata = loaderMeta;
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader";
             } else if (modrinthManifest.dependencies.containsKey("forge")) {
                 String forgeVersionString = modrinthManifest.dependencies.get("forge");
 
