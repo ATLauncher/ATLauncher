@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Use size provided by Modrinth api's when downloading mods/modpacks
+- The modpack search for Modrinth not working with all categories
 
 ### Misc

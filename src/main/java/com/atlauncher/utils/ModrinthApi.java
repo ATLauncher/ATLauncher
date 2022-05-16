@@ -107,8 +107,10 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
             String category) {
+        List<String> categories = category == null ? null : Arrays.asList(category);
+
         return searchModrinth(minecraftVersion == null ? null : Arrays.asList(minecraftVersion), query, page, sort,
-                Arrays.asList(category), ModrinthProjectType.MODPACK);
+                categories, ModrinthProjectType.MODPACK);
     }
 
     public static ModrinthProject getProject(String projectId) {
