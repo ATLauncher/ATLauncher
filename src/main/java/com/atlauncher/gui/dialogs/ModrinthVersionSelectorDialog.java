@@ -208,7 +208,9 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     && this.instance.launcher.loaderVersion != null) {
                 modrinthVersionsStream = modrinthVersionsStream
                         .filter(v -> this.instance.launcher.loaderVersion.isFabric() ? v.loaders.contains("fabric")
-                                : (this.instance.launcher.loaderVersion.isQuilt() ? v.loaders.contains("quilt") : v.loaders.contains("forge")));
+                                : (this.instance.launcher.loaderVersion.isQuilt()
+                                        ? (v.loaders.contains("quilt") || v.loaders.contains("fabric"))
+                                        : v.loaders.contains("forge")));
             }
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {

@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue when adding mod from Modrinth to a Quilt loader instance not showing Fabric versions
 
 ### Misc
