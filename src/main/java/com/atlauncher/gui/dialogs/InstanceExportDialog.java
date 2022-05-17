@@ -139,7 +139,8 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
-        author.setText(AccountManager.getSelectedAccount().minecraftUsername);
+        author.setText(AccountManager.getSelectedAccount() == null ? ""
+                : AccountManager.getSelectedAccount().minecraftUsername);
         topPanel.add(author, gbc);
 
         // Format
@@ -271,7 +272,11 @@ public class InstanceExportDialog extends JDialog {
                 if (instance.export(name.getText(), version.getText(), author.getText(),
                         exportFormat, saveTo.getText(), overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
-                    OS.openFileExplorer(Paths.get(saveTo.getText()).resolve(name.getText() + (exportFormat == InstanceExportFormat.MODRINTH ? ".mrpack" : ".zip")), true);
+                    OS.openFileExplorer(
+                            Paths.get(saveTo.getText())
+                                    .resolve(name.getText()
+                                            + (exportFormat == InstanceExportFormat.MODRINTH ? ".mrpack" : ".zip")),
+                            true);
                 } else {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
                 }

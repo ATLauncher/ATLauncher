@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue when adding mod from Modrinth to a Quilt loader instance not showing Fabric versions
+- Errors logging to console when checking mods on Modrinth via hash
 
 ### Misc

@@ -17,6 +17,7 @@
  */
 package com.atlauncher.utils;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +38,7 @@ import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
+import com.atlauncher.network.DownloadException;
 import com.google.gson.reflect.TypeToken;
 
 import okhttp3.CacheControl;
@@ -186,9 +188,21 @@ public class ModrinthApi {
     }
 
     private static ModrinthVersion getVersionFromHash(String hash, String algorithm) {
-        return Download.build()
-                .setUrl(String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash, algorithm))
-                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                .asType(ModrinthVersion.class);
+        try {
+            return Download.build()
+                    .setUrl(String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash,
+                            algorithm))
+                    .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                    .asTypeWithThrow(ModrinthVersion.class);
+        } catch (DownloadException e) {
+            // 404 is fine from this endpoint, so anything else, log it
+            if (e.statusCode != 404) {
+                LogManager.logStackTrace(e);
+            }
+
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 }
