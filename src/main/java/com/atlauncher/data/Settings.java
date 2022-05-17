@@ -81,6 +81,7 @@ public class Settings {
     public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
     public boolean dontCheckModsOnCurseForge = false;
+    public InstanceExportFormat defaultExportFormat = InstanceExportFormat.CURSEFORGE;
 
     // Java/Minecraft
     public int initialMemory = 512;

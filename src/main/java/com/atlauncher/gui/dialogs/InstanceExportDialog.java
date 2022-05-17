@@ -162,6 +162,15 @@ public class InstanceExportDialog extends JDialog {
         format.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
         topPanel.add(format, gbc);
 
+        for (int i = 0; i < format.getItemCount(); i++) {
+            ComboItem<InstanceExportFormat> item = format.getItemAt(i);
+
+            if (item.getValue() == App.settings.defaultExportFormat) {
+                format.setSelectedIndex(i);
+                break;
+            }
+        }
+
         // Export File
         gbc.gridx = 0;
         gbc.gridy++;
