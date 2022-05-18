@@ -106,7 +106,7 @@ public class EditModsDialog extends JDialog {
 
         setupComponents();
 
-        scanMissingMods();
+        // scanMissingMods();
 
         loadMods();
 
@@ -384,8 +384,9 @@ public class EditModsDialog extends JDialog {
                             .filter(dm -> dm.getFile(instance.ROOT, instance.id) != null).forEach(dm -> {
                                 try {
                                     long hash = Hashing
-                                            .murmur(dm.disabled ? dm.getDisabledFile(instance).toPath() : dm
-                                                    .getFile(instance.ROOT, instance.id).toPath());
+                                            .murmur(dm.disabled ? dm.getDisabledFile(instance).toPath()
+                                                    : dm
+                                                            .getFile(instance.ROOT, instance.id).toPath());
                                     murmurHashes.put(hash, dm);
                                 } catch (Throwable t) {
                                     LogManager.logStackTrace(t);

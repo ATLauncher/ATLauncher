@@ -1246,40 +1246,119 @@ public class Instance extends MinecraftVersion {
                 : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID
                         ? this.getRoot().resolve("saves").resolve(file.fileName)
                         : this.getRoot().resolve("mods").resolve(file.fileName));
-        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
-                .downloadTo(downloadLocation).size(file.fileLength)
-                .withHttpClient(Network.createProgressClient(dialog));
-
-        dialog.setTotalBytes(file.fileLength);
-
-        if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
-            download = download.unzipTo(this.getRoot().resolve("saves"));
-        } else {
-            download = download.copyTo(finalLocation);
-            if (Files.exists(finalLocation)) {
-                FileUtils.delete(finalLocation);
-            }
-        }
 
         // find mods with the same CurseForge project id
         List<DisableableMod> sameMods = this.launcher.mods.stream()
-                .filter(installedMod -> installedMod.isFromCurseForge() && installedMod.getCurseForgeModId() == mod.id)
+                .filter(installedMod -> installedMod.isFromCurseForge()
+                        && installedMod.getCurseForgeModId() == mod.id)
                 .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
         sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
 
-        if (download.needToDownload()) {
-            try {
-                download.downloadFile();
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-                DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
-                        .setContent("Failed to download " + file.fileName + ". Please try again later.").show();
-                return;
+        // TODO: for some reason we never checked hashes, even when downloading from the
+        // api, so do that at some point when it's not 4am on a weekday
+        if (file.downloadUrl == null) {
+            if (!App.settings.seenCurseForgeProjectDistributionDialog) {
+                App.settings.seenCurseForgeProjectDistributionDialog = true;
+                App.settings.save();
+
+                DialogManager.okDialog().setType(DialogManager.WARNING)
+                        .setTitle(GetText.tr("Mods Not Available"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                                .build())
+                        .show();
+            }
+
+            dialog.setIndeterminate();
+            File fileLocation = downloadLocation.toFile();
+            if (!fileLocation.exists()) {
+                File downloadsFolderFile = new File(FileSystem.USER_DOWNLOADS.toFile(), file.fileName);
+                if (downloadsFolderFile.exists()) {
+                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                }
+
+                System.out.println(fileLocation.length());
+                System.out.println(Long.valueOf(file.fileLength));
+                System.out.println(fileLocation.length() != Long.valueOf(file.fileLength));
+
+                while (!fileLocation.exists()) {
+                    int retValue = 1;
+                    do {
+                        if (retValue == 1) {
+                            OS.openWebBrowser(String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
+                                    mod.getClassUrlSlug(), mod.slug, file.id));
+                        }
+
+                        retValue = DialogManager.optionDialog()
+                                .setTitle(GetText.tr("Downloading") + " "
+                                        + file.fileName)
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "Browser opened to download file {0}",
+                                        file.fileName)
+                                        + "<br/><br/>" + GetText.tr("Please save this file to the following location")
+                                        + "<br/><br/>"
+                                        + (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS.toFile().getAbsolutePath()
+                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
+                                                        + FileSystem.USER_DOWNLOADS.toFile()))
+                                        .build())
+                                .addOption(GetText.tr("Open Folder"), true)
+                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO).show();
+
+                        if (retValue == DialogManager.CLOSED_OPTION) {
+                            return;
+                        } else if (retValue == 0) {
+                            OS.openFileExplorer(FileSystem.DOWNLOADS);
+                        }
+                    } while (retValue != 1);
+
+                    if (!fileLocation.exists()) {
+                        // Check users downloads folder to see if it's there
+                        if (downloadsFolderFile.exists()) {
+                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        }
+                        // Check to see if a browser has added a .zip to the end of the file
+                        File zipAddedFile = FileSystem.DOWNLOADS.resolve(file.fileName + ".zip").toFile();
+                        if (zipAddedFile.exists()) {
+                            Utils.moveFile(zipAddedFile, fileLocation, true);
+                        } else {
+                            zipAddedFile = new File(FileSystem.USER_DOWNLOADS.toFile(), file.fileName + ".zip");
+                            if (zipAddedFile.exists()) {
+                                Utils.moveFile(zipAddedFile, fileLocation, true);
+                            }
+                        }
+                    }
+                }
             }
         } else {
-            download.copy();
+            com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
+                    .downloadTo(downloadLocation).size(file.fileLength)
+                    .withHttpClient(Network.createProgressClient(dialog));
+
+            dialog.setTotalBytes(file.fileLength);
+
+            if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
+                download = download.unzipTo(this.getRoot().resolve("saves"));
+            } else {
+                download = download.copyTo(finalLocation);
+                if (Files.exists(finalLocation)) {
+                    FileUtils.delete(finalLocation);
+                }
+            }
+
+            if (download.needToDownload()) {
+                try {
+                    download.downloadFile();
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                    DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
+                            .setContent("Failed to download " + file.fileName + ". Please try again later.").show();
+                    return;
+                }
+            } else {
+                download.copy();
+            }
         }
 
         // remove any mods that are from the same mod on CurseForge from the master mod
