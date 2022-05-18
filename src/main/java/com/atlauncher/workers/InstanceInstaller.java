@@ -522,6 +522,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .getFileForProject(file.projectID, file.fileID));
 
             if (curseForgeFile.downloadUrl == null) {
+                Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+                        .findFirst();
+                if (sha1Hash.isPresent()) {
+                    ModrinthVersion modrinthVersion = ModrinthApi.getVersionFromSha1Hash(sha1Hash.get().value);
+
+                    if (modrinthVersion != null) {
+                        ModrinthProject modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
+
+                        Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
+                        modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
+                        modToAdd.modrinthProject = modrinthProject;
+                        modToAdd.modrinthVersion = modrinthVersion;
+
+                        return modToAdd;
+                    }
+                }
+
                 manualDownloadMods.add(new Pair<CurseForgeProject, CurseForgeFile>(curseForgeProject, curseForgeFile));
                 return null;
             }
@@ -534,28 +551,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         for (Pair<CurseForgeProject, CurseForgeFile> mod : manualDownloadMods) {
             LogManager.warn(String.format(
-                    "Cannot download mod %s as project distribution toggle is %s and no download url is provided",
+                    "Cannot download mod %s as project distribution toggle is %s and no download url is provided. Attempting to download via browser.",
                     mod.left().name, mod.left().allowModDistribution ? "true" : "false"));
-
-            Optional<CurseForgeFileHash> sha1Hash = mod.right().hashes.stream().filter(h -> h.isSha1())
-                    .findFirst();
-            if (sha1Hash.isPresent()) {
-                ModrinthVersion modrinthVersion = ModrinthApi.getVersionFromSha1Hash(sha1Hash.get().value);
-
-                if (modrinthVersion != null) {
-                    LogManager.warn("Found replacement mod (and download url) with same hash on Modrinth");
-
-                    ModrinthProject modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
-
-                    Mod modToAdd = mod.right().convertToMod(mod.left());
-                    modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
-                    modToAdd.modrinthProject = modrinthProject;
-                    modToAdd.modrinthVersion = modrinthVersion;
-
-                    packVersion.mods.add(modToAdd);
-                    continue;
-                }
-            }
 
             Mod modToAdd = mod.right().convertToMod(mod.left());
             modToAdd.download = DownloadType.browser;
