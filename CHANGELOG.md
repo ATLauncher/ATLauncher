@@ -7,6 +7,9 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in setting for Default Export Format
+- When a mod has distribution outside CurseForge disabled, work around the url being null by:
+  - Looking up the mod on Modrinth to get a download url
+  - If that fails get the user to download the mod via their browser
 
 ### Fixes
 - Issue when adding mod from Modrinth to a Quilt loader instance not showing Fabric versions

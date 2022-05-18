@@ -97,6 +97,8 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectTarget;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectTargetType;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
 import com.atlauncher.data.modrinth.ModrinthFile;
+import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
@@ -117,7 +119,9 @@ import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
@@ -507,18 +511,60 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         List<CurseForgeFile> filesFound = CurseForgeApi
                 .getFiles(curseForgeManifest.files.stream().mapToInt(file -> file.fileID).toArray());
 
+        List<Pair<CurseForgeProject, CurseForgeFile>> manualDownloadMods = new ArrayList<>();
+
         packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
             CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
                     .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
+
             CurseForgeFile curseForgeFile = filesFound.stream().filter(f -> f.id == file.fileID).findFirst()
                     .orElseGet(() -> CurseForgeApi
                             .getFileForProject(file.projectID, file.fileID));
+
+            if (curseForgeFile.downloadUrl == null) {
+                manualDownloadMods.add(new Pair<CurseForgeProject, CurseForgeFile>(curseForgeProject, curseForgeFile));
+                return null;
+            }
 
             Mod mod = curseForgeFile.convertToMod(curseForgeProject);
             mod.optional = !file.required;
 
             return mod;
-        }).collect(Collectors.toList());
+        }).filter(m -> m != null).collect(Collectors.toList());
+
+        for (Pair<CurseForgeProject, CurseForgeFile> mod : manualDownloadMods) {
+            LogManager.warn(String.format(
+                    "Cannot download mod %s as project distribution toggle is %s and no download url is provided",
+                    mod.left().name, mod.left().allowModDistribution ? "true" : "false"));
+
+            Optional<CurseForgeFileHash> sha1Hash = mod.right().hashes.stream().filter(h -> h.isSha1())
+                    .findFirst();
+            if (sha1Hash.isPresent()) {
+                ModrinthVersion modrinthVersion = ModrinthApi.getVersionFromSha1Hash(sha1Hash.get().value);
+
+                if (modrinthVersion != null) {
+                    LogManager.warn("Found replacement mod (and download url) with same hash on Modrinth");
+
+                    ModrinthProject modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
+
+                    Mod modToAdd = mod.right().convertToMod(mod.left());
+                    modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
+                    modToAdd.modrinthProject = modrinthProject;
+                    modToAdd.modrinthVersion = modrinthVersion;
+
+                    packVersion.mods.add(modToAdd);
+                    continue;
+                }
+            }
+
+            Mod modToAdd = mod.right().convertToMod(mod.left());
+            modToAdd.download = DownloadType.browser;
+            modToAdd.url = String.format("https://www.curseforge.com/minecraft/mc-mods/%s/download/%d",
+                    mod.left().slug, mod.right().id);
+
+            packVersion.mods.add(modToAdd);
+            continue;
+        }
 
         hideSubProgressBar();
     }
@@ -1148,7 +1194,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
                     this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
                     mod.getCurseForgeProjectId(), mod.getCurseForgeFileId(), mod.curseForgeProject,
-                    mod.curseForgeFile));
+                    mod.curseForgeFile, mod.modrinthProject, mod.modrinthVersion));
         }
 
         if (this.isReinstall && instance.hasCustomMods()) {
