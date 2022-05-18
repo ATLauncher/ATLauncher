@@ -40,6 +40,7 @@ public class CurseForgeProject {
     public List<CurseForgeCategory> categories;
     public int status;
     public int primaryCategoryId;
+    public int classId;
     public String slug;
     public boolean isFeatured;
     public String dateModified;
@@ -92,5 +93,13 @@ public class CurseForgeProject {
 
     public boolean hasWebsiteUrl() {
         return links.containsKey("websiteUrl");
+    }
+
+    public String getClassUrlSlug() {
+        if (classId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
+            return "texture-packs";
+        }
+
+        return "mc-mods";
     }
 }

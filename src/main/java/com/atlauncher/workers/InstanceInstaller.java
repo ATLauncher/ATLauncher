@@ -559,11 +559,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             Mod modToAdd = mod.right().convertToMod(mod.left());
             modToAdd.download = DownloadType.browser;
-            modToAdd.url = String.format("https://www.curseforge.com/minecraft/mc-mods/%s/download/%d",
-                    mod.left().slug, mod.right().id);
+            modToAdd.url = String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
+                    mod.left().getClassUrlSlug(), mod.left().slug, mod.right().id);
 
             packVersion.mods.add(modToAdd);
-            continue;
         }
 
         hideSubProgressBar();
