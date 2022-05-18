@@ -50,6 +50,7 @@ public class Settings {
     public boolean ignoreOneDriveWarning = false;
     public boolean ignoreProgramFilesWarning = false;
     public boolean ignoreJavaOptionsWarning = false;
+    public boolean seenCurseForgeProjectDistributionDialog = false;
 
     // Window settings
     public boolean rememberWindowSizePosition = false;

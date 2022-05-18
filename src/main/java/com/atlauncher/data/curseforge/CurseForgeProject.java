@@ -48,7 +48,7 @@ public class CurseForgeProject {
     public String dateReleased;
     public Map<String, String> links = new HashMap<>();
     public CurseForgeAttachment logo = null;
-    public boolean allowModDistribution;
+    public Boolean allowModDistribution;
 
     @SerializedName(value = "screenshots", alternate = { "attachments" })
     public List<CurseForgeAttachment> screenshots;

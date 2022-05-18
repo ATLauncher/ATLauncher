@@ -44,6 +44,7 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.DisableableMod;
@@ -107,6 +108,7 @@ import com.atlauncher.data.technic.TechnicModpackAsset;
 import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -540,7 +542,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
 
                 manualDownloadMods.add(new Pair<CurseForgeProject, CurseForgeFile>(curseForgeProject, curseForgeFile));
-                return null;
+
+                Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
+                modToAdd.download = DownloadType.browser;
+                modToAdd.url = String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
+                        curseForgeProject.getClassUrlSlug(), curseForgeProject.slug, curseForgeFile.id);
+                return modToAdd;
             }
 
             Mod mod = curseForgeFile.convertToMod(curseForgeProject);
@@ -549,17 +556,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return mod;
         }).filter(m -> m != null).collect(Collectors.toList());
 
-        for (Pair<CurseForgeProject, CurseForgeFile> mod : manualDownloadMods) {
-            LogManager.warn(String.format(
-                    "Cannot download mod %s as project distribution toggle is %s and no download url is provided. Attempting to download via browser.",
-                    mod.left().name, mod.left().allowModDistribution ? "true" : "false"));
+        if (manualDownloadMods.size() != 0 && !App.settings.seenCurseForgeProjectDistributionDialog) {
+            App.settings.seenCurseForgeProjectDistributionDialog = true;
+            App.settings.save();
 
-            Mod modToAdd = mod.right().convertToMod(mod.left());
-            modToAdd.download = DownloadType.browser;
-            modToAdd.url = String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
-                    mod.left().getClassUrlSlug(), mod.left().slug, mod.right().id);
-
-            packVersion.mods.add(modToAdd);
+            DialogManager.okDialog().setType(DialogManager.WARNING)
+                    .setTitle(GetText.tr("Mods Not Available"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                            .build())
+                    .show();
         }
 
         hideSubProgressBar();
