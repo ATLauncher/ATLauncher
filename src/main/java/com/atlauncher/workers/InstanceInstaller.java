@@ -553,6 +553,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 modToAdd.download = DownloadType.browser;
                 modToAdd.url = String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
                         curseForgeProject.getClassUrlSlug(), curseForgeProject.slug, curseForgeFile.id);
+                modToAdd.file = curseForgeFile.fileName.replace(" ", "+");
                 return modToAdd;
             }
 
