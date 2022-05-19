@@ -98,6 +98,17 @@ public class Library {
         }
 
         final String[] libraryParts = name.split(":");
+        final String[] versionParts = libraryParts[2].split("\\.");
+
+        // if using newer than 2.16 version, use the Mojang provided library
+        try {
+            if (Integer.parseInt(versionParts[0]) > 2
+                    || (Integer.parseInt(versionParts[0]) == 2
+                            && Integer.parseInt(versionParts[1]) >= 16)) {
+                return;
+            }
+        } catch (NumberFormatException ignored) {
+        }
 
         if (libraryParts[1].equals("log4j-api")) {
             if (libraryParts[2].startsWith("2.0-beta9")) {
