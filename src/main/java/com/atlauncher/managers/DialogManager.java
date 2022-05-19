@@ -18,10 +18,14 @@
 package com.atlauncher.managers;
 
 import java.awt.Window;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.Icon;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
@@ -184,6 +188,63 @@ public final class DialogManager {
         try {
             return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title, this.lookAndFeel, this.type,
                     this.icon, this.getOptions(), this.defaultOption);
+        } catch (Exception e) {
+            LogManager.logStackTrace(e, false);
+        }
+
+        return -1;
+    }
+
+    public int showWithFileMonitoring(File firstFile, File secondFile, int size, int returnValue) {
+        try {
+            Object[] options = this.getOptions();
+
+            JOptionPane jop = new JOptionPane(this.content, this.type, this.lookAndFeel, this.icon, options,
+                    this.defaultOption);
+
+            jop.setInitialValue(this.defaultOption);
+            jop.setComponentOrientation(this.getParent().getComponentOrientation());
+
+            JDialog dialog = jop.createDialog(this.getParent(), this.title);
+
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if ((firstFile.exists() && firstFile.length() == size)
+                            || (secondFile.exists() && secondFile.length() == size)) {
+                        timer.cancel();
+                        jop.setValue(options[returnValue]);
+                        dialog.dispose();
+                    }
+                }
+            }, 1000, 1000);
+
+            dialog.setVisible(true);
+
+            Object selectedValue = jop.getValue();
+
+            // make sure this timer gets killed
+            timer.cancel();
+
+            if (selectedValue == null) {
+                return CLOSED_OPTION;
+            }
+
+            if (options == null) {
+                if (selectedValue instanceof Integer) {
+                    return ((Integer) selectedValue).intValue();
+                }
+                return CLOSED_OPTION;
+            }
+
+            for (int counter = 0, maxCounter = options.length; counter < maxCounter; counter++) {
+                if (options[counter].equals(selectedValue)) {
+                    return counter;
+                }
+            }
+
+            return CLOSED_OPTION;
         } catch (Exception e) {
             LogManager.logStackTrace(e, false);
         }
