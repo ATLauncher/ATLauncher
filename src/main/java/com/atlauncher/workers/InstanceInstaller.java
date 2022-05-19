@@ -524,6 +524,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .getFileForProject(file.projectID, file.fileID));
 
             if (curseForgeFile.downloadUrl == null) {
+                LogManager.debug(String.format(
+                        "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
+                        curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name, curseForgeProject.id,
+                        curseForgeProject.allowModDistribution, curseForgeProject.allowModDistribution == null ? "null"
+                                : curseForgeProject.allowModDistribution.toString()));
+
                 Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(h -> h.isSha1())
                         .findFirst();
                 if (sha1Hash.isPresent()) {
@@ -2166,7 +2172,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireSubProgressUnknown();
 
         this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser)
-                .forEach(mod -> mod.download(this));
+                .forEach(mod -> {
+                    if (!isCancelled()) {
+                        mod.download(this);
+                    }
+                });
 
         hideSubProgressBar();
     }

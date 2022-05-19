@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Closing out the browser download dialog not cancelling the install fully
 
 ### Misc
