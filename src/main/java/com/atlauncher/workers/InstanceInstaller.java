@@ -586,28 +586,94 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         Path manifestFile = this.temp.resolve(version._curseForgeFile.fileName.toLowerCase());
 
-        com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build()
-                .setUrl(version._curseForgeFile.downloadUrl).downloadTo(manifestFile)
-                .size(version._curseForgeFile.fileLength);
+        if (version._curseForgeFile.downloadUrl == null) {
+            if (!App.settings.seenCurseForgeProjectDistributionDialog) {
+                App.settings.seenCurseForgeProjectDistributionDialog = true;
+                App.settings.save();
 
-        Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isMd5())
-                .findFirst();
-        Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isSha1())
-                .findFirst();
+                DialogManager.okDialog().setType(DialogManager.WARNING)
+                        .setTitle(GetText.tr("Mod Not Available"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "We were unable to download this modpack.<br/>This is likely due to the author of the modpack disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the modpack manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the modpack.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                                .build())
+                        .show();
+            }
 
-        if (md5Hash.isPresent()) {
-            manifestDownload = manifestDownload.hash(md5Hash.get().value);
-        } else if (sha1Hash.isPresent()) {
-            manifestDownload = manifestDownload.hash(sha1Hash.get().value);
+            File fileLocation = FileSystem.DOWNLOADS.resolve(version._curseForgeFile.fileName).toFile();
+            if (!fileLocation.exists()) {
+                File downloadsFolderFile = new File(FileSystem.USER_DOWNLOADS.toFile(),
+                        version._curseForgeFile.fileName);
+                if (downloadsFolderFile.exists()) {
+                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                }
+
+                while (!fileLocation.exists()) {
+                    int retValue = 1;
+                    do {
+                        if (retValue == 1) {
+                            OS.openWebBrowser(String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
+                                    pack.curseForgeProject.getClassUrlSlug(), pack.curseForgeProject.slug,
+                                    version._curseForgeFile.id));
+                        }
+
+                        retValue = DialogManager.optionDialog()
+                                .setTitle(GetText.tr("Downloading") + " "
+                                        + version._curseForgeFile.fileName)
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "Browser opened to download file {0}",
+                                        version._curseForgeFile.fileName)
+                                        + "<br/><br/>" + GetText.tr("Please save this file to the following location")
+                                        + "<br/><br/>"
+                                        + (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS.toFile().getAbsolutePath()
+                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
+                                                        + FileSystem.USER_DOWNLOADS.toFile()))
+                                        .build())
+                                .addOption(GetText.tr("Open Folder"), true)
+                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
+                                .showWithFileMonitoring(fileLocation, downloadsFolderFile,
+                                        version._curseForgeFile.fileLength, 1);
+
+                        if (retValue == DialogManager.CLOSED_OPTION) {
+                            return;
+                        } else if (retValue == 0) {
+                            OS.openFileExplorer(FileSystem.DOWNLOADS);
+                        }
+                    } while (retValue != 1);
+
+                    if (!fileLocation.exists()) {
+                        // Check users downloads folder to see if it's there
+                        if (downloadsFolderFile.exists()) {
+                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        }
+                    }
+                }
+            }
+
+            FileUtils.moveFile(fileLocation.toPath(), manifestFile, true);
         } else {
-            manifestDownload = manifestDownload.fingerprint(version._curseForgeFile.packageFingerprint);
+            com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build()
+                    .setUrl(version._curseForgeFile.downloadUrl).downloadTo(manifestFile)
+                    .size(version._curseForgeFile.fileLength);
+
+            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isMd5())
+                    .findFirst();
+            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+                    .findFirst();
+
+            if (md5Hash.isPresent()) {
+                manifestDownload = manifestDownload.hash(md5Hash.get().value);
+            } else if (sha1Hash.isPresent()) {
+                manifestDownload = manifestDownload.hash(sha1Hash.get().value);
+            } else {
+                manifestDownload = manifestDownload.fingerprint(version._curseForgeFile.packageFingerprint);
+            }
+
+            manifestDownload = manifestDownload.withInstanceInstaller(this)
+                    .withHttpClient(Network.createProgressClient(this));
+
+            this.setTotalBytes(version._curseForgeFile.fileLength);
+            manifestDownload.downloadFile();
         }
-
-        manifestDownload = manifestDownload.withInstanceInstaller(this)
-                .withHttpClient(Network.createProgressClient(this));
-
-        this.setTotalBytes(version._curseForgeFile.fileLength);
-        manifestDownload.downloadFile();
 
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();

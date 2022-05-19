@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Closing out the browser download dialog not cancelling the install fully
 - Automatically proceed to next browser download mod when detected to be downloaded
 - Issue with browser download of CurseForge mods with spaces in the filename
+- Issue with modpacks who opt out not being able to be installed
 
 ### Misc

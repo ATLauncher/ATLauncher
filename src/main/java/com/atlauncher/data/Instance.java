@@ -1264,9 +1264,9 @@ public class Instance extends MinecraftVersion {
                 App.settings.save();
 
                 DialogManager.okDialog().setType(DialogManager.WARNING)
-                        .setTitle(GetText.tr("Mods Not Available"))
+                        .setTitle(GetText.tr("Mod Not Available"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                                "We were unable to download this mod.<br/>This is likely due to the author of the mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the mod manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the mod.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
                                 .build())
                         .show();
             }
@@ -1278,10 +1278,6 @@ public class Instance extends MinecraftVersion {
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
-
-                System.out.println(fileLocation.length());
-                System.out.println(Long.valueOf(file.fileLength));
-                System.out.println(fileLocation.length() != Long.valueOf(file.fileLength));
 
                 while (!fileLocation.exists()) {
                     int retValue = 1;
@@ -1304,7 +1300,7 @@ public class Instance extends MinecraftVersion {
                                                         + FileSystem.USER_DOWNLOADS.toFile()))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
-                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO).show();
+                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO).showWithFileMonitoring(fileLocation, downloadsFolderFile, file.fileLength, 1);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             return;

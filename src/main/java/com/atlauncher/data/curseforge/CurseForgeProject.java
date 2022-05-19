@@ -98,6 +98,8 @@ public class CurseForgeProject {
     public String getClassUrlSlug() {
         if (classId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return "texture-packs";
+        } else if (classId == Constants.CURSEFORGE_MODPACKS_SECTION_ID) {
+            return "modpacks";
         }
 
         return "mc-mods";
