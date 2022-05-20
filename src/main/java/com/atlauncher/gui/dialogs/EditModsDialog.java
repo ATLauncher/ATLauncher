@@ -106,7 +106,7 @@ public class EditModsDialog extends JDialog {
 
         setupComponents();
 
-        // scanMissingMods();
+        scanMissingMods();
 
         loadMods();
 

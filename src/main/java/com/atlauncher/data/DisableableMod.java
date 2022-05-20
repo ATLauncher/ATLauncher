@@ -22,9 +22,7 @@ import java.awt.Window;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +45,7 @@ import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
+import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
@@ -418,8 +417,8 @@ public class DisableableMod implements Serializable {
                     versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instance.id));
                 }
 
-                if (versionsStream.noneMatch(v -> Date.from(Instant.parse(v.datePublished))
-                        .after(Date.from(Instant.parse(modrinthVersion.datePublished))))) {
+                if (versionsStream.noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
+                        .isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
                     dialog.setReturnValue(null);
                     dialog.close();
                     return;
