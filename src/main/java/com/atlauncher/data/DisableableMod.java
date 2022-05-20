@@ -259,11 +259,11 @@ public class DisableableMod implements Serializable {
     }
 
     public File getFile(Instance instance) {
-        return getFile(instance.getRoot(), null);
+        return getFile(instance.getRoot(), instance.id);
     }
 
     public File getFile(Instance instance, Path base) {
-        return getFile(base, null);
+        return getFile(base, instance.id);
     }
 
     public File getFile(Path base) {
@@ -313,6 +313,7 @@ public class DisableableMod implements Serializable {
             }
         }
         if (dir == null) {
+            LogManager.warn("null path returned for mod " + this.name);
             return null;
         }
         return new File(dir, file);

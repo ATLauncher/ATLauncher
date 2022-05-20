@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issues checking for updates to Modrinth mods under some systems
+- Exporting packs with dependency type mods not working
 
 ### Misc
