@@ -50,11 +50,15 @@ import org.mini2Dx.gettext.GetText;
 public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
+    boolean hasMorePages = true;
+
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
             boolean sortDescending, String search, int page) {
         ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
                 category);
+
+        hasMorePages = searchResult != null && searchResult.offset + searchResult.hits.size() < searchResult.totalHits;
 
         if (searchResult == null || searchResult.hits.size() == 0) {
             contentPanel.removeAll();
@@ -87,6 +91,8 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
             boolean sortDescending, String search, int page) {
         ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
                 category);
+
+        hasMorePages = searchResult != null && searchResult.offset + searchResult.hits.size() < searchResult.totalHits;
 
         if (searchResult != null) {
             for (ModrinthSearchHit pack : searchResult.hits) {
@@ -178,6 +184,11 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    @Override
+    public boolean hasMorePages() {
+        return hasMorePages;
     }
 
     public boolean supportsManualAdding() {

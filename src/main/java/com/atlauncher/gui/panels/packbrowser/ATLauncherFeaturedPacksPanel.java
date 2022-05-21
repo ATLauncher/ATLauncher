@@ -183,6 +183,11 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
+    public boolean hasMorePages() {
+        return false;
+    }
+
+    @Override
     public String getPlatformMessage() {
         return null;
     }

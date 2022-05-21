@@ -244,7 +244,10 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
-                if (!loading) {
+                PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
+                        .getSelectedComponent();
+
+                if (!loading && selectedPanel.hasPagination() && selectedPanel.hasMorePages()) {
                     int maxValue = scrollPane.getVerticalScrollBar().getMaximum()
                             - scrollPane.getVerticalScrollBar().getVisibleAmount();
                     int currentValue = scrollPane.getVerticalScrollBar().getValue();

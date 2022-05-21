@@ -151,6 +151,11 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
         return false;
     }
 
+    @Override
+    public boolean hasMorePages() {
+        return false;
+    }
+
     public boolean supportsManualAdding() {
         return false;
     }

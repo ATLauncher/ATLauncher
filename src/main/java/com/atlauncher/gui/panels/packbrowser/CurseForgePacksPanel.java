@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -47,13 +48,18 @@ import org.mini2Dx.gettext.GetText;
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
+    boolean hasMorePages = true;
+
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
             boolean sortDescending, String search, int page) {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, sortDescending, category,
                 minecraftVersion);
 
+        hasMorePages = packs != null && packs.size() == Constants.CURSEFORGE_PAGINATION_SIZE;
+
         if (packs == null || packs.size() == 0) {
+            hasMorePages = false;
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(GetText
@@ -84,6 +90,8 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
             boolean sortDescending, String search, int page) {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, sortDescending, category,
                 minecraftVersion);
+
+        hasMorePages = packs != null && packs.size() == Constants.MODPACKS_CH_PAGINATION_SIZE;
 
         if (packs != null) {
             for (CurseForgeProject pack : packs) {
@@ -184,6 +192,11 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    @Override
+    public boolean hasMorePages() {
+        return hasMorePages;
     }
 
     public boolean supportsManualAdding() {

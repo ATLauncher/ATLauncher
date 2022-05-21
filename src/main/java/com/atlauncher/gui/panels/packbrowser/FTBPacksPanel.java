@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
@@ -40,6 +41,8 @@ import org.mini2Dx.gettext.GetText;
 public class FTBPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
+    boolean hasMorePages = true;
+
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
             boolean sortDescending, String search, int page) {
@@ -50,6 +53,8 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
         } else {
             packs = ModpacksChApi.searchModPacks(search, page);
         }
+
+        hasMorePages = packs != null && packs.size() == Constants.CURSEFORGE_PAGINATION_SIZE;
 
         if (packs == null || packs.size() == 0) {
             contentPanel.removeAll();
@@ -86,6 +91,8 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
         } else {
             packs = ModpacksChApi.searchModPacks(search, page);
         }
+
+        hasMorePages = packs != null && packs.size() == Constants.MODPACKS_CH_PAGINATION_SIZE;
 
         if (packs != null) {
             for (ModpacksChPackManifest pack : packs) {
@@ -169,6 +176,11 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasPagination() {
         return true;
+    }
+
+    @Override
+    public boolean hasMorePages() {
+        return hasMorePages;
     }
 
     public boolean supportsManualAdding() {

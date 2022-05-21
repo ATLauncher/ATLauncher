@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue when adding mods with distribution disabled not copying to instance
+- The modpacks browser making extra calls to paginate when not needed
 
 ### Misc

@@ -63,6 +63,8 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
 
     public abstract boolean hasPagination();
 
+    public abstract boolean hasMorePages();
+
     protected abstract void loadPacks(JPanel contentPanel, String minecraftVersion,
             String category, String sort, boolean sortDescending, String search, int page);
 
