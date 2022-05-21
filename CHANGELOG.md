@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue when adding mods with distribution disabled not copying to instance
 
 ### Misc

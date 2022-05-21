@@ -1239,7 +1239,7 @@ public class Instance extends MinecraftVersion {
                 .findFirst().orElse(null);
     }
 
-    public void addFileFromCurse(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
+    public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         Path finalLocation = mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
                 ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
@@ -1300,7 +1300,8 @@ public class Instance extends MinecraftVersion {
                                                         + FileSystem.USER_DOWNLOADS.toFile()))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
-                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO).showWithFileMonitoring(fileLocation, downloadsFolderFile, file.fileLength, 1);
+                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
+                                .showWithFileMonitoring(fileLocation, downloadsFolderFile, file.fileLength, 1);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             return;
@@ -1326,6 +1327,22 @@ public class Instance extends MinecraftVersion {
                         }
                     }
                 }
+            }
+
+            if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
+                FileUtils.createDirectory(this.getRoot().resolve("saves"));
+
+                ArchiveUtils.extract(downloadLocation, this.getRoot().resolve("saves"));
+            } else {
+                if (Files.exists(finalLocation)) {
+                    FileUtils.delete(finalLocation);
+                }
+
+                if (!Files.isDirectory(finalLocation.getParent())) {
+                    FileUtils.createDirectory(finalLocation.getParent());
+                }
+
+                FileUtils.copyFile(downloadLocation, finalLocation, true);
             }
         } else {
             com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
