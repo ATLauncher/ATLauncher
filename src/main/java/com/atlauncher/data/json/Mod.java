@@ -364,19 +364,19 @@ public class Mod {
         return (dir, name) -> name.matches(file);
     }
 
-    public void download(InstanceInstaller installer) {
-        download(installer, 1);
+    public boolean download(InstanceInstaller installer) {
+        return download(installer, 1);
     }
 
-    public void download(InstanceInstaller installer, int attempt) {
+    public boolean download(InstanceInstaller installer, int attempt) {
         if (installer.isServer && this.serverUrl != null) {
-            downloadServer(installer, attempt);
+            return downloadServer(installer, attempt);
         } else {
-            downloadClient(installer, attempt);
+            return downloadClient(installer, attempt);
         }
     }
 
-    public void downloadClient(InstanceInstaller installer, int attempt) {
+    public boolean downloadClient(InstanceInstaller installer, int attempt) {
         File fileLocation = FileSystem.DOWNLOADS.resolve(getFile()).toFile();
 
         if (fileLocation.exists()) {
@@ -385,13 +385,13 @@ public class Mod {
             } else if (this.download != DownloadType.direct) {
                 if (hasMD5()) {
                     if (Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.md5))) {
-                        return; // File already exists and matches hash, don't download it
+                        return true; // File already exists and matches hash, don't download it
                     } else {
                         Utils.delete(fileLocation); // File exists but is corrupt, delete it
                     }
                 } else {
                     if (fileLocation.length() != 0) {
-                        return; // No MD5, but file is there, can only assume it's fine
+                        return true; // No MD5, but file is there, can only assume it's fine
                     }
                 }
             }
@@ -449,14 +449,18 @@ public class Mod {
                                                                 + FileSystem.USER_DOWNLOADS.toFile())))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
-                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
+                                .addOption(GetText.tr("I've Downloaded This File"))
+                                .addOption(GetText.tr("Skip Mod (Pack May Break)")).setType(DialogManager.INFO)
                                 .showWithFileMonitoring(fileLocation, downloadsFolderFile, filesize, 1);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             installer.cancel(true);
-                            return;
+                            return false;
                         } else if (retValue == 0) {
                             OS.openFileExplorer(FileSystem.DOWNLOADS);
+                        } else if (retValue == 2) {
+                            LogManager.warn(String.format("Skipping browser download of mod %s", name));
+                            return false;
                         }
                     } while (retValue != 1);
 
@@ -509,21 +513,24 @@ public class Mod {
         }
 
         if (!hasMD5()) {
-            return;
+            return true;
         }
 
         if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.md5))) {
             if (attempt < 5) {
                 Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
-                downloadClient(installer, ++attempt); // download again
+                return downloadClient(installer, ++attempt); // download again
             } else {
                 LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
                 installer.cancel(true);
+                return false;
             }
         }
+
+        return true;
     }
 
-    public void downloadServer(InstanceInstaller installer, int attempt) {
+    public boolean downloadServer(InstanceInstaller installer, int attempt) {
         File fileLocation = FileSystem.DOWNLOADS.resolve(getServerFile()).toFile();
         if (fileLocation.exists()) {
             if (this.shouldForce()) {
@@ -531,12 +538,12 @@ public class Mod {
             } else if (this.download != DownloadType.direct) {
                 if (this.hasServerMD5()) {
                     if (Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.serverMD5))) {
-                        return; // File already exists and matches hash, don't download it
+                        return true; // File already exists and matches hash, don't download it
                     } else {
                         Utils.delete(fileLocation); // File exists but is corrupt, delete it
                     }
                 } else {
-                    return; // No MD5, but file is there, can only assume it's fine
+                    return true; // No MD5, but file is there, can only assume it's fine
                 }
             }
         }
@@ -590,7 +597,7 @@ public class Mod {
 
                 if (ret == DialogManager.CLOSED_OPTION) {
                     installer.cancel(true);
-                    return;
+                    return false;
                 }
 
                 if (isFilePattern()) {
@@ -638,18 +645,21 @@ public class Mod {
         }
 
         if (!hasServerMD5()) {
-            return;
+            return true;
         }
 
         if (!Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(this.serverMD5))) {
             if (attempt < 5) {
                 Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
-                downloadServer(installer, ++attempt); // download again
+                return downloadServer(installer, ++attempt); // download again
             } else {
                 LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
                 installer.cancel(true);
+                return false;
             }
         }
+
+        return true;
     }
 
     public void install(InstanceInstaller installer) {

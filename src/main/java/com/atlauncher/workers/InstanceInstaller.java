@@ -2238,12 +2238,32 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         fireSubProgressUnknown();
 
-        this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser)
-                .forEach(mod -> {
-                    if (!isCancelled()) {
-                        mod.download(this);
+        List<Mod> browserDownloadMods = this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser)
+                .collect(Collectors.toList());
+        if (browserDownloadMods.size() != 0) {
+            int browserDownloadModsDownloaded = 0;
+            List<Mod> skippedMods = new ArrayList<>();
+
+            for (Mod mod : browserDownloadMods) {
+                if (!isCancelled()) {
+                    fireTask(GetText.tr("Downloading Browser Mods"));
+
+                    if (!mod.download(this)) {
+                        skippedMods.add(mod);
                     }
-                });
+
+                    browserDownloadModsDownloaded++;
+
+                    fireSubProgress((browserDownloadModsDownloaded / browserDownloadMods.size()) * 100.0,
+                            String.format("%d/%d", browserDownloadModsDownloaded,
+                                    browserDownloadMods.size()));
+                }
+            }
+
+            // filter out any browser mods that were skipped
+            this.selectedMods = this.selectedMods.parallelStream().filter(m -> !skippedMods.contains(m))
+                    .collect(Collectors.toList());
+        }
 
         hideSubProgressBar();
     }

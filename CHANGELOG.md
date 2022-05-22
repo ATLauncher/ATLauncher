@@ -6,6 +6,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.14.4
 
 ### New Features
+- Allow skipping browser download mods for cases where mods no longer exist
+- Show progress of downloading browser mods
 
 ### Fixes
 
