@@ -48,7 +48,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ImportPackUtils;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -155,7 +154,7 @@ public class ImportInstanceDialog extends JDialog {
                 }
             } else {
                 JFileChooser chooser = new JFileChooser();
-                chooser.setCurrentDirectory(FileSystem.USER_DOWNLOADS.toFile());
+                chooser.setCurrentDirectory(FileSystem.getUserDownloadsPath().toFile());
                 chooser.setDialogTitle(GetText.tr("Select"));
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 chooser.setAcceptAllFileFilterUsed(false);

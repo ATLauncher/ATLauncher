@@ -601,7 +601,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             File fileLocation = FileSystem.DOWNLOADS.resolve(version._curseForgeFile.fileName).toFile();
             if (!fileLocation.exists()) {
-                File downloadsFolderFile = new File(FileSystem.USER_DOWNLOADS.toFile(),
+                File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(),
                         version._curseForgeFile.fileName);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
@@ -624,9 +624,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                         version._curseForgeFile.fileName)
                                         + "<br/><br/>" + GetText.tr("Please save this file to the following location")
                                         + "<br/><br/>"
-                                        + (OS.isUsingMacApp() ? FileSystem.USER_DOWNLOADS.toFile().getAbsolutePath()
+                                        + (OS.isUsingMacApp()
+                                                ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
                                                 : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
-                                                        + FileSystem.USER_DOWNLOADS.toFile()))
+                                                        + FileSystem.getUserDownloadsPath().toFile()))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)

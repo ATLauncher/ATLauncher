@@ -510,7 +510,7 @@ public class App {
         }
 
         if (!matched && (Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
-                && FileSystem.BASE_DIR.equals(FileSystem.USER_DOWNLOADS)) {
+                && FileSystem.BASE_DIR.equals(FileSystem.getUserDownloadsPath())) {
             matched = true;
 
             if (DialogManager.optionDialog().setTitle("Warning").setContent(new HTMLBuilder().center().text(

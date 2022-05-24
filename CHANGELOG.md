@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Show progress of downloading browser mods
 
 ### Fixes
+- Custom downloads folders in Windows not being used for browser downloads [#586]
 
 ### Misc
