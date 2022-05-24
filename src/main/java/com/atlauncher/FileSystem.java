@@ -122,7 +122,6 @@ public final class FileSystem {
                 for (String line : output.split("\\r?\\n")) {
                     if (line.contains("REG_EXPAND_SZ")) {
                         String downloadsFolderPath = line.substring(line.indexOf("REG_EXPAND_SZ") + 13).trim();
-                        System.out.println(downloadsFolderPath);
 
                         if (Files.exists(Paths.get(downloadsFolderPath))) {
                             CACHED_USER_DOWNLOADS = Paths.get(downloadsFolderPath);

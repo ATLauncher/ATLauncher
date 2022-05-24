@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Custom downloads folders in Windows not being used for browser downloads [#586]
+- When using Flatpak, only show the launchers downloads folder and not the users one
 
 ### Misc

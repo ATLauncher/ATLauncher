@@ -1297,12 +1297,16 @@ public class Instance extends MinecraftVersion {
                                         + "<br/><br/>"
                                         + (OS.isUsingMacApp()
                                                 ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
-                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
-                                                        + FileSystem.getUserDownloadsPath().toFile()))
+                                                : (OS.isUsingFlatpak()
+                                                        ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                        : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                                + " or<br/>"
+                                                                + FileSystem.getUserDownloadsPath().toFile())))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(fileLocation, downloadsFolderFile, file.fileLength, 1);
+                                .showWithFileMonitoring(fileLocation, OS.isUsingFlatpak() ? null : downloadsFolderFile,
+                                        file.fileLength, 1);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             return;

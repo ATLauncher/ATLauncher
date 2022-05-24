@@ -211,8 +211,8 @@ public final class DialogManager {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if ((firstFile.exists() && firstFile.length() == size)
-                            || (secondFile.exists() && secondFile.length() == size)) {
+                    if ((firstFile != null && (firstFile.exists() && firstFile.length() == size))
+                            || (secondFile != null && (secondFile.exists() && secondFile.length() == size))) {
                         timer.cancel();
                         jop.setValue(options[returnValue]);
                         dialog.dispose();

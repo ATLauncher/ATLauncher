@@ -443,15 +443,20 @@ public class Mod {
                                                 : (isFilePattern() ? getName() : getServerFile())))
                                         + "<br/><br/>" + GetText.tr("Please save this file to the following location")
                                         + "<br/><br/>"
-                                        + (OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
+                                        + (OS.isUsingMacApp()
+                                                ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
                                                 : (isFilePattern() ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                        : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
-                                                                + FileSystem.getUserDownloadsPath().toFile())))
+                                                        : (OS.isUsingFlatpak()
+                                                                ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                                        + " or<br/>"
+                                                                        + FileSystem.getUserDownloadsPath().toFile()))))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File"))
                                 .addOption(GetText.tr("Skip Mod (Pack May Break)")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(fileLocation, downloadsFolderFile, filesize, 1);
+                                .showWithFileMonitoring(fileLocation, OS.isUsingFlatpak() ? null : downloadsFolderFile,
+                                        filesize, 1);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             installer.cancel(true);
@@ -475,14 +480,18 @@ public class Mod {
                             for (int i = 0; i < files.length; i++) {
                                 if (this.filePreference.equalsIgnoreCase("first") && i == 0) {
                                     this.file = files[i];
-                                    fileLocation = new File((OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile()
-                                            : FileSystem.DOWNLOADS.toFile()), files[i]);
+                                    fileLocation = new File(
+                                            (OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile()
+                                                    : FileSystem.DOWNLOADS.toFile()),
+                                            files[i]);
                                     break;
                                 }
                                 if (this.filePreference.equalsIgnoreCase("last") && (i + 1) == files.length) {
                                     this.file = files[i];
-                                    fileLocation = new File((OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile()
-                                            : FileSystem.DOWNLOADS.toFile()), files[i]);
+                                    fileLocation = new File(
+                                            (OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile()
+                                                    : FileSystem.DOWNLOADS.toFile()),
+                                            files[i]);
                                     break;
                                 }
                             }
@@ -559,7 +568,8 @@ public class Mod {
                 if (files.length == 1) {
                     this.file = files[0];
                     fileLocation = new File(
-                            (OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile() : FileSystem.DOWNLOADS.toFile()),
+                            (OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile()
+                                    : FileSystem.DOWNLOADS.toFile()),
                             files[0]);
                 } else if (files.length > 1) {
                     for (int i = 0; i < files.length; i++) {
@@ -588,9 +598,13 @@ public class Mod {
                                 .text(GetText.tr("Browser opened to download file {0}",
                                         (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
                                         + GetText.tr("Please save this file to the following location") + "<br/><br/>"
-                                        + (OS.isUsingMacApp() ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
-                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString() + " or<br/>"
-                                                        + FileSystem.getUserDownloadsPath().toFile()))
+                                        + (OS.isUsingMacApp()
+                                                ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
+                                                : (OS.isUsingFlatpak()
+                                                        ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                        : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                                + " or<br/>"
+                                                                + FileSystem.getUserDownloadsPath().toFile())))
                                 .build())
                         .setType(DialogManager.INFO).addOption(GetText.tr("Open Folder"), true)
                         .addOption(GetText.tr("I've Downloaded This File")).show();
@@ -634,7 +648,8 @@ public class Mod {
                         if (zipAddedFile.exists()) {
                             Utils.moveFile(zipAddedFile, fileLocation, true);
                         } else {
-                            zipAddedFile = new File(FileSystem.getUserDownloadsPath().toFile(), getServerFile() + ".zip");
+                            zipAddedFile = new File(FileSystem.getUserDownloadsPath().toFile(),
+                                    getServerFile() + ".zip");
                             if (zipAddedFile.exists()) {
                                 Utils.moveFile(zipAddedFile, fileLocation, true);
                             }
