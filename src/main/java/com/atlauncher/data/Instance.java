@@ -1390,7 +1390,7 @@ public class Instance extends MinecraftVersion {
                 mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
                         : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds
                                 : Type.mods),
-                null, mod.summary, false, true, true, mod, file));
+                null, mod.summary, false, true, true, false, mod, file));
 
         this.save();
 
@@ -1453,7 +1453,7 @@ public class Instance extends MinecraftVersion {
 
         // add this mod
         this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, Type.mods,
-                null, mod.description, false, true, true, mod, version));
+                null, mod.description, false, true, true, false, mod, version));
 
         this.save();
 

@@ -61,6 +61,7 @@ public class DisableableMod implements Serializable {
     public boolean disabled;
     public boolean userAdded = false; // Default to not being user added
     public boolean wasSelected = true; // Default to it being selected on install
+    public boolean skipped = false; // For browser download mods if they were skipped or not
 
     @SerializedName(value = "curseForgeProjectId", alternate = { "curseModId" })
     public Integer curseForgeProjectId;
@@ -79,7 +80,7 @@ public class DisableableMod implements Serializable {
     public ModrinthVersion modrinthVersion;
 
     public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
-            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected,
+            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
             Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
             CurseForgeFile curseForgeFile, ModrinthProject modrinthProject, ModrinthVersion modrinthVersion) {
         this.name = name;
@@ -93,6 +94,7 @@ public class DisableableMod implements Serializable {
         this.disabled = disabled;
         this.userAdded = userAdded;
         this.wasSelected = wasSelected;
+        this.skipped = skipped;
         this.curseForgeProjectId = curseForgeModId;
         this.curseForgeFileId = curseForgeFileId;
         this.curseForgeProject = curseForgeProject;
@@ -102,51 +104,56 @@ public class DisableableMod implements Serializable {
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
-            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected,
+            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
             Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
             CurseForgeFile curseForgeFile) {
-        this(name, version, optional, file, path, type, colour, description, disabled, userAdded, wasSelected,
+        this(name, version, optional, file, path, type, colour, description, disabled, userAdded, wasSelected, skipped,
                 curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseForgeModId,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+            Integer curseForgeModId,
             Integer curseForgeFileId, CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
-        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
                 curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
             CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
-        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
                 curseForgeProject.id, curseForgeFile.id, curseForgeProject, curseForgeFile);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
             ModrinthProject modrinthProject,
             ModrinthVersion modrinthVersion) {
-        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, null,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
+                null,
                 null, null, null, modrinthProject, modrinthVersion);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, Integer curseForgeModId,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+            Integer curseForgeModId,
             Integer curseForgeFileId) {
-        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
                 curseForgeModId, curseForgeFileId, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected) {
-        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, null,
+            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped) {
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
+                null,
                 null, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
             String description, boolean disabled, boolean userAdded) {
-        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, true, null, null,
+        this(name, version, optional, file, null, type, colour, description, disabled, userAdded, true, false, null,
+                null,
                 null, null);
     }
 

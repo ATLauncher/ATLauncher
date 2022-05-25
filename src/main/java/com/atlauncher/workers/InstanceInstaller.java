@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.JDialog;
 import javax.swing.SwingWorker;
 
 import com.atlauncher.App;
@@ -107,6 +108,7 @@ import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicModpackAsset;
 import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
+import com.atlauncher.gui.dialogs.BrowserDownloadDialog;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -191,13 +193,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public String mainClass;
     public Arguments arguments;
     public boolean success;
+    private JDialog dialog;
 
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
             boolean isReinstall, boolean isServer, boolean changingLoader, boolean saveMods, String shareCode,
             boolean showModsChooser, LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest,
             Path curseForgeExtractedPath, ModpacksChPackManifest modpacksChPackManifest,
             ModrinthModpackManifest modrinthManifest, Path modrinthExtractedPath, MultiMCManifest multiMCManifest,
-            Path multiMCExtractedPath, TechnicModpack technicModpack) {
+            Path multiMCExtractedPath, TechnicModpack technicModpack, JDialog dialog) {
         this.name = name;
         this.pack = pack;
         this.version = version;
@@ -207,6 +210,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.saveMods = saveMods;
         this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
+        this.dialog = dialog;
 
         if (isServer) {
             this.root = FileSystem.SERVERS.resolve(name.replaceAll("[^A-Za-z0-9]", ""));
@@ -1271,7 +1275,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             this.modsInstalled.add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(),
                     mod.isOptional(), file, mod.path,
                     com.atlauncher.data.Type.valueOf(com.atlauncher.data.Type.class, mod.getType().toString()),
-                    this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true,
+                    this.packVersion.getColour(mod.getColour()), mod.getDescription(), false, false, true, false,
                     mod.getCurseForgeProjectId(), mod.getCurseForgeFileId(), mod.curseForgeProject,
                     mod.curseForgeFile, mod.modrinthProject, mod.modrinthVersion));
         }
@@ -2198,7 +2202,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         hideSubProgressBar();
     }
 
-    private void downloadMods() {
+    private void downloadMods() throws Exception {
         addPercent(25);
 
         if (multiMCManifest != null || selectedMods.size() == 0) {
@@ -2245,28 +2249,51 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         List<Mod> browserDownloadMods = this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser)
                 .collect(Collectors.toList());
         if (browserDownloadMods.size() != 0) {
-            int browserDownloadModsDownloaded = 0;
-            List<Mod> skippedMods = new ArrayList<>();
+            if (curseForgeManifest != null) {
+                fireTask(GetText.tr("Downloading Browser Mods"));
 
-            for (Mod mod : browserDownloadMods) {
-                if (!isCancelled()) {
-                    fireTask(GetText.tr("Downloading Browser Mods"));
+                BrowserDownloadDialog browserDownloadDialog = new BrowserDownloadDialog(this.dialog,
+                        browserDownloadMods);
 
-                    if (!mod.download(this)) {
-                        skippedMods.add(mod);
+                for (Mod mod : browserDownloadMods) {
+                    if (!browserDownloadDialog.modsDownloaded.stream()
+                            .anyMatch(m -> m.curseForgeFileId == mod.curseForgeFileId)) {
+                        LogManager.info("Browser download mod " + mod.name + " was skipped");
+                        Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
+                                .filter(m -> m.curseForgeFileId == mod.curseForgeFileId).findFirst();
+                        if (disableableMod.isPresent()) {
+                            disableableMod.get().skipped = true;
+                        }
                     }
+                }
 
-                    browserDownloadModsDownloaded++;
+                if (!browserDownloadDialog.success) {
+                    throw new Exception("Installation cancelled from browser downloads dialog.");
+                }
+            } else {
+                int browserDownloadModsDownloaded = 0;
 
-                    fireSubProgress((browserDownloadModsDownloaded / browserDownloadMods.size()) * 100.0,
-                            String.format("%d/%d", browserDownloadModsDownloaded,
-                                    browserDownloadMods.size()));
+                for (Mod mod : browserDownloadMods) {
+                    if (!isCancelled()) {
+                        fireTask(GetText.tr("Downloading Browser Mods"));
+
+                        if (!mod.download(this)) {
+                            LogManager.info("Browser download mod " + mod.name + " was skipped");
+                            Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
+                                    .filter(m -> m.file == mod.file).findFirst();
+                            if (disableableMod.isPresent()) {
+                                disableableMod.get().skipped = true;
+                            }
+                        }
+
+                        browserDownloadModsDownloaded++;
+
+                        fireSubProgress((browserDownloadModsDownloaded / browserDownloadMods.size()) * 100.0,
+                                String.format("%d/%d", browserDownloadModsDownloaded,
+                                        browserDownloadMods.size()));
+                    }
                 }
             }
-
-            // filter out any browser mods that were skipped
-            this.selectedMods = this.selectedMods.parallelStream().filter(m -> !skippedMods.contains(m))
-                    .collect(Collectors.toList());
         }
 
         hideSubProgressBar();
@@ -2389,6 +2416,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         mod.disabled = false;
         mod.userAdded = false;
         mod.wasSelected = true;
+        mod.skipped = false;
         mod.file = "legacyjavafixer-1.0.jar";
         mod.type = Type.mods;
         mod.optional = false;

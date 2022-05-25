@@ -449,7 +449,7 @@ public class EditModsDialog extends JDialog {
         PerformanceManager.start("EditModsDialog::scanMissingMods - CheckForRemovedMods");
         // next remove any mods that the no longer exist in the filesystem
         List<DisableableMod> removedMods = instance.launcher.mods.parallelStream().filter(mod -> {
-            if (!mod.wasSelected || mod.type != com.atlauncher.data.Type.mods) {
+            if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
                 return false;
             }
 
@@ -470,6 +470,7 @@ public class EditModsDialog extends JDialog {
 
     private void loadMods() {
         List<DisableableMod> mods = instance.launcher.mods.stream().filter(DisableableMod::wasSelected)
+                .filter(m -> !m.skipped)
                 .sorted(Comparator.comparing(m -> m.name)).collect(Collectors.toList());
         enabledMods = new ArrayList<>();
         disabledMods = new ArrayList<>();
