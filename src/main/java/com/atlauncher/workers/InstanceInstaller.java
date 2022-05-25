@@ -555,8 +555,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
                 modToAdd.download = DownloadType.browser;
-                modToAdd.url = String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
-                        curseForgeProject.getClassUrlSlug(), curseForgeProject.slug, curseForgeFile.id);
+                modToAdd.url = curseForgeProject.getBrowserDownloadUrl(curseForgeFile);
                 modToAdd.file = curseForgeFile.fileName.replace(" ", "+");
                 return modToAdd;
             }
@@ -617,9 +616,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
-                            OS.openWebBrowser(String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
-                                    pack.curseForgeProject.getClassUrlSlug(), pack.curseForgeProject.slug,
-                                    version._curseForgeFile.id));
+                            OS.openWebBrowser(pack.curseForgeProject.getBrowserDownloadUrl(version._curseForgeFile));
                         }
 
                         retValue = DialogManager.optionDialog()

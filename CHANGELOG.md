@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue downloading mods/modpacks individually from CurseForge with spaces in filenames
+- Make sure all browser download urls are correct using website url from api when available
 
 ### Misc

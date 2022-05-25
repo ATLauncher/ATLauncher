@@ -104,4 +104,13 @@ public class CurseForgeProject {
 
         return "mc-mods";
     }
+
+    public String getBrowserDownloadUrl(CurseForgeFile file) {
+        if (hasWebsiteUrl()) {
+            return String.format("%s/download/%d", getWebsiteUrl(), file.id);
+        }
+
+        return String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d", getClassUrlSlug(), slug,
+                file.id);
+    }
 }

@@ -1284,8 +1284,7 @@ public class Instance extends MinecraftVersion {
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
-                            OS.openWebBrowser(String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d",
-                                    mod.getClassUrlSlug(), mod.slug, file.id));
+                            OS.openWebBrowser(mod.getBrowserDownloadUrl(file));
                         }
 
                         retValue = DialogManager.optionDialog()
