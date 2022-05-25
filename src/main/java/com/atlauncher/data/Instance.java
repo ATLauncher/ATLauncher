@@ -1272,9 +1272,10 @@ public class Instance extends MinecraftVersion {
             }
 
             dialog.setIndeterminate();
+            String filename = file.fileName.replace(" ", "+");
             File fileLocation = downloadLocation.toFile();
             if (!fileLocation.exists()) {
-                File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(), file.fileName);
+                File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(), filename);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
@@ -1289,10 +1290,10 @@ public class Instance extends MinecraftVersion {
 
                         retValue = DialogManager.optionDialog()
                                 .setTitle(GetText.tr("Downloading") + " "
-                                        + file.fileName)
+                                        + filename)
                                 .setContent(new HTMLBuilder().center().text(GetText.tr(
                                         "Browser opened to download file {0}",
-                                        file.fileName)
+                                        filename)
                                         + "<br/><br/>" + GetText.tr("Please save this file to the following location")
                                         + "<br/><br/>"
                                         + (OS.isUsingMacApp()

@@ -603,10 +603,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         .show();
             }
 
-            File fileLocation = FileSystem.DOWNLOADS.resolve(version._curseForgeFile.fileName).toFile();
+            String filename = version._curseForgeFile.fileName.replace(" ", "+");
+
+            File fileLocation = FileSystem.DOWNLOADS.resolve(filename).toFile();
             if (!fileLocation.exists()) {
                 File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(),
-                        version._curseForgeFile.fileName);
+                        filename);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
                 }
@@ -622,10 +624,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                         retValue = DialogManager.optionDialog()
                                 .setTitle(GetText.tr("Downloading") + " "
-                                        + version._curseForgeFile.fileName)
+                                        + filename)
                                 .setContent(new HTMLBuilder().center().text(GetText.tr(
                                         "Browser opened to download file {0}",
-                                        version._curseForgeFile.fileName)
+                                        filename)
                                         + "<br/><br/>" + GetText.tr("Please save this file to the following location")
                                         + "<br/><br/>"
                                         + (OS.isUsingMacApp()
