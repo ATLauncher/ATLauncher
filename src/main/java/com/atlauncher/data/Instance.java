@@ -99,6 +99,7 @@ import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthSide;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
@@ -1992,8 +1993,12 @@ public class Instance extends MinecraftVersion {
                     file.hashes.put("sha512", Hashing.sha512(modPath).toString());
 
                     file.env = new HashMap<>();
-                    file.env.put("client", mod.modrinthProject.clientSide.toString());
-                    file.env.put("server", mod.modrinthProject.serverSide.toString());
+                    file.env.put("client",
+                            mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED ? "unsupported"
+                                    : "required");
+                    file.env.put("server",
+                            mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED ? "unsupported"
+                                    : "required");
 
                     file.fileSize = modPath.toFile().length();
 

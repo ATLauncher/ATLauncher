@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Mark all Modrinth mods as required when exporting unless explicitely marked as unsupported
 
 ### Misc
