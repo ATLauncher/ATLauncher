@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Mark all Modrinth mods as required when exporting unless explicitely marked as unsupported
 - Modrinth mrpack downloads not showing size on instance installer
+- Missing progress dialog when getting Modrinth pack versions
 
 ### Misc

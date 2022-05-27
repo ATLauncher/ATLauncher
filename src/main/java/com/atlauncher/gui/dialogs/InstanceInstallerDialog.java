@@ -566,7 +566,19 @@ public class InstanceInstallerDialog extends JDialog {
         pack.websiteURL = String.format("https://modrinth.com/modpack/%s", modrinthProject.slug);
         pack.modrinthProject = modrinthProject;
 
-        List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id);
+        List<ModrinthVersion> versions = new ArrayList<>();
+        final ProgressDialog<List<ModrinthVersion>> modrinthProjectLookupDialog = new ProgressDialog<>(
+                GetText.tr("Getting Modpack Versions"), 0, GetText.tr("Getting Modpack Versions"),
+                "Aborting Getting Modpack Versions");
+
+        modrinthProjectLookupDialog.addThread(new Thread(() -> {
+            modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getVersions(modrinthProject.id));
+
+            modrinthProjectLookupDialog.close();
+        }));
+
+        modrinthProjectLookupDialog.start();
+        versions = modrinthProjectLookupDialog.getReturnValue();
 
         pack.versions = versions.stream()
                 .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
