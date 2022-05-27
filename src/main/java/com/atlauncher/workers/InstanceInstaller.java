@@ -719,6 +719,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (file.size != null && file.size != 0) {
             manifestDownload = manifestDownload.size(file.size);
+            this.setTotalBytes(file.size);
         }
 
         manifestDownload.downloadFile();
