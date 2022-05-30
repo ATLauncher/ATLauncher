@@ -66,6 +66,7 @@ public class Settings {
     public String instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
     public InstanceSortingStrategies defaultInstanceSorting = InstanceSortingStrategies.BY_NAME;
     public int selectedTabOnStartup = 0;
+    public String customDownloadsPath = null;
     public Boolean showPackNameAndVersion = null;
     public boolean keepLauncherOpen = true;
     public boolean enableConsole = true;

@@ -107,7 +107,16 @@ public final class FileSystem {
         }
     }
 
-    public static Path getUserDownloadsPath() {
+    public static Path getUserDownloadsPath(boolean useSetting) {
+        if (useSetting && App.settings != null && App.settings.customDownloadsPath != null) {
+            try {
+                return Paths.get(App.settings.customDownloadsPath);
+            } catch (Exception e) {
+                LogManager.logStackTrace(
+                        "Problem when reading custom downloads path, defaulting to user downloads folder.", e);
+            }
+        }
+
         if (CACHED_USER_DOWNLOADS != null) {
             return CACHED_USER_DOWNLOADS;
         }
@@ -136,6 +145,10 @@ public final class FileSystem {
 
         CACHED_USER_DOWNLOADS = Paths.get(System.getProperty("user.home"), "Downloads");
         return CACHED_USER_DOWNLOADS;
+    }
+
+    public static Path getUserDownloadsPath() {
+        return getUserDownloadsPath(true);
     }
 
     private static void cleanTempDirectory() {

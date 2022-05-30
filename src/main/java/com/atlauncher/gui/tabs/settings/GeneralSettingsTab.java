@@ -20,19 +20,24 @@ package com.atlauncher.gui.tabs.settings;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Point;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
@@ -53,6 +58,12 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<String>> instanceTitleFormat;
     private final JComboBox<ComboItem<Integer>> selectedTabOnStartup;
     private final JComboBox<InstanceSortingStrategies> defaultInstanceSorting;
+
+    private final JLabelWithHover customDownloadsPathLabel;
+    private JTextField customDownloadsPath;
+    private final JButton customDownloadsPathResetButton;
+    private final JButton customDownloadsPathBrowseButton;
+
     private final JCheckBox keepLauncherOpen;
     private final JCheckBox enableConsole;
     private final JCheckBox enableTrayIcon;
@@ -246,6 +257,54 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         defaultInstanceSorting.setSelectedItem(App.settings.defaultInstanceSorting);
 
         add(defaultInstanceSorting, gbc);
+
+        // Custom Downloads Path
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        customDownloadsPathLabel = new JLabelWithHover(GetText.tr("Downloads Folder") + ":", HELP_ICON,
+                new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "This setting allows you to change the Downloads folder that the launcher looks in when downloading browser mods."))
+                        .build());
+        add(customDownloadsPathLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JPanel customDownloadsPathPanel = new JPanel();
+        customDownloadsPathPanel.setLayout(new BoxLayout(customDownloadsPathPanel, BoxLayout.X_AXIS));
+
+        customDownloadsPath = new JTextField(16);
+        customDownloadsPath.setText(
+                Optional.ofNullable(App.settings.customDownloadsPath)
+                        .orElse(FileSystem.getUserDownloadsPath(false).toString()));
+        customDownloadsPathResetButton = new JButton(GetText.tr("Reset"));
+        customDownloadsPathResetButton.addActionListener(
+                e -> customDownloadsPath.setText(FileSystem.getUserDownloadsPath(false).toString()));
+        customDownloadsPathBrowseButton = new JButton(GetText.tr("Browse"));
+        customDownloadsPathBrowseButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File(customDownloadsPath.getText()));
+            chooser.setDialogTitle(GetText.tr("Select"));
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File selectedPath = chooser.getSelectedFile();
+                customDownloadsPath.setText(selectedPath.getAbsolutePath());
+            }
+        });
+
+        customDownloadsPathPanel.add(customDownloadsPath);
+        customDownloadsPathPanel.add(Box.createHorizontalStrut(5));
+        customDownloadsPathPanel.add(customDownloadsPathResetButton);
+        customDownloadsPathPanel.add(Box.createHorizontalStrut(5));
+        customDownloadsPathPanel.add(customDownloadsPathBrowseButton);
+
+        add(customDownloadsPathPanel, gbc);
 
         // Keep Launcher Open
 
@@ -472,6 +531,12 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.enableConsole = enableConsole.isSelected();
         App.settings.enableTrayMenu = enableTrayIcon.isSelected();
         App.settings.enableDiscordIntegration = enableDiscordIntegration.isSelected();
+
+        if (customDownloadsPath.getText().equalsIgnoreCase(FileSystem.getUserDownloadsPath(false).toString())) {
+            App.settings.customDownloadsPath = null;
+        } else {
+            App.settings.customDownloadsPath = customDownloadsPath.getText();
+        }
 
         if (OS.isLinux()) {
             App.settings.enableFeralGamemode = enableFeralGamemode.isSelected();
