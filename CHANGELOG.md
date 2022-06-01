@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Mark all Modrinth mods as required when exporting unless explicitely marked as unsupported
 - Modrinth mrpack downloads not showing size on instance installer
 - Missing progress dialog when getting Modrinth pack versions
+- Modpacks.ch packs not installing correctly after change to CurseForge metadata
 
 ### Misc

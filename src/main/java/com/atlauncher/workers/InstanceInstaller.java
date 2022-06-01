@@ -94,10 +94,11 @@ import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackArt;
 import com.atlauncher.data.modpacksch.ModpacksChPackArtType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
-import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectFileType;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectTarget;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifectTargetType;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
+import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifestFile;
+import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifestFileType;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
@@ -812,9 +813,102 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             throw new Exception("Unknown modloader with name of " + modloaderTarget.name);
         }
 
-        packVersion.mods = modpacksChPackVersionManifest.files.parallelStream()
-                .filter(f -> f.type == ModpacksChPackVersionManifectFileType.MOD).map(file -> file.convertToMod())
+        // find the mods with no url provided
+        List<ModpacksChPackVersionManifestFile> noUrlMods = modpacksChPackVersionManifest.files.parallelStream()
+                .filter(f -> f.type == ModpacksChPackVersionManifestFileType.MOD && (f.url == null || f.url.isEmpty()))
                 .collect(Collectors.toList());
+
+        // mods with CurseForge information
+        List<ModpacksChPackVersionManifestFile> curseForgeMods = modpacksChPackVersionManifest.files.parallelStream()
+                .filter(f -> f.type == ModpacksChPackVersionManifestFileType.MOD && (f.url == null || f.url.isEmpty())
+                        && f.curseforge != null)
+                .collect(Collectors.toList());
+
+        // if not all no url mods have CurseForge information, we can't install
+        if (noUrlMods.size() > curseForgeMods.size()) {
+            DialogManager.okDialog().setType(DialogManager.ERROR)
+                    .setTitle(GetText.tr("Mods Not Available"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Some of the mods for this pack are not available to download.<br/><br/>At this time you can only install this pack via FTB launcher."))
+                            .build())
+                    .show();
+            throw new Exception("Cannot install pack as there are files we cannot download");
+        }
+
+        Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
+                .getProjectsAsMap(curseForgeMods.stream().mapToInt(file -> file.curseforge.project).toArray());
+
+        List<CurseForgeFile> filesFound = CurseForgeApi
+                .getFiles(curseForgeMods.stream().mapToInt(file -> file.curseforge.file).toArray());
+
+        List<Pair<CurseForgeProject, CurseForgeFile>> manualDownloadMods = new ArrayList<>();
+
+        packVersion.mods = modpacksChPackVersionManifest.files.stream()
+                .filter(f -> f.type == ModpacksChPackVersionManifestFileType.MOD).map(file -> {
+                    if (file.url != null && !file.url.isEmpty()) {
+                        return file.convertToMod();
+                    }
+
+                    CurseForgeProject curseForgeProject = Optional
+                            .ofNullable(foundProjects.get(file.curseforge.project))
+                            .orElseGet(() -> CurseForgeApi.getProjectById(file.curseforge.project));
+
+                    CurseForgeFile curseForgeFile = filesFound.stream().filter(f -> f.id == file.curseforge.file)
+                            .findFirst()
+                            .orElseGet(() -> CurseForgeApi
+                                    .getFileForProject(file.curseforge.project, file.curseforge.file));
+
+                    if (curseForgeFile.downloadUrl == null) {
+                        LogManager.debug(String.format(
+                                "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
+                                curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name,
+                                curseForgeProject.id,
+                                curseForgeProject.allowModDistribution,
+                                curseForgeProject.allowModDistribution == null ? "null"
+                                        : curseForgeProject.allowModDistribution.toString()));
+
+                        Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+                                .findFirst();
+                        if (sha1Hash.isPresent()) {
+                            ModrinthVersion modrinthVersion = ModrinthApi.getVersionFromSha1Hash(sha1Hash.get().value);
+
+                            if (modrinthVersion != null) {
+                                ModrinthProject modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
+
+                                Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
+                                modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
+                                modToAdd.modrinthProject = modrinthProject;
+                                modToAdd.modrinthVersion = modrinthVersion;
+
+                                return modToAdd;
+                            }
+                        }
+
+                        manualDownloadMods
+                                .add(new Pair<CurseForgeProject, CurseForgeFile>(curseForgeProject, curseForgeFile));
+
+                        Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
+                        modToAdd.download = DownloadType.browser;
+                        modToAdd.url = curseForgeProject.getBrowserDownloadUrl(curseForgeFile);
+                        modToAdd.file = curseForgeFile.fileName.replace(" ", "+");
+                        return modToAdd;
+                    }
+
+                    return curseForgeFile.convertToMod(curseForgeProject);
+                })
+                .collect(Collectors.toList());
+
+        if (manualDownloadMods.size() != 0 && !App.settings.seenCurseForgeProjectDistributionDialog) {
+            App.settings.seenCurseForgeProjectDistributionDialog = true;
+            App.settings.save();
+
+            DialogManager.okDialog().setType(DialogManager.WARNING)
+                    .setTitle(GetText.tr("Mods Not Available"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                            .build())
+                    .show();
+        }
 
         hideSubProgressBar();
     }
@@ -2249,7 +2343,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         List<Mod> browserDownloadMods = this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser)
                 .collect(Collectors.toList());
         if (browserDownloadMods.size() != 0) {
-            if (curseForgeManifest != null) {
+            if (curseForgeManifest != null || modpacksChPackManifest != null) {
                 fireTask(GetText.tr("Downloading Browser Mods"));
 
                 BrowserDownloadDialog browserDownloadDialog = new BrowserDownloadDialog(this.dialog,
@@ -2482,7 +2576,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireTask(GetText.tr("Calculating Files To Download"));
 
             List<com.atlauncher.network.Download> filesToDownload = modpacksChPackVersionManifest.files.parallelStream()
-                    .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD).map(file -> {
+                    .filter(f -> f.type != ModpacksChPackVersionManifestFileType.MOD).map(file -> {
                         com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
                                 .setUrl(file.url).size((long) file.size).hash(file.sha1).ignoreFailures()
                                 .downloadTo(root.resolve(
@@ -2496,7 +2590,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireTask(GetText.tr("Creating Config Directories"));
 
             modpacksChPackVersionManifest.files.stream()
-                    .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
+                    .filter(f -> f.type != ModpacksChPackVersionManifestFileType.MOD)
                     .map(file -> root.resolve(
                             file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path))
                     .forEach(path -> {
@@ -2860,7 +2954,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             // delete all files downloaded previously if modpacks.ch pack
             if (isReinstall && instance != null && instance.isModpacksChPack()) {
                 instance.launcher.modpacksChPackVersionManifest.files.stream()
-                        .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
+                        .filter(f -> f.type != ModpacksChPackVersionManifestFileType.MOD)
                         .map(file -> instance.ROOT.resolve(
                                 (file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path)
                                         + file.name))
@@ -2876,7 +2970,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 // now delete all the empty directories left over to cleanup
                 instance.launcher.modpacksChPackVersionManifest.files.stream()
-                        .filter(f -> f.type != ModpacksChPackVersionManifectFileType.MOD)
+                        .filter(f -> f.type != ModpacksChPackVersionManifestFileType.MOD)
                         .map(file -> instance.ROOT.resolve(
                                 file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path))
                         .distinct().sorted(Comparator.comparingInt(Path::getNameCount).reversed()).forEach(path -> {

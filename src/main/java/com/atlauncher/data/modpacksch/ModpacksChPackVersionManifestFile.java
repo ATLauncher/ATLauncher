@@ -27,6 +27,7 @@ public class ModpacksChPackVersionManifestFile {
     public String version;
     public String path;
     public String url;
+    public List<String> mirrors;
     public String sha1;
     public int size;
     public List<Object> tags;
@@ -35,8 +36,9 @@ public class ModpacksChPackVersionManifestFile {
     public boolean optional;
     public int id;
     public String name;
-    public ModpacksChPackVersionManifectFileType type;
+    public ModpacksChPackVersionManifestFileType type;
     public int updated;
+    public ModpacksChPackVersionManifestFileCurseForge curseforge;
 
     public ModType getType() {
         return ModType.mods;

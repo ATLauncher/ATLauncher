@@ -17,18 +17,7 @@
  */
 package com.atlauncher.data.modpacksch;
 
-import com.google.gson.annotations.SerializedName;
-
-public enum ModpacksChPackVersionManifectFileType {
-    @SerializedName("config")
-    CONFIG,
-
-    @SerializedName("mod")
-    MOD,
-
-    @SerializedName("resource")
-    RESOURCE,
-
-    @SerializedName("script")
-    SCRIPT
+public class ModpacksChPackVersionManifestFileCurseForge {
+    public int project;
+    public int file;
 }
