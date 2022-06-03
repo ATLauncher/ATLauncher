@@ -17,5 +17,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Missing progress dialog when getting Modrinth pack versions
 - Modpacks.ch packs not installing correctly after change to CurseForge metadata
 - Reload CurseForge dependencies after installing one of them
+- The update and reinstall buttons on instances showing up when the platform is turned off
 
 ### Misc

@@ -63,6 +63,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -116,6 +118,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -141,8 +144,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonIOException;
-
-import org.mini2Dx.gettext.GetText;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -2237,7 +2238,13 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isUpdatableExternalPack() {
-        return isExternalPack() && (isModpacksChPack() || isCurseForgePack() || isTechnicPack() || isModrinthPack());
+        return isExternalPack() && ((isModpacksChPack()
+                && ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == true)
+                || (isCurseForgePack()
+                        && ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true)
+                || (isTechnicPack() && ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true)
+                || (isModrinthPack()
+                        && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
     }
 
     public String getAnalyticsCategory() {
