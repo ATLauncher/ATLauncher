@@ -49,6 +49,8 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
@@ -69,8 +71,6 @@ import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 public class EditModsDialog extends JDialog {
     private static final long serialVersionUID = 7004414192679481818L;
@@ -595,31 +595,40 @@ public class EditModsDialog extends JDialog {
     }
 
     private void removeMods() {
-        ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
-        for (ModsJCheckBox mod : mods) {
-            if (mod.isSelected()) {
-                this.instance.launcher.mods.remove(mod.getDisableableMod());
-                FileUtils.delete(
-                        (mod.getDisableableMod().isDisabled()
-                                ? mod.getDisableableMod().getDisabledFile(this.instance)
-                                : mod.getDisableableMod().getFile(this.instance)).toPath(),
-                        true);
-                enabledMods.remove(mod);
+        int ret = DialogManager.yesNoDialog()
+                .setTitle(GetText.tr("Delete Selected Mods?"))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "This will delete the selected mods from the instance.<br/><br/>Are you sure you want to do this?"))
+                        .build())
+                .setType(DialogManager.WARNING).show();
+
+        if (ret == 0) {
+            ArrayList<ModsJCheckBox> mods = new ArrayList<>(enabledMods);
+            for (ModsJCheckBox mod : mods) {
+                if (mod.isSelected()) {
+                    this.instance.launcher.mods.remove(mod.getDisableableMod());
+                    FileUtils.delete(
+                            (mod.getDisableableMod().isDisabled()
+                                    ? mod.getDisableableMod().getDisabledFile(this.instance)
+                                    : mod.getDisableableMod().getFile(this.instance)).toPath(),
+                            true);
+                    enabledMods.remove(mod);
+                }
             }
-        }
-        mods = new ArrayList<>(disabledMods);
-        for (ModsJCheckBox mod : mods) {
-            if (mod.isSelected()) {
-                this.instance.launcher.mods.remove(mod.getDisableableMod());
-                FileUtils.delete(
-                        (mod.getDisableableMod().isDisabled()
-                                ? mod.getDisableableMod().getDisabledFile(this.instance)
-                                : mod.getDisableableMod().getFile(this.instance)).toPath(),
-                        true);
-                disabledMods.remove(mod);
+            mods = new ArrayList<>(disabledMods);
+            for (ModsJCheckBox mod : mods) {
+                if (mod.isSelected()) {
+                    this.instance.launcher.mods.remove(mod.getDisableableMod());
+                    FileUtils.delete(
+                            (mod.getDisableableMod().isDisabled()
+                                    ? mod.getDisableableMod().getDisabledFile(this.instance)
+                                    : mod.getDisableableMod().getFile(this.instance)).toPath(),
+                            true);
+                    disabledMods.remove(mod);
+                }
             }
+            reloadPanels();
         }
-        reloadPanels();
     }
 
     public void reloadPanels() {
