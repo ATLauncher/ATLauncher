@@ -20,7 +20,6 @@ package com.atlauncher.gui.card;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Window;
 import java.util.Optional;
 
 import javax.swing.BorderFactory;
@@ -30,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+
+import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -43,15 +44,13 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
-import org.mini2Dx.gettext.GetText;
-
 @SuppressWarnings("serial")
 public final class CurseForgeFileDependencyCard extends JPanel {
-    private final Window parent;
+    private final CurseForgeProjectFileSelectorDialog parent;
     private final CurseForgeFileDependency dependency;
     private final Instance instance;
 
-    public CurseForgeFileDependencyCard(Window parent, CurseForgeFileDependency dependency, Instance instance) {
+    public CurseForgeFileDependencyCard(CurseForgeProjectFileSelectorDialog parent, CurseForgeFileDependency dependency, Instance instance) {
         this.parent = parent;
 
         setLayout(new BorderLayout());
@@ -93,6 +92,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
         addButton.addActionListener(e -> {
             Analytics.sendEvent(mod.name, "AddDependency", "CurseForgeMod");
             new CurseForgeProjectFileSelectorDialog(parent, mod, instance);
+            parent.reloadDependenciesPanel();
         });
 
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.getWebsiteUrl()));

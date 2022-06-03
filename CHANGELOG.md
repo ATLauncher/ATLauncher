@@ -16,5 +16,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Modrinth mrpack downloads not showing size on instance installer
 - Missing progress dialog when getting Modrinth pack versions
 - Modpacks.ch packs not installing correctly after change to CurseForge metadata
+- Reload CurseForge dependencies after installing one of them
 
 ### Misc
