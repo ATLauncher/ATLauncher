@@ -22,7 +22,7 @@ import java.util.List;
 public class ModpacksChPackVersionManifest {
     public List<ModpacksChPackVersionManifestFile> files;
     public ModpacksChPackVersionSpecs specs;
-    public List<ModpacksChPackVersionManifectTarget> targets;
+    public List<ModpacksChPackVersionManifestTarget> targets;
     public int installs;
     public int plays;
     public int refreshed;

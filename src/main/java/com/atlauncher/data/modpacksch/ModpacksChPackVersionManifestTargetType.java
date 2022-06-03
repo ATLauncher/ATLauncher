@@ -17,10 +17,12 @@
  */
 package com.atlauncher.data.modpacksch;
 
-public class ModpacksChPackVersionManifectTarget {
-    public String version;
-    public int id;
-    public String name;
-    public ModpacksChPackVersionManifectTargetType type;
-    public int updated;
+import com.google.gson.annotations.SerializedName;
+
+public enum ModpacksChPackVersionManifestTargetType {
+    @SerializedName("modloader")
+    MODLOADER,
+
+    @SerializedName("game")
+    GAME
 }

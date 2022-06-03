@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.modpacksch.ModpacksChPackList;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
+import com.atlauncher.data.modpacksch.ModpacksChPackVersionModsManifest;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 
 import okhttp3.CacheControl;
@@ -79,5 +81,26 @@ public class ModpacksChApi {
                 .filter(p -> p.versions != null).collect(Collectors.toList());
 
         return packs;
+    }
+
+    public static ModpacksChPackVersionModsManifest getModsManifest(int packId, int versionId) {
+        try {
+            ModpacksChPackVersionModsManifest modsManifest = Download.build()
+                    .setUrl(String.format("%s/modpack/%s/%s/mods", Constants.MODPACKS_CH_API_URL,
+                            packId,
+                            versionId))
+                    .cached(new CacheControl.Builder().maxStale(5, TimeUnit.MINUTES).build())
+                    .asClassWithThrow(ModpacksChPackVersionModsManifest.class);
+
+            if (modsManifest.status != null && modsManifest.status.equals("error")) {
+                return null;
+            }
+
+            return modsManifest;
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error calling mods endpoint for Modpacks.ch", e);
+        }
+
+        return null;
     }
 }

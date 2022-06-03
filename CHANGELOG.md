@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add setting for user to select a custom download path for browser downloaded mods
+- Use mods Modpacks.ch endpoint to fill in missing information for some packs
 
 ### Fixes
 - Mark all Modrinth mods as required when exporting unless explicitely marked as unsupported

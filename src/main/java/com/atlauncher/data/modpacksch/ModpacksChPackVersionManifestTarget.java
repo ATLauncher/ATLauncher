@@ -17,7 +17,10 @@
  */
 package com.atlauncher.data.modpacksch;
 
-public class ModpacksChPackVersionManifestFileCurseForge {
-    public Integer project;
-    public Integer file;
+public class ModpacksChPackVersionManifestTarget {
+    public String version;
+    public int id;
+    public String name;
+    public ModpacksChPackVersionManifestTargetType type;
+    public int updated;
 }
