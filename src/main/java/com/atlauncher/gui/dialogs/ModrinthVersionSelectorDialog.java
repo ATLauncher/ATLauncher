@@ -20,6 +20,7 @@ package com.atlauncher.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,21 +34,25 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.modrinth.ModrinthDependency;
+import com.atlauncher.data.modrinth.ModrinthDependencyType;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.gui.card.ModrinthProjectDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ModrinthVersionSelectorDialog extends JDialog {
@@ -56,6 +61,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private final Instance instance;
     private String installedVersionId = null;
 
+    private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
+    private JScrollPane scrollPane;
     private JButton addButton;
     private JButton viewModButton;
     private JButton viewFileButton;
@@ -101,6 +108,43 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         setupComponents();
     }
 
+    public void reloadDependenciesPanel() {
+        ModrinthVersion selectedFile = (ModrinthVersion) versionsDropdown.getSelectedItem();
+
+        dependenciesPanel.setVisible(false);
+
+        // this file has dependencies
+        if (selectedFile.dependencies.size() != 0) {
+            // check to see which required ones we don't already have
+            List<ModrinthDependency> dependencies = selectedFile.dependencies.stream()
+                    .filter(dependency -> dependency.dependencyType == ModrinthDependencyType.REQUIRED
+                            && instance.launcher.mods.stream()
+                                    .noneMatch(installedMod -> installedMod.isFromModrinth()
+                                            && installedMod.modrinthProject.id.equals(dependency.projectId)))
+                    .collect(Collectors.toList());
+
+            if (dependencies.size() != 0) {
+                dependenciesPanel.removeAll();
+
+                dependencies.forEach(dependency -> dependenciesPanel
+                        .add(new ModrinthProjectDependencyCard(this, dependency, instance)));
+
+                dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
+                        (dependencies.size() / 2) + 1));
+
+                setSize(550, 450);
+                setLocationRelativeTo(App.launcher.getParent());
+
+                dependenciesPanel.setVisible(true);
+
+                scrollPane.repaint();
+                scrollPane.validate();
+            } else {
+                setSize(550, 200);
+            }
+        }
+    }
+
     private void setupComponents() {
         Analytics.sendScreenView("Modrinth Version Selector Dialog");
 
@@ -122,6 +166,10 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
         viewFileButton = new JButton(GetText.tr("View File"));
         viewFileButton.setEnabled(false);
+
+        dependenciesPanel.setVisible(false);
+        dependenciesPanel
+                .setBorder(BorderFactory.createTitledBorder(GetText.tr("The below mods need to be installed")));
 
         // Top Panel Stuff
         JPanel top = new JPanel(new BorderLayout());
@@ -145,7 +193,13 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         versionsDropdown.setEnabled(false);
         filesPanel.add(versionsDropdown);
 
+        scrollPane = new JScrollPane(dependenciesPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(550, 250));
+
         middle.add(filesPanel, BorderLayout.NORTH);
+        middle.add(scrollPane, BorderLayout.SOUTH);
 
         this.getFiles();
 
@@ -177,6 +231,10 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
 
             OS.openWebBrowser(String.format("https://modrinth.com/mod/%s/version/%s", mod.slug, version.id));
+        });
+
+        versionsDropdown.addActionListener(e -> {
+            reloadDependenciesPanel();
         });
 
         JButton cancel = new JButton(GetText.tr("Cancel"));
