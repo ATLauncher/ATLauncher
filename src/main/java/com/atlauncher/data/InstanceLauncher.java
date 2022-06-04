@@ -97,4 +97,9 @@ public class InstanceLauncher {
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
     public boolean vanillaInstance = false;
+
+    public String lastExportName = null;
+    public String lastExportVersion = null;
+    public String lastExportAuthor = null;
+    public String lastExportSaveTo = null;
 }

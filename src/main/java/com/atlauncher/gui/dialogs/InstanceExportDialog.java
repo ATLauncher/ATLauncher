@@ -28,6 +28,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -105,7 +106,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField name = new JTextField(30);
-        name.setText(instance.launcher.name);
+        name.setText(Optional.ofNullable(instance.launcher.lastExportName).orElse(instance.launcher.name));
         topPanel.add(name, gbc);
 
         // Version
@@ -122,7 +123,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField version = new JTextField(30);
-        version.setText(instance.launcher.version);
+        version.setText(Optional.ofNullable(instance.launcher.lastExportVersion).orElse(instance.launcher.version));
         topPanel.add(version, gbc);
 
         // Author
@@ -139,8 +140,9 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
-        author.setText(AccountManager.getSelectedAccount() == null ? ""
-                : AccountManager.getSelectedAccount().minecraftUsername);
+        author.setText(Optional.ofNullable(instance.launcher.lastExportAuthor)
+                .orElse(AccountManager.getSelectedAccount() == null ? ""
+                        : AccountManager.getSelectedAccount().minecraftUsername));
         topPanel.add(author, gbc);
 
         // Format
@@ -190,7 +192,8 @@ public class InstanceExportDialog extends JDialog {
         saveToPanel.setLayout(new BoxLayout(saveToPanel, BoxLayout.X_AXIS));
 
         final JTextField saveTo = new JTextField(25);
-        saveTo.setText(instance.getRoot().toAbsolutePath().toString());
+        saveTo.setText(Optional.ofNullable(instance.launcher.lastExportSaveTo)
+                .orElse(instance.getRoot().toAbsolutePath().toString()));
 
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
@@ -281,6 +284,10 @@ public class InstanceExportDialog extends JDialog {
 
                 if (instance.export(name.getText(), version.getText(), author.getText(),
                         exportFormat, saveTo.getText(), overrides)) {
+                    instance.launcher.lastExportName = name.getText();
+                    instance.launcher.lastExportVersion = version.getText();
+                    instance.launcher.lastExportAuthor = author.getText();
+                    instance.launcher.lastExportSaveTo = saveTo.getText();
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                     String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
                     if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
