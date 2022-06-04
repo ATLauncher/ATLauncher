@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Unable to export when name contains invalid path characters
 - Remove overrides folder from exports when it's empty
+- Folders to go into overrides not working as intended when exporting an instance
 
 ### Misc

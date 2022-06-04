@@ -241,7 +241,7 @@ public class InstanceExportDialog extends JDialog {
         for (File filename : files) {
             JCheckBox checkBox = new JCheckBox(filename.getName());
 
-            checkBox.addChangeListener(e -> {
+            checkBox.addItemListener(e -> {
                 if (checkBox.isSelected()) {
                     overrides.add(checkBox.getText());
                 } else {
