@@ -45,9 +45,11 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.extension.ExtensionUtils;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ImportPackUtils;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -134,7 +136,14 @@ public class ImportInstanceDialog extends JDialog {
 
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
-            if (App.settings.useNativeFilePicker) {
+            if (OS.isUsingFlatpak() && ExtensionUtils.hasFlatpakExtension()) {
+                File[] filesChosen = ExtensionUtils.selectFilesFromExtension();
+
+                if (filesChosen.length != 0) {
+                    filePath.setText(filesChosen[0].getAbsolutePath());
+                    changeAddButtonStatus();
+                }
+            } else if (App.settings.useNativeFilePicker) {
                 FileDialog fileDialog = new FileDialog(this, GetText.tr("Select file/s"), FileDialog.LOAD);
                 fileDialog.setFilenameFilter(new FilenameFilter() {
                     @Override

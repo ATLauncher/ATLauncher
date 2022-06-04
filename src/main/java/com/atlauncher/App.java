@@ -59,6 +59,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
+import com.atlauncher.extension.ExtensionUtils;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
@@ -440,6 +441,9 @@ public class App {
 
         if (OS.isUsingFlatpak()) {
             LogManager.info("Using Flatpak!");
+            if (ExtensionUtils.hasFlatpakExtension()) {
+                LogManager.info("Has flatpak extension");
+            }
         }
 
         try {
