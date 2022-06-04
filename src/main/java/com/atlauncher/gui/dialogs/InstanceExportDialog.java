@@ -232,11 +232,13 @@ public class InstanceExportDialog extends JDialog {
         overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
         overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
 
-        // get all files ignoring ATLauncher specific things
+        // get all files ignoring ATLauncher specific things as well as naughtys
         File[] files = instance.getRoot().toFile()
                 .listFiles(pathname -> !pathname.getName().equalsIgnoreCase("disabledmods")
                         && !pathname.getName().equalsIgnoreCase("jarmods")
-                        && !pathname.getName().equalsIgnoreCase("instance.json"));
+                        && !pathname.getName().equalsIgnoreCase("instance.json")
+                        && !pathname.getName().equalsIgnoreCase(".fabric")
+                        && !pathname.getName().equalsIgnoreCase(".quilt"));
 
         for (File filename : files) {
             JCheckBox checkBox = new JCheckBox(filename.getName());
