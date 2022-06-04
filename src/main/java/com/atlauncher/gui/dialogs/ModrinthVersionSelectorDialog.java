@@ -113,24 +113,28 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
         dependenciesPanel.setVisible(false);
 
+        List<ModrinthDependency> dependencies = selectedFile.dependencies.stream().filter(d -> d.projectId != null)
+                .collect(Collectors.toList());
+
         // this file has dependencies
-        if (selectedFile.dependencies.size() != 0) {
+        if (dependencies.size() != 0) {
             // check to see which required ones we don't already have
-            List<ModrinthDependency> dependencies = selectedFile.dependencies.stream()
+            List<ModrinthDependency> dependenciesNeeded = dependencies.stream()
                     .filter(dependency -> dependency.dependencyType == ModrinthDependencyType.REQUIRED
                             && instance.launcher.mods.stream()
                                     .noneMatch(installedMod -> installedMod.isFromModrinth()
                                             && installedMod.modrinthProject.id.equals(dependency.projectId)))
                     .collect(Collectors.toList());
 
-            if (dependencies.size() != 0) {
+            if (dependenciesNeeded.size() != 0) {
                 dependenciesPanel.removeAll();
 
-                dependencies.forEach(dependency -> dependenciesPanel
+                dependenciesNeeded.forEach(dependency -> dependenciesPanel
                         .add(new ModrinthProjectDependencyCard(this, dependency, instance)));
 
-                dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
-                        (dependencies.size() / 2) + 1));
+                dependenciesPanel
+                        .setLayout(new GridLayout(dependenciesNeeded.size() < 2 ? 1 : dependenciesNeeded.size() / 2,
+                                (dependenciesNeeded.size() / 2) + 1));
 
                 setSize(550, 450);
                 setLocationRelativeTo(App.launcher.getParent());

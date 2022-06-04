@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with some Modrinth mod dependencies not having a project id
 
 ### Misc
