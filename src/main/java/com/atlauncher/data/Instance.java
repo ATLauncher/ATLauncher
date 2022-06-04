@@ -1545,7 +1545,8 @@ public class Instance extends MinecraftVersion {
 
     public boolean exportAsMultiMcZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
-        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
+        Path to = Paths.get(saveTo).resolve(safePathName + ".zip");
         MultiMCManifest manifest = new MultiMCManifest();
 
         manifest.formatVersion = 1;
@@ -1765,7 +1766,7 @@ public class Instance extends MinecraftVersion {
         FileUtils.createDirectory(dotMinecraftPath);
 
         for (String path : overrides) {
-            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+            if (!path.equalsIgnoreCase(safePathName + ".zip") && getRoot().resolve(path).toFile().exists()
                     && (getRoot().resolve(path).toFile().isFile()
                             || getRoot().resolve(path).toFile().list().length != 0)) {
                 if (getRoot().resolve(path).toFile().isDirectory()) {
@@ -1785,7 +1786,8 @@ public class Instance extends MinecraftVersion {
 
     public boolean exportAsCurseForgeZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
-        Path to = Paths.get(saveTo).resolve(name + ".zip");
+        String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
+        Path to = Paths.get(saveTo).resolve(safePathName + ".zip");
         CurseForgeManifest manifest = new CurseForgeManifest();
 
         // for any mods not from CurseForge, scan for them on CurseForge
@@ -1918,7 +1920,7 @@ public class Instance extends MinecraftVersion {
         FileUtils.createDirectory(overridesPath);
 
         for (String path : overrides) {
-            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+            if (!path.equalsIgnoreCase(safePathName + ".zip") && getRoot().resolve(path).toFile().exists()
                     && (getRoot().resolve(path).toFile().isFile()
                             || getRoot().resolve(path).toFile().list().length != 0)) {
                 if (getRoot().resolve(path).toFile().isDirectory()) {
@@ -1955,7 +1957,8 @@ public class Instance extends MinecraftVersion {
 
     public boolean exportAsModrinthZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
-        Path to = Paths.get(saveTo).resolve(name + ".mrpack");
+        String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
+        Path to = Paths.get(saveTo).resolve(safePathName + ".mrpack");
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
 
         // for any mods not from Modrinth, scan for them on Modrinth
@@ -2041,7 +2044,7 @@ public class Instance extends MinecraftVersion {
         FileUtils.createDirectory(overridesPath);
 
         for (String path : overrides) {
-            if (!path.equalsIgnoreCase(name + ".zip") && getRoot().resolve(path).toFile().exists()
+            if (!path.equalsIgnoreCase(safePathName + ".zip") && getRoot().resolve(path).toFile().exists()
                     && (getRoot().resolve(path).toFile().isFile()
                             || getRoot().resolve(path).toFile().list().length != 0)) {
                 if (getRoot().resolve(path).toFile().isDirectory()) {

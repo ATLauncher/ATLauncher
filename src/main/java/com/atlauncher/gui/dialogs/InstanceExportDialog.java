@@ -42,6 +42,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
@@ -51,8 +53,6 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class InstanceExportDialog extends JDialog {
@@ -281,9 +281,10 @@ public class InstanceExportDialog extends JDialog {
                 if (instance.export(name.getText(), version.getText(), author.getText(),
                         exportFormat, saveTo.getText(), overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
+                    String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
                     OS.openFileExplorer(
                             Paths.get(saveTo.getText())
-                                    .resolve(name.getText()
+                                    .resolve(safePathName
                                             + (exportFormat == InstanceExportFormat.MODRINTH ? ".mrpack" : ".zip")),
                             true);
                 } else {
