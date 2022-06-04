@@ -1793,7 +1793,7 @@ public class Instance extends MinecraftVersion {
     public boolean exportAsCurseForgeZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
-        Path to = Paths.get(saveTo).resolve(safePathName + ".zip");
+        Path to = Paths.get(saveTo).resolve(String.format("%s %s.zip", safePathName, version));
         CurseForgeManifest manifest = new CurseForgeManifest();
 
         // for any mods not from CurseForge, scan for them on CurseForge
@@ -1964,7 +1964,7 @@ public class Instance extends MinecraftVersion {
     public boolean exportAsModrinthZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
-        Path to = Paths.get(saveTo).resolve(safePathName + ".mrpack");
+        Path to = Paths.get(saveTo).resolve(String.format("%s %s.mrpack", safePathName, version));
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
 
         // for any mods not from Modrinth, scan for them on Modrinth

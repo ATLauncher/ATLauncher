@@ -288,6 +288,8 @@ public class InstanceExportDialog extends JDialog {
                     instance.launcher.lastExportVersion = version.getText();
                     instance.launcher.lastExportAuthor = author.getText();
                     instance.launcher.lastExportSaveTo = saveTo.getText();
+                    instance.save();
+
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                     String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
                     if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
@@ -295,8 +297,8 @@ public class InstanceExportDialog extends JDialog {
                     } else {
                         OS.openFileExplorer(
                                 Paths.get(saveTo.getText())
-                                        .resolve(safePathName
-                                                + (exportFormat == InstanceExportFormat.MODRINTH ? ".mrpack" : ".zip")),
+                                        .resolve(String.format("%s %s.%s", safePathName, version.getText(),
+                                                (exportFormat == InstanceExportFormat.MODRINTH ? "mrpack" : "zip"))),
                                 true);
                     }
                 } else {
