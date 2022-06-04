@@ -22,6 +22,8 @@ import java.awt.GridBagConstraints;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -30,8 +32,6 @@ import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ModsSettingsTab extends AbstractSettingsTab {
@@ -163,6 +163,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         defaultExportFormat = new JComboBox<>();
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MODRINTH, "Modrinth"));
+        defaultExportFormat
+                .addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
 
         for (int i = 0; i < defaultExportFormat.getItemCount(); i++) {

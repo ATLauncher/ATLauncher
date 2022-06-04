@@ -1536,6 +1536,12 @@ public class Instance extends MinecraftVersion {
             return exportAsCurseForgeZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MODRINTH) {
             return exportAsModrinthZip(name, version, author, saveTo, overrides);
+        } else if (format == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
+            if (!exportAsCurseForgeZip(name, version, author, saveTo, overrides)) {
+                return false;
+            }
+
+            return exportAsModrinthZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MULTIMC) {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }

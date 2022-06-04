@@ -159,6 +159,7 @@ public class InstanceExportDialog extends JDialog {
         final JComboBox<ComboItem<InstanceExportFormat>> format = new JComboBox<>();
         format.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
         format.addItem(new ComboItem<>(InstanceExportFormat.MODRINTH, "Modrinth"));
+        format.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
         format.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
         topPanel.add(format, gbc);
 
@@ -282,11 +283,15 @@ public class InstanceExportDialog extends JDialog {
                         exportFormat, saveTo.getText(), overrides)) {
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                     String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
-                    OS.openFileExplorer(
-                            Paths.get(saveTo.getText())
-                                    .resolve(safePathName
-                                            + (exportFormat == InstanceExportFormat.MODRINTH ? ".mrpack" : ".zip")),
-                            true);
+                    if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
+                        OS.openFileExplorer(Paths.get(saveTo.getText()));
+                    } else {
+                        OS.openFileExplorer(
+                                Paths.get(saveTo.getText())
+                                        .resolve(safePathName
+                                                + (exportFormat == InstanceExportFormat.MODRINTH ? ".mrpack" : ".zip")),
+                                true);
+                    }
                 } else {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
                 }
