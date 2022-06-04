@@ -1954,6 +1954,11 @@ public class Instance extends MinecraftVersion {
             }
         }
 
+        // if overrides folder itself is empty, then remove it
+        if (overridesPath.toFile().list().length == 0) {
+            FileUtils.deleteDirectory(overridesPath);
+        }
+
         ArchiveUtils.createZip(tempDir, to);
 
         FileUtils.deleteDirectory(tempDir);
@@ -2076,6 +2081,11 @@ public class Instance extends MinecraftVersion {
                     && overridesPath.resolve(path).toFile().list().length == 0) {
                 FileUtils.deleteDirectory(overridesPath.resolve(path));
             }
+        }
+
+        // if overrides folder itself is empty, then remove it
+        if (overridesPath.toFile().list().length == 0) {
+            FileUtils.deleteDirectory(overridesPath);
         }
 
         ArchiveUtils.createZip(tempDir, to);
