@@ -231,6 +231,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
                 scrollPane.repaint();
                 scrollPane.validate();
+            } else {
+                setSize(550, 200);
             }
         } else {
             setSize(550, 200);

@@ -146,6 +146,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             } else {
                 setSize(550, 200);
             }
+        } else {
+            setSize(550, 200);
         }
     }
 
