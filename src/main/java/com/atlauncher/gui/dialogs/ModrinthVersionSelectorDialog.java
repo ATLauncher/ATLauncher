@@ -109,6 +109,10 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     }
 
     public void reloadDependenciesPanel() {
+        if (versionsDropdown.getSelectedItem() == null) {
+            return;
+        }
+
         ModrinthVersion selectedFile = (ModrinthVersion) versionsDropdown.getSelectedItem();
 
         dependenciesPanel.setVisible(false);
@@ -196,6 +200,9 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         filesPanel.add(versionsLabel);
 
         versionsDropdown = new JComboBox<>();
+        ModrinthVersion loadingProject = new ModrinthVersion();
+        loadingProject.name = GetText.tr("Loading");
+        versionsDropdown.addItem(loadingProject);
         versionsDropdown.setEnabled(false);
         filesPanel.add(versionsDropdown);
 
@@ -300,6 +307,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                         getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.name) + 100);
             }
 
+            versionsDropdown.removeAllItems();
+
             versions.forEach(version -> versionsDropdown.addItem(version));
 
             if (versionsDropdown.getItemCount() == 0) {
@@ -331,7 +340,6 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             addButton.setEnabled(true);
             viewModButton.setEnabled(true);
             viewFileButton.setEnabled(true);
-            versionsDropdown.setEnabled(true);
         };
 
         new Thread(r).start();

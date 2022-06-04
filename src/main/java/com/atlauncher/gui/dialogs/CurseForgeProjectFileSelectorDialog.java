@@ -141,6 +141,9 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         filesPanel.add(versionsLabel);
 
         filesDropdown = new JComboBox<>();
+        CurseForgeFile loadingProject = new CurseForgeFile();
+        loadingProject.displayName = GetText.tr("Loading");
+        filesDropdown.addItem(loadingProject);
         filesDropdown.setEnabled(false);
         filesPanel.add(filesDropdown);
 
@@ -202,6 +205,10 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     public void reloadDependenciesPanel() {
+        if (filesDropdown.getSelectedItem() == null) {
+            return;
+        }
+
         CurseForgeFile selectedFile = (CurseForgeFile) filesDropdown.getSelectedItem();
 
         dependenciesPanel.setVisible(false);
@@ -291,6 +298,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                         getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
             }
 
+            filesDropdown.removeAllItems();
+
             // try to filter out non compatable mods (Forge on Fabric and vice versa) if no
             // loader gameVersions are set
             if (App.settings.addModRestriction == AddModRestriction.NONE) {
@@ -348,7 +357,6 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             addButton.setEnabled(true);
             viewModButton.setEnabled(true);
             viewFileButton.setEnabled(true);
-            filesDropdown.setEnabled(true);
         };
 
         new Thread(r).start();

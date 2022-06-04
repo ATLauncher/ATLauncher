@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.joda.time.format.ISODateTimeFormat;
+
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
@@ -30,15 +32,13 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.MinecraftManager;
 import com.google.gson.annotations.SerializedName;
 
-import org.joda.time.format.ISODateTimeFormat;
-
 public class CurseForgeFile {
     public int id;
     public int gameId;
     public boolean isAvailable;
     public String displayName;
     public String fileName;
-    public int releaseType;
+    public Integer releaseType;
     public int fileStatus;
     public String fileDate;
     public int fileLength;
@@ -64,6 +64,10 @@ public class CurseForgeFile {
     public int modId;
 
     public String toString() {
+        if (this.releaseType == null) {
+            return this.displayName;
+        }
+
         String releaseTypeString = this.releaseType == 1 ? "" : this.releaseType == 2 ? " (Beta)" : " (Alpha)";
         return this.displayName + releaseTypeString;
     }

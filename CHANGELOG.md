@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with some Modrinth mod dependencies not having a project id
 - Switching mod versions with and without dependencies not changing UI size
+- Add in loading indicator when adding mods as versions are fetched from the api
 
 ### Misc

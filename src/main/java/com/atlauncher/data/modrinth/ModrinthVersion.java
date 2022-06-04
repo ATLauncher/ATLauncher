@@ -72,6 +72,10 @@ public class ModrinthVersion {
     }
 
     public String toString() {
+        if (this.versionType == null) {
+            return this.name;
+        }
+
         String versionTypeString = this.versionType == ModrinthChannel.ALPHA ? "Alpha"
                 : this.versionType == ModrinthChannel.BETA ? "Beta" : "Release";
         return String.format("%s (%s)", this.name, versionTypeString);
