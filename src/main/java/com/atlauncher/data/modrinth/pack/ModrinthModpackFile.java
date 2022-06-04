@@ -38,8 +38,13 @@ public class ModrinthModpackFile {
     public Mod convertToMod(boolean isServer) {
         Mod mod = new Mod();
 
-        String clientEnv = env.containsKey("client") ? env.get("client") : "required";
-        String serverEnv = env.containsKey("server") ? env.get("server") : "required";
+        String clientEnv = "required";
+        String serverEnv = "required";
+
+        if (env != null) {
+            clientEnv = env.containsKey("client") ? env.get("client") : "required";
+            serverEnv = env.containsKey("server") ? env.get("server") : "required";
+        }
 
         mod.client = !clientEnv.equals("unsupported");
         mod.server = !serverEnv.equals("unsupported");
