@@ -232,14 +232,20 @@ public class QuiltLoader implements Loader {
         java.lang.reflect.Type type = new TypeToken<List<QuiltMetaVersion>>() {
         }.getType();
 
-        List<QuiltMetaVersion> versions = Download.build()
-                .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s", minecraft)).asType(type);
+        try {
+            List<QuiltMetaVersion> versions = Download.build()
+                    .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s", minecraft))
+                    .asTypeWithThrow(type);
 
-        List<String> disabledVersions = ConfigManager.getConfigItem("loaders.quilt.disabledVersions",
-                new ArrayList<String>());
+            List<String> disabledVersions = ConfigManager.getConfigItem("loaders.quilt.disabledVersions",
+                    new ArrayList<String>());
 
-        return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
-                .map(version -> new LoaderVersion(version.loader.version, false, "Quilt")).collect(Collectors.toList());
+            return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
+                    .map(version -> new LoaderVersion(version.loader.version, false, "Quilt"))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            return new ArrayList<>();
+        }
     }
 
     @Override

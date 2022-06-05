@@ -16,5 +16,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Folders to go into overrides not working as intended when exporting an instance
 - Exclude .fabric and .quilt folders from being exported
 - Issue installing Modrinth packs that have no env set for files
+- Issue selecting Quilt loader causing a lock when no versions available
 
 ### Misc
