@@ -74,6 +74,7 @@ dependencies {
     implementation 'joda-time:joda-time:2.10.14'
     implementation 'org.apache.commons:commons-compress:1.21'
     implementation 'org.commonmark:commonmark:0.18.2'
+    implementation 'com.github.hypfvieh:dbus-java:3.3.1'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
@@ -151,6 +152,8 @@ shadowJar {
     minimize {
         exclude(dependency('org.apache.logging.log4j:.*:.*'))
         exclude(dependency('com.formdev:.*:.*'))
+        exclude(dependency('com.github.jnr:.*:.*'))
+        exclude(dependency('com.github.hypfvieh:.*:.*'))
         exclude(dependency('org.apache.commons:commons-compress:.*'))
     }
     classifier = ''

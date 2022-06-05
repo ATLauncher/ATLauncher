@@ -45,6 +45,8 @@ import javax.swing.filechooser.FileFilter;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.dbus.DBusUtils;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 import org.mini2Dx.gettext.GetText;
@@ -99,7 +101,9 @@ public class FileChooserDialog extends JDialog {
 
         JButton selectButton = new JButton(GetText.tr("Select"));
         selectButton.addActionListener(e -> {
-            if (App.settings.useNativeFilePicker) {
+            if (OS.isUsingFlatpak()) {
+                filesChosen = DBusUtils.selectFiles();
+            } else if (App.settings.useNativeFilePicker) {
                 filesChosen = getFilesUsingFileDialog();
             } else {
                 filesChosen = getFilesUsingJFileChooser();
