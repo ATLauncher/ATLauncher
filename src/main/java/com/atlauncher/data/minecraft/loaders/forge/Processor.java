@@ -185,7 +185,14 @@ public class Processor {
             args.add(FileSystem.LIBRARIES.toFile().getAbsolutePath());
         }
 
-        ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[0]), Processor.class.getClassLoader());
+        ClassLoader parentClassLoader = null;
+        try {
+            Method getPlatform = ClassLoader.class.getDeclaredMethod("getPlatformClassLoader");
+            parentClassLoader = (ClassLoader) getPlatform.invoke(null);
+        } catch (Exception e) {
+        }
+
+        ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[0]), parentClassLoader);
         Thread currentThread = Thread.currentThread();
         ClassLoader threadClassloader = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(cl);
