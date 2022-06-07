@@ -173,6 +173,8 @@ public enum OS {
                 Runtime.getRuntime().exec("xdg-open " + uri);
             } else if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(uri);
+            } else {
+                LogManager.error("Cannot open web browser as no supported methods were found");
             }
         } catch (Exception e) {
             LogManager.logStackTrace("Error opening web browser!", e);
@@ -203,6 +205,8 @@ public enum OS {
                 } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open"))
                         || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
                     Runtime.getRuntime().exec("xdg-open " + pathToOpen.toString());
+                } else {
+                    LogManager.error("Cannot open file explorer as no supported methods were found");
                 }
             }
         } catch (Exception e) {

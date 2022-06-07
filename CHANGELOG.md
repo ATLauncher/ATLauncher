@@ -14,5 +14,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use Modrinths multi hash check endpoint instead of individually
 - Remove disk information from logging
 - Make no the default option when removing mods from an instance
+- Log error when no way to open web browser/file explorer
 
 ### Misc
