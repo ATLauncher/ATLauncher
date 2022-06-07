@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
@@ -37,8 +39,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.annotations.SerializedName;
-
-import org.mini2Dx.gettext.GetText;
 
 @Json
 public class Mod {
@@ -446,17 +446,14 @@ public class Mod {
                                         + (OS.isUsingMacApp()
                                                 ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
                                                 : (isFilePattern() ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                        : (OS.isUsingFlatpak()
-                                                                ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                                        + " or<br/>"
-                                                                        + FileSystem.getUserDownloadsPath().toFile()))))
+                                                        : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                                + " or<br/>"
+                                                                + FileSystem.getUserDownloadsPath().toFile())))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File"))
                                 .addOption(GetText.tr("Skip Mod (Pack May Break)")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(fileLocation, OS.isUsingFlatpak() ? null : downloadsFolderFile,
-                                        filesize, 1);
+                                .showWithFileMonitoring(fileLocation, downloadsFolderFile, filesize, 1);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             installer.cancel(true);
@@ -600,11 +597,9 @@ public class Mod {
                                         + GetText.tr("Please save this file to the following location") + "<br/><br/>"
                                         + (OS.isUsingMacApp()
                                                 ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
-                                                : (OS.isUsingFlatpak()
-                                                        ? FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                        : FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                                + " or<br/>"
-                                                                + FileSystem.getUserDownloadsPath().toFile())))
+                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                        + " or<br/>"
+                                                        + FileSystem.getUserDownloadsPath().toFile()))
                                 .build())
                         .setType(DialogManager.INFO).addOption(GetText.tr("Open Folder"), true)
                         .addOption(GetText.tr("I've Downloaded This File")).show();

@@ -15,5 +15,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove disk information from logging
 - Make no the default option when removing mods from an instance
 - Log error when no way to open web browser/file explorer
+- Use user downloads folder for Flatpak browser downloads
 
 ### Misc

@@ -73,7 +73,7 @@ public final class BrowserDownloadDialog extends JDialog {
     private final JButton skipRemainingButton = new JButton(GetText.tr("Skip Remaining"));
     private final JButton cancelInstallButton = new JButton(GetText.tr("Cancel Install"));
 
-    private final Path downloadPath = OS.isUsingFlatpak() ? FileSystem.DOWNLOADS : FileSystem.getUserDownloadsPath();
+    private final Path downloadPath = FileSystem.getUserDownloadsPath();
 
     public boolean success = false;
 
