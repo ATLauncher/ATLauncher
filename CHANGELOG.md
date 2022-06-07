@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Packs through Technic without a logo not installing
 - Use Modrinths multi hash check endpoint instead of individually
 - Remove disk information from logging
+- Make no the default option when removing mods from an instance
 
 ### Misc

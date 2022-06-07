@@ -595,7 +595,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void removeMods() {
-        int ret = DialogManager.yesNoDialog()
+        int ret = DialogManager.yesNoDialog(false)
                 .setTitle(GetText.tr("Delete Selected Mods?"))
                 .setContent(new HTMLBuilder().center().text(GetText.tr(
                         "This will delete the selected mods from the instance.<br/><br/>Are you sure you want to do this?"))
