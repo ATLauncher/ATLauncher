@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue with DBus packages causing install issues with some Forge versions [#564]
+- Modrinth exports trying to include non existent files
 
 ### Misc

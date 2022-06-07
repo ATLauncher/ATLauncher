@@ -1995,7 +1995,7 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.summary = this.launcher.description;
         manifest.files = this.launcher.mods.parallelStream()
-                .filter(m -> !m.disabled && m.isFromModrinth()).map(mod -> {
+                .filter(m -> !m.disabled && m.isFromModrinth() && m.getFile(this).exists()).map(mod -> {
                     Path modPath = mod.getFile(this).toPath();
 
                     ModrinthModpackFile file = new ModrinthModpackFile();
