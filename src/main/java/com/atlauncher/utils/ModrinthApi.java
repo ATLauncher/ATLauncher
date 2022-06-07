@@ -24,7 +24,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -42,6 +44,8 @@ import com.atlauncher.network.DownloadException;
 import com.google.gson.reflect.TypeToken;
 
 import okhttp3.CacheControl;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * Various utility methods for interacting with the Modrinth API.
@@ -204,5 +208,61 @@ public class ModrinthApi {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public static Map<String, ModrinthVersion> getVersionsFromSha1Hashes(String[] hashes) {
+        return getVersionsFromHashes(hashes, "sha1");
+    }
+
+    public static Map<String, ModrinthVersion> getVersionsFromSha512Hashes(String[] hashes) {
+        return getVersionsFromHashes(hashes, "sha512");
+    }
+
+    private static Map<String, ModrinthVersion> getVersionsFromHashes(String[] hashes, String algorithm) {
+        if (hashes.length == 0) {
+            return new HashMap<>();
+        }
+
+        try {
+            Map<String, Object> body = new HashMap<>();
+            body.put("hashes", hashes);
+            body.put("algorithm", algorithm);
+
+            java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
+            }.getType();
+
+            return Download.build()
+                    .setUrl(String.format("%s/version_files", Constants.MODRINTH_API_URL))
+                    .post(RequestBody.create(Gsons.DEFAULT.toJson(body),
+                            MediaType.get("application/json; charset=utf-8")))
+                    .asTypeWithThrow(type);
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
+    }
+
+    public static List<ModrinthProject> getProjects(String[] projectIds) {
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthProject>>() {
+        }.getType();
+
+        return Download.build()
+                .setUrl(String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,
+                        Gsons.DEFAULT.toJson(projectIds)))
+                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                .asType(type);
+    }
+
+    public static Map<String, ModrinthProject> getProjectsAsMap(String[] projectIds) {
+        try {
+            List<ModrinthProject> projects = getProjects(projectIds);
+
+            if (projects != null) {
+                return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
+            }
+        } catch (Throwable t) {
+            LogManager.logStackTrace("Error trying to get Modrinth projects as map", t);
+        }
+
+        return null;
     }
 }

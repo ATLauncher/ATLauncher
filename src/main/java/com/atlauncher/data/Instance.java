@@ -1973,21 +1973,33 @@ public class Instance extends MinecraftVersion {
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
 
         // for any mods not from Modrinth, scan for them on Modrinth
-        this.launcher.mods.stream()
-                .filter(m -> !m.disabled && !m.isFromModrinth()).forEach(mod -> {
-                    Path modPath = mod.getFile(this).toPath();
+        List<DisableableMod> nonModrinthMods = this.launcher.mods.parallelStream()
+                .filter(m -> !m.disabled && !m.isFromModrinth() && m.getFile(this).exists())
+                .collect(Collectors.toList());
 
-                    ModrinthVersion modrinthVersion = ModrinthApi
-                            .getVersionFromSha1Hash(Hashing.sha1(modPath).toString());
+        String[] sha1Hashes = nonModrinthMods.parallelStream()
+                .map(m -> Hashing.sha1(m.getFile(this).toPath()).toString()).toArray(String[]::new);
 
-                    if (modrinthVersion != null) {
-                        mod.modrinthVersion = modrinthVersion;
-                        mod.modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
+        Map<String, ModrinthVersion> modrinthVersions = ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes);
 
-                        LogManager.debug("Found matching mod from Modrinth called " + modrinthVersion.name);
-                    }
-                });
-        this.save();
+        if (modrinthVersions.size() != 0) {
+            Map<String, ModrinthProject> modrinthProjects = ModrinthApi.getProjectsAsMap(
+                    modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new));
+
+            nonModrinthMods.parallelStream().forEach(mod -> {
+                String hash = Hashing.sha1(mod.getFile(this).toPath()).toString();
+
+                if (modrinthVersions.containsKey(hash)) {
+                    ModrinthVersion modrinthVersion = modrinthVersions.get(hash);
+
+                    mod.modrinthVersion = modrinthVersion;
+                    mod.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
+
+                    LogManager.debug("Found matching mod from Modrinth called " + mod.modrinthProject.title);
+                }
+            });
+            this.save();
+        }
 
         manifest.formatVersion = 1;
         manifest.game = "minecraft";

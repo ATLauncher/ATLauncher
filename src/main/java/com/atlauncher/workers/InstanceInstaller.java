@@ -522,6 +522,34 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         List<Pair<CurseForgeProject, CurseForgeFile>> manualDownloadMods = new ArrayList<>();
 
+        List<CurseForgeFile> filesForManualDownload = curseForgeManifest.files.parallelStream()
+                .filter(file -> {
+                    Optional<CurseForgeFile> curseForgeFile = filesFound.stream().filter(f -> f.id == file.fileID)
+                            .findFirst();
+
+                    return curseForgeFile.isPresent() ? curseForgeFile.get().downloadUrl == null : false;
+                }).map(file -> filesFound.stream().filter(f -> f.id == file.fileID)
+                        .findFirst().get())
+                .collect(Collectors.toList());
+
+        Map<String, ModrinthVersion> modrinthVersions = new HashMap<>();
+        Map<String, ModrinthProject> modrinthProjects = new HashMap<>();
+
+        if (filesForManualDownload.size() != 0) {
+            String[] sha1Hashes = filesForManualDownload.parallelStream()
+                    .map(file -> file.hashes.stream().filter(h -> h.isSha1()).findFirst().orElse(null))
+                    .filter(f -> f != null)
+                    .map(hash -> hash.value)
+                    .toArray(String[]::new);
+
+            modrinthVersions.putAll(ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes));
+
+            if (modrinthVersions.size() != 0) {
+                modrinthProjects.putAll(ModrinthApi.getProjectsAsMap(
+                        modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new)));
+            }
+        }
+
         packVersion.mods = curseForgeManifest.files.parallelStream().map(file -> {
             CurseForgeProject curseForgeProject = Optional.ofNullable(foundProjects.get(file.projectID))
                     .orElseGet(() -> CurseForgeApi.getProjectById(file.projectID));
@@ -540,15 +568,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(h -> h.isSha1())
                         .findFirst();
                 if (sha1Hash.isPresent()) {
-                    ModrinthVersion modrinthVersion = ModrinthApi.getVersionFromSha1Hash(sha1Hash.get().value);
+                    ModrinthVersion modrinthVersion = modrinthVersions.get(sha1Hash.get().value);
 
                     if (modrinthVersion != null) {
-                        ModrinthProject modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
-
                         Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
                         modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
-                        modToAdd.modrinthProject = modrinthProject;
+                        modToAdd.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
                         modToAdd.modrinthVersion = modrinthVersion;
+
+                        LogManager.debug("Found matching mod from Modrinth called " + modToAdd.modrinthProject.title);
 
                         return modToAdd;
                     }
@@ -899,6 +927,51 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         List<Pair<CurseForgeProject, CurseForgeFile>> manualDownloadMods = new ArrayList<>();
 
+        List<CurseForgeFile> filesForManualDownload = modpacksChPackVersionManifest.files.parallelStream()
+                .map(file -> {
+                    if (file.url != null && !file.url.isEmpty()) {
+                        return null;
+                    }
+
+                    Optional<ModpacksChPackVersionManifestMod> modInfo = modsManifest == null ? Optional.empty()
+                            : modsManifest.mods.parallelStream()
+                                    .filter(m -> m.filename.equalsIgnoreCase(file.name)
+                                            || m.filename.equalsIgnoreCase(file.name.replace("_", ""))
+                                            || m.filename.replace("_", " ").equalsIgnoreCase(file.name))
+                                    .findFirst();
+
+                    int curseFileId = modInfo.isPresent() ? modInfo.get().curseFile : file.curseforge.file;
+
+                    Optional<CurseForgeFile> curseForgeFile = filesFound.stream().filter(f -> f.id == curseFileId)
+                            .findFirst();
+
+                    if (!curseForgeFile.isPresent() || curseForgeFile.get().downloadUrl != null) {
+                        return null;
+                    }
+
+                    return curseForgeFile.get();
+                })
+                .filter(m -> m != null)
+                .collect(Collectors.toList());
+
+        Map<String, ModrinthVersion> modrinthVersions = new HashMap<>();
+        Map<String, ModrinthProject> modrinthProjects = new HashMap<>();
+
+        if (filesForManualDownload.size() != 0) {
+            String[] sha1Hashes = filesForManualDownload.parallelStream()
+                    .map(file -> file.hashes.stream().filter(h -> h.isSha1()).findFirst().orElse(null))
+                    .filter(f -> f != null)
+                    .map(hash -> hash.value)
+                    .toArray(String[]::new);
+
+            modrinthVersions.putAll(ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes));
+
+            if (modrinthVersions.size() != 0) {
+                modrinthProjects.putAll(ModrinthApi.getProjectsAsMap(
+                        modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new)));
+            }
+        }
+
         packVersion.mods = modpacksChPackVersionManifest.files.stream()
                 .filter(f -> f.type == ModpacksChPackVersionManifestFileType.MOD).map(file -> {
                     if (file.url != null && !file.url.isEmpty()) {
@@ -936,15 +1009,16 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(h -> h.isSha1())
                                 .findFirst();
                         if (sha1Hash.isPresent()) {
-                            ModrinthVersion modrinthVersion = ModrinthApi.getVersionFromSha1Hash(sha1Hash.get().value);
+                            ModrinthVersion modrinthVersion = modrinthVersions.get(sha1Hash.get().value);
 
                             if (modrinthVersion != null) {
-                                ModrinthProject modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
-
                                 Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
                                 modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
-                                modToAdd.modrinthProject = modrinthProject;
+                                modToAdd.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
                                 modToAdd.modrinthVersion = modrinthVersion;
+
+                                LogManager.debug(
+                                        "Found matching mod from Modrinth called " + modToAdd.modrinthProject.title);
 
                                 return modToAdd;
                             }
