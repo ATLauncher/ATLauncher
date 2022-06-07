@@ -2759,7 +2759,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireTask(GetText.tr("Downloading Instance Image"));
             TechnicModpackAsset logo = this.technicModpack.logo;
 
-            if (logo != null) {
+            if (logo != null && logo.url != null && !logo.url.isEmpty()) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build().setUrl(logo.url)
                         .downloadTo(root.resolve("instance.png")).withInstanceInstaller(this)
                         .withHttpClient(Network.createProgressClient(this));
