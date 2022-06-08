@@ -19,3 +19,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't prompt to install Fabric API when user already has Quilt Standard Libraries
 
 ### Misc
+- Remove some unecessary files from the shadow jar

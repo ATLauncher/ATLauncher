@@ -114,6 +114,7 @@ jar {
                 'Multi-Release': 'true'
         )
     }
+
 }
 
 gettext {
@@ -156,6 +157,20 @@ shadowJar {
         exclude(dependency('com.github.hypfvieh:.*:.*'))
         exclude(dependency('org.apache.commons:commons-compress:.*'))
     }
+
+    // these are included by dbus-java which is only used on Linux
+    exclude("jni/x86_64-Windows/")
+    exclude("jni/x86_64-SunOS/")
+    exclude("jni/x86_64-OpenBSD/")
+    exclude("jni/x86_64-FreeBSD/")
+    exclude("jni/x86_64-DragonFlyBSD/")
+    exclude("jni/sparcv9-SunOS/")
+    exclude("jni/ppc-AIX/")
+    exclude("jni/ppc64-AIX/")
+    exclude("jni/i386-Windows/")
+    exclude("jni/i386-SunOS/")
+    exclude("jni/Darwin/")
+
     classifier = ''
 }
 
