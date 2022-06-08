@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.joda.time.format.ISODateTimeFormat;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -44,9 +47,6 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.google.gson.annotations.SerializedName;
-
-import org.joda.time.format.ISODateTimeFormat;
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
@@ -337,7 +337,8 @@ public class DisableableMod implements Serializable {
     public boolean checkForUpdate(Window parent, Instance instance, ModPlatform platform) {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
 
-        if (platform == ModPlatform.CURSEFORGE || platform == null && isFromCurseForge()) {
+        if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
+                && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<Object> dialog = new ProgressDialog<>(
                     GetText.tr("Checking For Update On CurseForge"), 0, GetText.tr("Checking For Update On CurseForge"),
                     "Cancelled checking for update on CurseForge", parent);
@@ -403,7 +404,8 @@ public class DisableableMod implements Serializable {
 
             new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instance,
                     curseForgeFileId);
-        } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()) {
+        } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()
+                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
             ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
                     GetText.tr("Checking For Update On Modrinth"), 0,
                     GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth", parent);

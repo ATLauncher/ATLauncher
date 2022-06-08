@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Log error when no way to open web browser/file explorer
 - Use user downloads folder for Flatpak browser downloads
 - Don't prompt to install Fabric API when user already has Quilt Standard Libraries
+- When updating/reinstalling mods with metadata from multiple platforms, use the default platform setting
 
 ### Misc
 - Remove some unecessary files from the shadow jar
