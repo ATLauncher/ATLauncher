@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - When installing a pack, check for mod metadata from Modrinth
+- When scanning for manually added mods, check Modrinth as well
 
 ### Fixes
 - Issue with DBus packages causing install issues with some Forge versions [#564]
