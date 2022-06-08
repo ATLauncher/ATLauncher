@@ -26,18 +26,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
+import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
+import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.FileTypeDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -45,9 +51,8 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ModsJCheckBoxTransferHandler extends TransferHandler {
@@ -227,6 +232,66 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                                 LogManager.debug("Found matching mod from CurseForge called "
                                                         + dm.curseForgeFile.displayName);
                                             });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!App.settings.dontCheckModsOnModrinth) {
+                    Map<String, DisableableMod> sha1Hashes = new HashMap<>();
+
+                    modsAdded.stream()
+                            .filter(dm -> dm.modrinthProject == null && dm.modrinthVersion == null)
+                            .filter(dm -> dm.getFile(dialog.instance.ROOT, dialog.instance.id) != null).forEach(dm -> {
+                                try {
+                                    sha1Hashes.put(Hashing
+                                            .sha1(dm.disabled ? dm.getDisabledFile(dialog.instance).toPath()
+                                                    : dm
+                                                            .getFile(dialog.instance.ROOT, dialog.instance.id).toPath())
+                                            .toString(), dm);
+                                } catch (Throwable t) {
+                                    LogManager.logStackTrace(t);
+                                }
+                            });
+
+                    if (sha1Hashes.size() != 0) {
+                        Set<String> keys = sha1Hashes.keySet();
+                        Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
+                                .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
+
+                        if (modrinthVersions != null && modrinthVersions.size() != 0) {
+                            String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
+                                    .toArray(String[]::new);
+
+                            if (projectIdsFound.length != 0) {
+                                Map<String, ModrinthProject> foundProjects = ModrinthApi
+                                        .getProjectsAsMap(projectIdsFound);
+
+                                if (foundProjects != null) {
+                                    for (Map.Entry<String, ModrinthVersion> entry : modrinthVersions.entrySet()) {
+                                        ModrinthVersion version = entry.getValue();
+                                        ModrinthProject project = foundProjects.get(version.projectId);
+
+                                        if (project != null) {
+                                            DisableableMod dm = sha1Hashes.get(entry.getKey());
+
+                                            // add Modrinth information
+                                            dm.modrinthProject = project;
+                                            dm.modrinthVersion = version;
+
+                                            if (!dm.isFromCurseForge()
+                                                    || App.settings.defaultModPlatform == ModPlatform.MODRINTH) {
+                                                dm.name = project.title;
+                                                dm.description = project.description;
+                                            }
+
+                                            LogManager
+                                                    .debug(String.format(
+                                                            "Found matching mod from Modrinth called %s with file %s",
+                                                            project.title, version.name));
+                                        }
+                                    }
                                 }
                             }
                         }

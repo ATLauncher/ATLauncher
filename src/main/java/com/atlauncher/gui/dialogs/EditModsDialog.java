@@ -428,12 +428,8 @@ public class EditModsDialog extends JDialog {
 
                                                 if (curseForgeProject != null) {
                                                     dm.curseForgeProject = curseForgeProject;
-
-                                                    if (!dm.isFromCurseForge()
-                                                            || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
-                                                        dm.name = curseForgeProject.name;
-                                                        dm.description = curseForgeProject.summary;
-                                                    }
+                                                    dm.name = curseForgeProject.name;
+                                                    dm.description = curseForgeProject.summary;
                                                 }
 
                                                 LogManager.debug("Found matching mod from CurseForge called "
@@ -487,7 +483,7 @@ public class EditModsDialog extends JDialog {
                                             dm.modrinthProject = project;
                                             dm.modrinthVersion = version;
 
-                                            if (!dm.isFromModrinth()
+                                            if (!dm.isFromCurseForge()
                                                     || App.settings.defaultModPlatform == ModPlatform.MODRINTH) {
                                                 dm.name = project.title;
                                                 dm.description = project.description;
