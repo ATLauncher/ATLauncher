@@ -83,6 +83,7 @@ public class Settings {
     public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
     public boolean dontCheckModsOnCurseForge = false;
+    public boolean dontCheckModsOnModrinth = false;
     public InstanceExportFormat defaultExportFormat = InstanceExportFormat.CURSEFORGE;
 
     // Java/Minecraft

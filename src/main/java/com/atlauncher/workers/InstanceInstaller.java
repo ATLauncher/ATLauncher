@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1744,6 +1745,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return false;
         }
 
+        checkModsOnModrinth();
+        if (isCancelled()) {
+            return false;
+        }
+
         cleanDirectories();
         if (isCancelled()) {
             return false;
@@ -2896,6 +2902,63 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     LogManager.debug("Found matching mod from CurseForge called "
                                             + dm.curseForgeFile.displayName);
                                 });
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkModsOnModrinth() {
+        if (App.settings.dontCheckModsOnModrinth || this.modsInstalled.size() == 0) {
+            return;
+        }
+
+        fireTask(GetText.tr("Checking Mods On Modrinth"));
+        fireSubProgressUnknown();
+
+        Map<String, DisableableMod> sha1Hashes = new HashMap<>();
+
+        this.modsInstalled.stream().filter(dm -> dm.modrinthProject == null && dm.modrinthVersion == null)
+                .filter(dm -> dm.getFile(root, this.packVersion.minecraft) != null).forEach(dm -> {
+                    try {
+                        sha1Hashes.put(Hashing.sha1(dm.getFile(root, this.packVersion.minecraft).toPath()).toString(),
+                                dm);
+                    } catch (Throwable t) {
+                        LogManager.logStackTrace(t);
+                    }
+                });
+
+        if (sha1Hashes.size() != 0) {
+            Set<String> keys = sha1Hashes.keySet();
+            Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
+                    .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
+
+            if (modrinthVersions != null && modrinthVersions.size() != 0) {
+                String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
+                        .toArray(String[]::new);
+
+                if (projectIdsFound.length != 0) {
+                    Map<String, ModrinthProject> foundProjects = ModrinthApi.getProjectsAsMap(projectIdsFound);
+
+                    if (foundProjects != null) {
+                        for (Map.Entry<String, ModrinthVersion> entry : modrinthVersions.entrySet()) {
+                            ModrinthVersion version = entry.getValue();
+                            ModrinthProject project = foundProjects.get(version.projectId);
+
+                            if (project != null) {
+                                DisableableMod dm = sha1Hashes.get(entry.getKey());
+
+                                // add Modrinth information
+                                dm.modrinthProject = project;
+                                dm.modrinthVersion = version;
+                                dm.name = project.title;
+                                dm.description = project.description;
+
+                                LogManager
+                                        .debug(String.format("Found matching mod from Modrinth called %s with file %s",
+                                                project.title, version.name));
+                            }
+                        }
                     }
                 }
             }

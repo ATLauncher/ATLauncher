@@ -1300,8 +1300,8 @@ public class Instance extends MinecraftVersion {
                                         + (OS.isUsingMacApp()
                                                 ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
                                                 : FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                                + " or<br/>"
-                                                                + FileSystem.getUserDownloadsPath().toFile()))
+                                                        + " or<br/>"
+                                                        + FileSystem.getUserDownloadsPath().toFile()))
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
@@ -1970,32 +1970,34 @@ public class Instance extends MinecraftVersion {
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
 
         // for any mods not from Modrinth, scan for them on Modrinth
-        List<DisableableMod> nonModrinthMods = this.launcher.mods.parallelStream()
-                .filter(m -> !m.disabled && !m.isFromModrinth() && m.getFile(this).exists())
-                .collect(Collectors.toList());
+        if (!App.settings.dontCheckModsOnModrinth) {
+            List<DisableableMod> nonModrinthMods = this.launcher.mods.parallelStream()
+                    .filter(m -> !m.disabled && !m.isFromModrinth() && m.getFile(this).exists())
+                    .collect(Collectors.toList());
 
-        String[] sha1Hashes = nonModrinthMods.parallelStream()
-                .map(m -> Hashing.sha1(m.getFile(this).toPath()).toString()).toArray(String[]::new);
+            String[] sha1Hashes = nonModrinthMods.parallelStream()
+                    .map(m -> Hashing.sha1(m.getFile(this).toPath()).toString()).toArray(String[]::new);
 
-        Map<String, ModrinthVersion> modrinthVersions = ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes);
+            Map<String, ModrinthVersion> modrinthVersions = ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes);
 
-        if (modrinthVersions.size() != 0) {
-            Map<String, ModrinthProject> modrinthProjects = ModrinthApi.getProjectsAsMap(
-                    modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new));
+            if (modrinthVersions.size() != 0) {
+                Map<String, ModrinthProject> modrinthProjects = ModrinthApi.getProjectsAsMap(
+                        modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new));
 
-            nonModrinthMods.parallelStream().forEach(mod -> {
-                String hash = Hashing.sha1(mod.getFile(this).toPath()).toString();
+                nonModrinthMods.parallelStream().forEach(mod -> {
+                    String hash = Hashing.sha1(mod.getFile(this).toPath()).toString();
 
-                if (modrinthVersions.containsKey(hash)) {
-                    ModrinthVersion modrinthVersion = modrinthVersions.get(hash);
+                    if (modrinthVersions.containsKey(hash)) {
+                        ModrinthVersion modrinthVersion = modrinthVersions.get(hash);
 
-                    mod.modrinthVersion = modrinthVersion;
-                    mod.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
+                        mod.modrinthVersion = modrinthVersion;
+                        mod.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
 
-                    LogManager.debug("Found matching mod from Modrinth called " + mod.modrinthProject.title);
-                }
-            });
-            this.save();
+                        LogManager.debug("Found matching mod from Modrinth called " + mod.modrinthProject.title);
+                    }
+                });
+                this.save();
+            }
         }
 
         manifest.formatVersion = 1;

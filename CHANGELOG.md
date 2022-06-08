@@ -3,9 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.17.1
+## 3.4.18.0
 
 ### New Features
+- When installing a pack, check for mod metadata from Modrinth
 
 ### Fixes
 - Issue with DBus packages causing install issues with some Forge versions [#564]
