@@ -37,6 +37,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -63,8 +65,6 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {

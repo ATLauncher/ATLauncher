@@ -218,8 +218,18 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             // check to see which required ones we don't already have
             List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
                     .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
-                            .noneMatch(installedMod -> installedMod.isFromCurseForge()
-                                    && installedMod.getCurseForgeModId() == dependency.modId))
+                            .noneMatch(installedMod -> {
+                                if (instance.getLoaderVersion().isQuilt()
+                                        && dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID) {
+                                    // if on Quilt and the dependency is Fabric API, then don't show it if user
+                                    // already has QSL installed
+                                    return instance.launcher.mods.parallelStream().anyMatch(m -> m.isFromModrinth()
+                                            && m.modrinthProject.id.equals(Constants.MODRINTH_QSL_MOD_ID));
+                                }
+
+                                return installedMod.isFromCurseForge()
+                                        && installedMod.getCurseForgeModId() == dependency.modId;
+                            }))
                     .collect(Collectors.toList());
 
             if (dependencies.size() != 0) {
