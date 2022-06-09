@@ -209,7 +209,7 @@ public class CurseForgeApi {
 
         CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
-        if (response != null) {
+        if (response != null && response.data.size() != 0) {
             return response.data.get(0);
         }
 

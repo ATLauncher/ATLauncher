@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -36,14 +38,13 @@ import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.CurseForgePackCard;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
-
-import org.mini2Dx.gettext.GetText;
 
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
@@ -205,27 +206,43 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
 
     public void addById(String id) {
 
-        CurseForgeProject project = null;
+        ProgressDialog<CurseForgeProject> progressDialog = new ProgressDialog<>(
+                GetText.tr("Looking Up Pack On CurseForge"),
+                0,
+                GetText.tr("Looking Up Pack On CurseForge"),
+                GetText.tr("Cancelling Looking Up Pack On CurseForge"));
+        progressDialog.addThread(new Thread(() -> {
+            CurseForgeProject project = null;
 
-        if (id.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
-            Pattern pattern = Pattern.compile(
-                    "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
-            Matcher matcher = pattern.matcher(id);
+            if (id.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
+                Pattern pattern = Pattern.compile(
+                        "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
+                Matcher matcher = pattern.matcher(id);
 
-            if (!matcher.find() || matcher.groupCount() < 2) {
-                LogManager.error("Cannot install as the url was not a valid CurseForge modpack url");
-                return;
+                if (!matcher.find() || matcher.groupCount() < 2) {
+                    LogManager.error("Cannot install as the url was not a valid CurseForge modpack url");
+                    progressDialog.doneTask();
+                    progressDialog.close();
+                    return;
+                }
+
+                String packSlug = matcher.group(1);
+                project = CurseForgeApi.getModPackBySlug(packSlug);
+            } else {
+                try {
+                    project = CurseForgeApi.getProjectById(Integer.parseInt(id));
+                } catch (NumberFormatException e) {
+                    project = CurseForgeApi.getModPackBySlug(id);
+                }
             }
 
-            String packSlug = matcher.group(1);
-            project = CurseForgeApi.getModPackBySlug(packSlug);
-        } else {
-            try {
-                project = CurseForgeApi.getProjectById(Integer.parseInt(id));
-            } catch (NumberFormatException e) {
-                project = CurseForgeApi.getModPackBySlug(id);
-            }
-        }
+            progressDialog.setReturnValue(project);
+            progressDialog.doneTask();
+            progressDialog.close();
+        }));
+        progressDialog.start();
+
+        CurseForgeProject project = progressDialog.getReturnValue();
 
         if (project == null) {
             DialogManager.okDialog().setType(DialogManager.ERROR).setTitle(GetText.tr("Pack Not Found"))

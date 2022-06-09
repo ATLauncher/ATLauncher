@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import org.apache.commons.text.WordUtils;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
@@ -37,15 +40,13 @@ import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.ModrinthPackCard;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ModrinthApi;
-
-import org.apache.commons.text.WordUtils;
-import org.mini2Dx.gettext.GetText;
 
 public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
@@ -211,7 +212,19 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
             packLookup = matcher.group(1);
         }
 
-        ModrinthProject project = ModrinthApi.getProject(packLookup);
+        String packToLookup = packLookup;
+        ProgressDialog<ModrinthProject> progressDialog = new ProgressDialog<>(GetText.tr("Looking Up Pack On Modrinth"),
+                0,
+                GetText.tr("Looking Up Pack On Modrinth"),
+                GetText.tr("Cancelling Looking Up Pack On Modrinth"));
+        progressDialog.addThread(new Thread(() -> {
+            progressDialog.setReturnValue(ModrinthApi.getProject(packToLookup));
+            progressDialog.doneTask();
+            progressDialog.close();
+        }));
+        progressDialog.start();
+
+        ModrinthProject project = progressDialog.getReturnValue();
 
         if (project == null) {
             DialogManager.okDialog().setType(DialogManager.ERROR).setTitle(GetText.tr("Pack Not Found"))
