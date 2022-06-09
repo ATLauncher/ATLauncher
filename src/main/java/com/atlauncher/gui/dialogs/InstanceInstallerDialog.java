@@ -48,6 +48,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
@@ -101,8 +103,6 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
 
-import org.mini2Dx.gettext.GetText;
-
 import okhttp3.CacheControl;
 
 public class InstanceInstallerDialog extends JDialog {
@@ -117,6 +117,7 @@ public class InstanceInstallerDialog extends JDialog {
     private ModrinthModpackManifest modrinthManifest = null;
     private CurseForgeProject curseForgeProject = null;
     private ModrinthProject modrinthProject = null;
+    private ModrinthVersion preselectedModrinthVersion = null;
     private ModpacksChPackManifest modpacksChPackManifest = null;
     private MultiMCManifest multiMCManifest = null;
     private TechnicModpack technicModpack = null;
@@ -125,8 +126,8 @@ public class InstanceInstallerDialog extends JDialog {
     private final JButton install;
     private final JTextField nameField;
     private JComboBox<PackVersion> versionsDropDown;
-    private JLabel loaderVersionLabel;
-    private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown;
+    private final JLabel loaderVersionLabel = new JLabel();
+    private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
     private final List<LoaderVersion> loaderVersions = new ArrayList<>();
 
     private final JLabel showAllMinecraftVersionsLabel = new JLabel(GetText.tr("Show All"));
@@ -139,52 +140,58 @@ public class InstanceInstallerDialog extends JDialog {
     private final Path extractedPath;
 
     public InstanceInstallerDialog(CurseForgeManifest manifest, Path curseExtractedPath) {
-        this(manifest, false, false, null, null, false, curseExtractedPath, App.launcher.getParent());
+        this(manifest, false, false, null, null, false, curseExtractedPath, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(ModrinthModpackManifest manifest, Path modrinthExtractedPath) {
-        this(manifest, false, false, null, null, false, modrinthExtractedPath, App.launcher.getParent());
+        this(manifest, false, false, null, null, false, modrinthExtractedPath, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(MultiMCManifest manifest, Path multiMCExtractedPath) {
-        this(manifest, false, false, null, null, false, multiMCExtractedPath, App.launcher.getParent());
+        this(manifest, false, false, null, null, false, multiMCExtractedPath, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false, null, null, true, null, App.launcher.getParent());
+        this(object, false, false, null, null, true, null, App.launcher.getParent(), null);
+    }
+
+    public InstanceInstallerDialog(ModrinthProject modrinthProject, ModrinthVersion preselectedModrinthVersion) {
+        this(modrinthProject, false, false, null, null, true, null, App.launcher.getParent(),
+                preselectedModrinthVersion);
     }
 
     public InstanceInstallerDialog(Object object, boolean isServer) {
-        this(object, false, isServer, null, null, true, null, App.launcher.getParent());
+        this(object, false, isServer, null, null, true, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Window parent, Object object) {
-        this(object, false, false, null, null, true, null, parent);
+        this(object, false, false, null, null, true, null, parent, null);
     }
 
     public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
-        this(pack, false, false, version, shareCode, showModsChooser, null, App.launcher.getParent());
+        this(pack, false, false, version, shareCode, showModsChooser, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this(pack, false, true, null, null, true, null, App.launcher.getParent());
+        this(pack, false, true, null, null, true, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
             String shareCode, boolean showModsChooser, Path extractedPath) {
         this(object, isUpdate, isServer, autoInstallVersion, shareCode, showModsChooser, extractedPath,
-                App.launcher.getParent());
+                App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
             final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
-            Path extractedPathCon, Window parent) {
+            Path extractedPathCon, Window parent, ModrinthVersion preselectedModrinthVersion) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         setName("instanceInstallerDialog");
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;
         this.extractedPath = extractedPathCon;
+        this.preselectedModrinthVersion = preselectedModrinthVersion;
 
         Analytics.sendScreenView("Instance Installer Dialog");
 
@@ -849,6 +856,15 @@ public class InstanceInstallerDialog extends JDialog {
             versionsDropDown.setEnabled(false);
         }
 
+        if (preselectedModrinthVersion != null) {
+            Optional<PackVersion> versionToSelect = this.pack.versions.stream()
+                    .filter(pv -> pv._modrinthVersion.id.equals(this.preselectedModrinthVersion.id)).findFirst();
+
+            if (versionToSelect.isPresent()) {
+                versionsDropDown.setSelectedItem(versionToSelect.get());
+            }
+        }
+
         if (multiMCManifest != null) {
             gbc.gridx--;
             versionLabel.setVisible(false);
@@ -1035,14 +1051,12 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        loaderVersionLabel = new JLabel();
 
         middle.add(loaderVersionLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        loaderVersionsDropDown = new JComboBox<>();
         this.updateLoaderVersions((PackVersion) this.versionsDropDown.getSelectedItem());
         middle.add(loaderVersionsDropDown, gbc);
 

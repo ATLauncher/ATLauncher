@@ -35,6 +35,7 @@ import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
@@ -246,6 +247,20 @@ public class ImportPackUtils {
         if (!file.getName().endsWith(".mrpack")) {
             LogManager.error("Cannot install as the file was not a mrpack file");
             return false;
+        }
+
+        ModrinthVersion version = ModrinthApi.getVersionFromSha1Hash(Hashing.sha1(file.toPath()).toString());
+        if (version != null) {
+            try {
+                ModrinthProject project = ModrinthApi.getProject(version.projectId);
+
+                new InstanceInstallerDialog(project, version);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Failed to install Modrinth pack", e);
+                return false;
+            }
+
+            return true;
         }
 
         Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toString().toLowerCase());
