@@ -595,8 +595,13 @@ public class InstanceInstallerDialog extends JDialog {
                     packVersion.hasLoader = version.loaders.size() != 0;
                     packVersion._modrinthVersion = version;
 
-                    // seems like there are multiple versions here, so use manifest value later
-                    packVersion.minecraftVersion = null;
+                    try {
+                        packVersion.minecraftVersion = MinecraftManager
+                                .getMinecraftVersion(version.gameVersions.get(0));
+                    } catch (InvalidMinecraftVersion e) {
+                        LogManager.error(e.getMessage());
+                        packVersion.minecraftVersion = null;
+                    }
 
                     return packVersion;
                 }).filter(pv -> pv != null).collect(Collectors.toList());

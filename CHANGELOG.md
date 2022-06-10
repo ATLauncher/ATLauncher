@@ -24,6 +24,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't prompt to install Fabric API when user already has Quilt Standard Libraries
 - When updating/reinstalling mods with metadata from multiple platforms, use the default platform setting
 - Adding pack manually through Modrinth/CurseForge not showing a progress dialog
+- Issue with installing/updating Modrinth packs causing NPEs
 
 ### Misc
 - Remove some unecessary files from the shadow jar

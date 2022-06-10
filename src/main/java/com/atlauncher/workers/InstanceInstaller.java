@@ -1231,6 +1231,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.packVersion = new Version();
         packVersion.version = Optional.ofNullable(modrinthManifest.versionId).orElse("1.0.0");
         packVersion.minecraft = modrinthManifest.dependencies.get("minecraft");
+        this.version.minecraftVersion = MinecraftManager
+                .getMinecraftVersion(modrinthManifest.dependencies.get("minecraft"));
         packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
 
