@@ -9,7 +9,7 @@
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher",
             "preLaunchTask": "createTestLauncherDir",
-            "args": "--debug --debug-level 5 --disable-error-reporting --no-launcher-update",
+            "args": "--debug --debug-level 5 --disable-error-reporting --no-launcher-update"
         },
         {
             "type": "java",

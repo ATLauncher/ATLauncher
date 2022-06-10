@@ -19,7 +19,12 @@
             "label": "createTestLauncherDir",
             "type": "shell",
             "command": "./gradlew createTestLauncherDir",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem",
+                "close": true
+            }
         },
         {
             "label": "generateTemplatePot",
