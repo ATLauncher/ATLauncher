@@ -157,13 +157,18 @@ public class Instance extends MinecraftVersion {
 
     public transient Path ROOT;
 
-    private Instant lastPlayed;
-    private long numPlays;
+    /**
+     * @deprecated moved within launcher property
+     */
+    public transient Instant lastPlayed;
+
+    /**
+     * @deprecated moved within launcher property
+     */
+    public transient long numPlays;
 
     public Instance(MinecraftVersion version) {
         setValues(version);
-        this.numPlays = 0;
-        this.lastPlayed = Instant.EPOCH;
     }
 
     public void setValues(MinecraftVersion version) {
@@ -2178,32 +2183,20 @@ public class Instance extends MinecraftVersion {
         return launcher.loaderVersion;
     }
 
-    public void setNumberOfPlays(final long val) {
-        this.numPlays = val;
-    }
-
     public long incrementNumberOfPlays() {
-        return this.numPlays++;
-    }
-
-    public long decrementNumberOfPlays() {
-        return this.numPlays--;
+        return this.launcher.numPlays++;
     }
 
     public long getNumberOfPlays() {
-        return this.numPlays;
+        return this.launcher.numPlays;
     }
 
     public void setLastPlayed(final Instant ts) {
-        this.lastPlayed = ts;
-    }
-
-    public Instant getLastPlayed() {
-        return this.lastPlayed;
+        this.launcher.lastPlayed = ts;
     }
 
     public Instant getLastPlayedOrEpoch() {
-        return this.lastPlayed != null ? this.lastPlayed : Instant.EPOCH;
+        return this.launcher.lastPlayed != null ? this.launcher.lastPlayed : Instant.EPOCH;
     }
 
     public String getMainClass() {

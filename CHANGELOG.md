@@ -28,3 +28,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Remove some unecessary files from the shadow jar
+- Move the numPlays/lastPlayed stats into the InstanceLauncher class

@@ -90,6 +90,15 @@ public class InstanceManager {
                     instance.save();
                 }
 
+                if (instance.launcher.numPlays == null) {
+                    LogManager.info(String.format("Converting instance \"%s\" numPlays/lastPlayed",
+                            instance.launcher.name));
+                    instance.launcher.numPlays = instance.numPlays;
+                    instance.launcher.lastPlayed = instance.lastPlayed;
+
+                    instance.save();
+                }
+
                 if (instance.launcher.account != null
                         && !AccountManager.isAccountByName(instance.launcher.account)) {
                     LogManager.warn(
