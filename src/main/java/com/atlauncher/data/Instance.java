@@ -2184,10 +2184,18 @@ public class Instance extends MinecraftVersion {
     }
 
     public long incrementNumberOfPlays() {
+        if (this.launcher.numPlays == null) {
+            this.launcher.numPlays = 0l;
+        }
+
         return this.launcher.numPlays++;
     }
 
     public long getNumberOfPlays() {
+        if (this.launcher.numPlays == null) {
+            this.launcher.numPlays = 0l;
+        }
+
         return this.launcher.numPlays;
     }
 
