@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -43,6 +44,7 @@ import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthDependency;
 import com.atlauncher.data.modrinth.ModrinthDependencyType;
+import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -51,11 +53,13 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public class ModrinthVersionSelectorDialog extends JDialog {
+    private int versionsLength = 0;
     private int filesLength = 0;
     private final ModrinthProject mod;
     private final Instance instance;
@@ -71,6 +75,9 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private JComboBox<ModrinthVersion> versionsDropdown;
     private final List<ModrinthVersion> versions = new ArrayList<>();
     private List<ModrinthVersion> versionsData;
+
+    private JLabel filesLabel;
+    private JComboBox<ComboItem<ModrinthFile>> filesDropdown;
 
     public ModrinthVersionSelectorDialog(ModrinthProject mod, Instance instance) {
         this(App.launcher.getParent(), mod, instance);
@@ -193,25 +200,38 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         JPanel middle = new JPanel(new BorderLayout());
 
         // Middle Panel Stuff
-        JPanel filesPanel = new JPanel(new FlowLayout());
-        filesPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        JPanel versionsPanel = new JPanel(new FlowLayout());
+        versionsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         versionsLabel = new JLabel(GetText.tr("Version To Install") + ": ");
-        filesPanel.add(versionsLabel);
+        versionsPanel.add(versionsLabel);
 
         versionsDropdown = new JComboBox<>();
         ModrinthVersion loadingProject = new ModrinthVersion();
         loadingProject.name = GetText.tr("Loading");
         versionsDropdown.addItem(loadingProject);
         versionsDropdown.setEnabled(false);
-        filesPanel.add(versionsDropdown);
+        versionsPanel.add(versionsDropdown);
+
+        JPanel filesPanel = new JPanel(new FlowLayout());
+        filesPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        filesLabel = new JLabel(GetText.tr("File To Install") + ": ");
+        filesPanel.add(filesLabel);
+        filesDropdown = new JComboBox<>();
+        filesPanel.add(filesDropdown);
+        filesPanel.setVisible(false);
 
         scrollPane = new JScrollPane(dependenciesPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(550, 250));
 
-        middle.add(filesPanel, BorderLayout.NORTH);
+        JPanel selectorPanel = new JPanel();
+        selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.Y_AXIS));
+        selectorPanel.add(versionsPanel);
+        selectorPanel.add(filesPanel);
+
+        middle.add(selectorPanel, BorderLayout.NORTH);
         middle.add(scrollPane, BorderLayout.SOUTH);
 
         this.getFiles();
@@ -222,13 +242,14 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
         addButton.addActionListener(e -> {
             ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
+            ModrinthFile file = ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
 
             ProgressDialog progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
                     GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
                 Analytics.sendEvent(mod.title + " - " + version.name, "AddFile", "ModrinthMod");
-                instance.addFileFromModrinth(mod, version, progressDialog);
+                instance.addFileFromModrinth(mod, version, file, progressDialog);
 
                 progressDialog.close();
             }));
@@ -247,7 +268,39 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         });
 
         versionsDropdown.addActionListener(e -> {
-            reloadDependenciesPanel();
+            ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
+
+            if (version != null) {
+                reloadDependenciesPanel();
+
+                filesDropdown.removeAllItems();
+                filesDropdown.addItem(new ComboItem<ModrinthFile>(null, GetText.tr("Select A File")));
+                if (version.files.size() > 1) {
+                    version.files
+                            .forEach(file -> filesDropdown.addItem(new ComboItem<ModrinthFile>(file, file.filename)));
+
+                    // ensures that font width is taken into account
+                    for (ModrinthFile file : version.files) {
+                        filesLength = Math.max(filesLength,
+                                getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.filename) + 100);
+                    }
+
+                    // ensures that the dropdown is at least 200 px wide and has a maximum width of
+                    // 350 px to prevent overflow
+                    filesDropdown.setPreferredSize(new Dimension(Math.min(350, Math.max(200, filesLength)), 25));
+                    addButton.setEnabled(false);
+                }
+
+                filesPanel.setVisible(version.files.size() > 1);
+            }
+        });
+
+        filesDropdown.addActionListener(e -> {
+            ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
+            if (version != null) {
+                ModrinthFile file = ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
+                addButton.setEnabled(version.files.size() == 1 || file != null);
+            }
         });
 
         JButton cancel = new JButton(GetText.tr("Cancel"));
@@ -303,7 +356,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
             // ensures that font width is taken into account
             for (ModrinthVersion version : versions) {
-                filesLength = Math.max(filesLength,
+                versionsLength = Math.max(versionsLength,
                         getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.name) + 100);
             }
 
@@ -332,12 +385,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
             // ensures that the dropdown is at least 200 px wide and has a maximum width of
             // 350 px to prevent overflow
-            versionsDropdown.setPreferredSize(new Dimension(Math.min(350, Math.max(200, filesLength)), 25));
+            versionsDropdown.setPreferredSize(new Dimension(Math.min(350, Math.max(200, versionsLength)), 25));
 
             versionsDropdown.setEnabled(true);
             versionsLabel.setVisible(true);
             versionsDropdown.setVisible(true);
-            addButton.setEnabled(true);
             viewModButton.setEnabled(true);
             viewFileButton.setEnabled(true);
         };

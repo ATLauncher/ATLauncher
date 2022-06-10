@@ -25,4 +25,12 @@ public class ModrinthFile {
     public String filename;
     public boolean primary;
     public Long size;
+
+    public String toString() {
+        if (primary) {
+            return String.format("%s (Primary)", this.filename);
+        }
+
+        return this.filename;
+    }
 }

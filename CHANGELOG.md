@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - When scanning for manually added mods, check Modrinth as well
 - When drag and dropping mods, check on Modrinth for the file
 - When importing mrpack file, check if it exists on Modrinth to sync it up for updates/reinstalls
+- When a Modrinth version has multiple files, add dropdown to select the version to download
 
 ### Fixes
 - Issue with DBus packages causing install issues with some Forge versions [#564]

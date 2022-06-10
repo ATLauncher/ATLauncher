@@ -1397,8 +1397,9 @@ public class Instance extends MinecraftVersion {
         App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
     }
 
-    public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ProgressDialog dialog) {
-        ModrinthFile fileToDownload = version.getPrimaryFile();
+    public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
+            ProgressDialog dialog) {
+        ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
         Path finalLocation = this.getRoot().resolve("mods").resolve(fileToDownload.filename);
