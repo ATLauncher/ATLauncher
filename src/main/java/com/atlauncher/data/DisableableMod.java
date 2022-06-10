@@ -458,7 +458,8 @@ public class DisableableMod implements Serializable {
     public boolean reinstall(Window parent, Instance instance, ModPlatform platform) {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "Instance");
 
-        if (platform == ModPlatform.CURSEFORGE || platform == null && isFromCurseForge()) {
+        if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
+                && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(GetText.tr("Getting Files From CurseForge"),
                     0, GetText.tr("Getting Files From CurseForge"), "Cancelled getting files from CurseForge", parent);
             dialog.addThread(new Thread(() -> {
@@ -468,7 +469,8 @@ public class DisableableMod implements Serializable {
             dialog.start();
 
             new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
-        } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()) {
+        } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
+                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(GetText.tr("Getting Files From Modrinth"), 0,
                     GetText.tr("Getting Files From Modrinth"), "Cancelled getting files from Modrinth", parent);
             dialog.addThread(new Thread(() -> {

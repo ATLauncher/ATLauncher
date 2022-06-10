@@ -297,7 +297,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
         filesDropdown.addActionListener(e -> {
             ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
-            if (version != null) {
+            if (version != null && filesDropdown.getSelectedItem() != null) {
                 ModrinthFile file = ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
                 addButton.setEnabled(version.files.size() == 1 || file != null);
             }
