@@ -78,7 +78,7 @@ public class ModrinthApi {
             }
 
             if (facets.size() != 0) {
-                url += String.format("&facets=%s", Gsons.DEFAULT.toJson(facets));
+                url += String.format("&facets=%s", Gsons.DEFAULT_SLIM.toJson(facets));
             }
 
             return Download.build().cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
@@ -228,12 +228,14 @@ public class ModrinthApi {
             body.put("hashes", hashes);
             body.put("algorithm", algorithm);
 
+            LogManager.debug(Gsons.DEFAULT_SLIM.toJson(body));
+
             java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
             }.getType();
 
             return Download.build()
                     .setUrl(String.format("%s/version_files", Constants.MODRINTH_API_URL))
-                    .post(RequestBody.create(Gsons.DEFAULT.toJson(body),
+                    .post(RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
                             MediaType.get("application/json; charset=utf-8")))
                     .asTypeWithThrow(type);
         } catch (Exception e) {
@@ -247,7 +249,7 @@ public class ModrinthApi {
 
         return Download.build()
                 .setUrl(String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,
-                        Gsons.DEFAULT.toJson(projectIds)))
+                        Gsons.DEFAULT_SLIM.toJson(projectIds)))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                 .asType(type);
     }

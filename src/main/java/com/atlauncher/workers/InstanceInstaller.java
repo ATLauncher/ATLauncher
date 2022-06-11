@@ -571,7 +571,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 if (sha1Hash.isPresent()) {
                     ModrinthVersion modrinthVersion = modrinthVersions.get(sha1Hash.get().value);
 
-                    if (modrinthVersion != null) {
+                    if (modrinthVersion != null
+                            && modrinthProjects.containsKey(modrinthVersion.projectId)) {
                         Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
                         modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
                         modToAdd.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
@@ -1010,7 +1011,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         if (sha1Hash.isPresent()) {
                             ModrinthVersion modrinthVersion = modrinthVersions.get(sha1Hash.get().value);
 
-                            if (modrinthVersion != null) {
+                            if (modrinthVersion != null
+                                    && modrinthProjects.containsKey(modrinthVersion.projectId)) {
                                 Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
                                 modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
                                 modToAdd.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);

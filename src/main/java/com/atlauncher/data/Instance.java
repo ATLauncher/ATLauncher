@@ -1997,9 +1997,12 @@ public class Instance extends MinecraftVersion {
                         ModrinthVersion modrinthVersion = modrinthVersions.get(hash);
 
                         mod.modrinthVersion = modrinthVersion;
-                        mod.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
 
-                        LogManager.debug("Found matching mod from Modrinth called " + mod.modrinthProject.title);
+                        LogManager.debug("Found matching version from Modrinth called " + mod.modrinthVersion.name);
+
+                        if (modrinthProjects.containsKey(modrinthVersions.get(hash).projectId)) {
+                            mod.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
+                        }
                     }
                 });
                 this.save();
@@ -2012,7 +2015,7 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.summary = this.launcher.description;
         manifest.files = this.launcher.mods.parallelStream()
-                .filter(m -> !m.disabled && m.isFromModrinth() && m.getFile(this).exists()).map(mod -> {
+                .filter(m -> !m.disabled && m.modrinthVersion != null && m.getFile(this).exists()).map(mod -> {
                     Path modPath = mod.getFile(this).toPath();
 
                     ModrinthModpackFile file = new ModrinthModpackFile();
@@ -2025,21 +2028,23 @@ public class Instance extends MinecraftVersion {
                     file.hashes.put("sha512", Hashing.sha512(modPath).toString());
 
                     file.env = new HashMap<>();
-                    file.env.put("client",
-                            mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED ? "unsupported"
-                                    : "required");
-                    file.env.put("server",
-                            mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED ? "unsupported"
-                                    : "required");
+
+                    if (mod.modrinthProject != null) {
+                        file.env.put("client",
+                                mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED ? "unsupported"
+                                        : "required");
+                        file.env.put("server",
+                                mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED ? "unsupported"
+                                        : "required");
+                    } else {
+                        file.env.put("client", "required");
+                        file.env.put("server", "required");
+                    }
 
                     file.fileSize = modPath.toFile().length();
 
                     file.downloads = new ArrayList<>();
-                    String downloadUrl = "";
-                    if (mod.isFromModrinth()) {
-                        downloadUrl = mod.modrinthVersion.getFileBySha1(sha1Hash).url;
-                    }
-                    file.downloads.add(HttpUrl.get(downloadUrl).toString());
+                    file.downloads.add(HttpUrl.get(mod.modrinthVersion.getFileBySha1(sha1Hash).url).toString());
 
                     return file;
                 }).collect(Collectors.toList());
@@ -2084,7 +2089,7 @@ public class Instance extends MinecraftVersion {
         }
 
         // remove files that come from Modrinth or aren't disabled
-        launcher.mods.stream().filter(m -> !m.disabled && m.isFromModrinth()).forEach(mod -> {
+        launcher.mods.stream().filter(m -> !m.disabled && m.modrinthVersion != null).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
 
             if (file.exists()) {
