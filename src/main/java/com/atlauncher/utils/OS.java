@@ -191,7 +191,6 @@ public enum OS {
     public static void openFileExplorer(Path path, boolean toFile) {
         try {
             if ((toFile || !Files.isDirectory(path)) && OS.isWindows()) {
-                LogManager.info("/select," + path.toAbsolutePath());
                 Runtime.getRuntime().exec("explorer /select," + path.toAbsolutePath());
             } else {
                 Path pathToOpen = path;

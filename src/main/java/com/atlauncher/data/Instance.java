@@ -1677,7 +1677,7 @@ public class Instance extends MinecraftVersion {
         }
 
         // create temp directory to put this in
-        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        Path tempDir = FileSystem.TEMP.resolve(this.getSafeName() + "-export");
         FileUtils.createDirectory(tempDir);
 
         // create mmc-pack.json
@@ -1888,7 +1888,7 @@ public class Instance extends MinecraftVersion {
         manifest.overrides = "overrides";
 
         // create temp directory to put this in
-        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        Path tempDir = FileSystem.TEMP.resolve(this.getSafeName() + "-export");
         FileUtils.createDirectory(tempDir);
 
         // create manifest.json
@@ -2058,7 +2058,7 @@ public class Instance extends MinecraftVersion {
         }
 
         // create temp directory to put this in
-        Path tempDir = FileSystem.TEMP.resolve(this.launcher.name + "-export");
+        Path tempDir = FileSystem.TEMP.resolve(this.getSafeName() + "-export");
         FileUtils.createDirectory(tempDir);
 
         // create modrinth.index.json

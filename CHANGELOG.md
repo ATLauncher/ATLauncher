@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue finding projects from Modrinth hash lookup
+- Issues exporting due to special characters in instance name
 
 ### Misc
