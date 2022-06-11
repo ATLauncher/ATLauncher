@@ -228,8 +228,6 @@ public class ModrinthApi {
             body.put("hashes", hashes);
             body.put("algorithm", algorithm);
 
-            LogManager.debug(Gsons.DEFAULT_SLIM.toJson(body));
-
             java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
             }.getType();
 
