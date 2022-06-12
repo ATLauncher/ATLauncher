@@ -51,7 +51,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MCLauncher {
     private static final Logger LOG = LogManager.getLogger(MCLauncher.class);
@@ -121,7 +120,7 @@ public class MCLauncher {
 
             if (instance.launcher.mods.stream().anyMatch(m -> m.skipped)) {
                 instance.launcher.mods.stream().filter(m -> m.skipped).forEach(m -> {
-                    LogManager.warn(String.format(
+                    LOG.warn(String.format(
                             "Mod %s (%s) was skipped from downloading during instance installation", m.name, m.file));
                 });
             }

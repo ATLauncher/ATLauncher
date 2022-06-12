@@ -25,8 +25,12 @@ import com.atlauncher.Data;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.utils.ModrinthApi;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ModrinthModpackUpdateManager {
+    private static final Logger LOG = LogManager.getLogger(ModrinthModpackUpdateManager.class);
+
     public static ModrinthVersion getLatestVersion(Instance instance) {
         return Data.MODRINTH_INSTANCE_LATEST_VERSION.get(instance);
     }
@@ -37,7 +41,7 @@ public class ModrinthModpackUpdateManager {
         }
 
         PerformanceManager.start();
-        LogManager.info("Checking for updates to Modrinth instances");
+        LOG.info("Checking for updates to Modrinth instances");
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
                 .filter(i -> i.isModrinthPack()).map(i -> {

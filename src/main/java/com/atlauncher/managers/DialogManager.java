@@ -255,7 +255,7 @@ public final class DialogManager {
 
             return CLOSED_OPTION;
         } catch (Exception e) {
-            LogManager.logStackTrace(e, false);
+            LOG.error(e);
         }
 
         return -1;

@@ -29,11 +29,15 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersionModsManifest;
 import com.atlauncher.network.Download;
 
 import okhttp3.CacheControl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Various utility methods for interacting with the Modpacks.ch API.
  */
 public class ModpacksChApi {
+    private static final Logger LOG = LogManager.getLogger(ModpacksChApi.class);
+
     public static List<ModpacksChPackManifest> searchModPacks(String query, int page) {
         String url = String.format("%s/modpack/search/50", Constants.MODPACKS_CH_API_URL);
 
@@ -97,7 +101,7 @@ public class ModpacksChApi {
 
             return modsManifest;
         } catch (Exception e) {
-            LogManager.logStackTrace("Error calling mods endpoint for Modpacks.ch", e);
+            LOG.error("Error calling mods endpoint for Modpacks.ch", e);
         }
 
         return null;

@@ -2427,7 +2427,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 hideSubProgressBar();
             } catch (IOException e){
                 LOG.error("Failed to download Java runtime", e);
-                ErrorReporting.reportError(e);
             }
         }
     }
@@ -2653,7 +2652,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 download.downloadFile();
             } catch (IOException e){
                 LOG.error("Failed to download Legacy Java Fixer", e);
-                ErrorReporting.reportError(e);
             }
         } else {
             download.copy();

@@ -251,7 +251,6 @@ public class Launcher {
                         .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER)).asType(type);
             } catch (Exception e) {
                 LOG.error("Error loading in file hashes!", e);
-                ErrorReporting.reportError(e);
                 return null;
             }
         }

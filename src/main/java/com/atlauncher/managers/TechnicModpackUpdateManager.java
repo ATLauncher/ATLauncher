@@ -60,10 +60,10 @@ public class TechnicModpackUpdateManager {
                         technicModpack = TechnicApi.getModpackBySlugWithThrow(i.launcher.technicModpack.name);
                     } catch (DownloadException e) {
                         if (e.response != null) {
-                            LogManager.debug(Gsons.DEFAULT.toJson(e.response));
+                            LOG.debug(Gsons.DEFAULT.toJson(e.response));
 
                             if (e.statusCode == 404) {
-                                LogManager.error(String.format(
+                                LOG.error(String.format(
                                         "Technic pack with name of %s no longer exists, disabling update checks.",
                                         i.launcher.technicModpack.displayName));
                                 i.launcher.checkForUpdates = false;
@@ -71,7 +71,7 @@ public class TechnicModpackUpdateManager {
                             }
                         }
                     } catch (IOException e) {
-                        LogManager.logStackTrace(e);
+                        LOG.error(e);
                     }
 
                     if (technicModpack == null) {

@@ -27,6 +27,8 @@ import java.util.UUID;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TransferQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.freedesktop.dbus.DBusMap;
 import org.freedesktop.dbus.DBusMatchRule;
 import org.freedesktop.dbus.connections.impl.DBusConnection;
@@ -36,6 +38,8 @@ import org.freedesktop.dbus.types.UInt32;
 import org.freedesktop.dbus.types.Variant;
 
 public class DBusUtils {
+    private static final Logger LOG = LogManager.getLogger(DBusUtils.class);
+
     public static File[] selectFiles() {
         try {
             DBusConnection bus = DBusConnection.getConnection(DBusConnection.DBusBusType.SESSION);
@@ -92,7 +96,7 @@ public class DBusUtils {
                 }).toArray(size -> new File[selectedFiles.get().length]);
             }
         } catch (Throwable t) {
-            LogManager.logStackTrace("Error selecting files using DBus", t);
+            LOG.error("Error selecting files using DBus", t);
         }
 
         return new File[0];
