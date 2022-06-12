@@ -17,12 +17,10 @@
  */
 package com.atlauncher.network;
 
-import java.awt.Rectangle;
-
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.events.SettingsSavedEvent;
+import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -30,6 +28,8 @@ import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
 import com.google.common.eventbus.Subscribe;
+
+import java.awt.*;
 
 public final class Analytics{
     private static GoogleAnalytics ga;
@@ -112,7 +112,7 @@ public final class Analytics{
     }
 
     @Subscribe
-    public void onSettingsSaved(final SettingsSavedEvent event){
+    public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event){
         ga.getConfig()
             .setProxyHost(App.settings.proxyHost)
             .setProxyPort(App.settings.proxyPort)

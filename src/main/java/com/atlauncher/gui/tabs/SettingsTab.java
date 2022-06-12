@@ -17,30 +17,20 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
 import com.atlauncher.App;
 import com.atlauncher.events.LocalizationChangedEvent;
-import com.atlauncher.events.SettingsSavedEvent;
+import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.ThemeEvent;
-import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
-import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
-import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
-import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
-import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
-import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
-import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
+import com.atlauncher.gui.tabs.settings.*;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.FlatLaf;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab{
@@ -89,7 +79,7 @@ public class SettingsTab extends JPanel implements Tab{
                 backupsSettingsTab.save();
                 commandSettingsTab.save();
                 App.settings.save();
-                App.EVENT_BUS.post(new SettingsSavedEvent());
+                App.EVENT_BUS.post(new SettingsEvent.SettingsSavedEvent());
                 if (reloadInstancesPanel) {
                     App.launcher.reloadInstancesPanel();
                 }

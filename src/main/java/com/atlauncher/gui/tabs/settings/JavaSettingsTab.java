@@ -47,7 +47,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.events.LocalizationChangedEvent;
-import com.atlauncher.events.SettingsSavedEvent;
+import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Java;
@@ -684,7 +684,7 @@ public class JavaSettingsTab extends AbstractSettingsTab{
     }
 
     @Subscribe
-    public void onSettingsSaved(final SettingsSavedEvent event){
+    public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event){
         this.javaPath.setText(App.settings.javaPath);
     }
 }
