@@ -17,28 +17,23 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar{
@@ -144,7 +139,7 @@ public class ConsoleBottomBar extends BottomBar{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.setupLanguage();
     }
 }

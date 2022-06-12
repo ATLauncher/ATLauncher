@@ -17,25 +17,18 @@
  */
 package com.atlauncher.gui.tabs.instances;
 
-import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
 import com.atlauncher.App;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
 
 public final class InstancesNavigationPanel extends JPanel{
     private final InstancesTab parent;
@@ -78,7 +71,7 @@ public final class InstancesNavigationPanel extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.importButton.setText(GetText.tr("Import"));
         this.searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         this.sortingBox.repaint();

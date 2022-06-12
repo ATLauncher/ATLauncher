@@ -17,27 +17,6 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
@@ -46,27 +25,27 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.gui.dialogs.AddModsDialog;
-import com.atlauncher.gui.dialogs.EditModsDialog;
-import com.atlauncher.gui.dialogs.InstanceExportDialog;
-import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.ConfigManager;
-import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
+import com.atlauncher.gui.dialogs.*;
+import com.atlauncher.managers.*;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.reflect.TypeToken;
-
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * <p/>
@@ -621,7 +600,7 @@ public class InstanceCard extends CollapsiblePanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.playButton.setText(GetText.tr("Play"));
         this.updateButton.setText(GetText.tr("Update"));
         this.backupButton.setText(GetText.tr("Backup"));

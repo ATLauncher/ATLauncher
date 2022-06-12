@@ -17,29 +17,9 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -49,9 +29,16 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 
 @SuppressWarnings("serial")
 public class ServerCard extends CollapsiblePanel{
@@ -205,7 +192,7 @@ public class ServerCard extends CollapsiblePanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.launchButton.setText(GetText.tr("Launch"));
         this.launchAndCloseButton.setText(GetText.tr("Launch & Close"));
         this.launchWithGui.setText(GetText.tr("Launch With GUI"));

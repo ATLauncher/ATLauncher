@@ -17,33 +17,25 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import com.atlauncher.App;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.events.ConsoleEvent;
+import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.gui.components.Console;
+import com.atlauncher.gui.components.ConsoleBottomBar;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-
-import com.atlauncher.App;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.events.ConsoleEvent;
-import com.atlauncher.events.LocalizationChangedEvent;
-import com.atlauncher.gui.components.Console;
-import com.atlauncher.gui.components.ConsoleBottomBar;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.Utils;
-
-import com.google.common.eventbus.Subscribe;
-import org.mini2Dx.gettext.GetText;
 
 public class LauncherConsole extends JFrame{
 
@@ -175,7 +167,7 @@ public class LauncherConsole extends JFrame{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.copy.setText(GetText.tr("Copy"));
         this.bottomBar.setupLanguage();
     }

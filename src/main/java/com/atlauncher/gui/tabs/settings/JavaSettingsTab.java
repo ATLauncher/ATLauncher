@@ -46,7 +46,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
@@ -628,7 +628,7 @@ public class JavaSettingsTab extends AbstractSettingsTab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
                 "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
                 .build());

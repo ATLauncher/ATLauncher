@@ -18,7 +18,7 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.gui.tabs.settings.*;
@@ -111,7 +111,7 @@ public class SettingsTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

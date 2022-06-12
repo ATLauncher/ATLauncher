@@ -20,7 +20,7 @@ package com.atlauncher.utils.sort;
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
@@ -95,7 +95,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy{
     protected abstract void updateLocalization();
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.updateLocalization();
     }
 }

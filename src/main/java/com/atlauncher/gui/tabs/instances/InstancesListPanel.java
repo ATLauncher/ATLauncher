@@ -17,26 +17,23 @@
  */
 package com.atlauncher.gui.tabs.instances;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import javax.swing.JPanel;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public final class InstancesListPanel extends JPanel
         implements InstancesSortEventListener, InstancesSearchEventListener{
@@ -130,7 +127,7 @@ public final class InstancesListPanel extends JPanel
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
 }

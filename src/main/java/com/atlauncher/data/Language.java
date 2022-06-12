@@ -17,19 +17,14 @@
  */
 package com.atlauncher.data;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import com.atlauncher.App;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.managers.LogManager;
-
 import org.mini2Dx.gettext.GetText;
 import org.mini2Dx.gettext.PoFile;
+
+import java.io.IOException;
+import java.util.*;
 
 public class Language {
     public final static List<Locale> locales = new ArrayList<>();
@@ -80,7 +75,7 @@ public class Language {
         }
 
         GetText.setLocale(locale);
-        App.EVENT_BUS.post(new LocalizationChangedEvent());
+        App.EVENT_BUS.post(new LocalizationEvent.LocalizationChangedEvent());
     }
 
     public static boolean isLanguageByName(String language) {

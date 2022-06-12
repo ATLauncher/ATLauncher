@@ -17,23 +17,11 @@
  */
 package com.atlauncher.gui.card.packbrowser;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.border.TitledBorder;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
@@ -42,9 +30,12 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class ATLauncherPackCard extends JPanel{
@@ -190,7 +181,7 @@ public class ATLauncherPackCard extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.newInstanceButton.setText(GetText.tr("New Instance"));
         this.createServerButton.setText(GetText.tr("Create Server"));
         this.supportButton.setText(GetText.tr("Support"));

@@ -17,32 +17,23 @@
  */
 package com.atlauncher.gui.card.packbrowser;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.util.Optional;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.border.TitledBorder;
-
 import com.atlauncher.App;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 public class CurseForgePackCard extends JPanel{
@@ -107,7 +98,7 @@ public class CurseForgePackCard extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         newInstanceButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }

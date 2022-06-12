@@ -17,31 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ItemEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.UUID;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.event.HyperlinkEvent;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -50,7 +25,7 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.events.AccountEvent;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
@@ -61,9 +36,14 @@ import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.UUID;
 
 public class AccountsTab extends JPanel implements Tab{
     private static final long serialVersionUID = 2493791137600123223L;
@@ -467,7 +447,7 @@ public class AccountsTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         if (accountsComboBox.getSelectedIndex() == 0) {
             leftButton.setText(GetText.tr("Add"));
             rightButton.setText(GetText.tr("Clear"));

@@ -17,35 +17,24 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Locale;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Language;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Locale;
 
 public class SetupDialog extends JDialog{
     private static final long serialVersionUID = -2931970914611329658L;
@@ -167,7 +156,7 @@ public class SetupDialog extends JDialog{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         setupLabel.setText(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
         languageLabel.setText(GetText.tr("Language") + ": ");
         enableAnalyticsLabel.setText(GetText.tr("Enable Anonymous Analytics") + "? ");

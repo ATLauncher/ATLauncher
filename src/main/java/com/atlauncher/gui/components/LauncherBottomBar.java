@@ -17,30 +17,23 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ItemEvent;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.events.AccountEvent;
 import com.atlauncher.events.ConsoleEvent;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar{
@@ -171,7 +164,7 @@ public class LauncherBottomBar extends BottomBar{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         if (App.console.isVisible()) {
             toggleConsole.setText(GetText.tr("Hide Console"));
         } else {

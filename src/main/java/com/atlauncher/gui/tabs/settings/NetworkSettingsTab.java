@@ -17,28 +17,22 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.GridBagConstraints;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Proxy.Type;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab{
@@ -288,7 +282,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.concurrentConnectionsLabel.setText(GetText.tr("Concurrent Connections") + ":");
         this.concurrentConnectionsLabel.setToolTipText("<html>"
                 + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");

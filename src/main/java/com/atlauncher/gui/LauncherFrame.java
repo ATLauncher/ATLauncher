@@ -17,39 +17,15 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.SystemTray;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.TabEvent;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
-import com.atlauncher.gui.tabs.AccountsTab;
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.gui.tabs.NewsTab;
-import com.atlauncher.gui.tabs.PacksBrowserTab;
-import com.atlauncher.gui.tabs.ServersTab;
-import com.atlauncher.gui.tabs.SettingsTab;
-import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.gui.tabs.ToolsTab;
-import com.atlauncher.gui.tabs.VanillaPacksTab;
+import com.atlauncher.gui.tabs.*;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
@@ -57,6 +33,15 @@ import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public final class LauncherFrame extends JFrame{
@@ -247,7 +232,7 @@ public final class LauncherFrame extends JFrame{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

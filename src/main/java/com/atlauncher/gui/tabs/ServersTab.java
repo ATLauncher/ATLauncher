@@ -17,30 +17,22 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.regex.Pattern;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
 public class ServersTab extends JPanel implements Tab{
@@ -153,7 +145,7 @@ public class ServersTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));

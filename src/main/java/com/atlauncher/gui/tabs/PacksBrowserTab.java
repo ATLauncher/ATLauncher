@@ -17,42 +17,12 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
-import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.ThemeEvent;
-import com.atlauncher.gui.panels.packbrowser.ATLauncherFeaturedPacksPanel;
-import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
-import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
-import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
-import com.atlauncher.gui.panels.packbrowser.ModrinthPacksPanel;
-import com.atlauncher.gui.panels.packbrowser.PackBrowserPlatformPanel;
-import com.atlauncher.gui.panels.packbrowser.PacksBrowserTabTitlePanel;
-import com.atlauncher.gui.panels.packbrowser.TechnicPacksPanel;
+import com.atlauncher.gui.panels.packbrowser.*;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -60,9 +30,17 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public final class PacksBrowserTab extends JPanel implements Tab{
@@ -512,7 +490,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
         searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
