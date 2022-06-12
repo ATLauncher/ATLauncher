@@ -18,6 +18,8 @@
 package com.atlauncher.logging;
 
 import java.awt.Color;
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -65,6 +67,7 @@ public final class LauncherConsoleAppender extends AbstractAppender {
     @Override
     public void append(LogEvent e) {
         this.getConsole().ifPresent((console) -> {
+            final Throwable t = e.getThrown();
             String body = e.getMessage().getFormattedMessage();
 
             if (!LogManager.getLogger().isDebugEnabled()) {
@@ -77,6 +80,16 @@ public final class LauncherConsoleAppender extends AbstractAppender {
             console.setColor(UIManager.getColor("EditorPane.foreground"))
                     .setBold(false)
                     .write(String.format("%s\n", body));
+
+            if (t != null) {
+                try (CharArrayWriter writer = new CharArrayWriter()) {
+                    t.printStackTrace(new PrintWriter(writer));
+
+                    console.setColor(UIManager.getColor("EditorPane.foreground"))
+                            .setBold(false)
+                            .write(String.format("%s\n", writer.toString()));
+                }
+            }
         });
     }
 

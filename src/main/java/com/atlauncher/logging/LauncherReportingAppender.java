@@ -27,6 +27,8 @@ import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
 import com.atlauncher.exceptions.LocalException;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.network.ErrorReporting;
 
 @Plugin(name = LauncherReportingAppender.PLUGIN_NAME, category = LauncherReportingAppender.PLUGIN_CATEGORY, elementType = LauncherReportingAppender.ELEMENT_TYPE, printObject = true)
 public final class LauncherReportingAppender extends AbstractAppender {
@@ -43,6 +45,9 @@ public final class LauncherReportingAppender extends AbstractAppender {
         if (!(th instanceof LocalException)) { // don't report LocalExceptions
             // fallthrough
         }
+
+        Analytics.sendException(th.getMessage());
+        ErrorReporting.captureException(th);
     }
 
     @PluginFactory

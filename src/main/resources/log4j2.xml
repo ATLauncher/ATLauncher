@@ -41,7 +41,7 @@
             <AppenderRef ref="LogToReporter"/>
         </Logger>
 
-        <Root level="error">
+        <Root level="ERROR">
             <AppenderRef ref="LogToConsole"/>
         </Root>
     </Loggers>
