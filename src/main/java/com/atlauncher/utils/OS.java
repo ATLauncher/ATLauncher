@@ -46,6 +46,9 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Update;
@@ -54,9 +57,6 @@ import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
@@ -502,7 +502,7 @@ public enum OS {
             path = thisFile.getCanonicalPath();
             path = URLDecoder.decode(path, "UTF-8");
         } catch (IOException e) {
-            LOG.error("error",  e);
+            LOG.error("error", e);
         }
 
         List<String> arguments = new ArrayList<>();
@@ -540,6 +540,7 @@ public enum OS {
     public static void restartLauncher() {
         OS.restartLauncher(null);
     }
+
     /**
      * This restarts the launcher in debug mode.
      */

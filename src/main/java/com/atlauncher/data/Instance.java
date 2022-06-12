@@ -17,8 +17,62 @@
  */
 package com.atlauncher.data;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.MarkerManager;
+import org.mini2Dx.gettext.GetText;
+
+import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
-import com.atlauncher.*;
+import com.atlauncher.Gsons;
+import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -31,8 +85,17 @@ import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
 import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
+import com.atlauncher.data.minecraft.AssetIndex;
+import com.atlauncher.data.minecraft.JavaRuntime;
+import com.atlauncher.data.minecraft.JavaRuntimeManifest;
+import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
+import com.atlauncher.data.minecraft.JavaRuntimes;
+import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.data.minecraft.LoggingFile;
 import com.atlauncher.data.minecraft.MinecraftVersion;
-import com.atlauncher.data.minecraft.*;
+import com.atlauncher.data.minecraft.MojangAssetIndex;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
@@ -57,44 +120,41 @@ import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
-
-import com.atlauncher.managers.*;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.CurseForgeUpdateManager;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.ModpacksChUpdateManager;
+import com.atlauncher.managers.ModrinthModpackUpdateManager;
+import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.PerformanceManager;
+import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.mclauncher.MCLauncher;
-
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
-import com.atlauncher.utils.*;
+import com.atlauncher.utils.ArchiveUtils;
+import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.CommandExecutor;
+import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.LoggingUtils;
+import com.atlauncher.utils.ModrinthApi;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonIOException;
+
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.MarkerManager;
-import org.mini2Dx.gettext.GetText;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Json
-public class Instance extends MinecraftVersion{
+public class Instance extends MinecraftVersion {
     private static final Logger LOG = LogManager.getLogger(Instance.class);
 
     public String inheritsFrom;
@@ -281,7 +341,8 @@ public class Instance extends MinecraftVersion{
 
                 return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
             } catch (Exception e) {
-                LOG.error("Error creating scaled image from the custom image of instance {}:", this.launcher.name, e);//don't send
+                LOG.error("Error creating scaled image from the custom image of instance {}:", this.launcher.name, e);// don't
+                                                                                                                      // send
             }
         }
 
@@ -433,7 +494,7 @@ public class Instance extends MinecraftVersion{
             }
 
             progressDialog.doneTask();
-        } catch (IOException e){
+        } catch (IOException e) {
             LOG.error("Error downloading minecraft", e);
             PerformanceManager.end("Downloading Minecraft");
             PerformanceManager.end();
@@ -1016,7 +1077,8 @@ public class Instance extends MinecraftVersion{
                 }
 
                 if (exitValue != 0) {
-                    LOG.error("Oh noes. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
+                    LOG.error(
+                            "Oh noes. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
                     if (this.getPack() != null && !this.getPack().system) {
                         LOG.info("Checking for modifications to the pack since installation.");
                         this.launcher.mods.forEach(mod -> {
@@ -1079,7 +1141,7 @@ public class Instance extends MinecraftVersion{
                 if (!App.settings.keepLauncherOpen) {
                     System.exit(0);
                 }
-            } catch (Exception e1){
+            } catch (Exception e1) {
                 LOG.error("error launching minecraft", e1);
 
                 App.launcher.setMinecraftLaunched(false);
@@ -1623,7 +1685,7 @@ public class Instance extends MinecraftVersion{
         // create mmc-pack.json
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("mmc-pack.json").toFile())) {
             Gsons.MINECRAFT.toJson(manifest, fileWriter);
-        } catch (JsonIOException | IOException e){
+        } catch (JsonIOException | IOException e) {
             LOG.error("Failed to save mmc-pack.json", e);
             FileUtils.deleteDirectory(tempDir);
 
@@ -1854,7 +1916,7 @@ public class Instance extends MinecraftVersion{
 
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modlist.html").toFile())) {
             fileWriter.write(sb.toString());
-        } catch (JsonIOException | IOException e){
+        } catch (JsonIOException | IOException e) {
             LOG.error("Failed to save modlist.html", e);
 
             FileUtils.deleteDirectory(tempDir);
@@ -2073,7 +2135,7 @@ public class Instance extends MinecraftVersion{
     public void save() {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("instance.json").toFile())) {
             Gsons.MINECRAFT.toJson(this, fileWriter);
-        } catch (JsonIOException | IOException e){
+        } catch (JsonIOException | IOException e) {
             LOG.error("failed to save instance", e);
         }
     }
@@ -2540,7 +2602,7 @@ public class Instance extends MinecraftVersion{
             installable.saveMods = true;
 
             success = installable.startInstall();
-        } catch (InvalidMinecraftVersion e){
+        } catch (InvalidMinecraftVersion e) {
             LOG.error("error adding loader {}", loaderType, e);
         }
 

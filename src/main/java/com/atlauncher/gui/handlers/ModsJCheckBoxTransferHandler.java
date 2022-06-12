@@ -31,6 +31,8 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -52,9 +54,6 @@ import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("serial")
 public class ModsJCheckBoxTransferHandler extends TransferHandler {
@@ -291,8 +290,8 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                             }
 
                                             LOG.debug(String.format(
-                                                            "Found matching mod from Modrinth called %s with file %s",
-                                                            project.title, version.name));
+                                                    "Found matching mod from Modrinth called %s with file %s",
+                                                    project.title, version.name));
                                         }
                                     }
                                 }

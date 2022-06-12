@@ -22,6 +22,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.AccountListener;
@@ -29,8 +31,6 @@ import com.atlauncher.evnt.manager.AccountManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener, AccountListener {

@@ -19,6 +19,9 @@ package com.atlauncher.managers;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.Gsons;
@@ -27,9 +30,6 @@ import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.TechnicApi;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TechnicModpackUpdateManager {
     private static final Logger LOG = LogManager.getLogger(TechnicModpackUpdateManager.class);

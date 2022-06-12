@@ -30,13 +30,13 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
-
-import org.mini2Dx.gettext.GetText;
 
 public final class ModrinthSearchHitCard extends JPanel {
     public ModrinthSearchHitCard(final ModrinthSearchHit mod, ActionListener al) {

@@ -37,6 +37,10 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -49,11 +53,6 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
@@ -131,7 +130,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.launchAndCloseButton.addActionListener(e -> server.launch("nogui", true));
         this.launchWithGui.addActionListener(e -> server.launch(false));
         this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
-        this.backupButton.addActionListener(e ->  server.backup());
+        this.backupButton.addActionListener(e -> server.backup());
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Server"))
                     .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)

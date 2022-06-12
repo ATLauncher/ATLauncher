@@ -29,6 +29,9 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import org.joda.time.format.ISODateTimeFormat;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -36,9 +39,6 @@ import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.ATLauncherPackCard;
 import com.atlauncher.managers.PackManager;
-
-import org.joda.time.format.ISODateTimeFormat;
-import org.mini2Dx.gettext.GetText;
 
 public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     private final List<Pack> packs = new LinkedList<>();

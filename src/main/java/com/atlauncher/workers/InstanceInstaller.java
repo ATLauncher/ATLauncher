@@ -41,6 +41,8 @@ import java.util.stream.Stream;
 import javax.swing.JDialog;
 import javax.swing.SwingWorker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -136,14 +138,10 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
-import org.slf4j.LoggerFactory;
 
-public class InstanceInstaller extends SwingWorker<Boolean, Void> implements NetworkProgressable{
+public class InstanceInstaller extends SwingWorker<Boolean, Void> implements NetworkProgressable {
     private static final Logger LOG = LogManager.getLogger(InstanceInstaller.class);
 
     protected double percent = 0.0; // Percent done installing
@@ -2425,7 +2423,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 // + ".sha1"), runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
 
                 hideSubProgressBar();
-            } catch (IOException e){
+            } catch (IOException e) {
                 LOG.error("Failed to download Java runtime", e);
             }
         }
@@ -2650,7 +2648,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (download.needToDownload()) {
             try {
                 download.downloadFile();
-            } catch (IOException e){
+            } catch (IOException e) {
                 LOG.error("Failed to download Legacy Java Fixer", e);
             }
         } else {
@@ -2906,7 +2904,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                         dm.description = curseForgeProject.summary;
                                     }
 
-                                    LOG.debug("Found matching mod from CurseForge called {}", dm.curseForgeFile.displayName);
+                                    LOG.debug("Found matching mod from CurseForge called {}",
+                                            dm.curseForgeFile.displayName);
                                 });
                     }
                 }
@@ -2961,7 +2960,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                 dm.description = project.description;
 
                                 LOG.debug(String.format("Found matching mod from Modrinth called %s with file %s",
-                                                project.title, version.name));
+                                        project.title, version.name));
                             }
                         }
                     }

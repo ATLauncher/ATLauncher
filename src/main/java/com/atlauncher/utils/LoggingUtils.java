@@ -19,22 +19,22 @@ package com.atlauncher.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public final class LoggingUtils{
-    private LoggingUtils(){}
+public final class LoggingUtils {
+    private LoggingUtils() {
+    }
 
-    public static void redirectSystemOutLogs(){
+    public static void redirectSystemOutLogs() {
         System.setOut(SystemOutInterceptor.asDebug(System.out));
         System.setErr(SystemOutInterceptor.asError(System.err));
     }
 
     private static final Logger MINECRAFT_LOG = LogManager.getLogger("Minecraft");
 
-    public static void minecraft(String line){
-        if (line.contains("[INFO] [STDERR]")){
+    public static void minecraft(String line) {
+        if (line.contains("[INFO] [STDERR]")) {
             MINECRAFT_LOG.warn(line.substring(line.indexOf("[INFO] [STDERR]")));
-        } else if (line.contains("[INFO]")){
+        } else if (line.contains("[INFO]")) {
             line = line.substring(line.indexOf("[INFO]"));
             if (line.contains("CONFLICT")) {
                 MINECRAFT_LOG.error(line);

@@ -20,13 +20,14 @@ package com.atlauncher.managers;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.utils.ModrinthApi;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ModrinthModpackUpdateManager {
     private static final Logger LOG = LogManager.getLogger(ModrinthModpackUpdateManager.class);

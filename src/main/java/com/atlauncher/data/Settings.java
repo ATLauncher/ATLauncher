@@ -32,17 +32,16 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class Settings {
     private static final Logger LOG = LogManager.getLogger(Settings.class);
@@ -502,7 +501,8 @@ public class Settings {
 
     private void validateInstanceTitleFormat() {
         if (!Arrays.asList(Constants.INSTANCE_TITLE_FORMATS).contains(instanceTitleFormat)) {
-            LOG.warn("Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
+            LOG.warn(
+                    "Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
                             + "back to default of " + Constants.INSTANCE_TITLE_FORMATS[0] + "!");
             instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
         }

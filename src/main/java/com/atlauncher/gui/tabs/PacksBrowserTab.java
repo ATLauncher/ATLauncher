@@ -40,6 +40,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -62,8 +64,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener, ThemeListener {

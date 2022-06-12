@@ -24,10 +24,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
-import com.atlauncher.App;
-import com.atlauncher.utils.walker.DeleteDirVisitor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.atlauncher.App;
+import com.atlauncher.utils.walker.DeleteDirVisitor;
 
 public class FileUtils {
     private static final Logger LOG = LogManager.getLogger(FileUtils.class);
@@ -57,8 +58,8 @@ public class FileUtils {
 
         try {
             Files.delete(path);
-        } catch (IOException e){
-            LOG.error("Path {} couldn't be deleted:", path, e);//don't send
+        } catch (IOException e) {
+            LOG.error("Path {} couldn't be deleted:", path, e);// don't send
             return false;
         }
 
@@ -92,8 +93,8 @@ public class FileUtils {
 
         try {
             Files.walkFileTree(dir, new DeleteDirVisitor());
-        } catch (IOException e){
-            LOG.error("Error trying to delete the directory {}", dir, e);//don't send
+        } catch (IOException e) {
+            LOG.error("Error trying to delete the directory {}", dir, e);// don't send
             return false;
         }
 
@@ -120,8 +121,8 @@ public class FileUtils {
         try {
             Files.createDirectory(directory);
             return true;
-        } catch (IOException e){
-            LOG.error("Error creating directory {}", directory, e);//don't send
+        } catch (IOException e) {
+            LOG.error("Error creating directory {}", directory, e);// don't send
         }
 
         return false;

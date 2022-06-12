@@ -23,6 +23,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
@@ -32,8 +34,6 @@ import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, ConsoleOpenListener {

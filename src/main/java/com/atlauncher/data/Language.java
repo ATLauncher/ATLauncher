@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.atlauncher.App;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 import org.mini2Dx.gettext.PoFile;
+
+import com.atlauncher.App;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 
 public class Language {
     private static final Logger LOG = LogManager.getLogger(Language.class);

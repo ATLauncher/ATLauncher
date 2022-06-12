@@ -25,19 +25,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.annotations.SerializedName;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * This class contains information about a pack's version. This is a singular
  * version and contains all the information necessary to install the pack.
  */
 @Json
-public class Version{
+public class Version {
     private static final Logger LOG = LogManager.getLogger(Version.class);
 
     /**
@@ -358,7 +359,7 @@ public class Version{
         if (key == null) {
             return null;
         }
-        if (!this.isColour(key)){
+        if (!this.isColour(key)) {
             LOG.warn("Colour with key {} not found!", key);
             return null;
         }
@@ -366,7 +367,7 @@ public class Version{
         if (colour.charAt(0) == '#') {
             colour = colour.replace("#", "");
         }
-        if (!colour.matches("[0-9A-Fa-f]{6}")){
+        if (!colour.matches("[0-9A-Fa-f]{6}")) {
             LOG.warn("Colour with key {} has invalid value of {}!", key, colour);
             return null;
         }
@@ -376,7 +377,7 @@ public class Version{
             g = Integer.parseInt(colour.substring(2, 4), 16);
             b = Integer.parseInt(colour.substring(4, 6), 16);
             return new Color(r, g, b);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             LOG.warn("Colour with key {} failed to create object with value of {}!", key, colour);
             return null;
         }

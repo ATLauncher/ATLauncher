@@ -24,6 +24,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -34,9 +37,6 @@ import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InstanceManager {
     private static final Logger LOG = LogManager.getLogger(InstanceManager.class);
@@ -107,7 +107,7 @@ public class InstanceManager {
                 if (instance.launcher.account != null
                         && !AccountManager.isAccountByName(instance.launcher.account)) {
                     LOG.warn(String.format("No account with name of %s, so setting instance account back to default",
-                                    instance.launcher.account));
+                            instance.launcher.account));
                     instance.launcher.account = null;
                     instance.save();
                 }

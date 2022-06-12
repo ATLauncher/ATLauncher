@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.openmods;
 
-import com.atlauncher.utils.Utils;
-
 import org.mini2Dx.gettext.GetText;
+
+import com.atlauncher.utils.Utils;
 
 /**
  * The Class OpenEyeReportResponse contains information returned from OpenMods

@@ -25,9 +25,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import com.atlauncher.App;
-
 import org.mini2Dx.gettext.GetText;
+
+import com.atlauncher.App;
 
 @SuppressWarnings("serial")
 public abstract class AbstractToolPanel extends JPanel {

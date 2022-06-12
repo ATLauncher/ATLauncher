@@ -25,6 +25,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.ModPlatform;
@@ -37,8 +39,6 @@ import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 /**
  * This class extends {@link JCheckBox} and overrides the need to use JCheckBox

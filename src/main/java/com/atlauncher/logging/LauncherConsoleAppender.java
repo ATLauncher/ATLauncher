@@ -55,8 +55,10 @@ public final class LauncherConsoleAppender extends AbstractAppender {
     }
 
     private Optional<Console> getConsole() {
-        if (App.console == null)
+        if (App.console == null) {
             return Optional.empty();
+        }
+
         return Optional.ofNullable(App.console.console);
     }
 

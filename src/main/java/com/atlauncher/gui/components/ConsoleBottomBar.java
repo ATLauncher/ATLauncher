@@ -27,6 +27,10 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -37,13 +41,8 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
-
 @SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar implements RelocalizationListener{
+public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
     private static final Logger LOG = LogManager.getLogger(ConsoleBottomBar.class);
 
     private final JButton clearButton = new JButton(GetText.tr("Clear"));

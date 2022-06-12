@@ -17,14 +17,13 @@
  */
 package com.atlauncher.managers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class PerformanceManager {
     private static final Logger LOG = LogManager.getLogger(PerformanceManager.class);
@@ -36,7 +35,7 @@ public final class PerformanceManager {
     }
 
     public static void start(String name) {
-        if(LOG.isDebugEnabled()){
+        if (LOG.isDebugEnabled()) {
             times.put(name, Instant.now());
         }
     }

@@ -23,6 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
@@ -40,9 +43,6 @@ import com.google.gson.reflect.TypeToken;
 
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
     private static final Logger LOG = LogManager.getLogger(ForgeLibraryTypeAdapter.class);

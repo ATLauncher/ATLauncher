@@ -28,6 +28,10 @@ import java.util.UUID;
 
 import javax.swing.ImageIcon;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -39,14 +43,10 @@ import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
 import com.mojang.util.UUIDTypeAdapter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 /**
  * This class deals with the Accounts in the launcher.
  */
-public abstract class AbstractAccount implements Serializable{
+public abstract class AbstractAccount implements Serializable {
     private static final Logger LOG = LogManager.getLogger(AbstractAccount.class);
 
     /**
@@ -119,9 +119,9 @@ public abstract class AbstractAccount implements Serializable{
 
             if (!currentUsername.equals(this.minecraftUsername)) {
                 LOG.info("The username for account with UUID of {} changed from {} to {}",
-                    this.getUUIDNoDashes(),
-                    this.minecraftUsername,
-                    currentUsername);
+                        this.getUUIDNoDashes(),
+                        this.minecraftUsername,
+                        currentUsername);
 
                 this.minecraftUsername = currentUsername;
                 dialog.setReturnValue(true);

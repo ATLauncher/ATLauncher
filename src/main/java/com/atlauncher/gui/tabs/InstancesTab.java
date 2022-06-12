@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.EventListenerList;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
 import com.atlauncher.gui.tabs.instances.InstancesSearchEvent;
@@ -31,8 +33,6 @@ import com.atlauncher.gui.tabs.instances.InstancesSearchEventListener;
 import com.atlauncher.gui.tabs.instances.InstancesSortEvent;
 import com.atlauncher.gui.tabs.instances.InstancesSortEventListener;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 public class InstancesTab extends JPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;

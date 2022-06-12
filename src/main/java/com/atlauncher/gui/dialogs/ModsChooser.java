@@ -35,6 +35,10 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.json.Mod;
@@ -45,12 +49,7 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import io.github.asyncronous.toast.Toaster;
-import org.slf4j.LoggerFactory;
 
 public class ModsChooser extends JDialog {
     private static final Logger LOG = LogManager.getLogger(ModsChooser.class);

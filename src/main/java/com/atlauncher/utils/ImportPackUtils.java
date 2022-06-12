@@ -17,32 +17,33 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
-import com.atlauncher.data.curseforge.CurseForgeFile;
-import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
-import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
-import com.atlauncher.data.multimc.MultiMCInstanceConfig;
-import com.atlauncher.data.multimc.MultiMCManifest;
-import com.atlauncher.data.nickymoe.SlugResponse;
-import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
-import com.atlauncher.network.Download;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
+import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
+import com.atlauncher.data.multimc.MultiMCInstanceConfig;
+import com.atlauncher.data.multimc.MultiMCManifest;
+import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.network.Download;
 
 public class ImportPackUtils {
     private static final Logger LOG = LogManager.getLogger(ImportPackUtils.class);
@@ -87,9 +88,7 @@ public class ImportPackUtils {
         Integer projectId = null;
         Integer fileId = null;
 
-
-
-        LOG.debug("{}",matcher.groupCount());
+        LOG.debug("{}", matcher.groupCount());
         if (matcher.groupCount() == 2 && matcher.group(2) != null) {
             fileId = Integer.parseInt(matcher.group(2));
         }

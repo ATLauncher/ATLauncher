@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.ArgumentRule;
@@ -33,9 +36,6 @@ import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.utils.FileUtils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Forge113Loader extends ForgeLoader {
     private static final Logger LOG = LogManager.getLogger(Forge113Loader.class);
@@ -71,7 +71,7 @@ public class Forge113Loader extends ForgeLoader {
                         new File(tempDir,
                                 "maven/" + library.downloads.artifact.path.substring(0,
                                         library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
-                                                .toPath(),
+                                .toPath(),
                         FileSystem.LIBRARIES.resolve(library.downloads.artifact.path.substring(0,
                                 library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar"),
                         true);

@@ -28,6 +28,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -45,9 +48,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // TODO: fuck this file, it's shit, I hate it
 public final class Download {
@@ -92,14 +92,14 @@ public final class Download {
             }
 
             return this.response.isSuccessful();
-        } catch(DownloadException exc){
+        } catch (DownloadException exc) {
             LOG.error("error fetching download from {}", this.url, exc);
-            if(exc.hasResponse()){
+            if (exc.hasResponse()) {
                 LOG.error("response: {}", exc.getResponse());
             }
         } catch (IOException e) {
             LOG.error("error fetching download from {}", this.url, e);
-        } finally{
+        } finally {
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
@@ -182,7 +182,7 @@ public final class Download {
     public <T> T asType(Type tClass, Gson gson) {
         try {
             return asTypeWithThrow(tClass, gson);
-        } catch (IOException e){
+        } catch (IOException e) {
             LOG.error("error", e);
             if (this.response != null) {
                 this.response.close();
@@ -456,8 +456,8 @@ public final class Download {
         try (FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
                 ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch (Exception e){
-            LOG.error("Failed to download file {}", this.to, e);//don't send
+        } catch (Exception e) {
+            LOG.error("Failed to download file {}", this.to, e);// don't send
         }
     }
 
@@ -521,7 +521,7 @@ public final class Download {
         // size and log a warning
         if (this.ignoreFailures && this.to.toFile().length() != 0) {
             LOG.warn(String.format("%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
-                            this.to.getFileName(), this.to.toFile().length()));
+                    this.to.getFileName(), this.to.toFile().length()));
             return true;
         }
 
@@ -627,27 +627,31 @@ public final class Download {
 
             if (!downloaded) {
                 if (this.response != null && this.response.header("content-type").contains("text/html")) {
-                    LOG.error("The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
+                    LOG.error(
+                            "The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
                     LOG.error(new String(Files.readAllBytes(this.to)));
                 }
 
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
-                    LOG.error("Error downloading {} from {}. Expected fingerprint of {} (with size of {}) but got {} (with size of {}) instead. Copied to FailedDownloads folder & cancelling install!",
-                        this.to.getFileName(),
-                        this.url,
-                        this.fingerprint,
-                        this.size,
-                        Hashing.murmur(this.to),
-                        (Files.exists(this.to) ? Files.size(this.to) : 0));
+                    LOG.error(
+                            "Error downloading {} from {}. Expected fingerprint of {} (with size of {}) but got {} (with size of {}) instead. Copied to FailedDownloads folder & cancelling install!",
+                            this.to.getFileName(),
+                            this.url,
+                            this.fingerprint,
+                            this.size,
+                            Hashing.murmur(this.to),
+                            (Files.exists(this.to) ? Files.size(this.to) : 0));
                 } else {
-                    LOG.error("Error downloading {} from {}. Expected hash of {} (with size of {}) but got {} (with size of {}) instead. Copied to FailedDownloads folder & cancelling install!",
-                        this.to.getFileName(),
-                        this.url,
-                        expected,
-                        this.size,
-                        (this.md5() ? Hashing.md5(this.to) : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))),
-                        (Files.exists(this.to) ? Files.size(this.to) : 0));
+                    LOG.error(
+                            "Error downloading {} from {}. Expected hash of {} (with size of {}) but got {} (with size of {}) instead. Copied to FailedDownloads folder & cancelling install!",
+                            this.to.getFileName(),
+                            this.url,
+                            expected,
+                            this.size,
+                            (this.md5() ? Hashing.md5(this.to)
+                                    : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))),
+                            (Files.exists(this.to) ? Files.size(this.to) : 0));
                 }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);

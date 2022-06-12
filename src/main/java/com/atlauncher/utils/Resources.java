@@ -23,10 +23,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.atlauncher.exceptions.ChunkyException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.atlauncher.exceptions.ChunkyException;
 
 public final class Resources {
     private static final Logger LOG = LogManager.getLogger(Resources.class);

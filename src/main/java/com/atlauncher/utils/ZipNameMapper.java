@@ -17,9 +17,9 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.data.BackupMode;
-
 import org.zeroturnaround.zip.NameMapper;
+
+import com.atlauncher.data.BackupMode;
 
 public class ZipNameMapper {
     public static final NameMapper NORMAL_BACKUP = name -> {

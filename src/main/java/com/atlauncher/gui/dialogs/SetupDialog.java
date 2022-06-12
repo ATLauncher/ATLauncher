@@ -34,6 +34,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
@@ -44,8 +46,6 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 public class SetupDialog extends JDialog implements RelocalizationListener {
     private static final long serialVersionUID = -2931970914611329658L;

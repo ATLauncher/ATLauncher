@@ -19,6 +19,9 @@ package com.atlauncher.network;
 
 import java.awt.Rectangle;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
@@ -28,9 +31,6 @@ import com.atlauncher.utils.OS;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class Analytics implements SettingsListener {
     private static final Logger LOG = LogManager.getLogger(Analytics.class);

@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.minecraft;
 
-import com.atlauncher.annot.Json;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
+
+import com.atlauncher.annot.Json;
 
 @Json
 public class VersionManifestVersion {

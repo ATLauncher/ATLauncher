@@ -24,11 +24,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import com.atlauncher.App;
-import com.atlauncher.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.atlauncher.App;
+import com.atlauncher.utils.FileUtils;
 
 @SuppressWarnings("serial")
 public final class DownloadPool extends LinkedList<Download> {

@@ -20,14 +20,14 @@ package com.atlauncher.network;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public final class DebugLoggingInterceptor implements Interceptor{
+public final class DebugLoggingInterceptor implements Interceptor {
     private static final Logger LOG = LogManager.getLogger(DebugLoggingInterceptor.class);
 
     @Override

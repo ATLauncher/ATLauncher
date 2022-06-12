@@ -33,6 +33,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.HyperlinkEvent;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.data.modpacksch.ModpacksChPackArt;
 import com.atlauncher.data.modpacksch.ModpacksChPackArtType;
@@ -46,8 +48,6 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class FTBPackCard extends JPanel implements RelocalizationListener {

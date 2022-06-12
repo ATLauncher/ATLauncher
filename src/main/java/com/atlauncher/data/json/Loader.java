@@ -23,11 +23,12 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.workers.InstanceInstaller;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Json
 public class Loader {

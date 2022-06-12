@@ -29,6 +29,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
@@ -41,8 +43,6 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ModrinthPackCard extends JPanel implements RelocalizationListener {

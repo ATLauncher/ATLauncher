@@ -31,6 +31,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -40,13 +44,8 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
-
 @SuppressWarnings("serial")
-public class RenameInstanceDialog extends JDialog{
+public class RenameInstanceDialog extends JDialog {
     private static final Logger LOG = LogManager.getLogger(RenameInstanceDialog.class);
 
     private JTextField instanceName;

@@ -28,14 +28,13 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
-import com.atlauncher.App;
-import com.atlauncher.interfaces.NetworkProgressable;
-import com.atlauncher.utils.Utils;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
+
+import com.atlauncher.App;
+import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ProgressDialog<T> extends JDialog implements NetworkProgressable {

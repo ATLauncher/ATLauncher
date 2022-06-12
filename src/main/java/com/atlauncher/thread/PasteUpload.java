@@ -28,12 +28,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class PasteUpload implements Callable<String> {
     private static final Logger LOG = LogManager.getLogger(PasteUpload.class);

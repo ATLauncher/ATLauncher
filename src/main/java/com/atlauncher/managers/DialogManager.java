@@ -17,7 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.awt.Dialog;
 import java.awt.Window;
 import java.io.File;
 import java.util.LinkedList;
@@ -29,15 +28,12 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import com.atlauncher.App;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MarkerFactory;
+
+import com.atlauncher.App;
 
 public final class DialogManager {
     private static final Logger LOG = LogManager.getLogger(DialogManager.class);

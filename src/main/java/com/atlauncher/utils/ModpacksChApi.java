@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.modpacksch.ModpacksChPackList;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
@@ -29,8 +32,6 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersionModsManifest;
 import com.atlauncher.network.Download;
 
 import okhttp3.CacheControl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Various utility methods for interacting with the Modpacks.ch API.

@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 
 import javax.swing.JPanel;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
@@ -35,8 +37,6 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
-
-import org.mini2Dx.gettext.GetText;
 
 public final class InstancesListPanel extends JPanel
         implements InstancesSortEventListener, InstancesSearchEventListener, RelocalizationListener {

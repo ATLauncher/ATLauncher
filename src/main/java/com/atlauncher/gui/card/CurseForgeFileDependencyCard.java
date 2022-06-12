@@ -50,7 +50,8 @@ public final class CurseForgeFileDependencyCard extends JPanel {
     private final CurseForgeFileDependency dependency;
     private final Instance instance;
 
-    public CurseForgeFileDependencyCard(CurseForgeProjectFileSelectorDialog parent, CurseForgeFileDependency dependency, Instance instance) {
+    public CurseForgeFileDependencyCard(CurseForgeProjectFileSelectorDialog parent, CurseForgeFileDependency dependency,
+            Instance instance) {
         this.parent = parent;
 
         setLayout(new BorderLayout());

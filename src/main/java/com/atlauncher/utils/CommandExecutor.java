@@ -31,14 +31,14 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.exceptions.CommandException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CommandExecutor {
     private static final Logger LOG = LogManager.getLogger(CommandExecutor.class);
@@ -184,9 +184,9 @@ public class CommandExecutor {
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
                 LOG.debug("Using Java runtime {} (major version {}) at path {}",
-                    instance.javaVersion.component,
-                    instance.javaVersion.majorVersion,
-                    javaPath);
+                        instance.javaVersion.component,
+                        instance.javaVersion.majorVersion,
+                        javaPath);
             }
         }
 

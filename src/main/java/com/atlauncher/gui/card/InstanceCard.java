@@ -38,6 +38,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
@@ -65,17 +69,12 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
-
 /**
  * <p/>
  * Class for displaying instances in the Instance Tab
  */
 @SuppressWarnings("serial")
-public class InstanceCard extends CollapsiblePanel implements RelocalizationListener{
+public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
     private static final Logger LOG = LogManager.getLogger(InstanceCard.class);
 
     private final Instance instance;

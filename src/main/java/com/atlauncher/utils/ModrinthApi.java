@@ -17,27 +17,37 @@
  */
 package com.atlauncher.utils;
 
-import com.atlauncher.Gsons;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.modrinth.*;
-import com.atlauncher.network.Download;
-import com.atlauncher.network.DownloadException;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.CacheControl;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.atlauncher.Gsons;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.modrinth.ModrinthCategory;
+import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthProjectType;
+import com.atlauncher.data.modrinth.ModrinthSearchResult;
+import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.network.Download;
+import com.atlauncher.network.DownloadException;
+import com.google.gson.reflect.TypeToken;
+
+import okhttp3.CacheControl;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * Various utility methods for interacting with the Modrinth API.

@@ -24,14 +24,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-public final class FileSystem{
+public final class FileSystem {
     private static final Logger LOG = LogManager.getLogger(FileSystem.class);
     private static Path CACHED_USER_DOWNLOADS = null;
 
@@ -198,7 +199,7 @@ public final class FileSystem{
                 Files.move(intermediaryPath, to, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            LOG.error("Error renaming directory:", e);//don't send
+            LOG.error("Error renaming directory:", e);// don't send
         }
     }
 

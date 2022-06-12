@@ -28,6 +28,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeCategoryForGame;
@@ -41,9 +44,6 @@ import com.google.gson.reflect.TypeToken;
 import okhttp3.CacheControl;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Various utility methods for interacting with the CurseForge API.

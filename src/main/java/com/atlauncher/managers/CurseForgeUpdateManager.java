@@ -20,15 +20,15 @@ package com.atlauncher.managers;
 import java.util.Comparator;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.utils.CurseForgeApi;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CurseForgeUpdateManager {
     private static final Logger LOG = LogManager.getLogger(CurseForgeUpdateManager.class);

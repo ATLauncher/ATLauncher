@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
-
-import org.mini2Dx.gettext.GetText;
 
 public class MinecraftError {
     static final int OUT_OF_MEMORY = 1;

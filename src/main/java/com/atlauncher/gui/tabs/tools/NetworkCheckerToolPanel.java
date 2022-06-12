@@ -26,6 +26,10 @@ import java.util.stream.Collectors;
 
 import javax.swing.JLabel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
@@ -38,15 +42,9 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
-
 @SuppressWarnings("serial")
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
     private static final Logger LOG = LogManager.getLogger(NetworkCheckerToolPanel.class);
-
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
@@ -113,7 +111,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
                 dialog.doneTask();
 
                 results.append("Tracert to " + Constants.CURSEFORGE_CORE_API_HOST + " was ")
-                        .append(Utils.traceRoute(Constants.CURSEFORGE_CORE_API_HOST)).append("\n\n----------------\n\n");
+                        .append(Utils.traceRoute(Constants.CURSEFORGE_CORE_API_HOST))
+                        .append("\n\n----------------\n\n");
                 dialog.doneTask();
 
                 // Connection to Modrinth API

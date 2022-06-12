@@ -42,6 +42,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
@@ -60,12 +64,7 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
-
-public class AccountsTab extends JPanel implements Tab, RelocalizationListener{
+public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final Logger LOG = LogManager.getLogger(AccountsTab.class);
     private static final long serialVersionUID = 2493791137600123223L;
 

@@ -27,6 +27,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.format.ISODateTimeFormat;
+
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -41,17 +45,13 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.LoggerFactory;
-
 public class MinecraftManager {
     private static final Logger LOG = LogManager.getLogger(MinecraftManager.class);
 
     public static void loadMinecraftVersions() {
         loadMinecraftVersions(false);
     }
+
     /**
      * Loads info about the different Minecraft versions
      */

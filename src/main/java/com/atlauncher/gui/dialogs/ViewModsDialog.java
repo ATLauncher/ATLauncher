@@ -34,13 +34,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.card.ModCard;
 import com.atlauncher.network.Analytics;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {

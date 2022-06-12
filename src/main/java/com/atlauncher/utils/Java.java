@@ -40,6 +40,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.managers.PerformanceManager;
@@ -47,11 +50,8 @@ import com.atlauncher.utils.javafinder.JavaFinder;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
 import okhttp3.tls.Certificates;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class Java{
+public class Java {
     private static final Logger LOG = LogManager.getLogger(Java.class);
 
     /**

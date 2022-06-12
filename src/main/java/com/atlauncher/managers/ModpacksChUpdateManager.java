@@ -20,18 +20,17 @@ package com.atlauncher.managers;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 
 import okhttp3.CacheControl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ModpacksChUpdateManager {
     private static final Logger LOG = LogManager.getLogger(ModpacksChUpdateManager.class);

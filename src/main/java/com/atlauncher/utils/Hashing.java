@@ -22,12 +22,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.google.common.hash.HashCode;
-import com.sangupta.murmur.Murmur2;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.common.hash.HashCode;
+import com.sangupta.murmur.Murmur2;
 
 public final class Hashing {
     private static final Logger LOG = LogManager.getLogger(Hashing.class);
@@ -84,10 +84,10 @@ public final class Hashing {
     // TODO: this is really not efficient or good on memory
     public static long murmur(Path to) throws IOException {
         byte[] bytes = ArrayUtils
-            .removeAllOccurrences(ArrayUtils.removeAllOccurrences(
-                ArrayUtils.removeAllOccurrences(
-                    ArrayUtils.removeAllOccurrences(Files.readAllBytes(to), (byte) 9), (byte) 10),
-                (byte) 13), (byte) 32);
+                .removeAllOccurrences(ArrayUtils.removeAllOccurrences(
+                        ArrayUtils.removeAllOccurrences(
+                                ArrayUtils.removeAllOccurrences(Files.readAllBytes(to), (byte) 9), (byte) 10),
+                        (byte) 13), (byte) 32);
 
         return Murmur2.hash(bytes, bytes.length, 1L);
     }

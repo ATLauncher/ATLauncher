@@ -17,11 +17,11 @@
  */
 package com.atlauncher.utils.sort;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-
-import org.mini2Dx.gettext.GetText;
 
 public enum InstanceSortingStrategies implements InstanceSortingStrategy, RelocalizationListener {
     BY_NAME(GetText.tr("By Name")) {

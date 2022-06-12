@@ -30,14 +30,14 @@ import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Json
 public class Processor {
@@ -208,10 +208,12 @@ public class Processor {
             main.invoke(null, (Object) args.toArray(new String[args.size()]));
         } catch (InvocationTargetException ite) {
             Throwable e = ite.getCause();
-            LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar", e);
+            LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar",
+                    e);
             instanceInstaller.cancel(true);
         } catch (Throwable e) {
-            LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar", e);
+            LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar",
+                    e);
             instanceInstaller.cancel(true);
         } finally {
             currentThread.setContextClassLoader(threadClassloader);

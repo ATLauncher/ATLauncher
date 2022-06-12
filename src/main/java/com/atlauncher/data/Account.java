@@ -23,10 +23,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.utils.Utils;
 
 /**
  * This class deals with the Accounts in the launcher.

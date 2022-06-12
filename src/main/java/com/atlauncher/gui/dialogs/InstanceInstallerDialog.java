@@ -17,6 +17,41 @@
  */
 package com.atlauncher.gui.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
@@ -28,7 +63,16 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
-import com.atlauncher.data.installables.*;
+import com.atlauncher.data.installables.ATLauncherInstallable;
+import com.atlauncher.data.installables.CurseForgeInstallable;
+import com.atlauncher.data.installables.CurseForgeManifestInstallable;
+import com.atlauncher.data.installables.Installable;
+import com.atlauncher.data.installables.ModpacksChInstallable;
+import com.atlauncher.data.installables.ModrinthInstallable;
+import com.atlauncher.data.installables.ModrinthManifestInstallable;
+import com.atlauncher.data.installables.MultiMCInstallable;
+import com.atlauncher.data.installables.TechnicModpackInstallable;
+import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.json.Version;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
@@ -54,20 +98,13 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.*;
-import okhttp3.CacheControl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
+import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.ModrinthApi;
+import com.atlauncher.utils.TechnicApi;
+import com.atlauncher.utils.Utils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import okhttp3.CacheControl;
 
 public class InstanceInstallerDialog extends JDialog {
     private static final Logger LOG = LogManager.getLogger(InstanceInstallerDialog.class);

@@ -40,16 +40,16 @@ public class DownloadException extends IOException {
         }
     }
 
-    public String getResponse(){
+    public String getResponse() {
         return this.response;
     }
 
-    public boolean hasResponse(){
-        if(this.download.response == null || this.response == null)
+    public boolean hasResponse() {
+        if (this.download.response == null || this.response == null)
             return false;
         final String contentType = this.download.response.header("Content-Type");
         return contentType.equalsIgnoreCase("application/json")
-            || contentType.equalsIgnoreCase("application/xml")
-            || contentType.startsWith("text/");
+                || contentType.equalsIgnoreCase("application/xml")
+                || contentType.startsWith("text/");
     }
 }

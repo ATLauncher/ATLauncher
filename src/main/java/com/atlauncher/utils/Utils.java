@@ -80,6 +80,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tukaani.xz.LZMAInputStream;
+import org.tukaani.xz.XZInputStream;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -89,15 +95,6 @@ import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.google.gson.reflect.TypeToken;
-
-import org.apache.commons.io.IOUtils;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.tukaani.xz.LZMAInputStream;
-import org.tukaani.xz.XZInputStream;
 
 import net.iharder.Base64;
 
@@ -283,11 +280,11 @@ public class Utils {
         if (!from.toString().startsWith("file:")) {
             if (!from.isFile()) {
                 LOG.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                                + " it isn't a file");
+                        + " it isn't a file");
             }
             if (!from.exists()) {
                 LOG.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                                + " it doesn't exist");
+                        + " it doesn't exist");
                 return false;
             }
         } else {
@@ -326,7 +323,7 @@ public class Utils {
                 IOUtils.copy(sourceStream, destinationStream);
             }
         } catch (IOException e) {
-            LOG.error("error",e);
+            LOG.error("error", e);
             return false;
         } finally {
             try {
@@ -381,8 +378,8 @@ public class Utils {
             return true;
         } else {
             LOG.error("Couldn't move directory {} to {}",
-                sourceLocation.getAbsolutePath(),
-                targetLocation.getAbsolutePath());
+                    sourceLocation.getAbsolutePath(),
+                    targetLocation.getAbsolutePath());
             return false;
         }
     }
@@ -520,8 +517,8 @@ public class Utils {
 
         if (!file.delete()) {
             LOG.error("({}) {} couldn't be deleted",
-                (file.isFile() ? "File" : "Folder"),
-                file.getAbsolutePath());
+                    (file.isFile() ? "File" : "Folder"),
+                    file.getAbsolutePath());
         }
     }
 
@@ -1104,7 +1101,8 @@ public class Utils {
         StringBuilder response;
         String request = Utils.getFileContents(report);
         if (request == null) {
-            LOG.error("OpenEye: Couldn't read contents of file '{}'. Pending report sending failed!", report.getAbsolutePath());
+            LOG.error("OpenEye: Couldn't read contents of file '{}'. Pending report sending failed!",
+                    report.getAbsolutePath());
             return null;
         }
 

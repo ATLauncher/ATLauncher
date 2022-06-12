@@ -29,6 +29,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -39,8 +41,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
-
-import javax.annotation.Nullable;
 
 public class ArchiveUtils {
     private static final Logger LOG = LogManager.getLogger(ArchiveUtils.class);
@@ -126,7 +126,7 @@ public class ArchiveUtils {
             } catch (Exception e) {
                 LOG.error(e);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             LOG.error("error", e);
         }
 
@@ -165,7 +165,8 @@ public class ArchiveUtils {
                     outputPath = extractToPath.resolve(fileName);
                 } catch (InvalidPathException e) {
                     String newFilename = fileName.replaceAll("[:*\\?\"<>|]", "");
-                    LOG.warn("Invalid path when extracting file with name of '{}'. Renaming to '{}'", fileName, newFilename);
+                    LOG.warn("Invalid path when extracting file with name of '{}'. Renaming to '{}'", fileName,
+                            newFilename);
                     outputPath = extractToPath.resolve(newFilename);
                 }
 
@@ -203,8 +204,8 @@ public class ArchiveUtils {
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LOG.error("Failed to create zip {} from {}",
-                archivePath.toAbsolutePath(),
-                pathToCompress.toAbsolutePath());
+                    archivePath.toAbsolutePath(),
+                    pathToCompress.toAbsolutePath());
         }
 
         try (OutputStream os = Files.newOutputStream(archivePath);

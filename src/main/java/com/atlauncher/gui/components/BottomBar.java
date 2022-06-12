@@ -26,14 +26,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.utils.OS;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class BottomBar extends JPanel implements ThemeListener{
+public abstract class BottomBar extends JPanel implements ThemeListener {
     private static final Logger LOG = LogManager.getLogger(BottomBar.class);
 
     private static final long serialVersionUID = -7488195680365431776L;
@@ -74,11 +74,11 @@ public abstract class BottomBar extends JPanel implements ThemeListener{
             LOG.info("Opening Up ATLauncher Discord");
             OS.openWebBrowser("https://atl.pw/discord");
         });
-        facebookIcon.addActionListener(e ->{
+        facebookIcon.addActionListener(e -> {
             LOG.info("Opening up ATLauncher Facebook Page");
             OS.openWebBrowser("https://atl.pw/facebook");
         });
-        githubIcon.addActionListener(e ->{
+        githubIcon.addActionListener(e -> {
             LOG.info("Opening Up ATLauncher GitHub Page");
             OS.openWebBrowser("https://atl.pw/github-launcher-3");
         });
