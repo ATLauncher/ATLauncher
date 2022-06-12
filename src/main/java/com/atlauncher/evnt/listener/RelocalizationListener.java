@@ -18,7 +18,7 @@
 package com.atlauncher.evnt.listener;
 
 /**
- * Defines a class that can be called to change to a new language
+ * Allow a class to listen in to changes to the selected language.
  */
 public interface RelocalizationListener {
 

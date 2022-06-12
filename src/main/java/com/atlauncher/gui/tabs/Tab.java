@@ -24,9 +24,8 @@ public interface Tab {
 
     /**
      * Title to display to the user.
-     * If null is returned, the tab will not be displayed.
      *
-     * @return Title to display, If null do not display
+     * @return Title to display
      */
     String getTitle();
 
