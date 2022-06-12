@@ -81,7 +81,7 @@ public class LoginResponse {
         } else if (this.auth.getAuthenticatedToken() == null) {
             this.setErrorMessage("No authentication token returned from Mojang!");
         } else if (auth.getSelectedProfile() == null
-                && (this.auth.getAvailableProfiles() == null || this.auth.getAvailableProfiles().length == 0)) {
+            && (this.auth.getAvailableProfiles() == null || this.auth.getAvailableProfiles().length == 0)) {
             this.setErrorMessage("There are no paid copies of Minecraft associated with this account!");
         } else if (this.auth.getSelectedProfile() == null) {
             this.setErrorMessage("No profile selected!");

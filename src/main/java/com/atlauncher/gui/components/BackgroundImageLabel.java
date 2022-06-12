@@ -17,13 +17,11 @@
  */
 package com.atlauncher.gui.components;
 
-import java.util.Optional;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
+
+import javax.swing.*;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 public final class BackgroundImageLabel extends JLabel {

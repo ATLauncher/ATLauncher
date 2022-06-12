@@ -43,7 +43,7 @@ import java.io.File;
 import java.io.IOException;
 
 @SuppressWarnings("serial")
-public class ServerCard extends CollapsiblePanel{
+public class ServerCard extends CollapsiblePanel {
     private static final Logger LOG = LogManager.getLogger(ServerCard.class);
     private final Server server;
     private final ImagePanel image;
@@ -100,7 +100,7 @@ public class ServerCard extends CollapsiblePanel{
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
         rightPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -120,13 +120,13 @@ public class ServerCard extends CollapsiblePanel{
         this.backupButton.addActionListener(e -> server.backup());
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Server"))
-                    .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)
-                    .show();
+                .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)
+                .show();
 
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent(server.pack + " - " + server.version, "Delete", "Server");
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Server"), 0,
-                        GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
+                    GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     ServerManager.removeServer(server);
                     dialog.close();
@@ -195,7 +195,7 @@ public class ServerCard extends CollapsiblePanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.launchButton.setText(GetText.tr("Launch"));
         this.launchAndCloseButton.setText(GetText.tr("Launch & Close"));
         this.launchWithGui.setText(GetText.tr("Launch With GUI"));

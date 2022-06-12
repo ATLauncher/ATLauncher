@@ -22,10 +22,10 @@ import com.google.gson.annotations.SerializedName;
 public class CurseForgeFileDependency {
     public int fileId;
 
-    @SerializedName(value = "modId", alternate = { "addonId" })
+    @SerializedName(value = "modId", alternate = {"addonId"})
     public int modId;
 
-    @SerializedName(value = "relationType", alternate = { "type" })
+    @SerializedName(value = "relationType", alternate = {"type"})
     public int relationType;
 
     public boolean isRequired() {

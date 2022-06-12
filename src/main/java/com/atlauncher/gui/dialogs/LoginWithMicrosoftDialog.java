@@ -17,26 +17,6 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
@@ -54,9 +34,19 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
-
 import net.freeutils.httpserver.HTTPServer;
 import net.freeutils.httpserver.HTTPServer.VirtualHost;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
@@ -99,8 +89,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         linkPanel.add(linkCopyButton);
 
         JLabel infoLabel = new JLabel("<html>"
-                + GetText.tr("If your browser hasn't opened, please manually open the below link in your browser")
-                + "</html>");
+            + GetText.tr("If your browser hasn't opened, please manually open the below link in your browser")
+            + "</html>");
         infoLabel.setBorder(BorderFactory.createEmptyBorder(0, 32, 0, 32));
 
         bottomPanel.add(infoLabel, BorderLayout.CENTER);
@@ -137,7 +127,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 res.getHeaders().add("Content-Type", "text/plain");
                 res.send(500, GetText.tr("Error logging in. Check console for more information"));
                 LOG.error("Error logging into Microsoft account: {}", URLDecoder
-                        .decode(req.getParams().get("error_description"), StandardCharsets.UTF_8.toString()));
+                    .decode(req.getParams().get("error_description"), StandardCharsets.UTF_8.toString()));
                 close();
                 return 0;
             }
@@ -162,7 +152,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             res.getHeaders().add("Content-Type", "text/plain");
             // #. {0} is the name of the launcher
             res.send(200, GetText.tr("Login complete. You can now close this window and go back to {0}",
-                    Constants.LAUNCHER_NAME));
+                Constants.LAUNCHER_NAME));
             close();
             return 0;
         }, "GET");
@@ -171,7 +161,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     }
 
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
-            LoginResponse loginResponse, Profile profile) throws Exception {
+                            LoginResponse loginResponse, Profile profile) throws Exception {
         if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
             MicrosoftAccount account = (MicrosoftAccount) AccountManager.getAccountByName(loginResponse.username);
 
@@ -182,9 +172,9 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             // if forced to relogin, then make sure they logged into correct account
             if (account != null && this.account != null && !account.username.equals(this.account.username)) {
                 DialogManager.okDialog().setTitle(GetText.tr("Incorrect account"))
-                        .setContent(
-                                GetText.tr("Logged into incorrect account. Please login again on the Accounts tab."))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(
+                        GetText.tr("Logged into incorrect account. Please login again on the Accounts tab."))
+                    .setType(DialogManager.ERROR).show();
                 return;
             }
 
@@ -192,7 +182,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             AccountManager.saveAccounts();
         } else {
             MicrosoftAccount account = new MicrosoftAccount(oauthTokenResponse, xstsAuthResponse, loginResponse,
-                    profile);
+                profile);
 
             AccountManager.addAccount(account);
         }
@@ -219,15 +209,15 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             if (e.response != null) {
                 LOG.debug(Gsons.DEFAULT.toJson(e.response));
                 XboxLiveAuthErrorResponse xboxLiveAuthErrorResponse = Gsons.DEFAULT.fromJson(e.response,
-                        XboxLiveAuthErrorResponse.class);
+                    XboxLiveAuthErrorResponse.class);
 
                 String error = xboxLiveAuthErrorResponse.getErrorMessageForCode();
 
                 if (error != null) {
                     LOG.warn(error);
                     DialogManager.okDialog().setTitle(GetText.tr("Error logging into Xbox Live"))
-                            .setContent(new HTMLBuilder().center().text(error).build()).setType(DialogManager.ERROR)
-                            .show();
+                        .setContent(new HTMLBuilder().center().text(error).build()).setType(DialogManager.ERROR)
+                        .show();
 
                     String link = xboxLiveAuthErrorResponse.getBrowserLinkForCode();
 
@@ -246,7 +236,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     }
 
     private void acquireMinecraftToken(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse)
-            throws Exception {
+        throws Exception {
         String xblUhs = xstsAuthResponse.displayClaims.xui.get(0).uhs;
         String xblXsts = xstsAuthResponse.token;
 
@@ -259,12 +249,12 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         Entitlements entitlements = MicrosoftAuthAPI.getEntitlements(loginResponse.accessToken);
 
         if (!(entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
-                && entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
+            && entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
             DialogManager.okDialog().setTitle(GetText.tr("Minecraft Has Not Been Purchased"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
             throw new Exception("Account does not own Minecraft");
         }
 
@@ -274,10 +264,10 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             profile = MicrosoftAuthAPI.getMcProfile(loginResponse.accessToken);
         } catch (DownloadException e) {
             DialogManager.okDialog().setTitle(GetText.tr("Minecraft Profile Not Found"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're an Xbox Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're an Xbox Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
             throw new Exception("Minecraft Profile not found");
         }
 

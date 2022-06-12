@@ -17,24 +17,17 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingConstants;
-
+import com.atlauncher.App;
+import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
-import com.atlauncher.interfaces.NetworkProgressable;
-import com.atlauncher.utils.Utils;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
@@ -54,7 +47,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     private double downloadedBytes = 0; // Total number of bytes downloaded
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
-            boolean showProgressBar, Window parent) {
+                          boolean showProgressBar, Window parent) {
         super(parent, ModalityType.DOCUMENT_MODAL);
         this.labelText = initLabelText;
         this.closedLogMessage = initClosedLogMessage;
@@ -102,7 +95,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     }
 
     public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
-            boolean showProgressBar) {
+                          boolean showProgressBar) {
         this(title, initMax, initLabelText, initClosedLogMessage, showProgressBar, App.launcher.getParent());
     }
 

@@ -33,7 +33,7 @@ import java.awt.*;
  * Class for displaying packs in the Pack Tab.
  */
 @SuppressWarnings("serial")
-public class NilCard extends JPanel{
+public class NilCard extends JPanel {
     private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png").getImage();
 
     private final JTextArea error = new JTextArea();
@@ -43,7 +43,7 @@ public class NilCard extends JPanel{
         AppEventBus.register(this);
 
         this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
+            TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
 
         this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.error.setEditable(false);
@@ -66,7 +66,7 @@ public class NilCard extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         TitledBorder border = (TitledBorder) this.getBorder();
         border.setTitle(GetText.tr("Nothing To Show"));
     }

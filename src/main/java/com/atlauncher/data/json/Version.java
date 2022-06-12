@@ -17,21 +17,20 @@
  */
 package com.atlauncher.data.json;
 
-import java.awt.Color;
+import com.atlauncher.annot.Json;
+import com.atlauncher.data.DisableableMod;
+import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.annotations.SerializedName;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.annot.Json;
-import com.atlauncher.data.DisableableMod;
-import com.atlauncher.workers.InstanceInstaller;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * This class contains information about a pack's version. This is a singular
@@ -69,7 +68,7 @@ public class Version {
     /**
      * If this version allows CurseForge integration.
      */
-    @SerializedName(value = "enableCurseForgeIntegration", alternate = { "enableCurseIntegration" })
+    @SerializedName(value = "enableCurseForgeIntegration", alternate = {"enableCurseIntegration"})
     public boolean enableCurseForgeIntegration = false;
 
     /**
@@ -296,7 +295,7 @@ public class Version {
         return this.mods.stream().filter(client ? Mod::installOnClient : Mod::installOnServer).map(mod -> {
             if (instanceInstaller.isReinstall) {
                 Optional<DisableableMod> matchingMod = instanceInstaller.instance.launcher.mods.parallelStream()
-                        .filter(dm -> dm.file.equals(mod.file)).findFirst();
+                    .filter(dm -> dm.file.equals(mod.file)).findFirst();
 
                 if (matchingMod.isPresent() && matchingMod.get().hasFullCurseForgeInformation()) {
                     mod.curseForgeProject = matchingMod.get().curseForgeProject;
@@ -353,7 +352,7 @@ public class Version {
      *
      * @param key The key/name given to the colour by the pack developer/s
      * @return a {@link Color} object of the colour matching the key or null if
-     *         there was an issue with the value given
+     * there was an issue with the value given
      */
     public Color getColour(String key) {
         if (key == null) {

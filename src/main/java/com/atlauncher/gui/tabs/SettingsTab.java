@@ -22,7 +22,13 @@ import com.atlauncher.AppEventBus;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.ThemeEvent;
-import com.atlauncher.gui.tabs.settings.*;
+import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
+import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
+import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
+import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
+import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
+import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
+import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.formdev.flatlaf.FlatLaf;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
@@ -33,7 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class SettingsTab extends JPanel implements Tab{
+public class SettingsTab extends JPanel implements Tab {
     private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
     private final ModsSettingsTab modsSettingsTab = new ModsSettingsTab();
     private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
@@ -42,8 +48,8 @@ public class SettingsTab extends JPanel implements Tab{
     private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
     private final CommandsSettingsTab commandSettingsTab = new CommandsSettingsTab();
     private final List<Tab> tabs = Arrays.asList(
-            new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
-                    this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
+        new Tab[]{this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
+            this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab});
     private final JTabbedPane tabbedPane;
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 
@@ -67,7 +73,7 @@ public class SettingsTab extends JPanel implements Tab{
         add(bottomPanel, BorderLayout.SOUTH);
         saveButton.addActionListener(arg0 -> {
             if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
-                    && networkSettingsTab.canConnectWithProxy()) {
+                && networkSettingsTab.canConnectWithProxy()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean themeChanged = generalSettingsTab.themeChanged();
                 boolean reloadInstancesPanel = generalSettingsTab.needToReloadInstancesPanel();
@@ -84,7 +90,7 @@ public class SettingsTab extends JPanel implements Tab{
                     App.launcher.reloadInstancesPanel();
                 }
                 if (themeChanged) {
-                    Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
+                    //TODO: Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
                 }
                 if (reloadTheme) {
                     App.loadTheme(App.settings.theme);
@@ -95,8 +101,9 @@ public class SettingsTab extends JPanel implements Tab{
             }
         });
 
-        tabbedPane.addChangeListener(e -> Analytics
-                .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
+        tabbedPane.addChangeListener(e ->{
+            //TODO: Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings")
+        });
     }
 
     @Override
@@ -111,7 +118,7 @@ public class SettingsTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

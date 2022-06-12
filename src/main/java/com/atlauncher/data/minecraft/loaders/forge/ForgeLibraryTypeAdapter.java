@@ -17,15 +17,6 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
@@ -40,16 +31,23 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
     private static final Logger LOG = LogManager.getLogger(ForgeLibraryTypeAdapter.class);
 
     @Override
     public ForgeLibrary deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
+        throws JsonParseException {
         ForgeLibrary library = new ForgeLibrary();
 
         JsonObject object = json.getAsJsonObject();
@@ -64,19 +62,19 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                 // forge installer provides this out the zip, but when the file is removed from
                 // shared libraries, we need to change the url to grab the launcher jar (same)
                 library.downloads.artifact.url = Constants.FORGE_MAVEN_BASE
-                        + library.downloads.artifact.path.replace(".jar", "-launcher.jar");
+                    + library.downloads.artifact.path.replace(".jar", "-launcher.jar");
             }
 
             // use our own mirror for Forge downloads
             if (library.downloads.artifact.url.contains(Constants.FORGE_MAVEN_BASE)) {
                 library.downloads.artifact.url = library.downloads.artifact.url.replace(Constants.FORGE_MAVEN_BASE,
-                        Constants.DOWNLOAD_SERVER + "/maven/");
+                    Constants.DOWNLOAD_SERVER + "/maven/");
             }
         } else {
             if (object.has("checksums")) {
                 library.checksums = new Gson().fromJson(object.get("checksums").getAsJsonArray(),
-                        new TypeToken<List<String>>() {
-                        }.getType());
+                    new TypeToken<List<String>>() {
+                    }.getType());
             }
 
             Downloads downloads = new Downloads();
@@ -94,7 +92,7 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                 artifact.path = Utils.convertMavenIdentifierToPath(object.get("name").getAsString());
 
                 if (library.name.startsWith("net.minecraftforge:forge:") && !object.has("clientreq")
-                        && !object.has("serverreq") && !object.has("checksums")) {
+                    && !object.has("serverreq") && !object.has("checksums")) {
                     artifact.path = artifact.path.substring(0, artifact.path.lastIndexOf(".jar")) + "-universal.jar";
                 }
 
@@ -105,13 +103,13 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                         String url = object.get("url").getAsString();
 
                         if (url.equalsIgnoreCase(Constants.FORGE_MAVEN_BASE)
-                                || url.equalsIgnoreCase(Constants.FORGE_MAVEN_BASE.replace("https://", "http://"))
-                                || url.equalsIgnoreCase(Constants.FORGE_OLD_MAVEN_BASE) || url.equalsIgnoreCase(
-                                        Constants.FORGE_OLD_MAVEN_BASE.replace("https://", "http://"))) {
+                            || url.equalsIgnoreCase(Constants.FORGE_MAVEN_BASE.replace("https://", "http://"))
+                            || url.equalsIgnoreCase(Constants.FORGE_OLD_MAVEN_BASE) || url.equalsIgnoreCase(
+                            Constants.FORGE_OLD_MAVEN_BASE.replace("https://", "http://"))) {
                             // make sure it exists first before blindly using it for old Forge
                             try {
                                 Request.Builder headRequestBuilder = new Request.Builder()
-                                        .url(Constants.DOWNLOAD_SERVER + "/maven/" + artifact.path).head();
+                                    .url(Constants.DOWNLOAD_SERVER + "/maven/" + artifact.path).head();
                                 Response headResponse = Network.CLIENT.newCall(headRequestBuilder.build()).execute();
 
                                 if (headResponse.code() == 200) {

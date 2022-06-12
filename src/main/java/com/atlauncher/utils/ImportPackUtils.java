@@ -17,20 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.curseforge.CurseForgeFile;
@@ -44,6 +30,19 @@ import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.network.Download;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ImportPackUtils {
     private static final Logger LOG = LogManager.getLogger(ImportPackUtils.class);
@@ -76,7 +75,7 @@ public class ImportPackUtils {
         }
 
         Pattern pattern = Pattern.compile(
-                "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
+            "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
         Matcher matcher = pattern.matcher(url);
 
         if (!matcher.find() || matcher.groupCount() < 2) {
@@ -111,12 +110,12 @@ public class ImportPackUtils {
 
         try {
             Download download = new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip)
-                    .size(curseFile.fileLength);
+                .size(curseFile.fileLength);
 
             Optional<CurseForgeFileHash> md5Hash = curseFile.hashes.stream().filter(h -> h.isMd5())
-                    .findFirst();
+                .findFirst();
             Optional<CurseForgeFileHash> sha1Hash = curseFile.hashes.stream().filter(h -> h.isSha1())
-                    .findFirst();
+                .findFirst();
 
             if (md5Hash.isPresent()) {
                 download = download.hash(md5Hash.get().value);
@@ -142,7 +141,7 @@ public class ImportPackUtils {
         }
 
         Pattern pattern = Pattern
-                .compile("modrinth\\.com\\/modpack\\/([\\w-]+)");
+            .compile("modrinth\\.com\\/modpack\\/([\\w-]+)");
         Matcher matcher = pattern.matcher(url);
 
         if (!matcher.find() || matcher.groupCount() < 1) {
@@ -190,7 +189,7 @@ public class ImportPackUtils {
             }
 
             if (tmpDir.toFile().list().length == 1
-                    && ArchiveUtils.archiveContainsFile(file.toPath(), tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
+                && ArchiveUtils.archiveContainsFile(file.toPath(), tmpDir.toFile().list()[0] + "/mmc-pack.json")) {
                 return loadMultiMCFormat(tmpDir.resolve(tmpDir.toFile().list()[0]));
             }
 
@@ -214,7 +213,7 @@ public class ImportPackUtils {
 
         try {
             CurseForgeManifest manifest = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "manifest.json"),
-                    CurseForgeManifest.class);
+                CurseForgeManifest.class);
 
             if (projectId != null) {
                 manifest.projectID = projectId;
@@ -269,8 +268,8 @@ public class ImportPackUtils {
 
         try {
             ModrinthModpackManifest manifest = Gsons.MINECRAFT
-                    .fromJson(ArchiveUtils.getFile(file.toPath(), "modrinth.index.json"),
-                            ModrinthModpackManifest.class);
+                .fromJson(ArchiveUtils.getFile(file.toPath(), "modrinth.index.json"),
+                    ModrinthModpackManifest.class);
 
             if (!manifest.game.equals("minecraft")) {
                 LOG.error("Cannot install as the manifest is for game {} and not for Minecraft", manifest.game);
@@ -300,7 +299,7 @@ public class ImportPackUtils {
 
     public static boolean loadMultiMCFormat(Path extractedPath) {
         try (FileReader fileReader = new FileReader(extractedPath.resolve("mmc-pack.json").toFile());
-                InputStream instanceCfgStream = new FileInputStream(extractedPath.resolve("instance.cfg").toFile())) {
+             InputStream instanceCfgStream = new FileInputStream(extractedPath.resolve("instance.cfg").toFile())) {
             MultiMCManifest manifest = Gsons.MINECRAFT.fromJson(fileReader, MultiMCManifest.class);
 
             Properties props = new Properties();

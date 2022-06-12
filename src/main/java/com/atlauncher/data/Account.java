@@ -17,23 +17,22 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.utils.Utils;
-
 /**
  * This class deals with the Accounts in the launcher.
  *
  * @deprecated This is no longer used. Replaced with AbstractAccount as the base
- *             and MojangAccount and MicrosoftAccount
+ * and MojangAccount and MicrosoftAccount
  */
 public class Account implements Serializable {
     private static final Logger LOG = LogManager.getLogger(Account.class);

@@ -36,7 +36,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
 
-public class SetupDialog extends JDialog{
+public class SetupDialog extends JDialog {
     private static final long serialVersionUID = -2931970914611329658L;
 
     private final JLabel setupLabel;
@@ -96,10 +96,10 @@ public class SetupDialog extends JDialog{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "? ",
-                Utils.getIconImage(App.THEME.getIconPath("question")),
-                "<html>" + Utils.splitMultilinedString(GetText.tr(
-                        "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),
-                        80, "<br/>") + "</html>");
+            Utils.getIconImage(App.THEME.getIconPath("question")),
+            "<html>" + Utils.splitMultilinedString(GetText.tr(
+                    "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),
+                80, "<br/>") + "</html>");
         middle.add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
@@ -131,8 +131,8 @@ public class SetupDialog extends JDialog{
             App.settings.save();
 
             if (enableAnalytics.isSelected()) {
-                Analytics.startSession();
-                Analytics.sendEvent("SetupDialogComplete", "Launcher");
+                //TODO: Analytics.startSession();
+                //TODO: Analytics.sendEvent("SetupDialogComplete", "Launcher");
             }
 
             setVisible(false);
@@ -156,13 +156,13 @@ public class SetupDialog extends JDialog{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         setupLabel.setText(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
         languageLabel.setText(GetText.tr("Language") + ": ");
         enableAnalyticsLabel.setText(GetText.tr("Enable Anonymous Analytics") + "? ");
         enableAnalyticsLabel.setToolTipText("<html>" + Utils.splitMultilinedString(GetText.tr(
                 "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),
-                80, "<br/>") + "</html>");
+            80, "<br/>") + "</html>");
         saveButton.setText(GetText.tr("Save"));
     }
 }

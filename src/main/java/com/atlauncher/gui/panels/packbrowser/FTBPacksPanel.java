@@ -17,17 +17,6 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.awt.GridBagConstraints;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.swing.JPanel;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -37,6 +26,15 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.FTBPackCard;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.utils.ModpacksChApi;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FTBPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
@@ -45,7 +43,7 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                             boolean sortDescending, String search, int page) {
         List<ModpacksChPackManifest> packs;
 
         if (search == null || search.isEmpty()) {
@@ -59,9 +57,9 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
         if (packs == null || packs.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
-                    gbc);
+                new NilCard(GetText
+                    .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                gbc);
             return;
         }
 
@@ -83,7 +81,7 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                              boolean sortDescending, String search, int page) {
         List<ModpacksChPackManifest> packs;
 
         if (search == null || search.isEmpty()) {

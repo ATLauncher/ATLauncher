@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.modrinth;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class ModrinthSearchResult {
     public List<ModrinthSearchHit> hits;

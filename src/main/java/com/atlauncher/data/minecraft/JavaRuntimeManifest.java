@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.util.Map;
-
 import com.atlauncher.annot.Json;
+
+import java.util.Map;
 
 @Json
 public class JavaRuntimeManifest {

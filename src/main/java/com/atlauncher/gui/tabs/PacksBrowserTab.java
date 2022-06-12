@@ -25,7 +25,14 @@ import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
 import com.atlauncher.events.ThemeEvent;
-import com.atlauncher.gui.panels.packbrowser.*;
+import com.atlauncher.gui.panels.packbrowser.ATLauncherFeaturedPacksPanel;
+import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
+import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
+import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
+import com.atlauncher.gui.panels.packbrowser.ModrinthPacksPanel;
+import com.atlauncher.gui.panels.packbrowser.PackBrowserPlatformPanel;
+import com.atlauncher.gui.panels.packbrowser.PacksBrowserTabTitlePanel;
+import com.atlauncher.gui.panels.packbrowser.TechnicPacksPanel;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -45,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public final class PacksBrowserTab extends JPanel implements Tab{
+public final class PacksBrowserTab extends JPanel implements Tab {
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
@@ -94,7 +101,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
     private void initComponents() {
         actionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         actionsPanel
-                .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
+            .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
 
         minecraftVersionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
         minecraftVersionPanel.add(minecraftVersionLabel);
@@ -149,7 +156,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
                 String newSort = ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue();
 
                 PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                        .getSelectedComponent();
+                    .getSelectedComponent();
                 setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true) == true);
 
                 load(true);
@@ -192,10 +199,10 @@ public final class PacksBrowserTab extends JPanel implements Tab{
 
         addManuallyButton.addActionListener(e -> {
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                    .getSelectedComponent();
+                .getSelectedComponent();
 
             String id = DialogManager.okDialog().setTitle(GetText.tr("Add Pack By ID/Slug/URL"))
-                    .setContent(GetText.tr("Enter an ID/slug/url for a pack to add manually:")).showInput();
+                .setContent(GetText.tr("Enter an ID/slug/url for a pack to add manually:")).showInput();
 
             if (id != null && !id.isEmpty()) {
                 selectedPanel.addById(id);
@@ -216,17 +223,17 @@ public final class PacksBrowserTab extends JPanel implements Tab{
         // scrollpane
 
         scrollPane = new JScrollPane(contentPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                        .getSelectedComponent();
+                    .getSelectedComponent();
 
                 if (!loading && selectedPanel.hasPagination() && selectedPanel.hasMorePages()) {
                     int maxValue = scrollPane.getVerticalScrollBar().getMaximum()
-                            - scrollPane.getVerticalScrollBar().getVisibleAmount();
+                        - scrollPane.getVerticalScrollBar().getVisibleAmount();
                     int currentValue = scrollPane.getVerticalScrollBar().getValue();
 
                     if ((float) currentValue / (float) maxValue > 0.9f) {
@@ -247,7 +254,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
 
         platformTabbedPane.add(atlauncherFeaturedPacksPanel);
         platformTabbedPane.setTabComponentAt(index++,
-                new PacksBrowserTabTitlePanel("ATLauncher Featured", "atlauncher"));
+            new PacksBrowserTabTitlePanel("ATLauncher Featured", "atlauncher"));
 
         if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
             platformTabbedPane.add(curseForgePacksPanel);
@@ -271,10 +278,10 @@ public final class PacksBrowserTab extends JPanel implements Tab{
 
         platformTabbedPane.addChangeListener(e -> {
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                    .getSelectedComponent();
+                .getSelectedComponent();
 
             // send analytics page view
-            Analytics.sendScreenView(selectedPanel.getPlatformName() + " Platform Packs");
+            //TODO: Analytics.sendScreenView(selectedPanel.getPlatformName() + " Platform Packs");
 
             afterTabChange();
         });
@@ -311,11 +318,11 @@ public final class PacksBrowserTab extends JPanel implements Tab{
             minecraftVersionComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Versions")));
 
             List<VersionManifestVersion> versionsToShow = selectedPanel
-                    .getSupportedMinecraftVersionsForFiltering().size() != 0
-                            ? selectedPanel.getSupportedMinecraftVersionsForFiltering()
-                            : MinecraftManager
-                                    .getFilteredMinecraftVersions(
-                                            selectedPanel.getSupportedMinecraftVersionTypesForFiltering());
+                .getSupportedMinecraftVersionsForFiltering().size() != 0
+                ? selectedPanel.getSupportedMinecraftVersionsForFiltering()
+                : MinecraftManager
+                .getFilteredMinecraftVersions(
+                    selectedPanel.getSupportedMinecraftVersionTypesForFiltering());
 
             for (VersionManifestVersion mv : versionsToShow) {
                 minecraftVersionComboBox.addItem(new ComboItem<String>(mv.id, mv.id));
@@ -378,7 +385,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
             platformTabbedPane.setEnabled(false);
             page += 1;
 
-            Analytics.sendEvent(page, "Next", "Navigation", selectedPanel.getAnalyticsCategory());
+            //TODO: Analytics.sendEvent(page, "Next", "Navigation", selectedPanel.getAnalyticsCategory());
 
             // load in the content for the platform
             new Thread(() -> {
@@ -399,7 +406,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
 
                 // load in the content for the platform
                 selectedPanel.loadMorePacks(contentPanel, minecraftVersion, category, sort, sortDescending,
-                        searchField.getText(), page);
+                    searchField.getText(), page);
 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -425,7 +432,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
         platformTabbedPane.setEnabled(false);
 
         if (!searchField.getText().isEmpty()) {
-            Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
+            //TODO: Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
         }
 
         // load in the content for the platform
@@ -438,7 +445,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
         new Thread(() -> {
             String minecraftVersion = null;
             if (selectedPanel.supportsMinecraftVersionFiltering()
-                    && minecraftVersionComboBox.getSelectedItem() != null) {
+                && minecraftVersionComboBox.getSelectedItem() != null) {
                 minecraftVersion = ((ComboItem<String>) minecraftVersionComboBox.getSelectedItem()).getValue();
             }
 
@@ -454,7 +461,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
 
             // load in the content for the platform
             selectedPanel.load(contentPanel, minecraftVersion, category, sort, sortDescending, searchField.getText(),
-                    page);
+                page);
 
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -492,7 +499,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
         searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
@@ -500,7 +507,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event) {
         ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
         descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));
     }

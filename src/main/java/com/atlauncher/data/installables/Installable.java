@@ -17,25 +17,6 @@
  */
 package com.atlauncher.data.installables;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Instance;
@@ -54,6 +35,19 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public abstract class Installable {
     private static final Logger LOG = LogManager.getLogger(Installable.class);
@@ -90,27 +84,27 @@ public abstract class Installable {
     public boolean startInstall() {
         if (!isReinstall && !isServer && InstanceManager.isInstance(instanceName)) {
             DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(new HTMLBuilder().center()
-                    .text(GetText.tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
-                    .build()).setType(DialogManager.ERROR).show();
+                .text(GetText.tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
+                .build()).setType(DialogManager.ERROR).show();
             return false;
         } else if (!isReinstall && !isServer && instanceName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
             return false;
         } else if (!isReinstall && isServer && ServerManager.isServer(instanceName)) {
             DialogManager.okDialog().setTitle(GetText.tr("Error")).setContent(new HTMLBuilder().center()
-                    .text(GetText.tr("A server already exists with that name.<br/><br/>Rename it and try again."))
-                    .build()).setType(DialogManager.ERROR).show();
+                .text(GetText.tr("A server already exists with that name.<br/><br/>Rename it and try again."))
+                .build()).setType(DialogManager.ERROR).show();
             return false;
         } else if (!isReinstall && isServer && instanceName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("Server name is invalid. It must contain at least 1 letter or number."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("Server name is invalid. It must contain at least 1 letter or number."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
             return false;
         }
 
@@ -138,7 +132,7 @@ public abstract class Installable {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
         final JLabel doing = new JLabel(
-                (isReinstall) ? GetText.tr("Starting Reinstall Process") : GetText.tr("Starting Install Process"));
+            (isReinstall) ? GetText.tr("Starting Reinstall Process") : GetText.tr("Starting Install Process"));
         doing.setHorizontalAlignment(JLabel.CENTER);
         doing.setVerticalAlignment(JLabel.TOP);
         topPanel.add(doing);
@@ -163,9 +157,9 @@ public abstract class Installable {
         boolean saveMods = !isServer && isReinstall && this.saveMods;
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
-                isServer, changingLoader, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest,
-                curseExtractedPath, modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
-                multiMCExtractedPath, technicModpack, dialog) {
+            isServer, changingLoader, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest,
+            curseExtractedPath, modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
+            multiMCExtractedPath, technicModpack, dialog) {
 
             protected void done() {
                 Boolean success = false;
@@ -181,7 +175,7 @@ public abstract class Installable {
 
                         // #. {0} is the pack name and {1} is the pack version
                         text = GetText.tr("{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
-                                pack.getName(), version.version);
+                            pack.getName(), version.version);
 
                         if (instanceIsCorrupt && instance != null) {
                             instance.launcher.isPlayable = false;
@@ -195,7 +189,7 @@ public abstract class Installable {
 
                         // #. {0} is the pack name and {1} is the pack version
                         text = GetText.tr("{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
-                                pack.getName(), version.version);
+                            pack.getName(), version.version);
 
                         if (Files.exists(this.root) && Files.isDirectory(this.root)) {
                             FileUtils.deleteDirectory(this.root);
@@ -225,11 +219,11 @@ public abstract class Installable {
                         } else if (isServer) {
                             // #. {0} is the pack name and {1} is the pack version
                             text = GetText.tr("{0} {1} server has been installed.<br/><br/>Find it in the servers tab.",
-                                    pack.getName(), version.version);
+                                pack.getName(), version.version);
                         } else {
                             // #. {0} is the pack name and {1} is the pack version
                             text = GetText.tr("{0} {1} has been installed.<br/><br/>Find it in the instances tab.",
-                                    pack.getName(), version.version);
+                                pack.getName(), version.version);
                         }
 
                         if (isServer) {
@@ -254,16 +248,16 @@ public abstract class Installable {
 
                             // #. {0} is the pack name and {1} is the pack version
                             text = GetText.tr(
-                                    "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
-                                    pack.getName(), version.version);
+                                "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
+                                pack.getName(), version.version);
                         } else {
                             // #. {0} is the pack name and {1} is the pack version
                             title = GetText.tr("{0} {1} Not Installed", pack.getName(), version.version);
 
                             // #. {0} is the pack name and {1} is the pack version
                             text = GetText.tr(
-                                    "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
-                                    pack.getName(), version.version);
+                                "{0} {1} wasn't installed.<br/><br/>Check error logs for more information.",
+                                pack.getName(), version.version);
                         }
                     }
                 }
@@ -284,7 +278,7 @@ public abstract class Installable {
 
                 if (!addingLoader && !changingLoader && !removingLoader) {
                     DialogManager.okDialog().setTitle(title).setContent(new HTMLBuilder().center().text(text).build())
-                            .setType(type).show();
+                        .setType(type).show();
                 }
             }
         };
@@ -377,7 +371,7 @@ public abstract class Installable {
     private String getDialogTitle(String name) {
         if (removingLoader) {
             return GetText.tr("Removing {0} {1}", instance.launcher.loaderVersion.type,
-                    instance.launcher.loaderVersion.version);
+                instance.launcher.loaderVersion.version);
         }
 
         if (addingLoader) {
@@ -405,10 +399,10 @@ public abstract class Installable {
 
     public int showDifferentMinecraftVersionsDialog() {
         int ret = DialogManager.yesNoCancelDialog().setTitle(GetText.tr("Save Mods?"))
-                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>The mods installed will be removed since you've not checked the \"Save Mods\" checkbox.<br/><br/>Do you want to save your mods?"))
-                        .build())
-                .setType(DialogManager.WARNING).show();
+            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>The mods installed will be removed since you've not checked the \"Save Mods\" checkbox.<br/><br/>Do you want to save your mods?"))
+                .build())
+            .setType(DialogManager.WARNING).show();
 
         if (ret == 0) {
             saveMods = true;

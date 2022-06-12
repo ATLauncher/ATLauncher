@@ -17,13 +17,13 @@
  */
 package com.atlauncher.events;
 
-public abstract class AccountEvent extends Event{
-    protected AccountEvent(){
+public abstract class AccountEvent extends Event {
+    protected AccountEvent() {
         super();
     }
 
-    public static final class AccountChangedEvent extends AccountEvent{
-        public AccountChangedEvent(){
+    public static final class AccountChangedEvent extends AccountEvent {
+        public AccountChangedEvent() {
             super();
         }
     }

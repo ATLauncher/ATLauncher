@@ -17,13 +17,6 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.events.OnSide;
@@ -32,7 +25,10 @@ import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
 
-public class PacksBrowserTabTitlePanel extends JPanel{
+import javax.swing.*;
+import java.awt.*;
+
+public class PacksBrowserTabTitlePanel extends JPanel {
     private final JLabel label = new JLabel(null, null, SwingConstants.CENTER);
     private final String icon;
 
@@ -59,7 +55,7 @@ public class PacksBrowserTabTitlePanel extends JPanel{
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event) {
         label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform", icon)));
     }
 }

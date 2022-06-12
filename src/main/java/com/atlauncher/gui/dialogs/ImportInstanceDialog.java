@@ -17,32 +17,6 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FileDialog;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FilenameFilter;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileFilter;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
@@ -53,6 +27,17 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FilenameFilter;
 
 @SuppressWarnings("serial")
 public class ImportInstanceDialog extends JDialog {
@@ -80,7 +65,7 @@ public class ImportInstanceDialog extends JDialog {
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
                 "Select a zip/mrpack file to import it.<br/>We currently support CurseForge, Modrinth and MultiMC exported files/urls, as well as CurseForge.com links."))
-                .build());
+            .build());
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);
 
@@ -202,7 +187,7 @@ public class ImportInstanceDialog extends JDialog {
             setVisible(false);
 
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Import Instance"), 0,
-                    GetText.tr("Import Instance"), this);
+                GetText.tr("Import Instance"), this);
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
@@ -221,10 +206,10 @@ public class ImportInstanceDialog extends JDialog {
 
             if (!dialog.getReturnValue()) {
                 DialogManager.okDialog().setTitle(GetText.tr("Failed To Import Instance"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occured when trying to import an instance.<br/><br/>Check the console for more information."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "An error occured when trying to import an instance.<br/><br/>Check the console for more information."))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
                 setVisible(true);
             } else {
                 dispose();

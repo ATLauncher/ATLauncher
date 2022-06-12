@@ -17,6 +17,19 @@
  */
 package com.atlauncher.data.minecraft.loaders.fabric;
 
+import com.atlauncher.FileSystem;
+import com.atlauncher.data.minecraft.Arguments;
+import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.data.minecraft.loaders.Loader;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.network.Download;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -36,20 +49,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.FileSystem;
-import com.atlauncher.data.minecraft.Arguments;
-import com.atlauncher.data.minecraft.Library;
-import com.atlauncher.data.minecraft.loaders.Loader;
-import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.managers.ConfigManager;
-import com.atlauncher.network.Download;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
-import com.google.gson.reflect.TypeToken;
-
 public class FabricLoader implements Loader {
     private static final Logger LOG = LogManager.getLogger(FabricLoader.class);
 
@@ -61,7 +60,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion versionOverride) {
+                    LoaderVersion versionOverride) {
         this.minecraft = (String) metadata.get("minecraft");
         this.tempDir = tempDir;
         this.instanceInstaller = instanceInstaller;
@@ -78,8 +77,8 @@ public class FabricLoader implements Loader {
 
     public FabricMetaVersion getLoader(String version) {
         return Download.build()
-                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s", this.minecraft, version))
-                .asClass(FabricMetaVersion.class);
+            .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s", this.minecraft, version))
+            .asClass(FabricMetaVersion.class);
     }
 
     public FabricMetaVersion getVersion(String version) {
@@ -91,8 +90,8 @@ public class FabricLoader implements Loader {
         }.getType();
 
         List<FabricMetaVersion> loaders = Download.build()
-                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft))
-                .asType(type);
+            .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft))
+            .asType(type);
 
         if (loaders == null || loaders.size() == 0) {
             return null;
@@ -114,8 +113,8 @@ public class FabricLoader implements Loader {
 
     private List<File> getLibraryFiles() {
         return this.getLibraries().stream()
-                .map(library -> FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile())
-                .collect(Collectors.toList());
+            .map(library -> FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile())
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -163,7 +162,7 @@ public class FabricLoader implements Loader {
                 Manifest manifest = new Manifest();
                 manifest.getMainAttributes().put(new Attributes.Name("Manifest-Version"), "1.0");
                 manifest.getMainAttributes().put(new Attributes.Name("Main-Class"),
-                        "net.fabricmc.loader.launch.server.FabricServerLauncher");
+                    "net.fabricmc.loader.launch.server.FabricServerLauncher");
                 manifest.write(zipOutputStream);
 
                 zipOutputStream.closeEntry();
@@ -171,8 +170,8 @@ public class FabricLoader implements Loader {
                 addedEntries.add("fabric-server-launch.properties");
                 zipOutputStream.putNextEntry(new ZipEntry("fabric-server-launch.properties"));
                 zipOutputStream.write(
-                        ("launch.mainClass=" + this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer)
-                                + "\n").getBytes(StandardCharsets.UTF_8));
+                    ("launch.mainClass=" + this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer)
+                        + "\n").getBytes(StandardCharsets.UTF_8));
                 zipOutputStream.closeEntry();
 
                 byte[] buffer = new byte[32768];
@@ -182,7 +181,7 @@ public class FabricLoader implements Loader {
                         JarEntry entry;
                         while ((entry = jis.getNextJarEntry()) != null) {
                             if (!addedEntries.contains(entry.getName())
-                                    && !manifestPattern.matcher(entry.getName()).matches()) {
+                                && !manifestPattern.matcher(entry.getName()).matches()) {
                                 JarEntry newEntry = new JarEntry(entry.getName());
                                 zipOutputStream.putNextEntry(newEntry);
 
@@ -203,9 +202,9 @@ public class FabricLoader implements Loader {
             outputStream.close();
 
             FileOutputStream propertiesOutputStream = new FileOutputStream(
-                    new File(this.instanceInstaller.root.toFile(), "fabric-server-launcher.properties"));
+                new File(this.instanceInstaller.root.toFile(), "fabric-server-launcher.properties"));
             propertiesOutputStream.write(("serverJar=" + this.instanceInstaller.getMinecraftJar().getName() + "\n")
-                    .getBytes(StandardCharsets.UTF_8));
+                .getBytes(StandardCharsets.UTF_8));
             propertiesOutputStream.close();
         } catch (IOException e) {
             LOG.error("error", e);
@@ -233,15 +232,15 @@ public class FabricLoader implements Loader {
 
         try {
             List<FabricMetaVersion> versions = Download.build()
-                    .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft))
-                    .asTypeWithThrow(type);
+                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft))
+                .asTypeWithThrow(type);
 
             List<String> disabledVersions = ConfigManager.getConfigItem("loaders.fabric.disabledVersions",
-                    new ArrayList<String>());
+                new ArrayList<String>());
 
             return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
-                    .map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
-                    .collect(Collectors.toList());
+                .map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
+                .collect(Collectors.toList());
         } catch (IOException e) {
             return new ArrayList<>();
         }

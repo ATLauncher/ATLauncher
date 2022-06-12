@@ -17,27 +17,6 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.Point;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
@@ -49,6 +28,16 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
@@ -82,7 +71,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
 
         JLabelWithHover languageLabel = new JLabelWithHover(GetText.tr("Language") + ":", HELP_ICON,
-                GetText.tr("This specifies the language used by the Launcher."));
+            GetText.tr("This specifies the language used by the Launcher."));
         add(languageLabel, gbc);
 
         gbc.gridx++;
@@ -112,7 +101,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover themeLabel = new JLabelWithHover(GetText.tr("Theme") + ":", HELP_ICON,
-                GetText.tr("This sets the theme that the launcher will use."));
+            GetText.tr("This sets the theme that the launcher will use."));
 
         add(themeLabel, gbc);
 
@@ -127,7 +116,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         theme.addItem(new ComboItem<>("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.Vuesion", "Vuesion"));
         theme.addItem(
-                new ComboItem<>("com.atlauncher.themes.MaterialPalenightContrast", "Material Palenight Contrast"));
+            new ComboItem<>("com.atlauncher.themes.MaterialPalenightContrast", "Material Palenight Contrast"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.ArcOrange", "Arc Orange"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.CyanLight", "Cyan Light"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.HighTechDarkness", "High Tech Darkness"));
@@ -152,7 +141,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover dateFormatLabel = new JLabelWithHover(GetText.tr("Date Format") + ":", HELP_ICON,
-                GetText.tr("This controls the format that dates are displayed in the launcher."));
+            GetText.tr("This controls the format that dates are displayed in the launcher."));
 
         add(dateFormatLabel, gbc);
 
@@ -183,7 +172,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover instanceTitleFormatLabel = new JLabelWithHover(GetText.tr("Instance Title Format") + ":",
-                HELP_ICON, GetText.tr("This controls the format that instances titles are shown as."));
+            HELP_ICON, GetText.tr("This controls the format that instances titles are shown as."));
 
         add(instanceTitleFormatLabel, gbc);
 
@@ -194,7 +183,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         for (String format : Constants.INSTANCE_TITLE_FORMATS) {
             instanceTitleFormat.addItem(new ComboItem<>(format, String.format(format, GetText.tr("Instance Name"),
-                    GetText.tr("Pack Name"), GetText.tr("Pack Version"), GetText.tr("Minecraft Version"))));
+                GetText.tr("Pack Name"), GetText.tr("Pack Version"), GetText.tr("Minecraft Version"))));
         }
 
         instanceTitleFormat.setSelectedItem(App.settings.instanceTitleFormat);
@@ -209,7 +198,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover selectedTabOnStartupLabel = new JLabelWithHover(GetText.tr("Default Tab") + ":", HELP_ICON,
-                GetText.tr("Which tab to have selected by default when opening the launcher."));
+            GetText.tr("Which tab to have selected by default when opening the launcher."));
 
         add(selectedTabOnStartupLabel, gbc);
 
@@ -246,7 +235,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover defaultInstanceSortingLabel = new JLabelWithHover(GetText.tr("Default Tab") + ":", HELP_ICON,
-                GetText.tr("Which tab to have selected by default when opening the launcher."));
+            GetText.tr("Which tab to have selected by default when opening the launcher."));
 
         add(defaultInstanceSortingLabel, gbc);
 
@@ -266,9 +255,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         customDownloadsPathLabel = new JLabelWithHover(GetText.tr("Downloads Folder") + ":", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This setting allows you to change the Downloads folder that the launcher looks in when downloading browser mods."))
-                        .build());
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "This setting allows you to change the Downloads folder that the launcher looks in when downloading browser mods."))
+                .build());
         add(customDownloadsPathLabel, gbc);
 
         gbc.gridx++;
@@ -279,11 +268,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         customDownloadsPath = new JTextField(16);
         customDownloadsPath.setText(
-                Optional.ofNullable(App.settings.customDownloadsPath)
-                        .orElse(FileSystem.getUserDownloadsPath(false).toString()));
+            Optional.ofNullable(App.settings.customDownloadsPath)
+                .orElse(FileSystem.getUserDownloadsPath(false).toString()));
         customDownloadsPathResetButton = new JButton(GetText.tr("Reset"));
         customDownloadsPathResetButton.addActionListener(
-                e -> customDownloadsPath.setText(FileSystem.getUserDownloadsPath(false).toString()));
+            e -> customDownloadsPath.setText(FileSystem.getUserDownloadsPath(false).toString()));
         customDownloadsPathBrowseButton = new JButton(GetText.tr("Browse"));
         customDownloadsPathBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
@@ -313,7 +302,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover keepLauncherOpenLabel = new JLabelWithHover(GetText.tr("Keep Launcher Open") + "?", HELP_ICON,
-                GetText.tr("This determines if ATLauncher should stay open or exit after Minecraft has exited"));
+            GetText.tr("This determines if ATLauncher should stay open or exit after Minecraft has exited"));
         add(keepLauncherOpenLabel, gbc);
 
         gbc.gridx++;
@@ -332,7 +321,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableConsoleLabel = new JLabelWithHover(GetText.tr("Enable Console") + "?", HELP_ICON,
-                GetText.tr("If you want the console to be visible when opening the Launcher."));
+            GetText.tr("If you want the console to be visible when opening the Launcher."));
         add(enableConsoleLabel, gbc);
 
         gbc.gridx++;
@@ -351,9 +340,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableTrayIconLabel = new JLabelWithHover(GetText.tr("Enable Tray Menu") + "?", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "The Tray Menu is a little icon that shows in your system taskbar which allows you to perform different functions to do various things with the launcher such as hiding or showing the console, killing Minecraft or closing ATLauncher."))
-                        .build());
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "The Tray Menu is a little icon that shows in your system taskbar which allows you to perform different functions to do various things with the launcher such as hiding or showing the console, killing Minecraft or closing ATLauncher."))
+                .build());
         add(enableTrayIconLabel, gbc);
 
         gbc.gridx++;
@@ -372,8 +361,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableDiscordIntegrationLabel = new JLabelWithHover(
-                GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
-                GetText.tr("This will enable showing which pack you're playing in Discord."));
+            GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
+            GetText.tr("This will enable showing which pack you're playing in Discord."));
         add(enableDiscordIntegrationLabel, gbc);
 
         gbc.gridx++;
@@ -395,7 +384,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             JLabelWithHover enableFeralGamemodeLabel = new JLabelWithHover(GetText.tr("Enable Feral Gamemode") + "?",
-                    HELP_ICON, GetText.tr("This will enable Feral Gamemode for packs launched."));
+                HELP_ICON, GetText.tr("This will enable Feral Gamemode for packs launched."));
             add(enableFeralGamemodeLabel, gbc);
 
             gbc.gridx++;
@@ -408,7 +397,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
             if (!gameModeExistsInPath) {
                 enableFeralGamemodeLabel.setToolTipText(GetText.tr(
-                        "This will enable Feral Gamemode for packs launched (disabled because gamemoderun not found in PATH, please install Feral Gamemode or add it to your PATH)."));
+                    "This will enable Feral Gamemode for packs launched (disabled because gamemoderun not found in PATH, please install Feral Gamemode or add it to your PATH)."));
                 enableFeralGamemodeLabel.setEnabled(false);
 
                 enableFeralGamemode.setEnabled(false);
@@ -424,9 +413,9 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover disableCustomFontsLabel = new JLabelWithHover(GetText.tr("Disable Custom Fonts?"), HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This will disable custom fonts used by themes. If your system has issues with font display not looking right, you can disable this to switch to a default compatible font."))
-                        .build());
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "This will disable custom fonts used by themes. If your system has issues with font display not looking right, you can disable this to switch to a default compatible font."))
+                .build());
         add(disableCustomFontsLabel, gbc);
 
         gbc.gridx++;
@@ -443,10 +432,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover rememberWindowSizePositionLabel = new JLabelWithHover(
-                GetText.tr("Remember Window Size & Positions?"), HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This will remember the windows positions and size so they keep the same size and position when you restart the launcher."))
-                        .build());
+            GetText.tr("Remember Window Size & Positions?"), HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "This will remember the windows positions and size so they keep the same size and position when you restart the launcher."))
+                .build());
         add(rememberWindowSizePositionLabel, gbc);
 
         gbc.gridx++;
@@ -463,10 +452,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover useNativeFilePickerLabel = new JLabelWithHover(GetText.tr("Use Native File Picker?"), HELP_ICON,
-                new HTMLBuilder().center().split(100)
-                        .text(GetText
-                                .tr("This will use your operating systems native file picker when selecting files."))
-                        .build());
+            new HTMLBuilder().center().split(100)
+                .text(GetText
+                    .tr("This will use your operating systems native file picker when selecting files."))
+                .build());
         add(useNativeFilePickerLabel, gbc);
 
         gbc.gridx++;
@@ -483,10 +472,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover useRecycleBinLabel = new JLabelWithHover(GetText.tr("Use Recycle Bin/Trash?"), HELP_ICON,
-                new HTMLBuilder().center().split(100)
-                        .text(GetText
-                                .tr("This will use your operating systems recycle bin/trash where possible when deleting files/instances/servers instead of just deleting them entirely, allowing you to recover files if you make a mistake or want to get them back."))
-                        .build());
+            new HTMLBuilder().center().split(100)
+                .text(GetText
+                    .tr("This will use your operating systems recycle bin/trash where possible when deleting files/instances/servers instead of just deleting them entirely, allowing you to recover files if you make a mistake or want to get them back."))
+                .build());
         add(useRecycleBinLabel, gbc);
 
         gbc.gridx++;
@@ -500,8 +489,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     @SuppressWarnings("unchecked")
     public boolean needToReloadTheme() {
         return !((ComboItem<String>) theme.getSelectedItem()).getValue().equalsIgnoreCase(App.settings.theme)
-                || App.settings.disableCustomFonts != disableCustomFonts.isSelected()
-                || !((String) language.getSelectedItem()).equalsIgnoreCase(App.settings.language);
+            || App.settings.disableCustomFonts != disableCustomFonts.isSelected()
+            || !((String) language.getSelectedItem()).equalsIgnoreCase(App.settings.language);
     }
 
     @SuppressWarnings("unchecked")
@@ -511,7 +500,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
     public boolean needToReloadInstancesPanel() {
         return !(((ComboItem<String>) instanceTitleFormat.getSelectedItem()).getValue())
-                .equals(App.settings.instanceTitleFormat);
+            .equals(App.settings.instanceTitleFormat);
     }
 
     public boolean needToReloadLanguage() {

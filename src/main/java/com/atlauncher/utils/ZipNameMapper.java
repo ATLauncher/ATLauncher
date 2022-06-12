@@ -17,9 +17,8 @@
  */
 package com.atlauncher.utils;
 
-import org.zeroturnaround.zip.NameMapper;
-
 import com.atlauncher.data.BackupMode;
+import org.zeroturnaround.zip.NameMapper;
 
 public class ZipNameMapper {
     public static final NameMapper NORMAL_BACKUP = name -> {
@@ -32,7 +31,7 @@ public class ZipNameMapper {
 
     public static final NameMapper NORMAL_PLUS_MODS_BACKUP = name -> {
         if (name.equalsIgnoreCase("options.txt") || name.startsWith("saves") || name.startsWith("config")
-                || name.startsWith("mods") || name.startsWith("jarmods") || name.startsWith("coremods")) {
+            || name.startsWith("mods") || name.startsWith("jarmods") || name.startsWith("coremods")) {
             return name;
         }
 

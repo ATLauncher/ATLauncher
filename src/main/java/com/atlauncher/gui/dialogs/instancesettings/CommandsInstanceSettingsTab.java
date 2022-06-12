@@ -17,27 +17,18 @@
  */
 package com.atlauncher.gui.dialogs.instancesettings;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ItemEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.border.Border;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.ItemEvent;
 
 @SuppressWarnings("serial")
 public class CommandsInstanceSettingsTab extends JPanel {
@@ -68,7 +59,7 @@ public class CommandsInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableCommandsLabel = new JLabelWithHover(GetText.tr("Enable commands") + "?", HELP_ICON,
-                GetText.tr("This allows you to turn launch/exit commands on or off."));
+            GetText.tr("This allows you to turn launch/exit commands on or off."));
         add(enableCommandsLabel, gbc);
 
         gbc.gridx++;
@@ -95,8 +86,8 @@ public class CommandsInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover preLaunchCommandLabel = new JLabelWithHover(GetText.tr("Pre-launch command") + ":", HELP_ICON,
-                GetText.tr(
-                        "This command will be run before the instance launches. The game will not run until the command has finished."));
+            GetText.tr(
+                "This command will be run before the instance launches. The game will not run until the command has finished."));
         add(preLaunchCommandLabel, gbc);
 
         gbc.gridx++;
@@ -117,8 +108,8 @@ public class CommandsInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover postExitCommandLabel = new JLabelWithHover(GetText.tr("Post-exit command") + ":", HELP_ICON,
-                GetText.tr(
-                        "This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
+            GetText.tr(
+                "This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
         add(postExitCommandLabel, gbc);
 
         gbc.gridx++;
@@ -139,8 +130,8 @@ public class CommandsInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover wrapperCommandLabel = new JLabelWithHover(GetText.tr("Wrapper command") + ":", HELP_ICON,
-                GetText.tr(
-                        "Wrapper command allow launcher using an extra wrapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
+            GetText.tr(
+                "Wrapper command allow launcher using an extra wrapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
         add(wrapperCommandLabel, gbc);
 
         gbc.gridx++;
@@ -163,17 +154,17 @@ public class CommandsInstanceSettingsTab extends JPanel {
 
         JTextPane parameterInformation = new JTextPane();
         parameterInformation
-                .setText(GetText.tr("Commands will be run in the directory of the instance that is launched/exited.")
-                        + System.lineSeparator() + GetText.tr("The following variables are available for each command")
-                        + ":" + System.lineSeparator() + "$INST_NAME: " + GetText.tr("The name of the instance")
-                        + System.lineSeparator() + "$INST_ID: "
-                        + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
-                        + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory")
-                        + System.lineSeparator() + "$INST_MC_DIR: " + GetText.tr("Alias for") + " $INST_DIR"
-                        + System.lineSeparator() + "$INST_JAVA: "
-                        + GetText.tr("The absolute path to the java executable used for launch")
-                        + System.lineSeparator() + "$INST_JAVA_ARGS: "
-                        + GetText.tr("The JVM parameters used for launch") + System.lineSeparator());
+            .setText(GetText.tr("Commands will be run in the directory of the instance that is launched/exited.")
+                + System.lineSeparator() + GetText.tr("The following variables are available for each command")
+                + ":" + System.lineSeparator() + "$INST_NAME: " + GetText.tr("The name of the instance")
+                + System.lineSeparator() + "$INST_ID: "
+                + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
+                + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory")
+                + System.lineSeparator() + "$INST_MC_DIR: " + GetText.tr("Alias for") + " $INST_DIR"
+                + System.lineSeparator() + "$INST_JAVA: "
+                + GetText.tr("The absolute path to the java executable used for launch")
+                + System.lineSeparator() + "$INST_JAVA_ARGS: "
+                + GetText.tr("The JVM parameters used for launch") + System.lineSeparator());
         parameterInformation.setEditable(false);
 
         add(parameterInformation, gbc);

@@ -17,17 +17,16 @@
  */
 package com.atlauncher.managers;
 
-import java.util.Comparator;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.utils.ModrinthApi;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class ModrinthModpackUpdateManager {
     private static final Logger LOG = LogManager.getLogger(ModrinthModpackUpdateManager.class);
@@ -45,34 +44,34 @@ public class ModrinthModpackUpdateManager {
         LOG.info("Checking for updates to Modrinth instances");
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
-                .filter(i -> i.isModrinthPack()).map(i -> {
-                    boolean wasUpdated = false;
+            .filter(i -> i.isModrinthPack()).map(i -> {
+                boolean wasUpdated = false;
 
-                    List<ModrinthVersion> packVersions = ModrinthApi.getVersions(i.launcher.modrinthProject.id);
+                List<ModrinthVersion> packVersions = ModrinthApi.getVersions(i.launcher.modrinthProject.id);
 
-                    if (packVersions == null) {
-                        return false;
-                    }
+                if (packVersions == null) {
+                    return false;
+                }
 
-                    ModrinthVersion latestVersion = packVersions.stream()
-                            .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
-                            .findFirst().orElse(null);
+                ModrinthVersion latestVersion = packVersions.stream()
+                    .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
+                    .findFirst().orElse(null);
 
-                    if (latestVersion == null) {
-                        return false;
-                    }
+                if (latestVersion == null) {
+                    return false;
+                }
 
-                    // if there is a change to the latestversion for an instance (but not a first
-                    // time write), then refresh instances panel
-                    if (Data.MODRINTH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && Data.MODRINTH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
-                        wasUpdated = true;
-                    }
+                // if there is a change to the latestversion for an instance (but not a first
+                // time write), then refresh instances panel
+                if (Data.MODRINTH_INSTANCE_LATEST_VERSION.containsKey(i)
+                    && Data.MODRINTH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                    wasUpdated = true;
+                }
 
-                    Data.MODRINTH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
+                Data.MODRINTH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
 
-                    return wasUpdated;
-                }).anyMatch(b -> b);
+                return wasUpdated;
+            }).anyMatch(b -> b);
 
         if (refreshInstancesPanel) {
             App.launcher.reloadInstancesPanel();

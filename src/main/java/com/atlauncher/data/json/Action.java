@@ -17,12 +17,12 @@
  */
 package com.atlauncher.data.json;
 
-import java.io.File;
-import java.util.List;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+
+import java.io.File;
+import java.util.List;
 
 @Json
 public class Action {
@@ -63,7 +63,7 @@ public class Action {
         Mod toAdd;
         for (String name : this.mod) {
             toAdd = instanceInstaller.allMods.stream().filter(mod -> mod.name.equalsIgnoreCase(name)).findFirst()
-                    .orElse(null);
+                .orElse(null);
             if (toAdd != null) {
                 addMod(toAdd);
             }
@@ -88,20 +88,20 @@ public class Action {
             if (mod.size() >= 2) {
                 for (Mod mod : this.mods) {
                     Utils.unzip(mod.getInstalledFile(instanceInstaller),
-                            instanceInstaller.temp.resolve("actions").toFile());
+                        instanceInstaller.temp.resolve("actions").toFile());
                 }
                 switch (this.type) {
                     case mods:
                         Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
-                                new File(instanceInstaller.root.resolve("mods").toFile(), saveAs));
+                            new File(instanceInstaller.root.resolve("mods").toFile(), saveAs));
                         break;
                     case coremods:
                         Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
-                                new File(instanceInstaller.root.resolve("coremods").toFile(), saveAs));
+                            new File(instanceInstaller.root.resolve("coremods").toFile(), saveAs));
                         break;
                     case jar:
                         Utils.zip(instanceInstaller.temp.resolve("actions").toFile(),
-                                new File(instanceInstaller.root.resolve("jarmods").toFile(), saveAs));
+                            new File(instanceInstaller.root.resolve("jarmods").toFile(), saveAs));
                         break;
                     default:
                         break;

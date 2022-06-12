@@ -17,9 +17,8 @@
  */
 package com.atlauncher.data.microsoft;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.google.gson.annotations.SerializedName;
+import org.mini2Dx.gettext.GetText;
 
 //{"Identity":"0","XErr":2148916233,"Message":"","Redirect":"https://start.ui.xboxlive.com/CreateAccount"}
 public class XboxLiveAuthErrorResponse {
@@ -38,7 +37,7 @@ public class XboxLiveAuthErrorResponse {
     public String getErrorMessageForCode() {
         if (xErr == 2148916233L) {
             return GetText.tr(
-                    "Account doesn't have an Xbox account.<br/><br/>Please create one by logging into minecraft.net before trying to login again.");
+                "Account doesn't have an Xbox account.<br/><br/>Please create one by logging into minecraft.net before trying to login again.");
         }
 
         if (xErr == 2148916238L) {

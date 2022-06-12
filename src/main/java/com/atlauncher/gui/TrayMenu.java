@@ -31,7 +31,7 @@ import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("serial")
-public final class TrayMenu extends JPopupMenu{
+public final class TrayMenu extends JPopupMenu {
 
     private final JMenuItem killMinecraftButton = new JMenuItem(GetText.tr("Kill Minecraft"));
     private final JMenuItem toggleConsoleButton = new JMenuItem(GetText.tr("Toggle Console"));
@@ -59,10 +59,10 @@ public final class TrayMenu extends JPopupMenu{
         this.killMinecraftButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             if (App.launcher.minecraftLaunched) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
 
                 if (ret == DialogManager.YES_OPTION) {
                     App.launcher.killMinecraft();

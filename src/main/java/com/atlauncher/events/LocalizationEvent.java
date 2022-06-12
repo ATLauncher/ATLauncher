@@ -17,19 +17,19 @@
  */
 package com.atlauncher.events;
 
-public abstract class LocalizationEvent extends Event{
-    protected LocalizationEvent(){
+public abstract class LocalizationEvent extends Event {
+    protected LocalizationEvent() {
         super();
     }
 
-    public static final class LocalizationLoadedEvent extends LocalizationEvent{
-        public LocalizationLoadedEvent(){
+    public static final class LocalizationLoadedEvent extends LocalizationEvent {
+        public LocalizationLoadedEvent() {
             super();
         }
     }
 
-    public static final class LocalizationChangedEvent extends LocalizationEvent{
-        public LocalizationChangedEvent(){
+    public static final class LocalizationChangedEvent extends LocalizationEvent {
+        public LocalizationChangedEvent() {
             super();
         }
     }

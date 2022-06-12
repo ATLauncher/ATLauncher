@@ -41,7 +41,8 @@ public enum LoaderType {
         public String toString() {
             return "Quilt";
         }
-    },;
+    },
+    ;
 
     public Integer getAnalyticsValue() {
         if (this == FORGE) {

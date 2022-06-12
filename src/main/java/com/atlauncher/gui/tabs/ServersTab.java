@@ -35,7 +35,7 @@ import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
-public class ServersTab extends JPanel implements Tab{
+public class ServersTab extends JPanel implements Tab {
     private JTextField searchBox;
 
     private String searchText = null;
@@ -81,7 +81,7 @@ public class ServersTab extends JPanel implements Tab{
 
         panel = new JPanel();
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -98,7 +98,7 @@ public class ServersTab extends JPanel implements Tab{
 
                 if (searchText != null) {
                     if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(server.name)
-                            .find()) {
+                        .find()) {
                         showServer = false;
                     }
                 }
@@ -145,7 +145,7 @@ public class ServersTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));

@@ -17,21 +17,6 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.awt.GridBagConstraints;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.swing.JPanel;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -46,6 +31,19 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     private static final Logger LOG = LogManager.getLogger(CurseForgePacksPanel.class);
@@ -56,9 +54,9 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                             boolean sortDescending, String search, int page) {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, sortDescending, category,
-                minecraftVersion);
+            minecraftVersion);
 
         hasMorePages = packs != null && packs.size() == Constants.CURSEFORGE_PAGINATION_SIZE;
 
@@ -66,9 +64,9 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
             hasMorePages = false;
             contentPanel.removeAll();
             contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
-                    gbc);
+                new NilCard(GetText
+                    .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                gbc);
             return;
         }
 
@@ -79,7 +77,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         List<CurseForgePackCard> cards = packs.stream().map(p -> new CurseForgePackCard(p))
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
         contentPanel.removeAll();
 
@@ -91,9 +89,9 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                              boolean sortDescending, String search, int page) {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, sortDescending, category,
-                minecraftVersion);
+            minecraftVersion);
 
         hasMorePages = packs != null && packs.size() == Constants.MODPACKS_CH_PAGINATION_SIZE;
 
@@ -130,7 +128,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         Map<String, String> categoryFields = new LinkedHashMap<>();
 
         CurseForgeApi.getCategoriesForModpacks().stream().forEach(c -> categoryFields.put(String.valueOf(
-                c.id), c.name));
+            c.id), c.name));
 
         return categoryFields;
     }
@@ -210,16 +208,16 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     public void addById(String id) {
 
         ProgressDialog<CurseForgeProject> progressDialog = new ProgressDialog<>(
-                GetText.tr("Looking Up Pack On CurseForge"),
-                0,
-                GetText.tr("Looking Up Pack On CurseForge"),
-                GetText.tr("Cancelling Looking Up Pack On CurseForge"));
+            GetText.tr("Looking Up Pack On CurseForge"),
+            0,
+            GetText.tr("Looking Up Pack On CurseForge"),
+            GetText.tr("Cancelling Looking Up Pack On CurseForge"));
         progressDialog.addThread(new Thread(() -> {
             CurseForgeProject project = null;
 
             if (id.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
                 Pattern pattern = Pattern.compile(
-                        "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
+                    "https:\\/\\/www\\.curseforge\\.com\\/minecraft\\/modpacks\\/([a-zA-Z0-9-]+)\\/?(?:download|files)?\\/?([0-9]+)?");
                 Matcher matcher = pattern.matcher(id);
 
                 if (!matcher.find() || matcher.groupCount() < 2) {
@@ -249,17 +247,17 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
 
         if (project == null) {
             DialogManager.okDialog().setType(DialogManager.ERROR).setTitle(GetText.tr("Pack Not Found"))
-                    .setContent(
-                            GetText.tr(
-                                    "A pack with that id/slug was not found. Please check the id/slug/url and try again."))
-                    .show();
+                .setContent(
+                    GetText.tr(
+                        "A pack with that id/slug was not found. Please check the id/slug/url and try again."))
+                .show();
             return;
         }
 
         if (AccountManager.getSelectedAccount() == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                    .setType(DialogManager.ERROR).show();
+                .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                .setType(DialogManager.ERROR).show();
         } else {
             Analytics.sendEvent(project.name, "InstallManual", getAnalyticsCategory());
             Analytics.sendEvent(project.name, "Install", getAnalyticsCategory());

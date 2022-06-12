@@ -17,18 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.ImageIcon;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
@@ -40,6 +28,16 @@ import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Pack {
     private static final Logger LOG = LogManager.getLogger(Pack.class);
@@ -299,7 +297,7 @@ public class Pack {
             int tries = 1;
             do {
                 this.json = com.atlauncher.network.Download.build().cached().setUrl(this.getJsonDownloadUrl(version))
-                        .asString();
+                    .asString();
                 tries++;
             } while (json == null && tries < 5);
             this.jsonVersion = version;
@@ -309,7 +307,7 @@ public class Pack {
 
     public String getJsonDownloadUrl(String version) {
         return String.format("%s/packs/%s/versions/%s/Configs.json", Constants.DOWNLOAD_SERVER, this.getSafeName(),
-                version);
+            version);
     }
 
     public String addInstall(String version) {

@@ -36,7 +36,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar{
+public class LauncherBottomBar extends BottomBar {
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
@@ -86,9 +86,9 @@ public class LauncherBottomBar extends BottomBar{
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
         checkForUpdates.addActionListener(e -> {
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updates"), 0,
-                    GetText.tr("Checking For Updates"), "Aborting Update Check!");
+                GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
-                Analytics.sendEvent("UpdateData", "Launcher");
+                //TODO: Analytics.sendEvent("UpdateData", "Launcher");
                 App.launcher.updateData(true);
                 dialog.close();
             }));
@@ -97,7 +97,7 @@ public class LauncherBottomBar extends BottomBar{
         username.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 if (!dontSave) {
-                    Analytics.sendEvent("Switch", "Account");
+                    //TODO: Analytics.sendEvent("Switch", "Account");
                     AccountManager.switchAccount((AbstractAccount) username.getSelectedItem());
                 }
             }
@@ -107,12 +107,12 @@ public class LauncherBottomBar extends BottomBar{
     }
 
     @Subscribe
-    public final void onConsoleOpened(final ConsoleEvent.ConsoleOpenedEvent event){
+    public final void onConsoleOpened(final ConsoleEvent.ConsoleOpenedEvent event) {
         this.toggleConsole.setText(GetText.tr("Hide Console"));
     }
 
     @Subscribe
-    public final void onConsoleClosed(final ConsoleEvent.ConsoleClosedEvent event){
+    public final void onConsoleClosed(final ConsoleEvent.ConsoleClosedEvent event) {
         this.toggleConsole.setText(GetText.tr("Show Console"));
     }
 
@@ -164,7 +164,7 @@ public class LauncherBottomBar extends BottomBar{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         if (App.console.isVisible()) {
             toggleConsole.setText(GetText.tr("Hide Console"));
         } else {
@@ -175,7 +175,7 @@ public class LauncherBottomBar extends BottomBar{
     }
 
     @Subscribe
-    public void onAccountChanged(final AccountEvent.AccountChangedEvent event){
+    public void onAccountChanged(final AccountEvent.AccountChangedEvent event) {
         this.reloadAccounts();
     }
 }

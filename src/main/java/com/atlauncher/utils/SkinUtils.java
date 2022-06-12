@@ -17,17 +17,15 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Graphics;
-import java.awt.Image;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class SkinUtils {
     private static final Logger LOG = LogManager.getLogger(SkinUtils.class);

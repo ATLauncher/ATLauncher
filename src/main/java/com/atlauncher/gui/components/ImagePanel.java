@@ -17,13 +17,8 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public final class ImagePanel extends JPanel {

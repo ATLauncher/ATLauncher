@@ -17,6 +17,29 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
+import com.atlauncher.Gsons;
+import com.atlauncher.Network;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.data.minecraft.ExtractRule;
+import com.atlauncher.data.minecraft.FabricMod;
+import com.atlauncher.data.minecraft.MCMod;
+import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.google.gson.reflect.TypeToken;
+import net.iharder.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tukaani.xz.LZMAInputStream;
+import org.tukaani.xz.XZInputStream;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.swing.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -69,45 +92,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.SecretKeySpec;
-import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.tukaani.xz.LZMAInputStream;
-import org.tukaani.xz.XZInputStream;
-
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.Network;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.data.minecraft.ExtractRule;
-import com.atlauncher.data.minecraft.FabricMod;
-import com.atlauncher.data.minecraft.MCMod;
-import com.atlauncher.data.openmods.OpenEyeReportResponse;
-import com.google.gson.reflect.TypeToken;
-
-import net.iharder.Base64;
-
 public class Utils {
     private static final Logger LOG = LogManager.getLogger(Utils.class);
 
     public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW,
-            StandardOpenOption.WRITE);
+        StandardOpenOption.WRITE);
     public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
 
     public static JScrollPane wrapInVerticalScroller(final JPanel panel, final int scrollUnits) {
         final JScrollPane scroller = new JScrollPane(panel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.getVerticalScrollBar().setUnitIncrement(scrollUnits);
         return scroller;
     }
@@ -150,7 +144,7 @@ public class Utils {
                 return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
             case OSX:
                 return new File(System.getProperty("user.home"),
-                        "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
+                    "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
             default:
                 return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
         }
@@ -280,11 +274,11 @@ public class Utils {
         if (!from.toString().startsWith("file:")) {
             if (!from.isFile()) {
                 LOG.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                        + " it isn't a file");
+                    + " it isn't a file");
             }
             if (!from.exists()) {
                 LOG.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                        + " it doesn't exist");
+                    + " it doesn't exist");
                 return false;
             }
         } else {
@@ -378,8 +372,8 @@ public class Utils {
             return true;
         } else {
             LOG.error("Couldn't move directory {} to {}",
-                    sourceLocation.getAbsolutePath(),
-                    targetLocation.getAbsolutePath());
+                sourceLocation.getAbsolutePath(),
+                targetLocation.getAbsolutePath());
             return false;
         }
     }
@@ -517,8 +511,8 @@ public class Utils {
 
         if (!file.delete()) {
             LOG.error("({}) {} couldn't be deleted",
-                    (file.isFile() ? "File" : "Folder"),
-                    file.getAbsolutePath());
+                (file.isFile() ? "File" : "Folder"),
+                file.getAbsolutePath());
         }
     }
 
@@ -750,7 +744,7 @@ public class Utils {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void replaceText(InputStream fs, File destinationFile, String replaceThis, String withThis)
-            throws IOException {
+        throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
 
@@ -777,7 +771,7 @@ public class Utils {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void writeResourceToFile(InputStream fs, File destinationFile)
-            throws IOException {
+        throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
 
@@ -941,15 +935,15 @@ public class Utils {
 
     public static boolean combineJars(File mainJar, File jarToAdd, File outputJar) {
         try (FileInputStream is = new FileInputStream(mainJar);
-                JarInputStream jis = new JarInputStream(is);
-                JarFile jarFile = new JarFile(mainJar);
+             JarInputStream jis = new JarInputStream(is);
+             JarFile jarFile = new JarFile(mainJar);
 
-                FileInputStream is2 = new FileInputStream(jarToAdd);
-                JarInputStream jis2 = new JarInputStream(is2);
-                JarFile jarFile2 = new JarFile(jarToAdd);
+             FileInputStream is2 = new FileInputStream(jarToAdd);
+             JarInputStream jis2 = new JarInputStream(is2);
+             JarFile jarFile2 = new JarFile(jarToAdd);
 
-                FileOutputStream fos = new FileOutputStream(outputJar);
-                JarOutputStream jos = new JarOutputStream(fos)) {
+             FileOutputStream fos = new FileOutputStream(outputJar);
+             JarOutputStream jos = new JarOutputStream(fos)) {
             Set<String> entriesAdded = new HashSet<>();
             JarEntry entry;
             while ((entry = jis2.getNextJarEntry()) != null) {
@@ -1015,10 +1009,10 @@ public class Utils {
      */
     public static boolean stripMetaInf(File minecraftJar, File outputJar) {
         try (FileInputStream is = new FileInputStream(minecraftJar);
-                JarInputStream jis = new JarInputStream(is);
-                FileOutputStream fos = new FileOutputStream(outputJar);
-                JarOutputStream jos = new JarOutputStream(fos);
-                JarFile jarFile = new JarFile(minecraftJar)) {
+             JarInputStream jis = new JarInputStream(is);
+             FileOutputStream fos = new FileOutputStream(outputJar);
+             JarOutputStream jos = new JarOutputStream(fos);
+             JarFile jarFile = new JarFile(minecraftJar)) {
             JarEntry entry;
             while ((entry = jis.getNextJarEntry()) != null) {
                 if (entry.getName().contains("META-INF")) {
@@ -1095,14 +1089,14 @@ public class Utils {
      * @param report a {@link File} object of the pending crash report to send the
      *               contents of
      * @return the response received from OpenEye about the crash that was sent
-     *         which is of {@link OpenEyeReportResponse} type
+     * which is of {@link OpenEyeReportResponse} type
      */
     public static OpenEyeReportResponse sendOpenEyePendingReport(File report) {
         StringBuilder response;
         String request = Utils.getFileContents(report);
         if (request == null) {
             LOG.error("OpenEye: Couldn't read contents of file '{}'. Pending report sending failed!",
-                    report.getAbsolutePath());
+                report.getAbsolutePath());
             return null;
         }
 
@@ -1587,7 +1581,7 @@ public class Utils {
         }
 
         String path = parts[0].replace(".", "/") + "/" + name + "/" + version + "/" + name + "-" + version + classifier
-                + "." + extension;
+            + "." + extension;
 
         return path;
     }
@@ -1605,12 +1599,12 @@ public class Utils {
         }
 
         if (lessThan && versionParts[0].equals(matchedParts[0])
-                && Integer.parseInt(versionParts[1]) < Integer.parseInt(matchedParts[1])) {
+            && Integer.parseInt(versionParts[1]) < Integer.parseInt(matchedParts[1])) {
             return true;
         }
 
         if (!lessThan && versionParts[0].equals(matchedParts[0])
-                && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1])) {
+            && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1])) {
             return true;
         }
 
@@ -1637,7 +1631,7 @@ public class Utils {
     public static FabricMod getFabricModForFile(File file) {
         try {
             FabricMod mod = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "fabric.mod.json"),
-                    FabricMod.class);
+                FabricMod.class);
 
             if (mod != null) {
                 return mod;
@@ -1652,10 +1646,10 @@ public class Utils {
     public static boolean executableInPath(String executableName) {
         try {
             return java.util.stream.Stream
-                    .of(System.getenv("PATH").split(java.util.regex.Pattern.quote(File.pathSeparator)))
-                    .map(path -> path.replace("\"", "")).map(Paths::get)
-                    .anyMatch(path -> Files.exists(path.resolve(executableName))
-                            && Files.isExecutable(path.resolve(executableName)));
+                .of(System.getenv("PATH").split(java.util.regex.Pattern.quote(File.pathSeparator)))
+                .map(path -> path.replace("\"", "")).map(Paths::get)
+                .anyMatch(path -> Files.exists(path.resolve(executableName))
+                    && Files.isExecutable(path.resolve(executableName)));
         } catch (Exception e) {
             return false;
         }

@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
+import com.atlauncher.annot.Json;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.atlauncher.annot.Json;
 
 @Json
 public class ForgeInstallProfile {

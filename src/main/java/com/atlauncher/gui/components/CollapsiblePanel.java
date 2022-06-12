@@ -17,31 +17,6 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
-
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Instance;
@@ -58,11 +33,19 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 /**
  * The user-triggered collapsible panel containing the component (trigger) in
  * the titled border
  */
-public class CollapsiblePanel extends JPanel{
+public class CollapsiblePanel extends JPanel {
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type
@@ -125,7 +108,7 @@ public class CollapsiblePanel extends JPanel{
 
         try {
             title = String.format(App.settings.instanceTitleFormat, instance.launcher.name, instance.launcher.pack,
-                    instance.launcher.version, instance.id);
+                instance.launcher.version, instance.id);
         } catch (Throwable t) {
             title = instance.launcher.name;
         }
@@ -254,7 +237,7 @@ public class CollapsiblePanel extends JPanel{
      * the panel.
      *
      * @return iconArrow An ImageIcon array holding the collapse and expanded
-     *         versions of the right hand side arrow
+     * versions of the right hand side arrow
      */
     private ImageIcon[] createExpandAndCollapseIcon() {
         ImageIcon[] iconArrow = new ImageIcon[2];
@@ -295,7 +278,7 @@ public class CollapsiblePanel extends JPanel{
                 PackManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, instance.getPackName() + " - " + instance.getVersion(),
-                        "Collapse", "Instance");
+                    "Collapse", "Instance");
                 InstanceManager.setInstanceVisbility(instance, isCollapsed());
             } else if (server != null) {
                 Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
@@ -337,7 +320,7 @@ public class CollapsiblePanel extends JPanel{
 
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Rectangle borderR = new Rectangle(x + EDGE_SPACING, y + EDGE_SPACING, width - (EDGE_SPACING * 2),
-                    height - (EDGE_SPACING * 2));
+                height - (EDGE_SPACING * 2));
             Insets borderInsets;
             if (border != null) {
                 borderInsets = border.getBorderInsets(c);
@@ -442,7 +425,7 @@ public class CollapsiblePanel extends JPanel{
                     break;
                 case BOTTOM:
                     compR.y = rect.height - borderInsets.bottom + TEXT_SPACING
-                            + (borderInsets.bottom - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
+                        + (borderInsets.bottom - EDGE_SPACING - TEXT_SPACING - compD.height) / 2;
                     break;
                 case BELOW_BOTTOM:
                     compR.y = rect.height - compD.height - EDGE_SPACING;
@@ -467,7 +450,7 @@ public class CollapsiblePanel extends JPanel{
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event) {
         iconArrow = createExpandAndCollapseIcon();
 
         // force state

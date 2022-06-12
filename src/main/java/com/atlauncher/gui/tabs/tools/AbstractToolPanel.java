@@ -17,17 +17,12 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
+import com.atlauncher.App;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public abstract class AbstractToolPanel extends JPanel {
@@ -45,7 +40,7 @@ public abstract class AbstractToolPanel extends JPanel {
 
         if (TITLE != null) {
             setBorder(BorderFactory.createTitledBorder(null, TITLE, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                    App.THEME.getBoldFont()));
+                App.THEME.getBoldFont()));
         }
     }
 }

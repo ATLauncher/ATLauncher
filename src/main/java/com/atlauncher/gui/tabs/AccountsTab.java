@@ -42,10 +42,14 @@ import org.mini2Dx.gettext.GetText;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.UUID;
 
-public class AccountsTab extends JPanel implements Tab{
+public class AccountsTab extends JPanel implements Tab {
     private static final Logger LOG = LogManager.getLogger(AccountsTab.class);
     private static final long serialVersionUID = 2493791137600123223L;
 
@@ -75,7 +79,7 @@ public class AccountsTab extends JPanel implements Tab{
 
         JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
                 "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://atl.pw/create-account\">by buying Minecraft here</a>. ATLauncher doesn't work with cracked accounts."))
-                .build());
+            .build());
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -130,7 +134,7 @@ public class AccountsTab extends JPanel implements Tab{
                     refreshAccessTokenMenuItem.setVisible(false);
                 } else {
                     AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                            .getValue();
+                        .getValue();
 
                     usernameLabel.setVisible(account instanceof MojangAccount);
                     usernameField.setVisible(account instanceof MojangAccount);
@@ -223,11 +227,11 @@ public class AccountsTab extends JPanel implements Tab{
         rememberField.addActionListener(e -> {
             if (rememberField.isSelected()) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Security Warning"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "Make sure you only do this on a computer you trust.<br/>If you do this on a shared computer, your password may be stolen.<br/>Do you still want to save your password?"))
-                                .build())
-                        .setType(DialogManager.ERROR).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
-                        .show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Make sure you only do this on a computer you trust.<br/>If you do this on a shared computer, your password may be stolen.<br/>Do you still want to save your password?"))
+                        .build())
+                    .setType(DialogManager.ERROR).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
+                    .show();
 
                 if (ret != 0) {
                     rememberField.setSelected(false);
@@ -255,10 +259,10 @@ public class AccountsTab extends JPanel implements Tab{
             } else {
                 AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem()).getValue();
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete"))
-                        .setContent(GetText.tr("Are you sure you want to delete this account?"))
-                        .setType(DialogManager.WARNING).show();
+                    .setContent(GetText.tr("Are you sure you want to delete this account?"))
+                    .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
-                    Analytics.sendEvent("Delete", "Account");
+                    //TODO: Analytics.sendEvent("Delete", "Account");
                     AccountManager.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
@@ -296,8 +300,8 @@ public class AccountsTab extends JPanel implements Tab{
         updateSkin = new JMenuItem(GetText.tr("Reload Skin"));
         updateSkin.addActionListener(e -> {
             final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                    .getValue();
-            Analytics.sendEvent("UpdateSkin", "Account");
+                .getValue();
+            //TODO: Analytics.sendEvent("UpdateSkin", "Account");
             account.updateSkin();
             userSkin.setIcon(account.getMinecraftSkin());
         });
@@ -306,8 +310,8 @@ public class AccountsTab extends JPanel implements Tab{
         JMenuItem updateUsername = new JMenuItem(GetText.tr("Update Username"));
         updateUsername.addActionListener(e -> {
             final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                    .getValue();
-            Analytics.sendEvent("UpdateUsername", "Account");
+                .getValue();
+            //TODO: Analytics.sendEvent("UpdateUsername", "Account");
             account.updateUsername();
             AccountManager.saveAccounts();
         });
@@ -317,27 +321,27 @@ public class AccountsTab extends JPanel implements Tab{
         refreshAccessTokenMenuItem.setVisible(false);
         refreshAccessTokenMenuItem.addActionListener(e -> {
             final MicrosoftAccount account = (MicrosoftAccount) ((ComboItem<AbstractAccount>) accountsComboBox
-                    .getSelectedItem()).getValue();
-            Analytics.sendEvent("RefreshAccessToken", "Account");
+                .getSelectedItem()).getValue();
+            //TODO: Analytics.sendEvent("RefreshAccessToken", "Account");
 
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Refreshing Access Token"), 0,
-                    GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-                    "Aborting refreshing access token for " + account.minecraftUsername);
+                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+                "Aborting refreshing access token for " + account.minecraftUsername);
             dialog.addThread(new Thread(() -> {
                 boolean success = account.refreshAccessToken(true);
                 AccountManager.saveAccounts();
 
                 if (success) {
                     DialogManager.okDialog().setTitle(GetText.tr("Access Token Refreshed"))
-                            .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)
-                            .show();
+                        .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)
+                        .show();
                 } else {
                     account.mustLogin = true;
                     AccountManager.saveAccounts();
 
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Refresh Access Token"))
-                            .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
+                        .setType(DialogManager.ERROR).show();
 
                     new LoginWithMicrosoftDialog(account);
                 }
@@ -373,17 +377,17 @@ public class AccountsTab extends JPanel implements Tab{
         boolean remember = rememberField.isSelected();
         if (AccountManager.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
-                    .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
+                .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
             return;
         }
 
         LOG.info("Logging into Minecraft!");
         final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"), 0,
-                GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
+            GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
         dialog.setName("loginDialog");
         dialog.addThread(new Thread(() -> {
             LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
-                    new String(passwordField.getPassword()), clientToken);
+                new String(passwordField.getPassword()), clientToken);
             dialog.setReturnValue(resp);
             dialog.close();
         }));
@@ -416,10 +420,10 @@ public class AccountsTab extends JPanel implements Tab{
                     AppEventBus.post(new AccountEvent.AccountChangedEvent());
                 }
 
-                Analytics.sendEvent("Edit", "Account");
+                //TODO: Analytics.sendEvent("Edit", "Account");
                 LOG.info("Edited Account {}", account);
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
-                        .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
+                    .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
@@ -430,10 +434,10 @@ public class AccountsTab extends JPanel implements Tab{
         } else {
             LOG.error("error response: {}", response);
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
-                    // #. {0} is the error message from Mojang as to why we couldn't login
-                    .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
-                            response.getErrorMessage()))
-                    .build()).setType(DialogManager.INFO).show();
+                // #. {0} is the error message from Mojang as to why we couldn't login
+                .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
+                    response.getErrorMessage()))
+                .build()).setType(DialogManager.INFO).show();
         }
     }
 
@@ -448,7 +452,7 @@ public class AccountsTab extends JPanel implements Tab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         if (accountsComboBox.getSelectedIndex() == 0) {
             leftButton.setText(GetText.tr("Add"));
             rightButton.setText(GetText.tr("Clear"));

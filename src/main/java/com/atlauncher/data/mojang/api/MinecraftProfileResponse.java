@@ -17,13 +17,12 @@
  */
 package com.atlauncher.data.mojang.api;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.atlauncher.annot.Json;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.atlauncher.annot.Json;
+import java.io.IOException;
+import java.util.List;
 
 @Json
 public class MinecraftProfileResponse {

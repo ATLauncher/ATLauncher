@@ -17,10 +17,9 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.Color;
+import com.atlauncher.App;
 
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
@@ -34,8 +33,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
-
-import com.atlauncher.App;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public final class Console extends JTextPane {

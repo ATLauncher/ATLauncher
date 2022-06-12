@@ -23,7 +23,7 @@ import com.atlauncher.events.LocalizationEvent;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
-public enum InstanceSortingStrategies implements InstanceSortingStrategy{
+public enum InstanceSortingStrategies implements InstanceSortingStrategy {
     BY_NAME(GetText.tr("By Name")) {
         @Override
         public int compare(Instance lhs, Instance rhs) {
@@ -31,7 +31,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy{
         }
 
         @Override
-        public void updateLocalization(){
+        public void updateLocalization() {
             this.setName(GetText.tr("By Name"));
         }
     },
@@ -49,7 +49,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy{
         }
 
         @Override
-        public void updateLocalization(){
+        public void updateLocalization() {
             this.setName(GetText.tr("By Last Played"));
         }
     },
@@ -65,7 +65,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy{
         }
 
         @Override
-        public void updateLocalization(){
+        public void updateLocalization() {
             this.setName(GetText.tr("By Number of Plays"));
         }
     };
@@ -94,7 +94,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy{
     protected abstract void updateLocalization();
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.updateLocalization();
     }
 }

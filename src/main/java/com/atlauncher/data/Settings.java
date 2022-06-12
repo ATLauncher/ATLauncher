@@ -17,9 +17,17 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Timestamper;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,17 +39,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Timestamper;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
 public class Settings {
     private static final Logger LOG = LogManager.getLogger(Settings.class);
@@ -322,7 +319,7 @@ public class Settings {
         // people are sharing configs around with a static id or with null which means
         // it's hard to see actual usage, so randomise if enabled
         if (enableAnalytics && (analyticsClientId == null
-                || analyticsClientId.equalsIgnoreCase("30662333-d88f-4e21-8d77-95739af9bf78"))) {
+            || analyticsClientId.equalsIgnoreCase("30662333-d88f-4e21-8d77-95739af9bf78"))) {
             analyticsClientId = UUID.randomUUID().toString();
             save();
         }
@@ -346,12 +343,12 @@ public class Settings {
         }
 
         if (launcherPosition != null
-                && !OS.getScreenVirtualBounds().contains(new Rectangle(launcherPosition, launcherSize))) {
+            && !OS.getScreenVirtualBounds().contains(new Rectangle(launcherPosition, launcherSize))) {
             launcherPosition = null;
         }
 
         if (consolePosition != null
-                && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
+            && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
             consolePosition = null;
         }
     }
@@ -376,7 +373,7 @@ public class Settings {
 
     private void validateDefaultModPlatform() {
         if (defaultModPlatform == null
-                || !(defaultModPlatform == ModPlatform.CURSEFORGE || defaultModPlatform == ModPlatform.MODRINTH)) {
+            || !(defaultModPlatform == ModPlatform.CURSEFORGE || defaultModPlatform == ModPlatform.MODRINTH)) {
             defaultModPlatform = ModPlatform.CURSEFORGE;
         }
     }
@@ -399,19 +396,19 @@ public class Settings {
 
         if (systemMemory != 0 && initialMemory > systemMemory) {
             LOG.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
-                    + "MB is available to use!");
+                + "MB is available to use!");
             initialMemory = 512;
             needToSave = true;
         } else if (initialMemory > maximumMemory) {
             LOG.warn("Tried to allocate " + initialMemory + "MB for initial memory which is more than "
-                    + maximumMemory + "MB set for the maximum memory!");
+                + maximumMemory + "MB set for the maximum memory!");
             initialMemory = 512;
             needToSave = true;
         }
 
         if (systemMemory != 0 && maximumMemory > systemMemory) {
             LOG.warn("Tried to allocate " + maximumMemory + "MB of maximum memory but only " + systemMemory
-                    + "MB is available to use!");
+                + "MB is available to use!");
 
             if (OS.is64Bit()) {
                 maximumMemory = Math.min((systemMemory / 1000) * 512, 8192);
@@ -431,7 +428,7 @@ public class Settings {
         int systemWindowWidth = OS.getMaximumWindowWidth();
         if (windowWidth > systemWindowWidth) {
             LOG.warn("Tried to set window width to " + windowWidth + "px but the maximum is " + systemWindowWidth
-                    + "px!");
+                + "px!");
 
             windowWidth = systemWindowWidth;
         }
@@ -439,7 +436,7 @@ public class Settings {
         int systemWindowHeight = OS.getMaximumWindowHeight();
         if (windowHeight > systemWindowHeight) {
             LOG.warn("Tried to set window height to " + windowHeight + "px but the maximum is "
-                    + systemWindowHeight + "px!");
+                + systemWindowHeight + "px!");
 
             windowHeight = systemWindowHeight;
         }
@@ -449,14 +446,14 @@ public class Settings {
         if (enableProxy) {
             if (proxyPort <= 0 || proxyPort > 65535) {
                 LOG.warn("Tried to set proxy port to " + proxyPort
-                        + " which is not a valid port! Proxy support disabled!");
+                    + " which is not a valid port! Proxy support disabled!");
                 enableProxy = false;
                 proxyPort = 8080;
             }
 
             if (!proxyType.equals("SOCKS") && !proxyType.equals("HTTP") && !proxyType.equals("DIRECT")) {
                 LOG.warn(
-                        "Tried to set proxy type to " + proxyType + " which is not valid! Proxy support disabled!");
+                    "Tried to set proxy type to " + proxyType + " which is not valid! Proxy support disabled!");
                 enableProxy = false;
                 proxyType = "HTTP";
             }
@@ -486,7 +483,7 @@ public class Settings {
     private void validateConcurrentConnections() {
         if (concurrentConnections < 1) {
             LOG.warn("Tried to set the number of concurrent connections to " + concurrentConnections
-                    + " which is not valid! Must be 1 or more. Setting back to default of 8!");
+                + " which is not valid! Must be 1 or more. Setting back to default of 8!");
             concurrentConnections = 8;
         }
     }
@@ -494,7 +491,7 @@ public class Settings {
     private void validateDateFormat() {
         if (!Arrays.asList(Constants.DATE_FORMATS).contains(dateFormat)) {
             LOG.warn("Tried to set the date format to " + dateFormat + " which is not valid! Setting "
-                    + "back to default of " + Constants.DATE_FORMATS[0] + "!");
+                + "back to default of " + Constants.DATE_FORMATS[0] + "!");
             dateFormat = Constants.DATE_FORMATS[0];
         }
     }
@@ -502,8 +499,8 @@ public class Settings {
     private void validateInstanceTitleFormat() {
         if (!Arrays.asList(Constants.INSTANCE_TITLE_FORMATS).contains(instanceTitleFormat)) {
             LOG.warn(
-                    "Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
-                            + "back to default of " + Constants.INSTANCE_TITLE_FORMATS[0] + "!");
+                "Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
+                    + "back to default of " + Constants.INSTANCE_TITLE_FORMATS[0] + "!");
             instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
         }
 

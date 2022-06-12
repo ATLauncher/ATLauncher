@@ -17,17 +17,6 @@
  */
 package com.atlauncher.gui.dialogs.instancesettings;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
@@ -35,6 +24,11 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class GeneralInstanceSettingsTab extends JPanel {
@@ -68,7 +62,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover accountLabel = new JLabelWithHover(GetText.tr("Account Override") + ":", HELP_ICON, GetText.tr(
-                "Which account to use when launching this instance. Use Launcher Default will use whichever account is selected in the launcher."));
+            "Which account to use when launching this instance. Use Launcher Default will use whichever account is selected in the launcher."));
 
         add(accountLabel, gbc);
 
@@ -78,7 +72,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         account = new JComboBox<>();
         account.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
         AccountManager.getAccounts().stream()
-                .forEach(a -> account.addItem(new ComboItem<>(a.username, a.minecraftUsername)));
+            .forEach(a -> account.addItem(new ComboItem<>(a.username, a.minecraftUsername)));
 
         for (int i = 0; i < account.getItemCount(); i++) {
             ComboItem<String> item = account.getItemAt(i);
@@ -98,8 +92,8 @@ public class GeneralInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableDiscordIntegrationLabel = new JLabelWithHover(
-                GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
-                GetText.tr("This will enable showing which pack you're playing in Discord."));
+            GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
+            GetText.tr("This will enable showing which pack you're playing in Discord."));
         add(enableDiscordIntegrationLabel, gbc);
 
         gbc.gridx++;
@@ -124,7 +118,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
     public void saveSettings() {
         this.instance.launcher.account = ((ComboItem<String>) account.getSelectedItem()).getValue();
         this.instance.launcher.enableDiscordIntegration = ((ComboItem<Boolean>) enableDiscordIntegration
-                .getSelectedItem()).getValue();
+            .getSelectedItem()).getValue();
     }
 
 }

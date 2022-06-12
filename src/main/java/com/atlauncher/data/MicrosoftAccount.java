@@ -17,14 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Optional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
@@ -36,6 +28,13 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Optional;
 
 public class MicrosoftAccount extends AbstractAccount {
     private static final Logger LOG = LogManager.getLogger(MicrosoftAccount.class);
@@ -72,12 +71,12 @@ public class MicrosoftAccount extends AbstractAccount {
     public boolean mustLogin;
 
     public MicrosoftAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
-            LoginResponse loginResponse, Profile profile) {
+                            LoginResponse loginResponse, Profile profile) {
         update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
     }
 
     public void update(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
-            LoginResponse loginResponse, Profile profile) {
+                       LoginResponse loginResponse, Profile profile) {
         this.oauthToken = oauthTokenResponse;
         this.xstsAuth = xstsAuthResponse;
         this.accessToken = loginResponse.accessToken;
@@ -146,7 +145,7 @@ public class MicrosoftAccount extends AbstractAccount {
         }
 
         return Optional.of(profile.skins).orElse(new ArrayList<>()).stream()
-                .filter(s -> s.state.equalsIgnoreCase("ACTIVE")).findFirst().map(s -> s.url).orElse(null);
+            .filter(s -> s.state.equalsIgnoreCase("ACTIVE")).findFirst().map(s -> s.url).orElse(null);
     }
 
     public boolean refreshAccessToken() {
@@ -199,7 +198,7 @@ public class MicrosoftAccount extends AbstractAccount {
                 Entitlements entitlements = MicrosoftAuthAPI.getEntitlements(loginResponse.accessToken);
 
                 if (!(entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
-                        && entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
+                    && entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
                     LOG.error("This account doesn't have a valid purchase of Minecraft");
                     return false;
                 }
@@ -218,7 +217,7 @@ public class MicrosoftAccount extends AbstractAccount {
 
                 this.accessTokenExpiresAt = new Date();
                 this.accessTokenExpiresAt
-                        .setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
+                    .setTime(this.accessTokenExpiresAt.getTime() + (loginResponse.expiresIn * 1000));
 
                 AccountManager.saveAccounts();
             }
@@ -236,7 +235,7 @@ public class MicrosoftAccount extends AbstractAccount {
     /**
      * This will check the user has a Minecraft profile (Game Pass subscribers will
      * not until first login of the Minecraft Launcher).
-     *
+     * <p>
      * If an account doesn't have a Minecraft profile, then they either don't own
      * Minecraft Java edition, or their Game Pass subscription has expired and no
      * longer has a profile.
@@ -251,10 +250,10 @@ public class MicrosoftAccount extends AbstractAccount {
         } catch (DownloadException e) {
             LOG.error("Minecraft Profile not found");
             DialogManager.okDialog().setTitle(GetText.tr("Minecraft Profile Not Found"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're an Xbox Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're an Xbox Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
             return false;
         } catch (Exception e) {
             LOG.error("Failed to get Minecraft profile", e);
@@ -280,8 +279,8 @@ public class MicrosoftAccount extends AbstractAccount {
         boolean hasCancelled = false;
         while (mustLogin) {
             int ret = DialogManager.okCancelDialog().setTitle(GetText.tr("You Must Login Again"))
-                    .setContent(GetText.tr("You must login again in order to continue.")).setType(DialogManager.INFO)
-                    .show();
+                .setContent(GetText.tr("You must login again in order to continue.")).setType(DialogManager.INFO)
+                .show();
 
             if (ret != 0) {
                 hasCancelled = true;

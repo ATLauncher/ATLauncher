@@ -17,19 +17,20 @@
  */
 package com.atlauncher.events;
 
-public abstract class ThemeEvent extends Event{
-    protected ThemeEvent(){
+public abstract class ThemeEvent extends Event {
+    protected ThemeEvent() {
         super();
     }
 
-    public static final class ThemeLoadedEvent extends ThemeEvent{//TODO: use
-        public ThemeLoadedEvent(){
+    public static final class ThemeLoadedEvent extends ThemeEvent {//TODO: use
+
+        public ThemeLoadedEvent() {
             super();
         }
     }
 
-    public static final class ThemeChangedEvent extends ThemeEvent{
-        public ThemeChangedEvent(){
+    public static final class ThemeChangedEvent extends ThemeEvent {
+        public ThemeChangedEvent() {
             super();
         }
     }

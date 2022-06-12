@@ -17,21 +17,19 @@
  */
 package com.atlauncher.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.modpacksch.ModpacksChPackList;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionModsManifest;
 import com.atlauncher.network.Download;
-
 import okhttp3.CacheControl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Various utility methods for interacting with the Modpacks.ch API.
@@ -53,36 +51,36 @@ public class ModpacksChApi {
         }
 
         List<Integer> packsToShow = packList.packs.stream().skip((page - 1) * Constants.MODPACKS_CH_PAGINATION_SIZE)
-                .limit(Constants.MODPACKS_CH_PAGINATION_SIZE).collect(Collectors.toList());
+            .limit(Constants.MODPACKS_CH_PAGINATION_SIZE).collect(Collectors.toList());
 
         List<ModpacksChPackManifest> packs = packsToShow.parallelStream()
-                .map(packId -> com.atlauncher.network.Download.build()
-                        .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
-                        .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                        .asClass(ModpacksChPackManifest.class))
-                .filter(p -> p.versions != null).collect(Collectors.toList());
+            .map(packId -> com.atlauncher.network.Download.build()
+                .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                .asClass(ModpacksChPackManifest.class))
+            .filter(p -> p.versions != null).collect(Collectors.toList());
 
         return packs;
     }
 
     public static List<ModpacksChPackManifest> getModPacks(int page, String sort) {
         ModpacksChPackList packList = Download.build()
-                .setUrl(String.format("%s/modpack/%s/50", Constants.MODPACKS_CH_API_URL, sort))
-                .asType(ModpacksChPackList.class);
+            .setUrl(String.format("%s/modpack/%s/50", Constants.MODPACKS_CH_API_URL, sort))
+            .asType(ModpacksChPackList.class);
 
         if (packList.status != null && packList.status.equals("error")) {
             return new ArrayList<>();
         }
 
         List<Integer> packsToShow = packList.packs.stream().skip((page - 1) * Constants.MODPACKS_CH_PAGINATION_SIZE)
-                .limit(Constants.MODPACKS_CH_PAGINATION_SIZE).collect(Collectors.toList());
+            .limit(Constants.MODPACKS_CH_PAGINATION_SIZE).collect(Collectors.toList());
 
         List<ModpacksChPackManifest> packs = packsToShow.parallelStream()
-                .map(packId -> com.atlauncher.network.Download.build()
-                        .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
-                        .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                        .asClass(ModpacksChPackManifest.class))
-                .filter(p -> p.versions != null).collect(Collectors.toList());
+            .map(packId -> com.atlauncher.network.Download.build()
+                .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                .asClass(ModpacksChPackManifest.class))
+            .filter(p -> p.versions != null).collect(Collectors.toList());
 
         return packs;
     }
@@ -90,11 +88,11 @@ public class ModpacksChApi {
     public static ModpacksChPackVersionModsManifest getModsManifest(int packId, int versionId) {
         try {
             ModpacksChPackVersionModsManifest modsManifest = Download.build()
-                    .setUrl(String.format("%s/modpack/%s/%s/mods", Constants.MODPACKS_CH_API_URL,
-                            packId,
-                            versionId))
-                    .cached(new CacheControl.Builder().maxStale(5, TimeUnit.MINUTES).build())
-                    .asClassWithThrow(ModpacksChPackVersionModsManifest.class);
+                .setUrl(String.format("%s/modpack/%s/%s/mods", Constants.MODPACKS_CH_API_URL,
+                    packId,
+                    versionId))
+                .cached(new CacheControl.Builder().maxStale(5, TimeUnit.MINUTES).build())
+                .asClassWithThrow(ModpacksChPackVersionModsManifest.class);
 
             if (modsManifest.status != null && modsManifest.status.equals("error")) {
                 return null;

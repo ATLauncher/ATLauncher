@@ -17,19 +17,19 @@
  */
 package com.atlauncher.data.microsoft;
 
-import java.lang.reflect.Type;
-import java.util.Date;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import java.lang.reflect.Type;
+import java.util.Date;
+
 public class OauthTokenResponseTypeAdapter implements JsonDeserializer<OauthTokenResponse> {
     @Override
     public OauthTokenResponse deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
+        throws JsonParseException {
         OauthTokenResponse oauthTokenResponse = new OauthTokenResponse();
         JsonObject rootObject = json.getAsJsonObject();
 
@@ -49,7 +49,7 @@ public class OauthTokenResponseTypeAdapter implements JsonDeserializer<OauthToke
         } else {
             oauthTokenResponse.expiresAt = new Date();
             oauthTokenResponse.expiresAt
-                    .setTime(oauthTokenResponse.expiresAt.getTime() + (oauthTokenResponse.expiresIn * 1000));
+                .setTime(oauthTokenResponse.expiresAt.getTime() + (oauthTokenResponse.expiresIn * 1000));
         }
 
         return oauthTokenResponse;

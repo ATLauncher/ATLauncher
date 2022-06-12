@@ -27,15 +27,15 @@ public class CurseForgeCategory {
     public int gameId;
     public boolean isClass = false;
 
-    @SerializedName(value = "id", alternate = { "categoryId" })
+    @SerializedName(value = "id", alternate = {"categoryId"})
     public int id;
 
-    @SerializedName(value = "iconUrl", alternate = { "avatarUrl" })
+    @SerializedName(value = "iconUrl", alternate = {"avatarUrl"})
     public String avatarUrl;
 
-    @SerializedName(value = "parentCategoryId", alternate = { "parentId" })
+    @SerializedName(value = "parentCategoryId", alternate = {"parentId"})
     public int parentCategoryId;
 
-    @SerializedName(value = "classId", alternate = { "rootId" })
+    @SerializedName(value = "classId", alternate = {"rootId"})
     public int classId;
 }

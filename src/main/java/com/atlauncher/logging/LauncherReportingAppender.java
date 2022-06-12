@@ -17,6 +17,9 @@
  */
 package com.atlauncher.logging;
 
+import com.atlauncher.exceptions.LocalException;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.network.ErrorReporting;
 import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
@@ -25,10 +28,6 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
-
-import com.atlauncher.exceptions.LocalException;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.ErrorReporting;
 
 @Plugin(name = LauncherReportingAppender.PLUGIN_NAME, category = LauncherReportingAppender.PLUGIN_CATEGORY, elementType = LauncherReportingAppender.ELEMENT_TYPE, printObject = true)
 public final class LauncherReportingAppender extends AbstractAppender {
@@ -50,7 +49,7 @@ public final class LauncherReportingAppender extends AbstractAppender {
 
     @PluginFactory
     public static LauncherReportingAppender createAppender(@PluginAttribute("name") final String name,
-            @PluginElement("Filter") final Filter filter) {
+                                                           @PluginElement("Filter") final Filter filter) {
         return new LauncherReportingAppender(name, filter);
     }
 }

@@ -17,21 +17,19 @@
  */
 package com.atlauncher.network;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.MarkerManager;
-
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.Utils;
-
 import io.sentry.Breadcrumb;
 import io.sentry.Sentry;
 import io.sentry.SentryLevel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.MarkerManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ErrorReporting {
     private static final Logger LOG = LogManager.getLogger(ErrorReporting.class);
@@ -52,7 +50,7 @@ public final class ErrorReporting {
                     }
 
                     if (ignoredMessages.stream()
-                            .anyMatch(m -> t.getMessage().contains(m) || hint.getClass().toString().contains(m))) {
+                        .anyMatch(m -> t.getMessage().contains(m) || hint.getClass().toString().contains(m))) {
                         return null;
                     }
 
@@ -161,7 +159,7 @@ public final class ErrorReporting {
     }
 
     public static void recordInstancePlay(String packName, String packVersion, LoaderVersion loader,
-            int instanceVersion) {
+                                          int instanceVersion) {
         if (sentryInitialised && Sentry.isEnabled()) {
             Breadcrumb breadcrumb = new Breadcrumb("Playing instance");
             breadcrumb.setType("user");

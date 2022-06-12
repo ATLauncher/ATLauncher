@@ -37,13 +37,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public final class InstancesListPanel extends JPanel
-        implements InstancesSortEventListener, InstancesSearchEventListener{
+    implements InstancesSortEventListener, InstancesSearchEventListener {
     private static NilCard createNilCard() {
         return new NilCard(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
 
     private static Stream<Instance> createInstanceStream(final Pattern searchPattern,
-            final InstanceSortingStrategy sortingStrategy) {
+                                                         final InstanceSortingStrategy sortingStrategy) {
         Stream<Instance> stream = InstanceManager.getInstancesSorted().stream();
         if (searchPattern != null) {
             stream = stream.filter(createSearchFilter(searchPattern));
@@ -84,10 +84,10 @@ public final class InstancesListPanel extends JPanel
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
         createInstanceStream(this.searchPattern, this.sortingStrategy)
-                .forEach((val) -> {
-                    this.add(new InstanceCard(val), gbc);
-                    gbc.gridy++;
-                });
+            .forEach((val) -> {
+                this.add(new InstanceCard(val), gbc);
+                gbc.gridy++;
+            });
 
         if (this.getComponentCount() == 0) {
             this.add(this.nilCard, gbc);
@@ -128,7 +128,7 @@ public final class InstancesListPanel extends JPanel
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
 }

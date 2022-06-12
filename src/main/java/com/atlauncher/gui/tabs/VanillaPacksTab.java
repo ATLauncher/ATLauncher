@@ -17,46 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -75,13 +35,34 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.ComboItem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 public final class VanillaPacksTab extends JPanel implements Tab {
     private static final Logger LOG = LogManager.getLogger(VanillaPacksTab.class);
 
     private final List<VersionManifestVersionType> minecraftVersionTypeFilters = new ArrayList<>(
-            Arrays.asList(VersionManifestVersionType.RELEASE));
+        Arrays.asList(VersionManifestVersionType.RELEASE));
     private String selectedMinecraftVersion = null;
 
     private final JTextField nameField = new JTextField(32);
@@ -161,8 +142,8 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
                 // if the name is the same as the default is, then we're not dirty
                 nameFieldDirty = !(currentValue.equals(String.format("Minecraft %s", selectedMinecraftVersion))
-                        || (selectedLoader != null && currentValue.equals(
-                                String.format("Minecraft %s with %s", selectedMinecraftVersion, selectedLoader))));
+                    || (selectedLoader != null && currentValue.equals(
+                    String.format("Minecraft %s with %s", selectedMinecraftVersion, selectedLoader))));
             }
         });
         mainPanel.add(nameField, gbc);
@@ -181,7 +162,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JScrollPane descriptionScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
@@ -211,8 +192,8 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
                 // if the description is the same as the default is, then we're not dirty
                 descriptionFieldDirty = !(currentValue.equals(String.format("Minecraft %s", selectedMinecraftVersion))
-                        || (selectedLoader != null && currentValue.equals(
-                                String.format("Minecraft %s with %s", selectedMinecraftVersion, selectedLoader))));
+                    || (selectedLoader != null && currentValue.equals(
+                    String.format("Minecraft %s with %s", selectedMinecraftVersion, selectedLoader))));
             }
         });
         mainPanel.add(descriptionScrollPane, gbc);
@@ -328,7 +309,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         JScrollPane minecraftVersionScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         minecraftVersionScrollPane.setPreferredSize(new Dimension(450, 300));
 
@@ -409,8 +390,8 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     }
 
     private void setupMinecraftVersionsTable() {
-        minecraftVersionTableModel = new DefaultTableModel(new String[][] {},
-                new String[] { GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type") }) {
+        minecraftVersionTableModel = new DefaultTableModel(new String[][]{},
+            new String[]{GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type")}) {
 
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -474,14 +455,14 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             }
 
             loaderTypeFabricRadioButton.setVisible(
-                    !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
-                            .contains(newSelectedMinecraftVersion));
+                !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
+                    .contains(newSelectedMinecraftVersion));
             loaderTypeForgeRadioButton.setVisible(
-                    !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
-                            .contains(newSelectedMinecraftVersion));
+                !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
+                    .contains(newSelectedMinecraftVersion));
             loaderTypeQuiltRadioButton.setVisible(
-                    !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
-                            .contains(newSelectedMinecraftVersion));
+                !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
+                    .contains(newSelectedMinecraftVersion));
 
             // refresh the loader versions if we have one selected
             LoaderType selectedLoaderType = getSelectedLoader();
@@ -517,12 +498,12 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         }
 
         List<VersionManifestVersion> minecraftVersions = MinecraftManager
-                .getFilteredMinecraftVersions(minecraftVersionTypeFilters);
+            .getFilteredMinecraftVersions(minecraftVersionTypeFilters);
 
         DateTimeFormatter fmt = DateTimeFormat.forPattern(App.settings.dateFormat);
         minecraftVersions.stream().forEach(mv -> {
-            minecraftVersionTableModel.addRow(new String[] { mv.id,
-                    fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime)), mv.type.toString() });
+            minecraftVersionTableModel.addRow(new String[]{mv.id,
+                fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime)), mv.type.toString()});
         });
 
         if (minecraftVersionTable.getRowCount() >= 1) {
@@ -530,7 +511,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             int newSelectedRow = 0;
             if (selectedMinecraftVersion != null) {
                 Optional<VersionManifestVersion> versionToSelect = minecraftVersions.stream()
-                        .filter(mv -> mv.id.equals(selectedMinecraftVersion)).findFirst();
+                    .filter(mv -> mv.id.equals(selectedMinecraftVersion)).findFirst();
 
                 if (versionToSelect.isPresent()) {
                     newSelectedRow = minecraftVersions.indexOf(versionToSelect.get());
@@ -545,15 +526,15 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         // update checkboxes so not all of them can be unchecked
         minecraftVersionReleasesFilterCheckbox.setEnabled(
-                !(minecraftVersionReleasesFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+            !(minecraftVersionReleasesFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
         minecraftVersionExperimentsFilterCheckbox.setEnabled(
-                !(minecraftVersionExperimentsFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+            !(minecraftVersionExperimentsFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
         minecraftVersionSnapshotsFilterCheckbox.setEnabled(
-                !(minecraftVersionSnapshotsFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+            !(minecraftVersionSnapshotsFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
         minecraftVersionBetasFilterCheckbox.setEnabled(
-                !(minecraftVersionBetasFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+            !(minecraftVersionBetasFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
         minecraftVersionAlphasFilterCheckbox.setEnabled(
-                !(minecraftVersionAlphasFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
+            !(minecraftVersionAlphasFilterCheckbox.isSelected() && minecraftVersionTypeFilters.size() == 1));
     }
 
     private void selectedLoaderTypeChanged(LoaderType selectedLoader) {
@@ -613,17 +594,17 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             // ensures that font width is taken into account
             for (LoaderVersion version : loaderVersions) {
                 loaderVersionLength = Math.max(loaderVersionLength,
-                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
+                    getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
             }
 
             loaderVersionsDropDown.removeAllItems();
 
             loaderVersions.forEach(version -> loaderVersionsDropDown
-                    .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
+                .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
 
             if (selectedLoader == LoaderType.FORGE) {
                 Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
-                        .findFirst();
+                    .findFirst();
 
                 if (recommendedVersion.isPresent()) {
                     loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
@@ -648,7 +629,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
             // update the name and description fields if they're not dirty
             String defaultNameFieldValue = String.format("Minecraft %s with %s", selectedMinecraftVersion,
-                    selectedLoader.toString());
+                selectedLoader.toString());
             if (!nameFieldDirty) {
                 nameField.setText(defaultNameFieldValue);
             }
@@ -671,11 +652,11 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 // user has no instances, they may not be aware this is not how to play
                 if (InstanceManager.getInstances().size() == 0) {
                     int ret = DialogManager.yesNoDialog()
-                            .setTitle(GetText.tr("Are you sure you want to create a server?"))
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
-                                    .build())
-                            .setType(DialogManager.QUESTION).show();
+                        .setTitle(GetText.tr("Are you sure you want to create a server?"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                            .build())
+                        .setType(DialogManager.QUESTION).show();
 
                     if (ret != 0) {
                         return;
@@ -701,10 +682,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         Installable installable;
         try {
             LoaderVersion selectedLoaderVersion = ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem())
-                    .getValue();
+                .getValue();
 
             installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(selectedMinecraftVersion),
-                    selectedLoaderVersion, descriptionField.getText());
+                selectedLoaderVersion, descriptionField.getText());
             installable.instanceName = nameField.getText();
             installable.isReinstall = false;
             installable.isServer = isServer;

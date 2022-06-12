@@ -17,7 +17,11 @@
  */
 package com.atlauncher.managers;
 
-import com.atlauncher.*;
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.Data;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
@@ -30,7 +34,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -51,7 +60,7 @@ public class AccountManager {
         return Data.SELECTED_ACCOUNT;
     }
 
-    private static void postAccountChangedEvent(){
+    private static void postAccountChangedEvent() {
         AppEventBus.post(new AccountEvent.AccountChangedEvent());
     }
 
@@ -120,7 +129,7 @@ public class AccountManager {
                 Account account = (Account) obj;
 
                 convertedAccounts.add(new MojangAccount(account.username, account.password, account.minecraftUsername,
-                        account.uuid, account.remember, account.clientToken, account.store));
+                    account.uuid, account.remember, account.clientToken, account.store));
             }
         } catch (EOFException e) {
             // Don't log this, it always happens when it gets to the end of the file
@@ -136,9 +145,9 @@ public class AccountManager {
                 }
             } catch (IOException e) {
                 LOG.error(
-                        "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
-                                + "accounts.",
-                        e);
+                    "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
+                        + "accounts.",
+                    e);
             }
         }
 
@@ -166,16 +175,19 @@ public class AccountManager {
     public static void addAccount(AbstractAccount account) {
         String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
 
-        Analytics.sendEvent(accountType, "Add", "Account");
+        //TODO: Analytics.sendEvent(accountType, "Add", "Account");
         LOG.info("Added " + accountType + " Account " + account);
 
         Data.ACCOUNTS.add(account);
 
         if (Data.ACCOUNTS.size() > 1) {
             // not first account? ask if they want to switch to it
-            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
-                    .setContent(GetText.tr("Account added successfully. Switch to it now?")).setType(DialogManager.INFO)
-                    .addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No")).show();
+            int ret = DialogManager.optionDialog()
+                .setTitle(GetText.tr("Account Added"))
+                .setContent(GetText.tr("Account added successfully. Switch to it now?"))
+                .setType(DialogManager.INFO)
+                .addOption(GetText.tr("Yes"), true)
+                .addOption(GetText.tr("No")).show();
 
             if (ret == 0) {
                 switchAccount(account);

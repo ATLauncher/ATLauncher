@@ -31,13 +31,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener{
+public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener {
 
     public SkinUpdaterToolPanel() {
         super(GetText.tr("Skin Updater"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-                .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
+            .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
@@ -51,10 +51,10 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Analytics.sendEvent("SkinUpdater", "Run", "Tool");
+        //TODO: Analytics.sendEvent("SkinUpdater", "Run", "Tool");
 
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), Data.ACCOUNTS.size(),
-                GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
+            GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
         dialog.addThread(new Thread(() -> {
             Data.ACCOUNTS.forEach(account -> {
                 account.updateSkin();
@@ -68,11 +68,11 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
         dialog.start();
 
         DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                .setContent(GetText.tr("Successfully updated skins.")).show();
+            .setContent(GetText.tr("Successfully updated skins.")).show();
     }
 
     @Subscribe
-    public void onAccountChanged(final AccountEvent.AccountChangedEvent e){
+    public void onAccountChanged(final AccountEvent.AccountChangedEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

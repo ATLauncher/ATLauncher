@@ -17,30 +17,6 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Window;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -66,6 +42,15 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
@@ -88,19 +73,19 @@ public final class AddModsDialog extends JDialog {
 
     // #. Fabric/Fabric API is the name of a mod, so should be left untranslated
     private final JLabel fabricApiWarningLabel = new JLabel(
-            "<html><p align=\"center\" style=\"color: "
-                    + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
-                    + "\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
+        "<html><p align=\"center\" style=\"color: "
+            + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
+            + "\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
 
     // #. Quilt Standard Libraries is the name of a mod, so should be left
     private final JButton installQuiltStandardLibrariesButton = new JButton(
-            GetText.tr("Install Quilt Standard Libraries"));
+        GetText.tr("Install Quilt Standard Libraries"));
 
     // #. Quilt/Quilt Standard Libraries is the name of a mod, so should be left
     private final JLabel quiltStandardLibrariesWarningLabel = new JLabel(
-            "<html><p align=\"center\" style=\"color: "
-                    + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
-                    + "\">Before installing Quilt mods, you should install Quilt Standard Libraries first!</p></html>");
+        "<html><p align=\"center\" style=\"color: "
+            + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
+            + "\">Before installing Quilt mods, you should install Quilt Standard Libraries first!</p></html>");
 
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -141,7 +126,7 @@ public final class AddModsDialog extends JDialog {
         });
 
         String platformMessage = ConfigManager.getConfigItem(String.format("platforms.%s.message",
-                App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? "curseforge" : "modrinth"), null);
+            App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? "curseforge" : "modrinth"), null);
         if (platformMessage != null) {
             platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
         }
@@ -188,15 +173,15 @@ public final class AddModsDialog extends JDialog {
 
         this.installFabricApiButton.addActionListener(e -> {
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                    .getValue() == ModPlatform.CURSEFORGE;
+                .getValue() == ModPlatform.CURSEFORGE;
             if (isCurseForge) {
                 final ProgressDialog<CurseForgeProject> curseForgeProjectLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
-                        "Aborting Getting Fabric API Information");
+                    GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
+                    "Aborting Getting Fabric API Information");
 
                 curseForgeProjectLookupDialog.addThread(new Thread(() -> {
                     curseForgeProjectLookupDialog
-                            .setReturnValue(CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID));
+                        .setReturnValue(CurseForgeApi.getProjectById(Constants.CURSEFORGE_FABRIC_MOD_ID));
 
                     curseForgeProjectLookupDialog.close();
                 }));
@@ -207,10 +192,10 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error Getting Fabric API Information"))
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "There was an error getting Fabric API information from CurseForge. Please try again later."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "There was an error getting Fabric API information from CurseForge. Please try again later."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                     return;
                 }
 
@@ -218,20 +203,20 @@ public final class AddModsDialog extends JDialog {
                 new CurseForgeProjectFileSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
-                        m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
-                                || (m.isFromModrinth()
-                                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
+                    m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
+                        || (m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
                     fabricApiWarningLabel.setVisible(false);
                     installFabricApiButton.setVisible(false);
                 }
             } else {
                 final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
-                        "Aborting Getting Fabric API Information");
+                    GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
+                    "Aborting Getting Fabric API Information");
 
                 modrinthProjectLookupDialog.addThread(new Thread(() -> {
                     modrinthProjectLookupDialog
-                            .setReturnValue(ModrinthApi.getProject(Constants.MODRINTH_FABRIC_MOD_ID));
+                        .setReturnValue(ModrinthApi.getProject(Constants.MODRINTH_FABRIC_MOD_ID));
 
                     modrinthProjectLookupDialog.close();
                 }));
@@ -242,10 +227,10 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     DialogManager.okDialog().setTitle(GetText.tr("Error Getting Fabric API Information"))
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "There was an error getting Fabric API information from Modrinth. Please try again later."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "There was an error getting Fabric API information from Modrinth. Please try again later."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                     return;
                 }
 
@@ -253,9 +238,9 @@ public final class AddModsDialog extends JDialog {
                 new ModrinthVersionSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
-                        m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
-                                || (m.isFromModrinth()
-                                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
+                    m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
+                        || (m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
                     fabricApiWarningLabel.setVisible(false);
                     installFabricApiButton.setVisible(false);
                 }
@@ -264,13 +249,13 @@ public final class AddModsDialog extends JDialog {
 
         this.installQuiltStandardLibrariesButton.addActionListener(e -> {
             final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
-                    GetText.tr("Getting Quilt Standard Libaries Information"), 0,
-                    GetText.tr("Getting Quilt Standard Libaries Information"),
-                    "Aborting Getting Quilt Standard Libaries Information");
+                GetText.tr("Getting Quilt Standard Libaries Information"), 0,
+                GetText.tr("Getting Quilt Standard Libaries Information"),
+                "Aborting Getting Quilt Standard Libaries Information");
 
             modrinthProjectLookupDialog.addThread(new Thread(() -> {
                 modrinthProjectLookupDialog
-                        .setReturnValue(ModrinthApi.getProject(Constants.MODRINTH_QSL_MOD_ID));
+                    .setReturnValue(ModrinthApi.getProject(Constants.MODRINTH_QSL_MOD_ID));
 
                 modrinthProjectLookupDialog.close();
             }));
@@ -281,10 +266,10 @@ public final class AddModsDialog extends JDialog {
 
             if (mod == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("Error Getting Quilt Standard Libaries Information"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "There was an error getting Quilt Standard Libaries information from Modrinth. Please try again later."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "There was an error getting Quilt Standard Libaries information from Modrinth. Please try again later."))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
                 return;
             }
 
@@ -292,8 +277,8 @@ public final class AddModsDialog extends JDialog {
             new ModrinthVersionSelectorDialog(this, mod, instance);
 
             if (instance.launcher.mods.stream().anyMatch(
-                    m -> m.isFromModrinth()
-                            && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
+                m -> m.isFromModrinth()
+                    && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
                 quiltStandardLibrariesWarningLabel.setVisible(false);
                 installQuiltStandardLibrariesButton.setVisible(false);
             }
@@ -302,16 +287,16 @@ public final class AddModsDialog extends JDialog {
         LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
         if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
-                .noneMatch(m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
-                        || m.isFromModrinth()
-                                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
+            .noneMatch(m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
+                || m.isFromModrinth()
+                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
         }
 
         if (loaderVersion != null && loaderVersion.isQuilt() && instance.launcher.mods.stream()
-                .noneMatch(m -> m.isFromModrinth()
-                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
+            .noneMatch(m -> m.isFromModrinth()
+                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
             this.topPanel.add(quiltStandardLibrariesWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installQuiltStandardLibrariesButton, BorderLayout.EAST);
         }
@@ -353,7 +338,7 @@ public final class AddModsDialog extends JDialog {
         this.hostComboBox.addActionListener(e -> {
             updating = true;
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                    .getValue() == ModPlatform.CURSEFORGE;
+                .getValue() == ModPlatform.CURSEFORGE;
 
             String platformMessage = null;
 
@@ -448,31 +433,31 @@ public final class AddModsDialog extends JDialog {
 
         String query = searchField.getText();
         boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                .getValue() == ModPlatform.CURSEFORGE;
+            .getValue() == ModPlatform.CURSEFORGE;
 
         new Thread(() -> {
             if (isCurseForge) {
                 String versionToSearchFor = App.settings.addModRestriction == AddModRestriction.STRICT
-                        ? this.instance.id
-                        : null;
+                    ? this.instance.id
+                    : null;
 
                 if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                     setCurseForgeMods(CurseForgeApi.searchResourcePacks(query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                     setCurseForgeMods(CurseForgeApi.searchWorlds(versionToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
                     if (this.instance.launcher.loaderVersion.isFabric() || this.instance.launcher.loaderVersion
-                            .isQuilt()) {
+                        .isQuilt()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     } else if (this.instance.launcher.loaderVersion.isForge()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForForge(versionToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     } else {
                         setCurseForgeMods(CurseForgeApi.searchMods(versionToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                     }
                 }
             } else {
@@ -483,7 +468,7 @@ public final class AddModsDialog extends JDialog {
                 } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                     try {
                         versionsToSearchFor.addAll(MinecraftManager.getMajorMinecraftVersions(this.instance.id).stream()
-                                .map(mv -> mv.id).collect(Collectors.toList()));
+                            .map(mv -> mv.id).collect(Collectors.toList()));
                     } catch (InvalidMinecraftVersion e) {
                         LOG.error("error", e);
                         versionsToSearchFor = null;
@@ -494,13 +479,13 @@ public final class AddModsDialog extends JDialog {
 
                 if (this.instance.launcher.loaderVersion.isFabric()) {
                     setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (this.instance.launcher.loaderVersion.isQuilt()) {
                     setModrinthMods(ModrinthApi.searchModsForQuiltOrFabric(versionsToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (this.instance.launcher.loaderVersion.isForge()) {
                     setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                        ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 }
             }
 
@@ -581,8 +566,8 @@ public final class AddModsDialog extends JDialog {
 
                 contentPanel.add(new ModrinthSearchHitCard(castMod, e -> {
                     final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
-                            GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
-                            "Aborting Getting Mod Information");
+                        GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
+                        "Aborting Getting Mod Information");
 
                     modrinthProjectLookupDialog.addThread(new Thread(() -> {
                         modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getProject(castMod.projectId));
@@ -596,10 +581,10 @@ public final class AddModsDialog extends JDialog {
 
                     if (modrinthMod == null) {
                         DialogManager.okDialog().setTitle(GetText.tr("Error Getting Mod Information"))
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "There was an error getting mod information from Modrinth. Please try again later."))
-                                        .build())
-                                .setType(DialogManager.ERROR).show();
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "There was an error getting mod information from Modrinth. Please try again later."))
+                                .build())
+                            .setType(DialogManager.ERROR).show();
                         return;
                     }
 

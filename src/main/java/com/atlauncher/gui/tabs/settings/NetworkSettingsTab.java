@@ -36,7 +36,7 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 
 @SuppressWarnings("serial")
-public class NetworkSettingsTab extends AbstractSettingsTab{
+public class NetworkSettingsTab extends AbstractSettingsTab {
     private final JLabelWithHover concurrentConnectionsLabel;
     private final JSpinner concurrentConnections;
 
@@ -67,14 +67,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         concurrentConnectionsLabel = new JLabelWithHover(GetText.tr("Concurrent Connections") + ":", HELP_ICON, "<html>"
-                + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
+            + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
         add(concurrentConnectionsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel concurrentConnectionsModel = new SpinnerNumberModel(App.settings.concurrentConnections, null,
-                null, 1);
+            null, 1);
         concurrentConnectionsModel.setMinimum(1);
         concurrentConnections = new JSpinner(concurrentConnectionsModel);
         add(concurrentConnections, gbc);
@@ -85,14 +85,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         connectionTimeoutLabel = new JLabelWithHover(GetText.tr("Connection Timeout") + ":", HELP_ICON,
-                "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
+            "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
         add(connectionTimeoutLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel connectionTimeoutModel = new SpinnerNumberModel(App.settings.connectionTimeout, null, null,
-                1);
+            1);
         connectionTimeoutModel.setMinimum(1);
         connectionTimeout = new JSpinner(connectionTimeoutModel);
         add(connectionTimeout, gbc);
@@ -103,7 +103,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         dontUseHttp2Label = new JLabelWithHover(GetText.tr("Don't Use HTTP/2") + "?", HELP_ICON, GetText
-                .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
+            .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
         add(dontUseHttp2Label, gbc);
 
         gbc.gridx++;
@@ -119,7 +119,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         enableProxyLabel = new JLabelWithHover(GetText.tr("Enable Proxy") + "?", HELP_ICON,
-                GetText.tr("If you use a proxy to connect to the internet you can enable it here."));
+            GetText.tr("If you use a proxy to connect to the internet you can enable it here."));
         add(enableProxyLabel, gbc);
 
         gbc.gridx++;
@@ -148,7 +148,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyHostLabel = new JLabelWithHover(GetText.tr("Proxy Host") + ":", HELP_ICON,
-                GetText.tr("This is the IP/hostname used to connect to the proxy."));
+            GetText.tr("This is the IP/hostname used to connect to the proxy."));
         add(proxyHostLabel, gbc);
 
         gbc.gridx++;
@@ -167,7 +167,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyPortLabel = new JLabelWithHover(GetText.tr("Proxy Port") + ":", HELP_ICON,
-                GetText.tr("This is the port used to connect to the proxy."));
+            GetText.tr("This is the port used to connect to the proxy."));
         add(proxyPortLabel, gbc);
 
         gbc.gridx++;
@@ -189,7 +189,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         proxyTypeLabel = new JLabelWithHover(GetText.tr("Proxy Type") + ":", HELP_ICON,
-                GetText.tr("This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."));
+            GetText.tr("This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."));
         add(proxyTypeLabel, gbc);
 
         gbc.gridx++;
@@ -227,10 +227,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
 
         final Type theType = type;
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Checking Proxy"), 0,
-                GetText.tr("Checking the proxy entered."), "Cancelled Proxy Test!");
+            GetText.tr("Checking the proxy entered."), "Cancelled Proxy Test!");
         dialog.addThread(new Thread(() -> {
             dialog.setReturnValue(Utils.testProxy(
-                    new Proxy(theType, new InetSocketAddress(proxyHost.getText(), (Integer) proxyPort.getValue()))));
+                new Proxy(theType, new InetSocketAddress(proxyHost.getText(), (Integer) proxyPort.getValue()))));
             dialog.close();
         }));
         dialog.start();
@@ -241,8 +241,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
 
         if (!dialog.getReturnValue()) {
             DialogManager.okDialog().setTitle(GetText.tr("Help"))
-                    .setContent(GetText.tr("Cannot connect to proxy. Please check the settings and try again."))
-                    .setType(DialogManager.ERROR).show();
+                .setContent(GetText.tr("Cannot connect to proxy. Please check the settings and try again."))
+                .setType(DialogManager.ERROR).show();
             return false;
         }
 
@@ -283,22 +283,22 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.concurrentConnectionsLabel.setText(GetText.tr("Concurrent Connections") + ":");
         this.concurrentConnectionsLabel.setToolTipText("<html>"
-                + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
+            + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");
 
         this.connectionTimeoutLabel.setText(GetText.tr("Connection Timeout") + ":");
         this.connectionTimeoutLabel.setToolTipText(
-                "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
+            "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
 
         this.dontUseHttp2Label.setText(GetText.tr("Don't Use HTTP/2") + "?");
         this.dontUseHttp2Label.setToolTipText(GetText
-                .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
+            .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
 
         this.enableProxyLabel.setText(GetText.tr("Don't Use HTTP/2") + "?");
         this.enableProxyLabel.setToolTipText(GetText
-                .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
+            .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
 
         this.proxyHostLabel.setText(GetText.tr("Proxy Host") + ":");
         this.proxyHostLabel.setToolTipText(GetText.tr("This is the IP/hostname used to connect to the proxy."));
@@ -308,6 +308,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
 
         this.proxyTypeLabel.setText(GetText.tr("Proxy Type") + ":");
         this.proxyTypeLabel.setToolTipText(
-                GetText.tr("This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."));
+            GetText.tr("This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."));
     }
 }

@@ -17,30 +17,20 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.card.ModCard;
 import com.atlauncher.network.Analytics;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {
@@ -112,7 +102,7 @@ public final class ViewModsDialog extends JDialog {
 
             if (!this.searchField.getText().isEmpty()) {
                 if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
-                        .matcher(card.mod.getName()).find()) {
+                    .matcher(card.mod.getName()).find()) {
 
                     show = false;
                 }

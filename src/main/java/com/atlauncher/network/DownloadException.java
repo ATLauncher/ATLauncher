@@ -49,7 +49,7 @@ public class DownloadException extends IOException {
             return false;
         final String contentType = this.download.response.header("Content-Type");
         return contentType.equalsIgnoreCase("application/json")
-                || contentType.equalsIgnoreCase("application/xml")
-                || contentType.startsWith("text/");
+            || contentType.equalsIgnoreCase("application/xml")
+            || contentType.startsWith("text/");
     }
 }

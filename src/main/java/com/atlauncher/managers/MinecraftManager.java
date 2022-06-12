@@ -17,20 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.joda.time.format.ISODateTimeFormat;
-
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -44,6 +30,19 @@ import com.atlauncher.network.Download;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.format.ISODateTimeFormat;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MinecraftManager {
     private static final Logger LOG = LogManager.getLogger(MinecraftManager.class);
@@ -66,7 +65,7 @@ public class MinecraftManager {
 
         try {
             Download download = Download.build().setUrl(Constants.MINECRAFT_VERSION_MANIFEST_URL)
-                    .downloadTo(manifestPath);
+                .downloadTo(manifestPath);
 
             if (!force) {
                 download = download.cached();
@@ -79,7 +78,7 @@ public class MinecraftManager {
             if (Files.exists(manifestPath)) {
                 try {
                     versionManifest = Gsons.DEFAULT.fromJson(new FileReader(manifestPath.toFile()),
-                            VersionManifest.class);
+                        VersionManifest.class);
                 } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
                     LOG.error("error: ", e1);
                 }
@@ -161,7 +160,7 @@ public class MinecraftManager {
     }
 
     public static List<VersionManifestVersion> getMajorMinecraftVersions(String version)
-            throws InvalidMinecraftVersion {
+        throws InvalidMinecraftVersion {
         VersionManifestVersion parentVersion = getMinecraftVersion(version);
 
         // this doesn't apply for anything other than release types
@@ -172,18 +171,18 @@ public class MinecraftManager {
         }
 
         return Data.MINECRAFT.entrySet().stream()
-                .filter(e -> e.getValue().type == VersionManifestVersionType.RELEASE
-                        && e.getKey().startsWith(version.substring(0, version.lastIndexOf("."))))
-                .map(e -> e.getValue()).collect(Collectors.toList());
+            .filter(e -> e.getValue().type == VersionManifestVersionType.RELEASE
+                && e.getKey().startsWith(version.substring(0, version.lastIndexOf("."))))
+            .map(e -> e.getValue()).collect(Collectors.toList());
     }
 
     public static List<VersionManifestVersion> getFilteredMinecraftVersions(
-            List<VersionManifestVersionType> filterTypes) {
+        List<VersionManifestVersionType> filterTypes) {
         List<String> disabledVersions = new ArrayList<>();
 
         filterTypes.forEach(ft -> {
             disabledVersions.addAll(ConfigManager.getConfigItem(
-                    String.format("minecraft.%s.disabledVersions", ft.getValue()), new ArrayList<String>()));
+                String.format("minecraft.%s.disabledVersions", ft.getValue()), new ArrayList<String>()));
         });
 
         return Data.MINECRAFT.values().stream().filter(mv -> {
@@ -199,7 +198,7 @@ public class MinecraftManager {
 
     public static List<VersionManifestVersion> getFilteredMinecraftVersions(VersionManifestVersionType filterType) {
         List<String> disabledVersions = ConfigManager.getConfigItem(
-                String.format("minecraft.%s.disabledVersions", filterType.getValue()), new ArrayList<String>());
+            String.format("minecraft.%s.disabledVersions", filterType.getValue()), new ArrayList<String>());
 
         return Data.MINECRAFT.values().stream().filter(mv -> {
             if (disabledVersions.contains(mv.id)) {
@@ -217,12 +216,12 @@ public class MinecraftManager {
 
         for (VersionManifestVersionType vt : VersionManifestVersionType.values()) {
             disabledVersions.addAll(ConfigManager.getConfigItem(
-                    String.format("minecraft.%s.disabledVersions", vt.getValue()), new ArrayList<String>()));
+                String.format("minecraft.%s.disabledVersions", vt.getValue()), new ArrayList<String>()));
         }
 
         return Data.MINECRAFT.values().stream().filter(mv -> !disabledVersions.contains(mv.id))
-                .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
-                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
-                }).reversed()).collect(Collectors.toList());
+            .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+                return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+            }).reversed()).collect(Collectors.toList());
     }
 }

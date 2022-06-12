@@ -40,7 +40,7 @@ import java.util.Comparator;
 import java.util.Optional;
 
 @SuppressWarnings("serial")
-public class FTBPackCard extends JPanel{
+public class FTBPackCard extends JPanel {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
@@ -48,13 +48,13 @@ public class FTBPackCard extends JPanel{
         super();
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(null, pack.name, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                App.THEME.getBoldFont().deriveFont(15f)));
+            App.THEME.getBoldFont().deriveFont(15f)));
 
         String imageUrl = null;
         if (pack.art != null) {
             Optional<ModpacksChPackArt> art = pack.art.stream()
-                    .filter(a -> a.type == ModpacksChPackArtType.LOGO || a.type == ModpacksChPackArtType.SQUARE)
-                    .sorted(Comparator.comparingInt((ModpacksChPackArt a) -> a.updated).reversed()).findFirst();
+                .filter(a -> a.type == ModpacksChPackArtType.LOGO || a.type == ModpacksChPackArtType.SQUARE)
+                .sorted(Comparator.comparingInt((ModpacksChPackArt a) -> a.updated).reversed()).findFirst();
             if (art.isPresent()) {
                 imageUrl = art.get().url;
             }
@@ -76,10 +76,10 @@ public class FTBPackCard extends JPanel{
         newInstanceButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                    .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.name, "Install", "FTBPack");
+                //TODO: Analytics.sendEvent(pack.name, "Install", "FTBPack");
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -93,7 +93,7 @@ public class FTBPackCard extends JPanel{
         websiteButton.setVisible(pack.hasTag("FTB"));
 
         JEditorPane descArea = new JEditorPane("text/html",
-                String.format("<html>%s</html>", Markdown.render(pack.description)));
+            String.format("<html>%s</html>", Markdown.render(pack.description)));
         descArea.setEditable(false);
         descArea.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -102,7 +102,7 @@ public class FTBPackCard extends JPanel{
         });
 
         actionsPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         actionsPanel.add(buttonsPanel, BorderLayout.SOUTH);
         actionsPanel.setPreferredSize(new Dimension(0, 155));
 
@@ -112,7 +112,7 @@ public class FTBPackCard extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         newInstanceButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }

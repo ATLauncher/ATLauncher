@@ -58,18 +58,18 @@ public class PackVersion {
 
     private String getVersionString() {
         if (this.minecraftVersion == null || (this.minecraftVersion.id.equalsIgnoreCase(this.version)
-                && this.minecraftVersion.type != VersionManifestVersionType.SNAPSHOT
-                && this.minecraftVersion.type != VersionManifestVersionType.EXPERIMENT)) {
+            && this.minecraftVersion.type != VersionManifestVersionType.SNAPSHOT
+            && this.minecraftVersion.type != VersionManifestVersionType.EXPERIMENT)) {
             return this.version;
         }
 
         if (this.minecraftVersion.id.equalsIgnoreCase(this.version)
-                && this.minecraftVersion.type == VersionManifestVersionType.SNAPSHOT) {
+            && this.minecraftVersion.type == VersionManifestVersionType.SNAPSHOT) {
             return this.version + " (Snapshot)";
         }
 
         if (this.minecraftVersion.id.equalsIgnoreCase(this.version)
-                && this.minecraftVersion.type == VersionManifestVersionType.EXPERIMENT) {
+            && this.minecraftVersion.type == VersionManifestVersionType.EXPERIMENT) {
             return this.version + " (Experiment)";
         }
 

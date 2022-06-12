@@ -17,20 +17,15 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.Graphics;
-import java.awt.SystemTray;
+import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JWindow;
-
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.App;
-import com.atlauncher.utils.Utils;
 
 /**
  * The splash screen which shows when the launcher is started up and is loading

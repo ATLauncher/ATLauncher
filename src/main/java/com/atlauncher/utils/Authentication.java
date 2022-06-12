@@ -17,10 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MojangAccount;
@@ -30,13 +26,16 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
 
 public class Authentication {
     private static final Logger LOG = LogManager.getLogger(Authentication.class);
 
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
-                App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
+            App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
 
         LoginResponse response = new LoginResponse(username);
 
@@ -50,7 +49,7 @@ public class Authentication {
             } catch (AuthenticationException e) {
                 if (e.getMessage().contains("410")) {
                     response.setErrorMessage(GetText.tr(
-                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
+                        "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
                 } else {
                     response.setErrorMessage(e.getMessage());
                 }
@@ -64,7 +63,7 @@ public class Authentication {
 
     public static LoginResponse login(MojangAccount account, boolean usePassword) {
         UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.clientToken)
-                .createUserAuthentication(Agent.MINECRAFT);
+            .createUserAuthentication(Agent.MINECRAFT);
         LoginResponse response = new LoginResponse(account.username);
 
         if (!usePassword && account.store != null) {
@@ -89,7 +88,7 @@ public class Authentication {
             } catch (AuthenticationException e) {
                 if (e.getMessage().contains("410")) {
                     response.setErrorMessage(GetText.tr(
-                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
+                        "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
                 } else {
                     response.setErrorMessage(e.getMessage());
                 }

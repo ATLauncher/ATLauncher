@@ -17,18 +17,17 @@
  */
 package com.atlauncher.data.json;
 
+import com.atlauncher.annot.Json;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.workers.InstanceInstaller;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.annot.Json;
-import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Loader {
@@ -66,10 +65,10 @@ public class Loader {
     }
 
     public com.atlauncher.data.minecraft.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion loaderVersion) throws Exception {
+                                                                  LoaderVersion loaderVersion) throws Exception {
         com.atlauncher.data.minecraft.loaders.Loader instance = (com.atlauncher.data.minecraft.loaders.Loader) Class
-                .forName(this.className.replace("com.atlauncher.data.loaders", "com.atlauncher.data.minecraft.loaders"))
-                .getDeclaredConstructor().newInstance();
+            .forName(this.className.replace("com.atlauncher.data.loaders", "com.atlauncher.data.minecraft.loaders"))
+            .getDeclaredConstructor().newInstance();
 
         instance.set(this.metadata, tempDir, instanceInstaller, loaderVersion);
 
@@ -80,13 +79,13 @@ public class Loader {
     public List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             Method method = Class
-                    .forName(this.chooseClassName.replace("com.atlauncher.data.loaders",
-                            "com.atlauncher.data.minecraft.loaders"))
-                    .getDeclaredMethod(this.chooseMethod, String.class);
+                .forName(this.chooseClassName.replace("com.atlauncher.data.loaders",
+                    "com.atlauncher.data.minecraft.loaders"))
+                .getDeclaredMethod(this.chooseMethod, String.class);
 
             return (List<LoaderVersion>) method.invoke(null, minecraft);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
+                 | IllegalArgumentException | InvocationTargetException e) {
             LOG.error("error", e);
         }
 

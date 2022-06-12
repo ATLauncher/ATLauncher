@@ -17,12 +17,6 @@
  */
 package com.atlauncher.data.minecraft.loaders.fabric;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -30,10 +24,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class FabricMetaLauncherMetaTypeAdapter implements JsonDeserializer<FabricMetaLauncherMeta> {
     @Override
     public FabricMetaLauncherMeta deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
+        throws JsonParseException {
         String version;
         Map<String, String> mainClass = new HashMap<>();
         Map<String, List<FabricLibrary>> libraries = new HashMap<>();
@@ -60,7 +60,7 @@ public class FabricMetaLauncherMetaTypeAdapter implements JsonDeserializer<Fabri
         for (JsonElement libraryElement : clientLibrariesArray) {
             if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
                 clientLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                        libraryElement.getAsJsonObject().get("url").getAsString()));
+                    libraryElement.getAsJsonObject().get("url").getAsString()));
             }
         }
         libraries.put("client", clientLibraries);
@@ -70,7 +70,7 @@ public class FabricMetaLauncherMetaTypeAdapter implements JsonDeserializer<Fabri
         for (JsonElement libraryElement : commonLibrariesArray) {
             if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
                 commonLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                        libraryElement.getAsJsonObject().get("url").getAsString()));
+                    libraryElement.getAsJsonObject().get("url").getAsString()));
             }
         }
         libraries.put("common", commonLibraries);
@@ -80,7 +80,7 @@ public class FabricMetaLauncherMetaTypeAdapter implements JsonDeserializer<Fabri
         for (JsonElement libraryElement : serverLibrariesArray) {
             if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
                 serverLibraries.add(new FabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                        libraryElement.getAsJsonObject().get("url").getAsString()));
+                    libraryElement.getAsJsonObject().get("url").getAsString()));
             }
         }
         libraries.put("server", serverLibraries);

@@ -17,20 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -42,6 +28,19 @@ import com.atlauncher.utils.Hashing;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PackManager {
     private static final Logger LOG = LogManager.getLogger(PackManager.class);
@@ -61,7 +60,7 @@ public class PackManager {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
             Data.PACKS.addAll(Gsons.DEFAULT_ALT
-                    .fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()), type));
+                .fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LOG.error("error: ", e);
         }
@@ -275,7 +274,7 @@ public class PackManager {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
             packUsers.addAll(
-                    Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
+                Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LOG.error("error: ", e);
         }
@@ -293,7 +292,7 @@ public class PackManager {
         File[] files = FileSystem.IMAGES.toFile().listFiles();
 
         Set<String> packImageFilenames = Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png")
-                .collect(Collectors.toSet());
+            .collect(Collectors.toSet());
         packImageFilenames.add("defaultimage.png");
 
         if (files != null) {

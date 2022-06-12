@@ -17,8 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.lang.reflect.Type;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -27,10 +25,12 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Type;
+
 public class AccountTypeAdapter implements JsonSerializer<AbstractAccount>, JsonDeserializer<AbstractAccount> {
     @Override
     public final JsonElement serialize(final AbstractAccount object, final Type interfaceType,
-            final JsonSerializationContext context) {
+                                       final JsonSerializationContext context) {
         final JsonObject rootJsonObject = context.serialize(object).getAsJsonObject();
 
         rootJsonObject.addProperty("internalType", object.getClass().getName());
@@ -40,7 +40,7 @@ public class AccountTypeAdapter implements JsonSerializer<AbstractAccount>, Json
 
     @Override
     public AbstractAccount deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
+        throws JsonParseException {
         Type actualType;
         try {
             actualType = Class.forName(json.getAsJsonObject().get("internalType").getAsString());

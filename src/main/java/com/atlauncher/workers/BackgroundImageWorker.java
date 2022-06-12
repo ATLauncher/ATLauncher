@@ -17,19 +17,16 @@
  */
 package com.atlauncher.workers;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingWorker;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadException;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
     private final JLabel label;

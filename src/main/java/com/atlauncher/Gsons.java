@@ -17,10 +17,6 @@
  */
 package com.atlauncher;
 
-import java.awt.Color;
-import java.time.Instant;
-import java.util.Date;
-
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.AccountTypeAdapter;
@@ -46,6 +42,10 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.awt.*;
+import java.time.Instant;
+import java.util.Date;
+
 public final class Gsons {
     public static final ExclusionStrategy exclusionAnnotationStrategy = new ExclusionStrategy() {
         @Override
@@ -60,27 +60,27 @@ public final class Gsons {
     };
 
     private static final Gson BASE = new GsonBuilder()
-            .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
-            .registerTypeAdapter(Date.class, new DateTypeAdapter())
-            .registerTypeAdapter(Color.class, new ColorTypeAdapter())
-            .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter())
-            .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
+        .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
+        .registerTypeAdapter(Date.class, new DateTypeAdapter())
+        .registerTypeAdapter(Color.class, new ColorTypeAdapter())
+        .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter())
+        .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
 
     public static final Gson DEFAULT = BASE.newBuilder().setPrettyPrinting().create();
 
     public static final Gson DEFAULT_SLIM = BASE.newBuilder().create();
 
     public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapter(Color.class, new ColorTypeAdapter())
-            .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter())
-            .addSerializationExclusionStrategy(exclusionAnnotationStrategy).setPrettyPrinting().create();
+        .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter())
+        .addSerializationExclusionStrategy(exclusionAnnotationStrategy).setPrettyPrinting().create();
 
     public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
-            .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
-            .registerTypeAdapter(Color.class, new ColorTypeAdapter())
-            .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
-            .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
-            .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
-            .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())
-            .registerTypeAdapter(QuiltMetaLauncherMeta.class, new QuiltMetaLauncherMetaTypeAdapter())
-            .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
+        .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
+        .registerTypeAdapter(Color.class, new ColorTypeAdapter())
+        .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
+        .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
+        .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
+        .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())
+        .registerTypeAdapter(QuiltMetaLauncherMeta.class, new QuiltMetaLauncherMetaTypeAdapter())
+        .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
 }

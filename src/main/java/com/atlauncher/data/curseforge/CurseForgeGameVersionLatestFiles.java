@@ -24,12 +24,12 @@ public class CurseForgeGameVersionLatestFiles {
     public int gameVersionTypeId;
     public int modLoader;
 
-    @SerializedName(value = "fileId", alternate = { "projectFileId" })
+    @SerializedName(value = "fileId", alternate = {"projectFileId"})
     public int fileId;
 
-    @SerializedName(value = "filename", alternate = { "projectFileName" })
+    @SerializedName(value = "filename", alternate = {"projectFileName"})
     public String filename;
 
-    @SerializedName(value = "releaseType", alternate = { "fileType" })
+    @SerializedName(value = "releaseType", alternate = {"fileType"})
     public int releaseType;
 }

@@ -17,6 +17,18 @@
  */
 package com.atlauncher.utils;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zeroturnaround.zip.NameMapper;
+import org.zeroturnaround.zip.ZipUtil;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,19 +40,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.zeroturnaround.zip.NameMapper;
-import org.zeroturnaround.zip.ZipUtil;
 
 public class ArchiveUtils {
     private static final Logger LOG = LogManager.getLogger(ArchiveUtils.class);
@@ -56,7 +55,7 @@ public class ArchiveUtils {
         boolean found = false;
 
         try (InputStream is = Files.newInputStream(archivePath);
-                ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
+             ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
             ArchiveEntry entry = null;
             while ((entry = zais.getNextEntry()) != null) {
                 if (!zais.canReadEntryData(entry)) {
@@ -111,7 +110,7 @@ public class ArchiveUtils {
         try {
             InputStream is = createStream(archivePath);
             try (
-                    ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
+                ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
                 ArchiveEntry entry = null;
                 while ((entry = ais.getNextEntry()) != null) {
                     if (!ais.canReadEntryData(entry)) {
@@ -147,7 +146,7 @@ public class ArchiveUtils {
         }
 
         try (InputStream is = Files.newInputStream(archivePath);
-                ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
+             ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
             ArchiveEntry entry = null;
             while ((entry = zais.getNextEntry()) != null) {
                 if (!zais.canReadEntryData(entry)) {
@@ -166,7 +165,7 @@ public class ArchiveUtils {
                 } catch (InvalidPathException e) {
                     String newFilename = fileName.replaceAll("[:*\\?\"<>|]", "");
                     LOG.warn("Invalid path when extracting file with name of '{}'. Renaming to '{}'", fileName,
-                            newFilename);
+                        newFilename);
                     outputPath = extractToPath.resolve(newFilename);
                 }
 
@@ -204,12 +203,12 @@ public class ArchiveUtils {
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
             LOG.error("Failed to create zip {} from {}",
-                    archivePath.toAbsolutePath(),
-                    pathToCompress.toAbsolutePath());
+                archivePath.toAbsolutePath(),
+                pathToCompress.toAbsolutePath());
         }
 
         try (OutputStream os = Files.newOutputStream(archivePath);
-                ArchiveOutputStream aos = new ArchiveStreamFactory().createArchiveOutputStream("ZIP", os)) {
+             ArchiveOutputStream aos = new ArchiveStreamFactory().createArchiveOutputStream("ZIP", os)) {
 
             Files.walkFileTree(pathToCompress, new SimpleFileVisitor<Path>() {
                 @Override

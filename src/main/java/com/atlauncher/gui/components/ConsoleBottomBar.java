@@ -37,7 +37,7 @@ import java.awt.datatransfer.StringSelection;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar{
+public class ConsoleBottomBar extends BottomBar {
     private static final Logger LOG = LogManager.getLogger(ConsoleBottomBar.class);
 
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
@@ -70,7 +70,7 @@ public class ConsoleBottomBar extends BottomBar{
             LOG.info("Console Cleared");
         });
         copyLogButton.addActionListener(e -> {
-            Analytics.sendEvent("CopyLog", "Launcher");
+            //TODO: Analytics.sendEvent("CopyLog", "Launcher");
             App.TOASTER.pop("Copied Log to clipboard");
             LOG.info("Copied Log to clipboard");
             StringSelection text = new StringSelection(App.console.getLog());
@@ -80,7 +80,7 @@ public class ConsoleBottomBar extends BottomBar{
         uploadLogButton.addActionListener(e -> {
             String result;
             final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Uploading Logs"), 0,
-                    GetText.tr("Uploading Logs"), "Aborting Uploading Logs", App.console);
+                GetText.tr("Uploading Logs"), "Aborting Uploading Logs", App.console);
 
             dialog.addThread(new Thread(() -> {
                 try {
@@ -100,7 +100,7 @@ public class ConsoleBottomBar extends BottomBar{
             result = dialog.getReturnValue();
 
             if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
-                Analytics.sendEvent("UploadLog", "Launcher");
+                //TODO: Analytics.sendEvent("UploadLog", "Launcher");
                 App.TOASTER.pop("Log uploaded and link copied to clipboard");
                 LOG.info("Log uploaded and link copied to clipboard: {}", result);
                 StringSelection text = new StringSelection(result);
@@ -113,12 +113,12 @@ public class ConsoleBottomBar extends BottomBar{
         });
         killMinecraftButton.addActionListener(arg0 -> {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft") + "?")
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves."))
-                            .build())
-                    .setType(DialogManager.QUESTION).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves."))
+                    .build())
+                .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
-                Analytics.sendEvent("KillMinecraft", "Launcher");
+                //TODO: Analytics.sendEvent("KillMinecraft", "Launcher");
                 App.launcher.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }
@@ -141,7 +141,7 @@ public class ConsoleBottomBar extends BottomBar{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.setupLanguage();
     }
 }

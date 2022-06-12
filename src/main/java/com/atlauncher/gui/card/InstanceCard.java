@@ -32,7 +32,11 @@ import com.atlauncher.events.Side;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.gui.dialogs.*;
+import com.atlauncher.gui.dialogs.AddModsDialog;
+import com.atlauncher.gui.dialogs.EditModsDialog;
+import com.atlauncher.gui.dialogs.InstanceExportDialog;
+import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
@@ -59,7 +63,7 @@ import java.util.ArrayList;
  * Class for displaying instances in the Instance Tab
  */
 @SuppressWarnings("serial")
-public class InstanceCard extends CollapsiblePanel{
+public class InstanceCard extends CollapsiblePanel {
     private static final Logger LOG = LogManager.getLogger(InstanceCard.class);
 
     private final Instance instance;
@@ -79,12 +83,12 @@ public class InstanceCard extends CollapsiblePanel{
     private final JMenuItem playOnlinePlayMenuItem = new JMenuItem(GetText.tr("Play Online"));
     private final JMenuItem playOfflinePlayMenuItem = new JMenuItem(GetText.tr("Play Offline"));
     private final DropDownButton playButton = new DropDownButton(GetText.tr("Play"), playPopupMenu, true,
-            new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    play(false);
-                }
-            });
+        new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                play(false);
+            }
+        });
 
     private final JPopupMenu backupPopupMenu = new JPopupMenu();
     private final JMenuItem normalBackupMenuItem = new JMenuItem(GetText.tr("Normal Backup"));
@@ -113,7 +117,7 @@ public class InstanceCard extends CollapsiblePanel{
     private final JMenuItem changeQuiltVersionMenuItem = new JMenuItem(GetText.tr("Change Quilt Version"));
     private final JMenuItem removeQuiltMenuItem = new JMenuItem(GetText.tr("Remove Quilt"));
     private final DropDownButton editInstanceButton = new DropDownButton(GetText.tr("Edit Instance"),
-            editInstancePopupMenu);
+        editInstancePopupMenu);
 
     public InstanceCard(Instance instance) {
         super(instance);
@@ -173,7 +177,7 @@ public class InstanceCard extends CollapsiblePanel{
         // if not an ATLauncher pack, a system pack or has no urls, don't show the links
         // button
         if (instance.getPack() == null || instance.getPack().system || (instance.getPack().discordInviteURL == null
-                && instance.getPack().supportURL == null && instance.getPack().websiteURL == null)) {
+            && instance.getPack().supportURL == null && instance.getPack().websiteURL == null)) {
             this.getHelpButton.setVisible(false);
         }
 
@@ -192,9 +196,9 @@ public class InstanceCard extends CollapsiblePanel{
         this.openWebsite.setVisible(instance.hasWebsite());
 
         if (instance.launcher.enableCurseForgeIntegration
-                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
-                                && this.instance.launcher.loaderVersion != null))) {
+            && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
+            || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+            && this.instance.launcher.loaderVersion != null))) {
             bottom.add(this.addButton);
         }
 
@@ -209,7 +213,7 @@ public class InstanceCard extends CollapsiblePanel{
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
         rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -275,24 +279,24 @@ public class InstanceCard extends CollapsiblePanel{
         editInstancePopupMenu.addSeparator();
 
         if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true
-                && !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
+            && !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
+            .contains(instance.id)) {
             editInstancePopupMenu.add(addFabricMenuItem);
             editInstancePopupMenu.add(changeFabricVersionMenuItem);
         }
         editInstancePopupMenu.add(removeFabricMenuItem);
 
         if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true
-                && !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
+            && !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
+            .contains(instance.id)) {
             editInstancePopupMenu.add(addForgeMenuItem);
             editInstancePopupMenu.add(changeForgeVersionMenuItem);
         }
         editInstancePopupMenu.add(removeForgeMenuItem);
 
         if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true
-                && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
+            && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
+            .contains(instance.id)) {
             editInstancePopupMenu.add(addQuiltMenuItem);
             editInstancePopupMenu.add(changeQuiltVersionMenuItem);
         }
@@ -360,66 +364,61 @@ public class InstanceCard extends CollapsiblePanel{
         addQuiltMenuItem.setVisible(instance.launcher.loaderVersion == null);
 
         changeFabricVersionMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
+            .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
         changeForgeVersionMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
+            .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
         changeQuiltVersionMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
+            .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
 
         removeFabricMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
+            .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
         removeForgeMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
+            .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
         removeQuiltMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
+            .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
     }
 
     private void addActionListeners() {
         this.updateButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot update pack as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(GetText.tr("Cannot update pack as you have no account selected."))
+                    .setType(DialogManager.ERROR).show();
                 return;
             }
 
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Update",
-                    instance.getAnalyticsCategory());
+            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Update", instance.getAnalyticsCategory());
             instance.update();
         });
         this.addButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
-                    instance.getAnalyticsCategory());
+            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods", instance.getAnalyticsCategory());
             new AddModsDialog(instance);
             exportButton.setVisible(instance.canBeExported());
         });
         this.editButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditMods",
-                    instance.getAnalyticsCategory());
+            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditMods", instance.getAnalyticsCategory());
             new EditModsDialog(instance);
             exportButton.setVisible(instance.canBeExported());
         });
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
-                String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
-                        Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
+            String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
+                Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings",
-                    instance.getAnalyticsCategory());
+            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings", instance.getAnalyticsCategory());
             new InstanceSettingsDialog(instance);
         });
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Instance"))
-                    .setContent(
-                            GetText.tr("Are you sure you want to delete the instance \"{0}\"?", instance.launcher.name))
-                    .setType(DialogManager.ERROR).show();
+                .setContent(
+                    GetText.tr("Are you sure you want to delete the instance \"{0}\"?", instance.launcher.name))
+                .setType(DialogManager.ERROR).show();
 
             if (ret == DialogManager.YES_OPTION) {
-                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Delete",
-                        instance.getAnalyticsCategory());
+                //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Delete", instance.getAnalyticsCategory());
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
-                        GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
+                    GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     InstanceManager.removeInstance(instance);
                     dialog.close();
@@ -429,8 +428,7 @@ public class InstanceCard extends CollapsiblePanel{
             }
         });
         this.exportButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Export",
-                    instance.getAnalyticsCategory());
+            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Export", instance.getAnalyticsCategory());
             new InstanceExportDialog(instance);
         });
     }
@@ -438,37 +436,36 @@ public class InstanceCard extends CollapsiblePanel{
     private void play(boolean offline) {
         if (!instance.launcher.isPlayable) {
             DialogManager.okDialog().setTitle(GetText.tr("Instance Corrupt"))
-                    .setContent(GetText
-                            .tr("Cannot play instance as it's corrupted. Please reinstall, update or delete it."))
-                    .setType(DialogManager.ERROR).show();
+                .setContent(GetText
+                    .tr("Cannot play instance as it's corrupted. Please reinstall, update or delete it."))
+                .setType(DialogManager.ERROR).show();
             return;
         }
 
         if (!App.settings.ignoreJavaOnInstanceLaunch && instance.shouldShowWrongJavaWarning()) {
             DialogManager.okDialog().setTitle(GetText.tr("Cannot launch instance due to your Java version"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}",
-                            instance.launcher.java.getVersionString())).build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}",
+                    instance.launcher.java.getVersionString())).build())
+                .setType(DialogManager.ERROR).show();
             return;
         }
 
         if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr(
-                                    "An update is available for this instance.<br/><br/>Do you want to update now?"))
-                            .build())
-                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr(
+                        "An update is available for this instance.<br/><br/>Do you want to update now?"))
+                    .build())
+                .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
 
             if (ret == 0) {
                 if (AccountManager.getSelectedAccount() == null) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                            .setContent(GetText.tr("Cannot update pack as you have no account selected."))
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(GetText.tr("Cannot update pack as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
                 } else {
-                    Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateFromPlay",
-                            instance.getAnalyticsCategory());
+                    //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateFromPlay", instance.getAnalyticsCategory());
                     instance.update();
                 }
             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
@@ -556,16 +553,15 @@ public class InstanceCard extends CollapsiblePanel{
 
                     JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
                     shareCodeItem.addActionListener(e1 -> {
-                        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "MakeShareCode",
-                                instance.getAnalyticsCategory());
+                        //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "MakeShareCode", instance.getAnalyticsCategory());
                         try {
                             java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
                             }.getType();
 
                             APIResponse<String> response = Gsons.DEFAULT.fromJson(
-                                    Utils.sendAPICall("pack/" + instance.getSafePackName() + "/"
-                                            + instance.launcher.version + "/share-code", instance.getShareCodeData()),
-                                    type);
+                                Utils.sendAPICall("pack/" + instance.getSafePackName() + "/"
+                                    + instance.launcher.version + "/share-code", instance.getShareCodeData()),
+                                type);
 
                             if (response.wasError()) {
                                 App.TOASTER.pop(GetText.tr("Error getting share code."));
@@ -582,8 +578,8 @@ public class InstanceCard extends CollapsiblePanel{
                         }
                     });
                     shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
-                            && !instance.isExternalPack() && !instance.launcher.vanillaInstance
-                            && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
+                        && !instance.isExternalPack() && !instance.launcher.vanillaInstance
+                        && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
                     rightClickMenu.add(shareCodeItem);
 
                     rightClickMenu.show(image, e.getX(), e.getY());
@@ -610,7 +606,7 @@ public class InstanceCard extends CollapsiblePanel{
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.playButton.setText(GetText.tr("Play"));
         this.updateButton.setText(GetText.tr("Update"));
         this.backupButton.setText(GetText.tr("Backup"));

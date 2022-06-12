@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data;
 
-import java.util.List;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.managers.PackManager;
+
+import java.util.List;
 
 @Json
 public class PackUsers {

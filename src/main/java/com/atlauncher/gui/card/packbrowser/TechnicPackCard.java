@@ -34,7 +34,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 @SuppressWarnings("serial")
-public class TechnicPackCard extends JPanel{
+public class TechnicPackCard extends JPanel {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
@@ -42,7 +42,7 @@ public class TechnicPackCard extends JPanel{
         super();
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(null, pack.name, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                App.THEME.getBoldFont().deriveFont(15f)));
+            App.THEME.getBoldFont().deriveFont(15f)));
 
         JSplitPane splitter = new JSplitPane();
 
@@ -60,10 +60,10 @@ public class TechnicPackCard extends JPanel{
         newInstanceButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                    .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.name, "Install", "TechnicPack");
+                //TODO: Analytics.sendEvent(pack.name, "Install", "TechnicPack");
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -90,7 +90,7 @@ public class TechnicPackCard extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         newInstanceButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }

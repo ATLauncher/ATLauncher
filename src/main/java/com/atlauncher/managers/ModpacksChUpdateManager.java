@@ -17,20 +17,18 @@
  */
 package com.atlauncher.managers;
 
-import java.util.Comparator;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
-
 import okhttp3.CacheControl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Comparator;
+import java.util.concurrent.TimeUnit;
 
 public class ModpacksChUpdateManager {
     private static final Logger LOG = LogManager.getLogger(ModpacksChUpdateManager.class);
@@ -49,38 +47,38 @@ public class ModpacksChUpdateManager {
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream().filter(
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)
-                .map(i -> {
-                    boolean wasUpdated = false;
+            .map(i -> {
+                boolean wasUpdated = false;
 
-                    ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
-                            .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
-                                    i.launcher.modpacksChPackManifest.id))
-                            .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                            .asClass(ModpacksChPackManifest.class);
+                ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
+                    .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
+                        i.launcher.modpacksChPackManifest.id))
+                    .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                    .asClass(ModpacksChPackManifest.class);
 
-                    if (packManifest == null) {
-                        return false;
-                    }
+                if (packManifest == null) {
+                    return false;
+                }
 
-                    ModpacksChPackVersion latestVersion = packManifest.versions.stream().sorted(
-                            Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
-                            .findFirst().orElse(null);
+                ModpacksChPackVersion latestVersion = packManifest.versions.stream().sorted(
+                        Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
+                    .findFirst().orElse(null);
 
-                    if (latestVersion == null) {
-                        return false;
-                    }
+                if (latestVersion == null) {
+                    return false;
+                }
 
-                    // if there is a change to the latestversion for an instance (but not a first
-                    // time write), then refresh instances panel
-                    if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
-                        wasUpdated = true;
-                    }
+                // if there is a change to the latestversion for an instance (but not a first
+                // time write), then refresh instances panel
+                if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
+                    && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                    wasUpdated = true;
+                }
 
-                    Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
+                Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
 
-                    return wasUpdated;
-                }).anyMatch(b -> b);
+                return wasUpdated;
+            }).anyMatch(b -> b);
 
         if (refreshInstancesPanel) {
             App.launcher.reloadInstancesPanel();

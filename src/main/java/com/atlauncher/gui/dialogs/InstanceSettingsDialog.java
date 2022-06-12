@@ -17,29 +17,19 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.gui.dialogs.instancesettings.CommandsInstanceSettingsTab;
 import com.atlauncher.gui.dialogs.instancesettings.GeneralInstanceSettingsTab;
 import com.atlauncher.gui.dialogs.instancesettings.JavaInstanceSettingsTab;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class InstanceSettingsDialog extends JDialog {
@@ -62,7 +52,7 @@ public class InstanceSettingsDialog extends JDialog {
 
     public InstanceSettingsDialog(Instance instance) {
         super(App.launcher.getParent(), GetText.tr("{0} Settings", instance.launcher.name),
-                ModalityType.DOCUMENT_MODAL);
+            ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
 
         this.generalInstanceSettingsTab = new GeneralInstanceSettingsTab(instance);

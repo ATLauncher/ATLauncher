@@ -17,26 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -53,6 +33,24 @@ import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Json
 public class Server {
@@ -98,11 +96,11 @@ public class Server {
     public void launch(String args, boolean close) {
         if (!isPatchedForLog4Shell) {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Server Is Vulnerable"))
-                    .setContent(new HTMLBuilder().text(GetText.tr(
-                            "This server is currently vulnerable to the Log4Shell exploit.<br/><br/>For your safety, and of those on your server, please delete and recreate this server.<br/><br/>Do you still want to launch the server (not recommended)?"))
-                            .center().build())
-                    .setType(DialogManager.ERROR)
-                    .show();
+                .setContent(new HTMLBuilder().text(GetText.tr(
+                        "This server is currently vulnerable to the Log4Shell exploit.<br/><br/>For your safety, and of those on your server, please delete and recreate this server.<br/><br/>Do you still want to launch the server (not recommended)?"))
+                    .center().build())
+                .setType(DialogManager.ERROR)
+                .show();
 
             if (ret != DialogManager.YES_OPTION) {
                 return;
@@ -124,12 +122,12 @@ public class Server {
         String javaPath = null;
         if (!usesRunSh && javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
             Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
-                    .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+                .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
 
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
                 LOG.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                        javaVersion.component, javaVersion.majorVersion, javaPath));
+                    javaVersion.component, javaVersion.majorVersion, javaPath));
             }
         }
 
@@ -158,9 +156,9 @@ public class Server {
                     arguments.add("-e");
 
                     arguments.add(getRoot().resolve(serverScript).toString()
-                            + (!usesRunSh && javaPath != null ? String.format(" ATLcustomjava %s",
-                                    javaPath + "/bin/java ") : " ")
-                            + args);
+                        + (!usesRunSh && javaPath != null ? String.format(" ATLcustomjava %s",
+                        javaPath + "/bin/java ") : " ")
+                        + args);
                 } else if (Utils.executableInPath("exo-open")) {
                     arguments.add("exo-open");
                     arguments.add("--launch");
@@ -168,18 +166,18 @@ public class Server {
                     arguments.add("--working-directory");
                     arguments.add(getRoot().toAbsolutePath().toString());
                     arguments.add(String.format(
-                            "./%s %s%s", serverScript, (!usesRunSh && javaPath != null
-                                    ? String.format(" ATLcustomjava %s",
-                                            javaPath + "/bin/java ")
-                                    : ""),
-                            args));
+                        "./%s %s%s", serverScript, (!usesRunSh && javaPath != null
+                            ? String.format(" ATLcustomjava %s",
+                            javaPath + "/bin/java ")
+                            : ""),
+                        args));
                 } else {
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "The server couldn't be launched as we don't know how to launcher it.<br/><br/>Please open the server folder and run the {0} file manually.",
-                                    serverScript))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "The server couldn't be launched as we don't know how to launcher it.<br/><br/>Please open the server folder and run the {0} file manually.",
+                                serverScript))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                     return;
                 }
             } else if (OS.isMac()) {
@@ -202,12 +200,12 @@ public class Server {
 
                     Path tempLaunchFile = getRoot().resolve(".launcherrun.sh");
                     Files.write(tempLaunchFile, String.join(" ", launchScript).toString().getBytes(),
-                            StandardOpenOption.CREATE,
-                            StandardOpenOption.TRUNCATE_EXISTING);
+                        StandardOpenOption.CREATE,
+                        StandardOpenOption.TRUNCATE_EXISTING);
                     tempLaunchFile.toFile().setExecutable(true);
 
                     LOG.info(String.format("Running \"%s\" from \".launcherrun.sh\"",
-                            String.join(" ", launchScript)));
+                        String.join(" ", launchScript)));
 
                     launchCommand = "./.launcherrun.sh";
                 }
@@ -226,10 +224,10 @@ public class Server {
 
             if (!close) {
                 DialogManager.okDialog().setTitle(GetText.tr("Server Launched"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "The server has been launched in an external window.<br/><br/>You can close ATLauncher which will not stop the server."))
-                                .build())
-                        .setType(DialogManager.INFO).show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "The server has been launched in an external window.<br/><br/>You can close ATLauncher which will not stop the server."))
+                        .build())
+                    .setType(DialogManager.INFO).show();
             } else {
                 System.exit(0);
             }
@@ -272,7 +270,7 @@ public class Server {
                 // version of the Pack and that the latest version of the Pack is not restricted
                 // to disallow updates.
                 if (!pack.getLatestVersion().version.equalsIgnoreCase(this.version)
-                        && !pack.isLatestVersionNoUpdate()) {
+                    && !pack.isLatestVersionNoUpdate()) {
                     return true;
                 }
             }

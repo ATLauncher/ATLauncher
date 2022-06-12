@@ -17,18 +17,15 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JPanel;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.panels.LoadingPanel;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import java.util.Map;
 
 public abstract class PackBrowserPlatformPanel extends JPanel {
     public abstract String getPlatformName();
@@ -66,14 +63,14 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
     public abstract boolean hasMorePages();
 
     protected abstract void loadPacks(JPanel contentPanel, String minecraftVersion,
-            String category, String sort, boolean sortDescending, String search, int page);
+                                      String category, String sort, boolean sortDescending, String search, int page);
 
     public abstract void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page);
+                                       boolean sortDescending, String search, int page);
 
     public void load(JPanel contentPanel, String minecraftVersion, String category, String sort, boolean sortDescending,
-            String search,
-            int page) {
+                     String search,
+                     int page) {
         // remove all components on the content panel
         contentPanel.removeAll();
 

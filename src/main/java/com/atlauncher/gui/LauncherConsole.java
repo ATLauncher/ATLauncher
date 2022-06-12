@@ -41,7 +41,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LauncherConsole extends JFrame{
+public class LauncherConsole extends JFrame {
     private static final Logger LOG = LogManager.getLogger(LauncherConsole.class);
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
@@ -60,9 +60,9 @@ public class LauncherConsole extends JFrame{
 
         try {
             if (App.settings.rememberWindowSizePosition && App.settings.consoleSize != null
-                    && App.settings.consolePosition != null) {
+                && App.settings.consolePosition != null) {
                 setBounds(App.settings.consolePosition.x, App.settings.consolePosition.y,
-                        App.settings.consoleSize.width, App.settings.consoleSize.height);
+                    App.settings.consoleSize.width, App.settings.consoleSize.height);
             }
         } catch (Exception e) {
             LOG.error("Error setting custom remembered window size settings", e);
@@ -75,7 +75,7 @@ public class LauncherConsole extends JFrame{
         bottomBar = new ConsoleBottomBar();
 
         JScrollPane scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
@@ -105,18 +105,18 @@ public class LauncherConsole extends JFrame{
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if(visible){
+        if (visible) {
             this.postConsoleOpenEvent();
-        } else{
+        } else {
             this.postConsoleClosedEvent();
         }
     }
 
-    private void postConsoleOpenEvent(){
+    private void postConsoleOpenEvent() {
         AppEventBus.post(new ConsoleEvent.ConsoleOpenedEvent());
     }
 
-    private void postConsoleClosedEvent(){
+    private void postConsoleClosedEvent() {
         AppEventBus.post(new ConsoleEvent.ConsoleClosedEvent());
     }
 
@@ -172,7 +172,7 @@ public class LauncherConsole extends JFrame{
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.copy.setText(GetText.tr("Copy"));
         this.bottomBar.setupLanguage();
     }

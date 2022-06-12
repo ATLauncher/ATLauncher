@@ -17,15 +17,14 @@
  */
 package com.atlauncher.network;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
 
 public final class DebugLoggingInterceptor implements Interceptor {
     private static final Logger LOG = LogManager.getLogger(DebugLoggingInterceptor.class);
@@ -50,12 +49,12 @@ public final class DebugLoggingInterceptor implements Interceptor {
         long t2 = System.nanoTime();
 
         if (response.cacheResponse() != null && (response.networkResponse() == null
-                || response.networkResponse().code() == HttpURLConnection.HTTP_NOT_MODIFIED)) {
+            || response.networkResponse().code() == HttpURLConnection.HTTP_NOT_MODIFIED)) {
             LOG.debug(String.format("Received cached response code %d for %s in %.1fms", response.code(),
-                    response.request().url(), (t2 - t1) / 1e6d), 3);
+                response.request().url(), (t2 - t1) / 1e6d), 3);
         } else {
             LOG.debug(String.format("Received response code %d for %s in %.1fms", response.code(),
-                    response.request().url(), (t2 - t1) / 1e6d), 3);
+                response.request().url(), (t2 - t1) / 1e6d), 3);
         }
 
         LOG.debug("{}", response);

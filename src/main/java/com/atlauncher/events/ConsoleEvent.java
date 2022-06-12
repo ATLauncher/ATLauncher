@@ -17,19 +17,19 @@
  */
 package com.atlauncher.events;
 
-public abstract class ConsoleEvent extends Event{
-    protected ConsoleEvent(){
+public abstract class ConsoleEvent extends Event {
+    protected ConsoleEvent() {
         super();
     }
 
-    public static final class ConsoleOpenedEvent extends ConsoleEvent{
-        public ConsoleOpenedEvent(){
+    public static final class ConsoleOpenedEvent extends ConsoleEvent {
+        public ConsoleOpenedEvent() {
             super();
         }
     }
 
-    public static final class ConsoleClosedEvent extends ConsoleEvent{
-        public ConsoleClosedEvent(){
+    public static final class ConsoleClosedEvent extends ConsoleEvent {
+        public ConsoleClosedEvent() {
             super();
         }
     }

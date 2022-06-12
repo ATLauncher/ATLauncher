@@ -34,14 +34,14 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 
-public final class Analytics{
+public final class Analytics {
     private static final Logger LOG = LogManager.getLogger(Analytics.class);
     private static GoogleAnalytics ga;
 
     public static void startSession() {
         ga = GoogleAnalytics.builder().withConfig(buildConfig()).withDefaultRequest(buildDefaultRequest())
-                .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
-                .withAppVersion(Constants.VERSION.toStringForLogging()).build();
+            .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
+            .withAppVersion(Constants.VERSION.toStringForLogging()).build();
 
         ga.screenView().sessionControl("start").sendAsync();
 
@@ -49,8 +49,11 @@ public final class Analytics{
     }
 
     private static GoogleAnalyticsConfig buildConfig() {
-        return new GoogleAnalyticsConfig().setDiscoverRequestParameters(true).setProxyHost(App.settings.proxyHost)
-                .setProxyPort(App.settings.proxyPort).setEnabled(!App.disableAnalytics && App.settings.enableAnalytics);
+        return new GoogleAnalyticsConfig()
+            .setDiscoverRequestParameters(true)
+            .setProxyHost(App.settings.proxyHost)
+            .setProxyPort(App.settings.proxyPort)
+            .setEnabled(!App.disableAnalytics && App.settings.enableAnalytics);
     }
 
     private static DefaultRequest buildDefaultRequest() {
@@ -58,8 +61,8 @@ public final class Analytics{
         String screenResolution = String.format("%dx%d", screenBounds.width, screenBounds.height);
 
         return new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.analyticsClientId)
-                .customDimension(1, Java.getLauncherJavaVersion()).customDimension(2, System.getProperty("os.name"))
-                .customDimension(3, System.getProperty("os.arch")).screenResolution(screenResolution);
+            .customDimension(1, Java.getLauncherJavaVersion()).customDimension(2, System.getProperty("os.name"))
+            .customDimension(3, System.getProperty("os.arch")).screenResolution(screenResolution);
     }
 
     public static void sendScreenView(String title) {
@@ -117,7 +120,7 @@ public final class Analytics{
 
     @Subscribe
     @OnSide(Side.UI)
-    public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event){
+    public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event) {
         ga.getConfig()
             .setProxyHost(App.settings.proxyHost)
             .setProxyPort(App.settings.proxyPort)

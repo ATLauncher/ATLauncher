@@ -17,20 +17,18 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.nio.file.Files;
-
-import javax.swing.JLabel;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.nio.file.Files;
 
 @SuppressWarnings("serial")
 public class LogClearerToolPanel extends AbstractToolPanel implements ActionListener {
@@ -40,7 +38,7 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
                 "This tool clears out all logs created by the launcher (not included those made by instances) to free up space and old junk."))
-                .build());
+            .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
@@ -58,7 +56,7 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
             }
 
             DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                    .setContent(GetText.tr("Successfully cleared the logs.")).show();
+                .setContent(GetText.tr("Successfully cleared the logs.")).show();
         }
     }
 }

@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.OS;
+
+import java.util.List;
+import java.util.Map;
 
 public class Library {
     public String name;
@@ -48,17 +48,17 @@ public class Library {
         }
 
         if (OS.isWindows() && this.natives.containsKey("windows") && this.downloads.classifiers
-                .containsKey(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
+            .containsKey(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
             return true;
         }
 
         if (OS.isLinux() && this.natives.containsKey("linux") && this.downloads.classifiers
-                .containsKey(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
+            .containsKey(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
             return true;
         }
 
         if (OS.isMac() && this.natives.containsKey("osx") && this.downloads.classifiers
-                .containsKey(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
+            .containsKey(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
             return true;
         }
 
@@ -68,25 +68,25 @@ public class Library {
     public Download getNativeDownloadForOS() {
         if (OS.isWindows() && this.natives != null && this.natives.containsKey("windows")) {
             return this.downloads.classifiers
-                    .get(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"));
+                .get(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"));
         }
 
         if (OS.isLinux() && this.natives != null && this.natives.containsKey("linux")) {
             return this.downloads.classifiers
-                    .get(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"));
+                .get(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"));
         }
 
         if (OS.isMac() && this.natives != null && this.natives.containsKey("osx")) {
             // if on ARM based Mac and there is a classifier for it, use it
             if (this.downloads.classifiers.containsKey(this.natives.get("osx") + "-arm64") && OS.isMacArm()
-                    && OS.is64Bit()) {
+                && OS.is64Bit()) {
                 return this.downloads.classifiers
-                        .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32") + "-arm64");
+                    .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32") + "-arm64");
             }
 
             // else fall back to the standard natives, ARM based Macs can run in Rosetta
             return this.downloads.classifiers
-                    .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"));
+                .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"));
         }
 
         return null;
@@ -103,8 +103,8 @@ public class Library {
         // if using newer than 2.16 version, use the Mojang provided library
         try {
             if (Integer.parseInt(versionParts[0]) > 2
-                    || (Integer.parseInt(versionParts[0]) == 2
-                            && Integer.parseInt(versionParts[1]) >= 16)) {
+                || (Integer.parseInt(versionParts[0]) == 2
+                && Integer.parseInt(versionParts[1]) >= 16)) {
                 return;
             }
         } catch (NumberFormatException ignored) {

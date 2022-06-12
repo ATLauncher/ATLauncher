@@ -37,7 +37,7 @@ import java.awt.*;
 import java.util.Optional;
 
 @SuppressWarnings("serial")
-public class CurseForgePackCard extends JPanel{
+public class CurseForgePackCard extends JPanel {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
@@ -45,7 +45,7 @@ public class CurseForgePackCard extends JPanel{
         super();
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(null, project.name, TitledBorder.LEADING,
-                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
+            TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
 
         String imageUrl = null;
         Optional<CurseForgeAttachment> attachment = project.getLogo();
@@ -69,8 +69,8 @@ public class CurseForgePackCard extends JPanel{
         newInstanceButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                    .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(project.name, "Install", "CurseForgePack");
                 new InstanceInstallerDialog(project);
@@ -99,7 +99,7 @@ public class CurseForgePackCard extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         newInstanceButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }

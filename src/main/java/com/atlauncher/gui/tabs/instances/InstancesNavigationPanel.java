@@ -31,7 +31,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 
-public final class InstancesNavigationPanel extends JPanel{
+public final class InstancesNavigationPanel extends JPanel {
     private final InstancesTab parent;
 
     private final JButton importButton = new JButton(GetText.tr("Import"));
@@ -72,7 +72,7 @@ public final class InstancesNavigationPanel extends JPanel{
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
+    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
         this.importButton.setText(GetText.tr("Import"));
         this.searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         this.sortingBox.repaint();

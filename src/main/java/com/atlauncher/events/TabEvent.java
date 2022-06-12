@@ -17,13 +17,13 @@
  */
 package com.atlauncher.events;
 
-public abstract class TabEvent extends Event{
-    protected TabEvent(){
+public abstract class TabEvent extends Event {
+    protected TabEvent() {
         super();
     }
 
-    public static final class TabChangedEvent extends TabEvent{
-        public TabChangedEvent(){
+    public static final class TabChangedEvent extends TabEvent {
+        public TabChangedEvent() {
             super();
         }
     }

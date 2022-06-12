@@ -17,11 +17,11 @@
  */
 package com.atlauncher.network;
 
-import java.io.IOException;
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import java.io.IOException;
 
 public final class ErrorReportingInterceptor implements Interceptor {
     @Override
@@ -33,7 +33,7 @@ public final class ErrorReportingInterceptor implements Interceptor {
         long t2 = System.nanoTime();
 
         ErrorReporting.recordNetworkRequest(request.url().toString(), request.method(), response.code(),
-                String.format("%.1fms%n", (t2 - t1) / 1e6d));
+            String.format("%.1fms%n", (t2 - t1) / 1e6d));
 
         return response;
     }

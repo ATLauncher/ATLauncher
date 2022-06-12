@@ -17,32 +17,24 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
 import com.atlauncher.AppEventBus;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
 import com.atlauncher.events.ThemeEvent;
-
+import com.atlauncher.utils.OS;
+import com.google.common.eventbus.Subscribe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.atlauncher.utils.OS;
-import com.google.common.eventbus.Subscribe;
+import javax.swing.*;
+import java.awt.*;
 
-public abstract class BottomBar extends JPanel{
+public abstract class BottomBar extends JPanel {
     private static final Logger LOG = LogManager.getLogger(BottomBar.class);
     private static final long serialVersionUID = -7488195680365431776L;
 
     protected final JButton nodeCraftIcon = new SMButton("/assets/image/social/nodecraft.png",
-            "Nodecraft - Setup a Minecraft server with an ATLauncher modpack in less than 60 seconds");
+        "Nodecraft - Setup a Minecraft server with an ATLauncher modpack in less than 60 seconds");
     protected final JButton discordIcon = new SMButton("/assets/image/social/discord.png", "Discord");
     protected final JButton facebookIcon = new SMButton("/assets/image/social/facebook.png", "Facebook");
     protected final JButton githubIcon = new SMButton("/assets/image/social/github.png", "GitHub");
@@ -97,7 +89,7 @@ public abstract class BottomBar extends JPanel{
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event) {
         this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
     }
 }

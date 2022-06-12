@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.nio.file.Path;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
+
+import java.nio.file.Path;
 
 @Json
 public class LoggingClient {

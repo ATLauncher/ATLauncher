@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.minecraft;
 
+import com.atlauncher.annot.Json;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.atlauncher.annot.Json;
 
 @Json
 public class Arguments {
