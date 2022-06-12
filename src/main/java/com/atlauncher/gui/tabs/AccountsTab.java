@@ -17,7 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -31,13 +30,13 @@ import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
 import com.google.common.eventbus.Subscribe;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
@@ -47,6 +46,7 @@ import java.awt.event.*;
 import java.util.UUID;
 
 public class AccountsTab extends JPanel implements Tab{
+    private static final Logger LOG = LogManager.getLogger(AccountsTab.class);
     private static final long serialVersionUID = 2493791137600123223L;
 
     private JLabel userSkin;
@@ -377,7 +377,7 @@ public class AccountsTab extends JPanel implements Tab{
             return;
         }
 
-        LogManager.info("Logging into Minecraft!");
+        LOG.info("Logging into Minecraft!");
         final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"), 0,
                 GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
         dialog.setName("loginDialog");
@@ -417,7 +417,7 @@ public class AccountsTab extends JPanel implements Tab{
                 }
 
                 Analytics.sendEvent("Edit", "Account");
-                LogManager.info("Edited Account " + account);
+                LOG.info("Edited Account {}", account);
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                         .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
@@ -428,7 +428,7 @@ public class AccountsTab extends JPanel implements Tab{
             }
             accountsComboBox.setSelectedItem(account);
         } else {
-            LogManager.error(response.getErrorMessage());
+            LOG.error("error response: {}", response);
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
                     // #. {0} is the error message from Mojang as to why we couldn't login
                     .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",

@@ -33,12 +33,16 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.*;
-import com.atlauncher.managers.*;
-import com.atlauncher.network.Analytics;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
@@ -56,6 +60,8 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("serial")
 public class InstanceCard extends CollapsiblePanel{
+    private static final Logger LOG = LogManager.getLogger(InstanceCard.class);
+
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
@@ -569,10 +575,10 @@ public class InstanceCard extends CollapsiblePanel{
                                 clipboard.setContents(text, null);
 
                                 App.TOASTER.pop(GetText.tr("Share code copied to clipboard"));
-                                LogManager.info("Share code copied to clipboard");
+                                LOG.info("Share code copied to clipboard");
                             }
                         } catch (IOException ex) {
-                            LogManager.logStackTrace("API call failed", ex);
+                            LOG.error("API call failed", ex);
                         }
                     });
                     shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)

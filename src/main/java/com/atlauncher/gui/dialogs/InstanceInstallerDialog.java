@@ -48,6 +48,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -94,7 +96,6 @@ import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.ConfigManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
@@ -106,6 +107,8 @@ import com.atlauncher.utils.Utils;
 import okhttp3.CacheControl;
 
 public class InstanceInstallerDialog extends JDialog {
+    private static final Logger LOG = LogManager.getLogger(InstanceInstallerDialog.class);
+
     private static final long serialVersionUID = -6984886874482721558L;
     private int versionLength = 0;
     private int loaderVersionLength = 0;
@@ -599,7 +602,7 @@ public class InstanceInstallerDialog extends JDialog {
                         packVersion.minecraftVersion = MinecraftManager
                                 .getMinecraftVersion(version.gameVersions.get(0));
                     } catch (InvalidMinecraftVersion e) {
-                        LogManager.error(e.getMessage());
+                        LOG.error(e.getMessage());
                         packVersion.minecraftVersion = null;
                     }
 
@@ -699,7 +702,7 @@ public class InstanceInstallerDialog extends JDialog {
         try {
             packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(curseForgeManifest.minecraft.version);
         } catch (InvalidMinecraftVersion e) {
-            LogManager.error(e.getMessage());
+            LOG.error(e.getMessage());
             return;
         }
 
@@ -726,7 +729,7 @@ public class InstanceInstallerDialog extends JDialog {
             packVersion.minecraftVersion = MinecraftManager
                     .getMinecraftVersion(modrinthManifest.dependencies.get("minecraft"));
         } catch (InvalidMinecraftVersion e) {
-            LogManager.error(e.getMessage());
+            LOG.error(e.getMessage());
             return;
         }
 
@@ -756,14 +759,14 @@ public class InstanceInstallerDialog extends JDialog {
                     .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
 
             if (!minecraftVersionComponent.isPresent()) {
-                LogManager.error("No net.minecraft component present in manifest");
+                LOG.error("No net.minecraft component present in manifest");
                 return;
             }
 
             packVersion.minecraftVersion = MinecraftManager
                     .getMinecraftVersion(minecraftVersionComponent.get().version);
         } catch (InvalidMinecraftVersion e) {
-            LogManager.error(e.getMessage());
+            LOG.error(e.getMessage());
             return;
         }
 

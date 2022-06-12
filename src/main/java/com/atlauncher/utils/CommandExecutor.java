@@ -31,14 +31,18 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.exceptions.CommandException;
-import com.atlauncher.managers.LogManager;
 
 public class CommandExecutor {
+    private static final Logger LOG = LogManager.getLogger(CommandExecutor.class);
+
     /**
      * Runs the specified {@code command} in the system command line. Substitutes
      * <br/>
@@ -62,7 +66,7 @@ public class CommandExecutor {
         try {
             command = replaceArgumentTokensForCommand(getCommandArgumentTokensForInstance(instance), command);
 
-            LogManager.info("Running command: \"" + command + "\"");
+            LOG.info("Running command: \"{}\"", command);
 
             Process process;
 
@@ -84,7 +88,7 @@ public class CommandExecutor {
                 throw new CommandException();
             }
         } catch (IOException | InterruptedException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
             throw new CommandException(e);
         }
     }
@@ -96,10 +100,10 @@ public class CommandExecutor {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                LogManager.info(line);
+                LOG.info(line);
             }
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
             // throw new RuntimeException(e);
         }
     }
@@ -121,10 +125,9 @@ public class CommandExecutor {
                 }
             }
 
-            LogManager.error(message.toString());
+            LOG.error("error: {}", message);
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
-            // throw new RuntimeException(e);
+            LOG.error("error", e);
         }
     }
 
@@ -180,8 +183,10 @@ public class CommandExecutor {
 
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                        instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
+                LOG.debug("Using Java runtime {} (major version {}) at path {}",
+                        instance.javaVersion.component,
+                        instance.javaVersion.majorVersion,
+                        javaPath);
             }
         }
 

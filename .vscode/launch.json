@@ -9,7 +9,7 @@
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher",
             "preLaunchTask": "createTestLauncherDir",
-            "args": "--debug --debug-level 5 --disable-error-reporting --no-launcher-update"
+            "args": "--debug --disable-error-reporting --no-launcher-update"
         },
         {
             "type": "java",
@@ -19,7 +19,7 @@
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher/dev",
             "preLaunchTask": "createTestLauncherDir",
-            "args": "--debug --debug-level 5 --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs"
+            "args": "--debug --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs"
         }
     ]
 }

@@ -17,11 +17,14 @@
  */
 package com.atlauncher;
 
-import com.atlauncher.managers.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class ExceptionStrainer implements Thread.UncaughtExceptionHandler {
+    private static final Logger LOG = LogManager.getLogger(ExceptionStrainer.class);
+
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        LogManager.logStackTrace(e);
+        LOG.error("error", e);
     }
 }

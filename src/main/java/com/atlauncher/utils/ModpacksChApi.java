@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.modpacksch.ModpacksChPackList;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionModsManifest;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 
 import okhttp3.CacheControl;
@@ -35,6 +37,8 @@ import okhttp3.CacheControl;
  * Various utility methods for interacting with the Modpacks.ch API.
  */
 public class ModpacksChApi {
+    private static final Logger LOG = LogManager.getLogger(ModpacksChApi.class);
+
     public static List<ModpacksChPackManifest> searchModPacks(String query, int page) {
         String url = String.format("%s/modpack/search/50", Constants.MODPACKS_CH_API_URL);
 
@@ -98,7 +102,7 @@ public class ModpacksChApi {
 
             return modsManifest;
         } catch (Exception e) {
-            LogManager.logStackTrace("Error calling mods endpoint for Modpacks.ch", e);
+            LOG.error("Error calling mods endpoint for Modpacks.ch", e);
         }
 
         return null;

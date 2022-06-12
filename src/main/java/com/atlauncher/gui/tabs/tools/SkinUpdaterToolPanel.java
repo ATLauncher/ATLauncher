@@ -17,22 +17,18 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JLabel;
-
-import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.events.AccountEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
 public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener{

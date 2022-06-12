@@ -26,6 +26,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -36,6 +39,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class ConfigManager {
+    private static final Logger LOG = LogManager.getLogger(ConfigManager.class);
 
     /**
      * Gets a config item. Use dot notation to get an item from the config
@@ -84,7 +88,7 @@ public class ConfigManager {
             }
             return thirdLevel.containsKey(keyParts[2]);
         } catch (Throwable t) {
-            LogManager.logStackTrace(String.format("Error checking if config value for key '%s' exists", key), t);
+            LOG.error(String.format("Error checking if config value for key '%s' exists", key), t);
             return false;
         }
     }
@@ -121,7 +125,7 @@ public class ConfigManager {
 
             return (T) thirdLevel.get(keyParts[2]);
         } catch (Throwable t) {
-            LogManager.logStackTrace(String.format("Error loading config value for key '%s'", key), t);
+            LOG.error(String.format("Error loading config value for key '%s'", key), t);
             return defaultValue;
         }
     }
@@ -131,7 +135,7 @@ public class ConfigManager {
      */
     public static void loadConfig() {
         PerformanceManager.start();
-        LogManager.debug("Loading config");
+        LOG.debug("Loading config");
 
         java.lang.reflect.Type type = new TypeToken<Map<String, Object>>() {
         }.getType();
@@ -144,20 +148,20 @@ public class ConfigManager {
             Data.CONFIG = Gsons.DEFAULT.fromJson(in, type);
             in.close();
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error: ", e);
         }
 
         if (App.configOverride != null) {
             try {
                 Data.CONFIG_OVERRIDES = Gsons.DEFAULT.fromJson(App.configOverride, type);
             } catch (JsonIOException | JsonSyntaxException e) {
-                LogManager.logStackTrace("Failed to read in config overrides", e);
+                LOG.error("Failed to read in config overrides", e);
             }
         }
 
         afterConfigLoaded();
 
-        LogManager.debug("Finished loading config");
+        LOG.debug("Finished loading config");
         PerformanceManager.end();
     }
 

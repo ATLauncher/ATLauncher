@@ -26,9 +26,12 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.atlauncher.managers.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SkinUtils {
+    private static final Logger LOG = LogManager.getLogger(SkinUtils.class);
+
     public static ImageIcon getDefaultHead() {
         return getHead(Utils.getImage("/assets/image/skins/default.png"));
     }
@@ -52,7 +55,7 @@ public class SkinUtils {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         if (image == null) {
@@ -62,7 +65,7 @@ public class SkinUtils {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         return getHead(image);
@@ -126,7 +129,7 @@ public class SkinUtils {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         if (image == null) {
@@ -136,7 +139,7 @@ public class SkinUtils {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         return getSkin(image);

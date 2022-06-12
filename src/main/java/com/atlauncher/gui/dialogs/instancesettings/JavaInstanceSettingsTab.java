@@ -45,6 +45,8 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -56,8 +58,6 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class JavaInstanceSettingsTab extends JPanel {

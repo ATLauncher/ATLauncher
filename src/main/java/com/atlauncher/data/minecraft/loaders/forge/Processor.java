@@ -30,15 +30,19 @@ import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Processor {
+    private static final Logger LOG = LogManager.getLogger(Processor.class);
+
     public String jar;
     public List<String> sides;
     public List<String> classpath;
@@ -76,9 +80,9 @@ public class Processor {
                 : FileSystem.LIBRARIES.toFile();
 
         File jarPath = Utils.convertMavenIdentifierToFile(this.jar, librariesDirectory);
-        LogManager.debug("Jar path is " + jarPath);
+        LOG.debug("Jar path is " + jarPath);
         if (!jarPath.exists() || !jarPath.isFile()) {
-            LogManager.error("Failed to process processor with jar " + this.jar + " as the jar doesn't exist");
+            LOG.error("Failed to process processor with jar " + this.jar + " as the jar doesn't exist");
             instanceInstaller.cancel(true);
             return;
         }
@@ -86,10 +90,10 @@ public class Processor {
         JarFile jarFile = new JarFile(jarPath);
         String mainClass = jarFile.getManifest().getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
         jarFile.close();
-        LogManager.debug("Found mainclass of " + mainClass);
+        LOG.debug("Found mainclass of " + mainClass);
 
         if (mainClass == null || mainClass.isEmpty()) {
-            LogManager.error("Failed to process processor with jar " + this.jar + " as the mainclass wasn't found");
+            LOG.error("Failed to process processor with jar " + this.jar + " as the mainclass wasn't found");
             instanceInstaller.cancel(true);
             return;
         }
@@ -98,11 +102,11 @@ public class Processor {
         classpath.add(jarPath.toURI().toURL());
 
         for (String classpathItem : this.getClasspath()) {
-            LogManager.debug("Adding classpath " + classpathItem);
+            LOG.debug("Adding classpath " + classpathItem);
             File classpathFile = Utils.convertMavenIdentifierToFile(classpathItem, FileSystem.LIBRARIES.toFile());
 
             if (!classpathFile.exists() || !classpathFile.isFile()) {
-                LogManager.error("Failed to process processor with jar " + this.jar
+                LOG.error("Failed to process processor with jar " + this.jar
                         + " as the classpath item with file " + classpathFile.getAbsolutePath() + " doesn't exist");
                 instanceInstaller.cancel(true);
                 return;
@@ -119,23 +123,23 @@ public class Processor {
                         installProfile.data.get("ROOT").getValue(!instanceInstaller.isServer, librariesDirectory));
             }
 
-            LogManager.debug("Processing argument " + arg);
+            LOG.debug("Processing argument " + arg);
             char start = arg.charAt(0);
             char end = arg.charAt(arg.length() - 1);
 
             if (start == '{' && end == '}') {
                 String key = arg.substring(1, arg.length() - 1);
-                LogManager.debug("Getting data with key of " + key);
+                LOG.debug("Getting data with key of " + key);
                 String value = installProfile.data.get(key).getValue(!instanceInstaller.isServer, librariesDirectory);
 
                 if (value == null || value.isEmpty()) {
-                    LogManager.error("Failed to process processor with jar " + this.jar + " as the argument with name "
+                    LOG.error("Failed to process processor with jar " + this.jar + " as the argument with name "
                             + arg + " as the data item with key " + key + " was empty or null");
                     instanceInstaller.cancel(true);
                     return;
                 }
 
-                LogManager.debug("Got value of " + value);
+                LOG.debug("Got value of " + value);
                 // checking for local file paths returned "/data/client.lzma" and then makes
                 // sure we localise it to the libraries folder if it's indeed local
                 if (value.charAt(0) == '/') {
@@ -145,10 +149,10 @@ public class Processor {
                         args.add(value);
                     } else {
                         File localFile = new File(extractedDir, value);
-                        LogManager.debug("Got argument with local file of " + localFile.getAbsolutePath());
+                        LOG.debug("Got argument with local file of " + localFile.getAbsolutePath());
 
                         if (!localFile.exists() || !localFile.isFile()) {
-                            LogManager.error("Failed to process argument with value of " + value + " as the local file "
+                            LOG.error("Failed to process argument with value of " + value + " as the local file "
                                     + localFile.getAbsolutePath() + " doesn't exist");
                             instanceInstaller.cancel(true);
                             return;
@@ -162,10 +166,10 @@ public class Processor {
             } else if (start == '[' && end == ']') {
                 String artifact = arg.substring(1, arg.length() - 1);
                 File artifactFile = Utils.convertMavenIdentifierToFile(artifact, FileSystem.LIBRARIES.toFile());
-                LogManager.debug("Got argument with file of " + artifactFile.getAbsolutePath());
+                LOG.debug("Got argument with file of " + artifactFile.getAbsolutePath());
 
                 if (!artifactFile.exists() || !artifactFile.isFile()) {
-                    LogManager.error("Failed to process argument with value of " + arg + " as the file "
+                    LOG.error("Failed to process argument with value of " + arg + " as the file "
                             + artifactFile.getAbsolutePath() + " doesn't exist");
                     instanceInstaller.cancel(true);
                     return;
@@ -198,20 +202,18 @@ public class Processor {
         currentThread.setContextClassLoader(cl);
 
         try {
-            LogManager.debug("Running processor with args \"" + String.join(" ", args) + "\"");
+            LOG.debug("Running processor with args \"" + String.join(" ", args) + "\"");
             Class<?> cls = Class.forName(mainClass, true, cl);
             Method main = cls.getDeclaredMethod("main", String[].class);
             main.invoke(null, (Object) args.toArray(new String[args.size()]));
         } catch (InvocationTargetException ite) {
             Throwable e = ite.getCause();
-            LogManager.logStackTrace(e);
-            LogManager.error(
-                    "Failed to process processor with jar " + this.jar + " as there was an error invoking the jar");
+            LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar",
+                    e);
             instanceInstaller.cancel(true);
         } catch (Throwable e) {
-            LogManager.logStackTrace(e);
-            LogManager.error(
-                    "Failed to process processor with jar " + this.jar + " as there was an error invoking the jar");
+            LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar",
+                    e);
             instanceInstaller.cancel(true);
         } finally {
             currentThread.setContextClassLoader(threadClassloader);
@@ -221,7 +223,7 @@ public class Processor {
     public boolean needToRun(ForgeInstallProfile installProfile, File extractedDir,
             InstanceInstaller instanceInstaller) {
         if (this.sides != null && !this.sides.contains(instanceInstaller.isServer ? "server" : "client")) {
-            LogManager.debug("No need to run processor " + this.jar + " since it's not needed for this side");
+            LOG.debug("No need to run processor " + this.jar + " since it's not needed for this side");
             return false;
         }
 
@@ -234,17 +236,17 @@ public class Processor {
 
         for (Entry<String, String> entry : this.outputs.entrySet()) {
             String key = entry.getKey();
-            LogManager.debug("Processing output for " + key);
+            LOG.debug("Processing output for " + key);
 
             char start = key.charAt(0);
             char end = key.charAt(key.length() - 1);
 
             if (start == '{' && end == '}') {
-                LogManager.debug("Getting data with key of " + key.substring(1, key.length() - 1));
+                LOG.debug("Getting data with key of " + key.substring(1, key.length() - 1));
                 String dataItem = installProfile.data.get(key.substring(1, key.length() - 1))
                         .getValue(!instanceInstaller.isServer, librariesDirectory);
                 if (dataItem == null || dataItem.isEmpty()) {
-                    LogManager.error("Failed to process processor with jar " + this.jar + " as the output with key "
+                    LOG.error("Failed to process processor with jar " + this.jar + " as the output with key "
                             + key + " doesn't have a corresponding data entry");
                     instanceInstaller.cancel(true);
                     return true;
@@ -261,11 +263,11 @@ public class Processor {
                 char valueEnd = value.charAt(value.length() - 1);
 
                 if (valueStart == '{' && valueEnd == '}') {
-                    LogManager.debug("Getting data with key of " + value.substring(1, value.length() - 1));
+                    LOG.debug("Getting data with key of " + value.substring(1, value.length() - 1));
                     String valueDataItem = installProfile.data.get(value.substring(1, value.length() - 1))
                             .getValue(!instanceInstaller.isServer, librariesDirectory);
                     if (dataItem == null || dataItem.isEmpty()) {
-                        LogManager.error("Failed to process processor with jar " + this.jar
+                        LOG.error("Failed to process processor with jar " + this.jar
                                 + " as the output with value " + value + " doesn't have a corresponding data entry");
                         instanceInstaller.cancel(true);
                         return true;
@@ -276,7 +278,7 @@ public class Processor {
                             ? valueDataItem.substring(1, valueDataItem.length() - 1)
                             : valueDataItem;
 
-                    LogManager.debug("Expecting " + sha1Hash + " to equal " + sha1Hash);
+                    LOG.debug("Expecting " + sha1Hash + " to equal " + sha1Hash);
                     if (!sha1Hash.equals(expectedHash)) {
                         Utils.delete(outputFile);
                         return true;
@@ -285,7 +287,7 @@ public class Processor {
             }
         }
 
-        LogManager.debug("No need to run processor " + this.jar + " since outputs all match hashes");
+        LOG.debug("No need to run processor " + this.jar + " since outputs all match hashes");
 
         return false;
     }

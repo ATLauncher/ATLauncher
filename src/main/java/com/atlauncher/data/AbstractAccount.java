@@ -17,6 +17,23 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.AppEventBus;
+import com.atlauncher.FileSystem;
+import com.atlauncher.events.AccountEvent;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.gui.tabs.ServersTab;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.network.Download;
+import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.utils.Utils;
+import com.mojang.util.UUIDTypeAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,29 +43,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.swing.ImageIcon;
-
-import com.atlauncher.App;
-import com.atlauncher.AppEventBus;
-import com.atlauncher.FileSystem;
-import com.atlauncher.events.AccountEvent;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.gui.tabs.ServersTab;
-import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
-import com.atlauncher.utils.SkinUtils;
-import com.atlauncher.utils.Utils;
-import com.mojang.util.UUIDTypeAdapter;
-
-import org.mini2Dx.gettext.GetText;
-
 /**
  * This class deals with the Accounts in the launcher.
  */
 public abstract class AbstractAccount implements Serializable {
+    private static final Logger LOG = LogManager.getLogger(AbstractAccount.class);
+
     /**
      * Auto generated serial.
      */
@@ -118,8 +118,11 @@ public abstract class AbstractAccount implements Serializable {
             }
 
             if (!currentUsername.equals(this.minecraftUsername)) {
-                LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from "
-                        + this.minecraftUsername + " to " + currentUsername);
+                LOG.info("The username for account with UUID of {} changed from {} to {}",
+                        this.getUUIDNoDashes(),
+                        this.minecraftUsername,
+                        currentUsername);
+
                 this.minecraftUsername = currentUsername;
                 dialog.setReturnValue(true);
             }
@@ -154,7 +157,8 @@ public abstract class AbstractAccount implements Serializable {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
             final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
-            LogManager.info("Downloading skin for " + this.minecraftUsername);
+
+            LOG.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading Skin"), 0,
                     GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
                     "Aborting downloading Minecraft skin for " + this.minecraftUsername);
@@ -163,7 +167,7 @@ public abstract class AbstractAccount implements Serializable {
                 dialog.setReturnValue(false);
                 String skinURL = getSkinUrl();
                 if (skinURL == null) {
-                    LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
+                    LOG.warn("Couldn't download skin because the url found was NULL. Using default skin");
                     if (!file.exists()) {
                         String skinFilename = "default.png";
 
@@ -177,7 +181,7 @@ public abstract class AbstractAccount implements Serializable {
                             java.nio.file.Files.copy(
                                     Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
                         } catch (IOException e) {
-                            LogManager.logStackTrace(e);
+                            LOG.error("error copying skin", e);
                         }
 
                         dialog.setReturnValue(true);
@@ -206,14 +210,14 @@ public abstract class AbstractAccount implements Serializable {
                                             Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
                                             file.toPath());
                                 } catch (IOException e) {
-                                    LogManager.logStackTrace(e);
+                                    LOG.error("error updating skin", e);
                                 }
 
                                 dialog.setReturnValue(true);
                             }
                         }
                     } catch (IOException e) {
-                        LogManager.logStackTrace(e);
+                        LOG.error("error updating skin", e);
                     }
                     AppEventBus.post(new AccountEvent.AccountChangedEvent());
                 }

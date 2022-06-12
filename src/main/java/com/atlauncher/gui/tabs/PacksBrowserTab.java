@@ -29,7 +29,6 @@ import com.atlauncher.gui.panels.packbrowser.*;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;

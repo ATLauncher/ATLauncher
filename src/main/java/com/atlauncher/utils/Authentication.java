@@ -17,10 +17,13 @@
  */
 package com.atlauncher.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.managers.LogManager;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.UserAuthentication;
 import com.mojang.authlib.exceptions.AuthenticationException;
@@ -28,9 +31,9 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
-import org.mini2Dx.gettext.GetText;
-
 public class Authentication {
+    private static final Logger LOG = LogManager.getLogger(Authentication.class);
+
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
                 App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
@@ -52,7 +55,7 @@ public class Authentication {
                     response.setErrorMessage(e.getMessage());
                 }
 
-                LogManager.error("Authentication failed");
+                LOG.error("Authentication failed");
             }
         }
 
@@ -82,7 +85,7 @@ public class Authentication {
             } catch (AuthenticationUnavailableException e) {
                 response.setErrorMessage(e.getMessage());
                 response.setOffline();
-                LogManager.error("Authentication servers unavailable");
+                LOG.error("Authentication servers unavailable");
             } catch (AuthenticationException e) {
                 if (e.getMessage().contains("410")) {
                     response.setErrorMessage(GetText.tr(
@@ -91,7 +94,7 @@ public class Authentication {
                     response.setErrorMessage(e.getMessage());
                 }
 
-                LogManager.error("Authentication failed");
+                LOG.error("Authentication failed");
             }
         }
 

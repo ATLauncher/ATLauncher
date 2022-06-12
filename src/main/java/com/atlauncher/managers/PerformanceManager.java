@@ -22,7 +22,11 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public final class PerformanceManager {
+    private static final Logger LOG = LogManager.getLogger(PerformanceManager.class);
 
     private static final Map<String, Instant> times = new HashMap<>();
 
@@ -31,7 +35,7 @@ public final class PerformanceManager {
     }
 
     public static void start(String name) {
-        if (LogManager.showDebug) {
+        if (LOG.isDebugEnabled()) {
             times.put(name, Instant.now());
         }
     }
@@ -41,12 +45,12 @@ public final class PerformanceManager {
     }
 
     public static void end(String name) {
-        if (LogManager.showDebug && times.containsKey(name)) {
+        if (LOG.isDebugEnabled() && times.containsKey(name)) {
             long timeElapsed = Duration.between(times.get(name), Instant.now()).toMillis();
 
             times.remove(name);
 
-            LogManager.debug(name + " took " + timeElapsed + " ms", 5);
+            LOG.debug(name + " took " + timeElapsed + " ms", 5);
         }
     }
 }

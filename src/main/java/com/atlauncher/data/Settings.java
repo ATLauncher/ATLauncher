@@ -32,16 +32,20 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
 public class Settings {
+    private static final Logger LOG = LogManager.getLogger(Settings.class);
+
     // Launcher things
     public String lastAccount;
     public boolean usingCustomJavaPath = false;
@@ -384,7 +388,7 @@ public class Settings {
 
         // now validate the java path actually exists
         if (!new File(javaPath, "bin" + File.separator + "java" + (OS.isWindows() ? ".exe" : "")).exists()) {
-            LogManager.warn("Custom Java Path Is Incorrect! Defaulting to valid value!");
+            LOG.warn("Custom Java Path Is Incorrect! Defaulting to valid value!");
             javaPath = OS.getDefaultJavaPath();
         }
     }
@@ -394,19 +398,19 @@ public class Settings {
         int systemMemory = OS.getMaximumRam();
 
         if (systemMemory != 0 && initialMemory > systemMemory) {
-            LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
+            LOG.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
                     + "MB is available to use!");
             initialMemory = 512;
             needToSave = true;
         } else if (initialMemory > maximumMemory) {
-            LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory which is more than "
+            LOG.warn("Tried to allocate " + initialMemory + "MB for initial memory which is more than "
                     + maximumMemory + "MB set for the maximum memory!");
             initialMemory = 512;
             needToSave = true;
         }
 
         if (systemMemory != 0 && maximumMemory > systemMemory) {
-            LogManager.warn("Tried to allocate " + maximumMemory + "MB of maximum memory but only " + systemMemory
+            LOG.warn("Tried to allocate " + maximumMemory + "MB of maximum memory but only " + systemMemory
                     + "MB is available to use!");
 
             if (OS.is64Bit()) {
@@ -426,7 +430,7 @@ public class Settings {
     private void validateWindowSize() {
         int systemWindowWidth = OS.getMaximumWindowWidth();
         if (windowWidth > systemWindowWidth) {
-            LogManager.warn("Tried to set window width to " + windowWidth + "px but the maximum is " + systemWindowWidth
+            LOG.warn("Tried to set window width to " + windowWidth + "px but the maximum is " + systemWindowWidth
                     + "px!");
 
             windowWidth = systemWindowWidth;
@@ -434,7 +438,7 @@ public class Settings {
 
         int systemWindowHeight = OS.getMaximumWindowHeight();
         if (windowHeight > systemWindowHeight) {
-            LogManager.warn("Tried to set window height to " + windowHeight + "px but the maximum is "
+            LOG.warn("Tried to set window height to " + windowHeight + "px but the maximum is "
                     + systemWindowHeight + "px!");
 
             windowHeight = systemWindowHeight;
@@ -444,14 +448,14 @@ public class Settings {
     private void validateProxy() {
         if (enableProxy) {
             if (proxyPort <= 0 || proxyPort > 65535) {
-                LogManager.warn("Tried to set proxy port to " + proxyPort
+                LOG.warn("Tried to set proxy port to " + proxyPort
                         + " which is not a valid port! Proxy support disabled!");
                 enableProxy = false;
                 proxyPort = 8080;
             }
 
             if (!proxyType.equals("SOCKS") && !proxyType.equals("HTTP") && !proxyType.equals("DIRECT")) {
-                LogManager.warn(
+                LOG.warn(
                         "Tried to set proxy type to " + proxyType + " which is not valid! Proxy support disabled!");
                 enableProxy = false;
                 proxyType = "HTTP";
@@ -481,7 +485,7 @@ public class Settings {
 
     private void validateConcurrentConnections() {
         if (concurrentConnections < 1) {
-            LogManager.warn("Tried to set the number of concurrent connections to " + concurrentConnections
+            LOG.warn("Tried to set the number of concurrent connections to " + concurrentConnections
                     + " which is not valid! Must be 1 or more. Setting back to default of 8!");
             concurrentConnections = 8;
         }
@@ -489,7 +493,7 @@ public class Settings {
 
     private void validateDateFormat() {
         if (!Arrays.asList(Constants.DATE_FORMATS).contains(dateFormat)) {
-            LogManager.warn("Tried to set the date format to " + dateFormat + " which is not valid! Setting "
+            LOG.warn("Tried to set the date format to " + dateFormat + " which is not valid! Setting "
                     + "back to default of " + Constants.DATE_FORMATS[0] + "!");
             dateFormat = Constants.DATE_FORMATS[0];
         }
@@ -497,7 +501,7 @@ public class Settings {
 
     private void validateInstanceTitleFormat() {
         if (!Arrays.asList(Constants.INSTANCE_TITLE_FORMATS).contains(instanceTitleFormat)) {
-            LogManager.warn(
+            LOG.warn(
                     "Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
                             + "back to default of " + Constants.INSTANCE_TITLE_FORMATS[0] + "!");
             instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
@@ -519,13 +523,13 @@ public class Settings {
         try (FileWriter writer = new FileWriter(FileSystem.SETTINGS.toFile())) {
             Gsons.DEFAULT.toJson(this, writer);
         } catch (IOException e) {
-            LogManager.logStackTrace("Error saving settings", e);
+            LOG.error("Error saving settings", e);
         }
 
         try {
             Timestamper.updateDateFormat(dateFormat);
         } catch (Exception e) {
-            LogManager.logStackTrace("Error updating date format to " + dateFormat, e);
+            LOG.error("Error updating date format to " + dateFormat, e);
         }
     }
 }

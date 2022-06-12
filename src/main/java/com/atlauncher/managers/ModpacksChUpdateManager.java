@@ -20,6 +20,9 @@ package com.atlauncher.managers;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.constants.Constants;
@@ -30,6 +33,8 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import okhttp3.CacheControl;
 
 public class ModpacksChUpdateManager {
+    private static final Logger LOG = LogManager.getLogger(ModpacksChUpdateManager.class);
+
     public static ModpacksChPackVersion getLatestVersion(Instance instance) {
         return Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(instance);
     }
@@ -40,7 +45,7 @@ public class ModpacksChUpdateManager {
         }
 
         PerformanceManager.start();
-        LogManager.info("Checking for updates to modpacks.ch instances");
+        LOG.info("Checking for updates to modpacks.ch instances");
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream().filter(
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)

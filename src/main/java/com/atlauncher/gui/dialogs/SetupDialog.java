@@ -24,7 +24,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Language;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;

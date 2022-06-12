@@ -33,10 +33,10 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.utils.OS;
-
-import org.mini2Dx.gettext.GetText;
 
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the

@@ -9,7 +9,8 @@ import io.github.asyncronous.toast.Toaster;
 import io.github.asyncronous.toast.ui.ToastWindow;
 
 /**
- * The main Toaster animation class, controls the entire window - location, whether or not to display, etc...
+ * The main Toaster animation class, controls the entire window - location,
+ * whether or not to display, etc...
  */
 public final class ToastAnimator extends SwingWorker<Void, Void> {
     private final ToastWindow window;

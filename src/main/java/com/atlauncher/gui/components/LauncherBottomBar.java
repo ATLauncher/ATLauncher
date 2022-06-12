@@ -27,7 +27,6 @@ import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;

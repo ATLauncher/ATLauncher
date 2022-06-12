@@ -23,13 +23,17 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Loader {
+    private static final Logger LOG = LogManager.getLogger(Loader.class);
+
     public String type;
     public boolean choose = false;
     public Map<String, Object> metadata;
@@ -83,7 +87,7 @@ public class Loader {
             return (List<LoaderVersion>) method.invoke(null, minecraft);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         return null;

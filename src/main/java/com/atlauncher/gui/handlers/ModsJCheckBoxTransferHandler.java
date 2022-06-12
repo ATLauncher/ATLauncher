@@ -31,6 +31,8 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -48,7 +50,6 @@ import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.FileTypeDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.ModrinthApi;
@@ -56,6 +57,8 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ModsJCheckBoxTransferHandler extends TransferHandler {
+    private static final Logger LOG = LogManager.getLogger(ModsJCheckBoxTransferHandler.class);
+
     private final EditModsDialog dialog;
     private final boolean disabled;
 
@@ -191,7 +194,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                             .murmur(dm.getFile(dialog.instance.ROOT, dialog.instance.id).toPath());
                                     murmurHashes.put(hash, dm);
                                 } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
+                                    LOG.error(t);
                                 }
                             });
 
@@ -229,7 +232,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                                     dm.description = curseForgeProject.summary;
                                                 }
 
-                                                LogManager.debug("Found matching mod from CurseForge called "
+                                                LOG.debug("Found matching mod from CurseForge called "
                                                         + dm.curseForgeFile.displayName);
                                             });
                                 }
@@ -251,7 +254,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                                             .getFile(dialog.instance.ROOT, dialog.instance.id).toPath())
                                             .toString(), dm);
                                 } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
+                                    LOG.error(t);
                                 }
                             });
 
@@ -286,10 +289,9 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                                 dm.description = project.description;
                                             }
 
-                                            LogManager
-                                                    .debug(String.format(
-                                                            "Found matching mod from Modrinth called %s with file %s",
-                                                            project.title, version.name));
+                                            LOG.debug(String.format(
+                                                    "Found matching mod from Modrinth called %s with file %s",
+                                                    project.title, version.name));
                                         }
                                     }
                                 }

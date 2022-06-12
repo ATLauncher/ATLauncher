@@ -20,7 +20,8 @@ package com.atlauncher.data;
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.events.LocalizationEvent;
-import com.atlauncher.managers.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 import org.mini2Dx.gettext.PoFile;
 
@@ -28,6 +29,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class Language {
+    private static final Logger LOG = LogManager.getLogger(Language.class);
+
     public final static List<Locale> locales = new ArrayList<>();
     public final static Map<String, Locale> languages = new HashMap<>();
     public static String selected = Locale.ENGLISH.getDisplayName();
@@ -42,7 +45,7 @@ public class Language {
             if (App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po") != null) {
                 System.out.println(locale.toString());
                 languages.put(locale.getDisplayName(), locale);
-                LogManager.debug("Loaded language " + locale.getDisplayName() + " with key of " + locale);
+                LOG.debug("Loaded language " + locale.getDisplayName() + " with key of " + locale);
             }
         }
     }
@@ -55,11 +58,11 @@ public class Language {
         Locale locale;
 
         if (isLanguageByName(language)) {
-            LogManager.info("Language set to " + language);
+            LOG.info("Language set to " + language);
             locale = languages.get(language);
             selected = language;
         } else {
-            LogManager.info("Unknown language " + language + ". Defaulting to " + Locale.ENGLISH.getDisplayName());
+            LOG.info("Unknown language " + language + ". Defaulting to " + Locale.ENGLISH.getDisplayName());
             locale = Locale.ENGLISH;
             selected = Locale.ENGLISH.getDisplayName();
         }
@@ -69,7 +72,7 @@ public class Language {
                 GetText.add(
                         new PoFile(locale, App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po")));
             } catch (IOException e) {
-                LogManager.logStackTrace("Failed loading language po file for " + language, e);
+                LOG.error("Failed loading language po file for " + language, e);
                 locale = Locale.ENGLISH;
                 selected = Locale.ENGLISH.getDisplayName();
             }

@@ -25,6 +25,10 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
@@ -35,7 +39,6 @@ import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.ArchiveUtils;
@@ -44,12 +47,12 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
-import org.mini2Dx.gettext.GetText;
-
 import okhttp3.OkHttpClient;
 
 @SuppressWarnings("serial")
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
+    private static final Logger LOG = LogManager.getLogger(RuntimeDownloaderToolPanel.class);
+
     protected final JButton REMOVE_BUTTON = new JButton(GetText.tr("Remove"));
 
     public RuntimeDownloaderToolPanel() {
@@ -107,7 +110,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                         i.save();
                     });
         } else {
-            LogManager.error("Runtime removal failed!");
+            LOG.error("Runtime removal failed!");
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr("An error occurred removing the runtime. Please check the logs.")).build())
@@ -160,7 +163,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                     try {
                         download.downloadFile();
                     } catch (IOException e1) {
-                        LogManager.logStackTrace(e1);
+                        LOG.error("error", e1);
                         dialog.setReturnValue(null);
                     }
 
@@ -174,7 +177,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                 try {
                     Utils.unXZFile(downloadFile, unpackedFile);
                 } catch (IOException e2) {
-                    LogManager.logStackTrace(e2);
+                    LOG.error("error", e2);
                     dialog.setReturnValue(null);
                 }
 
@@ -190,14 +193,14 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
         dialog.start();
 
         if (dialog.getReturnValue() == null) {
-            LogManager.error("Runtime downloaded failed to run!");
+            LOG.error("Runtime downloaded failed to run!");
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
                             .build())
                     .setType(DialogManager.ERROR).show();
         } else {
-            LogManager.info("Runtime downloaded!");
+            LOG.info("Runtime downloaded!");
 
             String path = dialog.getReturnValue();
 

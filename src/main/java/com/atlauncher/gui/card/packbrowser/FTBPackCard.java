@@ -27,7 +27,6 @@ import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 import com.google.common.eventbus.Subscribe;

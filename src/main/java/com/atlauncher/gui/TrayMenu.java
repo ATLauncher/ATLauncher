@@ -17,12 +17,6 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.SystemTray;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
@@ -30,9 +24,11 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.events.ConsoleEvent;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
-
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public final class TrayMenu extends JPopupMenu{

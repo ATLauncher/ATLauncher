@@ -17,10 +17,8 @@
  */
 package com.atlauncher.utils.sort;
 
-import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Instance;
-
 import com.atlauncher.events.LocalizationEvent;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;

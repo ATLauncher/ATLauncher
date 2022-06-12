@@ -26,7 +26,7 @@ public class CurseForgeCategory {
     public String dateModified;
     public int gameId;
     public boolean isClass = false;
-    
+
     @SerializedName(value = "id", alternate = { "categoryId" })
     public int id;
 

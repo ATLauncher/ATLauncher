@@ -32,14 +32,14 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.gui.dialogs.instancesettings.CommandsInstanceSettingsTab;
 import com.atlauncher.gui.dialogs.instancesettings.GeneralInstanceSettingsTab;
 import com.atlauncher.gui.dialogs.instancesettings.JavaInstanceSettingsTab;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class InstanceSettingsDialog extends JDialog {

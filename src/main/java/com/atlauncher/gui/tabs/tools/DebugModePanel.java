@@ -22,15 +22,17 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
-import org.mini2Dx.gettext.GetText;
-
 @SuppressWarnings("serial")
 public class DebugModePanel extends AbstractToolPanel {
+    private static final Logger LOG = LogManager.getLogger(DebugModePanel.class);
 
     public DebugModePanel() {
         super(GetText.tr("Debug Mode"));
@@ -40,9 +42,9 @@ public class DebugModePanel extends AbstractToolPanel {
                 .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.setEnabled(!OS.isUsingFlatpak() && !LogManager.showDebug);
+        LAUNCH_BUTTON.setEnabled(!OS.isUsingFlatpak() && !LOG.isDebugEnabled());
 
-        if (!LogManager.showDebug) {
+        if (!LOG.isDebugEnabled()) {
             LAUNCH_BUTTON.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -50,7 +52,7 @@ public class DebugModePanel extends AbstractToolPanel {
                         // Handle left-click
                         Analytics.sendEvent("DebugMode", "Run", "Tool");
 
-                        OS.relaunchInDebugMode(e.isShiftDown() ? 5 : 3);
+                        OS.relaunchInDebugMode();
                     }
                 }
             });

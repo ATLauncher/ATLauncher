@@ -22,8 +22,10 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Resources;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -33,6 +35,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 @SuppressWarnings("serial")
 public class ATLauncherLaf extends FlatLaf {
+    private static final Logger LOG = LogManager.getLogger(ATLauncherLaf.class);
+
     public static ATLauncherLaf instance;
 
     private final String defaultFontName = "OpenSans-Regular";
@@ -97,7 +101,7 @@ public class ATLauncherLaf extends FlatLaf {
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Resources.makeFont(consoleFontName));
             GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Resources.makeFont(tabFontName));
         } catch (Throwable t) {
-            LogManager.logStackTrace("Error registering fonts", t);
+            LOG.error("Error registering fonts", t);
         }
     }
 

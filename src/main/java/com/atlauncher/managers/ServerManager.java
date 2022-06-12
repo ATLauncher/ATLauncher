@@ -24,6 +24,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -33,6 +36,8 @@ import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
 public class ServerManager {
+    private static final Logger LOG = LogManager.getLogger(ServerManager.class);
+
     public static List<Server> getServers() {
         return Data.SERVERS;
     }
@@ -42,7 +47,7 @@ public class ServerManager {
      */
     public static void loadServers() {
         PerformanceManager.start();
-        LogManager.debug("Loading servers");
+        LOG.debug("Loading servers");
         Data.SERVERS.clear();
 
         for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
@@ -53,21 +58,21 @@ public class ServerManager {
 
             try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
                 server = Gsons.MINECRAFT.fromJson(fileReader, Server.class);
-                LogManager.debug("Loaded server from " + serverDir);
+                LOG.debug("Loaded server from " + serverDir);
             } catch (Exception e) {
-                LogManager.logStackTrace("Failed to load server in the folder " + serverDir, e);
+                LOG.error("Failed to load server in the folder " + serverDir, e);
                 continue;
             }
 
             if (server == null) {
-                LogManager.error("Failed to load server in the folder " + serverDir);
+                LOG.error("Failed to load server in the folder " + serverDir);
                 continue;
             }
 
             Data.SERVERS.add(server);
         }
 
-        LogManager.debug("Finished loading servers");
+        LOG.debug("Finished loading servers");
         PerformanceManager.end();
     }
 

@@ -25,6 +25,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -34,6 +37,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class NewsManager {
+    private static final Logger LOG = LogManager.getLogger(NewsManager.class);
 
     /**
      * Get the News for the Launcher
@@ -49,7 +53,7 @@ public class NewsManager {
      */
     public static void loadNews() {
         PerformanceManager.start();
-        LogManager.debug("Loading news");
+        LOG.debug("Loading news");
         Data.NEWS.clear();
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
@@ -61,9 +65,9 @@ public class NewsManager {
             Data.NEWS.addAll(Gsons.DEFAULT.fromJson(in, type));
             in.close();
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error: ", e);
         }
-        LogManager.debug("Finished loading news");
+        LOG.debug("Finished loading news");
         PerformanceManager.end();
     }
 

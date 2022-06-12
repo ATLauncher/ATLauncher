@@ -28,12 +28,16 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.managers.LogManager;
 
 public final class PasteUpload implements Callable<String> {
+    private static final Logger LOG = LogManager.getLogger(PasteUpload.class);
+
     @Override
     public String call() {
         String log = App.console.getLog().replace(System.getProperty("line.separator"), "\n");
@@ -44,17 +48,17 @@ public final class PasteUpload implements Callable<String> {
             urlParameters += "private=" + URLEncoder.encode("1", "UTF-8") + "&";
             urlParameters += "text=" + URLEncoder.encode(log, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            LogManager.logStackTrace("Unsupported encoding", e);
+            LOG.error("Unsupported encoding", e);
             return "Unsupported encoding";
         }
         HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) new URL(Constants.PASTE_API_URL).openConnection();
         } catch (MalformedURLException e) {
-            LogManager.logStackTrace("Malformed paste API URL", e);
+            LOG.error("Malformed paste API URL", e);
             return "Malformed paste API URL";
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to connect to paste API", e);
+            LOG.error("Failed to connect to paste API", e);
             return "Failed to connect to paste API";
         }
         conn.setDoOutput(true);
@@ -65,7 +69,7 @@ public final class PasteUpload implements Callable<String> {
             conn.getOutputStream().flush();
             conn.getOutputStream().close();
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to send data to paste API", e);
+            LOG.error("Failed to send data to paste API", e);
             return "Failed to send data to paste API";
         }
 
@@ -74,10 +78,10 @@ public final class PasteUpload implements Callable<String> {
         try {
             stream = conn.getInputStream();
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to receive response from paste API", e);
+            LOG.error("Failed to receive response from paste API", e);
             stream = conn.getErrorStream();
             if (stream == null) {
-                LogManager.error("No error message returned from paste API");
+                LOG.error("No error message returned from paste API");
                 return "No error message returned from paste API";
             }
         }
@@ -88,12 +92,12 @@ public final class PasteUpload implements Callable<String> {
                 builder.append(line);
             }
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to read error data", e);
+            LOG.error("Failed to read error data", e);
         } finally {
             try {
                 reader.close();
             } catch (IOException e) {
-                LogManager.logStackTrace("Failed to close error reader", e);
+                LOG.error("Failed to close error reader", e);
             }
         }
         return builder.toString();

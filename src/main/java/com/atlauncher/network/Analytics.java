@@ -23,17 +23,19 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.Side;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
 import com.google.common.eventbus.Subscribe;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 
 public final class Analytics{
+    private static final Logger LOG = LogManager.getLogger(Analytics.class);
     private static GoogleAnalytics ga;
 
     public static void startSession() {
@@ -109,7 +111,7 @@ public final class Analytics{
             ga.screenView().sessionControl("end").send();
             ga.close();
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
     }
 

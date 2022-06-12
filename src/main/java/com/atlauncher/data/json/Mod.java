@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.FileSystem;
@@ -33,7 +35,6 @@ import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -42,6 +43,8 @@ import com.google.gson.annotations.SerializedName;
 
 @Json
 public class Mod {
+    private static final Logger LOG = LogManager.getLogger(Mod.class);
+
     public String name;
     public String version;
     public String url;
@@ -461,7 +464,7 @@ public class Mod {
                         } else if (retValue == 0) {
                             OS.openFileExplorer(FileSystem.DOWNLOADS);
                         } else if (retValue == 2) {
-                            LogManager.warn(String.format("Skipping browser download of mod %s", name));
+                            LOG.warn(String.format("Skipping browser download of mod %s", name));
                             return false;
                         }
                     } while (retValue != 1);
@@ -527,7 +530,7 @@ public class Mod {
                 Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                 return downloadClient(installer, ++attempt); // download again
             } else {
-                LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
+                LOG.error("Cannot download {}. Aborting install!", fileLocation.getAbsolutePath());
                 installer.cancel(true);
                 return false;
             }
@@ -663,7 +666,7 @@ public class Mod {
                 Utils.delete(fileLocation); // MD5 hash doesn't match, delete it
                 return downloadServer(installer, ++attempt); // download again
             } else {
-                LogManager.error("Cannot download " + fileLocation.getAbsolutePath() + ". Aborting install!");
+                LOG.error("Cannot download {}. Aborting install!", fileLocation.getAbsolutePath());
                 installer.cancel(true);
                 return false;
             }
@@ -810,7 +813,7 @@ public class Mod {
                         Utils.copyDirectory(folder, installer.root.toFile());
                         break;
                     default:
-                        LogManager.error("No known way to extract mod " + this.name + " with type " + this.extractTo);
+                        LOG.error("No known way to extract mod {} with type {}", this.name, this.extractTo);
                         break;
                 }
                 Utils.delete(tempDirExtract);
@@ -858,17 +861,17 @@ public class Mod {
                             }
                             break;
                         default:
-                            LogManager
-                                    .error("No known way to decomp mod " + this.name + " with type " + this.decompType);
+                            LOG.error("No known way to decomp mod {} with type {}", this.name, this.decompType);
                             break;
                     }
                 } else {
-                    LogManager.error("Couldn't find decomp file " + this.decompFile + " for mod " + this.name);
+                    LOG.error("Couldn't find decomp file {} for mod {}", this.decompFile, this.name);
                 }
+
                 Utils.delete(tempDirDecomp);
                 break;
             default:
-                LogManager.error("No known way to install mod " + this.name + " with type " + thisType);
+                LOG.error("No known way to install mod {} with type {}", this.name, thisType);
                 break;
         }
     }
@@ -924,7 +927,7 @@ public class Mod {
                 base = installer.root.resolve("shaderpacks").toFile();
                 break;
             default:
-                LogManager.error("No known way to find installed mod " + this.name + " with type " + thisType);
+                LOG.error("No known way to find installed mod {} with type {}", this.name, thisType);
                 break;
         }
         if (path != null) {

@@ -24,23 +24,27 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.App;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
 
 public class FileUtils {
+    private static final Logger LOG = LogManager.getLogger(FileUtils.class);
+
     public static boolean delete(Path path) {
         return delete(path, false);
     }
 
     public static boolean delete(Path path, boolean recycle) {
         if (!Files.exists(path)) {
-            LogManager.error("Couldn't delete " + path + " as it doesn't exist!");
+            LOG.error("Couldn't delete {} as it doesn't exist!", path);
             return false;
         }
 
         if (Files.isSymbolicLink(path)) {
-            LogManager.error("Not deleting " + path + " as it's a symlink!");
+            LOG.error("Not deleting {} as it's a symlink!", path);
             return false;
         }
 
@@ -55,7 +59,7 @@ public class FileUtils {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            LogManager.logStackTrace("Path " + path + " couldn't be deleted!", e, false);
+            LOG.error("Path {} couldn't be deleted:", path, e);// don't send
             return false;
         }
 
@@ -64,7 +68,7 @@ public class FileUtils {
 
     private static boolean recycle(Path path) {
         if (!Files.exists(path)) {
-            LogManager.error("Cannot recycle " + path + " as it doesn't exist.");
+            LOG.error("Cannot recycle " + path + " as it doesn't exist.");
             return false;
         }
 
@@ -83,14 +87,14 @@ public class FileUtils {
 
     public static boolean deleteDirectory(Path dir) {
         if (!Files.exists(dir) || !Files.isDirectory(dir)) {
-            LogManager.error("Cannot delete directory " + dir + " as it doesn't exist or isn't a directory!");
+            LOG.error("Cannot delete directory {} as it doesn't exist or isn't a directory!", dir);
             return false;
         }
 
         try {
             Files.walkFileTree(dir, new DeleteDirVisitor());
         } catch (IOException e) {
-            LogManager.logStackTrace("Error trying to delete the directory " + dir, e, false);
+            LOG.error("Error trying to delete the directory {}", dir, e);// don't send
             return false;
         }
 
@@ -118,7 +122,7 @@ public class FileUtils {
             Files.createDirectory(directory);
             return true;
         } catch (IOException e) {
-            LogManager.logStackTrace("Error creating directory " + directory, e, false);
+            LOG.error("Error creating directory {}", directory, e);// don't send
         }
 
         return false;
@@ -129,14 +133,14 @@ public class FileUtils {
     }
 
     public static boolean copyFile(Path from, Path to, boolean withFilename) {
-        LogManager.debug("Copying file from " + from + " to " + to);
+        LOG.debug("Copying file from {} to {}", from, to);
         if (!Files.isRegularFile(from)) {
-            LogManager.error("File " + from + " cannot be copied to " + to + " as it isn't a file!");
+            LOG.error("File {} cannot be copied to {} as it isn't a file!", from, to);
             return false;
         }
 
         if (!Files.exists(from)) {
-            LogManager.error("File " + from + " cannot be copied to " + to + " as it doesn't exist!");
+            LOG.error("File {} cannot be copied to {} as it doesn't exist!", from, to);
             return false;
         }
 
@@ -156,14 +160,14 @@ public class FileUtils {
                 return from.toFile().renameTo(to.toFile());
             }
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to copy file " + from + " to " + to, e);
+            LOG.error("Failed to copy file " + from + " to " + to, e);
             return false;
         }
 
         try {
             Files.copy(from, to, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to copy file " + from + " to " + to, e);
+            LOG.error("Failed to copy file " + from + " to " + to, e);
             return false;
         }
 
@@ -183,11 +187,11 @@ public class FileUtils {
                     FileUtils.delete(from);
                 }
             } catch (IOException e) {
-                LogManager.logStackTrace("Couldn't delete file " + from + " while renaming to " + to, e);
+                LOG.error("Couldn't delete file " + from + " while renaming to " + to, e);
             }
             return true;
         } else {
-            LogManager.error("Couldn't move file " + from + " to " + to);
+            LOG.error("Couldn't move file {} to {}", from, to);
             return false;
         }
     }

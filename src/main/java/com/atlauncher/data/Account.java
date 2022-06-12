@@ -23,8 +23,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -34,6 +36,8 @@ import com.atlauncher.utils.Utils;
  *             and MojangAccount and MicrosoftAccount
  */
 public class Account implements Serializable {
+    private static final Logger LOG = LogManager.getLogger(Account.class);
+
     /**
      * Auto generated serial.
      */
@@ -117,7 +121,7 @@ public class Account implements Serializable {
         } else {
             this.password = Utils.decrypt(this.encryptedPassword);
             if (this.password == null) {
-                LogManager.error("Error reading in saved password from file!");
+                LOG.error("Error reading in saved password from file!");
                 this.password = "";
                 this.remember = false;
             }

@@ -23,13 +23,13 @@ import java.io.File;
 
 import javax.swing.JLabel;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class DownloadClearerToolPanel extends AbstractToolPanel implements ActionListener {

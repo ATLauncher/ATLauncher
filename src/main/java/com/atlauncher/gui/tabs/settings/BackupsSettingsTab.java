@@ -22,13 +22,13 @@ import java.awt.GridBagConstraints;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class BackupsSettingsTab extends AbstractSettingsTab {

@@ -2,7 +2,7 @@
   <configuration default="false" name="Launch (Dev)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.atlauncher.App" />
     <module name="ATLauncher.main" />
-    <option name="PROGRAM_PARAMETERS" value="--debug --debug-level 5 --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs" />
+    <option name="PROGRAM_PARAMETERS" value="--debug --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/testLauncher" />
     <extension name="coverage">
       <pattern>

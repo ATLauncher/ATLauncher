@@ -23,12 +23,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
@@ -43,6 +45,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
+    private static final Logger LOG = LogManager.getLogger(ForgeLibraryTypeAdapter.class);
+
     @Override
     public ForgeLibrary deserialize(JsonElement json, Type type, JsonDeserializationContext context)
             throws JsonParseException {
@@ -135,7 +139,7 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                             artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
                         }
                     } catch (Throwable t) {
-                        LogManager.logStackTrace(t);
+                        LOG.error("error", t);
                     }
                 }
 

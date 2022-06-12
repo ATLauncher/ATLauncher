@@ -27,7 +27,6 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;

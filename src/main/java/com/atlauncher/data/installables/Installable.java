@@ -32,6 +32,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.Instance;
@@ -47,14 +51,13 @@ import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.workers.InstanceInstaller;
 
-import org.mini2Dx.gettext.GetText;
-
 public abstract class Installable {
+    private static final Logger LOG = LogManager.getLogger(Installable.class);
+
     public String instanceName;
     public boolean isServer = false;
     public boolean isUpdate = false;
@@ -207,7 +210,7 @@ public abstract class Installable {
                         Thread.currentThread().interrupt();
                         return;
                     } catch (ExecutionException e) {
-                        LogManager.logStackTrace(e);
+                        LOG.error("error", e);
                     }
 
                     if (success) {

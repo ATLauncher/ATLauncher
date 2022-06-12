@@ -1,6 +1,6 @@
 #define MyAppName "ATLauncher"
 #define MyAppURL "https://atlauncher.com"
-#define MyAppVersion "1.0.0.0"
+#define MyAppVersion "1.1.0.0"
 
 [Setup]
 AppId={{2F5FDA11-45A5-4CC3-8E51-5E11E2481697}
@@ -43,7 +43,7 @@ Source: "{tmp}\jre.zip"; DestDir: "{tmp}"; Flags: external deleteafterinstall; C
 
 [Components]
 Name: "atlauncher"; Description: "ATLauncher"; ExtraDiskSpaceRequired: 20000000; Types: full compact custom; Flags: fixed
-Name: "java"; Description: "Install Java"; ExtraDiskSpaceRequired: 99401728; Types: full
+Name: "java"; Description: "Install Java"; ExtraDiskSpaceRequired: 129016602; Types: full
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -72,7 +72,7 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if (CurStep = ssPostInstall) then begin
     if WizardIsComponentSelected('java') then begin
-      if not RenameFile(ExpandConstant('{app}/jdk8u312-b07-jre'), ExpandConstant('{app}/jre')) then begin
+      if not RenameFile(ExpandConstant('{app}') + '\jdk-17.0.3+7-jre', ExpandConstant('{app}/jre')) then begin
         MsgBox('Failed to rename jre directory. Please try again or uncheck the "Install Java" option', mbError, MB_OK);
         WizardForm.Close;
       end
@@ -89,9 +89,9 @@ begin
 
     if WizardIsComponentSelected('java') then begin
       if IsWin64 then begin
-        DownloadPage.Add('https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jre_x64_windows_hotspot_8u312b07.zip', 'jre.zip', 'a4623365d70e7bc969e84b7f29b6b2eecb6c0686863ed67651506e2b5adf43b0');
+        DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'd77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97');
       end else begin
-        DownloadPage.Add('https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jre_x86-32_windows_hotspot_8u312b07.zip', 'jre.zip', '789cfa21858156084020ee885ade643556dc57ddec2b44745b5489edb7945b64');
+        DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221');
       end;
     end;
 

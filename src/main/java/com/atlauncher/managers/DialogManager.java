@@ -28,11 +28,16 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import com.atlauncher.App;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.MarkerManager;
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
+
 public final class DialogManager {
+    private static final Logger LOG = LogManager.getLogger(DialogManager.class);
+
     public static final int OPTION_TYPE = 0;
     public static final int CONFIRM_TYPE = 1;
     public static final int OK_TYPE = 1;
@@ -189,7 +194,7 @@ public final class DialogManager {
             return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title, this.lookAndFeel, this.type,
                     this.icon, this.getOptions(), this.defaultOption);
         } catch (Exception e) {
-            LogManager.logStackTrace(e, false);
+            LOG.error(MarkerManager.getMarker("NoReporting"), "Couldn't show dialog", e);
         }
 
         return -1;
@@ -246,7 +251,7 @@ public final class DialogManager {
 
             return CLOSED_OPTION;
         } catch (Exception e) {
-            LogManager.logStackTrace(e, false);
+            LOG.error(e);
         }
 
         return -1;
@@ -261,7 +266,7 @@ public final class DialogManager {
             return (String) JOptionPane.showInputDialog(this.getParent(), this.content, this.title, this.type,
                     this.icon, null, defaultValue);
         } catch (Exception e) {
-            LogManager.logStackTrace(e, false);
+            LOG.error(MarkerManager.getMarker("NoReporting"), "Couldn't show input dialog", e);
         }
 
         return null;

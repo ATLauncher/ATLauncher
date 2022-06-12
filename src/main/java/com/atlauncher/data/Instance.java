@@ -63,6 +63,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.MarkerManager;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -122,7 +125,6 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
@@ -139,6 +141,7 @@ import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.LoggingUtils;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -152,6 +155,8 @@ import okhttp3.OkHttpClient;
 
 @Json
 public class Instance extends MinecraftVersion {
+    private static final Logger LOG = LogManager.getLogger(Instance.class);
+
     public String inheritsFrom;
     public InstanceLauncher launcher;
 
@@ -336,9 +341,8 @@ public class Instance extends MinecraftVersion {
 
                 return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
             } catch (Exception e) {
-                LogManager.logStackTrace(
-                        "Error creating scaled image from the custom image of instance " + this.launcher.name, e,
-                        false);
+                LOG.error("Error creating scaled image from the custom image of instance {}:", this.launcher.name, e);// don't
+                                                                                                                      // send
             }
         }
 
@@ -491,7 +495,7 @@ public class Instance extends MinecraftVersion {
 
             progressDialog.doneTask();
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("Error downloading minecraft", e);
             PerformanceManager.end("Downloading Minecraft");
             PerformanceManager.end();
             return false;
@@ -517,7 +521,7 @@ public class Instance extends MinecraftVersion {
 
                 progressDialog.doneTask();
             } catch (IOException e) {
-                LogManager.logStackTrace(e);
+                LOG.error(e);
                 PerformanceManager.end("Downloading Logging Config");
                 PerformanceManager.end();
                 return false;
@@ -629,7 +633,7 @@ public class Instance extends MinecraftVersion {
                     // Files.write(runtimeSystemDirectory.resolve(javaVersion.component
                     // + ".sha1"), runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to download Java runtime", e);
+                    LOG.error("Failed to download Java runtime", e);
                 }
             }
         }
@@ -728,7 +732,7 @@ public class Instance extends MinecraftVersion {
 
             if (!Utils.combineJars(getMinecraftJar(), getRoot().resolve("bin/modpack.jar").toFile(),
                     getCustomMinecraftJar())) {
-                LogManager.error("Failed to combine jars into custom minecraft.jar");
+                LOG.error("Failed to combine jars into custom minecraft.jar");
                 PerformanceManager.end("Creating custom minecraft.jar");
                 PerformanceManager.end();
                 return false;
@@ -763,7 +767,7 @@ public class Instance extends MinecraftVersion {
         // if Microsoft account must login again, then make sure to do that
         if (!offline && account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {
             if (!((MicrosoftAccount) account).ensureAccountIsLoggedIn()) {
-                LogManager.info("You must login to your account before continuing.");
+                LOG.info("You must login to your account before continuing.");
                 return false;
             }
         }
@@ -775,7 +779,7 @@ public class Instance extends MinecraftVersion {
                     .setContent(GetText.tr("Choose your offline player name:")).showInput(playerName);
 
             if (playerName == null || playerName.isEmpty()) {
-                LogManager.info("No player name provided for offline launch, so cancelling launch.");
+                LOG.info("No player name provided for offline launch, so cancelling launch.");
                 return false;
             }
         }
@@ -793,7 +797,7 @@ public class Instance extends MinecraftVersion {
                     .setType(DialogManager.ERROR).show();
 
             if (ret != 0) {
-                LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
+                LOG.warn("Launching of instance cancelled due to user cancelling memory warning!");
                 App.launcher.setMinecraftLaunched(false);
                 return false;
             }
@@ -806,7 +810,7 @@ public class Instance extends MinecraftVersion {
                             this.launcher.requiredPermGen)).build())
                     .setType(DialogManager.ERROR).show();
             if (ret != 0) {
-                LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
+                LOG.warn("Launching of instance cancelled due to user cancelling permgen warning!");
                 App.launcher.setMinecraftLaunched(false);
                 return false;
             }
@@ -817,21 +821,20 @@ public class Instance extends MinecraftVersion {
         try {
             Files.createDirectory(nativesTempDir);
         } catch (IOException e2) {
-            LogManager.logStackTrace(e2, false);
+            LOG.error(MarkerManager.getMarker("NoReporting"), "Couldn't create natives temp directory", e2);
         }
 
         ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 7,
                 GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
-            LogManager.info("Preparing for launch!");
+            LOG.info("Preparing for launch!");
             prepareDialog.setReturnValue(prepareForLaunch(prepareDialog, nativesTempDir));
             prepareDialog.close();
         }));
         prepareDialog.start();
 
         if (prepareDialog.getReturnValue() == null || !prepareDialog.getReturnValue()) {
-            LogManager.error(
-                    "Failed to prepare instance " + this.launcher.name + " for launch. Check the logs and try again.");
+            LOG.error("Failed to prepare instance {} for launch. Check the logs and try again.", this.launcher.name);
             return false;
         }
 
@@ -845,8 +848,7 @@ public class Instance extends MinecraftVersion {
                     App.launcher.getParent().setVisible(false);
                 }
 
-                LogManager.info("Launching pack " + this.launcher.pack + " " + this.launcher.version + " for "
-                        + "Minecraft " + this.id);
+                LOG.info("Launching pack {} {} for Minecraft {}", this.launcher.pack, this.launcher.version, this.id);
 
                 Process process = null;
 
@@ -870,7 +872,7 @@ public class Instance extends MinecraftVersion {
                         session = new LoginResponse(mojangAccount.username);
                         session.setOffline();
                     } else {
-                        LogManager.info("Logging into Minecraft!");
+                        LOG.info("Logging into Minecraft!");
                         ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
                                 GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
                                 "Aborted login to Minecraft!");
@@ -893,7 +895,7 @@ public class Instance extends MinecraftVersion {
 
                     if (enableCommands && preLaunchCommand != null) {
                         if (!executeCommand(preLaunchCommand)) {
-                            LogManager.error("Failed to execute pre-launch command");
+                            LOG.error("Failed to execute pre-launch command");
 
                             App.launcher.setMinecraftLaunched(false);
 
@@ -910,7 +912,7 @@ public class Instance extends MinecraftVersion {
                     MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
 
                     if (!offline) {
-                        LogManager.info("Logging into Minecraft!");
+                        LOG.info("Logging into Minecraft!");
                         ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
                                 0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
                         loginDialog.addThread(new Thread(() -> {
@@ -920,7 +922,7 @@ public class Instance extends MinecraftVersion {
                         loginDialog.start();
 
                         if (!(Boolean) loginDialog.getReturnValue()) {
-                            LogManager.error("Failed to login");
+                            LOG.error("Failed to login");
                             App.launcher.setMinecraftLaunched(false);
                             if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
@@ -934,7 +936,7 @@ public class Instance extends MinecraftVersion {
 
                     if (enableCommands && preLaunchCommand != null) {
                         if (!executeCommand(preLaunchCommand)) {
-                            LogManager.error("Failed to execute pre-launch command");
+                            LOG.error("Failed to execute pre-launch command");
 
                             App.launcher.setMinecraftLaunched(false);
 
@@ -950,7 +952,7 @@ public class Instance extends MinecraftVersion {
                 }
 
                 if (process == null) {
-                    LogManager.error("Failed to get process for Minecraft");
+                    LOG.error("Failed to get process for Minecraft");
                     App.launcher.setMinecraftLaunched(false);
                     if (App.launcher.getParent() != null) {
                         App.launcher.getParent().setVisible(true);
@@ -1022,7 +1024,7 @@ public class Instance extends MinecraftVersion {
                         detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
                     }
 
-                    if (!LogManager.showDebug) {
+                    if (!LOG.isDebugEnabled()) {
                         line = line.replace(account.minecraftUsername, "**MINECRAFTUSERNAME**");
                         line = line.replace(account.username, "**MINECRAFTUSERNAME**");
                         line = line.replace(account.uuid, "**UUID**");
@@ -1044,7 +1046,7 @@ public class Instance extends MinecraftVersion {
 
                             // end of the xml object so parse it
                             if (line.contains("</log4j:Event>")) {
-                                LogManager.minecraftLog4j(sb.toString());
+                                LoggingUtils.minecraftLog4j(sb.toString());
                                 sb.setLength(0);
                             }
 
@@ -1054,7 +1056,7 @@ public class Instance extends MinecraftVersion {
                         }
                     }
 
-                    LogManager.minecraft(line);
+                    LoggingUtils.minecraft(line);
                 }
                 App.launcher.hideKillMinecraft();
                 if (App.launcher.getParent() != null && App.settings.keepLauncherOpen) {
@@ -1075,14 +1077,13 @@ public class Instance extends MinecraftVersion {
                 }
 
                 if (exitValue != 0) {
-                    LogManager.error(
-                            "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
-
+                    LOG.error(
+                            "Oh noes. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
                     if (this.getPack() != null && !this.getPack().system) {
-                        LogManager.info("Checking for modifications to the pack since installation.");
+                        LOG.info("Checking for modifications to the pack since installation.");
                         this.launcher.mods.forEach(mod -> {
                             if (!mod.userAdded && mod.wasSelected && mod.disabled) {
-                                LogManager.warn("The mod " + mod.name + " (" + mod.file + ") has been disabled.");
+                                LOG.warn("The mod {} ({}) has been disabled.", mod.name, mod.file);
                             }
                         });
 
@@ -1093,7 +1094,7 @@ public class Instance extends MinecraftVersion {
                                                         .noneMatch(m -> m.type == Type.mods && !m.userAdded
                                                                 && m.getFile(this).toPath().equals(file)))
                                 .forEach(newMod -> {
-                                    LogManager.warn("The mod " + newMod.getFileName().toString() + " has been added.");
+                                    LOG.warn("The mod {} has been added.", newMod.getFileName());
                                 });
                     }
 
@@ -1110,7 +1111,7 @@ public class Instance extends MinecraftVersion {
 
                 if (enableCommands && postExitCommand != null) {
                     if (!executeCommand(postExitCommand)) {
-                        LogManager.error("Failed to execute post-exit command");
+                        LOG.error("Failed to execute post-exit command");
                     }
                 }
 
@@ -1141,7 +1142,8 @@ public class Instance extends MinecraftVersion {
                     System.exit(0);
                 }
             } catch (Exception e1) {
-                LogManager.logStackTrace(e1);
+                LOG.error("error launching minecraft", e1);
+
                 App.launcher.setMinecraftLaunched(false);
                 if (App.launcher.getParent() != null) {
                     App.launcher.getParent().setVisible(true);
@@ -1182,16 +1184,16 @@ public class Instance extends MinecraftVersion {
         if (reportsDir.exists()) {
             for (String filename : reportsDir.list(Utils.getOpenEyePendingReportsFileFilter())) {
                 File report = new File(reportsDir, filename);
-                LogManager.info("OpenEye: Sending pending crash report located at '" + report.getAbsolutePath() + "'");
+                LOG.info("OpenEye: Sending pending crash report located at '{}'", report.getAbsolutePath());
                 OpenEyeReportResponse response = Utils.sendOpenEyePendingReport(report);
                 if (response == null) {
                     // Pending report was never sent due to an issue. Won't delete the file in case
                     // it's
                     // a temporary issue and can be sent again later.
-                    LogManager.error("OpenEye: Couldn't send pending crash report!");
+                    LOG.error("OpenEye: Couldn't send pending crash report!");
                 } else {
                     // OpenEye returned a response to the report, display that to user if needed.
-                    LogManager.info("OpenEye: Pending crash report sent! URL: " + response.getURL());
+                    LOG.info("OpenEye: Pending crash report sent! URL: {}", response.getURL());
                     if (response.hasNote()) {
                         int ret = DialogManager.optionDialog().setTitle(GetText.tr("About Your Crash"))
                                 .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -1221,7 +1223,7 @@ public class Instance extends MinecraftVersion {
         try {
             return Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/play", request);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error(e);
         }
         return "Play Not Added!";
     }
@@ -1235,7 +1237,7 @@ public class Instance extends MinecraftVersion {
         try {
             return Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/timeplayed/", request);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("Error adding time played", e);
         }
         return "Leaderboard Time Not Added!";
     }
@@ -1373,7 +1375,7 @@ public class Instance extends MinecraftVersion {
                 try {
                     download.downloadFile();
                 } catch (IOException e) {
-                    LogManager.logStackTrace(e);
+                    LOG.error(e);
                     DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
                             .setContent("Failed to download " + file.fileName + ". Please try again later.").show();
                     return;
@@ -1440,7 +1442,7 @@ public class Instance extends MinecraftVersion {
             try {
                 download.downloadFile();
             } catch (IOException e) {
-                LogManager.logStackTrace(e);
+                LOG.error("error downloading file", e);
                 DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
                         .setContent("Failed to download " + fileToDownload.filename + ". Please try again later.")
                         .show();
@@ -1526,7 +1528,7 @@ public class Instance extends MinecraftVersion {
 
     public boolean canBeExported() {
         if (launcher.loaderVersion == null) {
-            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader");
+            LOG.debug("Instance {} cannot be exported due to: No loader", launcher.name);
             return false;
         }
 
@@ -1684,8 +1686,7 @@ public class Instance extends MinecraftVersion {
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("mmc-pack.json").toFile())) {
             Gsons.MINECRAFT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save mmc-pack.json", e);
-
+            LOG.error("Failed to save mmc-pack.json", e);
             FileUtils.deleteDirectory(tempDir);
 
             return false;
@@ -1755,7 +1756,7 @@ public class Instance extends MinecraftVersion {
         try (OutputStream outputStream = Files.newOutputStream(instanceCfgPath)) {
             instanceCfg.store(outputStream, "Exported by ATLauncher");
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save mmc-pack.json", e);
+            LOG.error("Failed to save mmc-pack.json", e);
 
             FileUtils.deleteDirectory(tempDir);
 
@@ -1810,7 +1811,7 @@ public class Instance extends MinecraftVersion {
                             long hash = Hashing.murmur(dm.getFile(this.ROOT, this.id).toPath());
                             murmurHashes.put(hash, dm);
                         } catch (Throwable t) {
-                            LogManager.logStackTrace(t);
+                            LOG.error(t);
                         }
                     });
 
@@ -1846,7 +1847,7 @@ public class Instance extends MinecraftVersion {
                                             dm.curseForgeProject = curseForgeProject;
                                         }
 
-                                        LogManager.debug("Found matching mod from CurseForge called "
+                                        LOG.debug("Found matching mod from CurseForge called "
                                                 + dm.curseForgeFile.displayName);
                                     });
                         }
@@ -1895,8 +1896,7 @@ public class Instance extends MinecraftVersion {
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("manifest.json").toFile())) {
             Gsons.MINECRAFT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save manifest.json", e);
-
+            LOG.error("Failed to save manifest.json", e);
             FileUtils.deleteDirectory(tempDir);
 
             return false;
@@ -1917,7 +1917,7 @@ public class Instance extends MinecraftVersion {
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modlist.html").toFile())) {
             fileWriter.write(sb.toString());
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save modlist.html", e);
+            LOG.error("Failed to save modlist.html", e);
 
             FileUtils.deleteDirectory(tempDir);
 
@@ -1998,7 +1998,7 @@ public class Instance extends MinecraftVersion {
 
                         mod.modrinthVersion = modrinthVersion;
 
-                        LogManager.debug("Found matching version from Modrinth called " + mod.modrinthVersion.name);
+                        LOG.debug("Found matching version from Modrinth called " + mod.modrinthVersion.name);
 
                         if (modrinthProjects.containsKey(modrinthVersions.get(hash).projectId)) {
                             mod.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
@@ -2065,7 +2065,7 @@ public class Instance extends MinecraftVersion {
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modrinth.index.json").toFile())) {
             Gsons.MINECRAFT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save modrinth.index.json", e);
+            LOG.error("Failed to save modrinth.index.json", e);
 
             FileUtils.deleteDirectory(tempDir);
 
@@ -2136,7 +2136,7 @@ public class Instance extends MinecraftVersion {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("instance.json").toFile())) {
             Gsons.MINECRAFT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("failed to save instance", e);
         }
     }
 
@@ -2464,14 +2464,14 @@ public class Instance extends MinecraftVersion {
             }));
             dialog.start();
         } else if (clonedName == null || clonedName.equals("")) {
-            LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
+            LOG.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
                             .build())
                     .setType(DialogManager.ERROR).show();
         } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
-            LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
+            LOG.error("Error Occurred While Cloning Instance! Invalid Name!");
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
@@ -2479,7 +2479,7 @@ public class Instance extends MinecraftVersion {
                     .setType(DialogManager.ERROR).show();
         } else if (Files
                 .exists(FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
-            LogManager.error(
+            LOG.error(
                     "Error Occurred While Cloning Instance! Folder Already Exists Rename It And Try Again!");
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -2487,7 +2487,7 @@ public class Instance extends MinecraftVersion {
                             .build())
                     .setType(DialogManager.ERROR).show();
         } else {
-            LogManager.error(
+            LOG.error(
                     "Error Occurred While Cloning Instance! Instance With That Name Already Exists!");
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -2528,7 +2528,7 @@ public class Instance extends MinecraftVersion {
                     Utils.safeCopy(img, getRoot().resolve("instance.png").toFile());
                     save();
                 } catch (IOException ex) {
-                    LogManager.logStackTrace("Failed to set instance image", ex);
+                    LOG.error("Failed to set instance image", ex);
                 }
             }
         }
@@ -2558,7 +2558,7 @@ public class Instance extends MinecraftVersion {
 
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error changing loader version", e);
         }
 
         if (success) {
@@ -2603,7 +2603,7 @@ public class Instance extends MinecraftVersion {
 
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error adding loader {}", loaderType, e);
         }
 
         if (success) {
@@ -2737,7 +2737,7 @@ public class Instance extends MinecraftVersion {
 
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error removing loader", e);
         }
 
         if (success) {
@@ -2798,7 +2798,7 @@ public class Instance extends MinecraftVersion {
 
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
+                LOG.debug(String.format("Using Java runtime %s (major version %d) at path %s",
                         javaVersion.component, javaVersion.majorVersion, javaPath));
             }
         }

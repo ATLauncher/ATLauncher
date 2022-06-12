@@ -23,7 +23,6 @@ import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.gui.tabs.settings.*;
-import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.FlatLaf;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;

@@ -35,6 +35,9 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.Arguments;
@@ -42,13 +45,14 @@ import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.ConfigManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
 public class QuiltLoader implements Loader {
+    private static final Logger LOG = LogManager.getLogger(QuiltLoader.class);
+
     protected String minecraft;
     protected QuiltMetaVersion version;
     protected File tempDir;
@@ -66,7 +70,7 @@ public class QuiltLoader implements Loader {
         } else if (metadata.containsKey("loader")) {
             this.version = this.getVersion((String) metadata.get("loader"));
         } else if ((boolean) metadata.get("latest")) {
-            LogManager.debug("Downloading latest Quilt version");
+            LOG.debug("Downloading latest Quilt version");
             this.version = this.getLatestVersion();
         }
     }
@@ -209,7 +213,7 @@ public class QuiltLoader implements Loader {
                     .getBytes(StandardCharsets.UTF_8));
             propertiesOutputStream.close();
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
     }
 

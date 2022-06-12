@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.microsoft;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.mini2Dx.gettext.GetText;
+
+import com.google.gson.annotations.SerializedName;
 
 //{"Identity":"0","XErr":2148916233,"Message":"","Redirect":"https://start.ui.xboxlive.com/CreateAccount"}
 public class XboxLiveAuthErrorResponse {

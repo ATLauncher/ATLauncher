@@ -36,19 +36,23 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.ConfigManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
 public class FabricLoader implements Loader {
+    private static final Logger LOG = LogManager.getLogger(FabricLoader.class);
+
     protected String minecraft;
     protected FabricMetaVersion version;
     protected File tempDir;
@@ -67,7 +71,7 @@ public class FabricLoader implements Loader {
         } else if (metadata.containsKey("loader")) {
             this.version = this.getVersion((String) metadata.get("loader"));
         } else if ((boolean) metadata.get("latest")) {
-            LogManager.debug("Downloading latest Fabric version");
+            LOG.debug("Downloading latest Fabric version");
             this.version = this.getLatestVersion();
         }
     }
@@ -204,7 +208,7 @@ public class FabricLoader implements Loader {
                     .getBytes(StandardCharsets.UTF_8));
             propertiesOutputStream.close();
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
     }
 

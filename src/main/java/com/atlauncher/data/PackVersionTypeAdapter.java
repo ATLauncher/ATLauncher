@@ -19,8 +19,10 @@ package com.atlauncher.data;
 
 import java.lang.reflect.Type;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -29,6 +31,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
+    private static final Logger LOG = LogManager.getLogger(PackVersionTypeAdapter.class);
+
     @Override
     public PackVersion deserialize(JsonElement json, Type type, JsonDeserializationContext context)
             throws JsonParseException {
@@ -50,7 +54,7 @@ public class PackVersionTypeAdapter implements JsonDeserializer<PackVersion> {
                 packVersion.minecraftVersion = MinecraftManager
                         .getMinecraftVersion(rootJsonObject.get("minecraft").getAsString());
             } catch (InvalidMinecraftVersion e) {
-                LogManager.error(e.getMessage());
+                LOG.error("error:", e);
             }
         }
 

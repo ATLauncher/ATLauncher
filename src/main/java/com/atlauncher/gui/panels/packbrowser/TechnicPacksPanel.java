@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
@@ -34,8 +36,6 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.TechnicPackCard;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.utils.TechnicApi;
-
-import org.mini2Dx.gettext.GetText;
 
 public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();

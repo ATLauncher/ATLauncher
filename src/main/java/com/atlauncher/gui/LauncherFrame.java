@@ -30,12 +30,12 @@ import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.*;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,14 +48,16 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public final class LauncherFrame extends JFrame{
+    private static final Logger LOG = LogManager.getLogger(LauncherFrame.class);
+
     private JTabbedPane tabbedPane;
 
     private List<Tab> tabs;
 
     public LauncherFrame(boolean show) {
-        LogManager.info("Launcher opening");
-        LogManager.info("Made By Bob*");
-        LogManager.info("*(Not Actually)");
+        LOG.info("Launcher opening");
+        LOG.info("Made By Bob*");
+        LOG.info("*(Not Actually)");
 
         App.launcher.setParentFrame(this);
         setTitle(Constants.LAUNCHER_NAME);
@@ -76,22 +78,22 @@ public final class LauncherFrame extends JFrame{
                 setLocation(App.settings.launcherPosition);
             }
         } catch (Exception e) {
-            LogManager.logStackTrace("Error setting custom remembered window size settings", e);
+            LOG.error("Error setting custom remembered window size settings", e);
         }
 
-        LogManager.info("Setting up Bottom Bar");
+        LOG.info("Setting up Bottom Bar");
         LauncherBottomBar bottomBar = new LauncherBottomBar();
-        LogManager.info("Finished Setting up Bottom Bar");
+        LOG.info("Finished Setting up Bottom Bar");
 
-        LogManager.info("Setting up Tabs");
+        LOG.info("Setting up Tabs");
         setupTabs(); // Setup the JTabbedPane
-        LogManager.info("Finished Setting up Tabs");
+        LOG.info("Finished Setting up Tabs");
 
         this.add(tabbedPane, BorderLayout.CENTER);
         this.add(bottomBar, BorderLayout.SOUTH);
 
         if (show) {
-            LogManager.info("Showing Launcher");
+            LOG.info("Showing Launcher");
             setVisible(true);
 
             addWindowListener(new WindowAdapter() {
@@ -111,11 +113,11 @@ public final class LauncherFrame extends JFrame{
             Pack pack = PackManager.getPackBySafeName(App.packToInstall);
 
             if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
-                LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
+                LOG.error("Error automatically installing " + pack.getName() + " as you don't have the "
                         + "pack added to the launcher!");
             } else {
                 if (AccountManager.getSelectedAccount() == null || pack == null) {
-                    LogManager
+                    LOG
                             .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
                 } else {
                     new InstanceInstallerDialog(pack);
@@ -125,21 +127,21 @@ public final class LauncherFrame extends JFrame{
             String[] parts = App.packShareCodeToInstall.split("\\|\\|\\|");
 
             if (parts.length != 4) {
-                LogManager.error("Error automatically installing pack from share code!");
+                LOG.error("Error automatically installing pack from share code!");
             } else {
                 Pack pack = PackManager.getPackBySafeName(parts[0]);
 
                 if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
-                    LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
+                    LOG.error("Error automatically installing " + pack.getName() + " as you don't have the "
                             + "pack added to the launcher!");
                 } else {
                     if (pack == null) {
-                        LogManager.error("Error automatically installing pack from share code!");
+                        LOG.error("Error automatically installing pack from share code!");
                     } else {
                         PackVersion version = pack.getVersionByName(parts[1]);
 
                         if (version == null) {
-                            LogManager.error("Error automatically installing " + pack.getName() + " from share code!");
+                            LOG.error("Error automatically installing " + pack.getName() + " from share code!");
                         } else {
                             new InstanceInstallerDialog(pack, version, parts[2], Boolean.parseBoolean(parts[3]));
                         }

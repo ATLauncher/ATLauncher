@@ -17,7 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.events.LocalizationEvent;

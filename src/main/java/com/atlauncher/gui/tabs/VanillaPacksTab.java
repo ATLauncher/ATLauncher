@@ -50,6 +50,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -66,17 +73,13 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.ComboItem;
 
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.mini2Dx.gettext.GetText;
-
 @SuppressWarnings("serial")
 public final class VanillaPacksTab extends JPanel implements Tab {
+    private static final Logger LOG = LogManager.getLogger(VanillaPacksTab.class);
+
     private final List<VersionManifestVersionType> minecraftVersionTypeFilters = new ArrayList<>(
             Arrays.asList(VersionManifestVersionType.RELEASE));
     private String selectedMinecraftVersion = null;
@@ -718,7 +721,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 minecraftVersionTable.setRowSelectionInterval(0, 0);
             }
         } catch (InvalidMinecraftVersion e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
     }
 

@@ -36,6 +36,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
@@ -47,8 +49,6 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {

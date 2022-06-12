@@ -24,11 +24,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.OS;
-
-import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class BrowserDownloadMod extends JPanel {

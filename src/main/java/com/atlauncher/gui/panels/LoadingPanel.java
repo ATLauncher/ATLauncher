@@ -24,9 +24,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.atlauncher.utils.Utils;
-
 import org.mini2Dx.gettext.GetText;
+
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class LoadingPanel extends JPanel {
