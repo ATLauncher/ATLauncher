@@ -36,7 +36,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.events.AccountChangedEvent;
+import com.atlauncher.events.AccountEvent;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -58,7 +58,7 @@ public class AccountManager {
     }
 
     private static void postAccountChangedEvent(){
-        App.EVENT_BUS.post(new AccountChangedEvent());
+        App.EVENT_BUS.post(new AccountEvent.AccountChangedEvent());
     }
 
     /**

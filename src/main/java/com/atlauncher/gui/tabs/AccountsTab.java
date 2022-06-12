@@ -49,7 +49,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.events.AccountChangedEvent;
+import com.atlauncher.events.AccountEvent;
 import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -432,7 +432,7 @@ public class AccountsTab extends JPanel implements Tab{
                     mojangAccount.store = response.getAuth().saveForStorage();
 
                     AccountManager.saveAccounts();
-                    App.EVENT_BUS.post(new AccountChangedEvent());
+                    App.EVENT_BUS.post(new AccountEvent.AccountChangedEvent());
                 }
 
                 Analytics.sendEvent("Edit", "Account");

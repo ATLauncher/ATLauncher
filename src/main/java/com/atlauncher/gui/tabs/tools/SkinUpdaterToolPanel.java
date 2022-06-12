@@ -25,7 +25,7 @@ import javax.swing.JLabel;
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.events.AccountChangedEvent;
+import com.atlauncher.events.AccountEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
@@ -75,7 +75,7 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
     }
 
     @Subscribe
-    public void onAccountChanged(final AccountChangedEvent e){
+    public void onAccountChanged(final AccountEvent.AccountChangedEvent e){
         this.checkLaunchButtonEnabled();
     }
 }

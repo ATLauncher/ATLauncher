@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.events.AccountChangedEvent;
+import com.atlauncher.events.AccountEvent;
 import com.atlauncher.events.ConsoleEvent;
 import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.AccountsDropDownRenderer;
@@ -182,7 +182,7 @@ public class LauncherBottomBar extends BottomBar{
     }
 
     @Subscribe
-    public void onAccountChanged(final AccountChangedEvent event){
+    public void onAccountChanged(final AccountEvent.AccountChangedEvent event){
         this.reloadAccounts();
     }
 }
