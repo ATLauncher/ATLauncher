@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.events.AccountEvent;
@@ -44,7 +45,7 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
         this.checkLaunchButtonEnabled();
     }
 

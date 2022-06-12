@@ -27,6 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
 import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
@@ -59,7 +62,7 @@ public abstract class BottomBar extends JPanel{
         this.rightSide.add(this.redditIcon);
         this.rightSide.add(this.twitterIcon);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     private void setupSocialButtonListeners() {
@@ -90,6 +93,7 @@ public abstract class BottomBar extends JPanel{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
     }

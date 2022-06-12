@@ -43,9 +43,12 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
 import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
@@ -193,7 +196,7 @@ public class CollapsiblePanel extends JPanel{
         setCollapsed(collapsed);
         placeTitleComponent();
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     /**
@@ -463,6 +466,7 @@ public class CollapsiblePanel extends JPanel{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         iconArrow = createExpandAndCollapseIcon();
 

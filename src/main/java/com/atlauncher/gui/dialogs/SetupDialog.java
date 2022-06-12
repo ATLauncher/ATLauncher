@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Language;
@@ -152,7 +153,7 @@ public class SetupDialog extends JDialog{
 
         setVisible(true);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     @Subscribe

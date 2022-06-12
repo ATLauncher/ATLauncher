@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -26,6 +27,8 @@ import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
@@ -213,7 +216,7 @@ public class InstanceCard extends CollapsiblePanel{
         this.addActionListeners();
         this.addMouseListeners();
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     private void setupPlayPopupMenus() {
@@ -600,6 +603,7 @@ public class InstanceCard extends CollapsiblePanel{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.playButton.setText(GetText.tr("Play"));
         this.updateButton.setText(GetText.tr("Update"));

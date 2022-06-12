@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card.packbrowser;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.events.LocalizationEvent;
@@ -94,7 +95,7 @@ public class CurseForgePackCard extends JPanel{
 
         add(splitter, BorderLayout.CENTER);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     @Subscribe

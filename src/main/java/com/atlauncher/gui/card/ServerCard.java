@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Server;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
@@ -106,7 +107,7 @@ public class ServerCard extends CollapsiblePanel{
         this.addActionListeners();
         this.addMouseListeners();
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     private void addActionListeners() {

@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
@@ -66,7 +67,7 @@ public class AccountsTab extends JPanel implements Tab{
     @SuppressWarnings("unchecked")
     public AccountsTab() {
         setLayout(new BorderLayout());
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
 
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BorderLayout());
@@ -412,7 +413,7 @@ public class AccountsTab extends JPanel implements Tab{
                     mojangAccount.store = response.getAuth().saveForStorage();
 
                     AccountManager.saveAccounts();
-                    App.EVENT_BUS.post(new AccountEvent.AccountChangedEvent());
+                    AppEventBus.post(new AccountEvent.AccountChangedEvent());
                 }
 
                 Analytics.sendEvent("Edit", "Account");

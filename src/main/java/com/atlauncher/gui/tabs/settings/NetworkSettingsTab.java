@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.Network;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.events.LocalizationEvent;
@@ -58,7 +59,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab{
     private JComboBox<String> proxyType;
 
     public NetworkSettingsTab() {
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
 
         // Concurrent Connection Settings
         gbc.gridx = 0;

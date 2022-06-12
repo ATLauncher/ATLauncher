@@ -18,6 +18,7 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.events.LocalizationEvent;
@@ -56,7 +57,7 @@ public class ConsoleBottomBar extends BottomBar{
 
         this.add(leftSide, BorderLayout.WEST);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     /**

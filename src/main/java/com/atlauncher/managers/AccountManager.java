@@ -28,10 +28,7 @@ import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.atlauncher.App;
-import com.atlauncher.Data;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
+import com.atlauncher.*;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
@@ -58,7 +55,7 @@ public class AccountManager {
     }
 
     private static void postAccountChangedEvent(){
-        App.EVENT_BUS.post(new AccountEvent.AccountChangedEvent());
+        AppEventBus.post(new AccountEvent.AccountChangedEvent());
     }
 
     /**

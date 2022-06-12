@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.Utils;
@@ -39,7 +40,7 @@ public class NilCard extends JPanel{
 
     public NilCard(String message) {
         super(new BorderLayout());
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
 
         this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));

@@ -18,6 +18,7 @@
 package com.atlauncher.utils.sort;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Instance;
 
 import com.atlauncher.events.LocalizationEvent;
@@ -75,7 +76,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy{
 
     InstanceSortingStrategies(final String name) {
         this.name = name;
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     public void setName(final String name) {

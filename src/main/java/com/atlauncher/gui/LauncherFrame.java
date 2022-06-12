@@ -18,10 +18,13 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
 import com.atlauncher.events.TabEvent;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -167,7 +170,7 @@ public final class LauncherFrame extends JFrame{
             }
         });
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     /**
@@ -225,13 +228,14 @@ public final class LauncherFrame extends JFrame{
 
         tabbedPane.addChangeListener(e -> {
             Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
-            App.EVENT_BUS.post(new TabEvent.TabChangedEvent());
+            AppEventBus.post(new TabEvent.TabChangedEvent());
         });
 
         Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());

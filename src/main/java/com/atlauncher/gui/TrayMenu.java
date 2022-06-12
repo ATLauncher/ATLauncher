@@ -24,6 +24,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.events.ConsoleEvent;
@@ -53,7 +54,7 @@ public final class TrayMenu extends JPopupMenu{
         this.addSeparator();
         this.add(this.quitButton);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
 
         this.addActionListeners();
     }

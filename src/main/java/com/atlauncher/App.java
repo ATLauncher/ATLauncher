@@ -253,8 +253,6 @@ public class App {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
 
-    public static final EventBus EVENT_BUS = new AppEventBus();
-
     /**
      * Where the magic happens.
      *

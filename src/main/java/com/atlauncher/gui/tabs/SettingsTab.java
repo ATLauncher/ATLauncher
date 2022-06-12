@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.ThemeEvent;
@@ -48,7 +49,7 @@ public class SettingsTab extends JPanel implements Tab{
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 
     public SettingsTab() {
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
         setLayout(new BorderLayout());
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -79,7 +80,7 @@ public class SettingsTab extends JPanel implements Tab{
                 backupsSettingsTab.save();
                 commandSettingsTab.save();
                 App.settings.save();
-                App.EVENT_BUS.post(new SettingsEvent.SettingsSavedEvent());
+                AppEventBus.post(new SettingsEvent.SettingsSavedEvent());
                 if (reloadInstancesPanel) {
                     App.launcher.reloadInstancesPanel();
                 }
@@ -89,7 +90,7 @@ public class SettingsTab extends JPanel implements Tab{
                 if (reloadTheme) {
                     App.loadTheme(App.settings.theme);
                     FlatLaf.updateUILater();
-                    App.EVENT_BUS.post(new ThemeEvent.ThemeChangedEvent());
+                    AppEventBus.post(new ThemeEvent.ThemeChangedEvent());
                 }
                 App.TOASTER.pop("Settings Saved");
             }

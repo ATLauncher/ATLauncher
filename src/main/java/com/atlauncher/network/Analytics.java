@@ -20,7 +20,9 @@ package com.atlauncher.network;
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.events.OnSide;
 import com.atlauncher.events.SettingsEvent;
+import com.atlauncher.events.Side;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -112,6 +114,7 @@ public final class Analytics{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event){
         ga.getConfig()
             .setProxyHost(App.settings.proxyHost)

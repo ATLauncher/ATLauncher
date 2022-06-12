@@ -25,6 +25,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
 import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
@@ -47,7 +50,7 @@ public class PacksBrowserTabTitlePanel extends JPanel{
         title.setHorizontalAlignment(SwingConstants.CENTER);
         add(title, BorderLayout.SOUTH);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     public PacksBrowserTabTitlePanel(String platform) {
@@ -55,6 +58,7 @@ public class PacksBrowserTabTitlePanel extends JPanel{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform", icon)));
     }

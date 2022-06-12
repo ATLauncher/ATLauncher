@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.instances;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.events.LocalizationEvent;
@@ -71,7 +72,7 @@ public final class InstancesListPanel extends JPanel
         parent.addSortEventListener(this);
         parent.addSearchEventListener(this);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     public void loadInstances() {

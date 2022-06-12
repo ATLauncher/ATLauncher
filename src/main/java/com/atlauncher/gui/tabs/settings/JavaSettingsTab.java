@@ -43,11 +43,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.OnSide;
 import com.atlauncher.events.SettingsEvent;
+import com.atlauncher.events.Side;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Java;
@@ -102,7 +105,7 @@ public class JavaSettingsTab extends AbstractSettingsTab{
     public JavaSettingsTab() {
         int systemRam = OS.getSystemRam();
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
 
         // Initial Memory Settings
         gbc.gridx = 0;
@@ -684,6 +687,7 @@ public class JavaSettingsTab extends AbstractSettingsTab{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event){
         this.javaPath.setText(App.settings.javaPath);
     }

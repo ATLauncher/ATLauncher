@@ -18,6 +18,7 @@
 package com.atlauncher.data;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.managers.LogManager;
 import org.mini2Dx.gettext.GetText;
@@ -75,7 +76,7 @@ public class Language {
         }
 
         GetText.setLocale(locale);
-        App.EVENT_BUS.post(new LocalizationEvent.LocalizationChangedEvent());
+        AppEventBus.post(new LocalizationEvent.LocalizationChangedEvent());
     }
 
     public static boolean isLanguageByName(String language) {

@@ -27,10 +27,13 @@ import java.util.stream.Collectors;
 import javax.swing.JLabel;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.events.OnSide;
 import com.atlauncher.events.SettingsEvent;
+import com.atlauncher.events.Side;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
@@ -60,7 +63,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
         this.checkLaunchButtonEnabled();
     }
 
@@ -250,6 +253,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event) {
         this.checkLaunchButtonEnabled();
     }

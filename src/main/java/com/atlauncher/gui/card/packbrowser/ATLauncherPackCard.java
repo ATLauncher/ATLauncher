@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card.packbrowser;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
@@ -121,7 +122,7 @@ public class ATLauncherPackCard extends JPanel{
             actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         }
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     public Pack getPack() {

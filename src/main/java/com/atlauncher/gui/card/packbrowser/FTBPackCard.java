@@ -18,6 +18,7 @@
 package com.atlauncher.gui.card.packbrowser;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.modpacksch.ModpacksChPackArt;
 import com.atlauncher.data.modpacksch.ModpacksChPackArtType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
@@ -108,7 +109,7 @@ public class FTBPackCard extends JPanel{
 
         add(splitter, BorderLayout.CENTER);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     @Subscribe

@@ -18,9 +18,12 @@
 package com.atlauncher.gui;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.events.ConsoleEvent;
 import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.managers.LogManager;
@@ -75,7 +78,7 @@ public class LauncherConsole extends JFrame{
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
 
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
@@ -109,11 +112,11 @@ public class LauncherConsole extends JFrame{
     }
 
     private void postConsoleOpenEvent(){
-        App.EVENT_BUS.post(new ConsoleEvent.ConsoleOpenedEvent());
+        AppEventBus.post(new ConsoleEvent.ConsoleOpenedEvent());
     }
 
     private void postConsoleClosedEvent(){
-        App.EVENT_BUS.post(new ConsoleEvent.ConsoleClosedEvent());
+        AppEventBus.post(new ConsoleEvent.ConsoleClosedEvent());
     }
 
     private void setupContextMenu() {
@@ -167,6 +170,7 @@ public class LauncherConsole extends JFrame{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event){
         this.copy.setText(GetText.tr("Copy"));
         this.bottomBar.setupLanguage();

@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.card.NilCard;
@@ -49,7 +50,7 @@ public class ServersTab extends JPanel implements Tab{
     public ServersTab() {
         setLayout(new BorderLayout());
         loadContent(false);
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     public void loadContent(boolean keepFilters) {

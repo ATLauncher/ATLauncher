@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.instances;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -55,7 +56,7 @@ public final class InstancesNavigationPanel extends JPanel{
         this.add(this.sortingBox);
         this.addListeners();
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     private void addListeners() {

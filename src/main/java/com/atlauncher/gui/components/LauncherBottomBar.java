@@ -18,6 +18,7 @@
 package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.events.AccountEvent;
@@ -75,7 +76,7 @@ public class LauncherBottomBar extends BottomBar{
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     /**
@@ -103,7 +104,7 @@ public class LauncherBottomBar extends BottomBar{
             }
         });
 
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     @Subscribe

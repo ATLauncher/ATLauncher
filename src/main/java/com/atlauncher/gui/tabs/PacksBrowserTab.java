@@ -18,9 +18,12 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
 import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.gui.panels.packbrowser.*;
 import com.atlauncher.managers.ConfigManager;
@@ -86,7 +89,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
         super(new BorderLayout());
         this.setName("packsBrowserPanel");
         this.initComponents();
-        App.EVENT_BUS.register(this);
+        AppEventBus.register(this);
     }
 
     private void initComponents() {
@@ -497,6 +500,7 @@ public final class PacksBrowserTab extends JPanel implements Tab{
     }
 
     @Subscribe
+    @OnSide(Side.UI)
     public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
         descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));

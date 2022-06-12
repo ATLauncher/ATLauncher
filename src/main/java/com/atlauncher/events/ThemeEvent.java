@@ -11,7 +11,6 @@ public abstract class ThemeEvent extends Event{
         }
     }
 
-    @SwingEvent
     public static final class ThemeChangedEvent extends ThemeEvent{
         public ThemeChangedEvent(){
             super();
