@@ -540,19 +540,11 @@ public enum OS {
     public static void restartLauncher() {
         OS.restartLauncher(null);
     }
-
     /**
      * This restarts the launcher in debug mode.
      */
     public static void relaunchInDebugMode() {
-        relaunchInDebugMode(3);
-    }
-
-    /**
-     * This restarts the launcher in debug mode.
-     */
-    public static void relaunchInDebugMode(int level) {
-        restartLauncher(new ArrayList<>(Arrays.asList("--debug", "--debug-level=" + level)));
+        restartLauncher(new ArrayList<>(Arrays.asList("--debug")));
     }
 
     /**

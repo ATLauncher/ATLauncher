@@ -22,14 +22,13 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 
-import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
+
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public class DebugModePanel extends AbstractToolPanel {
@@ -53,7 +52,7 @@ public class DebugModePanel extends AbstractToolPanel {
                         // Handle left-click
                         Analytics.sendEvent("DebugMode", "Run", "Tool");
 
-                        OS.relaunchInDebugMode(e.isShiftDown() ? 5 : 3);
+                        OS.relaunchInDebugMode();
                     }
                 }
             });

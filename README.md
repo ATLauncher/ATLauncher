@@ -49,7 +49,7 @@ If you want to run the launcher while developing with it, you can use your IDE (
 Alternatively you can run:
 
 ```sh
-./gradlew run --args="--debug --debug-level 3 --working-dir=testLauncher"
+./gradlew run --args="--debug --working-dir=testLauncher"
 ```
 
 Setting the `--working-dir=testLauncher` argument is necessary as it will ensure that the launchers files are not
