@@ -25,8 +25,11 @@ plugins {
 
 apply plugin: 'org.mini2Dx.gettext'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+java {
+    toolchain{
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 group = 'com.atlauncher'
 version = rootProject.file('src/main/resources/version').text.trim().replace('.Beta', '')
