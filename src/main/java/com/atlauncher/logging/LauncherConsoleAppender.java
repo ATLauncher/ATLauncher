@@ -65,7 +65,7 @@ public final class LauncherConsoleAppender extends AbstractAppender {
     }
 
     @Override
-    public void append(LogEvent e) {
+    public synchronized void append(LogEvent e) {
         this.getConsole().ifPresent((console) -> {
             final Throwable t = e.getThrown();
             String body = e.getMessage().getFormattedMessage();
