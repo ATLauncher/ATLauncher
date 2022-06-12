@@ -33,6 +33,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -43,12 +47,7 @@ import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.slf4j.LoggerFactory;
-
-public class LauncherConsole extends JFrame implements RelocalizationListener{
+public class LauncherConsole extends JFrame implements RelocalizationListener {
     private static final Logger LOG = LogManager.getLogger(LauncherConsole.class);
 
     private static final long serialVersionUID = -3538990021922025818L;

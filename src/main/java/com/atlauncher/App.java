@@ -53,8 +53,10 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -882,7 +884,7 @@ public class App {
         }
 
         if (options.has("debug")) {
-            // Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
+            Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
         }
 
         if (options.has("updated")) {
