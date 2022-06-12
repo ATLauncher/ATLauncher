@@ -43,10 +43,8 @@ import javax.swing.UIManager;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.ThemeListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherFeaturedPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
@@ -63,10 +61,11 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener, ThemeListener {
+public final class PacksBrowserTab extends JPanel implements Tab{
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
@@ -107,11 +106,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     public PacksBrowserTab() {
         super(new BorderLayout());
-        setName("packsBrowserPanel");
-        RelocalizationManager.addListener(this);
-        ThemeManager.addListener(this);
-
-        initComponents();
+        this.setName("packsBrowserPanel");
+        this.initComponents();
+        App.EVENT_BUS.register(this);
     }
 
     private void initComponents() {
@@ -514,16 +511,15 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         return "ATLauncher Platform Packs";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
-
         searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
     }
 
-    @Override
-    public void onThemeChange() {
+    @Subscribe
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
         descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));
     }

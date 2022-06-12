@@ -37,9 +37,8 @@ import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
+import com.atlauncher.events.LocalizationChangedEvent;
+import com.atlauncher.events.TabEvent;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -57,9 +56,10 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame extends JFrame implements RelocalizationListener {
+public final class LauncherFrame extends JFrame{
     private JTabbedPane tabbedPane;
 
     private List<Tab> tabs;
@@ -118,8 +118,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 }
             });
         }
-
-        RelocalizationManager.addListener(this);
 
         if (App.packToInstall != null) {
             Pack pack = PackManager.getPackBySafeName(App.packToInstall);
@@ -183,6 +181,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 }
             }
         });
+
+        App.EVENT_BUS.register(this);
     }
 
     /**
@@ -240,14 +240,14 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         tabbedPane.addChangeListener(e -> {
             Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
-            TabChangeManager.post();
+            App.EVENT_BUS.post(new TabEvent.TabChangedEvent());
         });
 
         Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

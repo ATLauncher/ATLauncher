@@ -26,12 +26,13 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.atlauncher.evnt.listener.ThemeListener;
-import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.App;
+import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
+import com.google.common.eventbus.Subscribe;
 
-public abstract class BottomBar extends JPanel implements ThemeListener {
+public abstract class BottomBar extends JPanel{
     private static final long serialVersionUID = -7488195680365431776L;
 
     protected final JButton nodeCraftIcon = new SMButton("/assets/image/social/nodecraft.png",
@@ -58,7 +59,7 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
         this.rightSide.add(this.redditIcon);
         this.rightSide.add(this.twitterIcon);
 
-        ThemeManager.addListener(this);
+        App.EVENT_BUS.register(this);
     }
 
     private void setupSocialButtonListeners() {
@@ -88,7 +89,8 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
         });
     }
 
-    public void onThemeChange() {
+    @Subscribe
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
     }
 }

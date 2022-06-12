@@ -20,7 +20,7 @@ package com.atlauncher.utils;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.events.LogEvent.LogType;
 import com.atlauncher.managers.LogManager;
 
 public class SystemOutInterceptor extends PrintStream {

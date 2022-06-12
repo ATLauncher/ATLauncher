@@ -30,18 +30,18 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
+public class ConsoleBottomBar extends BottomBar{
 
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton copyLogButton = new JButton(GetText.tr("Copy Log"));
@@ -61,7 +61,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
 
         this.add(leftSide, BorderLayout.WEST);
 
-        RelocalizationManager.addListener(this);
+        App.EVENT_BUS.register(this);
     }
 
     /**
@@ -137,14 +137,14 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     }
 
     public void setupLanguage() {
-        this.onRelocalization();
-    }
-
-    @Override
-    public void onRelocalization() {
         clearButton.setText(GetText.tr("Clear"));
         copyLogButton.setText(GetText.tr("Copy Log"));
         uploadLogButton.setText(GetText.tr("Upload Log"));
         killMinecraftButton.setText(GetText.tr("Kill Minecraft"));
+    }
+
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+        this.setupLanguage();
     }
 }

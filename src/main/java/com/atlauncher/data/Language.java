@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.atlauncher.App;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.managers.LogManager;
 
 import org.mini2Dx.gettext.GetText;
@@ -80,7 +80,7 @@ public class Language {
         }
 
         GetText.setLocale(locale);
-        RelocalizationManager.post();
+        App.EVENT_BUS.post(new LocalizationChangedEvent());
     }
 
     public static boolean isLanguageByName(String language) {

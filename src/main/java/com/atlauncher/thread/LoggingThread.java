@@ -19,7 +19,7 @@ package com.atlauncher.thread;
 
 import java.util.concurrent.BlockingQueue;
 
-import com.atlauncher.evnt.LogEvent;
+import com.atlauncher.events.LogEvent;
 
 import org.apache.logging.log4j.Logger;
 

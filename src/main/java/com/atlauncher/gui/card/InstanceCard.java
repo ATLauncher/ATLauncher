@@ -46,8 +46,7 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
@@ -64,6 +63,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
 import com.google.gson.reflect.TypeToken;
 
 import org.mini2Dx.gettext.GetText;
@@ -73,7 +73,7 @@ import org.mini2Dx.gettext.GetText;
  * Class for displaying instances in the Instance Tab
  */
 @SuppressWarnings("serial")
-public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
+public class InstanceCard extends CollapsiblePanel{
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
@@ -227,14 +227,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(splitter, BorderLayout.CENTER);
 
-        RelocalizationManager.addListener(this);
-
         if (!instance.hasUpdate()) {
             this.updateButton.setVisible(false);
         }
 
         this.addActionListeners();
         this.addMouseListeners();
+
+        App.EVENT_BUS.register(this);
     }
 
     private void setupPlayPopupMenus() {
@@ -620,8 +620,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         return instance;
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         this.playButton.setText(GetText.tr("Play"));
         this.updateButton.setText(GetText.tr("Update"));
         this.backupButton.setText(GetText.tr("Backup"));

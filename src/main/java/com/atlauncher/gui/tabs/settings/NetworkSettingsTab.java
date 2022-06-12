@@ -31,17 +31,17 @@ import javax.swing.SpinnerNumberModel;
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
+public class NetworkSettingsTab extends AbstractSettingsTab{
     private final JLabelWithHover concurrentConnectionsLabel;
     private final JSpinner concurrentConnections;
 
@@ -64,7 +64,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private JComboBox<String> proxyType;
 
     public NetworkSettingsTab() {
-        RelocalizationManager.addListener(this);
+        App.EVENT_BUS.register(this);
 
         // Concurrent Connection Settings
         gbc.gridx = 0;
@@ -287,8 +287,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         return "Network";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         this.concurrentConnectionsLabel.setText(GetText.tr("Concurrent Connections") + ":");
         this.concurrentConnectionsLabel.setToolTipText("<html>"
                 + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");

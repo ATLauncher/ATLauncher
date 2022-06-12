@@ -26,8 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atlauncher.Gsons;
-import com.atlauncher.evnt.LogEvent;
-import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.events.LogEvent;
+import com.atlauncher.events.LogEvent.LogType;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadException;

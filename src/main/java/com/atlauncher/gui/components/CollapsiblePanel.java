@@ -46,20 +46,20 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.ThemeListener;
-import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in
  * the titled border
  */
-public class CollapsiblePanel extends JPanel implements ThemeListener {
+public class CollapsiblePanel extends JPanel{
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type
@@ -193,7 +193,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         setCollapsed(collapsed);
         placeTitleComponent();
 
-        ThemeManager.addListener(this);
+        App.EVENT_BUS.register(this);
     }
 
     /**
@@ -462,12 +462,12 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         }
     }
 
-    @Override
-    public void onThemeChange() {
+    @Subscribe
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         iconArrow = createExpandAndCollapseIcon();
 
         // force state
-        setCollapsed(collapsed);
+        this.setCollapsed(collapsed);
     }
 
 }

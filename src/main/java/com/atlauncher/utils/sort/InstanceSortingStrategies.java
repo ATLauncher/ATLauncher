@@ -17,13 +17,14 @@
  */
 package com.atlauncher.utils.sort;
 
+import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 
+import com.atlauncher.events.LocalizationChangedEvent;
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
-public enum InstanceSortingStrategies implements InstanceSortingStrategy, RelocalizationListener {
+public enum InstanceSortingStrategies implements InstanceSortingStrategy{
     BY_NAME(GetText.tr("By Name")) {
         @Override
         public int compare(Instance lhs, Instance rhs) {
@@ -31,7 +32,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
+        public void updateLocalization(){
             this.setName(GetText.tr("By Name"));
         }
     },
@@ -49,7 +50,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
+        public void updateLocalization(){
             this.setName(GetText.tr("By Last Played"));
         }
     },
@@ -65,7 +66,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
+        public void updateLocalization(){
             this.setName(GetText.tr("By Number of Plays"));
         }
     };
@@ -74,7 +75,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
 
     InstanceSortingStrategies(final String name) {
         this.name = name;
-        RelocalizationManager.addListener(this);
+        App.EVENT_BUS.register(this);
     }
 
     public void setName(final String name) {
@@ -89,5 +90,12 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
     @Override
     public String toString() {
         return this.name;
+    }
+
+    protected abstract void updateLocalization();
+
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+        this.updateLocalization();
     }
 }

@@ -53,6 +53,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
+import com.google.common.eventbus.EventBus;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -251,6 +252,8 @@ public class App {
         // Sets up where all uncaught exceptions go to.
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
+
+    public static final EventBus EVENT_BUS = new AppEventBus();
 
     /**
      * Where the magic happens.

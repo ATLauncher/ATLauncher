@@ -25,11 +25,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
-import com.atlauncher.evnt.listener.ThemeListener;
-import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.events.ThemeEvent;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
 
-public class PacksBrowserTabTitlePanel extends JPanel implements ThemeListener {
+public class PacksBrowserTabTitlePanel extends JPanel{
     private final JLabel label = new JLabel(null, null, SwingConstants.CENTER);
     private final String icon;
 
@@ -43,19 +43,19 @@ public class PacksBrowserTabTitlePanel extends JPanel implements ThemeListener {
 
         add(label, BorderLayout.CENTER);
 
-        ThemeManager.addListener(this);
-
         JLabel title = new JLabel(platform);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         add(title, BorderLayout.SOUTH);
+
+        App.EVENT_BUS.register(this);
     }
 
     public PacksBrowserTabTitlePanel(String platform) {
         this(platform, platform.toLowerCase());
     }
 
-    @Override
-    public void onThemeChange() {
+    @Subscribe
+    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event){
         label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform", icon)));
     }
 }

@@ -36,6 +36,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.events.AccountChangedEvent;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -54,6 +55,10 @@ public class AccountManager {
 
     public static AbstractAccount getSelectedAccount() {
         return Data.SELECTED_ACCOUNT;
+    }
+
+    private static void postAccountChangedEvent(){
+        App.EVENT_BUS.post(new AccountChangedEvent());
     }
 
     /**
@@ -187,7 +192,7 @@ public class AccountManager {
         }
 
         saveAccounts();
-        com.atlauncher.evnt.manager.AccountManager.post();
+        postAccountChangedEvent();
     }
 
     public static void removeAccount(AbstractAccount account) {
@@ -202,7 +207,7 @@ public class AccountManager {
         }
         Data.ACCOUNTS.remove(account);
         saveAccounts();
-        com.atlauncher.evnt.manager.AccountManager.post();
+        postAccountChangedEvent();
     }
 
     /**
@@ -223,7 +228,7 @@ public class AccountManager {
         App.launcher.refreshPacksBrowserPanel();
         App.launcher.reloadInstancesPanel();
         App.launcher.reloadServersPanel();
-        com.atlauncher.evnt.manager.AccountManager.post();
+        postAccountChangedEvent();
         App.settings.save();
     }
 

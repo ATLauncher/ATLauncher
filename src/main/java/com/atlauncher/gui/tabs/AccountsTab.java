@@ -42,14 +42,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.AccountChangedEvent;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
@@ -61,9 +62,10 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
-public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
+public class AccountsTab extends JPanel implements Tab{
     private static final long serialVersionUID = 2493791137600123223L;
 
     private JLabel userSkin;
@@ -84,8 +86,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     @SuppressWarnings("unchecked")
     public AccountsTab() {
         setLayout(new BorderLayout());
-
-        RelocalizationManager.addListener(this);
+        App.EVENT_BUS.register(this);
 
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BorderLayout());
@@ -431,7 +432,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     mojangAccount.store = response.getAuth().saveForStorage();
 
                     AccountManager.saveAccounts();
-                    com.atlauncher.evnt.manager.AccountManager.post();
+                    App.EVENT_BUS.post(new AccountChangedEvent());
                 }
 
                 Analytics.sendEvent("Edit", "Account");
@@ -465,8 +466,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         return "Accounts";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         if (accountsComboBox.getSelectedIndex() == 0) {
             leftButton.setText(GetText.tr("Add"));
             rightButton.setText(GetText.tr("Clear"));

@@ -32,8 +32,7 @@ import javax.swing.border.TitledBorder;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
@@ -42,10 +41,11 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class ModrinthPackCard extends JPanel implements RelocalizationListener {
+public class ModrinthPackCard extends JPanel{
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
@@ -55,8 +55,6 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(null, searchHit.title, TitledBorder.LEADING,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
-
-        RelocalizationManager.addListener(this);
 
         String imageUrl = searchHit.iconUrl;
 
@@ -127,10 +125,12 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
         actionsPanel.setPreferredSize(new Dimension(actionsPanel.getPreferredSize().width, 155));
 
         add(splitter, BorderLayout.CENTER);
+
+        App.EVENT_BUS.register(this);
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         newInstanceButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }

@@ -27,25 +27,25 @@ import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.Utils;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 /**
  * Class for displaying packs in the Pack Tab.
  */
 @SuppressWarnings("serial")
-public class NilCard extends JPanel implements RelocalizationListener {
+public class NilCard extends JPanel{
     private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png").getImage();
 
     private final JTextArea error = new JTextArea();
 
     public NilCard(String message) {
         super(new BorderLayout());
-        RelocalizationManager.addListener(this);
+        App.EVENT_BUS.register(this);
 
         this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
@@ -70,8 +70,8 @@ public class NilCard extends JPanel implements RelocalizationListener {
         error.setText(message);
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         TitledBorder border = (TitledBorder) this.getBorder();
         border.setTitle(GetText.tr("Nothing To Show"));
     }

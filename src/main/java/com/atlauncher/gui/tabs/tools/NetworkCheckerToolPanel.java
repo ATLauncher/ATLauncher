@@ -30,8 +30,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.events.SettingsSavedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
@@ -39,10 +38,11 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
+public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener{
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
@@ -60,7 +60,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        SettingsManager.addListener(this);
+        App.EVENT_BUS.register(this);
         this.checkLaunchButtonEnabled();
     }
 
@@ -249,8 +249,8 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
         }
     }
 
-    @Override
-    public void onSettingsSaved() {
+    @Subscribe
+    public final void onSettingsSaved(final SettingsSavedEvent event) {
         this.checkLaunchButtonEnabled();
     }
 }

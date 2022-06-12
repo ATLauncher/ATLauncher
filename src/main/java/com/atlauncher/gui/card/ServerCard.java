@@ -39,8 +39,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -51,10 +50,11 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
+public class ServerCard extends CollapsiblePanel{
     private final Server server;
     private final ImagePanel image;
     private final JButton launchButton = new JButton(GetText.tr("Launch"));
@@ -116,10 +116,10 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(splitter, BorderLayout.CENTER);
 
-        RelocalizationManager.addListener(this);
-
         this.addActionListeners();
         this.addMouseListeners();
+
+        App.EVENT_BUS.register(this);
     }
 
     private void addActionListeners() {
@@ -204,8 +204,8 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         });
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         this.launchButton.setText(GetText.tr("Launch"));
         this.launchAndCloseButton.setText(GetText.tr("Launch & Close"));
         this.launchWithGui.setText(GetText.tr("Launch With GUI"));

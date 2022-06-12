@@ -33,8 +33,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
@@ -44,10 +43,11 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class ATLauncherPackCard extends JPanel implements RelocalizationListener {
+public class ATLauncherPackCard extends JPanel{
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton discordInviteButton = new JButton("Discord");
@@ -63,8 +63,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(null, pack.name, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 App.THEME.getBoldFont().deriveFont(15f)));
-
-        RelocalizationManager.addListener(this);
 
         JSplitPane splitter = new JSplitPane();
         splitter.setLeftComponent(new PackImagePanel(pack));
@@ -131,6 +129,8 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
             actionsPanel.add(top, BorderLayout.SOUTH);
             actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         }
+
+        App.EVENT_BUS.register(this);
     }
 
     public Pack getPack() {
@@ -189,8 +189,8 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
         });
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         this.newInstanceButton.setText(GetText.tr("New Instance"));
         this.createServerButton.setText(GetText.tr("Create Server"));
         this.supportButton.setText(GetText.tr("Support"));

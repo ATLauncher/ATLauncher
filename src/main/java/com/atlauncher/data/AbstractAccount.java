@@ -28,7 +28,9 @@ import java.util.UUID;
 
 import javax.swing.ImageIcon;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.events.AccountChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.ServersTab;
@@ -212,7 +214,7 @@ public abstract class AbstractAccount implements Serializable {
                     } catch (IOException e) {
                         LogManager.logStackTrace(e);
                     }
-                    com.atlauncher.evnt.manager.AccountManager.post();
+                    App.EVENT_BUS.post(new AccountChangedEvent());
                 }
                 dialog.close();
             }));

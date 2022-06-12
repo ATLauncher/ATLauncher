@@ -30,21 +30,20 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.evnt.listener.AccountListener;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.AccountChangedEvent;
+import com.atlauncher.events.ConsoleEvent;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener, AccountListener {
+public class LauncherBottomBar extends BottomBar{
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
@@ -83,8 +82,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
-        RelocalizationManager.addListener(this);
-        com.atlauncher.evnt.manager.AccountManager.addListener(this);
+        App.EVENT_BUS.register(this);
     }
 
     /**
@@ -111,8 +109,18 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 }
             }
         });
-        ConsoleCloseManager.addListener(() -> toggleConsole.setText(GetText.tr("Show Console")));
-        ConsoleOpenManager.addListener(() -> toggleConsole.setText(GetText.tr("Hide Console")));
+
+        App.EVENT_BUS.register(this);
+    }
+
+    @Subscribe
+    public final void onConsoleOpened(final ConsoleEvent.ConsoleOpenedEvent event){
+        this.toggleConsole.setText(GetText.tr("Hide Console"));
+    }
+
+    @Subscribe
+    public final void onConsoleClosed(final ConsoleEvent.ConsoleClosedEvent event){
+        this.toggleConsole.setText(GetText.tr("Show Console"));
     }
 
     /**
@@ -162,8 +170,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         dontSave = false;
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         if (App.console.isVisible()) {
             toggleConsole.setText(GetText.tr("Hide Console"));
         } else {
@@ -173,8 +181,8 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         this.openFolder.setText(GetText.tr("Open Folder"));
     }
 
-    @Override
-    public void onAccountsChanged() {
-        reloadAccounts();
+    @Subscribe
+    public void onAccountChanged(final AccountChangedEvent event){
+        this.reloadAccounts();
     }
 }

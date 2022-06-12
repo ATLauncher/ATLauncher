@@ -26,17 +26,15 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.evnt.listener.ConsoleCloseListener;
-import com.atlauncher.evnt.listener.ConsoleOpenListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
+import com.atlauncher.events.ConsoleEvent;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, ConsoleOpenListener {
+public final class TrayMenu extends JPopupMenu{
 
     private final JMenuItem killMinecraftButton = new JMenuItem(GetText.tr("Kill Minecraft"));
     private final JMenuItem toggleConsoleButton = new JMenuItem(GetText.tr("Toggle Console"));
@@ -55,8 +53,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
         this.addSeparator();
         this.add(this.quitButton);
 
-        ConsoleCloseManager.addListener(this);
-        ConsoleOpenManager.addListener(this);
+        App.EVENT_BUS.register(this);
 
         this.addActionListeners();
     }
@@ -95,13 +92,13 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
         this.killMinecraftButton.setVisible(launched);
     }
 
-    @Override
-    public void onConsoleClose() {
-        this.toggleConsoleButton.setText(GetText.tr("Show Console"));
+    @Subscribe
+    public void onConsoleOpen(final ConsoleEvent.ConsoleOpenedEvent event) {
+        this.toggleConsoleButton.setText(GetText.tr("Hide Console"));
     }
 
-    @Override
-    public void onConsoleOpen() {
-        this.toggleConsoleButton.setText(GetText.tr("Hide Console"));
+    @Subscribe
+    public void onConsoleClose(final ConsoleEvent.ConsoleClosedEvent event) {
+        this.toggleConsoleButton.setText(GetText.tr("Show Console"));
     }
 }

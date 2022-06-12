@@ -38,16 +38,16 @@ import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
-public class SetupDialog extends JDialog implements RelocalizationListener {
+public class SetupDialog extends JDialog{
     private static final long serialVersionUID = -2931970914611329658L;
 
     private final JLabel setupLabel;
@@ -161,13 +161,13 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
             }
         });
 
-        RelocalizationManager.addListener(this);
-
         setVisible(true);
+
+        App.EVENT_BUS.register(this);
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         setupLabel.setText(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
         languageLabel.setText(GetText.tr("Language") + ": ");
         enableAnalyticsLabel.setText(GetText.tr("Enable Anonymous Analytics") + "? ");

@@ -22,15 +22,16 @@ import java.awt.Rectangle;
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.events.SettingsSavedEvent;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
+import com.google.common.eventbus.Subscribe;
 
-public final class Analytics implements SettingsListener {
+public final class Analytics{
     private static GoogleAnalytics ga;
 
     public static void startSession() {
@@ -110,9 +111,11 @@ public final class Analytics implements SettingsListener {
         }
     }
 
-    @Override
-    public void onSettingsSaved() {
-        ga.getConfig().setProxyHost(App.settings.proxyHost).setProxyPort(App.settings.proxyPort)
-                .setEnabled(!App.disableAnalytics && App.settings.enableAnalytics);
+    @Subscribe
+    public void onSettingsSaved(final SettingsSavedEvent event){
+        ga.getConfig()
+            .setProxyHost(App.settings.proxyHost)
+            .setProxyPort(App.settings.proxyPort)
+            .setEnabled(!App.disableAnalytics && App.settings.enableAnalytics);
     }
 }

@@ -28,17 +28,16 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import com.atlauncher.App;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
-public final class InstancesNavigationPanel extends JPanel implements RelocalizationListener {
+public final class InstancesNavigationPanel extends JPanel{
     private final InstancesTab parent;
 
     private final JButton importButton = new JButton(GetText.tr("Import"));
@@ -63,7 +62,7 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
         this.add(this.sortingBox);
         this.addListeners();
 
-        RelocalizationManager.addListener(this);
+        App.EVENT_BUS.register(this);
     }
 
     private void addListeners() {
@@ -78,8 +77,8 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
         });
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         this.importButton.setText(GetText.tr("Import"));
         this.searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         this.sortingBox.repaint();

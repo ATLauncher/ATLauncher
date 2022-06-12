@@ -22,18 +22,19 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.evnt.listener.AccountListener;
-import com.atlauncher.evnt.manager.AccountManager;
+import com.atlauncher.events.AccountChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener, AccountListener {
+public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener{
 
     public SkinUpdaterToolPanel() {
         super(GetText.tr("Skin Updater"));
@@ -43,7 +44,7 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        AccountManager.addListener(this);
+        App.EVENT_BUS.register(this);
         this.checkLaunchButtonEnabled();
     }
 
@@ -73,8 +74,8 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
                 .setContent(GetText.tr("Successfully updated skins.")).show();
     }
 
-    @Override
-    public void onAccountsChanged() {
+    @Subscribe
+    public void onAccountChanged(final AccountChangedEvent e){
         this.checkLaunchButtonEnabled();
     }
 }

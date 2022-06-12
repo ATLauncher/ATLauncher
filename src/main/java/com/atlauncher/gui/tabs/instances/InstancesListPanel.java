@@ -28,18 +28,18 @@ import javax.swing.JPanel;
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 public final class InstancesListPanel extends JPanel
-        implements InstancesSortEventListener, InstancesSearchEventListener, RelocalizationListener {
+        implements InstancesSortEventListener, InstancesSearchEventListener{
     private static NilCard createNilCard() {
         return new NilCard(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
@@ -73,7 +73,8 @@ public final class InstancesListPanel extends JPanel
         this.loadInstances();
         parent.addSortEventListener(this);
         parent.addSearchEventListener(this);
-        RelocalizationManager.addListener(this);
+
+        App.EVENT_BUS.register(this);
     }
 
     public void loadInstances() {
@@ -128,8 +129,8 @@ public final class InstancesListPanel extends JPanel
         this.setSortingStrategy(event.getStrategy());
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         this.nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
 }

@@ -35,18 +35,17 @@ import javax.swing.JScrollPane;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.ConsoleEvent;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener {
+public class LauncherConsole extends JFrame{
 
     private static final long serialVersionUID = -3538990021922025818L;
     public Console console;
@@ -83,7 +82,8 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
         add(bottomBar, BorderLayout.SOUTH);
-        RelocalizationManager.addListener(this);
+
+        App.EVENT_BUS.register(this);
 
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
@@ -107,13 +107,21 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     }
 
     @Override
-    public void setVisible(boolean flag) {
-        super.setVisible(flag);
-        if (flag) {
-            ConsoleOpenManager.post();
-        } else {
-            ConsoleCloseManager.post();
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if(visible){
+            this.postConsoleOpenEvent();
+        } else{
+            this.postConsoleClosedEvent();
         }
+    }
+
+    private void postConsoleOpenEvent(){
+        App.EVENT_BUS.post(new ConsoleEvent.ConsoleOpenedEvent());
+    }
+
+    private void postConsoleClosedEvent(){
+        App.EVENT_BUS.post(new ConsoleEvent.ConsoleClosedEvent());
     }
 
     private void setupContextMenu() {
@@ -166,9 +174,9 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         console.setText(null);
     }
 
-    @Override
-    public void onRelocalization() {
-        copy.setText(GetText.tr("Copy"));
-        bottomBar.setupLanguage();
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
+        this.copy.setText(GetText.tr("Copy"));
+        this.bottomBar.setupLanguage();
     }
 }

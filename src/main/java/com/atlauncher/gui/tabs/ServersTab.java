@@ -30,19 +30,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.LocalizationChangedEvent;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
-public class ServersTab extends JPanel implements Tab, RelocalizationListener {
+public class ServersTab extends JPanel implements Tab{
     private JTextField searchBox;
 
     private String searchText = null;
@@ -56,7 +57,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     public ServersTab() {
         setLayout(new BorderLayout());
         loadContent(false);
-        RelocalizationManager.addListener(this);
+        App.EVENT_BUS.register(this);
     }
 
     public void loadContent(boolean keepFilters) {
@@ -151,10 +152,9 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         return "Servers";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));
         }
