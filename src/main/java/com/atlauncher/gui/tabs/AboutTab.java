@@ -48,10 +48,11 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         StringBuilder sb = new StringBuilder();
         sb.append(Constants.LAUNCHER_NAME);
         sb.append("\n");
-        sb.append(Constants.VERSION.toString());
+        sb.append("Version:\t").append(Constants.VERSION.toString());
         sb.append("\n");
-        sb.append(System.getProperty("os.name"));
+        sb.append("OS:\t").append(System.getProperty("os.name"));
         sb.append("\n");
+        sb.append("Java:\t");
         sb.append(String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
         textInfo.setText(sb.toString());
         textInfo.setEditable(false);
@@ -63,7 +64,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         copyButton = new JButton();
         copyButton.setText(GetText.tr("Copy"));
         copyButton.addActionListener(e -> {
-                OS.copyToClipboard("");
+                OS.copyToClipboard(sb.toString());
             }
         );
         info.add(copyButton, BorderLayout.EAST);
