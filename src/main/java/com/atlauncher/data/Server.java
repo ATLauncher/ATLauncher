@@ -43,7 +43,6 @@ import com.atlauncher.data.minecraft.JavaVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ArchiveUtils;
@@ -51,10 +50,14 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 @Json
-public class Server {
+public class Server{
+    private static final Logger LOG = LogManager.getLogger(Server.class);
+
     public String name;
     public String pack;
     public Integer packId;
@@ -115,7 +118,7 @@ public class Server {
             serverScript += ".sh";
         }
 
-        LogManager.info("Starting server " + name);
+        LOG.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 
         String javaPath = null;
@@ -125,7 +128,7 @@ public class Server {
 
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
+                LOG.debug(String.format("Using Java runtime %s (major version %d) at path %s",
                         javaVersion.component, javaVersion.majorVersion, javaPath));
             }
         }
@@ -203,7 +206,7 @@ public class Server {
                             StandardOpenOption.TRUNCATE_EXISTING);
                     tempLaunchFile.toFile().setExecutable(true);
 
-                    LogManager.info(String.format("Running \"%s\" from \".launcherrun.sh\"",
+                    LOG.info(String.format("Running \"%s\" from \".launcherrun.sh\"",
                             String.join(" ", launchScript)));
 
                     launchCommand = "./.launcherrun.sh";
@@ -215,7 +218,7 @@ public class Server {
                 arguments.add(launchCommand);
             }
 
-            LogManager.info("Launching server with the following arguments: " + arguments.toString());
+            LOG.info("Launching server with the following arguments: {}", arguments);
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(getRoot().toFile());
             processBuilder.command(arguments);
@@ -231,7 +234,7 @@ public class Server {
                 System.exit(0);
             }
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to launch server", e);
+            LOG.error("Failed to launch server", e);
         }
     }
 
@@ -254,7 +257,7 @@ public class Server {
 
         if (progressDialog.getReturnValue()) {
             App.TOASTER.pop(GetText.tr("Backup is complete"));
-            LogManager.info(String.format("Backup complete and stored at %s", backupZip.toString()));
+            LOG.info("Backup complete and stored at {}", backupZip);
         } else {
             App.TOASTER.popError(GetText.tr("Error making backup"));
         }
@@ -320,7 +323,7 @@ public class Server {
                 Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
                 return new ImageIcon(dimg);
             } catch (IOException e) {
-                LogManager.logStackTrace("Error creating scaled image from the custom image of server " + this.name, e);
+                LOG.error("Error creating scaled image from the custom image of server " + this.name, e);
             }
         }
 
@@ -338,7 +341,7 @@ public class Server {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("server.json").toFile())) {
             Gsons.MINECRAFT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
     }
 }

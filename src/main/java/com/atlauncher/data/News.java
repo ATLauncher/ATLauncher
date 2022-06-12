@@ -23,14 +23,17 @@ import java.text.SimpleDateFormat;
 
 import com.atlauncher.App;
 import com.atlauncher.annot.Json;
-import com.atlauncher.managers.LogManager;
 import com.google.gson.annotations.SerializedName;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * News class contains a single news article.
  */
 @Json
 public class News {
+    private static final Logger LOG = LogManager.getLogger(News.class);
+
     /**
      * The title of this news article.
      */
@@ -54,7 +57,7 @@ public class News {
         try {
             return formatter.format(iso8601Format.parse(this.createdAt));
         } catch (ParseException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
             return null;
         }
     }

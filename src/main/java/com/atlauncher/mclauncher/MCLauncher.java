@@ -19,7 +19,6 @@ package com.atlauncher.mclauncher;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,7 +40,6 @@ import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.mclauncher.legacy.LegacyMCLauncher;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
@@ -51,8 +49,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MCLauncher {
+    private static final Logger LOG = LogManager.getLogger(MCLauncher.class);
+
     public static final List<String> IGNORED_ARGUMENTS = new ArrayList<String>() {
         {
             // these seem to be tracking/telemetry things
@@ -89,7 +91,7 @@ public class MCLauncher {
 
         logInstanceInformation(instance);
 
-        LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
+        LOG.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
@@ -101,31 +103,31 @@ public class MCLauncher {
     private static void logInstanceInformation(Instance instance) {
         try {
             if (instance.launcher.loaderVersion != null) {
-                LogManager.info(String.format("Loader: %s %s", instance.launcher.loaderVersion.type,
+                LOG.info(String.format("Loader: %s %s", instance.launcher.loaderVersion.type,
                         instance.launcher.loaderVersion.version));
             }
 
             if (instance.ROOT.resolve("mods").toFile().listFiles().length != 0) {
-                LogManager.info("Mods:");
+                LOG.info("Mods:");
                 Files.walk(instance.ROOT.resolve("mods"))
                         .filter(file -> Files.isRegularFile(file)
                                 && (file.toString().endsWith(".jar") || file.toString().endsWith(".zip")))
                         .forEach(file -> {
-                            LogManager.info(
+                            LOG.info(
                                     " - " + file.toString().replace(instance.ROOT.resolve("mods").toString(), ""));
                         });
             }
 
             if (instance.launcher.mods.stream().anyMatch(m -> m.skipped)) {
                 instance.launcher.mods.stream().filter(m -> m.skipped).forEach(m -> {
-                    LogManager.warn(String.format(
+                    LOG.warn(String.format(
                             "Mod %s (%s) was skipped from downloading during instance installation", m.name, m.file));
                 });
             }
 
             if (instance.shouldUseLegacyLaunch() && Optional.ofNullable(instance.launcher.disableLegacyLaunching)
                     .orElse(App.settings.disableLegacyLaunching)) {
-                LogManager.warn(
+                LOG.warn(
                         "Legacy launching disabled. If you have issues with Minecraft, please enable this setting again");
             }
         } catch (IOException ignored) {
@@ -176,7 +178,7 @@ public class MCLauncher {
         String javaPath = instance.getJavaPath();
 
         if (instance.isUsingJavaRuntime()) {
-            LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
+            LOG.debug(String.format("Using Java runtime %s (major version %d) at path %s",
                     instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
         }
 
@@ -216,7 +218,7 @@ public class MCLauncher {
             for (File file : libraryFiles) {
                 if (!file.getName().equalsIgnoreCase("minecraft.jar")
                         && !file.getName().equalsIgnoreCase("modpack.jar")) {
-                    LogManager.info("Added in custom library " + file.getName());
+                    LOG.info("Added in custom library " + file.getName());
 
                     cpb.append(file);
                     cpb.append(File.pathSeparator);
@@ -239,12 +241,9 @@ public class MCLauncher {
             try {
                 pathh = thisFile.getCanonicalPath();
                 pathh = URLDecoder.decode(pathh, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                pathh = System.getProperty("java.class.path");
-                LogManager.logStackTrace(e);
             } catch (IOException e) {
                 pathh = System.getProperty("java.class.path");
-                LogManager.logStackTrace(e);
+                LOG.error("error: ", e);
             }
             cpb.append(pathh);
         }
@@ -326,7 +325,7 @@ public class MCLauncher {
             for (String arg : javaArguments.split(" ")) {
                 if (!arg.isEmpty()) {
                     if (arguments.toString().contains(arg)) {
-                        LogManager.error("Duplicate argument " + arg + " found and not added!");
+                        LOG.error("Duplicate argument " + arg + " found and not added!");
                         continue;
                     }
 
@@ -431,7 +430,7 @@ public class MCLauncher {
             String username) {
         String argsString = arguments.toString();
 
-        if (!LogManager.showDebug) {
+        if (!LOG.isDebugEnabled()) {
             if (App.settings != null) {
                 argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
             }

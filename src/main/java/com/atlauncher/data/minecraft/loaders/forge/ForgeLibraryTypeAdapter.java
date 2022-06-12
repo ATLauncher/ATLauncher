@@ -28,7 +28,6 @@ import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
@@ -41,8 +40,13 @@ import com.google.gson.reflect.TypeToken;
 
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
+    private static final Logger LOG = LogManager.getLogger(ForgeLibraryTypeAdapter.class);
+
     @Override
     public ForgeLibrary deserialize(JsonElement json, Type type, JsonDeserializationContext context)
             throws JsonParseException {
@@ -135,7 +139,7 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                             artifact.sha1 = Hashing.sha1(downloadedLibrary).toString();
                         }
                     } catch (Throwable t) {
-                        LogManager.logStackTrace(t);
+                        LOG.error("error", t);
                     }
                 }
 

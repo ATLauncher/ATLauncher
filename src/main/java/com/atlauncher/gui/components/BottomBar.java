@@ -28,10 +28,14 @@ import javax.swing.UIManager;
 
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.ThemeManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class BottomBar extends JPanel implements ThemeListener {
+public abstract class BottomBar extends JPanel implements ThemeListener{
+    private static final Logger LOG = LogManager.getLogger(BottomBar.class);
+
     private static final long serialVersionUID = -7488195680365431776L;
 
     protected final JButton nodeCraftIcon = new SMButton("/assets/image/social/nodecraft.png",
@@ -63,27 +67,27 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
 
     private void setupSocialButtonListeners() {
         nodeCraftIcon.addActionListener(e -> {
-            LogManager.info("Opening Up Nodecraft");
+            LOG.info("Opening Up Nodecraft");
             OS.openWebBrowser("https://atl.pw/nodecraft-from-launcher");
         });
         discordIcon.addActionListener(e -> {
-            LogManager.info("Opening Up ATLauncher Discord");
+            LOG.info("Opening Up ATLauncher Discord");
             OS.openWebBrowser("https://atl.pw/discord");
         });
-        facebookIcon.addActionListener(e -> {
-            LogManager.info("Opening Up ATLauncher Facebook Page");
+        facebookIcon.addActionListener(e ->{
+            LOG.info("Opening up ATLauncher Facebook Page");
             OS.openWebBrowser("https://atl.pw/facebook");
         });
-        githubIcon.addActionListener(e -> {
-            LogManager.info("Opening Up ATLauncher GitHub Page");
+        githubIcon.addActionListener(e ->{
+            LOG.info("Opening Up ATLauncher GitHub Page");
             OS.openWebBrowser("https://atl.pw/github-launcher-3");
         });
         redditIcon.addActionListener(e -> {
-            LogManager.info("Opening Up ATLauncher Reddit Page");
+            LOG.info("Opening Up ATLauncher Reddit Page");
             OS.openWebBrowser("https://atl.pw/reddit");
         });
         twitterIcon.addActionListener(e -> {
-            LogManager.info("Opening Up ATLauncher Twitter Page");
+            LOG.info("Opening Up ATLauncher Twitter Page");
             OS.openWebBrowser("https://atl.pw/twitter");
         });
     }

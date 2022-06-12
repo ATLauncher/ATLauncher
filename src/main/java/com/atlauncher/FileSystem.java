@@ -25,13 +25,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import com.atlauncher.constants.Constants;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public final class FileSystem {
+public final class FileSystem{
+    private static final Logger LOG = LogManager.getLogger(FileSystem.class);
     private static Path CACHED_USER_DOWNLOADS = null;
+
     public static final Path BASE_DIR = FileSystem.getCoreGracefully();
     public static final Path LOGS = BASE_DIR.resolve("logs");
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
@@ -112,8 +115,7 @@ public final class FileSystem {
             try {
                 return Paths.get(App.settings.customDownloadsPath);
             } catch (Exception e) {
-                LogManager.logStackTrace(
-                        "Problem when reading custom downloads path, defaulting to user downloads folder.", e);
+                LOG.error("Problem when reading custom downloads path, defaulting to user downloads folder.", e);
             }
         }
 
@@ -140,7 +142,7 @@ public final class FileSystem {
                 }
             }
         } catch (Exception e) {
-            LogManager.logStackTrace("Problem when reading in registry", e);
+            LOG.error("Problem when reading in registry", e);
         }
 
         CACHED_USER_DOWNLOADS = Paths.get(System.getProperty("user.home"), "Downloads");
@@ -196,7 +198,7 @@ public final class FileSystem {
                 Files.move(intermediaryPath, to, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            LogManager.logStackTrace("Error renaming directory", e, false);
+            LOG.error("Error renaming directory:", e);//don't send
         }
     }
 

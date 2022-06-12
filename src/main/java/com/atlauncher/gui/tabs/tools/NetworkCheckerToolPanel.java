@@ -34,15 +34,19 @@ import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.Utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener, SettingsListener {
+    private static final Logger LOG = LogManager.getLogger(NetworkCheckerToolPanel.class);
+
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
@@ -224,9 +228,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
                 String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString());
                 if (result.contains(Constants.PASTE_CHECK_URL)) {
-                    LogManager.info("Network Test has finished running, you can view the results at " + result);
+                    LOG.info("Network Test has finished running, you can view the results at {}", result);
                 } else {
-                    LogManager.error("Network Test failed to submit to " + Constants.LAUNCHER_NAME + "!");
+                    LOG.error("Network Test failed to submit to {}!", Constants.LAUNCHER_NAME);
                     dialog.setReturnValue(false);
                 }
 
@@ -236,9 +240,9 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             }));
             dialog.start();
             if (dialog.getReturnValue() == null || !dialog.getReturnValue()) {
-                LogManager.error("Network Test failed to run!");
+                LOG.error("Network Test failed to run!");
             } else {
-                LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");
+                LOG.info("Network Test ran and submitted to {}!", Constants.LAUNCHER_NAME);
 
                 DialogManager.okDialog().setTitle(GetText.tr("Network Checker"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(

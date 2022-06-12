@@ -37,14 +37,17 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
-public class RenameInstanceDialog extends JDialog {
+public class RenameInstanceDialog extends JDialog{
+    private static final Logger LOG = LogManager.getLogger(RenameInstanceDialog.class);
 
     private JTextField instanceName;
 
@@ -127,7 +130,7 @@ public class RenameInstanceDialog extends JDialog {
                 if (instance.rename(instanceName.getText())) {
                     App.launcher.reloadInstancesPanel();
                 } else {
-                    LogManager.error("Unknown Error Occurred While Renaming Instance!");
+                    LOG.error("Unknown Error Occurred While Renaming Instance!");
                     DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
                                     "An error occurred renaming the instance.<br/><br/>Please check the console and try again."))

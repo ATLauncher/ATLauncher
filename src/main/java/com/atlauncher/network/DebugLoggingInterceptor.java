@@ -20,18 +20,21 @@ package com.atlauncher.network;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-import com.atlauncher.managers.LogManager;
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public final class DebugLoggingInterceptor implements Interceptor {
+public final class DebugLoggingInterceptor implements Interceptor{
+    private static final Logger LOG = LogManager.getLogger(DebugLoggingInterceptor.class);
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        LogManager.debug(String.format("Sending request %s", request.url()), 3);
+        LOG.debug("Sending request {}", request.url());
 
         String debugLogMessage = request.toString();
         if (request.header("Authorization") != null) {
@@ -39,7 +42,8 @@ public final class DebugLoggingInterceptor implements Interceptor {
         } else if (request.header("x-api-key") != null) {
             debugLogMessage = debugLogMessage.replace(request.header("x-api-key"), "REDACTED");
         }
-        LogManager.debug(debugLogMessage, 5);
+
+        LOG.debug(debugLogMessage);
 
         long t1 = System.nanoTime();
         Response response = chain.proceed(request);
@@ -47,15 +51,14 @@ public final class DebugLoggingInterceptor implements Interceptor {
 
         if (response.cacheResponse() != null && (response.networkResponse() == null
                 || response.networkResponse().code() == HttpURLConnection.HTTP_NOT_MODIFIED)) {
-            LogManager.debug(String.format("Received cached response code %d for %s in %.1fms", response.code(),
+            LOG.debug(String.format("Received cached response code %d for %s in %.1fms", response.code(),
                     response.request().url(), (t2 - t1) / 1e6d), 3);
         } else {
-            LogManager.debug(String.format("Received response code %d for %s in %.1fms", response.code(),
+            LOG.debug(String.format("Received response code %d for %s in %.1fms", response.code(),
                     response.request().url(), (t2 - t1) / 1e6d), 3);
         }
 
-        LogManager.debug(response.toString(), 5);
-
+        LOG.debug("{}", response);
         return response;
     }
 }

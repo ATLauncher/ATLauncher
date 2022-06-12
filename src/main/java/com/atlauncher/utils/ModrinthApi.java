@@ -17,40 +17,34 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.Gsons;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.modrinth.*;
+import com.atlauncher.network.Download;
+import com.atlauncher.network.DownloadException;
+import com.google.gson.reflect.TypeToken;
+import okhttp3.CacheControl;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.atlauncher.Gsons;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.modrinth.ModrinthCategory;
-import com.atlauncher.data.modrinth.ModrinthProject;
-import com.atlauncher.data.modrinth.ModrinthProjectType;
-import com.atlauncher.data.modrinth.ModrinthSearchResult;
-import com.atlauncher.data.modrinth.ModrinthVersion;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
-import com.atlauncher.network.DownloadException;
-import com.google.gson.reflect.TypeToken;
-
-import okhttp3.CacheControl;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 /**
  * Various utility methods for interacting with the Modrinth API.
  */
 public class ModrinthApi {
+    private static final Logger LOG = LogManager.getLogger(ModrinthApi.class);
+
     public static ModrinthSearchResult searchModrinth(List<String> gameVersions, String query, int page, String index,
             List<String> categories, ModrinthProjectType projectType) {
         try {
@@ -84,7 +78,7 @@ public class ModrinthApi {
             return Download.build().cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                     .setUrl(url).asClass(ModrinthSearchResult.class);
         } catch (UnsupportedEncodingException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         return null;
@@ -201,7 +195,7 @@ public class ModrinthApi {
         } catch (DownloadException e) {
             // 404 is fine from this endpoint, so anything else, log it
             if (e.statusCode != 404) {
-                LogManager.logStackTrace(e);
+                LOG.error(e);
             }
 
             return null;
@@ -260,7 +254,7 @@ public class ModrinthApi {
                 return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
             }
         } catch (Throwable t) {
-            LogManager.logStackTrace("Error trying to get Modrinth projects as map", t);
+            LOG.error("Error trying to get Modrinth projects as map", t);
         }
 
         return null;

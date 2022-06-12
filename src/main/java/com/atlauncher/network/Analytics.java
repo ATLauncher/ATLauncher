@@ -23,14 +23,18 @@ import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
 import com.brsanthu.googleanalytics.GoogleAnalyticsConfig;
 import com.brsanthu.googleanalytics.request.DefaultRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Analytics implements SettingsListener {
+    private static final Logger LOG = LogManager.getLogger(Analytics.class);
+
     private static GoogleAnalytics ga;
 
     public static void startSession() {
@@ -106,7 +110,7 @@ public final class Analytics implements SettingsListener {
             ga.screenView().sessionControl("end").send();
             ga.close();
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
     }
 

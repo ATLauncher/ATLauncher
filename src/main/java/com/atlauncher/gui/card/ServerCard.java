@@ -45,16 +45,20 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
+    private static final Logger LOG = LogManager.getLogger(ServerCard.class);
+
     private final Server server;
     private final ImagePanel image;
     private final JButton launchButton = new JButton(GetText.tr("Launch"));
@@ -182,7 +186,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                                     image.setImage(server.getImage().getImage());
                                     server.save();
                                 } catch (IOException ex) {
-                                    LogManager.logStackTrace("Failed to set server image", ex);
+                                    LOG.error("Failed to set server image", ex);
                                 }
                             }
                         }

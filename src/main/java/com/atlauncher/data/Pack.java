@@ -35,11 +35,14 @@ import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Pack {
+    private static final Logger LOG = LogManager.getLogger(Pack.class);
+
     public int id;
     public int externalId;
     public boolean vanillaInstance = false;
@@ -316,7 +319,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
         return "Install Not Added!";
     }
@@ -329,7 +332,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
         return "Install Not Added!";
     }
@@ -342,7 +345,7 @@ public class Pack {
         try {
             return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
         return "Install Not Added!";
     }

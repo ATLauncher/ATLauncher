@@ -26,8 +26,13 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.utils.CurseForgeApi;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CurseForgeUpdateManager {
+    private static final Logger LOG = LogManager.getLogger(CurseForgeUpdateManager.class);
+
     public static CurseForgeFile getLatestVersion(Instance instance) {
         return Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance);
     }
@@ -38,7 +43,7 @@ public class CurseForgeUpdateManager {
         }
 
         PerformanceManager.start();
-        LogManager.info("Checking for updates to CurseForge instances");
+        LOG.info("Checking for updates to CurseForge instances");
 
         int[] projectIdsFound = Data.INSTANCES.parallelStream()
                 .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId())

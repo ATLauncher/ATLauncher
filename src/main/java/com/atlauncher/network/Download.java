@@ -31,7 +31,6 @@ import java.util.Map;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
@@ -46,9 +45,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO: fuck this file, it's shit, I hate it
 public final class Download {
+    private static Logger LOG = LogManager.getLogger(Download.class);
+
     public static final int MAX_ATTEMPTS = 3;
 
     // pre request
@@ -88,9 +92,14 @@ public final class Download {
             }
 
             return this.response.isSuccessful();
+        } catch(DownloadException exc){
+            LOG.error("error fetching download from {}", this.url, exc);
+            if(exc.hasResponse()){
+                LOG.error("response: {}", exc.getResponse());
+            }
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
-
+            LOG.error("error fetching download from {}", this.url, e);
+        } finally{
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
@@ -106,8 +115,7 @@ public final class Download {
 
             return this.response.body().string();
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
-
+            LOG.error("error", e);
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
@@ -137,8 +145,7 @@ public final class Download {
         try {
             return asClassWithThrow(tClass, gson);
         } catch (IOException e) {
-            LogManager.logStackTrace(e);
-
+            LOG.error("error", e);
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
@@ -175,9 +182,8 @@ public final class Download {
     public <T> T asType(Type tClass, Gson gson) {
         try {
             return asTypeWithThrow(tClass, gson);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-
+        } catch (IOException e){
+            LOG.error("error", e);
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
@@ -324,8 +330,7 @@ public final class Download {
             }
             return this.response.code();
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
-
+            LOG.error("error", e);
             if (this.response != null) {
                 this.response.close();
                 this.response = null;
@@ -373,7 +378,7 @@ public final class Download {
             try {
                 this.hash = this.getHashFromURL();
             } catch (Exception e) {
-                LogManager.logStackTrace(e);
+                LOG.error("error", e);
                 this.hash = "-";
             }
         }
@@ -396,7 +401,7 @@ public final class Download {
                 }
             }
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
             return -1;
         }
 
@@ -420,7 +425,7 @@ public final class Download {
                         return false;
                     }
                 } catch (IOException e) {
-                    LogManager.error("Error getting murmur hash");
+                    LOG.error("Error getting murmur hash", e);
                     return false;
                 }
             } else if (this.md5() && Hashing.md5(this.to).equals(Hashing.toHashCode(this.getHash()))) {
@@ -451,8 +456,8 @@ public final class Download {
         try (FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
                 ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch (Exception e) {
-            LogManager.logStackTrace("Failed to download file " + this.to, e, false);
+        } catch (Exception e){
+            LOG.error("Failed to download file {}", this.to, e);//don't send
         }
     }
 
@@ -462,7 +467,7 @@ public final class Download {
                 try {
                     return Hashing.murmur(this.to) == this.fingerprint;
                 } catch (IOException e) {
-                    LogManager.error("Error getting murmur hash");
+                    LOG.error("Error getting murmur hash", e);
                     return false;
                 }
             } else if (this.md5()) {
@@ -492,8 +497,7 @@ public final class Download {
             try {
                 this.execute();
             } catch (IOException e) {
-                LogManager.logStackTrace(e);
-
+                LOG.error("error", e);
                 if (this.response != null) {
                     this.response.close();
                     this.response = null;
@@ -516,14 +520,13 @@ public final class Download {
         // if hash doesn't match but we're ignoring failures, then pass it if not 0 in
         // size and log a warning
         if (this.ignoreFailures && this.to.toFile().length() != 0) {
-            LogManager
-                    .warn(String.format("%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
+            LOG.warn(String.format("%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
                             this.to.getFileName(), this.to.toFile().length()));
             return true;
         }
 
         // if the hash doesn't match, attempt again
-        LogManager.debug("Failed downloading " + this.url + " on attempt " + attempt);
+        LOG.debug("Failed downloading " + this.url + " on attempt " + attempt);
         return this.downloadRec(attempt + 1);
     }
 
@@ -624,26 +627,27 @@ public final class Download {
 
             if (!downloaded) {
                 if (this.response != null && this.response.header("content-type").contains("text/html")) {
-                    LogManager.error(
-                            "The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
-
-                    LogManager.error(new String(Files.readAllBytes(this.to)));
+                    LOG.error("The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
+                    LOG.error(new String(Files.readAllBytes(this.to)));
                 }
 
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
-                    LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got "
-                            + Hashing.murmur(this.to) + " (with size of "
-                            + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                    LOG.error("Error downloading {} from {}. Expected fingerprint of {} (with size of {}) but got {} (with size of {}) instead. Copied to FailedDownloads folder & cancelling install!",
+                        this.to.getFileName(),
+                        this.url,
+                        this.fingerprint,
+                        this.size,
+                        Hashing.murmur(this.to),
+                        (Files.exists(this.to) ? Files.size(this.to) : 0));
                 } else {
-                    LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " hash of " + expected.toString() + " (with size of " + this.size + ") but got "
-                            + (this.md5() ? Hashing.md5(this.to)
-                                    : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to)))
-                            + " (with size of " + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                    LOG.error("Error downloading {} from {}. Expected hash of {} (with size of {}) but got {} (with size of {}) instead. Copied to FailedDownloads folder & cancelling install!",
+                        this.to.getFileName(),
+                        this.url,
+                        expected,
+                        this.size,
+                        (this.md5() ? Hashing.md5(this.to) : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))),
+                        (Files.exists(this.to) ? Files.size(this.to) : 0));
                 }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);

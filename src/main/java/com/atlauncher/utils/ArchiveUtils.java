@@ -29,26 +29,28 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import javax.annotation.Nullable;
-
-import com.atlauncher.managers.LogManager;
-
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
 
+import javax.annotation.Nullable;
+
 public class ArchiveUtils {
+    private static final Logger LOG = LogManager.getLogger(ArchiveUtils.class);
+
     public static boolean archiveContainsFile(Path archivePath, String file) {
         try {
             return ZipUtil.containsEntry(archivePath.toFile(), file);
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
-            LogManager.error("Failed to check if archive contains file in " + archivePath.toAbsolutePath());
+            LOG.error("Failed to check if archive contains file in {}", archivePath.toAbsolutePath());
         }
 
         boolean found = false;
@@ -67,7 +69,7 @@ public class ArchiveUtils {
                 }
             }
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
         }
 
         return found;
@@ -90,7 +92,7 @@ public class ArchiveUtils {
                 is = Files.newInputStream(archivePath);
             }
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error(e);
         }
 
         return is;
@@ -101,8 +103,7 @@ public class ArchiveUtils {
             return new String(ZipUtil.unpackEntry(createStream(archivePath), file));
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
-            LogManager.debug(
-                    "Failed to get contents of file in " + archivePath.toAbsolutePath() + ". Trying fallback method");
+            LOG.debug("Failed to get contents of file in " + archivePath.toAbsolutePath() + ". Trying fallback method");
         }
 
         String contents = null;
@@ -123,10 +124,10 @@ public class ArchiveUtils {
                     }
                 }
             } catch (Exception e) {
-                LogManager.logStackTrace(e);
+                LOG.error(e);
             }
-        } catch (Exception e) {
-            LogManager.logStackTrace(e);
+        } catch (Exception e){
+            LOG.error("error", e);
         }
 
         return contents;
@@ -142,7 +143,7 @@ public class ArchiveUtils {
             return true;
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
-            LogManager.error("Failed to extract " + archivePath.toAbsolutePath());
+            LOG.error("Failed to extract {}", archivePath.toAbsolutePath());
         }
 
         try (InputStream is = Files.newInputStream(archivePath);
@@ -164,9 +165,7 @@ public class ArchiveUtils {
                     outputPath = extractToPath.resolve(fileName);
                 } catch (InvalidPathException e) {
                     String newFilename = fileName.replaceAll("[:*\\?\"<>|]", "");
-                    LogManager
-                            .warn(String.format("InvalidPath when extracting file with name of '%s'. Renaming to '%s'",
-                                    fileName, newFilename));
+                    LOG.warn("Invalid path when extracting file with name of '{}'. Renaming to '{}'", fileName, newFilename);
                     outputPath = extractToPath.resolve(newFilename);
                 }
 
@@ -186,7 +185,7 @@ public class ArchiveUtils {
                 }
             }
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
             return false;
         }
 
@@ -203,8 +202,9 @@ public class ArchiveUtils {
             return true;
         } catch (Throwable t) {
             // allow this to fail as we can fallback to Apache Commons library
-            LogManager.error("Failed to create zip " + archivePath.toAbsolutePath() + " from "
-                    + pathToCompress.toAbsolutePath());
+            LOG.error("Failed to create zip {} from {}",
+                archivePath.toAbsolutePath(),
+                pathToCompress.toAbsolutePath());
         }
 
         try (OutputStream os = Files.newOutputStream(archivePath);
@@ -232,7 +232,7 @@ public class ArchiveUtils {
                         aos.closeArchiveEntry();
 
                     } catch (IOException e) {
-                        LogManager.logStackTrace(String.format("Unable to add %s to zip", file), e);
+                        LOG.error(String.format("Unable to add %s to zip", file), e);
                     }
 
                     return FileVisitResult.CONTINUE;
@@ -240,13 +240,13 @@ public class ArchiveUtils {
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException e) {
-                    LogManager.logStackTrace(String.format("Unable to add %s to zip", file), e);
+                    LOG.error(String.format("Unable to add %s to zip", file), e);
                     return FileVisitResult.CONTINUE;
                 }
 
             });
         } catch (Exception e) {
-            LogManager.logStackTrace(e);
+            LOG.error("error", e);
             return false;
         }
 

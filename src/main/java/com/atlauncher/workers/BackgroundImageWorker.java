@@ -53,7 +53,8 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
         if (!Files.exists(path)) {
             try {
                 download.downloadFile();
-            } catch (DownloadException ignored) {
+            } catch (DownloadException ignored){
+                //fallthrough
             }
         }
 
