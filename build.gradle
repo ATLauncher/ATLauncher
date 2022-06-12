@@ -17,8 +17,8 @@ plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.adarshr.test-logger' version '3.2.0'
     id 'edu.sc.seis.macAppBundle' version '2.3.0'
-    id 'edu.sc.seis.launch4j' version '2.5.2'
-    id 'de.undercouch.download' version '5.0.2'
+    id 'edu.sc.seis.launch4j' version '2.5.3'
+    id 'de.undercouch.download' version '5.1.0'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'com.github.ben-manes.versions' version '0.42.0'
 }
@@ -44,8 +44,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.java.dev.jna:jna:5.10.0'
-    implementation 'net.java.dev.jna:jna-platform:5.10.0'
+    implementation 'net.java.dev.jna:jna:5.11.0'
+    implementation 'net.java.dev.jna:jna-platform:5.11.0'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'org.tukaani:xz:1.9'
@@ -64,19 +64,19 @@ dependencies {
     implementation 'com.sangupta:murmur:1.0.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.apache.commons:commons-text:1.9'
-    implementation 'com.formdev:flatlaf:2.1'
-    implementation 'com.formdev:flatlaf-extras:2.1'
-    implementation 'com.github.oshi:oshi-core:6.1.5'
+    implementation 'com.formdev:flatlaf:2.3'
+    implementation 'com.formdev:flatlaf-extras:2.3'
+    implementation 'com.github.oshi:oshi-core:6.1.6'
     implementation 'net.freeutils:jlhttp:2.6'
     implementation 'joda-time:joda-time:2.10.14'
     implementation 'org.apache.commons:commons-compress:1.21'
-    implementation 'org.commonmark:commonmark:0.18.2'
+    implementation 'org.commonmark:commonmark:0.19.0'
     implementation 'com.github.hypfvieh:dbus-java:3.3.1'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.assertj:assertj-swing-junit:3.17.1'
-    testImplementation 'org.mock-server:mockserver-netty:5.13.0'
+    testImplementation 'org.mock-server:mockserver-netty:5.13.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
 }
@@ -275,7 +275,7 @@ project.afterEvaluate {
     }
 }
 
-def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC'].any { it -> version.toUpperCase().contains(it) }}
+def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC', '-M'].any { it -> version.toUpperCase().contains(it) }}
 tasks.named("dependencyUpdates").configure {
     rejectVersionIf {
         shouldIgnoreUpdate(it.candidate.version)
