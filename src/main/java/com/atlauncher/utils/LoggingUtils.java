@@ -17,10 +17,21 @@
  */
 package com.atlauncher.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class LoggingUtils {
+    private static final Pattern LOG4J_THREAD_REGEX = Pattern.compile("<log4j:Event.*?thread=\"(.*?)\".*?>");
+    private static final Pattern LOG4J_LEVEL_REGEX = Pattern.compile("<log4j:Event.*?level=\"(.*?)\".*?>");
+    private static final Pattern LOG4J_MESSAGE_REGEX = Pattern
+            .compile("<log4j:Message><!\\[CDATA\\[(.*?)\\]\\]></log4j:Message>");
+
+    private static final Logger MINECRAFT_LOG = LogManager.getLogger("Minecraft");
+
     private LoggingUtils() {
     }
 
@@ -28,8 +39,6 @@ public final class LoggingUtils {
         System.setOut(SystemOutInterceptor.asDebug(System.out));
         System.setErr(SystemOutInterceptor.asError(System.err));
     }
-
-    private static final Logger MINECRAFT_LOG = LogManager.getLogger("Minecraft");
 
     public static void minecraft(String line) {
         if (line.contains("[INFO] [STDERR]")) {
@@ -106,5 +115,37 @@ public final class LoggingUtils {
         } else {
             MINECRAFT_LOG.info(line);
         }
+    }
+
+    public static void minecraftLog4j(String string) {
+        String thread = "";
+        String message = "";
+        String levelString = "";
+        Level level = Level.INFO;
+
+        Matcher threadMatcher = LOG4J_THREAD_REGEX.matcher(string);
+        if (threadMatcher.find()) {
+            thread = threadMatcher.group(1);
+        }
+
+        Matcher levelMatcher = LOG4J_LEVEL_REGEX.matcher(string);
+        if (levelMatcher.find()) {
+            levelString = levelMatcher.group(1);
+
+            if (levelString.equalsIgnoreCase("INFO")) {
+                level = Level.INFO;
+            } else if (levelString.equalsIgnoreCase("ERROR") || levelString.equalsIgnoreCase("SEVERE")) {
+                level = Level.ERROR;
+            } else if (levelString.equalsIgnoreCase("WARN")) {
+                level = Level.WARN;
+            }
+        }
+
+        Matcher messageMatcher = LOG4J_MESSAGE_REGEX.matcher(string);
+        if (messageMatcher.find()) {
+            message = messageMatcher.group(1);
+        }
+
+        MINECRAFT_LOG.log(level, String.format("[%s/%s] %s", thread, levelString, message));
     }
 }

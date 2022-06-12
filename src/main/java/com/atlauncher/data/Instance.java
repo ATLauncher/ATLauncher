@@ -1046,7 +1046,7 @@ public class Instance extends MinecraftVersion {
 
                             // end of the xml object so parse it
                             if (line.contains("</log4j:Event>")) {
-                                LOG.error(MarkerManager.getMarker("minecraft"), sb);
+                                LoggingUtils.minecraftLog4j(sb.toString());
                                 sb.setLength(0);
                             }
 
