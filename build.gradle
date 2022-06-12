@@ -34,7 +34,6 @@ version = rootProject.file('src/main/resources/version').text.trim().replace('.B
 repositories {
     mavenCentral()
     gradlePluginPortal()
-    jcenter()
     maven {
         url 'https://libraries.minecraft.net'
     }
