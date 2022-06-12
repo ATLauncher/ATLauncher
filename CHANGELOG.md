@@ -10,3 +10,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Switch to using Log4j2 for application logging [#533] (thanks @s0cks)
+- Add in some missing documentation [#569] (thanks @Doomsdayrs)
