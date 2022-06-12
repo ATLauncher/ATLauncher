@@ -22,6 +22,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import org.jetbrains.annotations.NotNull;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
@@ -29,47 +30,116 @@ import java.awt.*;
 
 /**
  * 14 / 04 / 2022
- *
+ * <p>
  * The about tab displays to the user some basic information in regard to
  * the current state of ATLauncher, and some other basic diagnostic information
  * to let users more easily report errors.
  */
 public class AboutTab extends JPanel implements Tab, RelocalizationListener {
+    /**
+     * Info of the current instance of ATLauncher
+     */
     private final JPanel info;
+
+    /**
+     * Contained in [info], Displays to user various information on ATLauncher
+     */
     private final JTextPane textInfo;
 
-
+    /**
+     * Copies [textInfo] to the users clipboard
+     */
     private final JButton copyButton;
 
+    private final JScrollPane authors;
+
+    /**
+     * Optimization method to ensure about tab opens with information as fast
+     * as possible.
+     *
+     * @return information on this launcher
+     */
+    private static @NotNull String getInformation() {
+        if (_information == null)
+            _information = Constants.LAUNCHER_NAME + "\n" +
+                "Version:\t" + Constants.VERSION.toString() + "\n" +
+                "OS:\t" + System.getProperty("os.name") + "\n" +
+                "Java:\t" +
+                String.format("Java %d (%s)",
+                    Java.getLauncherJavaVersionNumber(),
+                    Java.getLauncherJavaVersion()
+                );
+
+        return _information;
+    }
+
     public AboutTab() {
-        setLayout(new BorderLayout());
+        GridBagLayout layout = new GridBagLayout();
+        setLayout(layout);
 
-        textInfo = new JTextPane();
-        StringBuilder sb = new StringBuilder();
-        sb.append(Constants.LAUNCHER_NAME);
-        sb.append("\n");
-        sb.append("Version:\t").append(Constants.VERSION.toString());
-        sb.append("\n");
-        sb.append("OS:\t").append(System.getProperty("os.name"));
-        sb.append("\n");
-        sb.append("Java:\t");
-        sb.append(String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
-        textInfo.setText(sb.toString());
-        textInfo.setEditable(false);
+        // Top info panel
+        {
+            info = new JPanel();
+            info.setLayout(new BorderLayout());
 
-        info = new JPanel();
-        info.setLayout(new BorderLayout());
-        info.add(textInfo, BorderLayout.WEST);
-
-        copyButton = new JButton();
-        copyButton.setText(GetText.tr("Copy"));
-        copyButton.addActionListener(e -> {
-                OS.copyToClipboard(sb.toString());
+            // Add text info
+            {
+                textInfo = new JTextPane();
+                textInfo.setText(getInformation());
+                textInfo.setEditable(false);
+                info.add(textInfo, BorderLayout.WEST);
             }
-        );
-        info.add(copyButton, BorderLayout.EAST);
 
-        this.add(info, BorderLayout.NORTH);
+            // Add copy button
+            {
+                copyButton = new JButton();
+                copyButton.setText(GetText.tr("Copy"));
+                copyButton.addActionListener(e -> {
+                    OS.copyToClipboard(getInformation());
+                });
+                info.add(copyButton, BorderLayout.EAST);
+            }
+
+            // Add to layout
+            {
+                GridBagConstraints constraints = new GridBagConstraints();
+                constraints.gridx = 0;
+                constraints.gridy = 0;
+                constraints.fill = GridBagConstraints.HORIZONTAL;
+                this.add(info, constraints);
+            }
+        }
+
+        // Contributors panel
+        // TODO Add label "Authors" or something
+        {
+            // Create list
+            JPanel authorsList = new JPanel();
+            authorsList.setLayout(new FlowLayout());
+
+            // Populate list
+            for (String author : AUTHORS_ARRAY) {
+                JTextPane pane = new JTextPane();
+                pane.setText(author);
+                authorsList.add(pane);
+            }
+
+            // Create scroll panel
+            authors = new JScrollPane(authorsList);
+            authors.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            Dimension size = authorsList.getMinimumSize();
+            size.height = 40; // TODO Dynamic height
+            authors.setMinimumSize(size);
+
+            // Add to layout
+            {
+                GridBagConstraints constraints = new GridBagConstraints();
+                constraints.gridx = 0;
+                constraints.gridy = 1;
+                constraints.fill = GridBagConstraints.HORIZONTAL;
+                this.add(authors, constraints);
+            }
+        }
 
         RelocalizationManager.addListener(this);
     }
@@ -88,4 +158,57 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
     public String getAnalyticsScreenViewName() {
         return "About";
     }
+
+
+    private static String _information = null;
+
+    /**
+     * Produced via "git shortlog -s -n --all --no-merges" then some edits
+     * <p>
+     * Use the following pattern to retrieve icons
+     * "https://avatars.githubusercontent.com/USERNAME"
+     */
+    @SuppressWarnings("JavadocLinkAsPlainText")
+    private static final String[] AUTHORS_ARRAY = {
+        "Ryan Dowling",
+        "RyanTheAllmighty",
+        "atlauncher-bot",
+        "Asyncronous",
+        "PORTB",
+        "ATLauncher Bot",
+        "doomsdayrs",
+        "JakeJMattson",
+        "Jamie (Lexteam)",
+        "Ryan",
+        "Jamie Mansfield",
+        "flaw600",
+        "s0cks",
+        "Leah",
+        "Alan Jenkins",
+        "dgelessus",
+        "Kihira",
+        "Harald Krämer",
+        "James Ross",
+        "iarspider",
+        "xz-dev",
+        "Mysticpasta1",
+        "Torsten Walluhn",
+        "modmuss50",
+        "Andrew Thurman",
+        "Cassandra Caina",
+        "Jamie (Lexware)",
+        "Jowsey",
+        "Shegorath123",
+        "notfood",
+        "Dallas Epperson",
+        "Emma Waffle",
+        "Hossam Mohsen",
+        "Jamie",
+        "Laceh",
+        "Sasha Sorokin",
+        "TecCheck",
+        "Trejkaz",
+        "mac",
+    };
+
 }
