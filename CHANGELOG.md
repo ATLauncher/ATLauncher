@@ -14,3 +14,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)
 - Add in some missing documentation [#569] (thanks @Doomsdayrs)
 - Update dependencies
+- Update to Java 17 for the Windows installer [#601]
