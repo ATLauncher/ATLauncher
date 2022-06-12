@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Old launcher logs not being deleted after 14 days
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)

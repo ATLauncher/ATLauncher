@@ -22,8 +22,8 @@
                 <OnStartupTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="logs/old/" maxDepth="0">
-                    <IfFileName glob="*.log.gz" />
+                <Delete basePath="logs/old/" maxDepth="1">
+                    <IfFileName glob="*.log" />
                     <IfLastModified age="14d" />
                 </Delete>
             </DefaultRolloverStrategy>
