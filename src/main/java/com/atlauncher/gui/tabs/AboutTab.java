@@ -29,6 +29,10 @@ import java.awt.*;
 
 /**
  * 14 / 04 / 2022
+ *
+ * The about tab displays to the user some basic information in regard to
+ * the current state of ATLauncher, and some other basic diagnostic information
+ * to let users more easily report errors.
  */
 public class AboutTab extends JPanel implements Tab, RelocalizationListener {
     private final JPanel info;
