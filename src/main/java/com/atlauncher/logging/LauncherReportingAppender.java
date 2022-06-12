@@ -42,12 +42,10 @@ public final class LauncherReportingAppender extends AbstractAppender {
     @Override
     public void append(LogEvent event) {
         final Throwable th = event.getThrown();
-        if (!(th instanceof LocalException)) { // don't report LocalExceptions
-            // fallthrough
+        if (th != null && !(th instanceof LocalException)) { // don't report LocalExceptions
+            Analytics.sendException(th.getMessage());
+            ErrorReporting.captureException(th);
         }
-
-        Analytics.sendException(th.getMessage());
-        ErrorReporting.captureException(th);
     }
 
     @PluginFactory
