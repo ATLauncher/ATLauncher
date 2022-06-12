@@ -17,6 +17,13 @@
  */
 package com.atlauncher.evnt.listener;
 
+/**
+ * Allow a class to listen in to changes to the selected language.
+ */
 public interface RelocalizationListener {
+
+    /**
+     * Called when UI must be changed to a new language
+     */
     void onRelocalization();
 }
