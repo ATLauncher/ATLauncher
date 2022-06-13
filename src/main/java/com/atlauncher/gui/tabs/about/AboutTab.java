@@ -58,8 +58,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
     public AboutTab() {
         viewModel = new AboutTabViewModel();
-        GridBagLayout layout = new GridBagLayout();
-        setLayout(layout);
+        setLayout(new BorderLayout());
 
         // Top info panel
         {
@@ -86,11 +85,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
             // Add to layout
             {
-                GridBagConstraints constraints = new GridBagConstraints();
-                constraints.gridx = 0;
-                constraints.gridy = 0;
-                constraints.fill = GridBagConstraints.HORIZONTAL;
-                this.add(info, constraints);
+                this.add(info, BorderLayout.NORTH);
             }
         }
 
@@ -104,6 +99,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             // Populate list
             for (String author : viewModel.getAuthors()) {
                 JTextPane pane = new JTextPane();
+                pane.setEditable(false);
                 pane.setText(author);
                 authorsList.add(pane);
             }
@@ -111,17 +107,13 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             // Create scroll panel
             authors = new JScrollPane(authorsList);
             authors.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            Dimension size = authorsList.getMinimumSize();
-            size.height = 40; // TODO Dynamic height
-            authors.setMinimumSize(size);
 
             // Add to layout
             {
-                GridBagConstraints constraints = new GridBagConstraints();
-                constraints.gridx = 0;
-                constraints.gridy = 1;
-                constraints.fill = GridBagConstraints.HORIZONTAL;
-                this.add(authors, constraints);
+                JPanel panel = new JPanel();
+                panel.setLayout(new BorderLayout());
+                panel.add(authors, BorderLayout.NORTH);
+                this.add(panel, BorderLayout.CENTER);
             }
         }
 
