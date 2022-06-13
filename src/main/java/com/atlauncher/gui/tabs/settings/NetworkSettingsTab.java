@@ -21,7 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.Network;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -283,7 +283,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.concurrentConnectionsLabel.setText(GetText.tr("Concurrent Connections") + ":");
         this.concurrentConnectionsLabel.setToolTipText("<html>"
             + GetText.tr("This determines how many connections will be made when downloading files.") + "</html>");

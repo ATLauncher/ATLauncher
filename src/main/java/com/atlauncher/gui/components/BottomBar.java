@@ -20,7 +20,7 @@ package com.atlauncher.gui.components;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
-import com.atlauncher.events.ThemeEvent;
+import com.atlauncher.events.theme.ThemeChangedEvent;
 import com.atlauncher.utils.OS;
 import com.google.common.eventbus.Subscribe;
 import org.apache.logging.log4j.LogManager;
@@ -89,7 +89,7 @@ public abstract class BottomBar extends JPanel {
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event) {
+    public final void onThemeChanged(final ThemeChangedEvent event) {
         this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
     }
 }

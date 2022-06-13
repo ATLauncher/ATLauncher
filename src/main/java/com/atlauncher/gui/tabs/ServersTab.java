@@ -19,7 +19,7 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.managers.ServerManager;
@@ -145,7 +145,7 @@ public class ServersTab extends JPanel implements Tab {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));

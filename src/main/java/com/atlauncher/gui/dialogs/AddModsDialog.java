@@ -32,7 +32,7 @@ import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.events.AddFabricApiEvent;
 import com.atlauncher.events.AddModEvent;
 import com.atlauncher.events.AddQuiltLibrariesEvent;
-import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.AnalyticsCategories;
 import com.atlauncher.events.NavigationEvent;
 import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.events.SearchEvent;
@@ -207,7 +207,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                AppEventBus.post(AddFabricApiEvent.forCurseForge());
+                AppEventBus.post(AddFabricApiEvent.forCurseForgeMod());
                 new CurseForgeProjectFileSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -242,7 +242,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                AppEventBus.post(AddFabricApiEvent.forModrinth());
+                AppEventBus.post(AddFabricApiEvent.forModrinthMod());
                 new ModrinthVersionSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -281,7 +281,7 @@ public final class AddModsDialog extends JDialog {
                 return;
             }
 
-            AppEventBus.post(AddQuiltLibrariesEvent.forModrinth());
+            AppEventBus.post(AddQuiltLibrariesEvent.forModrinthMod());
             new ModrinthVersionSelectorDialog(this, mod, instance);
 
             if (instance.launcher.mods.stream().anyMatch(
@@ -418,7 +418,7 @@ public final class AddModsDialog extends JDialog {
             page -= 1;
         }
 
-        AppEventBus.post(NavigationEvent.nextPage(page, "CurseForgeMod"));
+        AppEventBus.post(NavigationEvent.previousPage(page, AnalyticsCategories.CURSE_FORGE_MOD));
         getMods();
     }
 
@@ -427,7 +427,7 @@ public final class AddModsDialog extends JDialog {
             page += 1;
         }
 
-        AppEventBus.post(NavigationEvent.nextPage(page, "CurseForgeMod"));
+        AppEventBus.post(NavigationEvent.nextPage(page, AnalyticsCategories.CURSE_FORGE_MOD));
         getMods();
     }
 
@@ -504,7 +504,7 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void searchForMods() {
-        AppEventBus.post(SearchEvent.forTextField(this.searchField, "CurseForgeMod"));
+        AppEventBus.post(SearchEvent.forCurseForgeMod(this.searchField));
         getMods();
     }
 
@@ -531,7 +531,7 @@ public final class AddModsDialog extends JDialog {
                 CurseForgeProject castMod = (CurseForgeProject) mod;
 
                 contentPanel.add(new CurseForgeProjectCard(castMod, e -> {
-                    AppEventBus.post(AddModEvent.forCurseForge(castMod));
+                    AppEventBus.post(AddModEvent.forCurseForgeMod(castMod));
                     new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
                 }), gbc);
 
@@ -591,7 +591,7 @@ public final class AddModsDialog extends JDialog {
                         return;
                     }
 
-                    AppEventBus.post(AddModEvent.forModrinth(castMod));
+                    AppEventBus.post(AddModEvent.forModrinthMod(castMod));
                     new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
                 }), gbc);
 

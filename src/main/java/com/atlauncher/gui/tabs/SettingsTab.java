@@ -19,9 +19,10 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
-import com.atlauncher.events.LocalizationEvent;
-import com.atlauncher.events.SettingsEvent;
-import com.atlauncher.events.ThemeEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.settings.SettingsEvent;
+import com.atlauncher.events.settings.SettingsSavedEvent;
+import com.atlauncher.events.theme.ThemeChangedEvent;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
@@ -85,17 +86,17 @@ public class SettingsTab extends JPanel implements Tab {
                 backupsSettingsTab.save();
                 commandSettingsTab.save();
                 App.settings.save();
-                AppEventBus.post(new SettingsEvent.SettingsSavedEvent());
+                AppEventBus.post(SettingsSavedEvent.newInstance());
                 if (reloadInstancesPanel) {
                     App.launcher.reloadInstancesPanel();
                 }
                 if (themeChanged) {
-                    //TODO: Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
+                    AppEventBus.postToDefault(ThemeChangedEvent.forCurrentTheme());
                 }
                 if (reloadTheme) {
                     App.loadTheme(App.settings.theme);
                     FlatLaf.updateUILater();
-                    AppEventBus.post(new ThemeEvent.ThemeChangedEvent());
+                    AppEventBus.post(ThemeChangedEvent.forCurrentTheme());//TODO: should this be a duplicate?
                 }
                 App.TOASTER.pop("Settings Saved");
             }
@@ -118,7 +119,7 @@ public class SettingsTab extends JPanel implements Tab {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

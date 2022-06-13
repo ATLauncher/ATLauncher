@@ -19,7 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
-import com.atlauncher.events.AccountEvent;
+import com.atlauncher.events.account.AccountChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.ServersTab;
@@ -219,7 +219,7 @@ public abstract class AbstractAccount implements Serializable {
                     } catch (IOException e) {
                         LOG.error("error updating skin", e);
                     }
-                    AppEventBus.post(new AccountEvent.AccountChangedEvent());
+                    AppEventBus.post(AccountChangedEvent.forAccount(AccountManager.getSelectedAccount()));
                 }
                 dialog.close();
             }));

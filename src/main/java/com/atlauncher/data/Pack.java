@@ -25,6 +25,7 @@ import com.atlauncher.data.json.Version;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.technic.TechnicModpack;
+import com.atlauncher.events.AnalyticsCategory;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
@@ -39,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Pack {
+public class Pack implements AnalyticsCategory {
     private static final Logger LOG = LogManager.getLogger(Pack.class);
 
     public int id;
@@ -347,5 +348,10 @@ public class Pack {
             LOG.error("error", e);
         }
         return "Install Not Added!";
+    }
+
+    @Override
+    public String getAnalyticsCategory() {
+        return "ATLauncherPack";
     }
 }

@@ -26,9 +26,16 @@ import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
-import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.pack.PackAddModsEvent;
+import com.atlauncher.events.pack.PackDeleteEvent;
+import com.atlauncher.events.pack.PackEditModsEvent;
+import com.atlauncher.events.pack.PackExportEvent;
+import com.atlauncher.events.pack.PackSettingsEvent;
+import com.atlauncher.events.pack.PackShareCodeEvent;
+import com.atlauncher.events.pack.PackUpdateEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
@@ -387,16 +394,16 @@ public class InstanceCard extends CollapsiblePanel {
                 return;
             }
 
-            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Update", instance.getAnalyticsCategory());
+            AppEventBus.postToDefault(PackUpdateEvent.of(this.instance));
             instance.update();
         });
         this.addButton.addActionListener(e -> {
-            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods", instance.getAnalyticsCategory());
+            AppEventBus.postToDefault(PackAddModsEvent.of(this.instance));
             new AddModsDialog(instance);
             exportButton.setVisible(instance.canBeExported());
         });
         this.editButton.addActionListener(e -> {
-            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditMods", instance.getAnalyticsCategory());
+            AppEventBus.postToDefault(PackEditModsEvent.of(this.instance));
             new EditModsDialog(instance);
             exportButton.setVisible(instance.canBeExported());
         });
@@ -406,7 +413,7 @@ public class InstanceCard extends CollapsiblePanel {
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
-            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings", instance.getAnalyticsCategory());
+            AppEventBus.postToDefault(PackSettingsEvent.of(this.instance));
             new InstanceSettingsDialog(instance);
         });
         this.deleteButton.addActionListener(e -> {
@@ -416,7 +423,7 @@ public class InstanceCard extends CollapsiblePanel {
                 .setType(DialogManager.ERROR).show();
 
             if (ret == DialogManager.YES_OPTION) {
-                //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Delete", instance.getAnalyticsCategory());
+                AppEventBus.postToDefault(PackDeleteEvent.of(this.instance));
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
                     GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
@@ -428,7 +435,7 @@ public class InstanceCard extends CollapsiblePanel {
             }
         });
         this.exportButton.addActionListener(e -> {
-            //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Export", instance.getAnalyticsCategory());
+            AppEventBus.postToDefault(PackExportEvent.of(this.instance));
             new InstanceExportDialog(instance);
         });
     }
@@ -465,7 +472,7 @@ public class InstanceCard extends CollapsiblePanel {
                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
                 } else {
-                    //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateFromPlay", instance.getAnalyticsCategory());
+                    AppEventBus.postToDefault(PackUpdateEvent.fromPlay(this.instance));
                     instance.update();
                 }
             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
@@ -553,7 +560,7 @@ public class InstanceCard extends CollapsiblePanel {
 
                     JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
                     shareCodeItem.addActionListener(e1 -> {
-                        //TODO: Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "MakeShareCode", instance.getAnalyticsCategory());
+                        AppEventBus.postToDefault(PackShareCodeEvent.of(instance));
                         try {
                             java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
                             }.getType();
@@ -606,7 +613,7 @@ public class InstanceCard extends CollapsiblePanel {
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.playButton.setText(GetText.tr("Play"));
         this.updateButton.setText(GetText.tr("Update"));
         this.backupButton.setText(GetText.tr("Backup"));

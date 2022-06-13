@@ -23,7 +23,6 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.dbus.DBusUtils;
-import com.atlauncher.events.AnalyticsEvent;
 import com.atlauncher.events.ImportInstanceEvent;
 import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.managers.DialogManager;

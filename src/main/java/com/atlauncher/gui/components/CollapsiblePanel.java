@@ -24,7 +24,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
-import com.atlauncher.events.ThemeEvent;
+import com.atlauncher.events.theme.ThemeChangedEvent;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
@@ -450,7 +450,7 @@ public class CollapsiblePanel extends JPanel {
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event) {
+    public final void onThemeChanged(final ThemeChangedEvent event) {
         iconArrow = createExpandAndCollapseIcon();
 
         // force state

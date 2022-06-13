@@ -2,15 +2,13 @@ package com.atlauncher.events;
 
 import javax.swing.*;
 
-public final class ImportInstanceEvent extends AnalyticsEvent.AppEvent{
-    private static final String CATEGORY = "ImportInstance";
-
-    private ImportInstanceEvent(final String source, final String action){
-        super(source, action, CATEGORY);
+public final class ImportInstanceEvent extends AbstractAnalyticsEvent{
+    ImportInstanceEvent(final String source, final AnalyticsActions action){
+        super(source, action, AnalyticsCategories.IMPORT_INSTANCE);
     }
 
     public static ImportInstanceEvent forUrl(final String url){
-        return new ImportInstanceEvent(url, "AddFromUrl");
+        return new ImportInstanceEvent(url, AnalyticsActions.ADD_FROM_URL);
     }
 
     public static ImportInstanceEvent forUrl(final JTextField field){
@@ -18,7 +16,7 @@ public final class ImportInstanceEvent extends AnalyticsEvent.AppEvent{
     }
 
     public static ImportInstanceEvent forZip(final String path){
-        return new ImportInstanceEvent(path, "AddFromZip");
+        return new ImportInstanceEvent(path, AnalyticsActions.ADD_FROM_ZIP);
     }
 
     public static ImportInstanceEvent forZip(final JTextField field){

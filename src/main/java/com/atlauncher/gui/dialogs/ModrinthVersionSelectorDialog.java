@@ -26,7 +26,7 @@ import com.atlauncher.data.modrinth.ModrinthDependencyType;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
-import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.AddFileEvent;
 import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.ModrinthProjectDependencyCard;
@@ -35,7 +35,6 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
-import com.jogamp.newt.Screen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
@@ -243,10 +242,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 // #. {0} is the name of the mod we're installing
                 GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
-                AppEventBus.postToDefault(new AnalyticsEvent.AppEvent(
-                    String.format("%s - %s", mod.title, version.name),
-                    "AddFile",
-                    "ModrinthMod"));
+                AppEventBus.postToDefault(AddFileEvent.forModrinthMod(this.mod, version));
                 instance.addFileFromModrinth(mod, version, file, progressDialog);
 
                 progressDialog.close();

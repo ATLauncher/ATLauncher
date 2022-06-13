@@ -20,7 +20,8 @@ package com.atlauncher.gui.card.packbrowser;
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.data.technic.TechnicModpackSlim;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.pack.PackInstallEvent;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
@@ -63,7 +64,7 @@ public class TechnicPackCard extends JPanel {
                     .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
             } else {
-                //TODO: Analytics.sendEvent(pack.name, "Install", "TechnicPack");
+                AppEventBus.postToDefault(PackInstallEvent.newInstall(pack));
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -90,7 +91,7 @@ public class TechnicPackCard extends JPanel {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         newInstanceButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }

@@ -21,6 +21,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.events.AnalyticsCategories;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.ATLauncherPackCard;
 import com.atlauncher.managers.PackManager;
@@ -98,8 +99,8 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getAnalyticsCategory() {
-        return "FeaturedPack";
+    public String getAnalyticsCategory(){
+        return "FeaturedPacks";
     }
 
     @Override

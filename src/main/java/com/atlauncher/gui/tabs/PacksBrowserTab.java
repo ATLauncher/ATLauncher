@@ -21,10 +21,13 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.NavigationEvent;
 import com.atlauncher.events.OnSide;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.events.SearchEvent;
 import com.atlauncher.events.Side;
-import com.atlauncher.events.ThemeEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.theme.ThemeChangedEvent;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherFeaturedPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
@@ -280,9 +283,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
                 .getSelectedComponent();
 
-            // send analytics page view
-            //TODO: Analytics.sendScreenView(selectedPanel.getPlatformName() + " Platform Packs");
-
+            AppEventBus.postToDefault(ScreenViewEvent.forScreen(String.format("%s Platform Packs", selectedPanel.getPlatformName())));
             afterTabChange();
         });
 
@@ -385,7 +386,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
             platformTabbedPane.setEnabled(false);
             page += 1;
 
-            //TODO: Analytics.sendEvent(page, "Next", "Navigation", selectedPanel.getAnalyticsCategory());
+            AppEventBus.postToDefault(NavigationEvent.nextPage(page, selectedPanel));
 
             // load in the content for the platform
             new Thread(() -> {
@@ -432,7 +433,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
         platformTabbedPane.setEnabled(false);
 
         if (!searchField.getText().isEmpty()) {
-            //TODO: Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
+            AppEventBus.postToDefault(SearchEvent.forTextField(searchField, selectedPanel));
         }
 
         // load in the content for the platform
@@ -499,7 +500,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
         searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
@@ -507,7 +508,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeEvent.ThemeChangedEvent event) {
+    public final void onThemeChanged(final ThemeChangedEvent event) {
         ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
         descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));
     }

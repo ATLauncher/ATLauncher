@@ -1,17 +1,15 @@
 package com.atlauncher.events;
 
-public final class AddQuiltLibrariesEvent extends AnalyticsEvent.AppEvent{
-    public static final String ACTION = "AddQuiltStandardLibraries";
-
-    private AddQuiltLibrariesEvent(final String category){
-        super(ACTION, category);
+public final class AddQuiltLibrariesEvent extends AbstractAnalyticsEvent {
+    private AddQuiltLibrariesEvent(final AnalyticsCategories category){
+        super(AnalyticsActions.ADD_QUILT_STANDARD_LIBRARIES, category);
     }
 
-    public static AddQuiltLibrariesEvent forCategory(final String category){
+    public static AddQuiltLibrariesEvent forMod(final AnalyticsCategories category){
         return new AddQuiltLibrariesEvent(category);
     }
 
-    public static AddQuiltLibrariesEvent forModrinth(){
-        return forCategory("Modrinth");
+    public static AddQuiltLibrariesEvent forModrinthMod(){
+        return forMod(AnalyticsCategories.MODRINTH);
     }
 }

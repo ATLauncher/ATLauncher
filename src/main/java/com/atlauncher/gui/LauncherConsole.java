@@ -20,10 +20,12 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.events.ConsoleEvent;
-import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
+import com.atlauncher.events.console.ConsoleClosedEvent;
+import com.atlauncher.events.console.ConsoleEvent;
+import com.atlauncher.events.console.ConsoleOpenedEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.utils.Utils;
@@ -113,11 +115,11 @@ public class LauncherConsole extends JFrame {
     }
 
     private void postConsoleOpenEvent() {
-        AppEventBus.post(new ConsoleEvent.ConsoleOpenedEvent());
+        AppEventBus.post(ConsoleOpenedEvent.newInstance());
     }
 
     private void postConsoleClosedEvent() {
-        AppEventBus.post(new ConsoleEvent.ConsoleClosedEvent());
+        AppEventBus.post(ConsoleClosedEvent.newInstance());
     }
 
     private void setupContextMenu() {
@@ -172,7 +174,7 @@ public class LauncherConsole extends JFrame {
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.copy.setText(GetText.tr("Copy"));
         this.bottomBar.setupLanguage();
     }

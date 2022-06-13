@@ -22,7 +22,6 @@ import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.events.AnalyticsEvent;
 import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;

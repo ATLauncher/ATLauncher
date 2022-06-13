@@ -20,11 +20,12 @@ package com.atlauncher.network;
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.events.AnalyticsEvent;
 import com.atlauncher.events.OnSide;
+import com.atlauncher.events.OutboundLinkEvent;
 import com.atlauncher.events.ScreenViewEvent;
-import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.Side;
+import com.atlauncher.events.ExceptionEvent;
+import com.atlauncher.events.settings.SettingsSavedEvent;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.brsanthu.googleanalytics.GoogleAnalytics;
@@ -128,7 +129,7 @@ public final class Analytics {
 
     @Subscribe
     @OnSide(Side.UI)
-    public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event) {
+    public void onSettingsSaved(final SettingsSavedEvent event) {
         session.getConfig()
             .setProxyHost(App.settings.proxyHost)
             .setProxyPort(App.settings.proxyPort)
@@ -143,13 +144,13 @@ public final class Analytics {
 
     @Subscribe
     @OnSide(Side.WORKER)
-    public void onOutboundLink(final AnalyticsEvent.OutboundLinkEvent event){
+    public void onOutboundLink(final OutboundLinkEvent event){
         sendOutboundLink(event.getDestination());
     }
 
     @Subscribe
     @OnSide(Side.WORKER)
-    public void onAppException(final AnalyticsEvent.AppExceptionEvent event){
-        sendException(event.getMessage());
+    public void onAppException(final ExceptionEvent event){
+        sendException(event.getCauseMessage());
     }
 }

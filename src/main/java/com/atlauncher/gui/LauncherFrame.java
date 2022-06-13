@@ -22,10 +22,11 @@ import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.events.LocalizationEvent;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
-import com.atlauncher.events.TabEvent;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.tab.TabChangedEvent;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -236,17 +237,16 @@ public final class LauncherFrame extends JFrame {
         tabbedPane.setOpaque(true);
         tabbedPane.setSelectedIndex(App.settings.selectedTabOnStartup);
 
+        final Tab tab = ((Tab)tabbedPane.getSelectedComponent());
         tabbedPane.addChangeListener(e -> {
-            //TODO: Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
-            AppEventBus.post(new TabEvent.TabChangedEvent());
+            AppEventBus.postToDefault(TabChangedEvent.newInstance());
         });
-
-        //TODO: Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(tab.getAnalyticsScreenViewName()));
     }
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

@@ -22,7 +22,7 @@ import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Update;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.OutboundLinkEvent;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.javafinder.JavaInfo;
 import org.apache.logging.log4j.LogManager;
@@ -165,7 +165,7 @@ public enum OS {
      * This opens the users default browser to the given uri.
      */
     public static void openWebBrowser(URI uri) {
-        AppEventBus.postToDefault(new AnalyticsEvent.OutboundLinkEvent(uri));
+        AppEventBus.postToDefault(OutboundLinkEvent.forUri(uri));
         try {
             if (getOS() == LINUX && Utils.executableInPath("xdg-open")) {
                 Runtime.getRuntime().exec("xdg-open " + uri);

@@ -15,16 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.events;
+package com.atlauncher.events.account;
 
-public abstract class TabEvent extends Event {
-    protected TabEvent() {
-        super();
+import com.atlauncher.data.AbstractAccount;
+
+public final class AccountAddedEvent extends AccountEvent{
+    AccountAddedEvent(final AbstractAccount account){
+        super(account);
     }
 
-    public static final class TabChangedEvent extends TabEvent {
-        public TabChangedEvent() {
-            super();
-        }
+    public static AccountAddedEvent forAccount(final AbstractAccount account){
+        return new AccountAddedEvent(account);
     }
 }

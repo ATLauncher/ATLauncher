@@ -21,7 +21,9 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.events.ConsoleEvent;
+import com.atlauncher.events.console.ConsoleClosedEvent;
+import com.atlauncher.events.console.ConsoleEvent;
+import com.atlauncher.events.console.ConsoleOpenedEvent;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 import com.google.common.eventbus.Subscribe;
@@ -90,12 +92,12 @@ public final class TrayMenu extends JPopupMenu {
     }
 
     @Subscribe
-    public void onConsoleOpen(final ConsoleEvent.ConsoleOpenedEvent event) {
+    public void onConsoleOpen(final ConsoleOpenedEvent event) {
         this.toggleConsoleButton.setText(GetText.tr("Hide Console"));
     }
 
     @Subscribe
-    public void onConsoleClose(final ConsoleEvent.ConsoleClosedEvent event) {
+    public void onConsoleClose(final ConsoleClosedEvent event) {
         this.toggleConsoleButton.setText(GetText.tr("Show Console"));
     }
 }

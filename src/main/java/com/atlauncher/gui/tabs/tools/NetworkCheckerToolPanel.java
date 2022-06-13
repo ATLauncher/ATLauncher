@@ -23,8 +23,9 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.events.OnSide;
-import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.Side;
+import com.atlauncher.events.ToolRunEvent;
+import com.atlauncher.events.settings.SettingsSavedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Download;
@@ -72,8 +73,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //TODO: Analytics.sendEvent("NetworkChecker", "Run", "Tool");
-
+        AppEventBus.postToDefault(ToolRunEvent.networkChecker());
         int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Network Checker"))
             .setContent(new HTMLBuilder().center().split(75).text(GetText.tr(
                     "Please note that the data from this tool is sent to ATLauncher so we can diagnose possible issues in your setup. This test may take up to 10 minutes or longer to complete and you will be unable to do anything while it's running. Please also keep in mind that this test will use some of your bandwidth, it will use approximately 100MB.<br/><br/>Do you wish to continue?"))
@@ -254,7 +254,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event) {
+    public final void onSettingsSaved(final SettingsSavedEvent event) {
         this.checkLaunchButtonEnabled();
     }
 }

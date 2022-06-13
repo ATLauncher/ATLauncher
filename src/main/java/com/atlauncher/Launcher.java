@@ -21,6 +21,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.LauncherVersion;
+import com.atlauncher.events.UpdateLauncherEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
@@ -39,6 +40,7 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -134,7 +136,7 @@ public class Launcher {
         checkForExternalPackUpdates();
 
         if (!App.settings.firstTimeRun && App.settings.enableLogs && App.settings.enableAnalytics) {
-            //TODO: Analytics.startSession();
+            Analytics.startSession();
         }
         PerformanceManager.end();
     }
@@ -164,7 +166,7 @@ public class Launcher {
             }
             File newFile = FileSystem.TEMP.resolve(saveAs).toFile();
             LOG.info("Downloading Launcher Update");
-            //TODO: Analytics.sendEvent("Update", "Launcher");
+            AppEventBus.postToDefault(UpdateLauncherEvent.newInstance());
 
             ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Launcher Update"), 1,
                 GetText.tr("Downloading Launcher Update"));

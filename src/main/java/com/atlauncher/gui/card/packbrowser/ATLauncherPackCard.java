@@ -22,7 +22,9 @@ import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.pack.PackInstallEvent;
+import com.atlauncher.events.pack.PackViewModsEvent;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
@@ -135,7 +137,7 @@ public class ATLauncherPackCard extends JPanel {
                     .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
             } else {
-                //TODO: Analytics.sendEvent(pack.getName(), "Install", "ATLauncherPack");
+                AppEventBus.postToDefault(PackInstallEvent.newInstall(this.pack));
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -159,7 +161,7 @@ public class ATLauncherPackCard extends JPanel {
                     .setContent(GetText.tr("Cannot create server as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
             } else {
-                //TODO: Analytics.sendEvent(pack.getName(), "ServerInstall", "ATLauncherPack");
+                AppEventBus.postToDefault(PackInstallEvent.newServerInstall(this.pack));
                 new InstanceInstallerDialog(pack, true);
             }
         });
@@ -175,13 +177,13 @@ public class ATLauncherPackCard extends JPanel {
                 Constants.SERVERS_LIST_PACK, pack.getSafeName())));
 
         this.modsButton.addActionListener(e -> {
-            //TODO: Analytics.sendEvent(pack.getName(), "ViewMods", "ATLauncherPack");
+            AppEventBus.postToDefault(PackViewModsEvent.of(this.pack));
             new ViewModsDialog(pack).setVisible(true);
         });
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.newInstanceButton.setText(GetText.tr("New Instance"));
         this.createServerButton.setText(GetText.tr("Create Server"));
         this.supportButton.setText(GetText.tr("Support"));

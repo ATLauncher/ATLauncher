@@ -21,9 +21,11 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.events.AccountEvent;
-import com.atlauncher.events.ConsoleEvent;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.launcher.UpdateDataEvent;
+import com.atlauncher.events.account.AccountChangedEvent;
+import com.atlauncher.events.console.ConsoleClosedEvent;
+import com.atlauncher.events.console.ConsoleOpenedEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
@@ -88,7 +90,7 @@ public class LauncherBottomBar extends BottomBar {
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updates"), 0,
                 GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
-                //TODO: Analytics.sendEvent("UpdateData", "Launcher");
+                AppEventBus.postToDefault(UpdateDataEvent.of());
                 App.launcher.updateData(true);
                 dialog.close();
             }));
@@ -96,7 +98,7 @@ public class LauncherBottomBar extends BottomBar {
         });
         username.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (!dontSave) {
+                if (!dontSave) {;
                     //TODO: Analytics.sendEvent("Switch", "Account");
                     AccountManager.switchAccount((AbstractAccount) username.getSelectedItem());
                 }
@@ -107,12 +109,12 @@ public class LauncherBottomBar extends BottomBar {
     }
 
     @Subscribe
-    public final void onConsoleOpened(final ConsoleEvent.ConsoleOpenedEvent event) {
+    public final void onConsoleOpened(final ConsoleOpenedEvent event) {
         this.toggleConsole.setText(GetText.tr("Hide Console"));
     }
 
     @Subscribe
-    public final void onConsoleClosed(final ConsoleEvent.ConsoleClosedEvent event) {
+    public final void onConsoleClosed(final ConsoleClosedEvent event) {
         this.toggleConsole.setText(GetText.tr("Show Console"));
     }
 
@@ -164,7 +166,7 @@ public class LauncherBottomBar extends BottomBar {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         if (App.console.isVisible()) {
             toggleConsole.setText(GetText.tr("Hide Console"));
         } else {
@@ -175,7 +177,7 @@ public class LauncherBottomBar extends BottomBar {
     }
 
     @Subscribe
-    public void onAccountChanged(final AccountEvent.AccountChangedEvent event) {
+    public void onAccountChanged(final AccountChangedEvent event) {
         this.reloadAccounts();
     }
 }

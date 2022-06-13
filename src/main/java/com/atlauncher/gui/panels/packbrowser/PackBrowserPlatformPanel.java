@@ -19,6 +19,8 @@ package com.atlauncher.gui.panels.packbrowser;
 
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.events.AnalyticsCategories;
+import com.atlauncher.events.AnalyticsCategory;
 import com.atlauncher.gui.panels.LoadingPanel;
 import org.mini2Dx.gettext.GetText;
 
@@ -27,12 +29,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-public abstract class PackBrowserPlatformPanel extends JPanel {
+public abstract class PackBrowserPlatformPanel extends JPanel implements AnalyticsCategory {
     public abstract String getPlatformName();
 
     public abstract String getPlatformMessage();
-
-    public abstract String getAnalyticsCategory();
 
     public abstract boolean supportsSearch();
 

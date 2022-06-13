@@ -24,8 +24,13 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.events.AccountEvent;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.account.AccountChangedEvent;
+import com.atlauncher.events.account.AccountDeletedEvent;
+import com.atlauncher.events.account.AccountEditEvent;
+import com.atlauncher.events.account.AccountRefreshAccessTokenEvent;
+import com.atlauncher.events.account.AccountSkinUpdatedEvent;
+import com.atlauncher.events.account.AccountUpdateUsernameEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
@@ -262,7 +267,7 @@ public class AccountsTab extends JPanel implements Tab {
                     .setContent(GetText.tr("Are you sure you want to delete this account?"))
                     .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
-                    //TODO: Analytics.sendEvent("Delete", "Account");
+                    AppEventBus.postToDefault(AccountDeletedEvent.newInstance());
                     AccountManager.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
@@ -301,7 +306,7 @@ public class AccountsTab extends JPanel implements Tab {
         updateSkin.addActionListener(e -> {
             final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
                 .getValue();
-            //TODO: Analytics.sendEvent("UpdateSkin", "Account");
+            AppEventBus.postToDefault(AccountSkinUpdatedEvent.newInstance());
             account.updateSkin();
             userSkin.setIcon(account.getMinecraftSkin());
         });
@@ -311,7 +316,7 @@ public class AccountsTab extends JPanel implements Tab {
         updateUsername.addActionListener(e -> {
             final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
                 .getValue();
-            //TODO: Analytics.sendEvent("UpdateUsername", "Account");
+            AppEventBus.postToDefault(AccountUpdateUsernameEvent.newInstance());
             account.updateUsername();
             AccountManager.saveAccounts();
         });
@@ -322,7 +327,7 @@ public class AccountsTab extends JPanel implements Tab {
         refreshAccessTokenMenuItem.addActionListener(e -> {
             final MicrosoftAccount account = (MicrosoftAccount) ((ComboItem<AbstractAccount>) accountsComboBox
                 .getSelectedItem()).getValue();
-            //TODO: Analytics.sendEvent("RefreshAccessToken", "Account");
+            AppEventBus.postToDefault(AccountRefreshAccessTokenEvent.newInstance());
 
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Refreshing Access Token"), 0,
                 GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
@@ -417,10 +422,10 @@ public class AccountsTab extends JPanel implements Tab {
                     mojangAccount.store = response.getAuth().saveForStorage();
 
                     AccountManager.saveAccounts();
-                    AppEventBus.post(new AccountEvent.AccountChangedEvent());
+                    AppEventBus.post(AccountChangedEvent.forCurrentAccount());
                 }
 
-                //TODO: Analytics.sendEvent("Edit", "Account");
+                AppEventBus.postToDefault(AccountEditEvent.newInstance());
                 LOG.info("Edited Account {}", account);
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                     .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
@@ -452,7 +457,7 @@ public class AccountsTab extends JPanel implements Tab {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         if (accountsComboBox.getSelectedIndex() == 0) {
             leftButton.setText(GetText.tr("Add"));
             rightButton.setText(GetText.tr("Clear"));

@@ -21,7 +21,8 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.pack.PackInstallEvent;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
@@ -68,7 +69,7 @@ public class ModrinthPackCard extends JPanel {
                     .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
             } else {
-                //TODO: Analytics.sendEvent(searchHit.title, "Install", "ModrinthPack");
+                AppEventBus.postToDefault(PackInstallEvent.newInstall(searchHit));
                 new InstanceInstallerDialog(searchHit, false);
             }
         });
@@ -93,7 +94,7 @@ public class ModrinthPackCard extends JPanel {
                     .setContent(GetText.tr("Cannot create server as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
             } else {
-                //TODO: Analytics.sendEvent(searchHit.title, "ServerInstall", "ModrinthPack");
+                AppEventBus.postToDefault(PackInstallEvent.newServerInstall(searchHit));
                 new InstanceInstallerDialog(searchHit, true);
             }
         });
@@ -121,7 +122,7 @@ public class ModrinthPackCard extends JPanel {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         newInstanceButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }

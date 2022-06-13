@@ -19,7 +19,7 @@ package com.atlauncher.data;
 
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
@@ -83,7 +83,7 @@ public class Language {
         }
 
         GetText.setLocale(locale);
-        AppEventBus.post(new LocalizationEvent.LocalizationChangedEvent());
+        AppEventBus.post(LocalizationChangedEvent.newInstance());
     }
 
     public static boolean isLanguageByName(String language) {

@@ -22,8 +22,10 @@ import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Language;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.SetupDialogCompleteEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
@@ -131,8 +133,8 @@ public class SetupDialog extends JDialog {
             App.settings.save();
 
             if (enableAnalytics.isSelected()) {
-                //TODO: Analytics.startSession();
-                //TODO: Analytics.sendEvent("SetupDialogComplete", "Launcher");
+                Analytics.startSession();
+                AppEventBus.postToDefault(SetupDialogCompleteEvent.of());
             }
 
             setVisible(false);
@@ -156,7 +158,7 @@ public class SetupDialog extends JDialog {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         setupLabel.setText(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
         languageLabel.setText(GetText.tr("Language") + ": ");
         enableAnalyticsLabel.setText(GetText.tr("Enable Anonymous Analytics") + "? ");

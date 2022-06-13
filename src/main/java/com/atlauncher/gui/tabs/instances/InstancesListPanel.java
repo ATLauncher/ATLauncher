@@ -21,7 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -128,7 +128,7 @@ public final class InstancesListPanel extends JPanel
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
 }

@@ -59,7 +59,6 @@ import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicModpackSlim;
 import com.atlauncher.data.technic.TechnicSolderModpack;
-import com.atlauncher.events.AnalyticsEvent;
 import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.JLabelWithHover;

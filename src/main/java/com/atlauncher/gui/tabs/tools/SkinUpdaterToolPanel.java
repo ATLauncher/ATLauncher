@@ -20,7 +20,8 @@ package com.atlauncher.gui.tabs.tools;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.events.AccountEvent;
+import com.atlauncher.events.ToolRunEvent;
+import com.atlauncher.events.account.AccountChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.google.common.eventbus.Subscribe;
@@ -51,8 +52,7 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //TODO: Analytics.sendEvent("SkinUpdater", "Run", "Tool");
-
+        AppEventBus.postToDefault(ToolRunEvent.skinUpdater());
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), Data.ACCOUNTS.size(),
             GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
         dialog.addThread(new Thread(() -> {
@@ -72,7 +72,7 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
     }
 
     @Subscribe
-    public void onAccountChanged(final AccountEvent.AccountChangedEvent e) {
+    public void onAccountChanged(final AccountChangedEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

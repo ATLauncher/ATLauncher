@@ -19,7 +19,7 @@ package com.atlauncher.gui.tabs.instances;
 
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
@@ -72,7 +72,7 @@ public final class InstancesNavigationPanel extends JPanel {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.importButton.setText(GetText.tr("Import"));
         this.searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         this.sortingBox.repaint();

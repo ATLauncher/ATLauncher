@@ -64,8 +64,17 @@ import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
-import com.atlauncher.events.AnalyticsEvent;
-import com.atlauncher.events.PackEvent;
+import com.atlauncher.events.AnalyticsCategory;
+import com.atlauncher.events.pack.PackBackupEvent;
+import com.atlauncher.events.pack.PackCloneEvent;
+import com.atlauncher.events.pack.PackImageChangedEvent;
+import com.atlauncher.events.pack.PackLoaderAddedEvent;
+import com.atlauncher.events.pack.PackLoaderRemovedEvent;
+import com.atlauncher.events.pack.PackLoaderVersionChangedEvent;
+import com.atlauncher.events.pack.PackPlayEvent;
+import com.atlauncher.events.pack.PackPlayOfflineEvent;
+import com.atlauncher.events.pack.PackReinstallEvent;
+import com.atlauncher.events.pack.PackRenameEvent;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
@@ -139,7 +148,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Json
-public class Instance extends MinecraftVersion {
+public class Instance extends MinecraftVersion implements AnalyticsCategory {
     private static final Logger LOG = LogManager.getLogger(Instance.class);
 
     public String inheritsFrom;
@@ -825,8 +834,8 @@ public class Instance extends MinecraftVersion {
 
 
         AppEventBus.postToDefault(offline ?
-                new PackEvent.PackPlayOfflineEvent(this) :
-                new PackEvent.PackPlayEvent(this));
+            PackPlayOfflineEvent.of(this) :
+            PackPlayEvent.of(this));
         Thread launcher = new Thread(() -> {
             try {
                 long start = System.currentTimeMillis();
@@ -2270,6 +2279,7 @@ public class Instance extends MinecraftVersion {
             && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
     }
 
+    @Override
     public String getAnalyticsCategory() {
         if (isCurseForgePack()) {
             return "CurseForgeInstance";
@@ -2389,7 +2399,7 @@ public class Instance extends MinecraftVersion {
         dialog.add(topPanel, BorderLayout.CENTER);
         dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-        AppEventBus.postToDefault(new PackEvent.PackBackupEvent(this));
+        AppEventBus.postToDefault(PackBackupEvent.of(this));
 
         final Thread backupThread = new Thread(() -> {
             Timestamp timestamp = new Timestamp(new Date().getTime());
@@ -2417,12 +2427,12 @@ public class Instance extends MinecraftVersion {
     }
 
     public void startReinstall() {
-        AppEventBus.postToDefault(new PackEvent.PackReinstallEvent(this));
+        AppEventBus.postToDefault(PackReinstallEvent.of(this));
         new InstanceInstallerDialog(this);
     }
 
     public void startRename() {
-        AppEventBus.postToDefault(new PackEvent.PackRenameEvent(this));
+        AppEventBus.postToDefault(PackRenameEvent.of(this));
         new RenameInstanceDialog(this);
     }
 
@@ -2437,7 +2447,7 @@ public class Instance extends MinecraftVersion {
             .getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
             && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
             FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
-            AppEventBus.postToDefault(new PackEvent.PackCloneEvent(this));
+            AppEventBus.postToDefault(PackCloneEvent.of(this));
 
             final String newName = clonedName;
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
@@ -2508,7 +2518,7 @@ public class Instance extends MinecraftVersion {
         if (ret == JFileChooser.APPROVE_OPTION) {
             File img = chooser.getSelectedFile();
             if (img.getAbsolutePath().endsWith(".png")) {
-                AppEventBus.postToDefault(new PackEvent.PackImageChangedEvent(this));
+                AppEventBus.postToDefault(PackImageChangedEvent.of(this));
                 try {
                     Utils.safeCopy(img, getRoot().resolve("instance.png").toFile());
                     save();
@@ -2520,7 +2530,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void changeLoaderVersion() {
-        AppEventBus.postToDefault(new PackEvent.PackLoaderVersionChangedEvent(this));
+        AppEventBus.postToDefault(PackLoaderVersionChangedEvent.of(this));
 
         LoaderVersion loaderVersion = showLoaderVersionSelector(launcher.loaderVersion.getLoaderType());
         if (loaderVersion == null) {
@@ -2563,7 +2573,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public void addLoader(LoaderType loaderType) {
-        AppEventBus.postToDefault(new PackEvent.PackLoaderAddedEvent(this, loaderType));
+        //TODO: AppEventBus.postToDefault(new PackEvent.PackLoaderAddedEvent(this, loaderType));
+        AppEventBus.postToDefault(PackLoaderAddedEvent.of(this));
 
         LoaderVersion loaderVersion = showLoaderVersionSelector(loaderType);
         if (loaderVersion == null) {
@@ -2700,7 +2711,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public void removeLoader() {
-        AppEventBus.postToDefault(new PackEvent.PackLoaderRemovedEvent(this, this.launcher.loaderVersion.getLoaderType()));
+        //TODO: AppEventBus.postToDefault(new PackEvent.PackLoaderRemovedEvent(this, this.launcher.loaderVersion.getLoaderType()));
+        AppEventBus.postToDefault(PackLoaderRemovedEvent.of(this));
         String loaderType = launcher.loaderVersion.type;
 
         boolean success = false;

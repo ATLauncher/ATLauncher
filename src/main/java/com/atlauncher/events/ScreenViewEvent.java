@@ -1,10 +1,9 @@
 package com.atlauncher.events;
 
-public final class ScreenViewEvent extends AnalyticsEvent{
+public final class ScreenViewEvent implements AnalyticsEvent {
     private final String title;
 
     private ScreenViewEvent(final String title){
-        super();
         this.title = title;
     }
 

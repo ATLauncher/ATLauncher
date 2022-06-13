@@ -20,7 +20,7 @@ package com.atlauncher.gui.card;
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Server;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -195,7 +195,7 @@ public class ServerCard extends CollapsiblePanel {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.launchButton.setText(GetText.tr("Launch"));
         this.launchAndCloseButton.setText(GetText.tr("Launch & Close"));
         this.launchWithGui.setText(GetText.tr("Launch With GUI"));

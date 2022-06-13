@@ -21,7 +21,9 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.launcher.CopyLogEvent;
+import com.atlauncher.events.launcher.KillMinecraftEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.thread.PasteUpload;
@@ -70,7 +72,7 @@ public class ConsoleBottomBar extends BottomBar {
             LOG.info("Console Cleared");
         });
         copyLogButton.addActionListener(e -> {
-            //TODO: Analytics.sendEvent("CopyLog", "Launcher");
+            AppEventBus.postToDefault(CopyLogEvent.of());
             App.TOASTER.pop("Copied Log to clipboard");
             LOG.info("Copied Log to clipboard");
             StringSelection text = new StringSelection(App.console.getLog());
@@ -100,7 +102,7 @@ public class ConsoleBottomBar extends BottomBar {
             result = dialog.getReturnValue();
 
             if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
-                //TODO: Analytics.sendEvent("UploadLog", "Launcher");
+                AppEventBus.postToDefault(KillMinecraftEvent.of());
                 App.TOASTER.pop("Log uploaded and link copied to clipboard");
                 LOG.info("Log uploaded and link copied to clipboard: {}", result);
                 StringSelection text = new StringSelection(result);
@@ -118,7 +120,7 @@ public class ConsoleBottomBar extends BottomBar {
                     .build())
                 .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
-                //TODO: Analytics.sendEvent("KillMinecraft", "Launcher");
+                AppEventBus.postToDefault(KillMinecraftEvent.of());
                 App.launcher.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }
@@ -141,7 +143,7 @@ public class ConsoleBottomBar extends BottomBar {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.setupLanguage();
     }
 }

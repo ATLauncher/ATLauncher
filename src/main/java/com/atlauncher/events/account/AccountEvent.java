@@ -15,22 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.events;
+package com.atlauncher.events.account;
 
-public abstract class ConsoleEvent implements Event {
-    protected ConsoleEvent() {
+import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.events.Event;
+
+public abstract class AccountEvent implements Event{
+    private final AbstractAccount account;
+
+    protected AccountEvent(final AbstractAccount account){
         super();
+        this.account = account;
     }
 
-    public static final class ConsoleOpenedEvent extends ConsoleEvent {
-        public ConsoleOpenedEvent() {
-            super();
-        }
-    }
-
-    public static final class ConsoleClosedEvent extends ConsoleEvent {
-        public ConsoleClosedEvent() {
-            super();
-        }
+    public AbstractAccount getAccount(){
+        return this.account;
     }
 }

@@ -15,22 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.events;
+package com.atlauncher.events.account;
 
-public abstract class SettingsEvent extends Event {
-    protected SettingsEvent() {
-        super();
+import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.managers.AccountManager;
+
+public final class AccountChangedEvent extends AccountEvent{
+    AccountChangedEvent(final AbstractAccount account){
+        super(account);
     }
 
-    public static final class SettingsLoadedEvent extends SettingsEvent {
-        public SettingsLoadedEvent() {
-            super();
-        }
+    public static AccountChangedEvent forAccount(final AbstractAccount account){
+        return new AccountChangedEvent(account);
     }
 
-    public static final class SettingsSavedEvent extends SettingsEvent {
-        public SettingsSavedEvent() {
-            super();
-        }
+    public static AccountChangedEvent forCurrentAccount(){
+        return forAccount(AccountManager.getSelectedAccount());
     }
 }

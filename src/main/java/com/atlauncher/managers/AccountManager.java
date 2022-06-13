@@ -26,7 +26,8 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.events.AccountEvent;
+import com.atlauncher.events.account.AccountAddedEvent;
+import com.atlauncher.events.account.AccountChangedEvent;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
@@ -61,7 +62,7 @@ public class AccountManager {
     }
 
     private static void postAccountChangedEvent() {
-        AppEventBus.post(new AccountEvent.AccountChangedEvent());
+        AppEventBus.post(AccountChangedEvent.forCurrentAccount());
     }
 
     /**
@@ -174,8 +175,7 @@ public class AccountManager {
 
     public static void addAccount(AbstractAccount account) {
         String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
-
-        //TODO: Analytics.sendEvent(accountType, "Add", "Account");
+        AppEventBus.postToDefault(AccountAddedEvent.forAccount(account));
         LOG.info("Added " + accountType + " Account " + account);
 
         Data.ACCOUNTS.add(account);

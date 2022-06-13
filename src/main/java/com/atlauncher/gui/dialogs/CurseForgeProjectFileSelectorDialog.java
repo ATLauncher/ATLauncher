@@ -26,7 +26,7 @@ import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileDependency;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.AddFileEvent;
 import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.CurseForgeFileDependencyCard;
@@ -162,11 +162,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 // #. {0} is the name of the mod we're installing
                 GetText.tr("Installing {0}", file.displayName), false, this);
             progressDialog.addThread(new Thread(() -> {
-                AppEventBus.postToDefault(new AnalyticsEvent.AppEvent(
-                    String.format("%s - %s", mod.name, file.displayName),
-                    "AddFile",
-                    "CurseForgeMod"
-                ));
+                AppEventBus.postToDefault(AddFileEvent.forCurseForgeMod(this.mod, file));
                 instance.addFileFromCurseForge(mod, file, progressDialog);
 
                 progressDialog.close();

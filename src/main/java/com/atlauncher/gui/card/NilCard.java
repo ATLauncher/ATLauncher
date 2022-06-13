@@ -19,7 +19,7 @@ package com.atlauncher.gui.card;
 
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
-import com.atlauncher.events.LocalizationEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
@@ -66,7 +66,7 @@ public class NilCard extends JPanel {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationEvent.LocalizationChangedEvent event) {
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         TitledBorder border = (TitledBorder) this.getBorder();
         border.setTitle(GetText.tr("Nothing To Show"));
     }
