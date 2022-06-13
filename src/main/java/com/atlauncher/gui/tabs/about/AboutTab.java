@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs;
+package com.atlauncher.gui.tabs.about;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import org.jetbrains.annotations.NotNull;
@@ -53,27 +54,10 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
     private final JScrollPane authors;
 
-    /**
-     * Optimization method to ensure about tab opens with information as fast
-     * as possible.
-     *
-     * @return information on this launcher
-     */
-    private static @NotNull String getInformation() {
-        if (_information == null)
-            _information = Constants.LAUNCHER_NAME + "\n" +
-                "Version:\t" + Constants.VERSION.toString() + "\n" +
-                "OS:\t" + System.getProperty("os.name") + "\n" +
-                "Java:\t" +
-                String.format("Java %d (%s)",
-                    Java.getLauncherJavaVersionNumber(),
-                    Java.getLauncherJavaVersion()
-                );
-
-        return _information;
-    }
+    private IAboutTabViewModel viewModel;
 
     public AboutTab() {
+        viewModel = new AboutTabViewModel();
         GridBagLayout layout = new GridBagLayout();
         setLayout(layout);
 
@@ -85,7 +69,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             // Add text info
             {
                 textInfo = new JTextPane();
-                textInfo.setText(getInformation());
+                textInfo.setText(viewModel.getInfo());
                 textInfo.setEditable(false);
                 info.add(textInfo, BorderLayout.WEST);
             }
@@ -95,7 +79,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 copyButton = new JButton();
                 copyButton.setText(GetText.tr("Copy"));
                 copyButton.addActionListener(e -> {
-                    OS.copyToClipboard(getInformation());
+                    OS.copyToClipboard(viewModel.getInfo());
                 });
                 info.add(copyButton, BorderLayout.EAST);
             }
@@ -118,7 +102,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             authorsList.setLayout(new FlowLayout());
 
             // Populate list
-            for (String author : AUTHORS_ARRAY) {
+            for (String author : viewModel.getAuthors()) {
                 JTextPane pane = new JTextPane();
                 pane.setText(author);
                 authorsList.add(pane);
@@ -158,57 +142,4 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
     public String getAnalyticsScreenViewName() {
         return "About";
     }
-
-
-    private static String _information = null;
-
-    /**
-     * Produced via "git shortlog -s -n --all --no-merges" then some edits
-     * <p>
-     * Use the following pattern to retrieve icons
-     * "https://avatars.githubusercontent.com/USERNAME"
-     */
-    @SuppressWarnings("JavadocLinkAsPlainText")
-    private static final String[] AUTHORS_ARRAY = {
-        "Ryan Dowling",
-        "RyanTheAllmighty",
-        "atlauncher-bot",
-        "Asyncronous",
-        "PORTB",
-        "ATLauncher Bot",
-        "doomsdayrs",
-        "JakeJMattson",
-        "Jamie (Lexteam)",
-        "Ryan",
-        "Jamie Mansfield",
-        "flaw600",
-        "s0cks",
-        "Leah",
-        "Alan Jenkins",
-        "dgelessus",
-        "Kihira",
-        "Harald Krämer",
-        "James Ross",
-        "iarspider",
-        "xz-dev",
-        "Mysticpasta1",
-        "Torsten Walluhn",
-        "modmuss50",
-        "Andrew Thurman",
-        "Cassandra Caina",
-        "Jamie (Lexware)",
-        "Jowsey",
-        "Shegorath123",
-        "notfood",
-        "Dallas Epperson",
-        "Emma Waffle",
-        "Hossam Mohsen",
-        "Jamie",
-        "Laceh",
-        "Sasha Sorokin",
-        "TecCheck",
-        "Trejkaz",
-        "mac",
-    };
-
 }

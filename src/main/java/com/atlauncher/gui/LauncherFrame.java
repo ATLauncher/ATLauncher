@@ -43,6 +43,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.tabs.about.AboutTab;
 import com.atlauncher.gui.tabs.AboutTab;
 import com.atlauncher.gui.tabs.CreatePackTab;
 import com.atlauncher.gui.tabs.InstancesTab;
