@@ -9,6 +9,7 @@ import com.atlauncher.utils.Authentication;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class AccountsViewModel implements IAccountsViewModel {
     private List<String> _accountUIs = null;
     private List<AbstractAccount> accounts = AccountManager.getAccounts();
 
+    @NotNull
     @Override
     public List<String> getAccounts() {
         if (_accountUIs == null)
@@ -66,7 +68,7 @@ public class AccountsViewModel implements IAccountsViewModel {
     }
 
     @Override
-    public String getLoginUsername() {
+    public @Nullable String getLoginUsername() {
         return loginUsername;
     }
 
@@ -94,16 +96,14 @@ public class AccountsViewModel implements IAccountsViewModel {
     private String clientToken = null;
 
     @NotNull
-    @Override
-    public String getClientToken() {
+    private String getClientToken() {
         if (clientToken == null)
             clientToken = UUID.randomUUID().toString().replace("-", "");
 
         return clientToken;
     }
 
-    @Override
-    public void invalidateClientToken() {
+    private void invalidateClientToken() {
         clientToken = null;
     }
 
@@ -115,8 +115,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         return null;
     }
 
-    @Override
-    public void addNewAccount(LoginResponse response) {
+    private void addNewAccount(LoginResponse response) {
         MojangAccount account = new MojangAccount(loginUsername,
             loginPassword,
             response,
@@ -128,8 +127,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         _accountUIs = null; // Invalidate old list
     }
 
-    @Override
-    public void editAccount(LoginResponse response) {
+    private void editAccount(LoginResponse response) {
         AbstractAccount account = getSelectedAccount();
 
         if (account instanceof MojangAccount) {
@@ -157,14 +155,34 @@ public class AccountsViewModel implements IAccountsViewModel {
         _accountUIs = null; // Invalidate old list
     }
 
+    private LoginResponse loginResponse = null;
+
+    @NotNull
+    @Override
+    public LoginPostResult loginPost() {
+        if (loginResponse != null && loginResponse.hasAuth() && loginResponse.isValidAuth()) {
+            if (selectedAccountIndex == -1) {
+                addNewAccount(loginResponse);
+                invalidateClientToken();
+                return new LoginPostResult.Added();
+            } else {
+                editAccount(loginResponse);
+                invalidateClientToken();
+                return new LoginPostResult.Edited();
+            }
+        } else {
+            return new LoginPostResult.Error(loginResponse != null ? loginResponse.getErrorMessage() : null);
+        }
+    }
+
     @Override
     public int getSelectedIndex() {
         return selectedAccountIndex + 1;
     }
 
-    @NotNull
     @Override
-    public LoginResponse checkAccount() {
-        return Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
+    public void login() {
+        loginResponse =
+            Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
     }
 }

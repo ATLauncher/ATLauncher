@@ -42,7 +42,9 @@ import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
 import com.atlauncher.gui.tabs.Tab;
+import com.atlauncher.gui.tabs.accounts.IAccountsViewModel.LoginPostResult;
 import com.atlauncher.gui.tabs.accounts.IAccountsViewModel.LoginPreCheckResult;
+import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
@@ -427,34 +429,44 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             GetText.tr("Logging Into Minecraft"), "Aborting login for " + viewModel.getLoginUsername());
         dialog.setName("loginDialog");
         dialog.addThread(new Thread(() -> {
-            LoginResponse resp = viewModel.checkAccount();
-            dialog.setReturnValue(resp);
+            viewModel.login();
             dialog.close();
         }));
         dialog.start();
 
-        LoginResponse response = dialog.getReturnValue();
-        if (response != null && response.hasAuth() && response.isValidAuth()) {
+        LoginPostResult postResult = viewModel.loginPost();
 
-            if (accountsComboBox.getSelectedIndex() == 0) {
-                viewModel.addNewAccount(response);
-            } else {
-                viewModel.editAccount(response);
-
-                DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
-                    .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
+        if (postResult instanceof LoginPostResult.Error) {
+            String error = ((LoginPostResult.Error) postResult).errorContent;
+            LOG.error("error response: {}", error);
+            DialogManager
+                .okDialog()
+                .setTitle(GetText.tr("Account Not Added"))
+                .setContent(
+                    new HTMLBuilder()
+                        .center()
+                        // #. {0} is the error message from Mojang as to why we couldn't login
+                        .text(GetText.tr(
+                                "Account not added as login details were incorrect.<br/><br/>{0}",
+                                error
+                            )
+                        )
+                        .build())
+                .setType(DialogManager.INFO)
+                .show();
+        } else {
+            if (postResult instanceof LoginPostResult.Edited) {
+                DialogManager
+                    .okDialog()
+                    .setTitle(GetText.tr("Account Edited"))
+                    .setContent(GetText.tr("Account edited successfully"))
+                    .setType(DialogManager.INFO)
+                    .show();
             }
+
             populateComboBox();
             accountsComboBox.setSelectedIndex(viewModel.getSelectedIndex());
-        } else {
-            LOG.error("error response: {}", response.getErrorMessage());
-            DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
-                // #. {0} is the error message from Mojang as to why we couldn't login
-                .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
-                    response.getErrorMessage()))
-                .build()).setType(DialogManager.INFO).show();
         }
-        viewModel.invalidateClientToken();
     }
 
     /**
