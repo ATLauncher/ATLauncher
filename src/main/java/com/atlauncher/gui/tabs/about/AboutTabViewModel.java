@@ -19,6 +19,7 @@ package com.atlauncher.gui.tabs.about;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.Java;
+import com.atlauncher.utils.OS;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,15 +43,24 @@ public class AboutTabViewModel implements IAboutTabViewModel {
     @NotNull
     @Override
     public String getInfo() {
-        if (info == null)
-            info = Constants.LAUNCHER_NAME + "\n" +
-                "Version:\t" + Constants.VERSION + "\n" +
-                "OS:\t" + System.getProperty("os.name") + "\n" +
-                "Java:\t" +
-                String.format("Java %d (%s)",
+        if (info == null) {
+            StringBuilder builder = new StringBuilder()
+                .append(Constants.LAUNCHER_NAME)
+                .append("\n")
+                .append("Version:\t").append(Constants.VERSION)
+                .append("\n")
+                .append("OS:\t").append(System.getProperty("os.name"));
+
+            if (OS.isUsingFlatpak())
+                builder.append(" (Flatpak)");
+
+            builder.append("\n").append("Java:\t")
+                .append(String.format("Java %d (%s)",
                     Java.getLauncherJavaVersionNumber(),
                     Java.getLauncherJavaVersion()
-                );
+                ));
+            info = builder.toString();
+        }
 
         return info;
     }
