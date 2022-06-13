@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs;
+package com.atlauncher.gui.tabs.accounts;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -42,6 +42,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
+import com.atlauncher.gui.tabs.Tab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
