@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthDependency;
@@ -25,14 +26,16 @@ import com.atlauncher.data.modrinth.ModrinthDependencyType;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.ModrinthProjectDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
+import com.jogamp.newt.Screen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
@@ -47,6 +50,7 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("serial")
 public class ModrinthVersionSelectorDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Modrinth Version Selector Dialog";
     private static final Logger LOG = LogManager.getLogger(ModrinthVersionSelectorDialog.class);
 
     private int versionsLength = 0;
@@ -154,7 +158,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("Modrinth Version Selector Dialog");
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.title));
@@ -239,7 +243,10 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 // #. {0} is the name of the mod we're installing
                 GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
-                Analytics.sendEvent(mod.title + " - " + version.name, "AddFile", "ModrinthMod");
+                AppEventBus.postToDefault(new AnalyticsEvent.AppEvent(
+                    String.format("%s - %s", mod.title, version.name),
+                    "AddFile",
+                    "ModrinthMod"));
                 instance.addFileFromModrinth(mod, version, file, progressDialog);
 
                 progressDialog.close();

@@ -18,12 +18,13 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.gui.layouts.WrapLayout;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
@@ -43,6 +44,7 @@ import java.util.TimerTask;
 
 @SuppressWarnings("serial")
 public final class BrowserDownloadDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Browser Download Mods";
     private final List<Mod> browserDownloadMods;
     public final List<Mod> modsDownloaded = new ArrayList<>();
 
@@ -65,8 +67,7 @@ public final class BrowserDownloadDialog extends JDialog {
     public BrowserDownloadDialog(Window parent, List<Mod> browserDownloadMods) {
         super(parent, GetText.tr("Browser Download Mods"), ModalityType.DOCUMENT_MODAL);
         this.browserDownloadMods = browserDownloadMods;
-
-        Analytics.sendScreenView("Browser Download Mods");
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         this.setPreferredSize(new Dimension(680, 600));
         this.setMinimumSize(new Dimension(680, 600));

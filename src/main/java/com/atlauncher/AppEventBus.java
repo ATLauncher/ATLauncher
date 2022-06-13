@@ -7,10 +7,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class AppEventBus {
-    private static final EventBus defaultBus = new EventBus();
-    private static final EventBus uiBus = new AsyncEventBus("ATLauncher", new SwingExecutor());
+    private static final ExecutorService pool = Executors.newWorkStealingPool();
+    private static final EventBus defaultBus = new AsyncEventBus("Workers", pool);
+    private static final EventBus uiBus = new AsyncEventBus("Swing", new SwingExecutor());
 
     public static EventBus getDefaultBus() {
         return defaultBus;

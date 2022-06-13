@@ -20,7 +20,9 @@ package com.atlauncher.network;
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.events.AnalyticsEvent;
 import com.atlauncher.events.OnSide;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.events.SettingsEvent;
 import com.atlauncher.events.Side;
 import com.atlauncher.utils.Java;
@@ -36,15 +38,21 @@ import java.awt.*;
 
 public final class Analytics {
     private static final Logger LOG = LogManager.getLogger(Analytics.class);
-    private static GoogleAnalytics ga;
+    private static GoogleAnalytics session;
+
+    private static GoogleAnalytics createSession(){
+        return GoogleAnalytics.builder()
+            .withConfig(buildConfig())
+            .withDefaultRequest(buildDefaultRequest())
+            .withTrackingId(Constants.GA_TRACKING_ID)
+            .withAppName(Constants.LAUNCHER_NAME)
+            .withAppVersion(Constants.VERSION.toStringForLogging())
+            .build();
+    }
 
     public static void startSession() {
-        ga = GoogleAnalytics.builder().withConfig(buildConfig()).withDefaultRequest(buildDefaultRequest())
-            .withTrackingId(Constants.GA_TRACKING_ID).withAppName(Constants.LAUNCHER_NAME)
-            .withAppVersion(Constants.VERSION.toStringForLogging()).build();
-
-        ga.screenView().sessionControl("start").sendAsync();
-
+        session = createSession();
+        session.screenView().sessionControl("start").sendAsync();
         Runtime.getRuntime().addShutdownHook(new Thread(Analytics::endSession));
     }
 
@@ -59,34 +67,36 @@ public final class Analytics {
     private static DefaultRequest buildDefaultRequest() {
         Rectangle screenBounds = OS.getScreenVirtualBounds();
         String screenResolution = String.format("%dx%d", screenBounds.width, screenBounds.height);
-
         return new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.analyticsClientId)
             .customDimension(1, Java.getLauncherJavaVersion()).customDimension(2, System.getProperty("os.name"))
             .customDimension(3, System.getProperty("os.arch")).screenResolution(screenResolution);
     }
 
-    public static void sendScreenView(String title) {
-        if (ga == null) {
+    private static void sendScreenView(final String title){
+        if(session == null)
             return;
-        }
-
-        ga.screenView(Constants.LAUNCHER_NAME, title).sendAsync();
+        session.screenView(Constants.LAUNCHER_NAME, title).sendAsync();
     }
 
-    public static void sendOutboundLink(String url) {
-        if (ga == null) {
+    private static void sendOutboundLink(String url) {
+        if (session == null)
             return;
-        }
-
-        ga.event().eventLabel(url).eventAction("Outbound").eventCategory("Link").sendAsync();
+        session.event()
+            .eventLabel(url)
+            .eventAction("Outbound")
+            .eventCategory("Link")
+            .sendAsync();
     }
 
     public static void sendEvent(Integer value, String label, String action, String category) {
-        if (ga == null) {
+        if (session == null)
             return;
-        }
-
-        ga.event().eventValue(value).eventLabel(label).eventAction(action).eventCategory(category).sendAsync();
+        session.event()
+            .eventValue(value)
+            .eventLabel(label)
+            .eventAction(action)
+            .eventCategory(category)
+            .sendAsync();
     }
 
     public static void sendEvent(String label, String action, String category) {
@@ -97,33 +107,49 @@ public final class Analytics {
         sendEvent(null, null, action, category);
     }
 
-    public static void sendException(String message) {
-        if (ga == null) {
+    private static void sendException(String message) {
+        if(session == null)
             return;
-        }
-
-        ga.exception().exceptionDescription(message).sendAsync();
+        session.exception().exceptionDescription(message).sendAsync();
     }
 
     public static void endSession() {
-        if (ga == null) {
+        if (session == null)
             return;
-        }
-
         try {
-            ga.screenView().sessionControl("end").send();
-            ga.close();
-        } catch (Exception e) {
-            LOG.error("error", e);
+            session.screenView()
+                .sessionControl("end")
+                .send();
+            session.close();
+        } catch (Exception exc) {
+            LOG.error("Error closing analytics session:", exc);
         }
     }
 
     @Subscribe
     @OnSide(Side.UI)
     public void onSettingsSaved(final SettingsEvent.SettingsSavedEvent event) {
-        ga.getConfig()
+        session.getConfig()
             .setProxyHost(App.settings.proxyHost)
             .setProxyPort(App.settings.proxyPort)
             .setEnabled(!App.disableAnalytics && App.settings.enableAnalytics);
+    }
+
+    @Subscribe
+    @OnSide(Side.WORKER)
+    public void onScreenView(final ScreenViewEvent event){
+        sendScreenView(event.getTitle());
+    }
+
+    @Subscribe
+    @OnSide(Side.WORKER)
+    public void onOutboundLink(final AnalyticsEvent.OutboundLinkEvent event){
+        sendOutboundLink(event.getDestination());
+    }
+
+    @Subscribe
+    @OnSide(Side.WORKER)
+    public void onAppException(final AnalyticsEvent.AppExceptionEvent event){
+        sendException(event.getMessage());
     }
 }

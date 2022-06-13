@@ -18,12 +18,14 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +38,7 @@ import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class RenameInstanceDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Rename Instance Dialog";
     private static final Logger LOG = LogManager.getLogger(RenameInstanceDialog.class);
 
     private JTextField instanceName;
@@ -51,7 +54,7 @@ public class RenameInstanceDialog extends JDialog {
 
         this.instance = instance;
 
-        Analytics.sendScreenView("Rename Instance Dialog");
+        AppEventBus.post(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         setSize(320, 150);
         setLocationRelativeTo(parent);

@@ -17,6 +17,6 @@
  */
 package com.atlauncher.events;
 
-public abstract class Event {
+public interface Event{
 
 }

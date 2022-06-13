@@ -17,7 +17,7 @@
  */
 package com.atlauncher.events;
 
-public abstract class ConsoleEvent extends Event {
+public abstract class ConsoleEvent implements Event {
     protected ConsoleEvent() {
         super();
     }

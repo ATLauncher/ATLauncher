@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -58,11 +59,12 @@ import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicModpackSlim;
 import com.atlauncher.data.technic.TechnicSolderModpack;
+import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
@@ -93,6 +95,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class InstanceInstallerDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Instance Installer Dialog";
     private static final Logger LOG = LogManager.getLogger(InstanceInstallerDialog.class);
 
     private static final long serialVersionUID = -6984886874482721558L;
@@ -175,14 +178,13 @@ public class InstanceInstallerDialog extends JDialog {
                                    final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
                                    Path extractedPathCon, Window parent, ModrinthVersion preselectedModrinthVersion) {
         super(parent, ModalityType.DOCUMENT_MODAL);
-
         setName("instanceInstallerDialog");
         this.isUpdate = isUpdate;
         this.autoInstallVersion = autoInstallVersion;
         this.extractedPath = extractedPathCon;
         this.preselectedModrinthVersion = preselectedModrinthVersion;
 
-        Analytics.sendScreenView("Instance Installer Dialog");
+        AppEventBus.post(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         if (object instanceof Pack) {
             handlePackInstall(object, isServer);

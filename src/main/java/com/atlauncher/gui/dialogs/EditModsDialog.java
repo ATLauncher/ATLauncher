@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
@@ -28,13 +29,14 @@ import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.events.AnalyticsEvent;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.PerformanceManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
@@ -65,6 +67,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EditModsDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Edit Mods Dialog";
     private static final Logger LOG = LogManager.getLogger(EditModsDialog.class);
     private static final long serialVersionUID = 7004414192679481818L;
 
@@ -107,7 +110,7 @@ public class EditModsDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("Edit Mods Dialog");
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setDividerSize(0);

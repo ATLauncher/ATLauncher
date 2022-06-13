@@ -17,8 +17,9 @@
  */
 package com.atlauncher.logging;
 
+import com.atlauncher.AppEventBus;
+import com.atlauncher.events.AnalyticsEvent;
 import com.atlauncher.exceptions.LocalException;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.network.ErrorReporting;
 import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;
@@ -42,7 +43,7 @@ public final class LauncherReportingAppender extends AbstractAppender {
     public void append(LogEvent event) {
         final Throwable th = event.getThrown();
         if (th != null && !(th instanceof LocalException)) { // don't report LocalExceptions
-            Analytics.sendException(th.getMessage());
+            AppEventBus.postToDefault(new AnalyticsEvent.AppExceptionEvent(th));
             ErrorReporting.captureException(th);
         }
     }

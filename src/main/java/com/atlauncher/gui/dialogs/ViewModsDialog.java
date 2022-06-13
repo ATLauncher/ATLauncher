@@ -18,10 +18,11 @@
 package com.atlauncher.gui.dialogs;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.json.Mod;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.gui.card.ModCard;
-import com.atlauncher.network.Analytics;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
@@ -34,6 +35,7 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "View Mods Dialog";
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JTextField searchField = new JTextField(16);
     private final List<ModCard> cards = new LinkedList<>();
@@ -41,8 +43,7 @@ public final class ViewModsDialog extends JDialog {
     public ViewModsDialog(Pack pack) {
         // #. {0} is the name of the pack
         super(App.launcher.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.DOCUMENT_MODAL);
-
-        Analytics.sendScreenView("View Mods Dialog");
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         this.setPreferredSize(new Dimension(550, 450));
         this.setMinimumSize(new Dimension(550, 450));
