@@ -69,8 +69,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final Logger LOG = LogManager.getLogger(AccountsTab.class);
     private static final long serialVersionUID = 2493791137600123223L;
 
+    private IAccountsViewModel viewModel;
+
     private JLabel userSkin;
-    private final JComboBox<ComboItem<AbstractAccount>> accountsComboBox;
+    private final JComboBox<ComboItem<String>> accountsComboBox;
     private JLabel usernameLabel;
     private JTextField usernameField;
     private JLabel passwordLabel;
@@ -86,6 +88,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
     @SuppressWarnings("unchecked")
     public AccountsTab() {
+        viewModel = new AccountsViewModel();
         setLayout(new BorderLayout());
 
         RelocalizationManager.addListener(this);
@@ -96,7 +99,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
                 "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://atl.pw/create-account\">by buying Minecraft here</a>. ATLauncher doesn't work with cracked accounts."))
-                .build());
+            .build());
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -125,60 +128,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         accountsComboBox = new JComboBox<>();
         accountsComboBox.setName("accountsTabAccountsComboBox");
         accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
-        for (AbstractAccount account : AccountManager.getAccounts()) {
-            accountsComboBox.addItem(new ComboItem<>(account, account.minecraftUsername));
+        for (String account : viewModel.getAccounts()) {
+            accountsComboBox.addItem(new ComboItem<>(null, account));
         }
         accountsComboBox.setSelectedIndex(0);
         accountsComboBox.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (accountsComboBox.getSelectedIndex() == 0) {
-                    usernameField.setText("");
-                    passwordField.setText("");
-                    rememberField.setSelected(false);
-                    leftButton.setText(GetText.tr("Add"));
-                    rightButton.setText(GetText.tr("Clear"));
-                    userSkin.setIcon(SkinUtils.getDefaultSkin());
-
-                    usernameLabel.setVisible(true);
-                    usernameField.setVisible(true);
-                    passwordLabel.setVisible(true);
-                    passwordField.setVisible(true);
-                    rememberLabel.setVisible(true);
-                    rememberField.setVisible(true);
-                    leftButton.setVisible(true);
-                    rightButton.setVisible(true);
-                    loginWithMicrosoftButton.setVisible(true);
-                    refreshAccessTokenMenuItem.setVisible(false);
-                } else {
-                    AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                            .getValue();
-
-                    usernameLabel.setVisible(account instanceof MojangAccount);
-                    usernameField.setVisible(account instanceof MojangAccount);
-                    passwordLabel.setVisible(account instanceof MojangAccount);
-                    passwordField.setVisible(account instanceof MojangAccount);
-                    rememberLabel.setVisible(account instanceof MojangAccount);
-                    rememberField.setVisible(account instanceof MojangAccount);
-                    leftButton.setVisible(account instanceof MojangAccount);
-                    rightButton.setVisible(true);
-                    loginWithMicrosoftButton.setVisible(account instanceof MicrosoftAccount);
-                    refreshAccessTokenMenuItem.setVisible(account instanceof MicrosoftAccount);
-
-                    if (account instanceof MojangAccount) {
-                        MojangAccount mojangAccount = (MojangAccount) account;
-                        usernameField.setText(mojangAccount.username);
-                        passwordField.setText(mojangAccount.password);
-                        rememberField.setSelected(mojangAccount.remember);
-                    } else {
-                        usernameField.setText("");
-                        passwordField.setText("");
-                        rememberField.setSelected(false);
-                    }
-
-                    leftButton.setText(GetText.tr("Save"));
-                    rightButton.setText(GetText.tr("Delete"));
-                    userSkin.setIcon(account.getMinecraftSkin());
-                }
+                viewModel.setSelectedAccount(accountsComboBox.getSelectedIndex());
             }
         });
         topPanel.add(accountsComboBox, gbc);
@@ -244,11 +200,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         rememberField.addActionListener(e -> {
             if (rememberField.isSelected()) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Security Warning"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "Make sure you only do this on a computer you trust.<br/>If you do this on a shared computer, your password may be stolen.<br/>Do you still want to save your password?"))
-                                .build())
-                        .setType(DialogManager.ERROR).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
-                        .show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Make sure you only do this on a computer you trust.<br/>If you do this on a shared computer, your password may be stolen.<br/>Do you still want to save your password?"))
+                        .build())
+                    .setType(DialogManager.ERROR).addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No"))
+                    .show();
 
                 if (ret != 0) {
                     rememberField.setSelected(false);
@@ -276,15 +232,15 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             } else {
                 AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem()).getValue();
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete"))
-                        .setContent(GetText.tr("Are you sure you want to delete this account?"))
-                        .setType(DialogManager.WARNING).show();
+                    .setContent(GetText.tr("Are you sure you want to delete this account?"))
+                    .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
                     Analytics.sendEvent("Delete", "Account");
                     AccountManager.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
                     for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                        accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
+                        accountsComboBox.addItem(new ComboItem<>(accountt.username, accountt.minecraftUsername));
                     }
                     accountsComboBox.setSelectedIndex(0);
                 }
@@ -299,7 +255,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 accountsComboBox.removeAllItems();
                 accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
                 for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                    accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
+                    accountsComboBox.addItem(new ComboItem<>(accountt.username, accountt.minecraftUsername));
                 }
                 accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
             }
@@ -317,7 +273,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         updateSkin = new JMenuItem(GetText.tr("Reload Skin"));
         updateSkin.addActionListener(e -> {
             final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                    .getValue();
+                .getValue();
             Analytics.sendEvent("UpdateSkin", "Account");
             account.updateSkin();
             userSkin.setIcon(account.getMinecraftSkin());
@@ -327,7 +283,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         JMenuItem updateUsername = new JMenuItem(GetText.tr("Update Username"));
         updateUsername.addActionListener(e -> {
             final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                    .getValue();
+                .getValue();
             Analytics.sendEvent("UpdateUsername", "Account");
             account.updateUsername();
             AccountManager.saveAccounts();
@@ -338,27 +294,27 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         refreshAccessTokenMenuItem.setVisible(false);
         refreshAccessTokenMenuItem.addActionListener(e -> {
             final MicrosoftAccount account = (MicrosoftAccount) ((ComboItem<AbstractAccount>) accountsComboBox
-                    .getSelectedItem()).getValue();
+                .getSelectedItem()).getValue();
             Analytics.sendEvent("RefreshAccessToken", "Account");
 
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Refreshing Access Token"), 0,
-                    GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-                    "Aborting refreshing access token for " + account.minecraftUsername);
+                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+                "Aborting refreshing access token for " + account.minecraftUsername);
             dialog.addThread(new Thread(() -> {
                 boolean success = account.refreshAccessToken(true);
                 AccountManager.saveAccounts();
 
                 if (success) {
                     DialogManager.okDialog().setTitle(GetText.tr("Access Token Refreshed"))
-                            .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)
-                            .show();
+                        .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)
+                        .show();
                 } else {
                     account.mustLogin = true;
                     AccountManager.saveAccounts();
 
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Refresh Access Token"))
-                            .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
+                        .setType(DialogManager.ERROR).show();
 
                     new LoginWithMicrosoftDialog(account);
                 }
@@ -383,6 +339,62 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         add(infoPanel, BorderLayout.NORTH);
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
+
+        observe();
+    }
+
+    /**
+     * Start observing state changes from view model
+     */
+    private void observe() {
+        viewModel.onAccountSelected(account -> {
+            if (account == null) {
+                usernameField.setText("");
+                passwordField.setText("");
+                rememberField.setSelected(false);
+                leftButton.setText(GetText.tr("Add"));
+                rightButton.setText(GetText.tr("Clear"));
+                userSkin.setIcon(SkinUtils.getDefaultSkin());
+
+                usernameLabel.setVisible(true);
+                usernameField.setVisible(true);
+                passwordLabel.setVisible(true);
+                passwordField.setVisible(true);
+                rememberLabel.setVisible(true);
+                rememberField.setVisible(true);
+                leftButton.setVisible(true);
+                rightButton.setVisible(true);
+                loginWithMicrosoftButton.setVisible(true);
+                refreshAccessTokenMenuItem.setVisible(false);
+            } else {
+
+                usernameLabel.setVisible(account instanceof MojangAccount);
+                usernameField.setVisible(account instanceof MojangAccount);
+                passwordLabel.setVisible(account instanceof MojangAccount);
+                passwordField.setVisible(account instanceof MojangAccount);
+                rememberLabel.setVisible(account instanceof MojangAccount);
+                rememberField.setVisible(account instanceof MojangAccount);
+                leftButton.setVisible(account instanceof MojangAccount);
+                rightButton.setVisible(true);
+                loginWithMicrosoftButton.setVisible(account instanceof MicrosoftAccount);
+                refreshAccessTokenMenuItem.setVisible(account instanceof MicrosoftAccount);
+
+                if (account instanceof MojangAccount) {
+                    MojangAccount mojangAccount = (MojangAccount) account;
+                    usernameField.setText(mojangAccount.username);
+                    passwordField.setText(mojangAccount.password);
+                    rememberField.setSelected(mojangAccount.remember);
+                } else {
+                    usernameField.setText("");
+                    passwordField.setText("");
+                    rememberField.setSelected(false);
+                }
+
+                leftButton.setText(GetText.tr("Save"));
+                rightButton.setText(GetText.tr("Delete"));
+                userSkin.setIcon(account.getMinecraftSkin());
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -394,17 +406,17 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         boolean remember = rememberField.isSelected();
         if (AccountManager.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
-                    .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
+                .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
             return;
         }
 
         LOG.info("Logging into Minecraft!");
         final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"), 0,
-                GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
+            GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
         dialog.setName("loginDialog");
         dialog.addThread(new Thread(() -> {
             LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
-                    new String(passwordField.getPassword()), clientToken);
+                new String(passwordField.getPassword()), clientToken);
             dialog.setReturnValue(resp);
             dialog.close();
         }));
@@ -440,21 +452,21 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 Analytics.sendEvent("Edit", "Account");
                 LOG.info("Edited Account {}", account);
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
-                        .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
+                    .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
             for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                accountsComboBox.addItem(new ComboItem<>(accountt, accountt.minecraftUsername));
+                accountsComboBox.addItem(new ComboItem<>(accountt.username, accountt.minecraftUsername));
             }
             accountsComboBox.setSelectedItem(account);
         } else {
             LOG.error("error response: {}", response);
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
-                    // #. {0} is the error message from Mojang as to why we couldn't login
-                    .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
-                            response.getErrorMessage()))
-                    .build()).setType(DialogManager.INFO).show();
+                // #. {0} is the error message from Mojang as to why we couldn't login
+                .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
+                    response.getErrorMessage()))
+                .build()).setType(DialogManager.INFO).show();
         }
     }
 
