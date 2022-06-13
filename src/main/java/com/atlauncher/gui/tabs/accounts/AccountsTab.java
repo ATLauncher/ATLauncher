@@ -27,7 +27,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -43,6 +42,7 @@ import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
 import com.atlauncher.gui.tabs.Tab;
+import com.atlauncher.gui.tabs.accounts.IAccountsViewModel.LoginPreCheckResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
@@ -60,7 +60,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
@@ -127,10 +126,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         accountsComboBox = new JComboBox<>();
         accountsComboBox.setName("accountsTabAccountsComboBox");
-        accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
-        for (String account : viewModel.getAccounts()) {
-            accountsComboBox.addItem(new ComboItem<>(null, account));
-        }
+        populateComboBox();
         accountsComboBox.setSelectedIndex(0);
         accountsComboBox.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -156,8 +152,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         usernameField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                viewModel.setLoginUsername(usernameField.getText());
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    leftButtonActions();
+                    if (!viewModel.isLoginPasswordSet())
+                        passwordField.grabFocus();
+                    else login();
                 }
             }
         });
@@ -178,8 +177,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         passwordField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                viewModel.setLoginPassword(new String(passwordField.getPassword()));
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    leftButtonActions();
+                    if (!viewModel.isLoginUsernameSet())
+                        usernameField.grabFocus();
+                    else login();
                 }
             }
         });
@@ -198,6 +200,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         rememberField = new JCheckBox();
         bottomPanel.add(rememberField, gbc);
         rememberField.addActionListener(e -> {
+            viewModel.setRememberLogin(rememberField.isSelected());
             if (rememberField.isSelected()) {
                 int ret = DialogManager.optionDialog().setTitle(GetText.tr("Security Warning"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -222,13 +225,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         buttons.setLayout(new FlowLayout());
         leftButton = new JButton(GetText.tr("Add"));
         leftButton.setName("leftButton");
-        leftButton.addActionListener(e -> leftButtonActions());
+        leftButton.addActionListener(e -> login());
         rightButton = new JButton(GetText.tr("Clear"));
         rightButton.addActionListener(e -> {
             if (accountsComboBox.getSelectedIndex() == 0) {
-                usernameField.setText("");
-                passwordField.setText("");
-                rememberField.setSelected(false);
+                clearLogin();
             } else {
                 AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem()).getValue();
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Delete"))
@@ -397,14 +398,25 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         });
     }
 
+    /**
+     * User requests to clear out the login attempt
+     */
+    private void clearLogin() {
+        usernameField.setText("");
+        viewModel.setLoginUsername("");
+
+        passwordField.setText("");
+        viewModel.setLoginPassword("");
+
+        rememberField.setSelected(false);
+        viewModel.setRememberLogin(false);
+    }
+
     @SuppressWarnings("unchecked")
-    private void leftButtonActions() {
-        AbstractAccount account;
-        String clientToken = UUID.randomUUID().toString().replace("-", "");
-        String username = usernameField.getText();
-        String password = new String(passwordField.getPassword());
-        boolean remember = rememberField.isSelected();
-        if (AccountManager.isAccountByName(username) && accountsComboBox.getSelectedIndex() == 0) {
+    private void login() {
+        // Pre check
+        LoginPreCheckResult preCheckResult = viewModel.loginPreCheck();
+        if (preCheckResult instanceof LoginPreCheckResult.Exists) {
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
                 .setContent(GetText.tr("This account already exists.")).setType(DialogManager.ERROR).show();
             return;
@@ -412,61 +424,47 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         LOG.info("Logging into Minecraft!");
         final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"), 0,
-            GetText.tr("Logging Into Minecraft"), "Aborting login for " + usernameField.getText());
+            GetText.tr("Logging Into Minecraft"), "Aborting login for " + viewModel.getLoginUsername());
         dialog.setName("loginDialog");
         dialog.addThread(new Thread(() -> {
-            LoginResponse resp = Authentication.checkAccount(usernameField.getText(),
-                new String(passwordField.getPassword()), clientToken);
+            LoginResponse resp = viewModel.checkAccount();
             dialog.setReturnValue(resp);
             dialog.close();
         }));
         dialog.start();
+
         LoginResponse response = dialog.getReturnValue();
         if (response != null && response.hasAuth() && response.isValidAuth()) {
+
             if (accountsComboBox.getSelectedIndex() == 0) {
-                account = new MojangAccount(username, password, response, remember, clientToken);
-                AccountManager.addAccount(account);
+                viewModel.addNewAccount(response);
             } else {
-                account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem()).getValue();
+                viewModel.editAccount(response);
 
-                if (account instanceof MojangAccount) {
-                    MojangAccount mojangAccount = (MojangAccount) account;
-
-                    mojangAccount.username = username;
-                    mojangAccount.minecraftUsername = response.getAuth().getSelectedProfile().getName();
-                    mojangAccount.uuid = response.getAuth().getSelectedProfile().getId().toString();
-                    if (remember) {
-                        mojangAccount.setPassword(password);
-                    } else {
-                        mojangAccount.encryptedPassword = null;
-                        mojangAccount.password = null;
-                    }
-                    mojangAccount.remember = remember;
-                    mojangAccount.clientToken = clientToken;
-                    mojangAccount.store = response.getAuth().saveForStorage();
-
-                    AccountManager.saveAccounts();
-                    com.atlauncher.evnt.manager.AccountManager.post();
-                }
-
-                Analytics.sendEvent("Edit", "Account");
-                LOG.info("Edited Account {}", account);
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                     .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
             }
-            accountsComboBox.removeAllItems();
-            accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
-            for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                accountsComboBox.addItem(new ComboItem<>(accountt.username, accountt.minecraftUsername));
-            }
-            accountsComboBox.setSelectedItem(account);
+            populateComboBox();
+            accountsComboBox.setSelectedIndex(viewModel.getSelectedIndex());
         } else {
-            LOG.error("error response: {}", response);
+            LOG.error("error response: {}", response.getErrorMessage());
             DialogManager.okDialog().setTitle(GetText.tr("Account Not Added")).setContent(new HTMLBuilder().center()
                 // #. {0} is the error message from Mojang as to why we couldn't login
                 .text(GetText.tr("Account not added as login details were incorrect.<br/><br/>{0}",
                     response.getErrorMessage()))
                 .build()).setType(DialogManager.INFO).show();
+        }
+        viewModel.invalidateClientToken();
+    }
+
+    /**
+     * Populate the accounts combo-box with fresh data
+     */
+    private void populateComboBox() {
+        accountsComboBox.removeAllItems();
+        accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
+        for (String account : viewModel.getAccounts()) {
+            accountsComboBox.addItem(new ComboItem<>(null, account));
         }
     }
 
