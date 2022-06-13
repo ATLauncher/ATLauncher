@@ -110,3 +110,18 @@ begin
   end else
     Result := True;
 end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usPostUninstall then
+  begin
+    if MsgBox('Do you want to delete all the launchers data (instances, downloads, saves, etc)?', mbConfirmation, MB_YESNO) = IDYES then begin
+        if DelTree(ExpandConstant('{app}/'), True, True, True) then
+        begin
+        end else
+        begin
+            MsgBox('Error deleting user data. Please delete it manually.', mbError, MB_OK);
+        end;
+    end;
+  end;
+end;
