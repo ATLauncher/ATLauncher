@@ -19,6 +19,7 @@ package com.atlauncher.gui.tabs.accounts;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
@@ -71,8 +72,20 @@ public class AccountsViewModel implements IAccountsViewModel {
             selected.accept(getSelectedAccount());
     }
 
-    private AbstractAccount getSelectedAccount() {
+    @NotNull
+    @Override
+    public AbstractAccount getSelectedAccount() {
         return accounts.get(selectedAccountIndex);
+    }
+
+    @Nullable
+    @Override
+    public MicrosoftAccount getSelectedAccountAs() {
+        AbstractAccount account = getSelectedAccount();
+
+        if (account instanceof MicrosoftAccount)
+            return (MicrosoftAccount) account;
+        return null;
     }
 
     private String loginUsername = null;
@@ -201,5 +214,42 @@ public class AccountsViewModel implements IAccountsViewModel {
     public void login() {
         loginResponse =
             Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
+    }
+
+    @Override
+    public boolean refreshAccessToken() {
+        Analytics.sendEvent("RefreshAccessToken", "Account");
+
+        AbstractAccount abstractAccount = getSelectedAccount();
+        if (abstractAccount instanceof MicrosoftAccount) {
+            MicrosoftAccount account = (MicrosoftAccount) abstractAccount;
+            boolean success = account
+                .refreshAccessToken(true);
+
+            if (!success) {
+                account.mustLogin = true;
+            }
+
+            AccountManager.saveAccounts();
+
+
+            return success;
+        }
+        return false;
+    }
+
+    @Override
+    public void updateUsername() {
+        AbstractAccount account = getSelectedAccount();
+        Analytics.sendEvent("UpdateUsername", "Account");
+        account.updateUsername();
+        AccountManager.saveAccounts();
+    }
+
+    @Override
+    public void updateSkin() {
+        AbstractAccount account = getSelectedAccount();
+        Analytics.sendEvent("UpdateSkin", "Account");
+        account.updateSkin();
     }
 }

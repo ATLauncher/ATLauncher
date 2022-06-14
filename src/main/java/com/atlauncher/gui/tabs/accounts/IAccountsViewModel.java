@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.accounts;
 
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.MicrosoftAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +35,37 @@ public interface IAccountsViewModel {
     void onAccountSelected(Consumer<AbstractAccount> onAccountSelected);
 
     void setSelectedAccount(int index);
+
+    /**
+     * Get the selected index
+     *
+     * @return UI index of selected item
+     */
+    int getSelectedIndex();
+
+    void updateUsername();
+
+    void updateSkin();
+
+    /**
+     * Refresh the access token for an account
+     *
+     * @return if refresh was successful
+     */
+    boolean refreshAccessToken();
+
+    // Account login
+
+    /**
+     * Get currently selected account
+     *
+     * @return the currently selected account
+     */
+    @NotNull
+    AbstractAccount getSelectedAccount();
+
+    @Nullable
+    MicrosoftAccount getSelectedAccountAs();
 
     boolean isLoginUsernameSet();
 
@@ -55,13 +87,6 @@ public interface IAccountsViewModel {
 
     @NotNull
     LoginPostResult loginPost();
-
-    /**
-     * Get the selected index
-     *
-     * @return UI index of selected item
-     */
-    int getSelectedIndex();
 
 
     abstract class LoginPreCheckResult {

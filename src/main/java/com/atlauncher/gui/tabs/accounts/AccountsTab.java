@@ -240,11 +240,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 if (ret == DialogManager.YES_OPTION) {
                     Analytics.sendEvent("Delete", "Account");
                     AccountManager.removeAccount(account);
-                    accountsComboBox.removeAllItems();
-                    accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
-                    for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                        accountsComboBox.addItem(new ComboItem<>(accountt.username, accountt.minecraftUsername));
-                    }
+                    populateComboBox();
                     accountsComboBox.setSelectedIndex(0);
                 }
             }
@@ -255,11 +251,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             new LoginWithMicrosoftDialog();
 
             if (numberOfAccountsBefore != AccountManager.getAccounts().size()) {
-                accountsComboBox.removeAllItems();
-                accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
-                for (AbstractAccount accountt : AccountManager.getAccounts()) {
-                    accountsComboBox.addItem(new ComboItem<>(accountt.username, accountt.minecraftUsername));
-                }
+                populateComboBox();
                 accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
             }
         });
@@ -275,56 +267,22 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         updateSkin = new JMenuItem(GetText.tr("Reload Skin"));
         updateSkin.addActionListener(e -> {
-            final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                .getValue();
-            Analytics.sendEvent("UpdateSkin", "Account");
-            account.updateSkin();
+            viewModel.updateSkin();
+
+            // Have this done via listener
+            AbstractAccount account = viewModel.getSelectedAccount();
             userSkin.setIcon(account.getMinecraftSkin());
         });
         contextMenu.add(updateSkin);
 
         JMenuItem updateUsername = new JMenuItem(GetText.tr("Update Username"));
-        updateUsername.addActionListener(e -> {
-            final AbstractAccount account = ((ComboItem<AbstractAccount>) accountsComboBox.getSelectedItem())
-                .getValue();
-            Analytics.sendEvent("UpdateUsername", "Account");
-            account.updateUsername();
-            AccountManager.saveAccounts();
-        });
+        updateUsername.addActionListener(e -> viewModel.updateUsername());
         contextMenu.add(updateUsername);
 
         refreshAccessTokenMenuItem = new JMenuItem(GetText.tr("Refresh Access Token"));
         refreshAccessTokenMenuItem.setVisible(false);
         refreshAccessTokenMenuItem.addActionListener(e -> {
-            final MicrosoftAccount account = (MicrosoftAccount) ((ComboItem<AbstractAccount>) accountsComboBox
-                .getSelectedItem()).getValue();
-            Analytics.sendEvent("RefreshAccessToken", "Account");
-
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Refreshing Access Token"), 0,
-                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-                "Aborting refreshing access token for " + account.minecraftUsername);
-            dialog.addThread(new Thread(() -> {
-                boolean success = account.refreshAccessToken(true);
-                AccountManager.saveAccounts();
-
-                if (success) {
-                    DialogManager.okDialog().setTitle(GetText.tr("Access Token Refreshed"))
-                        .setContent(GetText.tr("Access token refreshed successfully")).setType(DialogManager.INFO)
-                        .show();
-                } else {
-                    account.mustLogin = true;
-                    AccountManager.saveAccounts();
-
-                    DialogManager.okDialog().setTitle(GetText.tr("Failed To Refresh Access Token"))
-                        .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
-                        .setType(DialogManager.ERROR).show();
-
-                    new LoginWithMicrosoftDialog(account);
-                }
-
-                dialog.close();
-            }));
-            dialog.start();
+            refreshAccessToken();
         });
         contextMenu.add(refreshAccessTokenMenuItem);
 
@@ -344,6 +302,45 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         add(rightPanel, BorderLayout.CENTER);
 
         observe();
+    }
+
+    private void refreshAccessToken() {
+        MicrosoftAccount account = viewModel.getSelectedAccountAs();
+        if (account == null) return;
+
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
+            GetText.tr("Refreshing Access Token"),
+            0,
+            GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+            "Aborting refreshing access token for " + account.minecraftUsername
+        );
+
+        dialog.addThread(new Thread(() -> {
+            boolean success = viewModel.refreshAccessToken();
+            dialog.setReturnValue(success);
+            dialog.close();
+        }));
+        dialog.start();
+
+        boolean success = dialog.getReturnValue();
+
+        if (success) {
+            DialogManager
+                .okDialog()
+                .setTitle(GetText.tr("Access Token Refreshed"))
+                .setContent(GetText.tr("Access token refreshed successfully"))
+                .setType(DialogManager.INFO)
+                .show();
+        } else {
+            DialogManager
+                .okDialog()
+                .setTitle(GetText.tr("Failed To Refresh Access Token"))
+                .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
+                .setType(DialogManager.ERROR)
+                .show();
+
+            new LoginWithMicrosoftDialog(account);
+        }
     }
 
     /**
@@ -471,6 +468,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
     /**
      * Populate the accounts combo-box with fresh data
+     * <p>
+     * TODO Have this be purely a reaction via listener of some form
      */
     private void populateComboBox() {
         accountsComboBox.removeAllItems();
