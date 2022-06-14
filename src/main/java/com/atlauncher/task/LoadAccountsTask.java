@@ -60,9 +60,10 @@ public final class LoadAccountsTask implements Task{
         }
 
         try(InputStream is = Files.newInputStream(this.getFile())){
-            final List<AbstractAccount> accounts = this.getGson().fromJson(new InputStreamReader(is), AccountManager.ACCOUNT_LIST_TYPE);
+            final List<AbstractAccount> accounts = this.getGson()
+                .fromJson(new InputStreamReader(is), AccountManager.ACCOUNT_LIST_TYPE);
 
-            if(!accounts.isEmpty()){
+            if(accounts != null && !accounts.isEmpty()){
                 accounts.stream()
                     .filter(LoadAccountsTask::isMojangAccount)
                     .map((acc) -> (MojangAccount)acc)

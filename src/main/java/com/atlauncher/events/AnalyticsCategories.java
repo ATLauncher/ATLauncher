@@ -7,6 +7,7 @@ public enum AnalyticsCategories implements AnalyticsCategory{
     ACCOUNT("Account"),
     NAVIGATION("Navigation"),
     TOOL("Tool"),
+    SERVER("Server"),
     LAUNCHER("Launcher"),
     FEATURED_PACK("FeaturedPack")
     ;

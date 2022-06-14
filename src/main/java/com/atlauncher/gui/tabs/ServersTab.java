@@ -19,119 +19,92 @@ package com.atlauncher.gui.tabs;
 
 import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Server;
 import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.servers.ServerAddedEvent;
+import com.atlauncher.events.servers.ServerRemovedEvent;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
+import com.atlauncher.gui.tabs.servers.ServerListComponent;
+import com.atlauncher.gui.tabs.servers.ServerSearchField;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
+import com.google.common.base.Preconditions;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
-public class ServersTab extends JPanel implements Tab {
-    private JTextField searchBox;
-
-    private String searchText = null;
-
-    private JPanel panel;
-    private JScrollPane scrollPane;
+public class ServersTab extends JPanel implements Tab{
+    private final ServerListComponent serversList = new ServerListComponent(ServerManager.getServers());
+    private final ServerSearchField searchField = new ServerSearchField();
+    private final JScrollPane scrollPane = createScrollPanel(this.serversList);
     private int currentPosition = 0;
 
-    private NilCard nilCard;
-
     public ServersTab() {
-        setLayout(new BorderLayout());
-        loadContent(false);
         AppEventBus.register(this);
+        this.setLayout(new BorderLayout());
+        this.add(this.createTopPanel(), BorderLayout.NORTH);
+        this.add(this.scrollPane, BorderLayout.CENTER);
+    }
+
+    private static JScrollPane createScrollPanel(final ServerListComponent component){
+        final JScrollPane scrollPane = new JScrollPane(component, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        return scrollPane;
+    }
+
+    private JPanel createTopPanel(){
+        final JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.add(this.searchField);
+        return topPanel;
     }
 
     public void loadContent(boolean keepFilters) {
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        searchBox = new JTextField(16);
-        if (keepFilters) {
-            searchBox.setText(this.searchText);
-        }
-        searchBox.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    Analytics.sendEvent(searchBox.getText(), "Search", "Server");
-                    reload();
-                }
-            }
-        });
-        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-        searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
-        searchBox.putClientProperty("JTextField.showClearButton", true);
-        searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            searchBox.setText("");
-            reload();
-        });
-        topPanel.add(searchBox);
-
-        add(topPanel, BorderLayout.NORTH);
-
-        panel = new JPanel();
-        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        add(scrollPane, BorderLayout.CENTER);
-
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.insets = UIConstants.FIELD_INSETS_SMALL;
-        gbc.fill = GridBagConstraints.BOTH;
-
-        ServerManager.getServersSorted().forEach(server -> {
-            if (keepFilters) {
-                boolean showServer = true;
-
-                if (searchText != null) {
-                    if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(server.name)
-                        .find()) {
-                        showServer = false;
-                    }
-                }
-
-                if (showServer) {
-                    panel.add(new ServerCard(server), gbc);
-                    gbc.gridy++;
-                }
-            } else {
-                panel.add(new ServerCard(server), gbc);
-                gbc.gridy++;
-            }
-        });
-
-        if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));
-            panel.add(nilCard, gbc);
-        }
-
+//        ServerManager.getServers().forEach(server -> {
+//            if (keepFilters) {
+//                boolean showServer = true;
+//
+//                if (searchText != null) {
+//                    if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(server.name)
+//                        .find()) {
+//                        showServer = false;
+//                    }
+//                }
+//
+//                if (showServer) {
+//                    panel.add(new ServerCard(server), gbc);
+//                    gbc.gridy++;
+//                }
+//            } else {
+//                panel.add(new ServerCard(server), gbc);
+//                gbc.gridy++;
+//            }
+//        });
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(currentPosition));
     }
 
     public void reload() {
         this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
-        this.searchText = searchBox.getText();
-        if (this.searchText.isEmpty()) {
-            this.searchText = null;
-        }
         removeAll();
+
         loadContent(true);
+
         validate();
         repaint();
-        searchBox.requestFocus();
+        this.searchField.requestFocus();
     }
 
     @Override
@@ -146,9 +119,15 @@ public class ServersTab extends JPanel implements Tab {
 
     @Subscribe
     public final void onLocalizationChanged(final LocalizationChangedEvent event) {
-        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-        if (nilCard != null) {
-            nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));
-        }
+    }
+
+    @Subscribe
+    public final void onServerAdded(final ServerAddedEvent event){
+        this.serversList.addServer(event.getServer());
+    }
+
+    @Subscribe
+    public final void onServerRemoved(final ServerRemovedEvent event){
+        this.serversList.removeServer(event.getServer());
     }
 }

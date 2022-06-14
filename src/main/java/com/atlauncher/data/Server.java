@@ -35,6 +35,7 @@ import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.mini2Dx.gettext.GetText;
 
 import javax.imageio.ImageIO;
@@ -49,11 +50,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 @Json
-public class Server {
+public class Server implements Comparable<Server>{
     private static final Logger LOG = LogManager.getLogger(Server.class);
 
     public String name;
@@ -341,5 +343,10 @@ public class Server {
         } catch (JsonIOException | IOException e) {
             LOG.error("error", e);
         }
+    }
+
+    @Override
+    public int compareTo(@NotNull final Server server) {
+        return this.name.compareToIgnoreCase(server.name);
     }
 }

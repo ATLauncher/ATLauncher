@@ -83,6 +83,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -1067,6 +1068,10 @@ public class Utils {
             }
             return false;
         };
+    }
+
+    public static Predicate<Path> getServerFileFilterPredicate(){
+        return (path) -> Files.exists(path.resolve("server.json"));
     }
 
     /**

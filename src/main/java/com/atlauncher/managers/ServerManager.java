@@ -18,61 +18,57 @@
 package com.atlauncher.managers;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.AppTaskEngine;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Server;
+import com.atlauncher.events.servers.ServerAddedEvent;
+import com.atlauncher.events.servers.ServerRemovedEvent;
+import com.atlauncher.task.LoadServersTask;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ServerManager {
     private static final Logger LOG = LogManager.getLogger(ServerManager.class);
+    private static final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private static final Set<Server> servers = new TreeSet<>();
 
-    public static List<Server> getServers() {
-        return Data.SERVERS;
+    public static Set<Server> getServers(){
+        final ReentrantReadWriteLock.ReadLock lock = getReadLock();
+        try{
+            lock.lock();
+            return ImmutableSet.copyOf(servers);
+        } finally{
+            lock.unlock();
+        }
     }
 
     /**
      * Loads the user installed servers
      */
     public static void loadServers() {
-        PerformanceManager.start();
-        LOG.debug("Loading servers");
-        Data.SERVERS.clear();
-
-        for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
-            .orElse(new String[0])) {
-            File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
-
-            Server server;
-
-            try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
-                server = Gsons.MINECRAFT.fromJson(fileReader, Server.class);
-                LOG.debug("Loaded server from " + serverDir);
-            } catch (Exception e) {
-                LOG.error("Failed to load server in the folder " + serverDir, e);
-                continue;
-            }
-
-            if (server == null) {
-                LOG.error("Failed to load server in the folder " + serverDir);
-                continue;
-            }
-
-            Data.SERVERS.add(server);
-        }
-
-        LOG.debug("Finished loading servers");
-        PerformanceManager.end();
+        final LoadServersTask task = LoadServersTask.of(FileSystem.SERVERS)
+            .build();
+        AppTaskEngine.submit(task);
     }
 
     public static void setServerVisibility(Server server, boolean collapsed) {
@@ -90,25 +86,52 @@ public class ServerManager {
         }
     }
 
-    public static ArrayList<Server> getServersSorted() {
-        ArrayList<Server> servers = new ArrayList<>(Data.SERVERS);
-        servers.sort(Comparator.comparing(s -> s.name));
-        return servers;
+    public static void addServer(@Nonnull final Server server){
+        Preconditions.checkNotNull(server);
+        registerServer(server);
+        AppEventBus.postToDefault(ServerAddedEvent.of(server));
     }
 
-    public static boolean addServer(Server server) {
-        return Data.SERVERS.add(server);
-    }
-
-    public static void removeServer(Server server) {
-        if (Data.SERVERS.remove(server)) {
-            FileUtils.delete(server.getRoot(), true);
-            App.launcher.reloadServersPanel();
-        }
+    public static void removeServer(@Nonnull final Server server) {
+        Preconditions.checkNotNull(server);
+        unregisterServer(server);
+        AppEventBus.postToDefault(ServerRemovedEvent.of(server));
     }
 
     public static boolean isServer(String name) {
         return Data.SERVERS.stream()
             .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+    }
+
+    private static ReentrantReadWriteLock.WriteLock getWriteLock(){
+        return rwLock.writeLock();
+    }
+
+    private static ReentrantReadWriteLock.ReadLock getReadLock(){
+        return rwLock.readLock();
+    }
+
+    private static void registerServer(@Nonnull final Server server){
+        Preconditions.checkNotNull(server);
+
+        ReentrantReadWriteLock.WriteLock lock = getWriteLock();
+        try{
+            lock.lock();
+            servers.add(server);
+        } finally{
+            lock.unlock();
+        }
+    }
+
+    private static void unregisterServer(@Nonnull final Server server){
+        Preconditions.checkNotNull(server);
+
+        ReentrantReadWriteLock.WriteLock lock = getWriteLock();
+        try{
+            lock.lock();
+            servers.remove(server);
+        } finally{
+            lock.unlock();
+        }
     }
 }
