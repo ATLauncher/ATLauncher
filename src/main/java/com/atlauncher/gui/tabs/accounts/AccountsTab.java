@@ -328,6 +328,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         accountsComboBox.setSelectedIndex(0);
     }
 
+    /**
+     * Refresh the access token, and react to result
+     */
     private void refreshAccessToken() {
         MicrosoftAccount account = viewModel.getSelectedAccountAs();
         if (account == null) return;
@@ -454,6 +457,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         viewModel.setRememberLogin(false);
     }
 
+    /**
+     * Run login steps, and react accordingly
+     */
     @SuppressWarnings("unchecked")
     private void login() {
         // Pre check
