@@ -40,20 +40,35 @@ import java.util.stream.Collectors;
 public class AccountsViewModel implements IAccountsViewModel {
     private static final Logger LOG = LogManager.getLogger(AccountsViewModel.class);
 
-    private List<String> _accountUIs = null;
-    private List<AbstractAccount> accounts = AccountManager.getAccounts();
-
-    @NotNull
     @Override
-    public List<String> getAccounts() {
-        if (_accountUIs == null)
-            _accountUIs = accounts
-                .stream()
-                .map(account -> account.minecraftUsername)
-                .collect(Collectors.toList());
-
-        return _accountUIs;
+    public int accountCount(){
+        return AccountManager.getAccounts().size();
     }
+
+    private List<AbstractAccount> accounts() {
+        return AccountManager.getAccounts();
+    }
+
+    private Consumer<List<String>> _onAccountsChanged;
+
+    @Override
+    public void onAccountsNamesChanged(Consumer<List<String>> onAccountsChanged) {
+        _onAccountsChanged = onAccountsChanged;
+        pushNewAccounts();
+    }
+
+    /**
+     * Update the UI with new accounts
+     */
+    @Override
+    public void pushNewAccounts() {
+        _onAccountsChanged.accept(
+            accounts().stream()
+                .map(account -> account.minecraftUsername)
+                .collect(Collectors.toList())
+        );
+    }
+
 
     private Consumer<AbstractAccount> selected;
     private int selectedAccountIndex = -1;
@@ -75,7 +90,7 @@ public class AccountsViewModel implements IAccountsViewModel {
     @NotNull
     @Override
     public AbstractAccount getSelectedAccount() {
-        return accounts.get(selectedAccountIndex);
+        return accounts().get(selectedAccountIndex);
     }
 
     @Nullable
@@ -154,7 +169,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         );
 
         AccountManager.addAccount(account);
-        _accountUIs = null; // Invalidate old list
+        pushNewAccounts();
     }
 
     private void editAccount(LoginResponse response) {
@@ -182,7 +197,7 @@ public class AccountsViewModel implements IAccountsViewModel {
 
         Analytics.sendEvent("Edit", "Account");
         LOG.info("Edited Account {}", account);
-        _accountUIs = null; // Invalidate old list
+        pushNewAccounts();
     }
 
     private LoginResponse loginResponse = null;
@@ -241,9 +256,12 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void updateUsername() {
         AbstractAccount account = getSelectedAccount();
-        Analytics.sendEvent("UpdateUsername", "Account");
-        account.updateUsername();
-        AccountManager.saveAccounts();
+        if (account instanceof MojangAccount){
+            Analytics.sendEvent("UpdateUsername", "Account");
+            account.updateUsername();
+            AccountManager.saveAccounts();
+            pushNewAccounts();
+        }
     }
 
     @Override
@@ -251,5 +269,12 @@ public class AccountsViewModel implements IAccountsViewModel {
         AbstractAccount account = getSelectedAccount();
         Analytics.sendEvent("UpdateSkin", "Account");
         account.updateSkin();
+    }
+
+    @Override
+    public void deleteAccount() {
+        Analytics.sendEvent("Delete", "Account");
+        AccountManager.removeAccount(getSelectedAccount());
+        pushNewAccounts();
     }
 }
