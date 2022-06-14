@@ -17,13 +17,22 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Window;
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.FileSystem;
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.json.Mod;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.nio.file.Files;
@@ -33,31 +42,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.json.Mod;
-import com.atlauncher.gui.layouts.WrapLayout;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Hashing;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-
 @SuppressWarnings("serial")
 public final class BrowserDownloadDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Browser Download Mods";
     private final List<Mod> browserDownloadMods;
     public final List<Mod> modsDownloaded = new ArrayList<>();
 
@@ -80,8 +67,7 @@ public final class BrowserDownloadDialog extends JDialog {
     public BrowserDownloadDialog(Window parent, List<Mod> browserDownloadMods) {
         super(parent, GetText.tr("Browser Download Mods"), ModalityType.DOCUMENT_MODAL);
         this.browserDownloadMods = browserDownloadMods;
-
-        Analytics.sendScreenView("Browser Download Mods");
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         this.setPreferredSize(new Dimension(680, 600));
         this.setMinimumSize(new Dimension(680, 600));
@@ -132,40 +118,40 @@ public final class BrowserDownloadDialog extends JDialog {
 
             // first check the user downloads folder (if not the same as final)
             if (!downloadsPath.equals(finalLocation) && Files.exists(downloadsPath)
-                    && downloadsPath.toFile().length() == mod.filesize) {
+                && downloadsPath.toFile().length() == mod.filesize) {
                 if (mod.md5 != null
-                        && Hashing.md5(downloadsPath).equals(Hashing.toHashCode(mod.md5))) {
+                    && Hashing.md5(downloadsPath).equals(Hashing.toHashCode(mod.md5))) {
                     FileUtils.moveFile(downloadsPath, finalLocation, true);
                 }
 
                 if (mod.sha1 != null
-                        && Hashing.sha1(downloadsPath).equals(Hashing.toHashCode(mod.sha1))) {
+                    && Hashing.sha1(downloadsPath).equals(Hashing.toHashCode(mod.sha1))) {
                     FileUtils.moveFile(downloadsPath, finalLocation, true);
                 }
 
                 if (mod.sha512 != null
-                        && Hashing.sha512(downloadsPath).equals(Hashing.toHashCode(mod.sha512))) {
+                    && Hashing.sha512(downloadsPath).equals(Hashing.toHashCode(mod.sha512))) {
                     FileUtils.moveFile(downloadsPath, finalLocation, true);
                 }
             }
 
             if (Files.exists(finalLocation)) {
                 if (mod.md5 != null
-                        && Hashing.md5(finalLocation).equals(Hashing.toHashCode(mod.md5))) {
+                    && Hashing.md5(finalLocation).equals(Hashing.toHashCode(mod.md5))) {
                     modsDownloaded.add(mod);
                     reloadMainPanel = true;
                     continue;
                 }
 
                 if (mod.sha1 != null
-                        && Hashing.sha1(finalLocation).equals(Hashing.toHashCode(mod.sha1))) {
+                    && Hashing.sha1(finalLocation).equals(Hashing.toHashCode(mod.sha1))) {
                     modsDownloaded.add(mod);
                     reloadMainPanel = true;
                     continue;
                 }
 
                 if (mod.sha512 != null
-                        && Hashing.sha512(finalLocation).equals(Hashing.toHashCode(mod.sha512))) {
+                    && Hashing.sha512(finalLocation).equals(Hashing.toHashCode(mod.sha512))) {
                     modsDownloaded.add(mod);
                     reloadMainPanel = true;
                     continue;
@@ -198,9 +184,9 @@ public final class BrowserDownloadDialog extends JDialog {
         explanationPane.setContentType("text/html");
         explanationPane.setText(new HTMLBuilder().text(
                 GetText.tr(
-                        "In order to continue downloading this modpack, you must manually download the following mods.<br/>Simply click the Open button to open them in your browser, or alternatively you can copy the url to your clipboard to open in another browser.<br/><br/>Please download all files to <b>{0}</b> in order for the launcher to detect them.",
-                        downloadPath.toAbsolutePath().toString()))
-                .center().build());
+                    "In order to continue downloading this modpack, you must manually download the following mods.<br/>Simply click the Open button to open them in your browser, or alternatively you can copy the url to your clipboard to open in another browser.<br/><br/>Please download all files to <b>{0}</b> in order for the launcher to detect them.",
+                    downloadPath.toAbsolutePath().toString()))
+            .center().build());
         explanationPane.setEditable(false);
         explanationPane.setBackground(null);
         explanationPane.setBorder(null);

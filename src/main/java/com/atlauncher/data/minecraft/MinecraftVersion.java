@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.util.List;
-
 import com.atlauncher.annot.Json;
+
+import java.util.List;
 
 @Json
 public class MinecraftVersion {

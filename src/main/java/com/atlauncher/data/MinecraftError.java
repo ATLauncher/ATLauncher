@@ -17,11 +17,10 @@
  */
 package com.atlauncher.data;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
+import org.mini2Dx.gettext.GetText;
 
 public class MinecraftError {
     static final int OUT_OF_MEMORY = 1;
@@ -44,26 +43,26 @@ public class MinecraftError {
 
     static void showOutOfMemoryPopup() {
         DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
-                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Minecraft has crashed due to insufficent memory being allocated.<br/><br/>Please go to the settings tab and increase the maximum memory option and then try launching the instance again."))
-                        .build())
-                .setType(DialogManager.INFO).show();
+            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "Minecraft has crashed due to insufficent memory being allocated.<br/><br/>Please go to the settings tab and increase the maximum memory option and then try launching the instance again."))
+                .build())
+            .setType(DialogManager.INFO).show();
     }
 
     static void showConcurrentModificationError16() {
         DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
-                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Minecraft has crashed due to an incompatability with Forge and your version of Java.<br/><br/>Please reinstall the instance to automatically fix the problem, and then try launching the instance again."))
-                        .build())
-                .setType(DialogManager.INFO).show();
+            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "Minecraft has crashed due to an incompatability with Forge and your version of Java.<br/><br/>Please reinstall the instance to automatically fix the problem, and then try launching the instance again."))
+                .build())
+            .setType(DialogManager.INFO).show();
     }
 
     static void showUsingNewerJavaThan8Popup() {
         int ret = DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
-                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Minecraft has crashed due to not being compatable with your Java version.<br/><br/>Most modded Minecraft is only compatable with Java 8, so you must install Java 8 on your computer."))
-                        .build())
-                .addOption(GetText.tr("Download Java 8"), true).setType(DialogManager.INFO).show();
+            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "Minecraft has crashed due to not being compatable with your Java version.<br/><br/>Most modded Minecraft is only compatable with Java 8, so you must install Java 8 on your computer."))
+                .build())
+            .addOption(GetText.tr("Download Java 8"), true).setType(DialogManager.INFO).show();
 
         if (ret == 1) {
             OS.openWebBrowser("https://atl.pw/java8download");
@@ -72,9 +71,9 @@ public class MinecraftError {
 
     static void showNeedToUseJava16OrNewerPopup() {
         DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
-                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Minecraft has crashed due to not being compatable with your Java version.<br/><br/>This version of Minecraft requires Java 16 or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting."))
-                        .build())
-                .setType(DialogManager.INFO).show();
+            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "Minecraft has crashed due to not being compatable with your Java version.<br/><br/>This version of Minecraft requires Java 16 or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting."))
+                .build())
+            .setType(DialogManager.INFO).show();
     }
 }

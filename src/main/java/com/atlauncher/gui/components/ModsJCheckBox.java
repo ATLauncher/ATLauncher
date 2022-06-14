@@ -17,16 +17,6 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JToolTip;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.ModPlatform;
@@ -39,6 +29,11 @@ import com.atlauncher.gui.dialogs.ModsChooser;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * This class extends {@link JCheckBox} and overrides the need to use JCheckBox
@@ -138,7 +133,7 @@ public class ModsJCheckBox extends JCheckBox {
         if (getDisableableMod().hasFullCurseForgeInformation()) {
             JMenuItem openOnCurseForge = new JMenuItem(GetText.tr("Open On CurseForge"));
             openOnCurseForge
-                    .addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseForgeProject.getWebsiteUrl()));
+                .addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseForgeProject.getWebsiteUrl()));
             contextMenu.add(openOnCurseForge);
 
             contextMenu.add(new JPopupMenu.Separator());
@@ -149,7 +144,7 @@ public class ModsJCheckBox extends JCheckBox {
 
             JMenuItem openOnModrinth = new JMenuItem(GetText.tr("Open On Modrinth"));
             openOnModrinth.addActionListener(
-                    e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", modrinthMod.slug)));
+                e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", modrinthMod.slug)));
             contextMenu.add(openOnModrinth);
 
             if (modrinthMod.discordUrl != null) {
@@ -191,7 +186,7 @@ public class ModsJCheckBox extends JCheckBox {
         }
 
         JMenuItem enableDisableButton = new JMenuItem(
-                getDisableableMod().disabled ? GetText.tr("Enable") : GetText.tr("Disable"));
+            getDisableableMod().disabled ? GetText.tr("Enable") : GetText.tr("Disable"));
         enableDisableButton.addActionListener(e -> {
             if (getDisableableMod().disabled) {
                 getDisableableMod().enable(dialog.instance);
@@ -221,7 +216,7 @@ public class ModsJCheckBox extends JCheckBox {
         remove.addActionListener(e -> {
             dialog.instance.launcher.mods.remove(getDisableableMod());
             Utils.delete((getDisableableMod().isDisabled() ? getDisableableMod().getDisabledFile(dialog.instance)
-                    : getDisableableMod().getFile(dialog.instance)));
+                : getDisableableMod().getFile(dialog.instance)));
 
             dialog.reloadPanels();
         });
@@ -256,7 +251,7 @@ public class ModsJCheckBox extends JCheckBox {
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
-                            .setContent(GetText.tr("No updates were found.")).show();
+                        .setContent(GetText.tr("No updates were found.")).show();
                 }
 
                 dialog.reloadPanels();
@@ -271,7 +266,7 @@ public class ModsJCheckBox extends JCheckBox {
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
-                            .setContent(GetText.tr("No updates were found.")).show();
+                        .setContent(GetText.tr("No updates were found.")).show();
                 }
 
                 dialog.reloadPanels();
@@ -296,7 +291,7 @@ public class ModsJCheckBox extends JCheckBox {
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
-                            .setContent(GetText.tr("No updates were found.")).show();
+                        .setContent(GetText.tr("No updates were found.")).show();
                 }
 
                 dialog.reloadPanels();

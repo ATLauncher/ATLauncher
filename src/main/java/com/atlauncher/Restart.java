@@ -17,12 +17,12 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.utils.OS;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.atlauncher.utils.OS;
 
 public class Restart {
     public static void main(String[] args) {

@@ -17,18 +17,6 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
@@ -46,8 +34,16 @@ import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-
 import okhttp3.OkHttpClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 @SuppressWarnings("serial")
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
@@ -60,7 +56,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText
                 .tr("Use this to automatically install and use a recommended version of Java to use with ATLauncher."))
-                .build());
+            .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
@@ -95,9 +91,9 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
         if (FileUtils.deleteDirectory(FileSystem.RUNTIMES)) {
             DialogManager
-                    .okDialog().setTitle(GetText.tr("Runtime Downloader")).setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("Downloaded runtimes have been removed.")).build())
-                    .setType(DialogManager.INFO).show();
+                .okDialog().setTitle(GetText.tr("Runtime Downloader")).setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("Downloaded runtimes have been removed.")).build())
+                .setType(DialogManager.INFO).show();
 
             // switch back to use default
             App.settings.javaPath = OS.getDefaultJavaPath();
@@ -105,16 +101,16 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
 
             // remove the path from any custom paths set for instances
             InstanceManager.getInstances().stream()
-                    .filter(i -> i.launcher.javaPath != null && i.launcher.javaPath.contains(oldPath)).forEach(i -> {
-                        i.launcher.javaPath = null;
-                        i.save();
-                    });
+                .filter(i -> i.launcher.javaPath != null && i.launcher.javaPath.contains(oldPath)).forEach(i -> {
+                    i.launcher.javaPath = null;
+                    i.save();
+                });
         } else {
             LOG.error("Runtime removal failed!");
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("An error occurred removing the runtime. Please check the logs.")).build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("An error occurred removing the runtime. Please check the logs.")).build())
+                .setType(DialogManager.ERROR).show();
         }
     }
 
@@ -122,12 +118,12 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
         Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
 
         final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Runtime Downloader"), 3,
-                GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
+            GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
             Runtimes runtimes = Download.build().cached()
-                    .setUrl(String.format("%s/launcher/json/runtimes.json", Constants.DOWNLOAD_SERVER))
-                    .asClass(Runtimes.class);
+                .setUrl(String.format("%s/launcher/json/runtimes.json", Constants.DOWNLOAD_SERVER))
+                .asClass(Runtimes.class);
             dialog.doneTask();
 
             Runtime runtime = runtimes.getRuntimeForOS();
@@ -153,8 +149,8 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
                 OkHttpClient httpClient = Network.createProgressClient(dialog);
 
                 com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(url)
-                        .hash(runtime.sha1).size(runtime.size).withHttpClient(httpClient)
-                        .downloadTo(downloadFile.toPath());
+                    .hash(runtime.sha1).size(runtime.size).withHttpClient(httpClient)
+                    .downloadTo(downloadFile.toPath());
 
                 if (download.needToDownload()) {
                     dialog.setLabel(GetText.tr("Downloading"));
@@ -195,10 +191,10 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
         if (dialog.getReturnValue() == null) {
             LOG.error("Runtime downloaded failed to run!");
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
         } else {
             LOG.info("Runtime downloaded!");
 
@@ -208,10 +204,10 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements Act
             App.settings.save();
 
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("The recommended version of Java has been installed and set to be used."))
-                            .build())
-                    .setType(DialogManager.INFO).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("The recommended version of Java has been installed and set to be used."))
+                    .build())
+                .setType(DialogManager.INFO).show();
         }
     }
 }

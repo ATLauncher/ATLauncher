@@ -17,19 +17,17 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JLabel;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 @SuppressWarnings("serial")
 public class DownloadClearerToolPanel extends AbstractToolPanel implements ActionListener {
@@ -39,7 +37,7 @@ public class DownloadClearerToolPanel extends AbstractToolPanel implements Actio
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
                 "This tool clears out all the downloads done by the launcher. This will not affect any instances, but means new pack installs may take longer as it needs to redownload mods."))
-                .build());
+            .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
@@ -65,7 +63,7 @@ public class DownloadClearerToolPanel extends AbstractToolPanel implements Actio
             }
 
             DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                    .setContent(GetText.tr("Successfully cleared the downloads.")).show();
+                .setContent(GetText.tr("Successfully cleared the downloads.")).show();
         }
     }
 }

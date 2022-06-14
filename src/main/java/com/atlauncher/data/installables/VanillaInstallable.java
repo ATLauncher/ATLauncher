@@ -24,7 +24,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
 public class VanillaInstallable extends ATLauncherFormatInstallable {
     public VanillaInstallable(VersionManifestVersion minecraftVersion, LoaderVersion loaderVersion,
-            String description) {
+                              String description) {
         super();
 
         this.pack = new Pack();

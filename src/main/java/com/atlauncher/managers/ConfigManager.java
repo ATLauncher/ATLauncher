@@ -17,6 +17,17 @@
  */
 package com.atlauncher.managers;
 
+import com.atlauncher.App;
+import com.atlauncher.Data;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
+import com.atlauncher.network.ErrorReporting;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,25 +37,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.App;
-import com.atlauncher.Data;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
-import com.atlauncher.network.ErrorReporting;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
 public class ConfigManager {
     private static final Logger LOG = LogManager.getLogger(ConfigManager.class);
 
     /**
      * Gets a config item. Use dot notation to get an item from the config
      * ("loaders.fabric.enabled").
-     *
+     * <p>
      * TODO: make this not shit. It's pretty shit
      */
     public static <T> T getConfigItem(String key, T defaultValue) {
@@ -143,7 +142,7 @@ public class ConfigManager {
         try {
             File fileDir = FileSystem.JSON.resolve("config.json").toFile();
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
+                new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
 
             Data.CONFIG = Gsons.DEFAULT.fromJson(in, type);
             in.close();
@@ -169,7 +168,7 @@ public class ConfigManager {
         if (!App.disableErrorReporting && ConfigManager.getConfigItem("errorReporting.enabled", true) == true) {
             ErrorReporting.ignoredMessages.clear();
             ErrorReporting.ignoredMessages
-                    .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<String>()));
+                .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<String>()));
 
             // not initiated, so start it up
             if (!ErrorReporting.sentryInitialised) {

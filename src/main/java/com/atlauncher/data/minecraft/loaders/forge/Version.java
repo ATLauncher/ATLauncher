@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
-import java.util.List;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Logging;
+
+import java.util.List;
 
 @Json
 public class Version {

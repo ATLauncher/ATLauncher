@@ -17,16 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -34,6 +24,15 @@ import com.atlauncher.Gsons;
 import com.atlauncher.data.Server;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class ServerManager {
     private static final Logger LOG = LogManager.getLogger(ServerManager.class);
@@ -51,7 +50,7 @@ public class ServerManager {
         Data.SERVERS.clear();
 
         for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
-                .orElse(new String[0])) {
+            .orElse(new String[0])) {
             File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
 
             Server server;
@@ -110,6 +109,6 @@ public class ServerManager {
 
     public static boolean isServer(String name) {
         return Data.SERVERS.stream()
-                .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+            .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 }

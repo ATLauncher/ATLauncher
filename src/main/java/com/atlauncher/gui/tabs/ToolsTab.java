@@ -17,20 +17,16 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.gui.tabs.tools.DebugModePanel;
 import com.atlauncher.gui.tabs.tools.DownloadClearerToolPanel;
 import com.atlauncher.gui.tabs.tools.LogClearerToolPanel;
 import com.atlauncher.gui.tabs.tools.NetworkCheckerToolPanel;
 import com.atlauncher.gui.tabs.tools.RuntimeDownloaderToolPanel;
 import com.atlauncher.gui.tabs.tools.SkinUpdaterToolPanel;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class ToolsTab extends JPanel implements Tab {

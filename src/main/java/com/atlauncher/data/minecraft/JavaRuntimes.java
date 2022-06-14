@@ -17,12 +17,12 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.OS;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+import java.util.Map;
 
 @Json
 public class JavaRuntimes {

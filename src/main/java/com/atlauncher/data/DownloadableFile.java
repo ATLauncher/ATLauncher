@@ -55,9 +55,9 @@ public class DownloadableFile {
 
         if (arch != null) {
             return (arch.equalsIgnoreCase("arm64") && (OS.is64Bit() && OS.isArm()))
-                    || (arch.equalsIgnoreCase("arm") && (!OS.is64Bit() && OS.isArm()))
-                    || (arch.equalsIgnoreCase("x86") && (!OS.is64Bit() && !OS.isArm()))
-                    || (arch.equalsIgnoreCase("x64") && (OS.is64Bit() && !OS.isArm()));
+                || (arch.equalsIgnoreCase("arm") && (!OS.is64Bit() && OS.isArm()))
+                || (arch.equalsIgnoreCase("x86") && (!OS.is64Bit() && !OS.isArm()))
+                || (arch.equalsIgnoreCase("x64") && (OS.is64Bit() && !OS.isArm()));
         }
 
         return true;
@@ -65,8 +65,8 @@ public class DownloadableFile {
 
     public Download getDownload() {
         return Download.build()
-                .setUrl(String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(),
-                        this.name))
-                .downloadTo(FileSystem.CONFIGS.resolve(this.folder + "/" + this.name)).size(this.size).hash(this.sha1);
+            .setUrl(String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(),
+                this.name))
+            .downloadTo(FileSystem.CONFIGS.resolve(this.folder + "/" + this.name)).size(this.size).hash(this.sha1);
     }
 }

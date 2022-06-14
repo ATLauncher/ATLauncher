@@ -17,17 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -35,6 +24,16 @@ import com.atlauncher.data.News;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class NewsManager {
     private static final Logger LOG = LogManager.getLogger(NewsManager.class);
@@ -60,7 +59,7 @@ public class NewsManager {
             }.getType();
             File fileDir = FileSystem.JSON.resolve("newnews.json").toFile();
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
+                new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
 
             Data.NEWS.addAll(Gsons.DEFAULT.fromJson(in, type));
             in.close();

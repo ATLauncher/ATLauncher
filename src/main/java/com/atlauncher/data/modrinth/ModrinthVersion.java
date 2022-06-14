@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.modrinth;
 
-import java.util.List;
-
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class ModrinthVersion {
     public String id;
@@ -67,8 +67,8 @@ public class ModrinthVersion {
 
     public ModrinthFile getFileBySha1(String sha1Hash) {
         return files.stream()
-                .filter(f -> f.hashes.containsKey("sha1") && f.hashes.get("sha1").equalsIgnoreCase(sha1Hash))
-                .findFirst().orElse(getPrimaryFile());
+            .filter(f -> f.hashes.containsKey("sha1") && f.hashes.get("sha1").equalsIgnoreCase(sha1Hash))
+            .findFirst().orElse(getPrimaryFile());
     }
 
     public String toString() {
@@ -77,7 +77,7 @@ public class ModrinthVersion {
         }
 
         String versionTypeString = this.versionType == ModrinthChannel.ALPHA ? "Alpha"
-                : this.versionType == ModrinthChannel.BETA ? "Beta" : "Release";
+            : this.versionType == ModrinthChannel.BETA ? "Beta" : "Release";
         return String.format("%s (%s)", this.name, versionTypeString);
     }
 }

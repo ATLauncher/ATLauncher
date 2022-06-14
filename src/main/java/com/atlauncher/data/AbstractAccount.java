@@ -17,22 +17,9 @@
  */
 package com.atlauncher.data;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import javax.swing.ImageIcon;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
+import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
+import com.atlauncher.events.account.AccountChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.ServersTab;
@@ -42,6 +29,19 @@ import com.atlauncher.network.Download;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
 import com.mojang.util.UUIDTypeAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This class deals with the Accounts in the launcher.
@@ -105,8 +105,8 @@ public abstract class AbstractAccount implements Serializable {
 
     public void updateUsername() {
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Checking For Username Change"), 0,
-                GetText.tr("Checking Username Change For {0}", this.minecraftUsername),
-                "Aborting checking for username change for " + this.minecraftUsername);
+            GetText.tr("Checking Username Change For {0}", this.minecraftUsername),
+            "Aborting checking for username change for " + this.minecraftUsername);
 
         dialog.addThread(new Thread(() -> {
             String currentUsername = getCurrentUsername();
@@ -119,9 +119,9 @@ public abstract class AbstractAccount implements Serializable {
 
             if (!currentUsername.equals(this.minecraftUsername)) {
                 LOG.info("The username for account with UUID of {} changed from {} to {}",
-                        this.getUUIDNoDashes(),
-                        this.minecraftUsername,
-                        currentUsername);
+                    this.getUUIDNoDashes(),
+                    this.minecraftUsername,
+                    currentUsername);
 
                 this.minecraftUsername = currentUsername;
                 dialog.setReturnValue(true);
@@ -134,16 +134,16 @@ public abstract class AbstractAccount implements Serializable {
 
         if (dialog.getReturnValue() == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
-                    .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
+                .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
         } else if (dialog.getReturnValue()) {
             AccountManager.saveAccounts();
             DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))
-                    .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();
+                .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();
         } else {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                    .setContent(
-                            GetText.tr("Error checking for username change. Check the error logs and try again later."))
-                    .setType(DialogManager.ERROR).show();
+                .setContent(
+                    GetText.tr("Error checking for username change. Check the error logs and try again later."))
+                .setType(DialogManager.ERROR).show();
         }
     }
 
@@ -160,8 +160,8 @@ public abstract class AbstractAccount implements Serializable {
 
             LOG.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading Skin"), 0,
-                    GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
-                    "Aborting downloading Minecraft skin for " + this.minecraftUsername);
+                GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
+                "Aborting downloading Minecraft skin for " + this.minecraftUsername);
             final UUID uid = this.getRealUUID();
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(false);
@@ -179,7 +179,7 @@ public abstract class AbstractAccount implements Serializable {
                         // Only copy over the default skin if there is no skin for the user
                         try {
                             java.nio.file.Files.copy(
-                                    Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
+                                Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
                         } catch (IOException e) {
                             LOG.error("error copying skin", e);
                         }
@@ -207,8 +207,8 @@ public abstract class AbstractAccount implements Serializable {
                                 // Only copy over the default skin if there is no skin for the user
                                 try {
                                     java.nio.file.Files.copy(
-                                            Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
-                                            file.toPath());
+                                        Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
+                                        file.toPath());
                                 } catch (IOException e) {
                                     LOG.error("error updating skin", e);
                                 }
@@ -219,15 +219,15 @@ public abstract class AbstractAccount implements Serializable {
                     } catch (IOException e) {
                         LOG.error("error updating skin", e);
                     }
-                    com.atlauncher.evnt.manager.AccountManager.post();
+                    AppEventBus.post(AccountChangedEvent.forAccount(AccountManager.getSelectedAccount()));
                 }
                 dialog.close();
             }));
             dialog.start();
             if (!dialog.getReturnValue()) {
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(GetText.tr("Error downloading skin. Please try again later!"))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(GetText.tr("Error downloading skin. Please try again later!"))
+                    .setType(DialogManager.ERROR).show();
             }
             this.skinUpdating = false;
         }
@@ -241,7 +241,7 @@ public abstract class AbstractAccount implements Serializable {
      */
     public ImageIcon getMinecraftHead() {
         File file = FileSystem.SKINS.resolve((this.uuid == null ? "default" : this.getUUIDNoDashes()) + ".png")
-                .toFile();
+            .toFile();
 
         if (!file.exists()) {
             this.updateSkin(); // Download/update the users skin

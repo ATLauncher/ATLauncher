@@ -17,26 +17,18 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import com.atlauncher.managers.NewsManager;
+import com.atlauncher.utils.OS;
+import org.mini2Dx.gettext.GetText;
 
-import javax.swing.JEditorPane;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
-
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.managers.NewsManager;
-import com.atlauncher.utils.OS;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the
@@ -49,14 +41,14 @@ public class NewsTab extends JPanel implements Tab {
             StyleSheet styleSheet = new StyleSheet();
 
             styleSheet.addRule(String.format("a { color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
+                Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
 
             styleSheet.addRule(String.format(
-                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
+                "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
+                Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
 
             styleSheet.addRule(
-                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
+                "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
 
             this.setStyleSheet(styleSheet);
         }
@@ -71,7 +63,7 @@ public class NewsTab extends JPanel implements Tab {
     public NewsTab() {
         super(new BorderLayout());
         this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         this.reload();
     }
 

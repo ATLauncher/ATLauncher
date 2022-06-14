@@ -26,6 +26,6 @@ public class CurseForgeAttachment {
     public String title;
     public String url;
 
-    @SerializedName(value = "modId", alternate = { "projectId" })
+    @SerializedName(value = "modId", alternate = {"projectId"})
     public int modId;
 }

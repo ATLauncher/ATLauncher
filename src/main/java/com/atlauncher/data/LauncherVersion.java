@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data;
 
-import java.util.Locale;
-
 import com.atlauncher.annot.Json;
+
+import java.util.Locale;
 
 @Json
 public class LauncherVersion {
@@ -110,6 +110,6 @@ public class LauncherVersion {
         }
 
         return String.format(Locale.ENGLISH, "%d.%d.%d.%d %s", this.reserved, this.major, this.minor, this.revision,
-                this.stream);
+            this.stream);
     }
 }

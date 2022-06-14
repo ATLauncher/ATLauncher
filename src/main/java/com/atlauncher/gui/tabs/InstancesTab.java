@@ -17,15 +17,6 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.util.Arrays;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.event.EventListenerList;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
 import com.atlauncher.gui.tabs.instances.InstancesSearchEvent;
@@ -33,6 +24,12 @@ import com.atlauncher.gui.tabs.instances.InstancesSearchEventListener;
 import com.atlauncher.gui.tabs.instances.InstancesSortEvent;
 import com.atlauncher.gui.tabs.instances.InstancesSortEventListener;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import java.awt.*;
+import java.util.Arrays;
 
 public class InstancesTab extends JPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;
@@ -58,12 +55,12 @@ public class InstancesTab extends JPanel implements Tab {
 
     public void fireSearchEvent(final InstancesSearchEvent e) {
         Arrays.stream(this.eventListeners.getListeners(InstancesSearchEventListener.class))
-                .forEach((l) -> l.onSearch(e));
+            .forEach((l) -> l.onSearch(e));
     }
 
     public void fireSortEvent(final InstancesSortEvent e) {
         Arrays.stream(this.eventListeners.getListeners(InstancesSortEventListener.class))
-                .forEach((l) -> l.onSort(e));
+            .forEach((l) -> l.onSort(e));
     }
 
     public void reload() {

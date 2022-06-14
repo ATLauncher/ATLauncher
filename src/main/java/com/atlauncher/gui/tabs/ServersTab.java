@@ -17,32 +17,25 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.regex.Pattern;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
-import org.mini2Dx.gettext.GetText;
-
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
+import com.google.common.eventbus.Subscribe;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
-public class ServersTab extends JPanel implements Tab, RelocalizationListener {
+public class ServersTab extends JPanel implements Tab {
     private JTextField searchBox;
 
     private String searchText = null;
@@ -56,7 +49,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     public ServersTab() {
         setLayout(new BorderLayout());
         loadContent(false);
-        RelocalizationManager.addListener(this);
+        AppEventBus.register(this);
     }
 
     public void loadContent(boolean keepFilters) {
@@ -88,7 +81,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
         panel = new JPanel();
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -105,7 +98,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
                 if (searchText != null) {
                     if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(server.name)
-                            .find()) {
+                        .find()) {
                         showServer = false;
                     }
                 }
@@ -151,10 +144,9 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         return "Servers";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-
         if (nilCard != null) {
             nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));
         }

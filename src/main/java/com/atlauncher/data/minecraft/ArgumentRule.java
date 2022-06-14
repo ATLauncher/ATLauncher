@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.minecraft;
 
+import com.atlauncher.annot.Json;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.atlauncher.annot.Json;
 
 @Json
 public class ArgumentRule {
@@ -76,6 +76,6 @@ public class ArgumentRule {
         }
 
         return this.rules.stream().anyMatch(Rule::applies)
-                && this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action.equalsIgnoreCase("allow"));
+            && this.rules.stream().filter(Rule::applies).allMatch(rule -> rule.action.equalsIgnoreCase("allow"));
     }
 }

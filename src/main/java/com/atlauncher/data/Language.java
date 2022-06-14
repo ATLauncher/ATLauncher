@@ -17,20 +17,20 @@
  */
 package com.atlauncher.data;
 
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+import org.mini2Dx.gettext.PoFile;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-import org.mini2Dx.gettext.PoFile;
-
-import com.atlauncher.App;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 
 public class Language {
     private static final Logger LOG = LogManager.getLogger(Language.class);
@@ -74,7 +74,7 @@ public class Language {
         if (locale != Locale.ENGLISH) {
             try {
                 GetText.add(
-                        new PoFile(locale, App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po")));
+                    new PoFile(locale, App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po")));
             } catch (IOException e) {
                 LOG.error("Failed loading language po file for " + language, e);
                 locale = Locale.ENGLISH;
@@ -83,7 +83,7 @@ public class Language {
         }
 
         GetText.setLocale(locale);
-        RelocalizationManager.post();
+        AppEventBus.post(LocalizationChangedEvent.newInstance());
     }
 
     public static boolean isLanguageByName(String language) {

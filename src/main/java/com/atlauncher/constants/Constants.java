@@ -17,19 +17,19 @@
  */
 package com.atlauncher.constants;
 
+import com.atlauncher.App;
+import com.atlauncher.data.LauncherVersion;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-import com.atlauncher.App;
-import com.atlauncher.data.LauncherVersion;
-
 public class Constants {
     static {
         String versionFromFile = new BufferedReader(
-                new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8)).lines()
-                .collect(Collectors.joining("")).trim();
+            new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8)).lines()
+            .collect(Collectors.joining("")).trim();
         String[] versionParts = versionFromFile.split("\\.", 4);
 
         String stream = "Release";
@@ -40,7 +40,7 @@ public class Constants {
         }
 
         VERSION = new LauncherVersion(Integer.parseInt(versionParts[0]), Integer.parseInt(versionParts[1]),
-                Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream);
+            Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream);
     }
 
     // Launcher config
@@ -122,19 +122,19 @@ public class Constants {
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
     public static final String MINECRAFT_VERSION_MANIFEST_URL = LAUNCHER_META_MINECRAFT
-            + "/mc/game/version_manifest.json";
+        + "/mc/game/version_manifest.json";
     public static final String MINECRAFT_JAVA_RUNTIME_URL = LAUNCHER_META_MINECRAFT
-            + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
+        + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
 
     // Misc
     public static final String LEGACY_JAVA_FIXER_URL = "https://cdn.atlcdn.net/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
-    public static final String[] DATE_FORMATS = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", "dd MMMM yyyy",
-            "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
+    public static final String[] DATE_FORMATS = {"dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", "dd MMMM yyyy",
+        "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd"};
     // instance name, pack name, pack version, minecraft version
-    public static final String[] INSTANCE_TITLE_FORMATS = { "%1$s (%2$s %3$s)", "%1$s", "%1$s (%4$s)" };
-    public static final String[] SCREEN_RESOLUTIONS = { "854x480", "1280x720", "1366x768", "1600x900", "1920x1080",
-            "2560x1440", "3440x1440", "3840x2160" };
+    public static final String[] INSTANCE_TITLE_FORMATS = {"%1$s (%2$s %3$s)", "%1$s", "%1$s (%4$s)"};
+    public static final String[] SCREEN_RESOLUTIONS = {"854x480", "1280x720", "1366x768", "1600x900", "1920x1080",
+        "2560x1440", "3440x1440", "3840x2160"};
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
     // Custom for ATLauncher Microsoft login constants
@@ -142,14 +142,14 @@ public class Constants {
     public static final int MICROSOFT_LOGIN_REDIRECT_PORT = 28562;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + MICROSOFT_LOGIN_REDIRECT_PORT;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL_ENCODED = "http%3A%2F%2F127.0.0.1%3A"
-            + MICROSOFT_LOGIN_REDIRECT_PORT;
-    public static final String[] MICROSOFT_LOGIN_SCOPES = { "XboxLive.signin", "XboxLive.offline_access" };
+        + MICROSOFT_LOGIN_REDIRECT_PORT;
+    public static final String[] MICROSOFT_LOGIN_SCOPES = {"XboxLive.signin", "XboxLive.offline_access"};
 
     // General Microsoft login constants
     public static final String MICROSOFT_LOGIN_URL = "https://login.live.com/oauth20_authorize.srf" + "?client_id="
-            + MICROSOFT_LOGIN_CLIENT_ID
-            + "&prompt=select_account&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&response_type=code" + "&scope="
-            + String.join("%20", MICROSOFT_LOGIN_SCOPES) + "&redirect_uri=" + MICROSOFT_LOGIN_REDIRECT_URL_ENCODED;
+        + MICROSOFT_LOGIN_CLIENT_ID
+        + "&prompt=select_account&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d&response_type=code" + "&scope="
+        + String.join("%20", MICROSOFT_LOGIN_SCOPES) + "&redirect_uri=" + MICROSOFT_LOGIN_REDIRECT_URL_ENCODED;
     public static final String MICROSOFT_AUTH_TOKEN_URL = "https://login.live.com/oauth20_token.srf";
     public static final String MICROSOFT_XBL_AUTH_TOKEN_URL = "https://user.auth.xboxlive.com/user/authenticate";
     public static final String MICROSOFT_XSTS_AUTH_TOKEN_URL = "https://xsts.auth.xboxlive.com/xsts/authorize";

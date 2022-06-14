@@ -17,18 +17,17 @@
  */
 package com.atlauncher.network;
 
+import com.atlauncher.App;
+import com.atlauncher.utils.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.App;
-import com.atlauncher.utils.FileUtils;
 
 @SuppressWarnings("serial")
 public final class DownloadPool extends LinkedList<Download> {

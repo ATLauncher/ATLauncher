@@ -17,16 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -37,6 +27,15 @@ import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class InstanceManager {
     private static final Logger LOG = LogManager.getLogger(InstanceManager.class);
@@ -60,7 +59,7 @@ public class InstanceManager {
         Data.INSTANCES.clear();
 
         for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
-                .orElse(new String[0])) {
+            .orElse(new String[0])) {
             File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
@@ -81,15 +80,15 @@ public class InstanceManager {
                 }
 
                 if (instance.launcher.curseForgeManifest != null
-                        && instance.launcher.curseForgeManifest.projectID != null
-                        && instance.launcher.curseForgeManifest.fileID != null) {
+                    && instance.launcher.curseForgeManifest.projectID != null
+                    && instance.launcher.curseForgeManifest.fileID != null) {
                     LOG.error(String.format("Converting instance \"%s\" CurseForge information",
-                            instance.launcher.name));
+                        instance.launcher.name));
                     instance.launcher.curseForgeProject = CurseForgeApi
-                            .getProjectById(instance.launcher.curseForgeManifest.projectID);
+                        .getProjectById(instance.launcher.curseForgeManifest.projectID);
                     instance.launcher.curseForgeFile = CurseForgeApi.getFileForProject(
-                            instance.launcher.curseForgeManifest.projectID,
-                            instance.launcher.curseForgeManifest.fileID);
+                        instance.launcher.curseForgeManifest.projectID,
+                        instance.launcher.curseForgeManifest.fileID);
                     instance.launcher.curseForgeManifest = null;
 
                     instance.save();
@@ -97,7 +96,7 @@ public class InstanceManager {
 
                 if (instance.launcher.numPlays == null) {
                     LOG.info(String.format("Converting instance \"%s\" numPlays/lastPlayed",
-                            instance.launcher.name));
+                        instance.launcher.name));
                     instance.launcher.numPlays = instance.numPlays;
                     instance.launcher.lastPlayed = instance.lastPlayed;
 
@@ -105,9 +104,9 @@ public class InstanceManager {
                 }
 
                 if (instance.launcher.account != null
-                        && !AccountManager.isAccountByName(instance.launcher.account)) {
+                    && !AccountManager.isAccountByName(instance.launcher.account)) {
                     LOG.warn(String.format("No account with name of %s, so setting instance account back to default",
-                            instance.launcher.account));
+                        instance.launcher.account));
                     instance.launcher.account = null;
                     instance.save();
                 }
@@ -162,7 +161,7 @@ public class InstanceManager {
      */
     public static boolean isInstance(String name) {
         return Data.INSTANCES.stream()
-                .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+            .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     /**

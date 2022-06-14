@@ -17,10 +17,6 @@
  */
 package com.atlauncher.data.minecraft;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.atlauncher.Gsons;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -31,10 +27,14 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ArgumentsTypeAdapter implements JsonDeserializer<Arguments>, JsonSerializer<Arguments> {
     @Override
     public Arguments deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
+        throws JsonParseException {
         List<ArgumentRule> game = new ArrayList<>();
         List<ArgumentRule> jvm = new ArrayList<>();
 

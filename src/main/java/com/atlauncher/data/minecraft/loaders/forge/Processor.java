@@ -17,6 +17,14 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
+import com.atlauncher.FileSystem;
+import com.atlauncher.annot.Json;
+import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.InstanceInstaller;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -29,15 +37,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.FileSystem;
-import com.atlauncher.annot.Json;
-import com.atlauncher.utils.Hashing;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
 
 @Json
 public class Processor {
@@ -70,14 +69,14 @@ public class Processor {
     }
 
     public void process(ForgeInstallProfile installProfile, File extractedDir, InstanceInstaller instanceInstaller)
-            throws IOException {
+        throws IOException {
         // delete any outputs that are invalid. They still need to run
         if (!this.needToRun(installProfile, extractedDir, instanceInstaller)) {
             return;
         }
 
         File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
-                : FileSystem.LIBRARIES.toFile();
+            : FileSystem.LIBRARIES.toFile();
 
         File jarPath = Utils.convertMavenIdentifierToFile(this.jar, librariesDirectory);
         LOG.debug("Jar path is " + jarPath);
@@ -107,7 +106,7 @@ public class Processor {
 
             if (!classpathFile.exists() || !classpathFile.isFile()) {
                 LOG.error("Failed to process processor with jar " + this.jar
-                        + " as the classpath item with file " + classpathFile.getAbsolutePath() + " doesn't exist");
+                    + " as the classpath item with file " + classpathFile.getAbsolutePath() + " doesn't exist");
                 instanceInstaller.cancel(true);
                 return;
             }
@@ -120,7 +119,7 @@ public class Processor {
         for (String arg : this.getArgs()) {
             if (arg.contains("{ROOT}")) {
                 arg = arg.replace("{ROOT}",
-                        installProfile.data.get("ROOT").getValue(!instanceInstaller.isServer, librariesDirectory));
+                    installProfile.data.get("ROOT").getValue(!instanceInstaller.isServer, librariesDirectory));
             }
 
             LOG.debug("Processing argument " + arg);
@@ -134,7 +133,7 @@ public class Processor {
 
                 if (value == null || value.isEmpty()) {
                     LOG.error("Failed to process processor with jar " + this.jar + " as the argument with name "
-                            + arg + " as the data item with key " + key + " was empty or null");
+                        + arg + " as the data item with key " + key + " was empty or null");
                     instanceInstaller.cancel(true);
                     return;
                 }
@@ -153,7 +152,7 @@ public class Processor {
 
                         if (!localFile.exists() || !localFile.isFile()) {
                             LOG.error("Failed to process argument with value of " + value + " as the local file "
-                                    + localFile.getAbsolutePath() + " doesn't exist");
+                                + localFile.getAbsolutePath() + " doesn't exist");
                             instanceInstaller.cancel(true);
                             return;
                         }
@@ -170,7 +169,7 @@ public class Processor {
 
                 if (!artifactFile.exists() || !artifactFile.isFile()) {
                     LOG.error("Failed to process argument with value of " + arg + " as the file "
-                            + artifactFile.getAbsolutePath() + " doesn't exist");
+                        + artifactFile.getAbsolutePath() + " doesn't exist");
                     instanceInstaller.cancel(true);
                     return;
                 }
@@ -209,11 +208,11 @@ public class Processor {
         } catch (InvocationTargetException ite) {
             Throwable e = ite.getCause();
             LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar",
-                    e);
+                e);
             instanceInstaller.cancel(true);
         } catch (Throwable e) {
             LOG.error("Failed to process processor with jar " + this.jar + " as there was an error invoking the jar",
-                    e);
+                e);
             instanceInstaller.cancel(true);
         } finally {
             currentThread.setContextClassLoader(threadClassloader);
@@ -221,7 +220,7 @@ public class Processor {
     }
 
     public boolean needToRun(ForgeInstallProfile installProfile, File extractedDir,
-            InstanceInstaller instanceInstaller) {
+                             InstanceInstaller instanceInstaller) {
         if (this.sides != null && !this.sides.contains(instanceInstaller.isServer ? "server" : "client")) {
             LOG.debug("No need to run processor " + this.jar + " since it's not needed for this side");
             return false;
@@ -232,7 +231,7 @@ public class Processor {
         }
 
         File librariesDirectory = instanceInstaller.isServer ? instanceInstaller.root.resolve("libraries").toFile()
-                : FileSystem.LIBRARIES.toFile();
+            : FileSystem.LIBRARIES.toFile();
 
         for (Entry<String, String> entry : this.outputs.entrySet()) {
             String key = entry.getKey();
@@ -244,10 +243,10 @@ public class Processor {
             if (start == '{' && end == '}') {
                 LOG.debug("Getting data with key of " + key.substring(1, key.length() - 1));
                 String dataItem = installProfile.data.get(key.substring(1, key.length() - 1))
-                        .getValue(!instanceInstaller.isServer, librariesDirectory);
+                    .getValue(!instanceInstaller.isServer, librariesDirectory);
                 if (dataItem == null || dataItem.isEmpty()) {
                     LOG.error("Failed to process processor with jar " + this.jar + " as the output with key "
-                            + key + " doesn't have a corresponding data entry");
+                        + key + " doesn't have a corresponding data entry");
                     instanceInstaller.cancel(true);
                     return true;
                 }
@@ -265,18 +264,18 @@ public class Processor {
                 if (valueStart == '{' && valueEnd == '}') {
                     LOG.debug("Getting data with key of " + value.substring(1, value.length() - 1));
                     String valueDataItem = installProfile.data.get(value.substring(1, value.length() - 1))
-                            .getValue(!instanceInstaller.isServer, librariesDirectory);
+                        .getValue(!instanceInstaller.isServer, librariesDirectory);
                     if (dataItem == null || dataItem.isEmpty()) {
                         LOG.error("Failed to process processor with jar " + this.jar
-                                + " as the output with value " + value + " doesn't have a corresponding data entry");
+                            + " as the output with value " + value + " doesn't have a corresponding data entry");
                         instanceInstaller.cancel(true);
                         return true;
                     }
 
                     String sha1Hash = Hashing.sha1(outputFile.toPath()).toString();
                     String expectedHash = valueDataItem.charAt(0) == '\''
-                            ? valueDataItem.substring(1, valueDataItem.length() - 1)
-                            : valueDataItem;
+                        ? valueDataItem.substring(1, valueDataItem.length() - 1)
+                        : valueDataItem;
 
                     LOG.debug("Expecting " + sha1Hash + " to equal " + sha1Hash);
                     if (!sha1Hash.equals(expectedHash)) {

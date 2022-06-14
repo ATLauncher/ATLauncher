@@ -17,13 +17,13 @@
  */
 package com.atlauncher.managers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public final class PerformanceManager {
     private static final Logger LOG = LogManager.getLogger(PerformanceManager.class);

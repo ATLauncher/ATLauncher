@@ -17,11 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.Gsons;
@@ -30,6 +25,10 @@ import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.TechnicApi;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
 
 public class TechnicModpackUpdateManager {
     private static final Logger LOG = LogManager.getLogger(TechnicModpackUpdateManager.class);
@@ -51,79 +50,79 @@ public class TechnicModpackUpdateManager {
         LOG.info("Checking for updates to Technic Modpack instances");
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
-                .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).map(i -> {
-                    boolean wasUpdated = false;
+            .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).map(i -> {
+                boolean wasUpdated = false;
 
-                    TechnicModpack technicModpack = null;
+                TechnicModpack technicModpack = null;
 
-                    try {
-                        technicModpack = TechnicApi.getModpackBySlugWithThrow(i.launcher.technicModpack.name);
-                    } catch (DownloadException e) {
-                        if (e.response != null) {
-                            LOG.debug(Gsons.DEFAULT.toJson(e.response));
+                try {
+                    technicModpack = TechnicApi.getModpackBySlugWithThrow(i.launcher.technicModpack.name);
+                } catch (DownloadException e) {
+                    if (e.response != null) {
+                        LOG.debug(Gsons.DEFAULT.toJson(e.response));
 
-                            if (e.statusCode == 404) {
-                                LOG.error(String.format(
-                                        "Technic pack with name of %s no longer exists, disabling update checks.",
-                                        i.launcher.technicModpack.displayName));
-                                i.launcher.checkForUpdates = false;
-                                i.save();
-                            }
+                        if (e.statusCode == 404) {
+                            LOG.error(String.format(
+                                "Technic pack with name of %s no longer exists, disabling update checks.",
+                                i.launcher.technicModpack.displayName));
+                            i.launcher.checkForUpdates = false;
+                            i.save();
                         }
-                    } catch (IOException e) {
-                        LOG.error(e);
                     }
+                } catch (IOException e) {
+                    LOG.error(e);
+                }
 
-                    if (technicModpack == null) {
+                if (technicModpack == null) {
+                    return false;
+                }
+
+                if (i.isTechnicSolderPack()) {
+                    TechnicSolderModpack technicSolderModpack = TechnicApi.getSolderModpackBySlug(
+                        technicModpack.solder,
+                        technicModpack.name);
+
+                    if (technicSolderModpack == null) {
                         return false;
                     }
 
-                    if (i.isTechnicSolderPack()) {
-                        TechnicSolderModpack technicSolderModpack = TechnicApi.getSolderModpackBySlug(
-                                technicModpack.solder,
-                                technicModpack.name);
-
-                        if (technicSolderModpack == null) {
-                            return false;
-                        }
-
-                        // if there is a change to the latest key for an instance (but not a first time
-                        // write), then refresh instances panel
-                        if (Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(i).latest
-                                        .equals(technicSolderModpack.latest)) {
-                            wasUpdated = true;
-                        }
-
-                        // updated if there is no latest version stored yet but the instance has update
-                        if (!Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !technicSolderModpack.latest.equals(i.launcher.version)) {
-                            wasUpdated = true;
-                        }
-
-                        Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.put(i, technicSolderModpack);
-                    } else {
-                        // if there is a change to the latest key for an instance (but not a first time
-                        // write), then refresh instances panel
-                        if (Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !Data.TECHNIC_INSTANCE_LATEST_VERSION.get(i).version
-                                        .equals(technicModpack.version)) {
-                            wasUpdated = true;
-                        }
-
-                        // updated if there is no latest version stored yet but the instance has update
-                        if (!Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !technicModpack.version.equals(i.launcher.version)) {
-                            wasUpdated = true;
-                        }
-
-                        Data.TECHNIC_INSTANCE_LATEST_VERSION.put(i, technicModpack);
-
-                        wasUpdated = !technicModpack.version.equalsIgnoreCase(i.launcher.technicModpack.version);
+                    // if there is a change to the latest key for an instance (but not a first time
+                    // write), then refresh instances panel
+                    if (Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
+                        && !Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(i).latest
+                        .equals(technicSolderModpack.latest)) {
+                        wasUpdated = true;
                     }
 
-                    return wasUpdated;
-                }).anyMatch(b -> b);
+                    // updated if there is no latest version stored yet but the instance has update
+                    if (!Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
+                        && !technicSolderModpack.latest.equals(i.launcher.version)) {
+                        wasUpdated = true;
+                    }
+
+                    Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.put(i, technicSolderModpack);
+                } else {
+                    // if there is a change to the latest key for an instance (but not a first time
+                    // write), then refresh instances panel
+                    if (Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
+                        && !Data.TECHNIC_INSTANCE_LATEST_VERSION.get(i).version
+                        .equals(technicModpack.version)) {
+                        wasUpdated = true;
+                    }
+
+                    // updated if there is no latest version stored yet but the instance has update
+                    if (!Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
+                        && !technicModpack.version.equals(i.launcher.version)) {
+                        wasUpdated = true;
+                    }
+
+                    Data.TECHNIC_INSTANCE_LATEST_VERSION.put(i, technicModpack);
+
+                    wasUpdated = !technicModpack.version.equalsIgnoreCase(i.launcher.technicModpack.version);
+                }
+
+                return wasUpdated;
+            }).anyMatch(b -> b);
 
         if (refreshInstancesPanel) {
             App.launcher.reloadInstancesPanel();

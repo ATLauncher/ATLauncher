@@ -1,14 +1,8 @@
 // from http://www.camick.com/java/source/WrapLayout.java
 package com.atlauncher.gui.layouts;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Insets;
-
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * FlowLayout subclass that fully supports wrapping of components.
@@ -56,7 +50,7 @@ public class WrapLayout extends FlowLayout {
      *
      * @param target the component which needs to be laid out
      * @return the preferred dimensions to lay out the subcomponents of the
-     *         specified container
+     * specified container
      */
     @Override
     public Dimension preferredLayoutSize(Container target) {
@@ -69,7 +63,7 @@ public class WrapLayout extends FlowLayout {
      *
      * @param target the component which needs to be laid out
      * @return the minimum dimensions to lay out the subcomponents of the specified
-     *         container
+     * container
      */
     @Override
     public Dimension minimumLayoutSize(Container target) {

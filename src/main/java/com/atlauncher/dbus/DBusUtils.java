@@ -17,16 +17,6 @@
  */
 package com.atlauncher.dbus;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TransferQueue;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.freedesktop.dbus.DBusMap;
@@ -36,6 +26,16 @@ import org.freedesktop.dbus.interfaces.DBusSigHandler;
 import org.freedesktop.dbus.messages.DBusSignal;
 import org.freedesktop.dbus.types.UInt32;
 import org.freedesktop.dbus.types.Variant;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TransferQueue;
 
 public class DBusUtils {
     private static final Logger LOG = LogManager.getLogger(DBusUtils.class);
@@ -81,7 +81,7 @@ public class DBusUtils {
             });
 
             FileChooserInterface fileChooserInterface = bus.getRemoteObject("org.freedesktop.portal.Desktop",
-                    "/org/freedesktop/portal/desktop", FileChooserInterface.class);
+                "/org/freedesktop/portal/desktop", FileChooserInterface.class);
 
             Map<String, Variant> options = new HashMap<>();
             options.put("directory", new Variant(Boolean.FALSE));

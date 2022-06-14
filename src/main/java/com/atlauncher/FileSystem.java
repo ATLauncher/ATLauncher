@@ -17,20 +17,19 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.constants.Constants;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.constants.Constants;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 public final class FileSystem {
     private static final Logger LOG = LogManager.getLogger(FileSystem.class);
@@ -127,9 +126,9 @@ public final class FileSystem {
         try {
             if (OS.isWindows()) {
                 String output = Utils.runProcess("reg", "query",
-                        "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "/f",
-                        "{374DE290-123F-4565-9164-39C4925E467B}", "/t",
-                        "REG_EXPAND_SZ", "/s");
+                    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "/f",
+                    "{374DE290-123F-4565-9164-39C4925E467B}", "/t",
+                    "REG_EXPAND_SZ", "/s");
 
                 for (String line : output.split("\\r?\\n")) {
                     if (line.contains("REG_EXPAND_SZ")) {
@@ -188,7 +187,7 @@ public final class FileSystem {
 
             // case insensitive file systems
             if (Files.exists(to) && Files.isSameFile(from, to)
-                    && to.toRealPath().getFileName().toString().equals(from.getFileName().toString())) {
+                && to.toRealPath().getFileName().toString().equals(from.getFileName().toString())) {
                 needToMove = true;
             }
 
@@ -246,7 +245,7 @@ public final class FileSystem {
             try {
                 return Paths.get(
                         App.class.getProtectionDomain().getCodeSource().getLocation().toURI().getSchemeSpecificPart())
-                        .getParent();
+                    .getParent();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
                 return Paths.get(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);

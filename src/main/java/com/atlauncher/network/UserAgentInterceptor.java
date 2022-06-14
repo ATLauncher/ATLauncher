@@ -17,20 +17,19 @@
  */
 package com.atlauncher.network;
 
-import java.io.IOException;
-
 import com.atlauncher.Network;
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import java.io.IOException;
 
 public final class UserAgentInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
         Request requestWithUserAgent = originalRequest.newBuilder().removeHeader("User-Agent")
-                .addHeader("User-Agent", Network.USER_AGENT).build();
+            .addHeader("User-Agent", Network.USER_AGENT).build();
         return chain.proceed(requestWithUserAgent);
     }
 }

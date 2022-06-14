@@ -17,32 +17,16 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.SystemTray;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.tab.TabChangedEvent;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.AccountsTab;
@@ -57,11 +41,22 @@ import com.atlauncher.gui.tabs.VanillaPacksTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame extends JFrame implements RelocalizationListener {
+public final class LauncherFrame extends JFrame {
     private static final Logger LOG = LogManager.getLogger(LauncherFrame.class);
 
     private JTabbedPane tabbedPane;
@@ -123,18 +118,16 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             });
         }
 
-        RelocalizationManager.addListener(this);
-
         if (App.packToInstall != null) {
             Pack pack = PackManager.getPackBySafeName(App.packToInstall);
 
             if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                 LOG.error("Error automatically installing " + pack.getName() + " as you don't have the "
-                        + "pack added to the launcher!");
+                    + "pack added to the launcher!");
             } else {
                 if (AccountManager.getSelectedAccount() == null || pack == null) {
                     LOG
-                            .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
+                        .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
                 } else {
                     new InstanceInstallerDialog(pack);
                 }
@@ -149,7 +142,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
                 if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                     LOG.error("Error automatically installing " + pack.getName() + " as you don't have the "
-                            + "pack added to the launcher!");
+                        + "pack added to the launcher!");
                 } else {
                     if (pack == null) {
                         LOG.error("Error automatically installing pack from share code!");
@@ -187,6 +180,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 }
             }
         });
+
+        AppEventBus.register(this);
     }
 
     /**
@@ -232,8 +227,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         SettingsTab settingsTab = new SettingsTab();
         PerformanceManager.end("settingsTab");
 
-        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, packsBrowserTab, instancesTab,
-                serversTab, accountsTab, toolsTab, settingsTab });
+        this.tabs = Arrays.asList(new Tab[]{newsTab, vanillaPacksTab, packsBrowserTab, instancesTab,
+            serversTab, accountsTab, toolsTab, settingsTab});
 
         tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs) {
@@ -242,16 +237,16 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         tabbedPane.setOpaque(true);
         tabbedPane.setSelectedIndex(App.settings.selectedTabOnStartup);
 
+        final Tab tab = ((Tab)tabbedPane.getSelectedComponent());
         tabbedPane.addChangeListener(e -> {
-            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
-            TabChangeManager.post();
+            AppEventBus.postToDefault(TabChangedEvent.newInstance());
         });
-
-        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(tab.getAnalyticsScreenViewName()));
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    @OnSide(Side.UI)
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
         }

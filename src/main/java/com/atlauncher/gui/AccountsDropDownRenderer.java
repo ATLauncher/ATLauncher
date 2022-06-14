@@ -17,15 +17,10 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.Component;
-import java.awt.Dimension;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-
 import com.atlauncher.data.AbstractAccount;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<AbstractAccount> {
@@ -49,7 +44,7 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      * @return A component whose paint() method will render the specified value
      */
     public Component getListCellRendererComponent(JList<? extends AbstractAccount> list, AbstractAccount account,
-            int index, boolean isSelected, boolean cellHasFocus) {
+                                                  int index, boolean isSelected, boolean cellHasFocus) {
         if (account == null) {
             return this;
         }

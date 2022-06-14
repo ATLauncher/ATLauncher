@@ -17,33 +17,25 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.data.Pack;
+import com.atlauncher.data.json.Mod;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.gui.card.ModCard;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.App;
-import com.atlauncher.data.Pack;
-import com.atlauncher.data.json.Mod;
-import com.atlauncher.gui.card.ModCard;
-import com.atlauncher.network.Analytics;
-
 @SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "View Mods Dialog";
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JTextField searchField = new JTextField(16);
     private final List<ModCard> cards = new LinkedList<>();
@@ -51,8 +43,7 @@ public final class ViewModsDialog extends JDialog {
     public ViewModsDialog(Pack pack) {
         // #. {0} is the name of the pack
         super(App.launcher.getParent(), GetText.tr("Mods in {0}", pack.getName()), ModalityType.DOCUMENT_MODAL);
-
-        Analytics.sendScreenView("View Mods Dialog");
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         this.setPreferredSize(new Dimension(550, 450));
         this.setMinimumSize(new Dimension(550, 450));
@@ -112,7 +103,7 @@ public final class ViewModsDialog extends JDialog {
 
             if (!this.searchField.getText().isEmpty()) {
                 if (!Pattern.compile(Pattern.quote(this.searchField.getText()), Pattern.CASE_INSENSITIVE)
-                        .matcher(card.mod.getName()).find()) {
+                    .matcher(card.mod.getName()).find()) {
 
                     show = false;
                 }

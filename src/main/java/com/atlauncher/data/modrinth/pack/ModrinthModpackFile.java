@@ -17,12 +17,12 @@
  */
 package com.atlauncher.data.modrinth.pack;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
+
+import java.util.List;
+import java.util.Map;
 
 public class ModrinthModpackFile {
     public String path;

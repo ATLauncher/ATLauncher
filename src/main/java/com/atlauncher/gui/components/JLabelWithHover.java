@@ -17,12 +17,10 @@
  */
 package com.atlauncher.gui.components;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JToolTip;
-import javax.swing.border.Border;
-
 import com.atlauncher.gui.HoverLineBorder;
+
+import javax.swing.*;
+import javax.swing.border.Border;
 
 @SuppressWarnings("serial")
 public class JLabelWithHover extends JLabel {

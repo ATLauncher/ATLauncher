@@ -17,18 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.ImageIcon;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
@@ -37,11 +25,22 @@ import com.atlauncher.data.json.Version;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.technic.TechnicModpack;
+import com.atlauncher.events.AnalyticsCategory;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class Pack {
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Pack implements AnalyticsCategory {
     private static final Logger LOG = LogManager.getLogger(Pack.class);
 
     public int id;
@@ -299,7 +298,7 @@ public class Pack {
             int tries = 1;
             do {
                 this.json = com.atlauncher.network.Download.build().cached().setUrl(this.getJsonDownloadUrl(version))
-                        .asString();
+                    .asString();
                 tries++;
             } while (json == null && tries < 5);
             this.jsonVersion = version;
@@ -309,7 +308,7 @@ public class Pack {
 
     public String getJsonDownloadUrl(String version) {
         return String.format("%s/packs/%s/versions/%s/Configs.json", Constants.DOWNLOAD_SERVER, this.getSafeName(),
-                version);
+            version);
     }
 
     public String addInstall(String version) {
@@ -349,5 +348,10 @@ public class Pack {
             LOG.error("error", e);
         }
         return "Install Not Added!";
+    }
+
+    @Override
+    public String getAnalyticsCategory() {
+        return "ATLauncherPack";
     }
 }

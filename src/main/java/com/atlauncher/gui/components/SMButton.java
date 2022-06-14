@@ -17,15 +17,11 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.Cursor;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JToolTip;
-
 import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class SMButton extends JButton {

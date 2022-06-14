@@ -23,7 +23,7 @@ import java.util.Map;
 
 public final class Caching {
     public static final int MAX_SIZE = Integer
-            .parseInt(System.getProperty("com.atlauncher.collection.Caching.cacheSize", "127"));
+        .parseInt(System.getProperty("com.atlauncher.collection.Caching.cacheSize", "127"));
 
     private Caching() {
     }

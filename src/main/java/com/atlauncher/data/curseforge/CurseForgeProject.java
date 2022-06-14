@@ -17,15 +17,15 @@
  */
 package com.atlauncher.data.curseforge;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.json.ModType;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class CurseForgeProject {
     public int id;
@@ -50,14 +50,14 @@ public class CurseForgeProject {
     public CurseForgeAttachment logo = null;
     public Boolean allowModDistribution;
 
-    @SerializedName(value = "screenshots", alternate = { "attachments" })
+    @SerializedName(value = "screenshots", alternate = {"attachments"})
     public List<CurseForgeAttachment> screenshots;
 
-    @SerializedName(value = "latestFilesIndexes", alternate = { "gameVersionLatestFiles" })
+    @SerializedName(value = "latestFilesIndexes", alternate = {"gameVersionLatestFiles"})
     @ExcludeFromGsonSerialization
     public List<CurseForgeGameVersionLatestFiles> latestFilesIndexes;
 
-    @SerializedName(value = "mainFileId", alternate = { "defaultFileId" })
+    @SerializedName(value = "mainFileId", alternate = {"defaultFileId"})
     public int mainFileId;
 
     public ModType getModType() {
@@ -70,7 +70,7 @@ public class CurseForgeProject {
 
     public int getRootCategoryId() {
         Optional<CurseForgeCategory> primaryCategory = categories.stream().filter(c -> c.id == primaryCategoryId)
-                .findFirst();
+            .findFirst();
 
         if (primaryCategory.isPresent()) {
             return primaryCategory.get().classId;
@@ -111,6 +111,6 @@ public class CurseForgeProject {
         }
 
         return String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d", getClassUrlSlug(), slug,
-                file.id);
+            file.id);
     }
 }

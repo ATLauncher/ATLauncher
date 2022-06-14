@@ -17,26 +17,18 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionListener;
 
 public final class ModrinthSearchHitCard extends JPanel {
     public ModrinthSearchHitCard(final ModrinthSearchHit mod, ActionListener al) {
@@ -77,7 +69,7 @@ public final class ModrinthSearchHitCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.title, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
+            TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
 
         if (mod.iconUrl != null && !mod.iconUrl.isEmpty()) {

@@ -17,14 +17,14 @@
  */
 package com.atlauncher;
 
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 public class Update {
     public static void main(String[] args) {

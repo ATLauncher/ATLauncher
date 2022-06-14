@@ -17,17 +17,13 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-
 import com.atlauncher.App;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.utils.Utils;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public abstract class AbstractSettingsTab extends JPanel implements Tab {

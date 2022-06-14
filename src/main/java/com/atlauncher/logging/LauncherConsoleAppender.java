@@ -17,14 +17,10 @@
  */
 package com.atlauncher.logging;
 
-import java.awt.Color;
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.Optional;
-
-import javax.swing.UIManager;
-
+import com.atlauncher.App;
+import com.atlauncher.FileSystem;
+import com.atlauncher.gui.components.Console;
+import com.atlauncher.utils.Timestamper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
@@ -38,10 +34,12 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
-import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.gui.components.Console;
-import com.atlauncher.utils.Timestamper;
+import javax.swing.*;
+import java.awt.*;
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.Optional;
 
 @Plugin(name = LauncherConsoleAppender.PLUGIN_NAME, category = LauncherConsoleAppender.PLUGIN_CATEGORY, elementType = Appender.ELEMENT_TYPE, printObject = true)
 public final class LauncherConsoleAppender extends AbstractAppender {
@@ -49,10 +47,10 @@ public final class LauncherConsoleAppender extends AbstractAppender {
     public static final String PLUGIN_CATEGORY = Core.CATEGORY_NAME;
 
     public LauncherConsoleAppender(String name,
-            Filter filter,
-            Layout<? extends Serializable> layout,
-            boolean ignoreExceptions,
-            Property[] properties) {
+                                   Filter filter,
+                                   Layout<? extends Serializable> layout,
+                                   boolean ignoreExceptions,
+                                   Property[] properties) {
         super(name, filter, layout, ignoreExceptions, properties);
     }
 
@@ -72,22 +70,22 @@ public final class LauncherConsoleAppender extends AbstractAppender {
 
             if (!LogManager.getLogger().isDebugEnabled()) {
                 body = body.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(),
-                        "**USERSDIR**");
+                    "**USERSDIR**");
             }
 
             // write timestamp
             console.setColor(getColor(e)).setBold(true).write("[" + Timestamper.now() + "] ");
             console.setColor(UIManager.getColor("EditorPane.foreground"))
-                    .setBold(false)
-                    .write(String.format("%s\n", body));
+                .setBold(false)
+                .write(String.format("%s\n", body));
 
             if (t != null) {
                 try (CharArrayWriter writer = new CharArrayWriter()) {
                     t.printStackTrace(new PrintWriter(writer));
 
                     console.setColor(UIManager.getColor("EditorPane.foreground"))
-                            .setBold(false)
-                            .write(String.format("%s\n", writer.toString()));
+                        .setBold(false)
+                        .write(String.format("%s\n", writer.toString()));
                 }
             }
         });

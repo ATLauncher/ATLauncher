@@ -17,13 +17,13 @@
  */
 package com.atlauncher.utils.sort;
 
+import com.atlauncher.AppEventBus;
+import com.atlauncher.data.Instance;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.data.Instance;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-
-public enum InstanceSortingStrategies implements InstanceSortingStrategy, RelocalizationListener {
+public enum InstanceSortingStrategies implements InstanceSortingStrategy {
     BY_NAME(GetText.tr("By Name")) {
         @Override
         public int compare(Instance lhs, Instance rhs) {
@@ -31,7 +31,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
+        public void updateLocalization() {
             this.setName(GetText.tr("By Name"));
         }
     },
@@ -49,7 +49,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
+        public void updateLocalization() {
             this.setName(GetText.tr("By Last Played"));
         }
     },
@@ -65,7 +65,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
+        public void updateLocalization() {
             this.setName(GetText.tr("By Number of Plays"));
         }
     };
@@ -74,7 +74,7 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
 
     InstanceSortingStrategies(final String name) {
         this.name = name;
-        RelocalizationManager.addListener(this);
+        AppEventBus.register(this);
     }
 
     public void setName(final String name) {
@@ -89,5 +89,12 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
     @Override
     public String toString() {
         return this.name;
+    }
+
+    protected abstract void updateLocalization();
+
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
+        this.updateLocalization();
     }
 }

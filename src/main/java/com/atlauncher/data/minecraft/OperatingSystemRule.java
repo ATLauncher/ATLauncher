@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.minecraft;
 
+import com.atlauncher.utils.OS;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.atlauncher.utils.OS;
 
 public class OperatingSystemRule {
     public String name;
@@ -45,7 +45,7 @@ public class OperatingSystemRule {
         }
 
         if (arch != null && ((arch.equalsIgnoreCase("x86") && OS.is64Bit())
-                || (arch.equalsIgnoreCase("x64") && !OS.is64Bit()))) {
+            || (arch.equalsIgnoreCase("x64") && !OS.is64Bit()))) {
             return false;
         }
 

@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
-import java.util.List;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.minecraft.Library;
+
+import java.util.List;
 
 @Json
 public class ForgeLibrary extends Library {

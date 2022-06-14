@@ -17,23 +17,19 @@
  */
 package com.atlauncher.managers;
 
-import java.awt.Window;
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.Icon;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-
+import com.atlauncher.App;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.MarkerManager;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public final class DialogManager {
     private static final Logger LOG = LogManager.getLogger(DialogManager.class);
@@ -192,7 +188,7 @@ public final class DialogManager {
     public int show() {
         try {
             return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title, this.lookAndFeel, this.type,
-                    this.icon, this.getOptions(), this.defaultOption);
+                this.icon, this.getOptions(), this.defaultOption);
         } catch (Exception e) {
             LOG.error(MarkerManager.getMarker("NoReporting"), "Couldn't show dialog", e);
         }
@@ -205,7 +201,7 @@ public final class DialogManager {
             Object[] options = this.getOptions();
 
             JOptionPane jop = new JOptionPane(this.content, this.type, this.lookAndFeel, this.icon, options,
-                    this.defaultOption);
+                this.defaultOption);
 
             jop.setInitialValue(this.defaultOption);
             jop.setComponentOrientation(this.getParent().getComponentOrientation());
@@ -217,7 +213,7 @@ public final class DialogManager {
                 @Override
                 public void run() {
                     if ((firstFile != null && (firstFile.exists() && firstFile.length() == size))
-                            || (secondFile != null && (secondFile.exists() && secondFile.length() == size))) {
+                        || (secondFile != null && (secondFile.exists() && secondFile.length() == size))) {
                         timer.cancel();
                         jop.setValue(options[returnValue]);
                         dialog.dispose();
@@ -264,7 +260,7 @@ public final class DialogManager {
     public String showInput(String defaultValue) {
         try {
             return (String) JOptionPane.showInputDialog(this.getParent(), this.content, this.title, this.type,
-                    this.icon, null, defaultValue);
+                this.icon, null, defaultValue);
         } catch (Exception e) {
             LOG.error(MarkerManager.getMarker("NoReporting"), "Couldn't show input dialog", e);
         }

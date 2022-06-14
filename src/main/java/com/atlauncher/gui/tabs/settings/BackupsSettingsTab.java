@@ -17,18 +17,15 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.GridBagConstraints;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class BackupsSettingsTab extends AbstractSettingsTab {
@@ -43,7 +40,7 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover backupModeLabel = new JLabelWithHover(GetText.tr("Backup Mode") + ":", HELP_ICON, GetText.tr(
-                "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."));
+            "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."));
 
         add(backupModeLabel, gbc);
 
@@ -53,7 +50,7 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         backupMode = new JComboBox<>();
         backupMode.addItem(new ComboItem<>(BackupMode.NORMAL, GetText.tr("Backup saves, configs and options only")));
         backupMode.addItem(new ComboItem<>(BackupMode.NORMAL_PLUS_MODS,
-                GetText.tr("Backup saves, mods, configs and options only")));
+            GetText.tr("Backup saves, mods, configs and options only")));
         backupMode.addItem(new ComboItem<>(BackupMode.FULL, GetText.tr("Backup everything in the instance folder")));
 
         for (int i = 0; i < backupMode.getItemCount(); i++) {
@@ -74,8 +71,8 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableAutomaticBackupAfterLaunchLabel = new JLabelWithHover(
-                GetText.tr("Enable Automatic Backup After Launch") + "?", HELP_ICON,
-                GetText.tr("If a backup should run after launching an instance."));
+            GetText.tr("Enable Automatic Backup After Launch") + "?", HELP_ICON,
+            GetText.tr("If a backup should run after launching an instance."));
         add(enableAutomaticBackupAfterLaunchLabel, gbc);
 
         gbc.gridx++;

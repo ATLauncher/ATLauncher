@@ -17,12 +17,24 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Update;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.events.OutboundLinkEvent;
+import com.atlauncher.managers.PerformanceManager;
+import com.atlauncher.utils.javafinder.JavaInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import oshi.SystemInfo;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OSProcess;
+import oshi.software.os.OperatingSystem;
+import oshi.software.os.OperatingSystem.ProcessSorting;
+
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
@@ -46,24 +58,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Update;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.managers.PerformanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.javafinder.JavaInfo;
-
-import oshi.SystemInfo;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.software.os.OSProcess;
-import oshi.software.os.OperatingSystem;
-import oshi.software.os.OperatingSystem.ProcessSorting;
-
 public enum OS {
     LINUX, WINDOWS, OSX;
 
@@ -74,15 +68,15 @@ public enum OS {
     private static List<OSProcess> antivirusProcesses = null;
 
     private static final List<String> WINDOWS_ANTIVIRUS_PROCESS_NAMES = Arrays.asList("AvastSvc", "AvastUI", "AVGSvc",
-            "AVGUI", "Avira.VpnService", "avgnt", "mbam", "avpui");
+        "AVGUI", "Avira.VpnService", "avgnt", "mbam", "avpui");
     private static final List<String> WINDOWS_ANTIVIRUS_PROCESS_PATHS = Arrays.asList(
-            "C:\\Program Files\\Avast Software\\Avast\\AvastUI.exe", "C:\\Program Files\\AVG\\Antivirus\\AVGUI.exe",
-            "C:\\Program Files (x86)\\Avira\\Antivirus\\avgnt.exe",
-            "C:\\Program Files\\Malwarebytes\\Anti-Malware\\mbam.exe",
-            "C:\\Program Files (x86)\\Kaspersky Lab\\Kaspersky 21.5\\avpui.exe");
+        "C:\\Program Files\\Avast Software\\Avast\\AvastUI.exe", "C:\\Program Files\\AVG\\Antivirus\\AVGUI.exe",
+        "C:\\Program Files (x86)\\Avira\\Antivirus\\avgnt.exe",
+        "C:\\Program Files\\Malwarebytes\\Anti-Malware\\mbam.exe",
+        "C:\\Program Files (x86)\\Kaspersky Lab\\Kaspersky 21.5\\avpui.exe");
     public static final Predicate<OSProcess> WINDOWS_ANTIVIRUS_PROCESS_FILTER = (
-            process) -> WINDOWS_ANTIVIRUS_PROCESS_NAMES.contains(process.getName())
-                    || WINDOWS_ANTIVIRUS_PROCESS_PATHS.contains(process.getPath());
+        process) -> WINDOWS_ANTIVIRUS_PROCESS_NAMES.contains(process.getName())
+        || WINDOWS_ANTIVIRUS_PROCESS_PATHS.contains(process.getPath());
 
     public static OS getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
@@ -125,7 +119,7 @@ public enum OS {
                 return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
             case OSX:
                 return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
-                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                    .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
             default:
                 return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
         }
@@ -171,7 +165,7 @@ public enum OS {
      * This opens the users default browser to the given uri.
      */
     public static void openWebBrowser(URI uri) {
-        Analytics.sendOutboundLink(uri.toString());
+        AppEventBus.postToDefault(OutboundLinkEvent.forUri(uri));
         try {
             if (getOS() == LINUX && Utils.executableInPath("xdg-open")) {
                 Runtime.getRuntime().exec("xdg-open " + uri);
@@ -207,7 +201,7 @@ public enum OS {
                 if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
                     Desktop.getDesktop().open(pathToOpen.toFile());
                 } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open"))
-                        || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
+                    || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
                     Runtime.getRuntime().exec("xdg-open " + pathToOpen.toString());
                 } else {
                     LOG.error("Cannot open file explorer as no supported methods were found");
@@ -276,8 +270,8 @@ public enum OS {
         }
 
         List<JavaInfo> validVersions = installedJavas.stream()
-                .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
-                .collect(Collectors.toList());
+            .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
+            .collect(Collectors.toList());
 
         if (validVersions.size() == 0) {
             return null;
@@ -291,8 +285,8 @@ public enum OS {
 
         // get newest Java 8 64 bit if installed
         Optional<JavaInfo> java864bit = validVersions.stream()
-                .sorted(Comparator.comparingInt((JavaInfo javaInfo) -> javaInfo.minorVersion).reversed())
-                .filter(javaInfo -> javaInfo.majorVersion == 8 && javaInfo.is64bits).findFirst();
+            .sorted(Comparator.comparingInt((JavaInfo javaInfo) -> javaInfo.minorVersion).reversed())
+            .filter(javaInfo -> javaInfo.majorVersion == 8 && javaInfo.is64bits).findFirst();
         if (java864bit.isPresent()) {
             return java864bit.get();
         }
@@ -325,7 +319,7 @@ public enum OS {
      */
     public static boolean isArm() {
         return System.getProperty("os.arch").startsWith("arm")
-                || System.getProperty("os.arch").equalsIgnoreCase("aarch64");
+            || System.getProperty("os.arch").equalsIgnoreCase("aarch64");
     }
 
     public static boolean isMacArm() {
@@ -363,7 +357,7 @@ public enum OS {
                 ram = 1024;
             }
         } catch (SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException
-                | NoSuchMethodException e) {
+                 | NoSuchMethodException e) {
             LOG.error("error", e);
         }
         PerformanceManager.end();
@@ -596,7 +590,7 @@ public enum OS {
                     OperatingSystem os = systemInfo.getOperatingSystem();
 
                     antivirusProcesses = os.getProcesses(OS.WINDOWS_ANTIVIRUS_PROCESS_FILTER,
-                            ProcessSorting.PID_ASC, 0);
+                        ProcessSorting.PID_ASC, 0);
                 } catch (Throwable ignored) {
                 }
             }

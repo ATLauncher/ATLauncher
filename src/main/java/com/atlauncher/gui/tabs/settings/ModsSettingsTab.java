@@ -17,13 +17,6 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.GridBagConstraints;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -32,6 +25,10 @@ import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class ModsSettingsTab extends AbstractSettingsTab {
@@ -51,8 +48,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover defaultModPlatformLabel = new JLabelWithHover(GetText.tr("Default Mod Platform") + ":",
-                HELP_ICON, GetText.tr(
-                        "The default mod platform to use when adding mods to instances, as well as the platform to use when updating/reinstalling mods on multiple platforms."));
+            HELP_ICON, GetText.tr(
+            "The default mod platform to use when adding mods to instances, as well as the platform to use when updating/reinstalling mods on multiple platforms."));
 
         add(defaultModPlatformLabel, gbc);
 
@@ -82,7 +79,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover addModRestrictionsLabel = new JLabelWithHover(GetText.tr("Add Mod Restrictions") + ":",
-                HELP_ICON, GetText.tr("What restrictions should be in place when adding mods from a mod platform."));
+            HELP_ICON, GetText.tr("What restrictions should be in place when adding mods from a mod platform."));
 
         add(addModRestrictionsLabel, gbc);
 
@@ -91,11 +88,11 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         addModRestriction = new JComboBox<>();
         addModRestriction.addItem(
-                new ComboItem<>(AddModRestriction.STRICT, GetText.tr("Only show mods for current Minecraft version")));
+            new ComboItem<>(AddModRestriction.STRICT, GetText.tr("Only show mods for current Minecraft version")));
         addModRestriction.addItem(new ComboItem<>(AddModRestriction.LAX,
-                GetText.tr("Show mods for the current major Minecraft version (eg: 1.16.x)")));
+            GetText.tr("Show mods for the current major Minecraft version (eg: 1.16.x)")));
         addModRestriction
-                .addItem(new ComboItem<>(AddModRestriction.NONE, GetText.tr("Show mods for all Minecraft versions")));
+            .addItem(new ComboItem<>(AddModRestriction.NONE, GetText.tr("Show mods for all Minecraft versions")));
 
         for (int i = 0; i < addModRestriction.getItemCount(); i++) {
             ComboItem<AddModRestriction> item = addModRestriction.getItemAt(i);
@@ -115,8 +112,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableAddedModsByDefaultLabel = new JLabelWithHover(GetText.tr("Enable Added Mods By Default?"),
-                HELP_ICON, new HTMLBuilder().center().split(100)
-                        .text(GetText.tr("When adding mods manually, should they be enabled automatically?")).build());
+            HELP_ICON, new HTMLBuilder().center().split(100)
+            .text(GetText.tr("When adding mods manually, should they be enabled automatically?")).build());
         add(enableAddedModsByDefaultLabel, gbc);
 
         gbc.gridx++;
@@ -133,10 +130,10 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover dontCheckModsOnCurseForgeLabel = new JLabelWithHover(
-                GetText.tr("Don't Check Mods On CurseForge?"), HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "When installing packs or adding mods manually to instances, we check for the file on CurseForge to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher but may solve some issues installing packs due to running out of memory."))
-                        .build());
+            GetText.tr("Don't Check Mods On CurseForge?"), HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "When installing packs or adding mods manually to instances, we check for the file on CurseForge to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher but may solve some issues installing packs due to running out of memory."))
+                .build());
         add(dontCheckModsOnCurseForgeLabel, gbc);
 
         gbc.gridx++;
@@ -153,10 +150,10 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover dontCheckModsOnModrinthLabel = new JLabelWithHover(
-                GetText.tr("Don't Check Mods On Modrinth?"), HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "When installing packs or adding mods manually to instances, we check for the file on Modrinth to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher."))
-                        .build());
+            GetText.tr("Don't Check Mods On Modrinth?"), HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "When installing packs or adding mods manually to instances, we check for the file on Modrinth to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher."))
+                .build());
         add(dontCheckModsOnModrinthLabel, gbc);
 
         gbc.gridx++;
@@ -174,8 +171,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover defaultExportFormatLabel = new JLabelWithHover(GetText.tr("Default Export Format") + ":",
-                HELP_ICON, GetText.tr(
-                        "The default format to export instances to. Can also be changed at time of export."));
+            HELP_ICON, GetText.tr(
+            "The default format to export instances to. Can also be changed at time of export."));
 
         add(defaultExportFormatLabel, gbc);
 
@@ -186,7 +183,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MODRINTH, "Modrinth"));
         defaultExportFormat
-                .addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
+            .addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
 
         for (int i = 0; i < defaultExportFormat.getItemCount(); i++) {
@@ -205,12 +202,12 @@ public class ModsSettingsTab extends AbstractSettingsTab {
     public void save() {
         App.settings.defaultModPlatform = ((ComboItem<ModPlatform>) defaultModPlatform.getSelectedItem()).getValue();
         App.settings.addModRestriction = ((ComboItem<AddModRestriction>) addModRestriction.getSelectedItem())
-                .getValue();
+            .getValue();
         App.settings.enableAddedModsByDefault = enableAddedModsByDefault.isSelected();
         App.settings.dontCheckModsOnCurseForge = dontCheckModsOnCurseForge.isSelected();
         App.settings.dontCheckModsOnModrinth = dontCheckModsOnModrinth.isSelected();
         App.settings.defaultExportFormat = ((ComboItem<InstanceExportFormat>) defaultExportFormat.getSelectedItem())
-                .getValue();
+            .getValue();
     }
 
     @Override

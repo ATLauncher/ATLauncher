@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.json;
 
-import java.io.File;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
+
+import java.io.File;
 
 @Json
 public class Library {

@@ -22,6 +22,6 @@ import com.google.gson.annotations.SerializedName;
 public class CurseForgeFileModule {
     public long fingerprint;
 
-    @SerializedName(value = "name", alternate = { "foldername" })
+    @SerializedName(value = "name", alternate = {"foldername"})
     public String name;
 }

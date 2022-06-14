@@ -17,23 +17,21 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.atlauncher.exceptions.ChunkyException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.atlauncher.exceptions.ChunkyException;
+import java.awt.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class Resources {
     private static final Logger LOG = LogManager.getLogger(Resources.class);
 
     private static final Map<String, Object> resources = new HashMap<>();
     public static final String[] FONT_FAMILIES = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getAvailableFontFamilyNames();
+        .getAvailableFontFamilyNames();
 
     private Resources() {
     }
@@ -54,7 +52,7 @@ public final class Resources {
                 Object obj = resources.get(name);
                 if (!(obj instanceof Font)) {
                     throw new ChunkyException("Reference for " + name + " ended up with a bad value, " + "suggested="
-                            + Font.class.getName() + "; got=" + obj.getClass().getName());
+                        + Font.class.getName() + "; got=" + obj.getClass().getName());
                 } else {
                     return (Font) obj;
                 }

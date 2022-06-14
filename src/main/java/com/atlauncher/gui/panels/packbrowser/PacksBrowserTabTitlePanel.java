@@ -17,19 +17,18 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import com.atlauncher.App;
-import com.atlauncher.evnt.listener.ThemeListener;
-import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
+import com.atlauncher.events.theme.ThemeChangedEvent;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
 
-public class PacksBrowserTabTitlePanel extends JPanel implements ThemeListener {
+import javax.swing.*;
+import java.awt.*;
+
+public class PacksBrowserTabTitlePanel extends JPanel {
     private final JLabel label = new JLabel(null, null, SwingConstants.CENTER);
     private final String icon;
 
@@ -43,19 +42,20 @@ public class PacksBrowserTabTitlePanel extends JPanel implements ThemeListener {
 
         add(label, BorderLayout.CENTER);
 
-        ThemeManager.addListener(this);
-
         JLabel title = new JLabel(platform);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         add(title, BorderLayout.SOUTH);
+
+        AppEventBus.register(this);
     }
 
     public PacksBrowserTabTitlePanel(String platform) {
         this(platform, platform.toLowerCase());
     }
 
-    @Override
-    public void onThemeChange() {
+    @Subscribe
+    @OnSide(Side.UI)
+    public final void onThemeChanged(final ThemeChangedEvent event) {
         label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform", icon)));
     }
 }

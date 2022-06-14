@@ -17,9 +17,6 @@
  */
 package com.atlauncher.data.minecraft.loaders.quilt;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.constants.Constants;
@@ -29,6 +26,9 @@ import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.google.common.hash.HashCode;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Json
 public class QuiltLibrary extends Library {

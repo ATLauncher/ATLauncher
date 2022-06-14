@@ -17,14 +17,14 @@
  */
 package com.atlauncher.mclauncher.legacy;
 
+import com.atlauncher.constants.Constants;
+
 import java.applet.Applet;
-import java.awt.Dimension;
+import java.awt.*;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-
-import com.atlauncher.constants.Constants;
 
 public class LegacyMCLauncher {
     public static void main(String[] args) {

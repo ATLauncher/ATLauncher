@@ -17,11 +17,11 @@
  */
 package com.atlauncher.data.modpacksch;
 
-import java.util.List;
-
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
+
+import java.util.List;
 
 public class ModpacksChPackVersionManifestFile {
     public String version;

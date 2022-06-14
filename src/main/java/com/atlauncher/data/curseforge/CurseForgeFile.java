@@ -17,13 +17,6 @@
  */
 package com.atlauncher.data.curseforge;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
-import org.joda.time.format.ISODateTimeFormat;
-
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
@@ -31,6 +24,12 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.managers.MinecraftManager;
 import com.google.gson.annotations.SerializedName;
+import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class CurseForgeFile {
     public int id;
@@ -54,13 +53,13 @@ public class CurseForgeFile {
     public int downloadCount;
     public List<CurseForgeSortableGameVersion> sortableGameVersions = new ArrayList<>();
 
-    @SerializedName(value = "gameVersions", alternate = { "gameVersion" })
+    @SerializedName(value = "gameVersions", alternate = {"gameVersion"})
     public List<String> gameVersions;
 
-    @SerializedName(value = "fileFingerprint", alternate = { "packageFingerprint" })
+    @SerializedName(value = "fileFingerprint", alternate = {"packageFingerprint"})
     public long packageFingerprint;
 
-    @SerializedName(value = "modId", alternate = { "projectId" })
+    @SerializedName(value = "modId", alternate = {"projectId"})
     public int modId;
 
     public String toString() {
@@ -92,13 +91,13 @@ public class CurseForgeFile {
         mod.curseForgeFile = this;
 
         Optional<CurseForgeFileHash> md5Hash = hashes.stream().filter(h -> h.isMd5())
-                .findFirst();
+            .findFirst();
         if (md5Hash.isPresent()) {
             mod.md5 = md5Hash.get().value;
         }
 
         Optional<CurseForgeFileHash> sha1Hash = hashes.stream().filter(h -> h.isSha1())
-                .findFirst();
+            .findFirst();
         if (sha1Hash.isPresent()) {
             mod.sha1 = sha1Hash.get().value;
         }
@@ -121,16 +120,16 @@ public class CurseForgeFile {
         // instance) and then order them by Minecraft versions release date to make sure
         // we use the newest (SkyFactory 4 lists 3 Minecraft versions for some reason)
         Optional<String> minecraftVersion = gameVersions.stream().filter(gv -> MinecraftManager.isMinecraftVersion(gv))
-                .map(gv -> {
-                    try {
-                        return MinecraftManager.getMinecraftVersion(gv);
-                    } catch (InvalidMinecraftVersion e) {
-                        // this should never happen because of the filter
-                        return null;
-                    }
-                }).filter(gv -> gv != null).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
-                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
-                }).reversed()).map(mv -> mv.id).findFirst();
+            .map(gv -> {
+                try {
+                    return MinecraftManager.getMinecraftVersion(gv);
+                } catch (InvalidMinecraftVersion e) {
+                    // this should never happen because of the filter
+                    return null;
+                }
+            }).filter(gv -> gv != null).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+                return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+            }).reversed()).map(mv -> mv.id).findFirst();
 
         // worse case if nothing comes back, just grab the first item
         return minecraftVersion.orElseGet(() -> gameVersions.get(0));

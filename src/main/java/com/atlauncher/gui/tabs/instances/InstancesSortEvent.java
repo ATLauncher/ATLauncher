@@ -17,9 +17,9 @@
  */
 package com.atlauncher.gui.tabs.instances;
 
-import java.util.EventObject;
-
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
+
+import java.util.EventObject;
 
 public final class InstancesSortEvent extends EventObject {
     private final InstanceSortingStrategy strategy;

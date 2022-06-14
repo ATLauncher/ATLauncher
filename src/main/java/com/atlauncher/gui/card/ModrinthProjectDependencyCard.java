@@ -17,20 +17,6 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthDependency;
@@ -40,6 +26,12 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public final class ModrinthProjectDependencyCard extends JPanel {
@@ -48,7 +40,7 @@ public final class ModrinthProjectDependencyCard extends JPanel {
     private final Instance instance;
 
     public ModrinthProjectDependencyCard(ModrinthVersionSelectorDialog parent, ModrinthDependency dependency,
-            Instance instance) {
+                                         Instance instance) {
         this.parent = parent;
 
         setLayout(new BorderLayout());
@@ -99,7 +91,7 @@ public final class ModrinthProjectDependencyCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         TitledBorder border = new TitledBorder(null, mod.title, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
+            TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
         setBorder(border);
 
         if (mod.iconUrl != null && !mod.iconUrl.isEmpty()) {

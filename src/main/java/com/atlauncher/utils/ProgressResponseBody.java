@@ -17,10 +17,7 @@
  */
 package com.atlauncher.utils;
 
-import java.io.IOException;
-
 import com.atlauncher.listener.ProgressListener;
-
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import okio.Buffer;
@@ -28,6 +25,8 @@ import okio.BufferedSource;
 import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
+
+import java.io.IOException;
 
 public class ProgressResponseBody extends ResponseBody {
     private final ResponseBody responseBody;

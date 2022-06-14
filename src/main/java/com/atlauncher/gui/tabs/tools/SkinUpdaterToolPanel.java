@@ -17,33 +17,32 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
+import com.atlauncher.AppEventBus;
+import com.atlauncher.Data;
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.events.ToolRunEvent;
+import com.atlauncher.events.account.AccountChangedEvent;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.DialogManager;
+import com.google.common.eventbus.Subscribe;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JLabel;
-
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.Data;
-import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.evnt.listener.AccountListener;
-import com.atlauncher.evnt.manager.AccountManager;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-
 @SuppressWarnings("serial")
-public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener, AccountListener {
+public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener {
 
     public SkinUpdaterToolPanel() {
         super(GetText.tr("Skin Updater"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-                .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
+            .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        AccountManager.addListener(this);
+        AppEventBus.register(this);
         this.checkLaunchButtonEnabled();
     }
 
@@ -53,10 +52,9 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Analytics.sendEvent("SkinUpdater", "Run", "Tool");
-
+        AppEventBus.postToDefault(ToolRunEvent.skinUpdater());
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), Data.ACCOUNTS.size(),
-                GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
+            GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
         dialog.addThread(new Thread(() -> {
             Data.ACCOUNTS.forEach(account -> {
                 account.updateSkin();
@@ -70,11 +68,11 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
         dialog.start();
 
         DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                .setContent(GetText.tr("Successfully updated skins.")).show();
+            .setContent(GetText.tr("Successfully updated skins.")).show();
     }
 
-    @Override
-    public void onAccountsChanged() {
+    @Subscribe
+    public void onAccountChanged(final AccountChangedEvent e) {
         this.checkLaunchButtonEnabled();
     }
 }

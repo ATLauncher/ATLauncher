@@ -17,17 +17,17 @@
  */
 package com.atlauncher.data.minecraft.loaders;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.workers.InstanceInstaller;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
 public interface Loader {
     void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
-            LoaderVersion versionOverride);
+             LoaderVersion versionOverride);
 
     void downloadAndExtractInstaller() throws Exception;
 

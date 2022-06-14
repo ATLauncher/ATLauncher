@@ -17,6 +17,24 @@
  */
 package com.atlauncher.managers;
 
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.Data;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
+import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.Account;
+import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.data.MojangAccount;
+import com.atlauncher.events.account.AccountAddedEvent;
+import com.atlauncher.events.account.AccountChangedEvent;
+import com.atlauncher.utils.Utils;
+import com.google.gson.JsonIOException;
+import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -27,23 +45,6 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.App;
-import com.atlauncher.Data;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
-import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.Account;
-import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.MojangAccount;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Utils;
-import com.google.gson.JsonIOException;
-import com.google.gson.reflect.TypeToken;
 
 @SuppressWarnings("deprecation")
 public class AccountManager {
@@ -58,6 +59,10 @@ public class AccountManager {
 
     public static AbstractAccount getSelectedAccount() {
         return Data.SELECTED_ACCOUNT;
+    }
+
+    private static void postAccountChangedEvent() {
+        AppEventBus.post(AccountChangedEvent.forCurrentAccount());
     }
 
     /**
@@ -125,7 +130,7 @@ public class AccountManager {
                 Account account = (Account) obj;
 
                 convertedAccounts.add(new MojangAccount(account.username, account.password, account.minecraftUsername,
-                        account.uuid, account.remember, account.clientToken, account.store));
+                    account.uuid, account.remember, account.clientToken, account.store));
             }
         } catch (EOFException e) {
             // Don't log this, it always happens when it gets to the end of the file
@@ -141,9 +146,9 @@ public class AccountManager {
                 }
             } catch (IOException e) {
                 LOG.error(
-                        "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
-                                + "accounts.",
-                        e);
+                    "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
+                        + "accounts.",
+                    e);
             }
         }
 
@@ -170,17 +175,19 @@ public class AccountManager {
 
     public static void addAccount(AbstractAccount account) {
         String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
-
-        Analytics.sendEvent(accountType, "Add", "Account");
+        AppEventBus.postToDefault(AccountAddedEvent.forAccount(account));
         LOG.info("Added " + accountType + " Account " + account);
 
         Data.ACCOUNTS.add(account);
 
         if (Data.ACCOUNTS.size() > 1) {
             // not first account? ask if they want to switch to it
-            int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
-                    .setContent(GetText.tr("Account added successfully. Switch to it now?")).setType(DialogManager.INFO)
-                    .addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No")).show();
+            int ret = DialogManager.optionDialog()
+                .setTitle(GetText.tr("Account Added"))
+                .setContent(GetText.tr("Account added successfully. Switch to it now?"))
+                .setType(DialogManager.INFO)
+                .addOption(GetText.tr("Yes"), true)
+                .addOption(GetText.tr("No")).show();
 
             if (ret == 0) {
                 switchAccount(account);
@@ -191,7 +198,7 @@ public class AccountManager {
         }
 
         saveAccounts();
-        com.atlauncher.evnt.manager.AccountManager.post();
+        postAccountChangedEvent();
     }
 
     public static void removeAccount(AbstractAccount account) {
@@ -206,7 +213,7 @@ public class AccountManager {
         }
         Data.ACCOUNTS.remove(account);
         saveAccounts();
-        com.atlauncher.evnt.manager.AccountManager.post();
+        postAccountChangedEvent();
     }
 
     /**
@@ -227,7 +234,7 @@ public class AccountManager {
         App.launcher.refreshPacksBrowserPanel();
         App.launcher.reloadInstancesPanel();
         App.launcher.reloadServersPanel();
-        com.atlauncher.evnt.manager.AccountManager.post();
+        postAccountChangedEvent();
         App.settings.save();
     }
 

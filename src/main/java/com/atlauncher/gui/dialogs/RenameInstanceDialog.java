@@ -17,35 +17,27 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Instance;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
-import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.Instance;
-import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Utils;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class RenameInstanceDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Rename Instance Dialog";
     private static final Logger LOG = LogManager.getLogger(RenameInstanceDialog.class);
 
     private JTextField instanceName;
@@ -61,7 +53,7 @@ public class RenameInstanceDialog extends JDialog {
 
         this.instance = instance;
 
-        Analytics.sendScreenView("Rename Instance Dialog");
+        AppEventBus.post(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         setSize(320, 150);
         setLocationRelativeTo(parent);
@@ -112,29 +104,29 @@ public class RenameInstanceDialog extends JDialog {
         saveButton.addActionListener(e -> {
             if (InstanceManager.isInstance(instanceName.getText())) {
                 DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
-                        .setContent(
-                                GetText.tr("There is already an instance called {0}.<br/><br/>Rename it and try again.",
-                                        instanceName.getText()))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(
+                        GetText.tr("There is already an instance called {0}.<br/><br/>Rename it and try again.",
+                            instanceName.getText()))
+                    .setType(DialogManager.ERROR).show();
             } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(
-                                new HTMLBuilder().center()
-                                        .text(GetText.tr("Error") + "<br/><br/>" + GetText.tr(
-                                                "The name {0} is invalid. It must contain at least 1 letter or number.",
-                                                instanceName.getText()))
-                                        .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(
+                        new HTMLBuilder().center()
+                            .text(GetText.tr("Error") + "<br/><br/>" + GetText.tr(
+                                "The name {0} is invalid. It must contain at least 1 letter or number.",
+                                instanceName.getText()))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
             } else {
                 if (instance.rename(instanceName.getText())) {
                     App.launcher.reloadInstancesPanel();
                 } else {
                     LOG.error("Unknown Error Occurred While Renaming Instance!");
                     DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "An error occurred renaming the instance.<br/><br/>Please check the console and try again."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "An error occurred renaming the instance.<br/><br/>Please check the console and try again."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                 }
                 close();
             }

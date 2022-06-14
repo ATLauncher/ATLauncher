@@ -17,12 +17,12 @@
  */
 package com.atlauncher.utils;
 
-import java.util.List;
-
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
+
+import java.util.List;
 
 /**
  * Various utility methods for interacting with the Mojang API.
@@ -36,7 +36,7 @@ public class MojangAPIUtils {
      */
     public static String getUUID(String username) {
         ProfileResponse profile = Download.build().setUrl("https://api.mojang.com/users/profiles/minecraft/" + username)
-                .asClass(ProfileResponse.class);
+            .asClass(ProfileResponse.class);
 
         return profile.getId();
     }
@@ -46,7 +46,7 @@ public class MojangAPIUtils {
         }.getType();
 
         List<NameHistory> history = Download.build().setUrl("https://api.mojang.com/user/profiles/" + uuid + "/names")
-                .asType(type);
+            .asType(type);
 
         // Mojang API is down??
         if (history == null) {

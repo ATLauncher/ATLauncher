@@ -17,11 +17,6 @@
  */
 package com.atlauncher;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.News;
@@ -34,6 +29,11 @@ import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public final class Data {
     public static final List<AbstractAccount> ACCOUNTS = new LinkedList<>();

@@ -17,17 +17,6 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.ArgumentRule;
@@ -36,6 +25,16 @@ import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.utils.FileUtils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Forge113Loader extends ForgeLoader {
     private static final Logger LOG = LogManager.getLogger(Forge113Loader.class);
@@ -47,10 +46,10 @@ public class Forge113Loader extends ForgeLoader {
         installProfile.data.put("SIDE", new Data("client", "server"));
         installProfile.data.put("ROOT", new Data(instanceInstaller.root.toAbsolutePath().toString()));
         installProfile.data.put("MINECRAFT_JAR",
-                new Data(instanceInstaller.getMinecraftJarLibrary("client").getAbsolutePath(),
-                        instanceInstaller.getMinecraftJarLibrary("server").getAbsolutePath()));
+            new Data(instanceInstaller.getMinecraftJarLibrary("client").getAbsolutePath(),
+                instanceInstaller.getMinecraftJarLibrary("server").getAbsolutePath()));
         installProfile.data.put("MINECRAFT_VERSION",
-                new Data(instanceInstaller.temp.resolve("minecraft.json").toAbsolutePath().toString()));
+            new Data(instanceInstaller.temp.resolve("minecraft.json").toAbsolutePath().toString()));
         installProfile.data.put("INSTALLER", new Data(installerPath.toAbsolutePath().toString()));
         installProfile.data.put("LIBRARY_DIR", new Data(FileSystem.LIBRARIES.toAbsolutePath().toString()));
 
@@ -65,16 +64,16 @@ public class Forge113Loader extends ForgeLoader {
             // copy over any local files from the loader zip file
             if (library.name.equalsIgnoreCase(installProfile.path)) {
                 FileUtils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path).toPath(),
-                        FileSystem.LIBRARIES.resolve(library.downloads.artifact.path), true);
+                    FileSystem.LIBRARIES.resolve(library.downloads.artifact.path), true);
 
                 FileUtils.copyFile(
-                        new File(tempDir,
-                                "maven/" + library.downloads.artifact.path.substring(0,
-                                        library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
-                                .toPath(),
-                        FileSystem.LIBRARIES.resolve(library.downloads.artifact.path.substring(0,
-                                library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar"),
-                        true);
+                    new File(tempDir,
+                        "maven/" + library.downloads.artifact.path.substring(0,
+                            library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
+                        .toPath(),
+                    FileSystem.LIBRARIES.resolve(library.downloads.artifact.path.substring(0,
+                        library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar"),
+                    true);
             }
         });
     }
@@ -140,11 +139,11 @@ public class Forge113Loader extends ForgeLoader {
     @Override
     public String getServerJar() {
         Library forgeLibrary = this.getVersion().libraries.stream()
-                .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
+            .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
 
         if (forgeLibrary != null) {
             return forgeLibrary.downloads.artifact.path
-                    .substring(forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1);
+                .substring(forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1);
         }
 
         return null;

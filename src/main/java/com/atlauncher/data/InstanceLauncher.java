@@ -17,10 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -36,6 +32,10 @@ import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.google.gson.annotations.SerializedName;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 @Json
 public class InstanceLauncher {
     public String name;
@@ -43,7 +43,7 @@ public class InstanceLauncher {
     public String description;
     public Integer packId;
 
-    @SerializedName(value = "externalPackId", alternate = { "externaPackId" })
+    @SerializedName(value = "externalPackId", alternate = {"externaPackId"})
     public Integer externalPackId;
 
     public String version;
@@ -51,7 +51,7 @@ public class InstanceLauncher {
 
     public Java java;
 
-    @SerializedName(value = "enableCurseForgeIntegration", alternate = { "enableCurseIntegration" })
+    @SerializedName(value = "enableCurseForgeIntegration", alternate = {"enableCurseIntegration"})
     public boolean enableCurseForgeIntegration = false;
     public boolean enableEditingMods = true;
 
@@ -80,7 +80,7 @@ public class InstanceLauncher {
     public boolean isPlayable;
     public boolean assetsMapToResources;
 
-    @SerializedName(value = "curseForgeManifest", alternate = { "curseManifest" })
+    @SerializedName(value = "curseForgeManifest", alternate = {"curseManifest"})
     public CurseForgeManifest curseForgeManifest;
 
     public CurseForgeProject curseForgeProject;

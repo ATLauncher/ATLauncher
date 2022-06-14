@@ -17,10 +17,8 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public final class ToolsPanel extends JPanel {

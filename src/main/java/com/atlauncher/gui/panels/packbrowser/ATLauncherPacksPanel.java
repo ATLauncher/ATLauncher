@@ -17,7 +17,18 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.awt.GridBagConstraints;
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Pack;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.card.packbrowser.ATLauncherPackCard;
+import com.atlauncher.managers.PackManager;
+import org.joda.time.format.ISODateTimeFormat;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -27,27 +38,14 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.swing.JPanel;
-
-import org.joda.time.format.ISODateTimeFormat;
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.Pack;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
-import com.atlauncher.data.minecraft.VersionManifestVersionType;
-import com.atlauncher.gui.card.NilCard;
-import com.atlauncher.gui.card.packbrowser.ATLauncherPackCard;
-import com.atlauncher.managers.PackManager;
-
 public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     private final List<Pack> packs = new LinkedList<>();
     private final List<ATLauncherPackCard> cards = new LinkedList<>();
 
     private void loadPacksToShow(String minecraftVersion, String sort, boolean sortDescending, String searchText) {
         List<Pack> packs = sort.equalsIgnoreCase("name") ? PackManager.getPacksSortedAlphabetically(false,
-                sortDescending)
-                : PackManager.getPacksSortedPositionally(false, sortDescending);
+            sortDescending)
+            : PackManager.getPacksSortedPositionally(false, sortDescending);
 
         this.packs.addAll(packs.stream().filter(Pack::canInstall).filter(pack -> {
             if (minecraftVersion != null) {
@@ -58,10 +56,10 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
         }).filter(pack -> {
             if (!searchText.isEmpty()) {
                 return (pack.getDescription() != null
-                        && Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
-                                .matcher(pack.getDescription()).find())
-                        || Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(pack.getName())
-                                .find();
+                    && Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE)
+                    .matcher(pack.getDescription()).find())
+                    || Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(pack.getName())
+                    .find();
             }
 
             return true;
@@ -70,7 +68,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                             boolean sortDescending, String search, int page) {
         contentPanel.removeAll();
         this.packs.clear();
         this.cards.clear();
@@ -81,10 +79,10 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search,
-            int page) {
+                              boolean sortDescending, String search,
+                              int page) {
         this.packs.stream().skip(this.cards.size()).limit(10)
-                .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
+            .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -102,9 +100,9 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
         if (count == 0) {
             contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
-                    gbc);
+                new NilCard(GetText
+                    .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                gbc);
         }
     }
 
@@ -182,7 +180,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
         PackManager.getPacks().stream().forEach(p -> {
             minecraftVersions
-                    .addAll(p.versions.stream().map(v -> v.minecraftVersion).distinct().collect(Collectors.toList()));
+                .addAll(p.versions.stream().map(v -> v.minecraftVersion).distinct().collect(Collectors.toList()));
         });
 
         return minecraftVersions.stream().distinct().sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {

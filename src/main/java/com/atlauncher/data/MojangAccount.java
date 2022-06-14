@@ -17,22 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.BorderLayout;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Map;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
@@ -43,6 +27,18 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Map;
 
 public class MojangAccount extends AbstractAccount {
     private static final Logger LOG = LogManager.getLogger(MojangAccount.class);
@@ -78,14 +74,14 @@ public class MojangAccount extends AbstractAccount {
     public Map<String, Object> store;
 
     public MojangAccount(String username, String password, LoginResponse response, Boolean remember,
-            String clientToken) {
+                         String clientToken) {
         this(username, password, response.getAuth().getSelectedProfile().getName(),
-                response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken,
-                response.getAuth().saveForStorage());
+            response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken,
+            response.getAuth().saveForStorage());
     }
 
     public MojangAccount(String username, String password, String minecraftUsername, String uuid, Boolean remember,
-            String clientToken, Map<String, Object> store) {
+                         String clientToken, Map<String, Object> store) {
         this.username = username;
         if (remember) {
             this.password = password;
@@ -255,11 +251,11 @@ public class MojangAccount extends AbstractAccount {
             LOG.error("error: {}", response.getErrorMessage());
 
             DialogManager
-                    .okDialog().setTitle(
-                            GetText.tr("Error Logging In"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr("Couldn't login to Minecraft servers")
-                            + "<br/><br/>" + response.getErrorMessage()).build())
-                    .setType(DialogManager.ERROR).show();
+                .okDialog().setTitle(
+                    GetText.tr("Error Logging In"))
+                .setContent(new HTMLBuilder().center().text(GetText.tr("Couldn't login to Minecraft servers")
+                    + "<br/><br/>" + response.getErrorMessage()).build())
+                .setType(DialogManager.ERROR).show();
 
             App.launcher.setMinecraftLaunched(false);
             return null;

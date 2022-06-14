@@ -17,18 +17,13 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JPanel;
-
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.OS;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 @SuppressWarnings("serial")
 public final class ModCard extends JPanel {
@@ -59,6 +54,6 @@ public final class ModCard extends JPanel {
         g2.drawString(this.mod.getName(), 10, 10);
         g2.setColor(this.mod.isOptional() ? Color.GREEN : Color.RED);
         g2.drawString(this.mod.isOptional() ? "Optional" : "Required",
-                g2.getFontMetrics().stringWidth(this.mod.getName()) + g2.getFontMetrics().charWidth('M') * 2, 10);
+            g2.getFontMetrics().stringWidth(this.mod.getName()) + g2.getFontMetrics().charWidth('M') * 2, 10);
     }
 }

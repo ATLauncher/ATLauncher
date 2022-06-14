@@ -17,11 +17,9 @@
  */
 package com.atlauncher.gui;
 
-import java.awt.Component;
-import java.awt.Insets;
-
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class HoverLineBorder extends LineBorder {

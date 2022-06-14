@@ -17,9 +17,6 @@
  */
 package com.atlauncher.data;
 
-import java.awt.Color;
-import java.lang.reflect.Type;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -29,11 +26,14 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.awt.*;
+import java.lang.reflect.Type;
+
 public class ColorTypeAdapter implements JsonDeserializer<Color>, JsonSerializer<Color> {
 
     @Override
     public Color deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
+        throws JsonParseException {
         if (!(json instanceof JsonObject)) {
             throw new JsonParseException("The color " + json + " is not an object!");
         }

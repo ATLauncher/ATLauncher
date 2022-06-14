@@ -22,7 +22,7 @@ import com.google.gson.annotations.SerializedName;
 public class QuiltMetaVersion {
     public QuiltMetaLoader loader;
 
-    @SerializedName(value = "hashed", alternate = { "intermediary" })
+    @SerializedName(value = "hashed", alternate = {"intermediary"})
     public QuiltMetaHashed hashed;
 
     public QuiltMetaLauncherMeta launcherMeta;

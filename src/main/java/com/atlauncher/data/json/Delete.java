@@ -17,9 +17,9 @@
  */
 package com.atlauncher.data.json;
 
-import java.io.File;
-
 import com.atlauncher.annot.Json;
+
+import java.io.File;
 
 @Json
 public class Delete {
@@ -37,8 +37,8 @@ public class Delete {
     public boolean isAllowed() {
         if (this.base.equalsIgnoreCase("root")) {
             if (this.target.startsWith("world") || this.target.startsWith("DIM") || this.target.startsWith("saves")
-                    || this.target.startsWith("instance.json") || this.target.contains("./")
-                    || this.target.contains(".\\") || this.target.contains("~/") || this.target.contains("~\\")) {
+                || this.target.startsWith("instance.json") || this.target.contains("./")
+                || this.target.contains(".\\") || this.target.contains("~/") || this.target.contains("~\\")) {
                 return false;
             }
         }

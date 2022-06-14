@@ -17,10 +17,10 @@
  */
 package com.atlauncher.data.minecraft.loaders.forge;
 
-import java.io.File;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Utils;
+
+import java.io.File;
 
 @Json
 public class Data {
@@ -45,7 +45,7 @@ public class Data {
 
         if (start == '[' && end == ']') {
             return Utils.convertMavenIdentifierToFile(value.substring(1, value.length() - 1), libraiesDir)
-                    .getAbsolutePath();
+                .getAbsolutePath();
         }
 
         return value;

@@ -17,13 +17,10 @@
  */
 package com.atlauncher.gui.panels;
 
-import java.awt.Component;
-
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class NoCurseModsPanel extends JPanel {
@@ -31,7 +28,7 @@ public class NoCurseModsPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JLabel label = new JLabel(hasSearch ? GetText.tr("No mods found. Remove your search query and try again.")
-                : GetText.tr("No mods found."));
+            : GetText.tr("No mods found."));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         label.setAlignmentY(Component.CENTER_ALIGNMENT);
 

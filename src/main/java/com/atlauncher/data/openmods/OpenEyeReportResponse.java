@@ -17,9 +17,8 @@
  */
 package com.atlauncher.data.openmods;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
 
 /**
  * The Class OpenEyeReportResponse contains information returned from OpenMods
@@ -86,7 +85,7 @@ public class OpenEyeReportResponse {
     public String getNoteDisplay() {
         if (this.hasNote()) {
             return GetText.tr("A note attached to the crash can be seen below:") + "<br/><br/>"
-                    + Utils.splitMultilinedString(this.getNote(), 100, "<br/>") + "<br/><br/>";
+                + Utils.splitMultilinedString(this.getNote(), 100, "<br/>") + "<br/><br/>";
         } else {
             return GetText.tr("There is no note attached to this crash.") + "<br/><br/>";
         }

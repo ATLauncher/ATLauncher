@@ -17,7 +17,19 @@
  */
 package com.atlauncher.gui.panels.packbrowser;
 
-import java.awt.GridBagConstraints;
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Pack;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
+import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.events.AnalyticsCategories;
+import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.card.packbrowser.ATLauncherPackCard;
+import com.atlauncher.managers.PackManager;
+import org.joda.time.format.ISODateTimeFormat;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -25,19 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.swing.JPanel;
-
-import org.joda.time.format.ISODateTimeFormat;
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.Pack;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
-import com.atlauncher.data.minecraft.VersionManifestVersionType;
-import com.atlauncher.gui.card.NilCard;
-import com.atlauncher.gui.card.packbrowser.ATLauncherPackCard;
-import com.atlauncher.managers.PackManager;
 
 public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     private final List<Pack> packs = new LinkedList<>();
@@ -57,7 +56,7 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                             boolean sortDescending, String search, int page) {
         contentPanel.removeAll();
         this.packs.clear();
         this.cards.clear();
@@ -68,8 +67,8 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search,
-            int page) {
+                              boolean sortDescending, String search,
+                              int page) {
         this.packs.stream().forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -88,9 +87,9 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
 
         if (count == 0) {
             contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.")),
-                    gbc);
+                new NilCard(GetText
+                    .tr("There are no packs to display.")),
+                gbc);
         }
     }
 
@@ -100,8 +99,8 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getAnalyticsCategory() {
-        return "FeaturedPack";
+    public String getAnalyticsCategory(){
+        return "FeaturedPacks";
     }
 
     @Override
@@ -162,7 +161,7 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
 
         PackManager.getPacks().stream().forEach(p -> {
             minecraftVersions
-                    .addAll(p.versions.stream().map(v -> v.minecraftVersion).distinct().collect(Collectors.toList()));
+                .addAll(p.versions.stream().map(v -> v.minecraftVersion).distinct().collect(Collectors.toList()));
         });
 
         return minecraftVersions.stream().distinct().sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {

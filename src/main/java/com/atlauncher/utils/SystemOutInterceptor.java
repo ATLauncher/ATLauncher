@@ -17,12 +17,12 @@
  */
 package com.atlauncher.utils;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class SystemOutInterceptor extends PrintStream {
     private final Logger logger;

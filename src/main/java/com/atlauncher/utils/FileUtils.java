@@ -17,18 +17,17 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
+import com.atlauncher.utils.walker.DeleteDirVisitor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.App;
-import com.atlauncher.utils.walker.DeleteDirVisitor;
 
 public class FileUtils {
     private static final Logger LOG = LogManager.getLogger(FileUtils.class);
@@ -75,7 +74,7 @@ public class FileUtils {
         com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
         if (fileUtils.hasTrash()) {
             try {
-                fileUtils.moveToTrash(new File[] { path.toFile() });
+                fileUtils.moveToTrash(new File[]{path.toFile()});
                 return true;
             } catch (IOException e) {
                 return delete(path, false);
@@ -156,7 +155,7 @@ public class FileUtils {
         // types
         try {
             if (Files.exists(to) && Files.isSameFile(from, to)
-                    && !from.getFileName().toString().equals(to.getFileName().toString())) {
+                && !from.getFileName().toString().equals(to.getFileName().toString())) {
                 return from.toFile().renameTo(to.toFile());
             }
         } catch (IOException e) {

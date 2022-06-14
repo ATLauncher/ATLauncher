@@ -17,19 +17,14 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
+import com.atlauncher.App;
+import com.atlauncher.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import javax.swing.JButton;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
-
-import com.atlauncher.App;
-import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class DropDownButton extends JButton {
@@ -55,7 +50,7 @@ public class DropDownButton extends JButton {
                     l.mousePressed(e);
                 } else {
                     popupMenu.setPreferredSize(new Dimension(Math.max(getWidth(), popupMenu.getPreferredSize().width),
-                            popupMenu.getPreferredSize().height));
+                        popupMenu.getPreferredSize().height));
                     popupMenu.show(DropDownButton.this, 0, getHeight());
                 }
             }
@@ -66,7 +61,7 @@ public class DropDownButton extends JButton {
     public void paint(Graphics g) {
         super.paint(g);
         g.drawImage(Utils.getIconImage(App.THEME.getIconPath((popupMenu.isShowing() ? "expanded" : "collapsed")))
-                .getImage(), getWidth() - 20, ((getHeight() - 12) / 2), null);
+            .getImage(), getWidth() - 20, ((getHeight() - 12) / 2), null);
 
         if (isSeparated) {
             g.setColor(UIManager.getColor("Button.borderColor"));

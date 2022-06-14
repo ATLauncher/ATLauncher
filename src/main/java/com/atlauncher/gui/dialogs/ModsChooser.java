@@ -17,41 +17,31 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.Gsons;
+import com.atlauncher.data.json.Mod;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.gui.components.ModsJCheckBox;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.reflect.TypeToken;
+import io.github.asyncronous.toast.Toaster;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.App;
-import com.atlauncher.Gsons;
-import com.atlauncher.data.json.Mod;
-import com.atlauncher.gui.components.ModsJCheckBox;
-import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.workers.InstanceInstaller;
-import com.google.gson.reflect.TypeToken;
-
-import io.github.asyncronous.toast.Toaster;
-
 public class ModsChooser extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Mods Chooser Dialog";
     private static final Logger LOG = LogManager.getLogger(ModsChooser.class);
 
     private static final long serialVersionUID = -5309108183485463434L;
@@ -69,7 +59,7 @@ public class ModsChooser extends JDialog {
         super(App.launcher.getParent(), GetText.tr("Select Mods To Install"), ModalityType.DOCUMENT_MODAL);
         this.installer = installerr;
 
-        Analytics.sendScreenView("Mods Chooser Dialog");
+        AppEventBus.post(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         setIconImage(Utils.getImage("/assets/image/icon.png"));
         setLocationRelativeTo(App.launcher.getParent());
@@ -122,7 +112,7 @@ public class ModsChooser extends JDialog {
         checkBoxPanel1.setBackground(UIManager.getColor("Mods.modSelectionColor"));
 
         JScrollPane scroller1 = new JScrollPane(checkBoxPanel1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
         modsInPack.setRightComponent(scroller1);
 
@@ -131,7 +121,7 @@ public class ModsChooser extends JDialog {
         checkBoxPanel2.setBackground(UIManager.getColor("Mods.modSelectionColor"));
 
         JScrollPane scroller2 = new JScrollPane(checkBoxPanel2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
         modsInPack.setLeftComponent(scroller2);
 
@@ -142,7 +132,7 @@ public class ModsChooser extends JDialog {
         useShareCode.setText(GetText.tr("Use Share Code"));
         useShareCode.addActionListener(e -> {
             String ret = JOptionPane.showInputDialog(null, GetText.tr("Enter Share Code"), GetText.tr("Share Code"),
-                    JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.QUESTION_MESSAGE);
 
             if (ret != null) {
                 applyShareCode(ret);
@@ -209,7 +199,7 @@ public class ModsChooser extends JDialog {
         int count1 = 0;
         int count2 = 0;
 
-        for (int i = 0; i < installer.allMods.size();) {
+        for (int i = 0; i < installer.allMods.size(); ) {
             boolean skip = false;
             final Mod mod = installer.allMods.get(i);
             if (installer.isServer && !mod.installOnServer()) {
@@ -226,7 +216,7 @@ public class ModsChooser extends JDialog {
                         Mod linkedMod = installer.getModByName(mod.getLinked());
                         if (linkedMod == null) {
                             LOG.error("The mod " + mod.getName() + " tried to reference a linked mod "
-                                    + mod.getLinked() + " which doesn't exist!");
+                                + mod.getLinked() + " which doesn't exist!");
                             installer.cancel(true);
                             return;
                         }
@@ -277,14 +267,14 @@ public class ModsChooser extends JDialog {
 
                             if (message != null) {
                                 int ret = DialogManager
-                                        .optionDialog().setTitle(GetText.tr("Warning")).setContent("<html>"
-                                                // #. {0} is a warning for a given mod
-                                                + GetText.tr(
-                                                        "{0}<br/><br/>Are you sure that you want to enable this mod?",
-                                                        message)
-                                                + "</html>")
-                                        .setType(DialogManager.WARNING).addOption(GetText.tr("Yes"))
-                                        .addOption(GetText.tr("No"), true).show();
+                                    .optionDialog().setTitle(GetText.tr("Warning")).setContent("<html>"
+                                        // #. {0} is a warning for a given mod
+                                        + GetText.tr(
+                                        "{0}<br/><br/>Are you sure that you want to enable this mod?",
+                                        message)
+                                        + "</html>")
+                                    .setType(DialogManager.WARNING).addOption(GetText.tr("Yes"))
+                                    .addOption(GetText.tr("No"), true).show();
 
                                 if (ret != 0) {
                                     finalCheckBox.setSelected(false);
@@ -455,7 +445,7 @@ public class ModsChooser extends JDialog {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
                         LOG.debug("Selected " + a.getMod().getName() + " which is auto selecting "
-                                + check.getMod().getName() + " because it's a linked mod.");
+                            + check.getMod().getName() + " because it's a linked mod.");
                         check.setEnabled(true);
                     }
                 }
@@ -466,7 +456,7 @@ public class ModsChooser extends JDialog {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
                             LOG.debug("Selected " + a.getMod().getName() + " which is auto deselecting "
-                                    + check.getMod().getName() + " because it's in the same group.");
+                                + check.getMod().getName() + " because it's in the same group.");
                             check.setSelected(false);
                         }
                     }
@@ -478,7 +468,7 @@ public class ModsChooser extends JDialog {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod && !sortedOut.contains(check)) {
                             LOG.debug("Selected " + a.getMod().getName() + " which is auto selecting "
-                                    + check.getMod().getName() + " because it's a dependency.");
+                                + check.getMod().getName() + " because it's a dependency.");
                             sortedOut.add(check);
                             check.setSelected(true);
                             sortOutMods(check);
@@ -492,7 +482,7 @@ public class ModsChooser extends JDialog {
                 for (ModsJCheckBox check : modCheckboxes) {
                     if (check.getMod() == mod) {
                         LOG.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
-                                + check.getMod().getName() + " because it's a linked mod.");
+                            + check.getMod().getName() + " because it's a linked mod.");
                         check.setEnabled(false);
                         check.setSelected(false);
                     }
@@ -504,7 +494,7 @@ public class ModsChooser extends JDialog {
                     for (ModsJCheckBox check : modCheckboxes) {
                         if (check.getMod() == mod) {
                             LOG.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
-                                    + check.getMod().getName() + " because it's a dependant mod.");
+                                + check.getMod().getName() + " because it's a dependant mod.");
                             check.setSelected(false);
                         }
                     }
@@ -516,7 +506,7 @@ public class ModsChooser extends JDialog {
                         if (check.getMod() == mod) {
                             if (check.getMod().isLibrary()) {
                                 LOG.debug("Deselected " + a.getMod().getName() + " which is auto deselecting "
-                                        + check.getMod().getName() + " because it's a dependant library mod.");
+                                    + check.getMod().getName() + " because it's a dependant library mod.");
                                 check.setSelected(false);
                             }
                         }

@@ -88,7 +88,7 @@ public class LoaderVersion {
         }
 
         if (instance != null && instance.launcher.loaderVersion != null
-                && instance.launcher.loaderVersion.version.equals(this.version)) {
+            && instance.launcher.loaderVersion.version.equals(this.version)) {
             string += " (Current)";
         }
 

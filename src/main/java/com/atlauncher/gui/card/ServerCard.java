@@ -17,34 +17,10 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -53,11 +29,22 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 
 @SuppressWarnings("serial")
-public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
+public class ServerCard extends CollapsiblePanel {
     private static final Logger LOG = LogManager.getLogger(ServerCard.class);
-
     private final Server server;
     private final ImagePanel image;
     private final JButton launchButton = new JButton(GetText.tr("Launch"));
@@ -113,16 +100,16 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
         rightPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(splitter, BorderLayout.CENTER);
 
-        RelocalizationManager.addListener(this);
-
         this.addActionListeners();
         this.addMouseListeners();
+
+        AppEventBus.register(this);
     }
 
     private void addActionListeners() {
@@ -133,13 +120,13 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.backupButton.addActionListener(e -> server.backup());
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Server"))
-                    .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)
-                    .show();
+                .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)
+                .show();
 
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.sendEvent(server.pack + " - " + server.version, "Delete", "Server");
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Server"), 0,
-                        GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
+                    GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     ServerManager.removeServer(server);
                     dialog.close();
@@ -207,8 +194,8 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         });
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.launchButton.setText(GetText.tr("Launch"));
         this.launchAndCloseButton.setText(GetText.tr("Launch & Close"));
         this.launchWithGui.setText(GetText.tr("Launch With GUI"));
