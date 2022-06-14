@@ -1,5 +1,6 @@
 package com.atlauncher.task;
 
+import com.atlauncher.AppEventBus;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.managers.AccountManager;
@@ -42,16 +43,16 @@ public final class SaveAccountsTask implements Task{
     @Override
     public void run() {
         final List<AbstractAccount> accounts = AccountManager.getAccounts();
+        LOG.debug("saving {} accounts to {}", accounts.size(), this.getFile());
         if(!accounts.isEmpty()){
-            try(OutputStream os = Files.newOutputStream(this.getFile(), StandardOpenOption.CREATE_NEW)){
-                LOG.debug("saving {} accounts to {}", accounts.size(), this.getFile());
+            try(OutputStream os = Files.newOutputStream(this.getFile(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)){
                 this.getGson().toJson(accounts, AccountManager.ACCOUNT_LIST_TYPE, new OutputStreamWriter(os));
             } catch (JsonIOException | IOException e) {
                 LOG.error("couldn't save accounts to {}", this.getFile(), e);
-                return;
             }
         }
-        //TODO: notify listeners
+
+        //TODO: notify
     }
 
     public static final class Builder{

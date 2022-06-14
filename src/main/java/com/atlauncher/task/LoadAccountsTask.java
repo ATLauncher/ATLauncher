@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -74,6 +75,8 @@ public final class LoadAccountsTask implements Task{
                 AccountManager.setAccounts(accounts);
                 AccountManager.setSelectedAccount(account.orElseGet(() -> accounts.get(0)));
             }
+        } catch (IOException exc) {
+            LOG.error("error loading accounts: ", exc);
         } finally{
             //TODO: notify listeners
             this.getLatch()

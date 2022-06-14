@@ -219,7 +219,7 @@ public abstract class AbstractAccount implements Serializable {
                     } catch (IOException e) {
                         LOG.error("error updating skin", e);
                     }
-                    AppEventBus.post(AccountChangedEvent.forAccount(AccountManager.getSelectedAccount()));
+                    AppEventBus.post(AccountChangedEvent.of(AccountManager.getSelectedAccount()));
                 }
                 dialog.close();
             }));

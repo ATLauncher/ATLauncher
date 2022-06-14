@@ -2,7 +2,7 @@ package com.atlauncher.events.theme;
 
 public final class ThemeLoadedEvent extends ThemeEvent{
     ThemeLoadedEvent(){
-        super();
+        super(null);
     }
 
     public static ThemeLoadedEvent newInstance(){

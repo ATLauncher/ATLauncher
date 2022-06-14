@@ -18,13 +18,32 @@
 package com.atlauncher.events.account;
 
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.events.AnalyticsActions;
+import com.atlauncher.events.AnalyticsCategories;
+import com.atlauncher.events.AnalyticsEvent;
 
-public final class AccountAddedEvent extends AccountEvent{
+public final class AccountAddedEvent extends AccountEvent implements AnalyticsEvent {
     AccountAddedEvent(final AbstractAccount account){
         super(account);
     }
 
-    public static AccountAddedEvent forAccount(final AbstractAccount account){
+    @Override
+    public String getLabel() {
+        return getAccount() instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
+    }
+
+    @Override
+    public String getCategory() {
+        return AnalyticsCategories.ACCOUNT.getAnalyticsCategory();
+    }
+
+    @Override
+    public String getAction(){
+        return AnalyticsActions.ADD.getAnalyticsValue();
+    }
+
+    public static AccountAddedEvent of(final AbstractAccount account){
         return new AccountAddedEvent(account);
     }
 }

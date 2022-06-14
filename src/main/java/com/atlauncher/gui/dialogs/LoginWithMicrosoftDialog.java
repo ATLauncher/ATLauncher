@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
@@ -47,6 +48,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
@@ -163,14 +165,14 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
                             LoginResponse loginResponse, Profile profile) throws Exception {
         if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
-            MicrosoftAccount account = (MicrosoftAccount) AccountManager.getAccountByName(loginResponse.username);
-
-            if (account == null) {
+            final Optional<AbstractAccount> acc = AccountManager.getAccountByUsername(loginResponse.username);
+            if(!acc.isPresent())
                 return;
-            }
+
+            MicrosoftAccount account = (MicrosoftAccount)acc.get();
 
             // if forced to relogin, then make sure they logged into correct account
-            if (account != null && this.account != null && !account.username.equals(this.account.username)) {
+            if (this.account != null && !account.username.equals(this.account.username)) {
                 DialogManager.okDialog().setTitle(GetText.tr("Incorrect account"))
                     .setContent(
                         GetText.tr("Logged into incorrect account. Please login again on the Accounts tab."))

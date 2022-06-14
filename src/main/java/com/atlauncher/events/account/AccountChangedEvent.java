@@ -25,11 +25,11 @@ public final class AccountChangedEvent extends AccountEvent{
         super(account);
     }
 
-    public static AccountChangedEvent forAccount(final AbstractAccount account){
+    public static AccountChangedEvent of(final AbstractAccount account){
         return new AccountChangedEvent(account);
     }
 
-    public static AccountChangedEvent forCurrentAccount(){
-        return forAccount(AccountManager.getSelectedAccount());
+    public static AccountChangedEvent ofCurrentAccount(){
+        return of(AccountManager.getSelectedAccount());
     }
 }

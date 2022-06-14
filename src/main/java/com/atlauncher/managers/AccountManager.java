@@ -19,50 +19,82 @@ package com.atlauncher.managers;
 
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
-import com.atlauncher.Data;
+import com.atlauncher.AppTaskEngine;
 import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.Account;
-import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.MojangAccount;
 import com.atlauncher.events.account.AccountAddedEvent;
 import com.atlauncher.events.account.AccountChangedEvent;
-import com.atlauncher.utils.Utils;
-import com.google.gson.JsonIOException;
+import com.atlauncher.events.account.AccountRemovedEvent;
+import com.atlauncher.task.ConvertAccountsTask;
+import com.atlauncher.task.LoadAccountsTask;
+import com.atlauncher.task.SaveAccountsTask;
+import com.google.common.base.Preconditions;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @SuppressWarnings("deprecation")
 public class AccountManager {
     private static final Logger LOG = LogManager.getLogger(AccountManager.class);
+    public static final Type ACCOUNT_LIST_TYPE = new TypeToken<List<AbstractAccount>>() {}.getType();
+    private static final AtomicReference<AbstractAccount> currentRef = new AtomicReference<>(null);
+    private static final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private static final Set<AbstractAccount> loaded = new HashSet<>();
 
-    private static final Type abstractAccountListType = new TypeToken<List<AbstractAccount>>() {
-    }.getType();
+    public static int getNumberOfAccounts(){
+        ReentrantReadWriteLock.ReadLock lock = rwLock.readLock();
+        try{
+            lock.lock();
+            return loaded.size();
+        } finally{
+            lock.unlock();
+        }
+    }
+
+    public static void setSelectedAccount(@Nullable final AbstractAccount account){
+        currentRef.getAndSet(account);
+    }
+
+    public static void setAccounts(@Nonnull final Collection<AbstractAccount> accounts){
+        Preconditions.checkNotNull(accounts);
+        Preconditions.checkArgument(accounts.size() > 0);
+
+        ReentrantReadWriteLock.WriteLock lock = rwLock.writeLock();
+        try{
+            lock.lock();
+            loaded.addAll(accounts);
+        } finally{
+            lock.unlock();
+        }
+    }
 
     public static List<AbstractAccount> getAccounts() {
-        return Data.ACCOUNTS;
+        ReentrantReadWriteLock.ReadLock lock = rwLock.readLock();
+        try{
+            lock.lock();
+            return new ArrayList<>(loaded);
+        } finally{
+            lock.unlock();
+        }
     }
 
     public static AbstractAccount getSelectedAccount() {
-        return Data.SELECTED_ACCOUNT;
-    }
-
-    private static void postAccountChangedEvent() {
-        AppEventBus.post(AccountChangedEvent.forCurrentAccount());
+        return currentRef.get();
     }
 
     /**
@@ -77,38 +109,17 @@ public class AccountManager {
             convertAccounts();
         }
 
-        if (Files.exists(FileSystem.ACCOUNTS)) {
-            try (FileReader fileReader = new FileReader(FileSystem.ACCOUNTS.toFile())) {
-                Data.ACCOUNTS.addAll(Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType));
-            } catch (Exception e) {
-                LOG.error("Exception loading accounts", e);
-            }
-        }
+        final CountDownLatch latch = new CountDownLatch(1);
+        final LoadAccountsTask task = LoadAccountsTask.of(FileSystem.ACCOUNTS)
+            .withLatch(latch)
+            .build();
+        AppTaskEngine.submit(task);
 
-        for (AbstractAccount account : Data.ACCOUNTS) {
-            if (account.username.equalsIgnoreCase(App.settings.lastAccount)) {
-                Data.SELECTED_ACCOUNT = account;
-            }
-
-            if (account instanceof MojangAccount) {
-                MojangAccount mojangAccount = (MojangAccount) account;
-
-                if (mojangAccount.encryptedPassword == null) {
-                    mojangAccount.password = "";
-                    mojangAccount.remember = false;
-                } else {
-                    mojangAccount.password = Utils.decrypt(mojangAccount.encryptedPassword);
-                    if (mojangAccount.password == null) {
-                        LOG.error("Error reading in saved password from file!");
-                        mojangAccount.password = "";
-                        mojangAccount.remember = false;
-                    }
-                }
-            }
-        }
-
-        if (Data.SELECTED_ACCOUNT == null && Data.ACCOUNTS.size() >= 1) {
-            Data.SELECTED_ACCOUNT = Data.ACCOUNTS.get(0);
+        try{
+            latch.await();
+            LOG.info("selected account: {}", getSelectedAccount());
+        } catch(Exception exc){
+            LOG.error("failed to wait for LoadAccountsTask:", exc);
         }
 
         LOG.debug("Finished loading accounts");
@@ -119,68 +130,30 @@ public class AccountManager {
      * Converts the saved Accounts from old format to new one
      */
     private static void convertAccounts() {
-        FileInputStream in = null;
-        ObjectInputStream objIn = null;
-        List<AbstractAccount> convertedAccounts = new LinkedList<>();
-        try {
-            in = new FileInputStream(FileSystem.USER_DATA.toFile());
-            objIn = new ObjectInputStream(in);
-            Object obj;
-            while ((obj = objIn.readObject()) != null) {
-                Account account = (Account) obj;
-
-                convertedAccounts.add(new MojangAccount(account.username, account.password, account.minecraftUsername,
-                    account.uuid, account.remember, account.clientToken, account.store));
-            }
-        } catch (EOFException e) {
-            // Don't log this, it always happens when it gets to the end of the file
-        } catch (IOException | ClassNotFoundException e) {
-            LOG.error("Exception while trying to convert accounts from file.", e);
-        } finally {
-            try {
-                if (objIn != null) {
-                    objIn.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                LOG.error(
-                    "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
-                        + "accounts.",
-                    e);
-            }
-        }
-
-        saveAccounts(convertedAccounts);
-
-        try {
-            Files.delete(FileSystem.USER_DATA);
-        } catch (IOException e) {
-            LOG.error("Exception trying to remove old userdata file after conversion.", e);
-        }
+        final ConvertAccountsTask task = ConvertAccountsTask.of(FileSystem.ACCOUNTS)
+            .build();
+        AppTaskEngine.submit(task);
     }
 
     public static void saveAccounts() {
-        saveAccounts(Data.ACCOUNTS);
+        final SaveAccountsTask task = SaveAccountsTask.of(FileSystem.ACCOUNTS)
+            .build();
+        AppTaskEngine.submit(task);
     }
 
-    private static void saveAccounts(List<AbstractAccount> accounts) {
-        try (FileWriter fileWriter = new FileWriter(FileSystem.ACCOUNTS.toFile())) {
-            Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
-        } catch (JsonIOException | IOException e) {
-            LOG.error("error:", e);
+    private static void registerAccount(final AbstractAccount account){
+        ReentrantReadWriteLock.WriteLock lock = rwLock.writeLock();
+        try{
+            lock.lock();
+            loaded.add(account);
+        } finally{
+            lock.unlock();
         }
     }
 
-    public static void addAccount(AbstractAccount account) {
-        String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
-        AppEventBus.postToDefault(AccountAddedEvent.forAccount(account));
-        LOG.info("Added " + accountType + " Account " + account);
-
-        Data.ACCOUNTS.add(account);
-
-        if (Data.ACCOUNTS.size() > 1) {
+    public static void addAccount(@Nonnull AbstractAccount account) {
+        registerAccount(account);
+        if (getNumberOfAccounts() > 1) {
             // not first account? ask if they want to switch to it
             int ret = DialogManager.optionDialog()
                 .setTitle(GetText.tr("Account Added"))
@@ -196,24 +169,31 @@ public class AccountManager {
             // first account? switch to it immediately
             switchAccount(account);
         }
-
+        AppEventBus.postToDefault(AccountAddedEvent.of(account));
         saveAccounts();
-        postAccountChangedEvent();
+    }
+
+    private static Optional<AbstractAccount> getFirstAccount(){
+        ReentrantReadWriteLock.ReadLock lock = rwLock.readLock();
+        try{
+            lock.lock();
+            return loaded.stream()
+                .findFirst();
+        } finally{
+            lock.unlock();
+        }
     }
 
     public static void removeAccount(AbstractAccount account) {
-        if (Data.SELECTED_ACCOUNT == account) {
-            if (Data.ACCOUNTS.size() == 1) {
-                // if this was the only account, don't set an account
-                switchAccount(null);
-            } else {
-                // if they have more accounts, switch to the first one
-                switchAccount(Data.ACCOUNTS.get(0));
-            }
+        if (getSelectedAccount() == account) {
+            // if they have more accounts, switch to the first one
+            getFirstAccount()
+                .ifPresent(AccountManager::switchAccount);
         }
-        Data.ACCOUNTS.remove(account);
+
+        loaded.remove(account);
         saveAccounts();
-        postAccountChangedEvent();
+        AppEventBus.postToDefault(AccountRemovedEvent.of(account));
     }
 
     /**
@@ -224,17 +204,19 @@ public class AccountManager {
     public static void switchAccount(AbstractAccount account) {
         if (account == null) {
             LOG.info("Logging out of account");
-            Data.SELECTED_ACCOUNT = null;
+            setSelectedAccount(null);
             App.settings.lastAccount = null;
         } else {
             LOG.info("Changed account to " + account);
-            Data.SELECTED_ACCOUNT = account;
+            setSelectedAccount(account);
             App.settings.lastAccount = account.username;
         }
+
         App.launcher.refreshPacksBrowserPanel();
         App.launcher.reloadInstancesPanel();
         App.launcher.reloadServersPanel();
-        postAccountChangedEvent();
+
+        AppEventBus.postToDefault(AccountChangedEvent.of(account));
         App.settings.save();
     }
 
@@ -244,13 +226,12 @@ public class AccountManager {
      * @param username Username of the Account to find
      * @return Account if the Account is found from the username
      */
-    public static AbstractAccount getAccountByName(String username) {
-        for (AbstractAccount account : Data.ACCOUNTS) {
-            if (account.username.equalsIgnoreCase(username)) {
-                return account;
-            }
-        }
-        return null;
+    public static Optional<AbstractAccount> getAccountByUsername(@Nonnull final String username){
+        Preconditions.checkNotNull(username);
+        return getAccounts()
+            .stream()
+            .filter((acc) -> acc.username.equalsIgnoreCase(username))
+            .findFirst();
     }
 
     /**
@@ -259,12 +240,7 @@ public class AccountManager {
      * @param username The username of the Account
      * @return true if found, false if not
      */
-    public static boolean isAccountByName(String username) {
-        for (AbstractAccount account : Data.ACCOUNTS) {
-            if (account.username.equalsIgnoreCase(username)) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean isAccountByName(@Nonnull final String username){
+        return getAccountByUsername(username).isPresent();
     }
 }

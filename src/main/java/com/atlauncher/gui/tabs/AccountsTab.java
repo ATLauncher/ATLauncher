@@ -25,7 +25,6 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.events.account.AccountChangedEvent;
-import com.atlauncher.events.account.AccountDeletedEvent;
 import com.atlauncher.events.account.AccountEditEvent;
 import com.atlauncher.events.account.AccountRefreshAccessTokenEvent;
 import com.atlauncher.events.account.AccountSkinUpdatedEvent;
@@ -267,7 +266,6 @@ public class AccountsTab extends JPanel implements Tab {
                     .setContent(GetText.tr("Are you sure you want to delete this account?"))
                     .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
-                    AppEventBus.postToDefault(AccountDeletedEvent.newInstance());
                     AccountManager.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
@@ -422,7 +420,7 @@ public class AccountsTab extends JPanel implements Tab {
                     mojangAccount.store = response.getAuth().saveForStorage();
 
                     AccountManager.saveAccounts();
-                    AppEventBus.post(AccountChangedEvent.forCurrentAccount());
+                    AppEventBus.post(AccountChangedEvent.ofCurrentAccount());
                 }
 
                 AppEventBus.postToDefault(AccountEditEvent.newInstance());

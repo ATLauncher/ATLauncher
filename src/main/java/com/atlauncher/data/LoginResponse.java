@@ -91,10 +91,9 @@ public class LoginResponse {
     }
 
     public void save() {
-        MojangAccount account = (MojangAccount) AccountManager.getAccountByName(this.username);
-
-        if (account != null) {
-            account.store = this.auth.saveForStorage();
-        }
+        AccountManager.getAccountByUsername(this.username)
+            .ifPresent((account) -> {
+                ((MojangAccount)account).store = this.auth.saveForStorage();
+            });
     }
 }

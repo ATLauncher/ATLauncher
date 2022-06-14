@@ -745,10 +745,10 @@ public class Instance extends MinecraftVersion implements AnalyticsCategory {
     }
 
     public boolean launch(boolean offline) {
-        final AbstractAccount account = launcher.account == null ? AccountManager.getSelectedAccount()
-            : AccountManager.getAccountByName(launcher.account);
-
-        if (account == null) {
+        final Optional<AbstractAccount> acc = launcher.account == null
+            ? Optional.ofNullable(AccountManager.getSelectedAccount())
+            : AccountManager.getAccountByUsername(launcher.account);
+        if(!acc.isPresent()){
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                 .setContent(new HTMLBuilder().center()
                     .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
@@ -757,6 +757,8 @@ public class Instance extends MinecraftVersion implements AnalyticsCategory {
             App.launcher.setMinecraftLaunched(false);
             return false;
         }
+
+        final AbstractAccount account = acc.get();
 
         // if Microsoft account must login again, then make sure to do that
         if (!offline && account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {

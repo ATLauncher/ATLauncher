@@ -21,6 +21,8 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.events.account.AccountAddedEvent;
+import com.atlauncher.events.account.AccountRemovedEvent;
 import com.atlauncher.events.launcher.UpdateDataEvent;
 import com.atlauncher.events.account.AccountChangedEvent;
 import com.atlauncher.events.console.ConsoleClosedEvent;
@@ -36,6 +38,7 @@ import org.mini2Dx.gettext.GetText;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar {
@@ -165,6 +168,24 @@ public class LauncherBottomBar extends BottomBar {
         dontSave = false;
     }
 
+    private void removeAccount(final AbstractAccount account){
+        this.username.removeItem(account);
+        this.username.setVisible(this.username.getItemCount() > 0);
+
+        //TODO: remove
+        final Optional<AbstractAccount> selected = Optional.ofNullable(AccountManager.getSelectedAccount());
+        selected.ifPresent(this.username::setSelectedItem);
+    }
+
+    private void addAccount(final AbstractAccount account){
+        this.username.addItem(account);
+        this.username.setVisible(this.username.getItemCount() > 0);
+
+        //TODO: remove
+        final Optional<AbstractAccount> selected = Optional.ofNullable(AccountManager.getSelectedAccount());
+        selected.ifPresent(this.username::setSelectedItem);
+    }
+
     @Subscribe
     public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         if (App.console.isVisible()) {
@@ -179,5 +200,15 @@ public class LauncherBottomBar extends BottomBar {
     @Subscribe
     public void onAccountChanged(final AccountChangedEvent event) {
         this.reloadAccounts();
+    }
+
+    @Subscribe
+    public void onAccountRemoved(final AccountRemovedEvent event){
+        this.removeAccount(event.getAccount());
+    }
+
+    @Subscribe
+    public void onAccountAdded(final AccountAddedEvent event){
+        this.addAccount(event.getAccount());
     }
 }
