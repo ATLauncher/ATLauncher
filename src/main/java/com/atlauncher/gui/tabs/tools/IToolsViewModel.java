@@ -1,5 +1,7 @@
 package com.atlauncher.gui.tabs.tools;
 
+import java.util.function.Consumer;
+
 /**
  * 15 / 06 / 2022
  */
@@ -24,4 +26,16 @@ public interface IToolsViewModel {
     void clearDownloads();
 
     void clearLogs();
+
+    // NetworkCheckerToolPanel
+
+    void onCanRunNetworkCheckerChanged(Consumer<Boolean> onChanged);
+
+    int hostsLength();
+
+    /**
+     * @param onTaskComplete
+     * @param onFail
+     */
+    void runNetworkChecker(Consumer<Void> onTaskComplete, Consumer<Void> onFail, Consumer<Void> onSuccess);
 }
