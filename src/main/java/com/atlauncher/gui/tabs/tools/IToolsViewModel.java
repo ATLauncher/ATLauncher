@@ -81,6 +81,18 @@ public interface IToolsViewModel {
     // RuntimeDownloaderToolPanel
 
     /**
+     * Listen to if the runtime can be downloaded
+     * @param onChanged Function to call on ability to download has changed
+     */
+    void onCanDownloadRuntimeChanged(Consumer<Boolean> onChanged);
+
+    /**
+     * Listen to if the runtime can be removed
+     * @param onChanged Function to call on ability to remove has changed
+     */
+    void onCanRemoveDownloadChanged(Consumer<Boolean> onChanged);
+
+    /**
      * Remove the java(?) runtime
      * @param onFail failed to remove
      * @param onSuccess removed successfully

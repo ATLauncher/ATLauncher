@@ -32,10 +32,7 @@ import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
-import com.atlauncher.utils.ArchiveUtils;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.*;
 import okhttp3.OkHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -299,6 +296,33 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
         }
     }
 
+    private Consumer<Boolean> _onCanDownloadRuntimeChanged;
+    private Consumer<Boolean> _onCanRemoveDownloadChanged;
+    private boolean canDownloadRuntime(){
+        return !OS.isLinux();
+    }
+
+    private boolean canRemoveDownload(){
+        return !OS.isLinux() && Java.hasInstalledRuntime();
+    }
+
+    @Override
+    public void onCanDownloadRuntimeChanged(Consumer<Boolean> onChanged) {
+        _onCanDownloadRuntimeChanged = onChanged;
+        onChanged.accept(canDownloadRuntime());
+    }
+
+    @Override
+    public void onCanRemoveDownloadChanged(Consumer<Boolean> onChanged) {
+        _onCanRemoveDownloadChanged = onChanged;
+        onChanged.accept(canRemoveDownload());
+    }
+
+    private void updateDownloadButtons(){
+        _onCanDownloadRuntimeChanged.accept(canDownloadRuntime());
+        _onCanRemoveDownloadChanged.accept(canRemoveDownload());
+    }
+
     @Override
     public void removeRuntime(Consumer<Void> onFail, Consumer<Void> onSuccess) {
         Analytics.sendEvent("RuntimeDownloader", "Remove", "Tool");
@@ -323,6 +347,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
             LOG.error("Runtime removal failed!");
             onFail.accept(null);
         }
+        updateDownloadButtons();
     }
 
     private void downloadRuntimePost(String path) {
@@ -354,6 +379,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
             if (releaseFile.exists()) {
                 downloadRuntimePost(runtimeFolder.getAbsolutePath());
                 LOG.info("Runtime downloaded!");
+                updateDownloadButtons();
                 return true;
             }
 
@@ -381,6 +407,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
                 } catch (IOException e1) {
                     LOG.error("error", e1);
                     LOG.error("Runtime downloaded failed to run!");
+                    updateDownloadButtons();
                     return false;
                 }
 
@@ -396,6 +423,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
             } catch (IOException e2) {
                 LOG.error("error", e2);
                 LOG.error("Runtime downloaded failed to run!");
+                updateDownloadButtons();
                 return false;
             }
 
@@ -404,10 +432,12 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
             downloadRuntimePost(runtimeFolder.getAbsolutePath());
             LOG.info("Runtime downloaded!");
+            updateDownloadButtons();
             return true;
         }
 
         LOG.error("Runtime downloaded failed to run!");
+        updateDownloadButtons();
         return false;
     }
 

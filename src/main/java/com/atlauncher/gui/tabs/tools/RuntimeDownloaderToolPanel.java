@@ -17,41 +17,18 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Network;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.data.Runtime;
-import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.Download;
-import com.atlauncher.utils.ArchiveUtils;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Java;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-
-import okhttp3.OkHttpClient;
 
 @SuppressWarnings("serial")
 public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
-    private static final Logger LOG = LogManager.getLogger(RuntimeDownloaderToolPanel.class);
 
     protected final JButton REMOVE_BUTTON = new JButton(GetText.tr("Remove"));
     private final IToolsViewModel viewModel;
@@ -71,12 +48,8 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
         REMOVE_BUTTON.addActionListener(e -> removeRuntime());
         REMOVE_BUTTON.setFont(App.THEME.getNormalFont().deriveFont(16f));
 
-        setButtonEnabledStates();
-    }
-
-    private void setButtonEnabledStates() {
-        LAUNCH_BUTTON.setEnabled(!OS.isLinux());
-        REMOVE_BUTTON.setEnabled(!OS.isLinux() && Java.hasInstalledRuntime());
+        viewModel.onCanDownloadRuntimeChanged(LAUNCH_BUTTON::setEnabled);
+        viewModel.onCanRemoveDownloadChanged(REMOVE_BUTTON::setEnabled);
     }
 
     private void removeRuntime() {
@@ -94,7 +67,6 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
                     .setType(DialogManager.INFO).show();
             }
         );
-        setButtonEnabledStates();
     }
 
     private void downloadRuntime() {
@@ -129,6 +101,5 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
                     .build())
                 .setType(DialogManager.INFO).show();
         }
-        setButtonEnabledStates();
     }
 }
