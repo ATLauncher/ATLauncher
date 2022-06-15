@@ -358,7 +358,6 @@ public class App {
         }
 
         boolean open = true;
-
         if (autoLaunch != null) {
             Optional<Instance> instance = InstanceManager.getInstances()
                 .stream()
@@ -389,10 +388,12 @@ public class App {
             }
         }
 
+        final LauncherFrame launcherFrame = INJECTOR.getInstance(LauncherFrame.class);
+
         // Open the Launcher
         final boolean openLauncher = open;
         SwingUtilities.invokeLater(() -> {
-            new LauncherFrame(openLauncher);
+            launcherFrame.openLauncher(openLauncher);
             ss.close();
         });
     }
@@ -724,7 +725,7 @@ public class App {
      */
     private static void setLAF(){
         // then grab the instance
-        THEME = INJECTOR.getInstance(Key.get(ATLauncherLaf.class, Names.named("CurrentTheme")));
+        THEME = INJECTOR.getInstance(ATLauncherLaf.class);
         FlatLaf.setup(THEME);
 
         // add in flat inspector to allow inspecting UI elements for theming purposes on

@@ -41,7 +41,10 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Optional;
 
-@Plugin(name = LauncherConsoleAppender.PLUGIN_NAME, category = LauncherConsoleAppender.PLUGIN_CATEGORY, elementType = Appender.ELEMENT_TYPE, printObject = true)
+@Plugin(name = LauncherConsoleAppender.PLUGIN_NAME,
+    category = LauncherConsoleAppender.PLUGIN_CATEGORY,
+    elementType = Appender.ELEMENT_TYPE,
+    printObject = true)
 public final class LauncherConsoleAppender extends AbstractAppender {
     public static final String PLUGIN_NAME = "LauncherConsole";
     public static final String PLUGIN_CATEGORY = Core.CATEGORY_NAME;
@@ -59,7 +62,7 @@ public final class LauncherConsoleAppender extends AbstractAppender {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(App.console.console);
+        return Optional.ofNullable(App.console.getConsole());
     }
 
     @Override

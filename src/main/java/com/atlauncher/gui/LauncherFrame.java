@@ -47,6 +47,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -57,14 +58,17 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("serial")
+@Singleton
 public final class LauncherFrame extends JFrame {
     private static final Logger LOG = LogManager.getLogger(LauncherFrame.class);
 
+    private final LauncherBottomBar bottomBar;
     private JTabbedPane tabbedPane;
 
     private List<Tab> tabs;
 
-    public LauncherFrame(boolean show) {
+    @Inject
+    private LauncherFrame(final LauncherBottomBar bottomBar){
         LOG.info("Launcher opening");
         LOG.info("Made By Bob*");
         LOG.info("*(Not Actually)");
@@ -92,7 +96,7 @@ public final class LauncherFrame extends JFrame {
         }
 
         LOG.info("Setting up Bottom Bar");
-        LauncherBottomBar bottomBar = new LauncherBottomBar();
+        this.bottomBar = bottomBar;
         LOG.info("Finished Setting up Bottom Bar");
 
         LOG.info("Setting up Tabs");
@@ -101,23 +105,6 @@ public final class LauncherFrame extends JFrame {
 
         this.add(tabbedPane, BorderLayout.CENTER);
         this.add(bottomBar, BorderLayout.SOUTH);
-
-        if (show) {
-            LOG.info("Showing Launcher");
-            setVisible(true);
-
-            addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent windowEvent) {
-                    try {
-                        if (SystemTray.isSupported()) {
-                            SystemTray.getSystemTray().remove(App.trayIcon);
-                        }
-                    } catch (Exception ignored) {
-                    }
-                }
-            });
-        }
 
         if (App.packToInstall != null) {
             Pack pack = PackManager.getPackBySafeName(App.packToInstall);
@@ -183,6 +170,24 @@ public final class LauncherFrame extends JFrame {
         });
 
         AppEventBus.register(this);
+    }
+
+    public void openLauncher(final boolean show){
+        if (show) {
+            LOG.info("Showing Launcher");
+            setVisible(true);
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent windowEvent) {
+                    try {
+                        if (SystemTray.isSupported()) {
+                            SystemTray.getSystemTray().remove(App.trayIcon);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -253,5 +258,9 @@ public final class LauncherFrame extends JFrame {
         }
 
         tabbedPane.setFont(App.THEME.getTabFont());
+    }
+
+    public static void open(){
+
     }
 }

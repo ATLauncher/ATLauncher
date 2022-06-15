@@ -37,6 +37,7 @@ import org.mini2Dx.gettext.GetText;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -46,7 +47,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LauncherConsole extends JFrame {
+@Singleton
+public final class LauncherConsole extends JFrame {
     private static final Logger LOG = LogManager.getLogger(LauncherConsole.class);
     private static final long serialVersionUID = -3538990021922025818L;
     private final Console console;
@@ -99,6 +101,10 @@ public class LauncherConsole extends JFrame {
                 }
             }
         });
+    }
+
+    public Console getConsole(){
+        return this.console;
     }
 
     @Override
