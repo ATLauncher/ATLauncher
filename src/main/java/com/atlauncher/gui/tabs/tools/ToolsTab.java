@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs;
+package com.atlauncher.gui.tabs.tools;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -23,6 +23,7 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import com.atlauncher.gui.tabs.Tab;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.tabs.tools.DebugModePanel;
