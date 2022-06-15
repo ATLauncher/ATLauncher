@@ -36,7 +36,6 @@ import javax.swing.text.html.StyleSheet;
 import com.atlauncher.gui.tabs.Tab;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.managers.NewsManager;
 import com.atlauncher.utils.OS;
 
 /**
@@ -50,20 +49,21 @@ public class NewsTab extends JPanel implements Tab {
             StyleSheet styleSheet = new StyleSheet();
 
             styleSheet.addRule(String.format("a { color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
+                Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
 
             styleSheet.addRule(String.format(
-                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
+                "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
+                Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
 
             styleSheet.addRule(
-                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
+                "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
 
             this.setStyleSheet(styleSheet);
         }
     };
 
     private final ContextMenu NEWS_MENU = new ContextMenu();
+    private final INewsViewModel viewModel = new NewsViewModel();
 
     /**
      * Instantiates a new instance of this class which sets the layout and loads the
@@ -72,7 +72,14 @@ public class NewsTab extends JPanel implements Tab {
     public NewsTab() {
         super(new BorderLayout());
         this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+
+        viewModel.addOnReloadListener(html -> {
+            this.NEWS_PANE.setText("");
+            this.NEWS_PANE.setText(html);
+            this.NEWS_PANE.setCaretPosition(0);
+        });
+
         this.reload();
     }
 
@@ -105,9 +112,7 @@ public class NewsTab extends JPanel implements Tab {
      * Reloads the panel with updated news.
      */
     public void reload() {
-        this.NEWS_PANE.setText("");
-        this.NEWS_PANE.setText(NewsManager.getNewsHTML());
-        this.NEWS_PANE.setCaretPosition(0);
+        viewModel.reload();
     }
 
     @Override
