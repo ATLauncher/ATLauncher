@@ -54,4 +54,11 @@ public interface IToolsViewModel {
         Consumer<String> newLabel,
         Consumer<Void> clearDownloadedBytes
     );
+
+    // SkinUpdaterToolPanel
+
+    void onSkinUpdaterEnabledChanged(Consumer<Boolean> onChanged);
+
+    int accountCount();
+    void updateSkins(Consumer<Void> onTaskComplete);
 }

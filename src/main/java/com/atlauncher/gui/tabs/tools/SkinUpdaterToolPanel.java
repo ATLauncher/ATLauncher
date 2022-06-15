@@ -24,45 +24,36 @@ import javax.swing.JLabel;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.evnt.listener.AccountListener;
-import com.atlauncher.evnt.manager.AccountManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 
 @SuppressWarnings("serial")
-public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener, AccountListener {
+public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener {
 
-    public SkinUpdaterToolPanel() {
+    private final IToolsViewModel viewModel;
+
+    public SkinUpdaterToolPanel(IToolsViewModel viewModel) {
         super(GetText.tr("Skin Updater"));
-
+        this.viewModel = viewModel;
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-                .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
+            .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
-        AccountManager.addListener(this);
-        this.checkLaunchButtonEnabled();
-    }
-
-    private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(Data.ACCOUNTS.size() != 0);
+        viewModel.onSkinUpdaterEnabledChanged(LAUNCH_BUTTON::setEnabled);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Analytics.sendEvent("SkinUpdater", "Run", "Tool");
 
-        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), Data.ACCOUNTS.size(),
-                GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
-        dialog.addThread(new Thread(() -> {
-            Data.ACCOUNTS.forEach(account -> {
-                account.updateSkin();
-                dialog.doneTask();
-            });
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), viewModel.accountCount(),
+            GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
 
+        dialog.addThread(new Thread(() -> {
+            viewModel.updateSkins(onTaskComplete -> dialog.doneTask());
             dialog.setReturnValue(true);
             dialog.close();
         }));
@@ -70,11 +61,6 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
         dialog.start();
 
         DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                .setContent(GetText.tr("Successfully updated skins.")).show();
-    }
-
-    @Override
-    public void onAccountsChanged() {
-        this.checkLaunchButtonEnabled();
+            .setContent(GetText.tr("Successfully updated skins.")).show();
     }
 }

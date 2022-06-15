@@ -1,12 +1,15 @@
 package com.atlauncher.gui.tabs.tools;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Runtime;
 import com.atlauncher.data.Runtimes;
+import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.evnt.manager.AccountManager;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.InstanceManager;
@@ -32,18 +35,29 @@ import java.util.stream.Collectors;
 /**
  * 15 / 06 / 2022
  */
-public class ToolsViewModel implements IToolsViewModel, SettingsListener {
+public class ToolsViewModel implements IToolsViewModel, SettingsListener, AccountListener {
     private static final Logger LOG = LogManager.getLogger(ToolsViewModel.class);
 
     private Consumer<Boolean> onCanRunNetworkCheckerChanged;
+    private Consumer<Boolean> onSkinUpdaterEnabledChanged;
 
     public ToolsViewModel() {
         SettingsManager.addListener(this);
+        AccountManager.addListener(this);
     }
 
     @Override
     public void onSettingsSaved() {
         onCanRunNetworkCheckerChanged.accept(canRunNetworkChecker());
+    }
+
+    @Override
+    public void onAccountsChanged() {
+        onSkinUpdaterEnabledChanged.accept(skinUpdaterEnabled());
+    }
+
+    private boolean skinUpdaterEnabled() {
+        return Data.ACCOUNTS.size() != 0;
     }
 
     @Override
@@ -378,5 +392,24 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
 
         LOG.error("Runtime downloaded failed to run!");
         return false;
+    }
+
+    @Override
+    public void onSkinUpdaterEnabledChanged(Consumer<Boolean> onChanged) {
+        this.onSkinUpdaterEnabledChanged = onChanged;
+        onChanged.accept(skinUpdaterEnabled());
+    }
+
+    @Override
+    public int accountCount() {
+        return Data.ACCOUNTS.size();
+    }
+
+    @Override
+    public void updateSkins(Consumer<Void> onTaskComplete) {
+        Data.ACCOUNTS.forEach(account -> {
+            account.updateSkin();
+            onTaskComplete.accept(null);
+        });
     }
 }
