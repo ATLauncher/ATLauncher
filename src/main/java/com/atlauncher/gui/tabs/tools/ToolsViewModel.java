@@ -113,7 +113,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     @Override
     public void onCanRunNetworkCheckerChanged(Consumer<Boolean> onChanged) {
-        onChanged.accept(App.settings.enableLogs);
+        onChanged.accept(canRunNetworkChecker());
         onCanRunNetworkCheckerChanged = onChanged;
     }
 
