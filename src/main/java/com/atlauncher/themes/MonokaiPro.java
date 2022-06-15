@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class MonokaiPro extends Dark {
-    public static boolean install() {
-        instance = new MonokaiPro();
-
-        return setup(instance);
-    }
+    public static final String NAME = "Monokai Pro";
 
     @Override
     public String getName() {
-        return "Monokai Pro";
+        return NAME;
     }
 
     @Override

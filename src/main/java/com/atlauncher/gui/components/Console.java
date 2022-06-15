@@ -17,8 +17,9 @@
  */
 package com.atlauncher.gui.components;
 
-import com.atlauncher.App;
+import com.atlauncher.themes.ATLauncherLaf;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
@@ -39,10 +40,11 @@ import java.awt.*;
 public final class Console extends JTextPane {
     private final SimpleAttributeSet attrs = new SimpleAttributeSet();
 
-    public Console() {
+    @Inject
+    private Console(final ATLauncherLaf theme) {
         this.setEditable(false);
         this.setEditorKit(new WrapEditorKit());
-        this.setFont(App.THEME.getConsoleFont().deriveFont((float) UIManager.get("Console.fontSize")));
+        this.setFont(theme.getConsoleFont().deriveFont((float) UIManager.get("Console.fontSize")));
     }
 
     public Console setColor(Color c) {

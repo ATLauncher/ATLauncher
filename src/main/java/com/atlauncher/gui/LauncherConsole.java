@@ -20,6 +20,7 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.Settings;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
 import com.atlauncher.events.console.ConsoleClosedEvent;
@@ -34,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
@@ -47,36 +49,31 @@ import java.awt.event.MouseEvent;
 public class LauncherConsole extends JFrame {
     private static final Logger LOG = LogManager.getLogger(LauncherConsole.class);
     private static final long serialVersionUID = -3538990021922025818L;
-    public Console console;
+    private final Console console;
     private final ConsoleBottomBar bottomBar;
+    private final boolean remember;
     private JPopupMenu contextMenu; // Right click menu
 
     private JMenuItem copy;
 
     @Inject
-    public LauncherConsole() {
+    private LauncherConsole(final Settings settings,
+                            final Console console,
+                            final ConsoleBottomBar bottomBar) {
+        this.console = console;
+        this.bottomBar = bottomBar;
+
         setTitle(Constants.LAUNCHER_NAME + " Console");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/icon.png"));
         setLayout(new BorderLayout());
-
         setMinimumSize(new Dimension(650, 400));
 
-        try {
-            if (App.settings.rememberWindowSizePosition && App.settings.consoleSize != null
-                && App.settings.consolePosition != null) {
-                setBounds(App.settings.consolePosition.x, App.settings.consolePosition.y,
-                    App.settings.consoleSize.width, App.settings.consoleSize.height);
-            }
-        } catch (Exception e) {
-            LOG.error("Error setting custom remembered window size settings", e);
-        }
-
-        console = new Console();
+        this.remember = settings.rememberWindowSizePosition;
+        if(this.remember)
+            this.setCustomBounds(settings.consolePosition, settings.consoleSize);
 
         setupContextMenu(); // Setup the right click menu
-
-        bottomBar = new ConsoleBottomBar();
 
         JScrollPane scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -88,8 +85,7 @@ public class LauncherConsole extends JFrame {
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
-
-                if (App.settings.rememberWindowSizePosition) {
+                if (remember) { //TODO: update settings
                     App.settings.consoleSize = c.getSize();
                     App.settings.save();
                 }
@@ -97,8 +93,7 @@ public class LauncherConsole extends JFrame {
 
             public void componentMoved(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
-
-                if (App.settings.rememberWindowSizePosition) {
+                if (remember) { //TODO: update settings
                     App.settings.consolePosition = c.getLocation();
                     App.settings.save();
                 }
@@ -146,6 +141,12 @@ public class LauncherConsole extends JFrame {
         });
     }
 
+    private void setCustomBounds(@Nullable final Point pos,
+                                 @Nullable final Dimension size){
+        if (size != null && pos != null)
+            setBounds(pos.x, pos.y, size.width, size.height);
+    }
+
     /**
      * Returns a string with the text currently in the console
      *
@@ -161,13 +162,6 @@ public class LauncherConsole extends JFrame {
 
     public void hideKillMinecraft() {
         bottomBar.hideKillMinecraft();
-    }
-
-    public void setupLanguage() {
-        LOG.debug("Setting up language for console");
-        copy.setText(GetText.tr("Copy"));
-        bottomBar.setupLanguage();
-        LOG.debug("Finished setting up language for console");
     }
 
     public void clearConsole() {

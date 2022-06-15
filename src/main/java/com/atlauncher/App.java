@@ -33,16 +33,20 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.themes.ATLauncherLaf;
+import com.atlauncher.themes.ThemeModule;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.LoggingUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatInspector;
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
+import com.google.inject.name.Names;
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -260,10 +264,8 @@ public class App {
     public static void main(String[] args) {
         LoggingUtils.redirectSystemOutLogs();
         PASSED_ARGS = args;
-        INJECTOR = Guice.createInjector(new AppModule(), new ArgumentsModule(args));
-        final OptionSet options = INJECTOR.getInstance(OptionSet.class);
-        // Parse all the command line arguments
-        handleCommandLineArguments(options);
+        INJECTOR = Guice.createInjector(new AppModule(), new ArgumentsModule(args), new ThemeModule());
+        handleCommandLineArguments();
 
         // Initialize the error reporting unless disabled by command line
         if (!disableErrorReporting) {
@@ -301,7 +303,7 @@ public class App {
         launcher = new Launcher();
 
         // Load the theme and style everything.
-        loadTheme(settings.theme);
+        loadTheme();
 
         // check for _JAVA_OPTIONS being set which breaks things
         checkForJavaOptions();
@@ -311,7 +313,7 @@ public class App {
         // Load and show the splash screen while we load other things.
         SwingUtilities.invokeLater(() -> ss.setVisible(true));
 
-        console = new LauncherConsole();
+        console = INJECTOR.getInstance(LauncherConsole.class);
 
         if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
@@ -663,9 +665,9 @@ public class App {
     /**
      * Loads the theme and applies the theme's settings to the look and feel.
      */
-    public static void loadTheme(String theme) {
+    public static void loadTheme(){
         try {
-            setLAF(theme);
+            setLAF();
             modifyLAF();
 
             // now the theme is loaded, we can intialize the toaster/tray menu
@@ -720,19 +722,10 @@ public class App {
      *
      * @throws Exception
      */
-    private static void setLAF(String theme) throws Exception {
-        try {
-            Class.forName(theme);
-        } catch (NoClassDefFoundError | ClassNotFoundException e) {
-            theme = Constants.DEFAULT_THEME_CLASS;
-            settings.theme = theme;
-        }
-
-        // install the theme
-        Class.forName(theme).getMethod("install").invoke(null);
-
+    private static void setLAF(){
         // then grab the instance
-        THEME = (ATLauncherLaf) Class.forName(theme).getMethod("getInstance").invoke(null);
+        THEME = INJECTOR.getInstance(Key.get(ATLauncherLaf.class, Names.named("CurrentTheme")));
+        FlatLaf.setup(THEME);
 
         // add in flat inspector to allow inspecting UI elements for theming purposes on
         // non release versions
@@ -827,14 +820,10 @@ public class App {
         }
     }
 
-    private static OptionSet parseCommandLineArguments(final String[] args){
-        return INJECTOR.getInstance(OptionParser.class)
-            .parse(args);
-    }
-
-    private static void handleCommandLineArguments(final OptionSet options) {
+    private static void handleCommandLineArguments() {
         // Parse all the command line arguments
         final OptionParser parser = INJECTOR.getInstance(OptionParser.class);
+        final OptionSet options = INJECTOR.getInstance(OptionSet.class);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
 
         if (options.has("help")) {

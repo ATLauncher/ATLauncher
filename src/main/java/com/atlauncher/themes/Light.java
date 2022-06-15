@@ -18,16 +18,12 @@
 package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
-public class Light extends ATLauncherLaf {
-    public static boolean install() {
-        instance = new Light();
-
-        return setup(instance);
-    }
+public class Light extends ATLauncherLaf{
+    public static final String NAME = "Light";
 
     @Override
     public String getName() {
-        return "Light";
+        return NAME;
     }
 
     @Override

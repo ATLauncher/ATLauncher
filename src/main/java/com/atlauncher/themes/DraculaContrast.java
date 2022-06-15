@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class DraculaContrast extends Dark {
-    public static boolean install() {
-        instance = new DraculaContrast();
-
-        return setup(instance);
-    }
+    public static final String NAME = "Dracula Contrast";
 
     @Override
     public String getName() {
-        return "Dracula Contrast";
+        return NAME;
     }
 
     @Override

@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class Vuesion extends Dark {
-    public static boolean install() {
-        instance = new Vuesion();
-
-        return setup(instance);
-    }
+    public static final String NAME = "Vuesion";
 
     @Override
     public String getName() {
-        return "Vuesion";
+        return NAME;
     }
 
     @Override

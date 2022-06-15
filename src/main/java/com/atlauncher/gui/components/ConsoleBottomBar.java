@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -47,7 +48,8 @@ public class ConsoleBottomBar extends BottomBar {
     private final JButton uploadLogButton = new JButton(GetText.tr("Upload Log"));
     private final JButton killMinecraftButton = new JButton(GetText.tr("Kill Minecraft"));
 
-    public ConsoleBottomBar() {
+    @Inject
+    private ConsoleBottomBar() {
         this.addActionListeners(); // Setup Action Listeners
 
         JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 13));

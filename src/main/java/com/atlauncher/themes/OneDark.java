@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class OneDark extends Dark {
-    public static boolean install() {
-        instance = new OneDark();
-
-        return setup(instance);
-    }
+    public static final String NAME = "One Dark";
 
     @Override
     public String getName() {
-        return "One Dark";
+        return NAME;
     }
 
     @Override

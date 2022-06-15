@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class HighTechDarkness extends Dark {
-    public static boolean install() {
-        instance = new HighTechDarkness();
-
-        return setup(instance);
-    }
+    public static final String NAME = "High Tech Darkness";
 
     @Override
     public String getName() {
-        return "High Tech Darkness";
+        return NAME;
     }
 
     @Override

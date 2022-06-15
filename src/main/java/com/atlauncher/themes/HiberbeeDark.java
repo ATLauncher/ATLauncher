@@ -19,15 +19,10 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class HiberbeeDark extends Dark {
-    public static boolean install() {
-        instance = new HiberbeeDark();
-
-        return setup(instance);
-    }
-
+    public static final String NAME = "Hiberbee Dark";
     @Override
     public String getName() {
-        return "Hiberbee Dark";
+        return NAME;
     }
 
     @Override

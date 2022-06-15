@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class CyanLight extends Light {
-    public static boolean install() {
-        instance = new CyanLight();
-
-        return setup(instance);
-    }
+    public static final String NAME = "Cyan Light";
 
     @Override
     public String getName() {
-        return "Cyan Light";
+        return NAME;
     }
 
     @Override

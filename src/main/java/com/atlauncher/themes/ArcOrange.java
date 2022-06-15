@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class ArcOrange extends Light {
-    public static boolean install() {
-        instance = new ArcOrange();
-
-        return setup(instance);
-    }
+    public static final String NAME = "Arc Orange";
 
     @Override
     public String getName() {
-        return "Arc Orange";
+        return NAME;
     }
 
     @Override

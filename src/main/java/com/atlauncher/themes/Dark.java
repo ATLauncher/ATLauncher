@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class Dark extends ATLauncherLaf {
-    public static boolean install() {
-        instance = new Dark();
-
-        return setup(instance);
-    }
+    public static final String NAME = "Dark";
 
     @Override
     public String getName() {
-        return "Dark";
+        return NAME;
     }
 
     @Override

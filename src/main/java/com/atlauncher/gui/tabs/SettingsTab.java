@@ -94,7 +94,7 @@ public class SettingsTab extends JPanel implements Tab {
                     AppEventBus.postToDefault(ThemeChangedEvent.forCurrentTheme());
                 }
                 if (reloadTheme) {
-                    App.loadTheme(App.settings.theme);
+                    App.loadTheme();
                     FlatLaf.updateUILater();
                     AppEventBus.post(ThemeChangedEvent.forCurrentTheme());//TODO: should this be a duplicate?
                 }

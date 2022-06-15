@@ -19,15 +19,11 @@ package com.atlauncher.themes;
 
 @SuppressWarnings("serial")
 public class MaterialPalenightContrast extends Dark {
-    public static boolean install() {
-        instance = new MaterialPalenightContrast();
-
-        return setup(instance);
-    }
+    public static final String NAME = "Material Palenight Contrast";
 
     @Override
     public String getName() {
-        return "Material Palenight Contrast";
+        return NAME;
     }
 
     @Override
