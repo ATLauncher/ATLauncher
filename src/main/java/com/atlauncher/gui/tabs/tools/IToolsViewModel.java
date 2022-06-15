@@ -1,5 +1,7 @@
 package com.atlauncher.gui.tabs.tools;
 
+import com.atlauncher.interfaces.NetworkProgressable;
+
 import java.util.function.Consumer;
 
 /**
@@ -38,4 +40,18 @@ public interface IToolsViewModel {
      * @param onFail
      */
     void runNetworkChecker(Consumer<Void> onTaskComplete, Consumer<Void> onFail, Consumer<Void> onSuccess);
+
+    // RuntimeDownloaderToolPanel
+
+    void removeRuntime(
+        Consumer<Void> onFail,
+        Consumer<Void> onSuccess
+    );
+
+    boolean downloadRuntime(
+        NetworkProgressable progressable,
+        Consumer<Void> onTaskComplete,
+        Consumer<String> newLabel,
+        Consumer<Void> clearDownloadedBytes
+    );
 }

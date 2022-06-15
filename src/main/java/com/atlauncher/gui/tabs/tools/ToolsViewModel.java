@@ -2,17 +2,27 @@ package com.atlauncher.gui.tabs.tools;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.Runtime;
+import com.atlauncher.data.Runtimes;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
+import com.atlauncher.utils.ArchiveUtils;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import okhttp3.OkHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -258,5 +268,115 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
         }
     }
 
+    @Override
+    public void removeRuntime(Consumer<Void> onFail, Consumer<Void> onSuccess) {
+        Analytics.sendEvent("RuntimeDownloader", "Remove", "Tool");
 
+        String oldPath = App.settings.javaPath;
+
+        if (FileUtils.deleteDirectory(FileSystem.RUNTIMES)) {
+
+            // switch back to use default
+            App.settings.javaPath = OS.getDefaultJavaPath();
+            App.settings.save();
+
+            // remove the path from any custom paths set for instances
+            InstanceManager.getInstances().stream()
+                .filter(i -> i.launcher.javaPath != null && i.launcher.javaPath.contains(oldPath)).forEach(i -> {
+                    i.launcher.javaPath = null;
+                    i.save();
+                });
+
+            onSuccess.accept(null);
+        } else {
+            LOG.error("Runtime removal failed!");
+            onFail.accept(null);
+        }
+    }
+
+    private void downloadRuntimePost(String path) {
+        App.settings.javaPath = path;
+        App.settings.save();
+    }
+
+    @Override
+    public boolean downloadRuntime(
+        NetworkProgressable progressable,
+        Consumer<Void> onTaskComplete,
+        Consumer<String> newLabel,
+        Consumer<Void> clearDownloadedBytes
+    ) {
+        Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
+
+        Runtimes runtimes = Download.build().cached()
+            .setUrl(String.format("%s/launcher/json/runtimes.json", Constants.DOWNLOAD_SERVER))
+            .asClass(Runtimes.class);
+        onTaskComplete.accept(null);
+
+        Runtime runtime = runtimes.getRuntimeForOS();
+
+        if (runtime != null) {
+            File runtimeFolder = FileSystem.RUNTIMES.resolve(runtime.version).toFile();
+            File releaseFile = new File(runtimeFolder, "release");
+
+            // no need to download/extract
+            if (releaseFile.exists()) {
+                downloadRuntimePost(runtimeFolder.getAbsolutePath());
+                LOG.info("Runtime downloaded!");
+                return true;
+            }
+
+            if (!runtimeFolder.exists()) {
+                runtimeFolder.mkdirs();
+            }
+
+            String url = String.format("%s/%s", Constants.DOWNLOAD_SERVER, runtime.url);
+            String fileName = url.substring(url.lastIndexOf("/") + 1);
+            File downloadFile = new File(runtimeFolder, fileName);
+            File unpackedFile = new File(runtimeFolder, fileName.replace(".xz", ""));
+
+            OkHttpClient httpClient = Network.createProgressClient(progressable);
+
+            com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(url)
+                .hash(runtime.sha1).size(runtime.size).withHttpClient(httpClient)
+                .downloadTo(downloadFile.toPath());
+
+            if (download.needToDownload()) {
+                newLabel.accept(GetText.tr("Downloading"));
+                progressable.setTotalBytes(runtime.size);
+
+                try {
+                    download.downloadFile();
+                } catch (IOException e1) {
+                    LOG.error("error", e1);
+                    LOG.error("Runtime downloaded failed to run!");
+                    return false;
+                }
+
+                clearDownloadedBytes.accept(null);
+            }
+
+            onTaskComplete.accept(null);
+
+            newLabel.accept(GetText.tr("Extracting"));
+
+            try {
+                Utils.unXZFile(downloadFile, unpackedFile);
+            } catch (IOException e2) {
+                LOG.error("error", e2);
+                LOG.error("Runtime downloaded failed to run!");
+                return false;
+            }
+
+            ArchiveUtils.extract(unpackedFile.toPath(), runtimeFolder.toPath());
+            Utils.delete(unpackedFile);
+
+            downloadRuntimePost(runtimeFolder.getAbsolutePath());
+            LOG.info("Runtime downloaded!");
+            return true;
+        }
+
+        LOG.error("Runtime downloaded failed to run!");
+        return false;
+    }
 }
