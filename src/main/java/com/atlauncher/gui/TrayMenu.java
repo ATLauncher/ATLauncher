@@ -45,18 +45,14 @@ public final class TrayMenu extends JPopupMenu {
     @Inject
     public TrayMenu(final Launcher launcher) {
         super();
-
         this.setMinecraftLaunched(false);
-
         this.add(this.killMinecraftButton);
         this.add(this.toggleConsoleButton);
         this.addSeparator();
         this.add(this.openLauncherFolderButton);
         this.addSeparator();
         this.add(this.quitButton);
-
         AppEventBus.register(this);
-
         this.addActionListeners(launcher);
     }
 
