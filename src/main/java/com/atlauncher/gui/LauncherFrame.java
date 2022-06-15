@@ -126,7 +126,7 @@ public final class LauncherFrame extends JFrame {
         this.settingsTab = settingsTab;
         this.toolsTab = toolsTab;
         this.vanillaPacksTab = vanillaPacksTab;
-        this.tabs = Arrays.asList(this.newsTab, this.vanillaPacksTab, this.packsBrowserTab, this.instancesTab, this.serversTab, this.accountsTab, this.toolsTab, this.serversTab);
+        this.tabs = Arrays.asList(this.newsTab, this.vanillaPacksTab, this.packsBrowserTab, this.instancesTab, this.serversTab, this.accountsTab, this.toolsTab, this.serversTab, this.settingsTab);
         setupTabs(); // Setup the JTabbedPane
         LOG.info("Finished Setting up Tabs");
 

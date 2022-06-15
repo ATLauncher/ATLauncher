@@ -53,6 +53,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.Dialog.ModalityType;
 import java.awt.*;
@@ -86,6 +87,10 @@ public class Launcher {
     // Minecraft tracking variables
     private Process minecraftProcess = null; // The process minecraft is running on
     public boolean minecraftLaunched = false; // If Minecraft has been Launched
+
+    @Inject
+    public Launcher(){
+    }
 
     public void loadEverything() {
         PerformanceManager.start();

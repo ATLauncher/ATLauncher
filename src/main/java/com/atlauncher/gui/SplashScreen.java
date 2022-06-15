@@ -22,6 +22,7 @@ import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -33,6 +34,7 @@ import java.awt.image.BufferedImage;
  * it's stuff.
  */
 @SuppressWarnings("serial")
+@Singleton
 public class SplashScreen extends JWindow {
     private static final BufferedImage img = Utils.getImage("splash-screen.png");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();

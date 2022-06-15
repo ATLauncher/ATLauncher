@@ -300,7 +300,7 @@ public class App {
         checkForBadFolderInstall();
 
         // Setup the Launcher and wait for it to finish.
-        launcher = new Launcher();
+        launcher = INJECTOR.getInstance(Launcher.class);
 
         // Load the theme and style everything.
         loadTheme();
