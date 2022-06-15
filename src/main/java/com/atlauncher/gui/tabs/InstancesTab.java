@@ -17,22 +17,24 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.gui.tabs.instances.InstanceImportButton;
-import com.atlauncher.gui.tabs.instances.InstanceSearchPanel;
 import com.atlauncher.gui.tabs.instances.InstanceListPanel;
+import com.atlauncher.gui.tabs.instances.InstanceSearchPanel;
 import com.atlauncher.utils.Utils;
 import com.google.common.collect.Sets;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
+@Singleton
 public class InstancesTab extends JPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;
     private final InstanceListPanel instanceListPanel = new InstanceListPanel(Sets.newHashSet());
 
+    @Inject
     public InstancesTab() {
         this.setLayout(new BorderLayout());
         this.add(createSearchPanel(), BorderLayout.NORTH);

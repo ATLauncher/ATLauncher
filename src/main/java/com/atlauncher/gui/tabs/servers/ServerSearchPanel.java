@@ -2,13 +2,16 @@ package com.atlauncher.gui.tabs.servers;
 
 import com.atlauncher.AppEventBus;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 
+@Singleton
 public final class ServerSearchPanel extends JPanel {
     private final ServerSearchField searchField = new ServerSearchField();
     private final JComboBox<ServerSortingStrategy> sortingStrategy = new JComboBox<>(ServerSortingStrategies.values());
-
+    @Inject
     public ServerSearchPanel(){
         AppEventBus.registerToUIOnly(this);
 

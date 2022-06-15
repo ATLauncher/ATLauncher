@@ -34,6 +34,7 @@ import com.formdev.flatlaf.FlatLaf;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ public class SettingsTab extends JPanel implements Tab {
     private final JTabbedPane tabbedPane;
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 
+    @Inject
     public SettingsTab() {
         AppEventBus.register(this);
         setLayout(new BorderLayout());

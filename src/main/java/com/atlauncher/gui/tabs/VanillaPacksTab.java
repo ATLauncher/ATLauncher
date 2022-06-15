@@ -42,6 +42,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -58,6 +60,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("serial")
+@Singleton
 public final class VanillaPacksTab extends JPanel implements Tab {
     private static final Logger LOG = LogManager.getLogger(VanillaPacksTab.class);
 
@@ -91,6 +94,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton createInstanceButton = new JButton(GetText.tr("Create Instance"));
 
+    @Inject
     public VanillaPacksTab() {
         super(new BorderLayout());
         setName("vanillaPacksPanel");

@@ -25,12 +25,14 @@ import com.atlauncher.gui.tabs.tools.RuntimeDownloaderToolPanel;
 import com.atlauncher.gui.tabs.tools.SkinUpdaterToolPanel;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("serial")
 public class ToolsTab extends JPanel implements Tab {
 
+    @Inject
     public ToolsTab() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

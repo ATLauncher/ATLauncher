@@ -24,31 +24,25 @@ import com.atlauncher.gui.tabs.servers.ServerListPanel;
 import com.atlauncher.gui.tabs.servers.ServerSearchField;
 import com.atlauncher.gui.tabs.servers.ServerSearchPanel;
 import com.atlauncher.managers.ServerManager;
+import com.atlauncher.utils.Utils;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("serial")
+@Singleton
 public class ServersTab extends JPanel implements Tab{
-    private final ServerListPanel serversList = new ServerListPanel(ServerManager.getServers());
-
-    public ServersTab() {
+    @Inject
+    public ServersTab(final ServerSearchPanel searchPanel,
+                      final ServerListPanel serverListPanel) {
         AppEventBus.registerToUIOnly(this);
         this.setLayout(new BorderLayout());
-        this.add(createSearchPanel(), BorderLayout.NORTH);
-        this.add(this.createScrollPanel(), BorderLayout.CENTER);
-    }
-
-    private static ServerSearchPanel createSearchPanel(){
-        return new ServerSearchPanel();
-    }
-
-    private JScrollPane createScrollPanel(){
-        final JScrollPane pane = new JScrollPane(this.serversList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        pane.getVerticalScrollBar().setUnitIncrement(16);
-        return pane;
+        this.add(searchPanel, BorderLayout.NORTH);
+        this.add(Utils.wrapInVerticalScroller(serverListPanel, 16), BorderLayout.CENTER);
     }
 
     @Override

@@ -43,6 +43,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
@@ -72,6 +73,7 @@ public class AccountsTab extends JPanel implements Tab {
     private final JMenuItem updateSkin;
     private final JPopupMenu contextMenu; // Right click menu
 
+    @Inject
     @SuppressWarnings("unchecked")
     public AccountsTab() {
         setLayout(new BorderLayout());

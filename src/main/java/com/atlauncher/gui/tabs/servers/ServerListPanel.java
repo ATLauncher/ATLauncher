@@ -8,6 +8,7 @@ import com.atlauncher.gui.card.Card;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.gui.components.search.SearchListPanel;
+import com.atlauncher.managers.ServerManager;
 import com.google.common.eventbus.Subscribe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,16 +16,20 @@ import org.mini2Dx.gettext.GetText;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+@Singleton
 public final class ServerListPanel extends SearchListPanel<Server>{
     private static final Logger LOG = LogManager.getLogger(ServerListPanel.class);
 
-    public ServerListPanel(@Nullable final Set<Server> servers){
-        super(servers);
+    @Inject
+    public ServerListPanel(){
+        super(ServerManager.getServers());
         AppEventBus.registerToUIOnly(this);
     }
 

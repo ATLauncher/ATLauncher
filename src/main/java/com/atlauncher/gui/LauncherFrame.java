@@ -22,6 +22,7 @@ import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.Server;
 import com.atlauncher.events.OnSide;
 import com.atlauncher.events.Side;
 import com.atlauncher.events.ScreenViewEvent;
@@ -62,13 +63,30 @@ import java.util.List;
 public final class LauncherFrame extends JFrame {
     private static final Logger LOG = LogManager.getLogger(LauncherFrame.class);
 
-    private final LauncherBottomBar bottomBar;
     private JTabbedPane tabbedPane;
 
-    private List<Tab> tabs;
+    private final List<Tab> tabs;
+    private final AccountsTab accountsTab;
+    private final InstancesTab instancesTab;
+    private final NewsTab newsTab;
+    private final PacksBrowserTab packsBrowserTab;
+    private final ServersTab serversTab;
+    private final SettingsTab settingsTab;
+    private final ToolsTab toolsTab;
+    private final VanillaPacksTab vanillaPacksTab;
+    private final LauncherBottomBar bottomBar;
+
 
     @Inject
-    private LauncherFrame(final LauncherBottomBar bottomBar){
+    private LauncherFrame(final LauncherBottomBar bottomBar,
+                          final AccountsTab accountsTab,
+                          final InstancesTab instancesTab,
+                          final NewsTab newsTab,
+                          final PacksBrowserTab packsBrowserTab,
+                          final ServersTab serversTab,
+                          final SettingsTab settingsTab,
+                          final ToolsTab toolsTab,
+                          final VanillaPacksTab vanillaPacksTab){
         LOG.info("Launcher opening");
         LOG.info("Made By Bob*");
         LOG.info("*(Not Actually)");
@@ -100,6 +118,15 @@ public final class LauncherFrame extends JFrame {
         LOG.info("Finished Setting up Bottom Bar");
 
         LOG.info("Setting up Tabs");
+        this.accountsTab = accountsTab;
+        this.instancesTab = instancesTab;
+        this.newsTab = newsTab;
+        this.packsBrowserTab = packsBrowserTab;
+        this.serversTab = serversTab;
+        this.settingsTab = settingsTab;
+        this.toolsTab = toolsTab;
+        this.vanillaPacksTab = vanillaPacksTab;
+        this.tabs = Arrays.asList(this.newsTab, this.vanillaPacksTab, this.packsBrowserTab, this.instancesTab, this.serversTab, this.accountsTab, this.toolsTab, this.serversTab);
         setupTabs(); // Setup the JTabbedPane
         LOG.info("Finished Setting up Tabs");
 
@@ -197,44 +224,10 @@ public final class LauncherFrame extends JFrame {
         tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
         tabbedPane.setName("mainTabs");
 
-        PerformanceManager.start("newsTab");
-        NewsTab newsTab = new NewsTab();
         App.launcher.setNewsPanel(newsTab);
-        PerformanceManager.end("newsTab");
-
-        PerformanceManager.start("vanillaPacksTab");
-        VanillaPacksTab vanillaPacksTab = new VanillaPacksTab();
-        PerformanceManager.end("vanillaPacksTab");
-
-        PerformanceManager.start("packsBrowserTab");
-        PacksBrowserTab packsBrowserTab = new PacksBrowserTab();
         App.launcher.setPacksBrowserPanel(packsBrowserTab);
-        PerformanceManager.end("packsBrowserTab");
-
-        PerformanceManager.start("instancesTab");
-        InstancesTab instancesTab = new InstancesTab();
         App.launcher.setInstancesPanel(instancesTab);
-        PerformanceManager.end("instancesTab");
-
-        PerformanceManager.start("serversTab");
-        ServersTab serversTab = new ServersTab();
         App.launcher.setServersPanel(serversTab);
-        PerformanceManager.end("serversTab");
-
-        PerformanceManager.start("accountsTab");
-        AccountsTab accountsTab = new AccountsTab();
-        PerformanceManager.end("accountsTab");
-
-        PerformanceManager.start("toolsTab");
-        ToolsTab toolsTab = new ToolsTab();
-        PerformanceManager.end("toolsTab");
-
-        PerformanceManager.start("settingsTab");
-        SettingsTab settingsTab = new SettingsTab();
-        PerformanceManager.end("settingsTab");
-
-        this.tabs = Arrays.asList(new Tab[]{newsTab, vanillaPacksTab, packsBrowserTab, instancesTab,
-            serversTab, accountsTab, toolsTab, settingsTab});
 
         tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs) {
@@ -252,11 +245,9 @@ public final class LauncherFrame extends JFrame {
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
-        for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
+    public void onLocalizationChanged(final LocalizationChangedEvent event) {
+        for (int i = 0; i < this.tabbedPane.getTabCount(); i++)
             this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
-        }
-
         tabbedPane.setFont(App.THEME.getTabFont());
     }
 

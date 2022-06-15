@@ -21,6 +21,8 @@ import com.atlauncher.managers.NewsManager;
 import com.atlauncher.utils.OS;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
@@ -35,6 +37,7 @@ import java.awt.event.MouseEvent;
  * latest news.
  */
 @SuppressWarnings("serial")
+@Singleton
 public class NewsTab extends JPanel implements Tab {
     private final HTMLEditorKit NEWS_KIT = new HTMLEditorKit() {
         {
@@ -60,6 +63,7 @@ public class NewsTab extends JPanel implements Tab {
      * Instantiates a new instance of this class which sets the layout and loads the
      * content.
      */
+    @Inject
     public NewsTab() {
         super(new BorderLayout());
         this.add(new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,

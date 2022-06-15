@@ -45,6 +45,7 @@ import com.formdev.flatlaf.icons.FlatSearchIcon;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.AdjustmentEvent;
@@ -55,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("serial")
+@Singleton
 public final class PacksBrowserTab extends JPanel implements Tab {
     private final JPanel actionsPanel = new JPanel();
 
@@ -94,6 +96,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
     private boolean loading = false;
     private int page = 1;
 
+    @Singleton
     public PacksBrowserTab() {
         super(new BorderLayout());
         this.setName("packsBrowserPanel");
@@ -103,8 +106,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
 
     private void initComponents() {
         actionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        actionsPanel
-            .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
+        actionsPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
 
         minecraftVersionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
         minecraftVersionPanel.add(minecraftVersionLabel);
@@ -500,7 +502,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
     }
 
     @Subscribe
-    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
+    public void onLocalizationChanged(final LocalizationChangedEvent event) {
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
         searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
@@ -508,7 +510,7 @@ public final class PacksBrowserTab extends JPanel implements Tab {
 
     @Subscribe
     @OnSide(Side.UI)
-    public final void onThemeChanged(final ThemeChangedEvent event) {
+    public void onThemeChanged(final ThemeChangedEvent event) {
         ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
         descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));
     }
