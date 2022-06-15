@@ -17,54 +17,40 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.gui.tabs.instances.InstancesListPanel;
-import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
-import com.atlauncher.gui.tabs.instances.InstancesSearchEvent;
-import com.atlauncher.gui.tabs.instances.InstancesSearchEventListener;
-import com.atlauncher.gui.tabs.instances.InstancesSortEvent;
-import com.atlauncher.gui.tabs.instances.InstancesSortEventListener;
+import com.atlauncher.gui.dialogs.ImportInstanceDialog;
+import com.atlauncher.gui.tabs.instances.InstanceImportButton;
+import com.atlauncher.gui.tabs.instances.InstanceSearchPanel;
+import com.atlauncher.gui.tabs.instances.InstanceListPanel;
 import com.atlauncher.utils.Utils;
+import com.google.common.collect.Sets;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
-import javax.swing.event.EventListenerList;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.util.Arrays;
 
 public class InstancesTab extends JPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;
-
-    private final EventListenerList eventListeners = new EventListenerList();
-    private final InstancesNavigationPanel navigationPanel = new InstancesNavigationPanel(this);
-    private final InstancesListPanel instancesListPanel = new InstancesListPanel(this);
-    private final JScrollPane scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
+    private final InstanceListPanel instanceListPanel = new InstanceListPanel(Sets.newHashSet());
 
     public InstancesTab() {
         this.setLayout(new BorderLayout());
-        this.add(this.navigationPanel, BorderLayout.NORTH);
-        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(createSearchPanel(), BorderLayout.NORTH);
+        this.add(this.createScrollPane(), BorderLayout.CENTER);
     }
 
-    public void addSearchEventListener(final InstancesSearchEventListener listener) {
-        this.eventListeners.add(InstancesSearchEventListener.class, listener);
+    private JPanel createSearchPanel(){
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(new InstanceImportButton(), BorderLayout.WEST);
+        panel.add(new InstanceSearchPanel(), BorderLayout.CENTER);
+        return panel;
     }
 
-    public void addSortEventListener(final InstancesSortEventListener listener) {
-        this.eventListeners.add(InstancesSortEventListener.class, listener);
-    }
-
-    public void fireSearchEvent(final InstancesSearchEvent e) {
-        Arrays.stream(this.eventListeners.getListeners(InstancesSearchEventListener.class))
-            .forEach((l) -> l.onSearch(e));
-    }
-
-    public void fireSortEvent(final InstancesSortEvent e) {
-        Arrays.stream(this.eventListeners.getListeners(InstancesSortEventListener.class))
-            .forEach((l) -> l.onSort(e));
-    }
-
-    public void reload() {
-        instancesListPanel.loadInstances();
+    private JScrollPane createScrollPane(){
+        final JScrollPane pane = Utils.wrapInVerticalScroller(this.instanceListPanel, 16);
+        pane.getVerticalScrollBar().setUnitIncrement(16);
+        return pane;
     }
 
     @Override

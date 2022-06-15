@@ -23,7 +23,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import com.atlauncher.gui.tabs.instances.InstanceSortingStrategies;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

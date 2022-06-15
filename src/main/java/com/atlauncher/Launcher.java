@@ -446,7 +446,8 @@ public class Launcher {
      */
     public void reloadInstancesPanel() {
         if (instancesPanel != null) {
-            this.instancesPanel.reload(); // Reload the instances panel
+            // fallthrough
+            //TODO: this.instancesPanel.reload(); // Reload the instances panel
         }
     }
 

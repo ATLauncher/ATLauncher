@@ -27,7 +27,7 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import com.atlauncher.gui.tabs.instances.InstanceSortingStrategies;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;

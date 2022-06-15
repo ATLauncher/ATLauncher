@@ -15,20 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.instances;
+package com.atlauncher.utils;
 
-import java.util.EventObject;
-import java.util.regex.Pattern;
+import java.util.Comparator;
 
-public final class InstancesSearchEvent extends EventObject {
-    private final Pattern searchPattern;
-
-    public InstancesSearchEvent(final Object source, final Pattern searchPattern) {
-        super(source);
-        this.searchPattern = searchPattern;
-    }
-
-    public Pattern getSearchPattern() {
-        return this.searchPattern;
-    }
+public interface SortingStrategy<T> extends Comparator<T> {
+    String getName();
 }

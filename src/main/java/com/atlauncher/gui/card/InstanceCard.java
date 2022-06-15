@@ -70,7 +70,7 @@ import java.util.ArrayList;
  * Class for displaying instances in the Instance Tab
  */
 @SuppressWarnings("serial")
-public class InstanceCard extends CollapsiblePanel {
+public class InstanceCard extends CollapsiblePanel implements Card{
     private static final Logger LOG = LogManager.getLogger(InstanceCard.class);
 
     private final Instance instance;

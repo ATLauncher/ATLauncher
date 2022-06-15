@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.utils.sort;
+package com.atlauncher.gui.tabs.instances;
 
 import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Instance;

@@ -18,9 +18,11 @@
 package com.atlauncher.gui.tabs;
 
 import com.atlauncher.AppEventBus;
+import com.atlauncher.data.Server;
 import com.atlauncher.events.servers.ServerAddedEvent;
 import com.atlauncher.gui.tabs.servers.ServerListPanel;
 import com.atlauncher.gui.tabs.servers.ServerSearchField;
+import com.atlauncher.gui.tabs.servers.ServerSearchPanel;
 import com.atlauncher.managers.ServerManager;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
@@ -31,28 +33,23 @@ import java.awt.*;
 @SuppressWarnings("serial")
 public class ServersTab extends JPanel implements Tab{
     private final ServerListPanel serversList = new ServerListPanel(ServerManager.getServers());
-    private final ServerSearchField searchField = new ServerSearchField();
 
     public ServersTab() {
         AppEventBus.registerToUIOnly(this);
         this.setLayout(new BorderLayout());
-        this.add(this.createTopPanel(), BorderLayout.NORTH);
+        this.add(createSearchPanel(), BorderLayout.NORTH);
         this.add(this.createScrollPanel(), BorderLayout.CENTER);
     }
 
+    private static ServerSearchPanel createSearchPanel(){
+        return new ServerSearchPanel();
+    }
+
     private JScrollPane createScrollPanel(){
-        final JScrollPane scrollPane = new JScrollPane(this.serversList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        return scrollPane;
+        final JScrollPane pane = new JScrollPane(this.serversList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        pane.getVerticalScrollBar().setUnitIncrement(16);
+        return pane;
     }
-
-    private JPanel createTopPanel(){
-        final JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        topPanel.add(this.searchField);
-        return topPanel;
-    }
-
 
     @Override
     public String getTitle() {

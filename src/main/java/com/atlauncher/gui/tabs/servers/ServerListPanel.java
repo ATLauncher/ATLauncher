@@ -45,7 +45,6 @@ public final class ServerListPanel extends SearchListPanel<Server>{
 
     @Subscribe
     public void onServerSearch(final ServerSearchEvent event){
-        LOG.info("searching {}", event.getSearchPattern().pattern());
         this.updateComponent(event.getSearchPattern());
     }
 
