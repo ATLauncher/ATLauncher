@@ -2,9 +2,13 @@ package com.atlauncher;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.swing.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;

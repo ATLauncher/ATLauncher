@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -36,6 +37,7 @@ public class SplashScreen extends JWindow {
     private static final BufferedImage img = Utils.getImage("splash-screen.png");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();
 
+    @Inject
     public SplashScreen() {
         this.setLayout(null);
         this.setSize(img.getWidth(), img.getHeight());

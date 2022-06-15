@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -52,6 +53,7 @@ public class LauncherConsole extends JFrame {
 
     private JMenuItem copy;
 
+    @Inject
     public LauncherConsole() {
         setTitle(Constants.LAUNCHER_NAME + " Console");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
