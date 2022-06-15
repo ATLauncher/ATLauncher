@@ -23,6 +23,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.events.ToolRunEvent;
 import com.atlauncher.events.account.AccountChangedEvent;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
@@ -47,19 +48,20 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
     }
 
     private void checkLaunchButtonEnabled() {
-        LAUNCH_BUTTON.setEnabled(Data.ACCOUNTS.size() != 0);
+        LAUNCH_BUTTON.setEnabled(AccountManager.getNumberOfAccounts() > 0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         AppEventBus.postToDefault(ToolRunEvent.skinUpdater());
-        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), Data.ACCOUNTS.size(),
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), AccountManager.getNumberOfAccounts(),
             GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
         dialog.addThread(new Thread(() -> {
-            Data.ACCOUNTS.forEach(account -> {
-                account.updateSkin();
-                dialog.doneTask();
-            });
+            AccountManager.getAccounts()
+                        .forEach(account -> {
+                            account.updateSkin();
+                            dialog.doneTask();
+                        });
 
             dialog.setReturnValue(true);
             dialog.close();

@@ -43,7 +43,6 @@ import java.util.Optional;
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar {
     private boolean dontSave = false;
-    private JButton toggleConsole;
     private JButton openFolder;
     private JButton checkForUpdates;
     private JComboBox<AbstractAccount> username;
@@ -62,7 +61,7 @@ public class LauncherBottomBar extends BottomBar {
         gbc.gridy = GridBagConstraints.RELATIVE;
 
         gbc.insets = new Insets(0, 5, 0, 5);
-        leftSide.add(toggleConsole, gbc);
+        leftSide.add(new ToggleConsoleButton(), gbc);
 
         gbc.insets = new Insets(0, 0, 0, 5);
         gbc.gridx++;
@@ -87,7 +86,6 @@ public class LauncherBottomBar extends BottomBar {
      * Sets up the listeners on the buttons
      */
     private void setupListeners() {
-        toggleConsole.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
         checkForUpdates.addActionListener(e -> {
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updates"), 0,
@@ -111,26 +109,10 @@ public class LauncherBottomBar extends BottomBar {
         AppEventBus.register(this);
     }
 
-    @Subscribe
-    public final void onConsoleOpened(final ConsoleOpenedEvent event) {
-        this.toggleConsole.setText(GetText.tr("Hide Console"));
-    }
-
-    @Subscribe
-    public final void onConsoleClosed(final ConsoleClosedEvent event) {
-        this.toggleConsole.setText(GetText.tr("Show Console"));
-    }
-
     /**
      * Creates the JButton's for use in the bar
      */
     private void createButtons() {
-        if (App.console.isVisible()) {
-            toggleConsole = new JButton(GetText.tr("Hide Console"));
-        } else {
-            toggleConsole = new JButton(GetText.tr("Show Console"));
-        }
-
         openFolder = new JButton(GetText.tr("Open Folder"));
 
         checkForUpdates = new JButton(GetText.tr("Check For Updates"));
@@ -188,11 +170,6 @@ public class LauncherBottomBar extends BottomBar {
 
     @Subscribe
     public final void onLocalizationChanged(final LocalizationChangedEvent event) {
-        if (App.console.isVisible()) {
-            toggleConsole.setText(GetText.tr("Hide Console"));
-        } else {
-            toggleConsole.setText(GetText.tr("Show Console"));
-        }
         this.checkForUpdates.setText(GetText.tr("Check For Updates"));
         this.openFolder.setText(GetText.tr("Open Folder"));
     }

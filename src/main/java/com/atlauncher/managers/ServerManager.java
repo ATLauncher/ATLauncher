@@ -99,7 +99,8 @@ public class ServerManager {
     }
 
     public static boolean isServer(String name) {
-        return Data.SERVERS.stream()
+        return getServers()
+            .stream()
             .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
