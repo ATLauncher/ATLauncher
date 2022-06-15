@@ -23,4 +23,5 @@ public interface IToolsViewModel {
 
     void clearDownloads();
 
+    void clearLogs();
 }

@@ -17,25 +17,17 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.nio.file.Files;
-
 import javax.swing.JLabel;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
-public class LogClearerToolPanel extends AbstractToolPanel implements ActionListener {
+public class LogClearerToolPanel extends AbstractToolPanel {
 
-    public LogClearerToolPanel() {
+    public LogClearerToolPanel(IToolsViewModel viewModel) {
         super(GetText.tr("Log Clearer"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
@@ -43,22 +35,13 @@ public class LogClearerToolPanel extends AbstractToolPanel implements ActionList
                 .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.addActionListener(this);
-    }
+        LAUNCH_BUTTON.addActionListener(e -> {
+            if (e.getSource() == LAUNCH_BUTTON) {
+                viewModel.clearLogs();
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == LAUNCH_BUTTON) {
-            Analytics.sendEvent("LogClearer", "Run", "Tool");
-
-            if (Files.exists(FileSystem.LOGS.resolve("old"))) {
-                for (File file : FileSystem.LOGS.resolve("old").toFile().listFiles()) {
-                    Utils.delete(file);
-                }
-            }
-
-            DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
+                DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
                     .setContent(GetText.tr("Successfully cleared the logs.")).show();
-        }
+            }
+        });
     }
 }

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * 15 / 06 / 2022
@@ -48,6 +49,17 @@ public class ToolsViewModel implements IToolsViewModel {
 
         for (File file : FileSystem.FAILED_DOWNLOADS.toFile().listFiles()) {
             Utils.delete(file);
+        }
+    }
+
+    @Override
+    public void clearLogs() {
+        Analytics.sendEvent("LogClearer", "Run", "Tool");
+
+        if (Files.exists(FileSystem.LOGS.resolve("old"))) {
+            for (File file : FileSystem.LOGS.resolve("old").toFile().listFiles()) {
+                Utils.delete(file);
+            }
         }
     }
 }
