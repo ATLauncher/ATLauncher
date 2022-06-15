@@ -22,19 +22,14 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public class DebugModePanel extends AbstractToolPanel {
-    private static final Logger LOG = LogManager.getLogger(DebugModePanel.class);
 
-    public DebugModePanel() {
+    public DebugModePanel(IToolsViewModel viewModel) {
         super(GetText.tr("Debug Mode"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
@@ -42,17 +37,15 @@ public class DebugModePanel extends AbstractToolPanel {
                 .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.setEnabled(!OS.isUsingFlatpak() && !LOG.isDebugEnabled());
+        LAUNCH_BUTTON.setEnabled(viewModel.isLaunchInDebugEnabled());
 
-        if (!LOG.isDebugEnabled()) {
+        if (!viewModel.isDebugEnabled()) {
             LAUNCH_BUTTON.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON1) {
                         // Handle left-click
-                        Analytics.sendEvent("DebugMode", "Run", "Tool");
-
-                        OS.relaunchInDebugMode();
+                        viewModel.launchInDebug();
                     }
                 }
             });
