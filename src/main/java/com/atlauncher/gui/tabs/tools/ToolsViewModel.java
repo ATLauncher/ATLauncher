@@ -332,7 +332,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     @Override
     public boolean downloadRuntime(
-        NetworkProgressable progressable,
+        NetworkProgressable progressbar,
         Consumer<Void> onTaskComplete,
         Consumer<String> newLabel,
         Consumer<Void> clearDownloadedBytes
@@ -366,7 +366,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
             File downloadFile = new File(runtimeFolder, fileName);
             File unpackedFile = new File(runtimeFolder, fileName.replace(".xz", ""));
 
-            OkHttpClient httpClient = Network.createProgressClient(progressable);
+            OkHttpClient httpClient = Network.createProgressClient(progressbar);
 
             com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(url)
                 .hash(runtime.sha1).size(runtime.size).withHttpClient(httpClient)
@@ -374,7 +374,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
             if (download.needToDownload()) {
                 newLabel.accept(GetText.tr("Downloading"));
-                progressable.setTotalBytes(runtime.size);
+                progressbar.setTotalBytes(runtime.size);
 
                 try {
                     download.downloadFile();
