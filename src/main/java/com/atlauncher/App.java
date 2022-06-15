@@ -673,7 +673,7 @@ public class App {
 
             // now the theme is loaded, we can intialize the toaster/tray menu
             TOASTER = Toaster.instance();
-            TRAY_MENU = new TrayMenu();
+            TRAY_MENU = INJECTOR.getInstance(TrayMenu.class);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

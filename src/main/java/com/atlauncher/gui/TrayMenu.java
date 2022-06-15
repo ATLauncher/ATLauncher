@@ -20,6 +20,7 @@ package com.atlauncher.gui;
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Launcher;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.events.console.ConsoleClosedEvent;
 import com.atlauncher.events.console.ConsoleEvent;
@@ -29,18 +30,20 @@ import com.atlauncher.utils.OS;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 
-@SuppressWarnings("serial")
+@Singleton
 public final class TrayMenu extends JPopupMenu {
-
     private final JMenuItem killMinecraftButton = new JMenuItem(GetText.tr("Kill Minecraft"));
     private final JMenuItem toggleConsoleButton = new JMenuItem(GetText.tr("Toggle Console"));
     private final JMenuItem openLauncherFolderButton = new JMenuItem(GetText.tr("Open Launcher Folder"));
     private final JMenuItem quitButton = new JMenuItem(GetText.tr("Quit"));
 
-    public TrayMenu() {
+    @Inject
+    public TrayMenu(final Launcher launcher) {
         super();
 
         this.setMinecraftLaunched(false);
@@ -54,10 +57,10 @@ public final class TrayMenu extends JPopupMenu {
 
         AppEventBus.register(this);
 
-        this.addActionListeners();
+        this.addActionListeners(launcher);
     }
 
-    private void addActionListeners() {
+    private void addActionListeners(final Launcher launcher) {
         this.killMinecraftButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             if (App.launcher.minecraftLaunched) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft"))
@@ -67,7 +70,7 @@ public final class TrayMenu extends JPopupMenu {
                     .setType(DialogManager.ERROR).show();
 
                 if (ret == DialogManager.YES_OPTION) {
-                    App.launcher.killMinecraft();
+                    launcher.killMinecraft();
                 }
             }
         }));
