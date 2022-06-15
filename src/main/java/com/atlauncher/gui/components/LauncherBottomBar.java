@@ -20,32 +20,20 @@ package com.atlauncher.gui.components;
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.FileSystem;
-import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.events.account.AccountAddedEvent;
-import com.atlauncher.events.account.AccountRemovedEvent;
 import com.atlauncher.events.launcher.UpdateDataEvent;
-import com.atlauncher.events.account.AccountChangedEvent;
-import com.atlauncher.events.console.ConsoleClosedEvent;
-import com.atlauncher.events.console.ConsoleOpenedEvent;
 import com.atlauncher.events.localization.LocalizationChangedEvent;
-import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.OS;
 import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.util.Optional;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar {
-    private boolean dontSave = false;
     private JButton openFolder;
     private JButton checkForUpdates;
-    private JComboBox<AbstractAccount> username;
 
     public LauncherBottomBar() {
         JPanel leftSide = new JPanel();
@@ -73,9 +61,7 @@ public class LauncherBottomBar extends BottomBar {
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
         gbc.insets = new Insets(0, 0, 0, 5);
-        middle.add(username, gbc);
-
-        username.setVisible(AccountManager.getAccounts().size() != 0);
+        middle.add(new AccountsDropDown(), gbc);
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
@@ -97,14 +83,6 @@ public class LauncherBottomBar extends BottomBar {
             }));
             dialog.start();
         });
-        username.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (!dontSave) {;
-                    //TODO: Analytics.sendEvent("Switch", "Account");
-                    AccountManager.switchAccount((AbstractAccount) username.getSelectedItem());
-                }
-            }
-        });
 
         AppEventBus.register(this);
     }
@@ -117,75 +95,11 @@ public class LauncherBottomBar extends BottomBar {
 
         checkForUpdates = new JButton(GetText.tr("Check For Updates"));
         checkForUpdates.setName("checkForUpdates");
-
-        username = new JComboBox<>();
-        username.setName("accountSelector");
-        username.setRenderer(new AccountsDropDownRenderer());
-
-        for (AbstractAccount account : AccountManager.getAccounts()) {
-            username.addItem(account);
-        }
-
-        AbstractAccount active = AccountManager.getSelectedAccount();
-
-        if (active != null) {
-            username.setSelectedItem(active);
-        }
-    }
-
-    private void reloadAccounts() {
-        dontSave = true;
-        username.removeAllItems();
-
-        for (AbstractAccount account : AccountManager.getAccounts()) {
-            username.addItem(account);
-        }
-
-        if (AccountManager.getSelectedAccount() != null) {
-            username.setSelectedItem(AccountManager.getSelectedAccount());
-        }
-
-        username.setVisible(AccountManager.getAccounts().size() != 0);
-
-        dontSave = false;
-    }
-
-    private void removeAccount(final AbstractAccount account){
-        this.username.removeItem(account);
-        this.username.setVisible(this.username.getItemCount() > 0);
-
-        //TODO: remove
-        final Optional<AbstractAccount> selected = Optional.ofNullable(AccountManager.getSelectedAccount());
-        selected.ifPresent(this.username::setSelectedItem);
-    }
-
-    private void addAccount(final AbstractAccount account){
-        this.username.addItem(account);
-        this.username.setVisible(this.username.getItemCount() > 0);
-
-        //TODO: remove
-        final Optional<AbstractAccount> selected = Optional.ofNullable(AccountManager.getSelectedAccount());
-        selected.ifPresent(this.username::setSelectedItem);
     }
 
     @Subscribe
     public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.checkForUpdates.setText(GetText.tr("Check For Updates"));
         this.openFolder.setText(GetText.tr("Open Folder"));
-    }
-
-    @Subscribe
-    public void onAccountChanged(final AccountChangedEvent event) {
-        this.reloadAccounts();
-    }
-
-    @Subscribe
-    public void onAccountRemoved(final AccountRemovedEvent event){
-        this.removeAccount(event.getAccount());
-    }
-
-    @Subscribe
-    public void onAccountAdded(final AccountAddedEvent event){
-        this.addAccount(event.getAccount());
     }
 }

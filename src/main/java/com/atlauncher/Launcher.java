@@ -498,7 +498,9 @@ public class Launcher {
      * Refreshes the panel used for thePacks browser
      */
     public void refreshPacksBrowserPanel() {
-        this.packsBrowserPanel.refresh(); // Refresh the packs browser panel
+        if(this.packsBrowserPanel != null){
+            this.packsBrowserPanel.refresh(); // Refresh the packs browser panel
+        }
     }
 
     public void showKillMinecraft(Process minecraft) {

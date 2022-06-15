@@ -1,10 +1,12 @@
 package com.atlauncher.task;
 
 import com.atlauncher.App;
+import com.atlauncher.AppTaskEngine;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.task.account.LoadAccountTask;
 import com.atlauncher.utils.Utils;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -18,93 +20,75 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class LoadAccountsTask implements Task{
     private static final Logger LOG = LogManager.getLogger(LoadAccountsTask.class);
-
-    private final Path file;
+    private final Path source;
     private final Gson gson;
     private final CountDownLatch latch;
 
-    LoadAccountsTask(@Nonnull final Path file,
+    LoadAccountsTask(@Nonnull final Path source,
                      @Nonnull final Gson gson,
                      @Nullable final CountDownLatch latch){
-        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(source);
         Preconditions.checkNotNull(gson);
-        this.file = file;
+        this.source = source;
         this.gson = gson;
         this.latch = latch;
     }
 
-    public Path getFile(){
-        return this.file;
+    public Path getSource(){
+        return this.source;
     }
 
     public Gson getGson(){
         return this.gson;
     }
 
-    private Optional<CountDownLatch> getLatch(){
+    public Optional<CountDownLatch> getLatch(){
         return Optional.ofNullable(this.latch);
+    }
+
+    private List<Path> findAccountFiles() throws IOException{
+        try(Stream<Path> walk = Files.walk(this.getSource())){
+            return walk
+                .filter(Files::isRegularFile)
+                .filter(Utils.getAccountFilePredicate())
+                .collect(Collectors.toList());
+        }
     }
 
     @Override
     public void run() {
-        if(!Files.exists(this.getFile())){
-            this.getLatch()
-                .ifPresent(CountDownLatch::countDown);
-            return;
-        }
+        try{
+            final List<Path> found = this.findAccountFiles();
+            final CountDownLatch latch = new CountDownLatch(found.size());
 
-        try(InputStream is = Files.newInputStream(this.getFile())){
-            final List<AbstractAccount> accounts = this.getGson()
-                .fromJson(new InputStreamReader(is), AccountManager.ACCOUNT_LIST_TYPE);
+            LOG.info("loading {} accounts....", found.size());
+            found.stream()
+                .map(createTask(latch))
+                .forEach(AppTaskEngine::submit);
 
-            if(accounts != null && !accounts.isEmpty()){
-                accounts.stream()
-                    .filter(LoadAccountsTask::isMojangAccount)
-                    .map((acc) -> (MojangAccount)acc)
-                    .forEach(LoadAccountsTask::decryptMojangAccountPassword);
-
-                final Optional<AbstractAccount> account = accounts.stream()
-                    .filter(LoadAccountsTask::isLastAccount)
-                    .findAny();
-
-                AccountManager.setAccounts(accounts);
-                AccountManager.setSelectedAccount(account.orElseGet(() -> accounts.get(0)));
-            }
-        } catch (IOException exc) {
-            LOG.error("error loading accounts: ", exc);
+            latch.await();
+        } catch(Exception exc){
+            LOG.error("error loading accounts in {}", this.getSource(), exc);
         } finally{
-            //TODO: notify listeners
-            this.getLatch()
-                .ifPresent(CountDownLatch::countDown);
+            LOG.debug("Finished loading accounts.");
+            this.getLatch().ifPresent(CountDownLatch::countDown);
         }
     }
 
-    private static boolean isLastAccount(final AbstractAccount account){
-        return account.username.equalsIgnoreCase(App.settings.lastAccount);
-    }
-
-    private static boolean isMojangAccount(final AbstractAccount account){
-        return account instanceof MojangAccount;
-    }
-
-    private static void decryptMojangAccountPassword(final MojangAccount account){
-        if(account.encryptedPassword == null){
-            account.password = "";
-            account.remember = false;
-        } else{
-            account.password = Utils.decrypt(account.encryptedPassword);
-            if(account.password == null){
-                LOG.error("error decrypting password saved in file.");
-                account.password = "";
-                account.remember = false;
-            }
-        }
+    private Function<Path, LoadAccountTask> createTask(final CountDownLatch latch){
+        return (path) -> LoadAccountTask.of(path)
+            .withLatch(latch)
+            .build();
     }
 
     public static final class Builder{

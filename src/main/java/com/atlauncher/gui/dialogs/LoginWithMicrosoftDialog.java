@@ -187,6 +187,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 profile);
 
             AccountManager.addAccount(account);
+            AccountManager.saveAccounts();
         }
     }
 

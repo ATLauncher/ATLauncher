@@ -1074,6 +1074,10 @@ public class Utils {
         return (path) -> Files.exists(path.resolve("server.json"));
     }
 
+    public static Predicate<Path> getAccountFilePredicate(){
+        return (path) -> path.toString().endsWith(".json");
+    }
+
     /**
      * Gets the open eye pending reports file filter.
      *

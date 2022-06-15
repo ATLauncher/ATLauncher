@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.AppTaskEngine;
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.events.account.AccountAddedEvent;
 import com.atlauncher.events.account.AccountChangedEvent;
@@ -28,6 +29,7 @@ import com.atlauncher.events.account.AccountRemovedEvent;
 import com.atlauncher.task.ConvertAccountsTask;
 import com.atlauncher.task.LoadAccountsTask;
 import com.atlauncher.task.SaveAccountsTask;
+import com.atlauncher.task.account.SaveAccountTask;
 import com.google.common.base.Preconditions;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
@@ -68,6 +70,7 @@ public class AccountManager {
 
     public static void setSelectedAccount(@Nullable final AbstractAccount account){
         currentRef.getAndSet(account);
+        AppEventBus.post(AccountChangedEvent.of(account));
     }
 
     public static void setAccounts(@Nonnull final Collection<AbstractAccount> accounts){
@@ -136,9 +139,24 @@ public class AccountManager {
     }
 
     public static void saveAccounts() {
-        final SaveAccountsTask task = SaveAccountsTask.of(FileSystem.ACCOUNTS)
+        //TODO: implement
+    }
+
+    private static void saveAccount(final AbstractAccount account){
+        final CountDownLatch latch = new CountDownLatch(1);
+        final SaveAccountTask task = SaveAccountTask.of(account, FileSystem.ACCOUNTS.resolve(account.getUUIDNoDashes() + ".json"))
+            .withGson(Gsons.DEFAULT)
+            .withLatch(latch)
             .build();
+
         AppTaskEngine.submit(task);
+
+        try{
+            latch.await();
+            LOG.info("account saved");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void registerAccount(final AbstractAccount account){
@@ -151,7 +169,9 @@ public class AccountManager {
         }
     }
 
-    public static void addAccount(@Nonnull AbstractAccount account) {
+    public static void addAccount(@Nonnull final AbstractAccount account) {
+        Preconditions.checkNotNull(account);
+
         registerAccount(account);
         if (getNumberOfAccounts() > 1) {
             // not first account? ask if they want to switch to it
@@ -169,8 +189,9 @@ public class AccountManager {
             // first account? switch to it immediately
             switchAccount(account);
         }
-        AppEventBus.postToDefault(AccountAddedEvent.of(account));
-        saveAccounts();
+
+        saveAccount(account);
+        AppEventBus.post(AccountAddedEvent.of(account));
     }
 
     private static Optional<AbstractAccount> getFirstAccount(){
@@ -193,7 +214,7 @@ public class AccountManager {
 
         loaded.remove(account);
         saveAccounts();
-        AppEventBus.postToDefault(AccountRemovedEvent.of(account));
+        AppEventBus.post(AccountRemovedEvent.of(account));
     }
 
     /**
@@ -216,7 +237,7 @@ public class AccountManager {
         App.launcher.reloadInstancesPanel();
         App.launcher.reloadServersPanel();
 
-        AppEventBus.postToDefault(AccountChangedEvent.of(account));
+        AppEventBus.post(AccountChangedEvent.of(account));
         App.settings.save();
     }
 

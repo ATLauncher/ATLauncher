@@ -70,7 +70,7 @@ public final class FileSystem {
     public static final Path USER_DATA = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
     public static final Path SETTINGS = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".json");
-    public static final Path ACCOUNTS = CONFIGS.resolve("accounts.json");
+    public static final Path ACCOUNTS = CONFIGS.resolve("accounts");
 
     /**
      * This will organise the file system. This will remove old folders, create
@@ -218,6 +218,7 @@ public final class FileSystem {
         FileUtils.createDirectory(TEMP);
 
         FileUtils.createDirectory(CONFIGS);
+        FileUtils.createDirectory(ACCOUNTS);
         FileUtils.createDirectory(COMMON);
         FileUtils.createDirectory(IMAGES);
         FileUtils.createDirectory(SKINS);
