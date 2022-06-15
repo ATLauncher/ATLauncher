@@ -43,7 +43,7 @@ import java.io.File;
 import java.io.IOException;
 
 @SuppressWarnings("serial")
-public class ServerCard extends CollapsiblePanel {
+public class ServerCard extends CollapsiblePanel implements Card{
     private static final Logger LOG = LogManager.getLogger(ServerCard.class);
     private final Server server;
     private final ImagePanel image;

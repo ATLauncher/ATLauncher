@@ -89,13 +89,13 @@ public class ServerManager {
     public static void addServer(@Nonnull final Server server){
         Preconditions.checkNotNull(server);
         registerServer(server);
-        AppEventBus.postToDefault(ServerAddedEvent.of(server));
+        AppEventBus.post(ServerAddedEvent.of(server));
     }
 
     public static void removeServer(@Nonnull final Server server) {
         Preconditions.checkNotNull(server);
         unregisterServer(server);
-        AppEventBus.postToDefault(ServerRemovedEvent.of(server));
+        AppEventBus.post(ServerRemovedEvent.of(server));
     }
 
     public static boolean isServer(String name) {

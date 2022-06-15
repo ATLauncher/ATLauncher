@@ -33,7 +33,7 @@ import java.awt.*;
  * Class for displaying packs in the Pack Tab.
  */
 @SuppressWarnings("serial")
-public class NilCard extends JPanel {
+public class NilCard extends JPanel implements Card{
     private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png").getImage();
 
     private final JTextArea error = new JTextArea();
