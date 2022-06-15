@@ -89,7 +89,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Main entry point for the application, Java runs the main method here when the
@@ -100,11 +99,8 @@ public class App {
     private static Injector INJECTOR = null;
 
     public static String[] PASSED_ARGS;
-
-    /**
-     * The taskpool used to quickly add in tasks to do in the background.
-     */
-    public static final ExecutorService TASKPOOL = Executors.newFixedThreadPool(2);
+    public static ExecutorService TASKPOOL = null; //TODO: remove reference
+    public static AppTaskEngine TASK_ENGINE = null;//TODO: remove reference
 
     /**
      * The instance of toaster to show popups in the bottom right.
@@ -299,6 +295,8 @@ public class App {
         // check for bad install locations (OneDrive, Program Files)
         checkForBadFolderInstall();
 
+        TASKPOOL = INJECTOR.getInstance(Key.get(ExecutorService.class).withAnnotation(Names.named("taskPool")));//TODO: remove this assignment
+        TASK_ENGINE = INJECTOR.getInstance(AppTaskEngine.class); //TODO: remove this assignment
         // Setup the Launcher and wait for it to finish.
         launcher = INJECTOR.getInstance(Launcher.class);
 

@@ -27,7 +27,7 @@ extends AbstractModule{
 
     @Provides
     @Named("CurrentTheme")
-    public String getCurrentTheme(){
+    public String getCurrentTheme(){//TODO: refactor this
         return App.settings.theme;
     }
 }

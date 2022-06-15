@@ -1,5 +1,6 @@
 package com.atlauncher.task;
 
+import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
 import com.atlauncher.AppTaskEngine;
 import com.atlauncher.Gsons;
@@ -71,7 +72,7 @@ public final class SaveAccountsTask implements Task{
             final CountDownLatch latch = new CountDownLatch(accounts.size());
             accounts.stream()
                 .map(createTask(latch))
-                .forEach(AppTaskEngine::submit);
+                .forEach(App.TASK_ENGINE::submit);
 
             latch.await();
         } catch(Exception exc){

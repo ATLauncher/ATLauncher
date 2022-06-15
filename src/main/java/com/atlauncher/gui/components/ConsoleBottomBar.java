@@ -19,6 +19,7 @@ package com.atlauncher.gui.components;
 
 import com.atlauncher.App;
 import com.atlauncher.AppEventBus;
+import com.atlauncher.AppTaskEngine;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.events.launcher.CopyLogEvent;
@@ -33,11 +34,14 @@ import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar {
@@ -49,8 +53,8 @@ public class ConsoleBottomBar extends BottomBar {
     private final JButton killMinecraftButton = new JButton(GetText.tr("Kill Minecraft"));
 
     @Inject
-    private ConsoleBottomBar() {
-        this.addActionListeners(); // Setup Action Listeners
+    private ConsoleBottomBar(@Named("taskPool") final ExecutorService taskPool) { //TODO: move to task engine
+        this.addActionListeners(taskPool); // Setup Action Listeners
 
         JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 13));
         leftSide.add(this.clearButton);
@@ -68,7 +72,7 @@ public class ConsoleBottomBar extends BottomBar {
     /**
      * Sets up the action listeners on the buttons
      */
-    private void addActionListeners() {
+    private void addActionListeners(final ExecutorService taskPool) {
         clearButton.addActionListener(e -> {
             App.console.clearConsole();
             LOG.info("Console Cleared");
@@ -88,7 +92,7 @@ public class ConsoleBottomBar extends BottomBar {
 
             dialog.addThread(new Thread(() -> {
                 try {
-                    dialog.setReturnValue(App.TASKPOOL.submit(new PasteUpload()).get());
+                    dialog.setReturnValue(taskPool.submit(new PasteUpload()).get());
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                     dialog.setReturnValue(null);

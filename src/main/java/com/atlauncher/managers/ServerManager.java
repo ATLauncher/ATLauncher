@@ -68,7 +68,7 @@ public class ServerManager {
     public static void loadServers() {
         final LoadServersTask task = LoadServersTask.of(FileSystem.SERVERS)
             .build();
-        AppTaskEngine.submit(task);
+        App.TASK_ENGINE.submit(task);
     }
 
     public static void setServerVisibility(Server server, boolean collapsed) {

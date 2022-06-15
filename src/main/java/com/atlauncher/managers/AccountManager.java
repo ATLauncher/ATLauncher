@@ -116,7 +116,7 @@ public class AccountManager {
         final LoadAccountsTask task = LoadAccountsTask.of(FileSystem.ACCOUNTS)
             .withLatch(latch)
             .build();
-        AppTaskEngine.submit(task);
+        App.TASK_ENGINE.submit(task);
 
         try{
             latch.await();
@@ -135,7 +135,7 @@ public class AccountManager {
     private static void convertAccounts() {
         final ConvertAccountsTask task = ConvertAccountsTask.of(FileSystem.ACCOUNTS)
             .build();
-        AppTaskEngine.submit(task);
+        App.TASK_ENGINE.submit(task);
     }
 
     public static void saveAccounts() {
@@ -149,7 +149,7 @@ public class AccountManager {
             .withLatch(latch)
             .build();
 
-        AppTaskEngine.submit(task);
+        App.TASK_ENGINE.submit(task);
 
         try{
             latch.await();

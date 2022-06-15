@@ -1,5 +1,6 @@
 package com.atlauncher.task;
 
+import com.atlauncher.App;
 import com.atlauncher.AppTaskEngine;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.Utils;
@@ -59,7 +60,7 @@ public final class LoadServersTask implements Task{
             // create and schedule tasks
             found.stream()
                 .map(newTask(latch))
-                .forEach(AppTaskEngine::submit);
+                .forEach(App.TASK_ENGINE::submit);
             // wait for tasks to be done
             latch.await();
         } catch(Exception exc){

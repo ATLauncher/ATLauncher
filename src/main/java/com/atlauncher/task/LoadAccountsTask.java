@@ -74,7 +74,7 @@ public final class LoadAccountsTask implements Task{
             LOG.info("loading {} accounts....", found.size());
             found.stream()
                 .map(createTask(latch))
-                .forEach(AppTaskEngine::submit);
+                .forEach(App.TASK_ENGINE::submit);
 
             latch.await();
         } catch(Exception exc){

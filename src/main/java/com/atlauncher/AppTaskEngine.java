@@ -4,17 +4,22 @@ import com.atlauncher.task.Task;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 
+@Singleton
 public final class AppTaskEngine{
-    static final ExecutorService pool = Executors.newWorkStealingPool();
+    private final ExecutorService pool;
 
-    private AppTaskEngine(){}
+    @Inject
+    private AppTaskEngine(@Named("taskPool") final ExecutorService pool){
+        this.pool = pool;
+    }
 
-    public static Future<?> submit(final Task task){
+    public Future<?> submit(final Task task){
         return pool.submit(task);
     }
 }
