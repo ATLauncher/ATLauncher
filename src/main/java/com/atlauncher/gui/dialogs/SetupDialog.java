@@ -17,37 +17,28 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Language;
+import com.atlauncher.events.SetupDialogCompleteEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import org.mini2Dx.gettext.GetText;
-
-import com.atlauncher.App;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.Language;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-
-public class SetupDialog extends JDialog implements RelocalizationListener {
+public class SetupDialog extends JDialog {
     private static final long serialVersionUID = -2931970914611329658L;
 
     private final JLabel setupLabel;
@@ -143,7 +134,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
 
             if (enableAnalytics.isSelected()) {
                 Analytics.startSession();
-                Analytics.sendEvent("SetupDialogComplete", "Launcher");
+                AppEventBus.postToDefault(SetupDialogCompleteEvent.of());
             }
 
             setVisible(false);
@@ -161,13 +152,13 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
             }
         });
 
-        RelocalizationManager.addListener(this);
-
         setVisible(true);
+
+        AppEventBus.register(this);
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         setupLabel.setText(GetText.tr("Setting up {0}", Constants.LAUNCHER_NAME));
         languageLabel.setText(GetText.tr("Language") + ": ");
         enableAnalyticsLabel.setText(GetText.tr("Enable Anonymous Analytics") + "? ");

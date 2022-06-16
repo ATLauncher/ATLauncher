@@ -17,10 +17,10 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.atlauncher.App;
 
 public final class Timestamper {
     private static final SimpleDateFormat format = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");

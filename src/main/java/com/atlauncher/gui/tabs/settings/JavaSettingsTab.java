@@ -42,16 +42,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.settings.SettingsSavedEvent;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Java;
@@ -59,7 +61,7 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
 @SuppressWarnings("serial")
-public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener, SettingsListener {
+public class JavaSettingsTab extends AbstractSettingsTab {
     private final JLabelWithHover initialMemoryLabel;
     private final JSpinner initialMemory;
     private final JLabelWithHover initialMemoryLabelWarning;
@@ -103,8 +105,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     public JavaSettingsTab() {
         int systemRam = OS.getSystemRam();
 
-        RelocalizationManager.addListener(this);
-        SettingsManager.addListener(this);
+        AppEventBus.register(this);
 
         // Initial Memory Settings
         gbc.gridx = 0;
@@ -629,8 +630,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         return "Java/Minecraft";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event){
         this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
                 "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
                 .build());
@@ -685,8 +686,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 .build());
     }
 
-    @Override
-    public void onSettingsSaved() {
-        javaPath.setText(App.settings.javaPath);
+    @Subscribe
+    @OnSide(Side.UI)
+    public void onSettingsSaved(final SettingsSavedEvent event){
+        this.javaPath.setText(App.settings.javaPath);
     }
 }

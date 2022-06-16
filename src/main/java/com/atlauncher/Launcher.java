@@ -34,6 +34,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import com.atlauncher.events.UpdateLauncherEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
@@ -171,7 +172,7 @@ public class Launcher {
             }
             File newFile = FileSystem.TEMP.resolve(saveAs).toFile();
             LOG.info("Downloading Launcher Update");
-            Analytics.sendEvent("Update", "Launcher");
+            AppEventBus.postToDefault(UpdateLauncherEvent.newInstance());
 
             ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Launcher Update"), 1,
                     GetText.tr("Downloading Launcher Update"));

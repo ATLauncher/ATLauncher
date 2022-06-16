@@ -17,38 +17,17 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.ThemeListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.events.NavigationEvent;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.events.SearchEvent;
+import com.atlauncher.events.Side;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.theme.ThemeChangedEvent;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherFeaturedPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
@@ -60,13 +39,23 @@ import com.atlauncher.gui.panels.packbrowser.TechnicPacksPanel;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
+import com.google.common.eventbus.Subscribe;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("serial")
-public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener, ThemeListener {
+public final class PacksBrowserTab extends JPanel implements Tab {
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
@@ -107,11 +96,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     public PacksBrowserTab() {
         super(new BorderLayout());
-        setName("packsBrowserPanel");
-        RelocalizationManager.addListener(this);
-        ThemeManager.addListener(this);
-
-        initComponents();
+        this.setName("packsBrowserPanel");
+        this.initComponents();
+        AppEventBus.register(this);
     }
 
     private void initComponents() {
@@ -296,9 +283,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
                     .getSelectedComponent();
 
-            // send analytics page view
-            Analytics.sendScreenView(selectedPanel.getPlatformName() + " Platform Packs");
-
+            AppEventBus.postToDefault(ScreenViewEvent.forScreen(String.format("%s Platform Packs", selectedPanel.getPlatformName())));
             afterTabChange();
         });
 
@@ -401,7 +386,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             platformTabbedPane.setEnabled(false);
             page += 1;
 
-            Analytics.sendEvent(page, "Next", "Navigation", selectedPanel.getAnalyticsCategory());
+            AppEventBus.postToDefault(NavigationEvent.nextPage(page, selectedPanel));
 
             // load in the content for the platform
             new Thread(() -> {
@@ -448,7 +433,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         platformTabbedPane.setEnabled(false);
 
         if (!searchField.getText().isEmpty()) {
-            Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
+            AppEventBus.postToDefault(SearchEvent.forTextField(searchField, selectedPanel));
         }
 
         // load in the content for the platform
@@ -514,16 +499,16 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         return "ATLauncher Platform Packs";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public void onLocalizationChanged(final LocalizationChangedEvent event) {
         categoriesLabel.setText(GetText.tr("Category:"));
         sortLabel.setText(GetText.tr("Sort:"));
-
         searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
     }
 
-    @Override
-    public void onThemeChange() {
+    @Subscribe
+    @OnSide(Side.UI)
+    public void onThemeChanged(final ThemeChangedEvent event) {
         ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
         descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));
     }

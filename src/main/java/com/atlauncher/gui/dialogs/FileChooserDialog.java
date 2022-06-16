@@ -17,39 +17,22 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FileDialog;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.dbus.DBusUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class FileChooserDialog extends JDialog {
@@ -63,7 +46,7 @@ public class FileChooserDialog extends JDialog {
     private boolean closed = false;
 
     public FileChooserDialog(Window parent, String title, String labelName, String bottomText, String selectorText,
-            String[] subOptions) {
+                             String[] subOptions) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         setSize(400, 175);
         setMinimumSize(new Dimension(400, 175));

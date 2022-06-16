@@ -17,18 +17,18 @@
  */
 package com.atlauncher.utils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class LoggingUtils {
     private static final Pattern LOG4J_THREAD_REGEX = Pattern.compile("<log4j:Event.*?thread=\"(.*?)\".*?>");
     private static final Pattern LOG4J_LEVEL_REGEX = Pattern.compile("<log4j:Event.*?level=\"(.*?)\".*?>");
     private static final Pattern LOG4J_MESSAGE_REGEX = Pattern
-            .compile("<log4j:Message><!\\[CDATA\\[(.*?)\\]\\]></log4j:Message>");
+        .compile("<log4j:Message><!\\[CDATA\\[(.*?)\\]\\]></log4j:Message>");
 
     private static final Logger MINECRAFT_LOG = LogManager.getLogger("Minecraft");
 

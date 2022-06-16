@@ -17,30 +17,8 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Window;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
@@ -48,16 +26,29 @@ import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileDependency;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.events.AddFileEvent;
+import com.atlauncher.events.ScreenViewEvent;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.CurseForgeFileDependencyCard;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.OS;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("serial")
 public class CurseForgeProjectFileSelectorDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "CurseForge Project File Selector Dialog";
     private static final Logger LOG = LogManager.getLogger(CurseForgeProjectFileSelectorDialog.class);
 
     private int filesLength = 0;
@@ -89,7 +80,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance,
-            int installedFileId) {
+                                               int installedFileId) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
@@ -100,7 +91,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("CurseForge Project File Selector Dialog");
+        AppEventBus.postToDefault(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.name));
@@ -123,7 +114,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
         dependenciesPanel.setVisible(false);
         dependenciesPanel
-                .setBorder(BorderFactory.createTitledBorder(GetText.tr("The below mods need to be installed")));
+            .setBorder(BorderFactory.createTitledBorder(GetText.tr("The below mods need to be installed")));
 
         // Top Panel Stuff
         JPanel top = new JPanel(new BorderLayout());
@@ -168,10 +159,10 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
             ProgressDialog progressDialog = new ProgressDialog<>(
-                    // #. {0} is the name of the mod we're installing
-                    GetText.tr("Installing {0}", file.displayName), false, this);
+                // #. {0} is the name of the mod we're installing
+                GetText.tr("Installing {0}", file.displayName), false, this);
             progressDialog.addThread(new Thread(() -> {
-                Analytics.sendEvent(mod.name + " - " + file.displayName, "AddFile", "CurseForgeMod");
+                AppEventBus.postToDefault(AddFileEvent.forCurseForgeMod(this.mod, file));
                 instance.addFileFromCurseForge(mod, file, progressDialog);
 
                 progressDialog.close();
@@ -220,29 +211,29 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         if (selectedFile.dependencies.size() != 0) {
             // check to see which required ones we don't already have
             List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
-                    .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
-                            .noneMatch(installedMod -> {
-                                if (instance.getLoaderVersion().isQuilt()
-                                        && dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID) {
-                                    // if on Quilt and the dependency is Fabric API, then don't show it if user
-                                    // already has QSL installed
-                                    return instance.launcher.mods.parallelStream().anyMatch(m -> m.isFromModrinth()
-                                            && m.modrinthProject.id.equals(Constants.MODRINTH_QSL_MOD_ID));
-                                }
+                .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
+                    .noneMatch(installedMod -> {
+                        if (instance.getLoaderVersion().isQuilt()
+                            && dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID) {
+                            // if on Quilt and the dependency is Fabric API, then don't show it if user
+                            // already has QSL installed
+                            return instance.launcher.mods.parallelStream().anyMatch(m -> m.isFromModrinth()
+                                && m.modrinthProject.id.equals(Constants.MODRINTH_QSL_MOD_ID));
+                        }
 
-                                return installedMod.isFromCurseForge()
-                                        && installedMod.getCurseForgeModId() == dependency.modId;
-                            }))
-                    .collect(Collectors.toList());
+                        return installedMod.isFromCurseForge()
+                            && installedMod.getCurseForgeModId() == dependency.modId;
+                    }))
+                .collect(Collectors.toList());
 
             if (dependencies.size() != 0) {
                 dependenciesPanel.removeAll();
 
                 dependencies.forEach(dependency -> dependenciesPanel
-                        .add(new CurseForgeFileDependencyCard(this, dependency, instance)));
+                    .add(new CurseForgeFileDependencyCard(this, dependency, instance)));
 
                 dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
-                        (dependencies.size() / 2) + 1));
+                    (dependencies.size() / 2) + 1));
 
                 setSize(550, 450);
                 setLocationRelativeTo(App.launcher.getParent());
@@ -267,21 +258,21 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
             Stream<CurseForgeFile> curseForgeFilesStream = CurseForgeApi.getFilesForProject(mod.id).stream()
-                    .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+                .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                 curseForgeFilesStream = curseForgeFilesStream.filter(
-                        file -> mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
-                                || file.gameVersions.contains(this.instance.id));
+                    file -> mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
+                        || file.gameVersions.contains(this.instance.id));
             } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                 try {
                     List<String> minecraftVersionsToSearch = MinecraftManager
-                            .getMajorMinecraftVersions(this.instance.id).stream().map(mv -> mv.id)
-                            .collect(Collectors.toList());
+                        .getMajorMinecraftVersions(this.instance.id).stream().map(mv -> mv.id)
+                        .collect(Collectors.toList());
 
                     curseForgeFilesStream = curseForgeFilesStream
-                            .filter(v -> v.gameVersions.stream()
-                                    .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                        .filter(v -> v.gameVersions.stream()
+                            .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                 } catch (InvalidMinecraftVersion e) {
                     LOG.error("error", e);
                 }
@@ -291,12 +282,12 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             // and not our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                 if (cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Fabric") && loaderVersion != null
-                        && (loaderVersion.isFabric() || loaderVersion.isQuilt())) {
+                    && (loaderVersion.isFabric() || loaderVersion.isQuilt())) {
                     return false;
                 }
 
                 if (cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge") && loaderVersion != null
-                        && !loaderVersion.isFabric() && !loaderVersion.isQuilt()) {
+                    && !loaderVersion.isFabric() && !loaderVersion.isQuilt()) {
                     return false;
                 }
 
@@ -308,7 +299,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             // ensures that font width is taken into account
             for (CurseForgeFile file : files) {
                 filesLength = Math.max(filesLength,
-                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
+                    getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.displayName) + 100);
             }
 
             filesDropdown.removeAllItems();
@@ -325,15 +316,15 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
                         if (loaderVersion != null && loaderVersion.isFabric()) {
                             return !displayName.contains("-forge-") && !displayName.contains("(forge)")
-                                    && !displayName.contains("[forge") && !fileName.contains("forgemod");
+                                && !displayName.contains("[forge") && !fileName.contains("forgemod");
                         }
 
                         if (loaderVersion != null && !loaderVersion.isFabric()) {
                             // if it's Forge, and the gameVersion has "Fabric" then exclude it
                             return version.gameVersions.contains("Fabric")
-                                    || (!displayName.toLowerCase().contains("-fabric-")
-                                            && !displayName.contains("(fabric)")
-                                            && !displayName.contains("[fabric") && !fileName.contains("fabricmod"));
+                                || (!displayName.toLowerCase().contains("-fabric-")
+                                && !displayName.contains("(fabric)")
+                                && !displayName.contains("[fabric") && !fileName.contains("fabricmod"));
                         }
                     }
 
@@ -343,13 +334,13 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             if (filesDropdown.getItemCount() == 0) {
                 DialogManager.okDialog().setParent(CurseForgeProjectFileSelectorDialog.this).setTitle("No files found")
-                        .setContent("No files found for this mod").setType(DialogManager.ERROR).show();
+                    .setContent("No files found for this mod").setType(DialogManager.ERROR).show();
                 dispose();
             }
 
             if (this.installedFileId != null) {
                 CurseForgeFile installedFile = files.stream().filter(f -> f.id == this.installedFileId).findFirst()
-                        .orElse(null);
+                    .orElse(null);
 
                 if (installedFile != null) {
                     filesDropdown.setSelectedItem(installedFile);

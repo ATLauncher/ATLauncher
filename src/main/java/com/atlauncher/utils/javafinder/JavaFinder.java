@@ -17,6 +17,10 @@
  */
 package com.atlauncher.utils.javafinder;
 
+import com.atlauncher.managers.PerformanceManager;
+import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
+
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.nio.file.FileSystems;
@@ -32,10 +36,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.atlauncher.managers.PerformanceManager;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 public class JavaFinder {
     private static SoftReference<List<String>> javaPaths = new SoftReference<>(null);
@@ -56,24 +56,24 @@ public class JavaFinder {
 
                 PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java.exe");
 
-                String[] pathsToSearch = { "Java", "Amazon Corretto", "AdoptOpenJDK", "Eclipse Foundation" };
+                String[] pathsToSearch = {"Java", "Amazon Corretto", "AdoptOpenJDK", "Eclipse Foundation"};
 
                 for (String searchPath : pathsToSearch) {
                     List<String> foundPaths = new ArrayList<>();
 
                     try {
                         Files.walkFileTree(Paths.get(System.getenv("programfiles"), searchPath),
-                                EnumSet.noneOf(FileVisitOption.class), 10, new SimpleFileVisitor<Path>() {
-                                    @Override
-                                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
-                                            throws IOException {
-                                        if (pathMatcher.matches(path)) {
-                                            foundPaths.add(path.toString());
-                                        }
-
-                                        return FileVisitResult.CONTINUE;
+                            EnumSet.noneOf(FileVisitOption.class), 10, new SimpleFileVisitor<Path>() {
+                                @Override
+                                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                                    throws IOException {
+                                    if (pathMatcher.matches(path)) {
+                                        foundPaths.add(path.toString());
                                     }
-                                });
+
+                                    return FileVisitResult.CONTINUE;
+                                }
+                            });
                     } catch (Exception ignored) {
                     }
 
@@ -86,24 +86,24 @@ public class JavaFinder {
             if (OS.isLinux()) {
                 PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java");
 
-                String[] pathsToSearch = { "/usr/java", "/usr/lib/jvm", "/usr/lib32/jvm" };
+                String[] pathsToSearch = {"/usr/java", "/usr/lib/jvm", "/usr/lib32/jvm"};
 
                 for (String searchPath : pathsToSearch) {
                     List<String> foundPaths = new ArrayList<>();
 
                     try {
                         Files.walkFileTree(Paths.get(searchPath), EnumSet.noneOf(FileVisitOption.class), 10,
-                                new SimpleFileVisitor<Path>() {
-                                    @Override
-                                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
-                                            throws IOException {
-                                        if (pathMatcher.matches(path)) {
-                                            foundPaths.add(path.toString());
-                                        }
-
-                                        return FileVisitResult.CONTINUE;
+                            new SimpleFileVisitor<Path>() {
+                                @Override
+                                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                                    throws IOException {
+                                    if (pathMatcher.matches(path)) {
+                                        foundPaths.add(path.toString());
                                     }
-                                });
+
+                                    return FileVisitResult.CONTINUE;
+                                }
+                            });
                     } catch (Exception ignored) {
                     }
 
@@ -118,7 +118,7 @@ public class JavaFinder {
 
         PerformanceManager.end();
         return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(JavaInfo::new)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 
     // Inspired by
@@ -127,7 +127,7 @@ public class JavaFinder {
         List<String> versions = new ArrayList<>();
 
         String output = Utils.runProcess("reg", "query", "HKEY_LOCAL_MACHINE\\Software\\JavaSoft\\", "/f", "Home", "/t",
-                "REG_SZ", "/s", "/reg:" + bitness);
+            "REG_SZ", "/s", "/reg:" + bitness);
 
         for (String line : output.split("\\r?\\n")) {
             if (line.contains("REG_SZ")) {

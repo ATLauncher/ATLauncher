@@ -43,23 +43,26 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.ThemeListener;
-import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.events.OnSide;
+import com.atlauncher.events.Side;
+import com.atlauncher.events.theme.ThemeChangedEvent;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
+import com.google.common.eventbus.Subscribe;
 
 /**
  * The user-triggered collapsible panel containing the component (trigger) in
  * the titled border
  */
-public class CollapsiblePanel extends JPanel implements ThemeListener {
+public class CollapsiblePanel extends JPanel {
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type
@@ -122,7 +125,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
 
         try {
             title = String.format(App.settings.instanceTitleFormat, instance.launcher.name, instance.launcher.pack,
-                    instance.launcher.version, instance.id);
+                instance.launcher.version, instance.id);
         } catch (Throwable t) {
             title = instance.launcher.name;
         }
@@ -193,7 +196,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         setCollapsed(collapsed);
         placeTitleComponent();
 
-        ThemeManager.addListener(this);
+        AppEventBus.register(this);
     }
 
     /**
@@ -462,12 +465,13 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         }
     }
 
-    @Override
-    public void onThemeChange() {
+    @Subscribe
+    @OnSide(Side.UI)
+    public final void onThemeChanged(final ThemeChangedEvent event) {
         iconArrow = createExpandAndCollapseIcon();
 
         // force state
-        setCollapsed(collapsed);
+        this.setCollapsed(collapsed);
     }
 
 }

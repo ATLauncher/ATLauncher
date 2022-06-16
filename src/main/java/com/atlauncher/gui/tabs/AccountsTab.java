@@ -17,43 +17,20 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ItemEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.UUID;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.event.HyperlinkEvent;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.account.AccountChangedEvent;
+import com.atlauncher.events.account.AccountDeletedEvent;
+import com.atlauncher.events.account.AccountEditEvent;
+import com.atlauncher.events.account.AccountRefreshAccessTokenEvent;
+import com.atlauncher.events.account.AccountSkinUpdatedEvent;
+import com.atlauncher.events.account.AccountUpdateUsernameEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
@@ -63,8 +40,22 @@ import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
+import com.google.common.eventbus.Subscribe;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
 
-public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.UUID;
+
+public class AccountsTab extends JPanel implements Tab {
     private static final Logger LOG = LogManager.getLogger(AccountsTab.class);
     private static final long serialVersionUID = 2493791137600123223L;
 
@@ -86,8 +77,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     @SuppressWarnings("unchecked")
     public AccountsTab() {
         setLayout(new BorderLayout());
-
-        RelocalizationManager.addListener(this);
+        AppEventBus.register(this);
 
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BorderLayout());
@@ -278,7 +268,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                         .setContent(GetText.tr("Are you sure you want to delete this account?"))
                         .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
-                    Analytics.sendEvent("Delete", "Account");
+                    AppEventBus.postToDefault(AccountDeletedEvent.newInstance());
                     AccountManager.removeAccount(account);
                     accountsComboBox.removeAllItems();
                     accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
@@ -433,10 +423,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                     mojangAccount.store = response.getAuth().saveForStorage();
 
                     AccountManager.saveAccounts();
-                    com.atlauncher.evnt.manager.AccountManager.post();
+                    AppEventBus.post(AccountChangedEvent.forCurrentAccount());
                 }
 
-                Analytics.sendEvent("Edit", "Account");
+                AppEventBus.postToDefault(AccountEditEvent.newInstance());
                 LOG.info("Edited Account {}", account);
                 DialogManager.okDialog().setTitle(GetText.tr("Account Edited"))
                         .setContent(GetText.tr("Account edited successfully")).setType(DialogManager.INFO).show();
@@ -467,8 +457,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         return "Accounts";
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         if (accountsComboBox.getSelectedIndex() == 0) {
             leftButton.setText(GetText.tr("Add"));
             rightButton.setText(GetText.tr("Clear"));

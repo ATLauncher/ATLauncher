@@ -17,31 +17,8 @@
  */
 package com.atlauncher.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Window;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
@@ -52,6 +29,13 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
+import com.atlauncher.events.AddFabricApiEvent;
+import com.atlauncher.events.AddModEvent;
+import com.atlauncher.events.AddQuiltLibrariesEvent;
+import com.atlauncher.events.AnalyticsCategories;
+import com.atlauncher.events.NavigationEvent;
+import com.atlauncher.events.ScreenViewEvent;
+import com.atlauncher.events.SearchEvent;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.CurseForgeProjectCard;
 import com.atlauncher.gui.card.ModrinthSearchHitCard;
@@ -61,14 +45,23 @@ import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
+    private static final String ANALYTICS_SCREEN_NAME = "Add Mods Dialog";
     private static final Logger LOG = LogManager.getLogger(AddModsDialog.class);
 
     private final Instance instance;
@@ -175,7 +168,7 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("Add Mods Dialog");
+        AppEventBus.post(ScreenViewEvent.forScreen(ANALYTICS_SCREEN_NAME));
 
         this.topPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
@@ -214,7 +207,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.sendEvent("AddFabricApi", "CurseForgeMod");
+                AppEventBus.post(AddFabricApiEvent.forCurseForgeMod());
                 new CurseForgeProjectFileSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -249,7 +242,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.sendEvent("AddFabricApi", "ModrinthMod");
+                AppEventBus.post(AddFabricApiEvent.forModrinthMod());
                 new ModrinthVersionSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -288,7 +281,7 @@ public final class AddModsDialog extends JDialog {
                 return;
             }
 
-            Analytics.sendEvent("AddQuiltStandardLibraries", "ModrinthMod");
+            AppEventBus.post(AddQuiltLibrariesEvent.forModrinthMod());
             new ModrinthVersionSelectorDialog(this, mod, instance);
 
             if (instance.launcher.mods.stream().anyMatch(
@@ -425,8 +418,7 @@ public final class AddModsDialog extends JDialog {
             page -= 1;
         }
 
-        Analytics.sendEvent(page, "Previous", "Navigation", "CurseForgeMod");
-
+        AppEventBus.post(NavigationEvent.previousPage(page, AnalyticsCategories.CURSE_FORGE_MOD));
         getMods();
     }
 
@@ -435,8 +427,7 @@ public final class AddModsDialog extends JDialog {
             page += 1;
         }
 
-        Analytics.sendEvent(page, "Next", "Navigation", "CurseForgeMod");
-
+        AppEventBus.post(NavigationEvent.nextPage(page, AnalyticsCategories.CURSE_FORGE_MOD));
         getMods();
     }
 
@@ -513,10 +504,7 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void searchForMods() {
-        String query = searchField.getText();
-
-        Analytics.sendEvent(query, "Search", "CurseForgeMod");
-
+        AppEventBus.post(SearchEvent.forCurseForgeMod(this.searchField));
         getMods();
     }
 
@@ -543,7 +531,7 @@ public final class AddModsDialog extends JDialog {
                 CurseForgeProject castMod = (CurseForgeProject) mod;
 
                 contentPanel.add(new CurseForgeProjectCard(castMod, e -> {
-                    Analytics.sendEvent(castMod.name, "Add", "CurseForgeMod");
+                    AppEventBus.post(AddModEvent.forCurseForgeMod(castMod));
                     new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
                 }), gbc);
 
@@ -603,7 +591,7 @@ public final class AddModsDialog extends JDialog {
                         return;
                     }
 
-                    Analytics.sendEvent(castMod.title, "Add", "ModrinthMod");
+                    AppEventBus.post(AddModEvent.forModrinthMod(castMod));
                     new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
                 }), gbc);
 

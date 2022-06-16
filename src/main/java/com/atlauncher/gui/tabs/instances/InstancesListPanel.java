@@ -17,29 +17,27 @@
  */
 package com.atlauncher.gui.tabs.instances;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import javax.swing.JPanel;
-
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import com.google.common.eventbus.Subscribe;
+import org.mini2Dx.gettext.GetText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public final class InstancesListPanel extends JPanel
-        implements InstancesSortEventListener, InstancesSearchEventListener, RelocalizationListener {
+    implements InstancesSortEventListener, InstancesSearchEventListener {
     private static NilCard createNilCard() {
         return new NilCard(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
@@ -73,7 +71,8 @@ public final class InstancesListPanel extends JPanel
         this.loadInstances();
         parent.addSortEventListener(this);
         parent.addSearchEventListener(this);
-        RelocalizationManager.addListener(this);
+
+        AppEventBus.register(this);
     }
 
     public void loadInstances() {
@@ -85,10 +84,10 @@ public final class InstancesListPanel extends JPanel
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
         createInstanceStream(this.searchPattern, this.sortingStrategy)
-                .forEach((val) -> {
-                    this.add(new InstanceCard(val), gbc);
-                    gbc.gridy++;
-                });
+            .forEach((val) -> {
+                this.add(new InstanceCard(val), gbc);
+                gbc.gridy++;
+            });
 
         if (this.getComponentCount() == 0) {
             this.add(this.nilCard, gbc);
@@ -128,8 +127,8 @@ public final class InstancesListPanel extends JPanel
         this.setSortingStrategy(event.getStrategy());
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
     }
 }

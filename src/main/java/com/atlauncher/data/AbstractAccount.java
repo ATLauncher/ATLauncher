@@ -28,6 +28,8 @@ import java.util.UUID;
 
 import javax.swing.ImageIcon;
 
+import com.atlauncher.AppEventBus;
+import com.atlauncher.events.account.AccountChangedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
@@ -219,7 +221,7 @@ public abstract class AbstractAccount implements Serializable {
                     } catch (IOException e) {
                         LOG.error("error updating skin", e);
                     }
-                    com.atlauncher.evnt.manager.AccountManager.post();
+                    AppEventBus.post(AccountChangedEvent.forAccount(AccountManager.getSelectedAccount()));
                 }
                 dialog.close();
             }));

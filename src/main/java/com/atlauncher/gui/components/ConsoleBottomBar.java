@@ -17,32 +17,29 @@
  */
 package com.atlauncher.gui.components;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.util.concurrent.ExecutionException;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
+import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.events.launcher.CopyLogEvent;
+import com.atlauncher.events.launcher.KillMinecraftEvent;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.DialogManager;
+import com.atlauncher.thread.PasteUpload;
+import com.google.common.eventbus.Subscribe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
-import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.thread.PasteUpload;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("serial")
-public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
+public class ConsoleBottomBar extends BottomBar {
     private static final Logger LOG = LogManager.getLogger(ConsoleBottomBar.class);
 
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
@@ -63,7 +60,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
 
         this.add(leftSide, BorderLayout.WEST);
 
-        RelocalizationManager.addListener(this);
+        AppEventBus.register(this);
     }
 
     /**
@@ -75,7 +72,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             LOG.info("Console Cleared");
         });
         copyLogButton.addActionListener(e -> {
-            Analytics.sendEvent("CopyLog", "Launcher");
+            AppEventBus.postToDefault(CopyLogEvent.of());
             App.TOASTER.pop("Copied Log to clipboard");
             LOG.info("Copied Log to clipboard");
             StringSelection text = new StringSelection(App.console.getLog());
@@ -105,7 +102,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             result = dialog.getReturnValue();
 
             if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
-                Analytics.sendEvent("UploadLog", "Launcher");
+                AppEventBus.postToDefault(KillMinecraftEvent.of());
                 App.TOASTER.pop("Log uploaded and link copied to clipboard");
                 LOG.info("Log uploaded and link copied to clipboard: {}", result);
                 StringSelection text = new StringSelection(result);
@@ -123,7 +120,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                             .build())
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
-                Analytics.sendEvent("KillMinecraft", "Launcher");
+                AppEventBus.postToDefault(KillMinecraftEvent.of());
                 App.launcher.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }
@@ -139,14 +136,14 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     }
 
     public void setupLanguage() {
-        this.onRelocalization();
-    }
-
-    @Override
-    public void onRelocalization() {
         clearButton.setText(GetText.tr("Clear"));
         copyLogButton.setText(GetText.tr("Copy Log"));
         uploadLogButton.setText(GetText.tr("Upload Log"));
         killMinecraftButton.setText(GetText.tr("Kill Minecraft"));
+    }
+
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
+        this.setupLanguage();
     }
 }

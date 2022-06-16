@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import com.atlauncher.events.AnalyticsCategory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +42,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.utils.Utils;
 
-public class Pack {
+public class Pack implements AnalyticsCategory {
     private static final Logger LOG = LogManager.getLogger(Pack.class);
 
     public int id;
@@ -349,5 +350,10 @@ public class Pack {
             LOG.error("error", e);
         }
         return "Install Not Added!";
+    }
+
+    @Override
+    public String getAnalyticsCategory() {
+        return "ATLauncherPack";
     }
 }

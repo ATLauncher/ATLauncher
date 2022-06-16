@@ -100,8 +100,8 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getAnalyticsCategory() {
-        return "FeaturedPack";
+    public String getAnalyticsCategory(){
+        return "FeaturedPacks";
     }
 
     @Override

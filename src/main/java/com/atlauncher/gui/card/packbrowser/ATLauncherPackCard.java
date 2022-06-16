@@ -29,25 +29,27 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
+import com.google.common.eventbus.Subscribe;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.AppEventBus;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Pack;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.events.localization.LocalizationChangedEvent;
+import com.atlauncher.events.pack.PackInstallEvent;
+import com.atlauncher.events.pack.PackViewModsEvent;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
-public class ATLauncherPackCard extends JPanel implements RelocalizationListener {
+public class ATLauncherPackCard extends JPanel {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton discordInviteButton = new JButton("Discord");
@@ -63,8 +65,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder(null, pack.name, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
                 App.THEME.getBoldFont().deriveFont(15f)));
-
-        RelocalizationManager.addListener(this);
 
         JSplitPane splitter = new JSplitPane();
         splitter.setLeftComponent(new PackImagePanel(pack));
@@ -131,6 +131,8 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
             actionsPanel.add(top, BorderLayout.SOUTH);
             actionsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         }
+
+        AppEventBus.register(this);
     }
 
     public Pack getPack() {
@@ -144,7 +146,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "Install", "ATLauncherPack");
+                AppEventBus.postToDefault(PackInstallEvent.newInstall(this.pack));
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -168,7 +170,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "ServerInstall", "ATLauncherPack");
+                AppEventBus.postToDefault(PackInstallEvent.newServerInstall(this.pack));
                 new InstanceInstallerDialog(pack, true);
             }
         });
@@ -184,13 +186,13 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         Constants.SERVERS_LIST_PACK, pack.getSafeName())));
 
         this.modsButton.addActionListener(e -> {
-            Analytics.sendEvent(pack.getName(), "ViewMods", "ATLauncherPack");
+            AppEventBus.postToDefault(PackViewModsEvent.of(this.pack));
             new ViewModsDialog(pack).setVisible(true);
         });
     }
 
-    @Override
-    public void onRelocalization() {
+    @Subscribe
+    public final void onLocalizationChanged(final LocalizationChangedEvent event) {
         this.newInstanceButton.setText(GetText.tr("New Instance"));
         this.createServerButton.setText(GetText.tr("Create Server"));
         this.supportButton.setText(GetText.tr("Support"));

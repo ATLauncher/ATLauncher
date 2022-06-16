@@ -17,15 +17,15 @@
  */
 package com.atlauncher.utils.javafinder;
 
+import com.atlauncher.FileSystem;
+import com.atlauncher.utils.Java;
+import com.atlauncher.utils.Utils;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.atlauncher.FileSystem;
-import com.atlauncher.utils.Java;
-import com.atlauncher.utils.Utils;
 
 public class JavaInfo {
     public String path;
@@ -69,7 +69,7 @@ public class JavaInfo {
 
     // used for testing
     public JavaInfo(String path, String rootPath, String version, Integer majorVersion, Integer minorVersion,
-            boolean is64bits, boolean isRuntime) {
+                    boolean is64bits, boolean isRuntime) {
         this.path = path;
         this.rootPath = rootPath;
         this.version = version;
@@ -81,7 +81,7 @@ public class JavaInfo {
 
     // used for testing
     public JavaInfo(String path, String rootPath, String version, Integer majorVersion, Integer minorVersion,
-            boolean is64bits) {
+                    boolean is64bits) {
         this.path = path;
         this.rootPath = rootPath;
         this.version = version;

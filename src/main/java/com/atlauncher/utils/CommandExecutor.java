@@ -17,6 +17,14 @@
  */
 package com.atlauncher.utils;
 
+import com.atlauncher.App;
+import com.atlauncher.FileSystem;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.minecraft.JavaRuntimes;
+import com.atlauncher.exceptions.CommandException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -30,15 +38,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.data.Instance;
-import com.atlauncher.data.minecraft.JavaRuntimes;
-import com.atlauncher.exceptions.CommandException;
 
 public class CommandExecutor {
     private static final Logger LOG = LogManager.getLogger(CommandExecutor.class);
@@ -72,7 +71,7 @@ public class CommandExecutor {
 
             // linux/osx needs to run through sh
             if (OS.isLinux() || OS.isMac()) {
-                String[] linuxCommand = { "/bin/sh", "-c", command };
+                String[] linuxCommand = {"/bin/sh", "-c", command};
                 process = Runtime.getRuntime().exec(linuxCommand, null, instance.getRootDirectory());
             } else {
                 process = Runtime.getRuntime().exec(command, null, instance.getRootDirectory());
@@ -175,7 +174,7 @@ public class CommandExecutor {
         // are we using Mojangs provided runtime?
         if (instance.javaVersion != null && (!OS.isArm() || OS.isMacArm()) && App.settings.useJavaProvidedByMinecraft) {
             Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
-                    .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
+                .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
 
             if (OS.isMac()) {
                 runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
@@ -184,9 +183,9 @@ public class CommandExecutor {
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
                 LOG.debug("Using Java runtime {} (major version {}) at path {}",
-                        instance.javaVersion.component,
-                        instance.javaVersion.majorVersion,
-                        javaPath);
+                    instance.javaVersion.component,
+                    instance.javaVersion.majorVersion,
+                    javaPath);
             }
         }
 

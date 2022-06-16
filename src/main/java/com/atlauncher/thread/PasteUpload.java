@@ -17,6 +17,12 @@
  */
 package com.atlauncher.thread;
 
+import com.atlauncher.App;
+import com.atlauncher.Network;
+import com.atlauncher.constants.Constants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,13 +33,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.atlauncher.App;
-import com.atlauncher.Network;
-import com.atlauncher.constants.Constants;
 
 public final class PasteUpload implements Callable<String> {
     private static final Logger LOG = LogManager.getLogger(PasteUpload.class);

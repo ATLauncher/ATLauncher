@@ -341,10 +341,10 @@ public class DisableableMod implements Serializable {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
 
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
-                && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
+            && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<Object> dialog = new ProgressDialog<>(
-                    GetText.tr("Checking For Update On CurseForge"), 0, GetText.tr("Checking For Update On CurseForge"),
-                    "Cancelled checking for update on CurseForge", parent);
+                GetText.tr("Checking For Update On CurseForge"), 0, GetText.tr("Checking For Update On CurseForge"),
+                "Cancelled checking for update on CurseForge", parent);
             dialog.addThread(new Thread(() -> {
                 List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
 
@@ -355,21 +355,21 @@ public class DisableableMod implements Serializable {
                 }
 
                 Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
-                        .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+                    .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                     curseForgeFilesStream = curseForgeFilesStream
-                            .filter(file -> file.gameVersions.contains(instance.id));
+                        .filter(file -> file.gameVersions.contains(instance.id));
                 }
 
                 if (App.settings.addModRestriction == AddModRestriction.LAX) {
                     try {
                         List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
-                                .stream().map(mv -> mv.id).collect(Collectors.toList());
+                            .stream().map(mv -> mv.id).collect(Collectors.toList());
 
                         curseForgeFilesStream = curseForgeFilesStream.filter(
-                                file -> file.gameVersions.stream()
-                                        .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                            file -> file.gameVersions.stream()
+                                .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                     } catch (InvalidMinecraftVersion e) {
                         LOG.error(e);
                     }
@@ -378,12 +378,12 @@ public class DisableableMod implements Serializable {
                 // filter out mods that are explicitely for Forge/Fabric and not our loader
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                     if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
-                            && !instance.launcher.loaderVersion.isForge()) {
+                        && !instance.launcher.loaderVersion.isForge()) {
                         return false;
                     }
 
                     if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
-                            && !instance.launcher.loaderVersion.isFabric()) {
+                        && !instance.launcher.loaderVersion.isFabric()) {
                         return false;
                     }
 
@@ -406,16 +406,16 @@ public class DisableableMod implements Serializable {
             }
 
             new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instance,
-                    curseForgeFileId);
+                curseForgeFileId);
         } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()
-                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
+            && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
             ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
-                    GetText.tr("Checking For Update On Modrinth"), 0,
-                    GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth", parent);
+                GetText.tr("Checking For Update On Modrinth"), 0,
+                GetText.tr("Checking For Update On Modrinth"), "Cancelled checking for update on Modrinth", parent);
             dialog.addThread(new Thread(() -> {
                 ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
                 List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
-                        instance.launcher.loaderVersion);
+                    instance.launcher.loaderVersion);
 
                 if (versions == null) {
                     dialog.setReturnValue(null);
@@ -424,14 +424,14 @@ public class DisableableMod implements Serializable {
                 }
 
                 Stream<ModrinthVersion> versionsStream = versions.stream()
-                        .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
+                    .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                     versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instance.id));
                 }
 
                 if (versionsStream.noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
-                        .isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
+                    .isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
                     dialog.setReturnValue(null);
                     dialog.close();
                     return;
@@ -462,9 +462,9 @@ public class DisableableMod implements Serializable {
         Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "Instance");
 
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
-                && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
+            && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(GetText.tr("Getting Files From CurseForge"),
-                    0, GetText.tr("Getting Files From CurseForge"), "Cancelled getting files from CurseForge", parent);
+                0, GetText.tr("Getting Files From CurseForge"), "Cancelled getting files from CurseForge", parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
                 dialog.close();
@@ -473,9 +473,9 @@ public class DisableableMod implements Serializable {
 
             new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
         } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
-                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
+            && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(GetText.tr("Getting Files From Modrinth"), 0,
-                    GetText.tr("Getting Files From Modrinth"), "Cancelled getting files from Modrinth", parent);
+                GetText.tr("Getting Files From Modrinth"), "Cancelled getting files from Modrinth", parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(ModrinthApi.getProject(modrinthProject.id));
                 dialog.close();
