@@ -22,44 +22,27 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.*;
 
+import com.atlauncher.constants.Constants.ScreenResolution;
+import com.atlauncher.gui.tabs.settings.IJavaSettingsViewModel.MaxRamWarning;
+import com.atlauncher.listener.CheckingKeyListener;
+import com.atlauncher.utils.ComboItem;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.javafinder.JavaInfo;
 
 @SuppressWarnings("serial")
-public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener, SettingsListener {
+public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private final JLabelWithHover initialMemoryLabel;
     private final JSpinner initialMemory;
     private final JLabelWithHover initialMemoryLabelWarning;
@@ -73,10 +56,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JLabelWithHover windowSizeLabel;
     private final JSpinner widthField;
     private final JSpinner heightField;
-    private final JComboBox<String> commonScreenSizes;
+    private final JComboBox<ComboItem<ScreenResolution>> commonScreenSizes;
     private final JLabelWithHover javaPathLabel;
     private JTextField javaPath;
-    private final JComboBox<JavaInfo> installedJavasComboBox;
+    private final JComboBox<String> installedJavasComboBox;
     private final JButton javaPathResetButton;
     private final JButton javaBrowseButton;
     private final JLabelWithHover javaParametersLabel;
@@ -95,16 +78,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JLabelWithHover useSystemOpenAlLabel;
     private final JCheckBox useSystemOpenAl;
 
-    private boolean initialMemoryWarningShown = false;
-    private boolean maximumMemoryHalfWarningShown = false;
-    private boolean maximumMemoryEightGBWarningShown = false;
-    private boolean permgenWarningShown = false;
 
     public JavaSettingsTab() {
-        int systemRam = OS.getSystemRam();
-
+        IJavaSettingsViewModel viewModel = new JavaSettingsViewModel();
         RelocalizationManager.addListener(this);
-        SettingsManager.addListener(this);
 
         // Initial Memory Settings
         gbc.gridx = 0;
@@ -123,7 +100,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         JPanel initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Java.is64Bit()) {
+        if (viewModel.isJava32Bit()) {
             initialMemoryPanel.add(initialMemoryLabelWarning);
         }
         initialMemoryPanel.add(initialMemoryLabel);
@@ -135,32 +112,28 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.initialMemory, null, null, 128);
         initialMemoryModel.setMinimum(128);
-        initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
+        initialMemoryModel.setMaximum(viewModel.getSystemRam());
         initialMemory = new JSpinner(initialMemoryModel);
         ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
-        initialMemory.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                // if initial memory is larger than maximum memory, make maximum memory match
-                if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
-                    maximumMemory.setValue((Integer) s.getValue());
-                }
+        initialMemory.addChangeListener(e -> {
+            JSpinner s = (JSpinner) e.getSource();
 
-                if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
-                    initialMemoryWarningShown = true;
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
-                            .show();
+            boolean result = viewModel.setInitialRam((Integer) s.getValue());
 
-                    if (ret != 0) {
-                        initialMemory.setValue(512);
-                    }
+            if (result) {
+                viewModel.setInitialMemoryWarningShown();
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                    .setType(DialogManager.WARNING)
+                    .setContent(GetText.tr(
+                        "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
+                    .show();
+
+                if (ret != 0) {
+                    viewModel.setInitialRam(512);
                 }
             }
         });
+        viewModel.addOnInitialRamChanged(initialMemory::setValue);
         add(initialMemory, gbc);
 
         // Maximum Memory Settings
@@ -177,7 +150,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         JPanel maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Java.is64Bit()) {
+        if (viewModel.isJava32Bit()) {
             maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
                     .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
                     .build(), RESTART_BORDER));
@@ -191,37 +164,35 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.maximumMemory, null, null, 512);
         maximumMemoryModel.setMinimum(512);
-        maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
+        maximumMemoryModel.setMaximum(viewModel.getSystemRam());
         maximumMemory = new JSpinner(maximumMemoryModel);
         ((JSpinner.DefaultEditor) maximumMemory.getEditor()).getTextField().setColumns(5);
-        maximumMemory.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                // if initial memory is larger than maximum memory, make initial memory match
-                if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
-                    initialMemory.setValue(s.getValue());
-                }
+        maximumMemory.addChangeListener(e -> {
+            JSpinner s = (JSpinner) e.getSource();
+            MaxRamWarning warning = viewModel.setMaxRam((Integer) s.getValue());
+            if (warning == null) return;
 
-                if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
-                    maximumMemoryEightGBWarningShown = true;
+            switch (warning) {
+                case ABOVE_8GB:
+                    viewModel.setMaximumMemoryEightGBWarningShown();
+
                     DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
-                            .show();
-                } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
-                        && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
-                        && !maximumMemoryHalfWarningShown) {
-                    maximumMemoryHalfWarningShown = true;
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                            "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
+                        .show();
+                    break;
+                case ABOVE_HALF:
+                    viewModel.setMaximumMemoryHalfWarningShown();
                     DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
-                            .show();
-                }
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                            "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
+                        .show();
+                    break;
             }
         });
+        viewModel.addOnMaxRamChanged(maximumMemory::setValue);
         add(maximumMemory, gbc);
 
         // Perm Gen Settings
@@ -238,30 +209,27 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.metaspace, null, null, 32);
         permGenModel.setMinimum(32);
-        permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
+        permGenModel.setMaximum(viewModel.getSystemRam());
         permGen = new JSpinner(permGenModel);
         ((JSpinner.DefaultEditor) permGen.getEditor()).getTextField().setColumns(3);
-        permGen.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                int permGenMaxRecommendedSize = (OS.is64Bit() ? 256 : 128);
+        permGen.addChangeListener(e -> {
+            JSpinner s = (JSpinner) e.getSource();
+            boolean result = viewModel.setPermGen((Integer) s.getValue());
+            if (result) {
+                viewModel.setPermgenWarningShown();
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                    .setType(DialogManager.WARNING)
+                    .setContent(GetText.tr(
+                        "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
+                        viewModel.getPermGenMaxRecommendSize()))
+                    .show();
 
-                if ((Integer) s.getValue() > permGenMaxRecommendedSize && !permgenWarningShown) {
-                    permgenWarningShown = true;
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
-                                    permGenMaxRecommendedSize))
-                            .show();
-
-                    if (ret != 0) {
-                        permGen.setValue(permGenMaxRecommendedSize);
-                    }
+                if (ret != 0) {
+                    viewModel.setPermGen(viewModel.getPermGenMaxRecommendSize());
                 }
             }
         });
+        viewModel.addOnPermGenChanged(permGen::setValue);
         add(permGen, gbc);
 
         // Window Size
@@ -285,32 +253,35 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 1);
         widthField = new JSpinner(widthModel);
         widthField.setEditor(new JSpinner.NumberEditor(widthField, "#"));
+        widthField.addChangeListener(e ->
+            viewModel.setWidth((Integer) widthModel.getValue()));
+        viewModel.addOnWidthChanged(widthModel::setValue);
 
         SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.windowHeight, 1,
                 OS.getMaximumWindowHeight(), 1);
         heightField = new JSpinner(heightModel);
         heightField.setEditor(new JSpinner.NumberEditor(heightField, "#"));
+        heightField.addChangeListener(e ->
+            viewModel.setHeight((Integer) heightField.getValue()));
+        viewModel.addOnHeightChanged(heightField::setValue);
 
         commonScreenSizes = new JComboBox<>();
-        commonScreenSizes.addItem("Select An Option");
+        commonScreenSizes.addItem(new ComboItem<>(null, "Select An Option"));
 
-        for (String screenSize : Constants.SCREEN_RESOLUTIONS) {
-            String[] size = screenSize.split("x");
-            if (OS.getMaximumWindowWidth() >= Integer.parseInt(size[0])
-                    && OS.getMaximumWindowHeight() >= Integer.parseInt(size[1])) {
-                commonScreenSizes.addItem(screenSize);
-            }
+        for (ScreenResolution resolution : viewModel.getScreenResolutions()) {
+            commonScreenSizes.addItem(new ComboItem<>(resolution, resolution.toString()));
         }
         commonScreenSizes.addActionListener(e -> {
-            String selected = (String) commonScreenSizes.getSelectedItem();
-            if (selected.contains("x")) {
-                String[] parts = selected.split("x");
-                widthField.setValue(Integer.parseInt(parts[0]));
-                heightField.setValue(Integer.parseInt(parts[1]));
-            }
+            Object selectedItem = commonScreenSizes.getSelectedItem();
+            @SuppressWarnings("unchecked")
+            ComboItem<ScreenResolution> selected =
+                (ComboItem<ScreenResolution>) selectedItem;
+            ScreenResolution screenResolution = selected.getValue();
+            if (screenResolution != null)
+                viewModel.setScreenResolution(screenResolution);
         });
         commonScreenSizes.setPreferredSize(new Dimension(commonScreenSizes.getPreferredSize().width + 10,
-                commonScreenSizes.getPreferredSize().height));
+            commonScreenSizes.getPreferredSize().height));
 
         windowSizePanel.add(widthField);
         windowSizePanel.add(Box.createHorizontalStrut(5));
@@ -349,32 +320,50 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         installedJavasComboBox = new JComboBox<>();
         installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
-        List<JavaInfo> installedJavas = Java.getInstalledJavas();
         int selectedIndex = 0;
 
-        for (JavaInfo javaInfo : installedJavas) {
+        for (String javaInfo : viewModel.getJavaPaths()) {
             installedJavasComboBox.addItem(javaInfo);
 
-            if (javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)) {
+            if (javaInfo.equalsIgnoreCase(viewModel.getJavaPath())) {
                 selectedIndex = installedJavasComboBox.getItemCount() - 1;
             }
         }
 
         if (installedJavasComboBox.getItemCount() != 0) {
             installedJavasComboBox.setSelectedIndex(selectedIndex);
-            installedJavasComboBox.addActionListener(
-                    e -> javaPath.setText(((JavaInfo) installedJavasComboBox.getSelectedItem()).rootPath));
+            installedJavasComboBox.addActionListener(e -> {
+                    String path = ((String) installedJavasComboBox.getSelectedItem());
+                    boolean valid = viewModel.setJavaPath(path);
+                    if (!valid) {
+                        invalidJavaPath();
+                    }
+                }
+            );
             javaPathPanelTop.add(installedJavasComboBox);
         }
 
         javaPath = new JTextField(32);
-        javaPath.setText(App.settings.javaPath);
+        javaPath.addKeyListener(new CheckingKeyListener(
+            ignored -> viewModel.setJavaPath(javaPath.getText()),
+            invalid -> SwingUtilities.invokeLater(this::invalidJavaPath)
+        ));
+
+        viewModel.addOnJavaPathChanged(javaPath::setText);
+
+        javaPathPanelBottom.add(javaPath);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+
         javaPathResetButton = new JButton(GetText.tr("Reset"));
-        javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
+        javaPathResetButton.addActionListener(e -> viewModel.resetJavaPath());
+
+        javaPathPanelBottom.add(javaPathResetButton);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+
         javaBrowseButton = new JButton(GetText.tr("Browse"));
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new File(javaPath.getText()));
+            chooser.setCurrentDirectory(new File(viewModel.getJavaPath()));
             chooser.setDialogTitle(GetText.tr("Select"));
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setAcceptAllFileFilterUsed(false);
@@ -387,17 +376,13 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
                 // user selected the bin dir
                 if (!jPath.exists() && (javaExe.exists() || javaExecutable.exists())) {
-                    javaPath.setText(selectedPath.getParent().toString());
+                    javaPath.setText(selectedPath.getParent());
                 } else {
                     javaPath.setText(selectedPath.getAbsolutePath());
                 }
             }
         });
 
-        javaPathPanelBottom.add(javaPath);
-        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
-        javaPathPanelBottom.add(javaPathResetButton);
-        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
         javaPathPanelBottom.add(javaBrowseButton);
 
         javaPathPanel.add(javaPathPanelTop);
@@ -426,12 +411,18 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
         javaParameters = new JTextArea(6, 40);
-        javaParameters.setText(App.settings.javaParameters);
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
+        javaParameters.addKeyListener(new CheckingKeyListener(
+            ignored -> viewModel.setJavaParams(javaParameters.getText()),
+            invalid -> SwingUtilities.invokeLater(this::invalidJavaParameters)
+        ));
+        viewModel.addOnJavaParamsChanged(javaParameters::setText);
 
         javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
+        javaParametersResetButton.addActionListener(e ->
+            viewModel.resetJavaParams()
+        );
 
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(Box.createHorizontalStrut(5));
@@ -458,9 +449,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         startMinecraftMaximised = new JCheckBox();
-        if (App.settings.maximiseMinecraft) {
-            startMinecraftMaximised.setSelected(true);
-        }
+        startMinecraftMaximised.addItemListener(itemEvent ->
+            viewModel.setStartMinecraftMax(itemEvent.getStateChange() == ItemEvent.SELECTED)
+        );
+        viewModel.addOnStartMinecraftMaxChanged(startMinecraftMaximised::setSelected);
+
         add(startMinecraftMaximised, gbc);
 
         // Ignore Java checks On Launch
@@ -478,9 +471,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         ignoreJavaOnInstanceLaunch = new JCheckBox();
-        if (App.settings.ignoreJavaOnInstanceLaunch) {
-            ignoreJavaOnInstanceLaunch.setSelected(true);
-        }
+        ignoreJavaOnInstanceLaunch.addItemListener(itemEvent ->
+            viewModel.setIgnoreJavaChecks(itemEvent.getStateChange() == ItemEvent.SELECTED)
+        );
+        viewModel.addOnIgnoreJavaChecksChanged(ignoreJavaOnInstanceLaunch::setSelected);
         add(ignoreJavaOnInstanceLaunch, gbc);
 
         // Use Java Provided By Minecraft
@@ -503,26 +497,22 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useJavaProvidedByMinecraft = new JCheckBox();
-        useJavaProvidedByMinecraft.setSelected(App.settings.useJavaProvidedByMinecraft);
-        useJavaProvidedByMinecraft.setEnabled(!OS.isArm() || OS.isMacArm());
-        useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    SwingUtilities.invokeLater(() -> {
-                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                                .setType(DialogManager.WARNING)
-                                .setContent(GetText.tr(
-                                        "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
-                                .show();
+        useJavaProvidedByMinecraft.setEnabled(viewModel.getUseJavaFromMinecraftEnabled());
+        useJavaProvidedByMinecraft.addItemListener(e -> {
+            viewModel.setJavaFromMinecraft(e.getStateChange() == ItemEvent.SELECTED);
+            if (e.getStateChange() == ItemEvent.DESELECTED) {
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                    .setType(DialogManager.WARNING)
+                    .setContent(GetText.tr(
+                        "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
+                    .show();
 
-                        if (ret != 0) {
-                            useJavaProvidedByMinecraft.setSelected(true);
-                        }
-                    });
+                if (ret != 0) {
+                    viewModel.setJavaFromMinecraft(true);
                 }
             }
         });
+        viewModel.addOnJavaFromMinecraftChanged(useJavaProvidedByMinecraft::setSelected);
         add(useJavaProvidedByMinecraft, gbc);
 
         // Disable Legacy Launching
@@ -532,16 +522,18 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         disableLegacyLaunchingLabel = new JLabelWithHover(GetText.tr("Disable Legacy Launching") + "?", HELP_ICON,
-                new HTMLBuilder().center().text(GetText.tr(
-                        "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
-                        .build());
+            new HTMLBuilder().center().text(GetText.tr(
+                    "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
+                .build());
         add(disableLegacyLaunchingLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         disableLegacyLaunching = new JCheckBox();
-        disableLegacyLaunching.setSelected(App.settings.disableLegacyLaunching);
+        disableLegacyLaunching.addItemListener(itemEvent ->
+            viewModel.setDisableLegacyLaunching(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        viewModel.addOnDisableLegacyLaunchingChanged(disableLegacyLaunching::setSelected);
         add(disableLegacyLaunching, gbc);
 
         // Use System GLFW
@@ -558,7 +550,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useSystemGlfw = new JCheckBox();
-        useSystemGlfw.setSelected(App.settings.useSystemGlfw);
+        useSystemGlfw.addItemListener(itemEvent ->
+            viewModel.setSystemGLFW(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        viewModel.addOnSystemGLFWChanged(useSystemGlfw::setSelected);
         add(useSystemGlfw, gbc);
 
         // Use System OpenAL
@@ -575,48 +569,22 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useSystemOpenAl = new JCheckBox();
-        useSystemOpenAl.setSelected(App.settings.useSystemOpenAl);
+        useSystemOpenAl.addItemListener(itemEvent ->
+            viewModel.setSystemOpenAL(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        viewModel.addOnSystemOpenALChanged(useSystemOpenAl::setSelected);
         add(useSystemOpenAl, gbc);
     }
 
-    public boolean isValidJavaPath() {
-        File jPath = new File(javaPath.getText(), "bin");
-        if (!jPath.exists()) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
-                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."))
-                    .build()).setType(DialogManager.ERROR).show();
-            return false;
-        }
-        return true;
+    private void invalidJavaPath() {
+        DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."))
+            .build()).setType(DialogManager.ERROR).show();
     }
 
-    public boolean isValidJavaParamaters() {
-        if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
-                || javaParameters.getText().contains("-XX:PermSize")
-                || javaParameters.getText().contains("-XX:MetaspaceSize")) {
-            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
-                    "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
-                    .build()).setType(DialogManager.ERROR).show();
-            return false;
-        }
-        return true;
-    }
-
-    public void save() {
-        App.settings.initialMemory = (Integer) initialMemory.getValue();
-        App.settings.maximumMemory = (Integer) maximumMemory.getValue();
-        App.settings.metaspace = (Integer) permGen.getValue();
-        App.settings.windowWidth = (Integer) widthField.getValue();
-        App.settings.windowHeight = (Integer) heightField.getValue();
-        App.settings.javaPath = javaPath.getText();
-        App.settings.usingCustomJavaPath = !javaPath.getText().equalsIgnoreCase(OS.getDefaultJavaPath());
-        App.settings.javaParameters = javaParameters.getText();
-        App.settings.maximiseMinecraft = startMinecraftMaximised.isSelected();
-        App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
-        App.settings.useJavaProvidedByMinecraft = useJavaProvidedByMinecraft.isSelected();
-        App.settings.disableLegacyLaunching = disableLegacyLaunching.isSelected();
-        App.settings.useSystemGlfw = useSystemGlfw.isSelected();
-        App.settings.useSystemOpenAl = useSystemOpenAl.isSelected();
+    private void invalidJavaParameters() {
+        DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
+            .build()).setType(DialogManager.ERROR).show();
     }
 
     @Override
@@ -683,10 +651,5 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         this.disableLegacyLaunchingLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
                 "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
                 .build());
-    }
-
-    @Override
-    public void onSettingsSaved() {
-        javaPath.setText(App.settings.javaPath);
     }
 }
