@@ -382,7 +382,7 @@ public class App {
             if (PackManager.addPack(packCodeToAdd)) {
                 Pack packAdded = PackManager.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
-                    LOG.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
+                    LOG.info("The psdfsdsdfack " + packAdded.getName() + " was automatically added to the launcher!");
                 } else {
                     LOG.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
                 }
