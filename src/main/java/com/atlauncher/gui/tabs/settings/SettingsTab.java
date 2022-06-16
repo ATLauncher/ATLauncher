@@ -79,27 +79,12 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         saveButton.addActionListener(arg0 -> {
             if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
                     && networkSettingsTab.canConnectWithProxy()) {
-                boolean reloadTheme = generalSettingsTab.needToReloadTheme();
-                boolean themeChanged = generalSettingsTab.themeChanged();
-                boolean reloadInstancesPanel = generalSettingsTab.needToReloadInstancesPanel();
-                generalSettingsTab.save();
                 modsSettingsTab.save();
                 javaSettingsTab.save();
                 networkSettingsTab.save();
                 loggingSettingsTab.save();
                 App.settings.save();
                 SettingsManager.post();
-                if (reloadInstancesPanel) {
-                    App.launcher.reloadInstancesPanel();
-                }
-                if (themeChanged) {
-                    Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
-                }
-                if (reloadTheme) {
-                    App.loadTheme(App.settings.theme);
-                    FlatLaf.updateUILater();
-                    ThemeManager.post();
-                }
                 App.TOASTER.pop("Settings Saved");
             }
         });
