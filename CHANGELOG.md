@@ -15,3 +15,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in some missing documentation [#569] (thanks @Doomsdayrs)
 - Update dependencies
 - Update to Java 17 for the Windows installer [#601]
+- Implement view model for AccountsTab [#607]
