@@ -318,7 +318,7 @@ public class Utils {
                 destination = new FileOutputStream(to).getChannel();
                 destination.transferFrom(source, 0, source.size());
             } else {
-                sourceStream = ArchiveUtils.createStream(from.toPath());
+                sourceStream = ArchiveUtils.createInputStream(from.toPath());
                 destinationStream = new FileOutputStream(to);
                 IOUtils.copy(sourceStream, destinationStream);
             }
