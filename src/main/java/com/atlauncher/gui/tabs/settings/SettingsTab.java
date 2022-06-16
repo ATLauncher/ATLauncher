@@ -87,7 +87,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 javaSettingsTab.save();
                 networkSettingsTab.save();
                 loggingSettingsTab.save();
-                backupsSettingsTab.save();
                 commandSettingsTab.save();
                 App.settings.save();
                 SettingsManager.post();

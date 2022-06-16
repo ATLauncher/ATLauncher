@@ -18,32 +18,40 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 
 @SuppressWarnings("serial")
-public class BackupsSettingsTab extends AbstractSettingsTab {
+public class BackupsSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private final JComboBox<ComboItem<BackupMode>> backupMode;
     private final JCheckBox enableAutomaticBackupAfterLaunch;
+    private final JLabelWithHover enableAutomaticBackupAfterLaunchLabel;
+    private final JLabelWithHover backupModeLabel;
 
     public BackupsSettingsTab() {
+        final IBackupsSettingsViewModel viewModel = new BackupsSettingsViewModel();
         // Backup mode
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover backupModeLabel = new JLabelWithHover(GetText.tr("Backup Mode") + ":", HELP_ICON, GetText.tr(
-                "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."));
+
+        // TODO Relocalization support for below
+        backupModeLabel = new JLabelWithHover(GetText.tr("Backup Mode") + ":",
+            HELP_ICON,
+            GetText.tr("When backing up an instance, what should get backed up? Mainly used for when doing automated backups.")
+        );
 
         add(backupModeLabel, gbc);
 
@@ -51,19 +59,17 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         backupMode = new JComboBox<>();
-        backupMode.addItem(new ComboItem<>(BackupMode.NORMAL, GetText.tr("Backup saves, configs and options only")));
-        backupMode.addItem(new ComboItem<>(BackupMode.NORMAL_PLUS_MODS,
-                GetText.tr("Backup saves, mods, configs and options only")));
-        backupMode.addItem(new ComboItem<>(BackupMode.FULL, GetText.tr("Backup everything in the instance folder")));
 
-        for (int i = 0; i < backupMode.getItemCount(); i++) {
-            ComboItem<BackupMode> item = backupMode.getItemAt(i);
+        populateComboBox();
 
-            if (item.getValue() == App.settings.backupMode) {
-                backupMode.setSelectedIndex(i);
-                break;
+        backupMode.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                BackupMode item = (BackupMode) itemEvent.getItem();
+                viewModel.setBackupMode(item);
             }
-        }
+        });
+
+        viewModel.onBackupModeSelected(backupMode::setSelectedIndex);
 
         add(backupMode, gbc);
 
@@ -73,22 +79,36 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover enableAutomaticBackupAfterLaunchLabel = new JLabelWithHover(
-                GetText.tr("Enable Automatic Backup After Launch") + "?", HELP_ICON,
-                GetText.tr("If a backup should run after launching an instance."));
+
+        // TODO Relocalization support for below
+        enableAutomaticBackupAfterLaunchLabel = new JLabelWithHover(
+            GetText.tr("Enable Automatic Backup After Launch") + "?",
+            HELP_ICON,
+            GetText.tr("If a backup should run after launching an instance.")
+        );
         add(enableAutomaticBackupAfterLaunchLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableAutomaticBackupAfterLaunch = new JCheckBox();
-        enableAutomaticBackupAfterLaunch.setSelected(App.settings.enableAutomaticBackupAfterLaunch);
+
+        enableAutomaticBackupAfterLaunch.addItemListener(e -> {
+            viewModel.setEnableAutoBackup(e.getStateChange() == ItemEvent.SELECTED);
+        });
+        viewModel.addOnEnableAutoBackupChanged(enableAutomaticBackupAfterLaunch::setSelected);
+
         add(enableAutomaticBackupAfterLaunch, gbc);
     }
 
-    public void save() {
-        App.settings.backupMode = ((ComboItem<BackupMode>) backupMode.getSelectedItem()).getValue();
-        App.settings.enableAutomaticBackupAfterLaunch = enableAutomaticBackupAfterLaunch.isSelected();
+    private void populateComboBox() {
+        backupMode.removeAllItems();
+        backupMode.addItem(new ComboItem<>(BackupMode.NORMAL,
+            GetText.tr("Backup saves, configs and options only")));
+        backupMode.addItem(new ComboItem<>(BackupMode.NORMAL_PLUS_MODS,
+            GetText.tr("Backup saves, mods, configs and options only")));
+        backupMode.addItem(new ComboItem<>(BackupMode.FULL,
+            GetText.tr("Backup everything in the instance folder")));
     }
 
     @Override
@@ -99,5 +119,10 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
     @Override
     public String getAnalyticsScreenViewName() {
         return "Backups";
+    }
+
+    @Override
+    public void onRelocalization() {
+        populateComboBox();
     }
 }
