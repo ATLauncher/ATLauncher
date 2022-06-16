@@ -10,6 +10,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Old launcher logs not being deleted after 14 days
 - Fix issues importing from Flatpak [#605] (thanks @Doomsdayrs)
+- Issue importing CurseForge format zips with missing overrides in json
+- Fix default instance sort setting labeled incorrectly [#615] (thanks @Doomsdayrs)
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)

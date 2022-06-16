@@ -259,8 +259,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         // TODO Relocalization support for below
-        JLabelWithHover defaultInstanceSortingLabel = new JLabelWithHover(GetText.tr("Default Tab") + ":", HELP_ICON,
-            GetText.tr("Which tab to have selected by default when opening the launcher."));
+        JLabelWithHover defaultInstanceSortingLabel = new JLabelWithHover(GetText.tr("Default Instance Sort") + ":", HELP_ICON,
+            GetText.tr("Default sorting of instances under the Instances tab."));
 
         add(defaultInstanceSortingLabel, gbc);
 
