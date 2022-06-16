@@ -30,6 +30,10 @@ public class BackupsSettingsViewModel implements IBackupsSettingsViewModel {
     Consumer<Integer> _onBackupModeSelected;
     Consumer<Boolean> _addOnEnableAutoBackupChanged;
 
+    public BackupsSettingsViewModel(){
+        SettingsManager.addListener(this);
+    }
+
     @Override
     public void onSettingsSaved() {
         _onBackupModeSelected.accept(App.settings.backupMode.ordinal());

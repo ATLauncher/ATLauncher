@@ -38,6 +38,10 @@ public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
     private Consumer<String> _addOnPostExitCommandChanged;
     private Consumer<String> _addOnWrapperCommandChanged;
 
+    public CommandsSettingsViewModel(){
+        SettingsManager.addListener(this);
+    }
+
     @Override
     public void onSettingsSaved() {
         _addOnEnableCommandsChanged.accept(App.settings.enableCommands);

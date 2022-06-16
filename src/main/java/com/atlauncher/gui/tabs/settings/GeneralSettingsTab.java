@@ -137,7 +137,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         theme.addItemListener(itemEvent -> {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setSelectedTheme((String) itemEvent.getItem());
+                viewModel.setSelectedTheme(((ComboItem<String>) itemEvent.getItem()).getValue());
         });
         viewModel.addOnSelectedThemeChanged(theme::setSelectedIndex);
 
@@ -173,7 +173,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         dateFormat.addItemListener(itemEvent -> {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setDateFormat((String) itemEvent.getItem());
+                viewModel.setDateFormat(((ComboItem<String>) itemEvent.getItem()).getValue());
         });
         viewModel.addOnDateFormatChanged(dateFormat::setSelectedIndex);
 
@@ -212,7 +212,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         }
         instanceTitleFormat.addItemListener(itemEvent -> {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setInstanceTitleFormat((String) itemEvent.getItem());
+                viewModel.setInstanceTitleFormat(((ComboItem<String>) itemEvent.getItem()).getValue());
         });
         viewModel.addOnInstanceFormatChanged(instanceTitleFormat::setSelectedIndex);
 
@@ -246,7 +246,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         viewModel.addOnSelectedTabOnStartupChanged(selectedTabOnStartup::setSelectedIndex);
         selectedTabOnStartup.addItemListener(itemEvent -> {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setSelectedTabOnStartup((Integer) itemEvent.getItem());
+                viewModel.setSelectedTabOnStartup(((ComboItem<Integer>) itemEvent.getItem()).getValue());
         });
 
         add(selectedTabOnStartup, gbc);

@@ -60,6 +60,10 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     };
     Consumer<Boolean> _addOnUseRecycleBinChanged;
 
+    public GeneralSettingsViewModel(){
+        SettingsManager.addListener(this);
+    }
+
     @Override
     public void onSettingsSaved() {
         pushSelectedLanguage();
@@ -189,7 +193,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     private void pushInstanceFormat() {
-        for (int index = 0; index < getDateFormats().length; index++) {
+        for (int index = 0; index < getInstanceTitleFormats().length; index++) {
             if (getInstanceTitleFormats()[index].equals(App.settings.instanceTitleFormat))
                 _addOnInstanceFormatChanged.accept(index);
         }
@@ -226,7 +230,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     private void pushInstanceSorting() {
-        for (int index = 0; index < getDateFormats().length; index++) {
+        for (int index = 0; index < getInstanceSorting().length; index++) {
             if (getInstanceSorting()[index] == App.settings.defaultInstanceSorting)
                 _addInstanceSortingChanged.accept(index);
         }

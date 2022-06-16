@@ -64,8 +64,8 @@ public class BackupsSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         backupMode.addItemListener(itemEvent -> {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
-                BackupMode item = (BackupMode) itemEvent.getItem();
-                viewModel.setBackupMode(item);
+                ComboItem<BackupMode> item = (ComboItem<BackupMode>) itemEvent.getItem();
+                viewModel.setBackupMode(item.getValue());
             }
         });
 
