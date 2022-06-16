@@ -50,7 +50,7 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.NewsTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.ServersTab;
-import com.atlauncher.gui.tabs.SettingsTab;
+import com.atlauncher.gui.tabs.settings.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.ToolsTab;
 import com.atlauncher.gui.tabs.VanillaPacksTab;
