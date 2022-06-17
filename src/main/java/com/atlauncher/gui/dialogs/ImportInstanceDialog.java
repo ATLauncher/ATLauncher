@@ -140,7 +140,7 @@ public class ImportInstanceDialog extends JDialog {
                 File[] filesChosen = DBusUtils.selectFiles();
 
                 if (filesChosen.length != 0) {
-                    filePath.setText(filesChosen[0].getAbsolutePath());
+                    filePath.setText(filesChosen[0].getPath());
                     changeAddButtonStatus();
                 }
             } else if (App.settings.useNativeFilePicker) {
