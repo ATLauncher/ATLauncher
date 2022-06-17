@@ -18,13 +18,13 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -39,15 +39,17 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
     private JCheckBox enableOpenEyeReporting;
 
+
     public LoggingSettingsTab() {
+        ILoggingSettingsViewModel viewModel = new LoggingSettingsViewModel();
         // Forge Logging Level
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover forgeLoggingLevelLabel = new JLabelWithHover(GetText.tr("Forge Logging Level") + ":", HELP_ICON,
-                "<html>" + GetText.tr("This determines the type of logging that Forge should report back to you.")
-                        + "</html>");
+            "<html>" + GetText.tr("This determines the type of logging that Forge should report back to you.")
+                + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
@@ -61,7 +63,12 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         forgeLoggingLevel.addItem("FINE");
         forgeLoggingLevel.addItem("FINER");
         forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.setSelectedItem(App.settings.forgeLoggingLevel);
+        forgeLoggingLevel.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
+                viewModel.setLoggingLevel((String) itemEvent.getItem());
+        });
+        viewModel.addOnLoggingLevelChanged(forgeLoggingLevel::setSelectedItem);
+
         add(forgeLoggingLevel, gbc);
 
         // Enable Logging
@@ -71,27 +78,18 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableLoggingLabel = new JLabelWithHover(GetText.tr("Enable Logging") + "?", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."))
-                        .build());
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."))
+                .build());
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
-        enableLogs.addActionListener(e -> {
-            if (!enableLogs.isSelected()) {
-                enableOpenEyeReporting.setSelected(false);
-                enableOpenEyeReporting.setEnabled(false);
-            } else {
-                enableOpenEyeReporting.setSelected(true);
-                enableOpenEyeReporting.setEnabled(true);
-            }
-        });
-        if (App.settings.enableLogs) {
-            enableLogs.setSelected(true);
-        }
+        enableLogs.addActionListener(e ->
+            viewModel.setEnableLogging(enableLogs.isSelected())
+        );
         add(enableLogs, gbc);
 
         // Enable Analytics
@@ -101,19 +99,20 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "?",
-                HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."))
-                        .build());
+            HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."))
+                .build());
         add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableAnalytics = new JCheckBox();
-        if (App.settings.enableAnalytics) {
-            enableAnalytics.setSelected(true);
-        }
+        enableAnalytics.addActionListener(e ->
+            viewModel.setEnableAnonAnalytics(enableAnalytics.isSelected())
+        );
+        viewModel.addOnEnableAnonAnalyticsChanged(enableAnalytics::setSelected);
         add(enableAnalytics, gbc);
 
         // Enable OpenEye Reporting
@@ -123,30 +122,25 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableOpenEyeReportingLabel = new JLabelWithHover(GetText.tr("Enable OpenEye Reporting") + "?",
-                HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "OpenEye is a mod/project created by the OpenMods team which aims to help gather statistics and crash logs from Minecraft in order to help users and modders discover and fix issues with mods. With the OpenEye mod installed (each ModPack chooses if they wish to install it or not, it's not installed by default to all packs by the Launcher) everytime Minecraft crashes the OpenEye report is sent to OpenEye for analysis and if a note from the modder has been added on the cause/fix it will be displayed to you. For more information please see http://openeye.openblocks.info"))
-                        .build());
+            HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "OpenEye is a mod/project created by the OpenMods team which aims to help gather statistics and crash logs from Minecraft in order to help users and modders discover and fix issues with mods. With the OpenEye mod installed (each ModPack chooses if they wish to install it or not, it's not installed by default to all packs by the Launcher) everytime Minecraft crashes the OpenEye report is sent to OpenEye for analysis and if a note from the modder has been added on the cause/fix it will be displayed to you. For more information please see http://openeye.openblocks.info"))
+                .build());
         add(enableOpenEyeReportingLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableOpenEyeReporting = new JCheckBox();
-        if (!App.settings.enableLogs) {
-            enableOpenEyeReporting.setEnabled(false);
-        }
-        if (App.settings.enableOpenEyeReporting) {
-            enableOpenEyeReporting.setSelected(true);
-        }
+        enableOpenEyeReporting.addActionListener(e ->
+            viewModel.setEnableOpenEyeReporting(enableOpenEyeReporting.isSelected())
+        );
+        viewModel.addOnEnableLoggingChanged(enabled -> {
+            enableLogs.setSelected(enabled);
+            enableOpenEyeReporting.setEnabled(enabled);
+        });
+        viewModel.addOnEnableOpenEyeReportingChanged(enableOpenEyeReporting::setSelected);
         add(enableOpenEyeReporting, gbc);
-    }
-
-    public void save() {
-        App.settings.forgeLoggingLevel = (String) forgeLoggingLevel.getSelectedItem();
-        App.settings.enableLogs = enableLogs.isSelected();
-        App.settings.enableAnalytics = enableAnalytics.isSelected();
-        App.settings.enableOpenEyeReporting = enableOpenEyeReporting.isSelected();
     }
 
     @Override
