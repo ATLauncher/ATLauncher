@@ -33,15 +33,15 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.atlauncher.managers.PerformanceManager;
+import com.atlauncher.utils.MonitorPerformance;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 public class JavaFinder {
     private static SoftReference<List<String>> javaPaths = new SoftReference<>(null);
 
+    @MonitorPerformance
     public static List<JavaInfo> findJavas() {
-        PerformanceManager.start();
         List<String> javaExecs = javaPaths.get();
 
         if (javaExecs == null) {
@@ -115,8 +115,6 @@ public class JavaFinder {
 
             javaPaths = new SoftReference<>(javaExecs);
         }
-
-        PerformanceManager.end();
         return javaExecs.stream().distinct().filter(java -> Files.exists(Paths.get(java))).map(JavaInfo::new)
                 .collect(Collectors.toList());
     }
