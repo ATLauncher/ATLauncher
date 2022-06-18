@@ -53,8 +53,8 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
     private final CommandsSettingsTab commandSettingsTab = new CommandsSettingsTab();
     private final List<Tab> tabs = Arrays.asList(
-            new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
-                    this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
+        new Tab[]{this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
+            this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab});
     private final JTabbedPane tabbedPane;
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 
@@ -77,16 +77,13 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
 
         add(bottomPanel, BorderLayout.SOUTH);
         saveButton.addActionListener(arg0 -> {
-            if (networkSettingsTab.canConnectWithProxy()) {
-                networkSettingsTab.save();
-                App.settings.save();
-                SettingsManager.post();
-                App.TOASTER.pop("Settings Saved");
-            }
+            App.settings.save();
+            SettingsManager.post();
+            App.TOASTER.pop("Settings Saved");
         });
 
         tabbedPane.addChangeListener(e -> Analytics
-                .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
+            .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
     }
 
     @Override
