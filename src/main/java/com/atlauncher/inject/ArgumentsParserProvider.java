@@ -22,6 +22,9 @@ import joptsimple.OptionParser;
 import javax.inject.Provider;
 import java.util.Arrays;
 
+/**
+ * A {@link Provider} that constructs the app {@link OptionParser}.
+ */
 public final class ArgumentsParserProvider implements Provider<OptionParser> {
     @Override
     public OptionParser get(){

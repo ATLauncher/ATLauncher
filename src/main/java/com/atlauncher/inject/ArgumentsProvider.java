@@ -24,6 +24,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+/**
+ * A {@link Provider} that constructs the app {@link OptionSet} using the provided {@link OptionParser}
+ * and command line arguments.
+ */
 public final class ArgumentsProvider implements Provider<OptionSet>{
     private final String[] arguments;
     private final OptionParser parser;

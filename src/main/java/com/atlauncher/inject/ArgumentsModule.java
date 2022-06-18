@@ -24,25 +24,41 @@ import joptsimple.OptionSet;
 
 import javax.inject.Named;
 
-public final class ArgumentsModule extends AbstractModule{
+/**
+ * A Guice Module for binding the app arguments.
+ *
+ * Node(s):
+ *   - This needs to be constructed at launch so the arguments can get injected where needed.
+ */
+public final class ArgumentsModule extends AbstractModule {
     public static final String ARGUMENTS = "Arguments";
     private final String[] arguments;
 
-    public ArgumentsModule(final String[] arguments){
+    /**
+     * Constructor
+     * @param arguments The command line arguments passed in at launch
+     */
+    public ArgumentsModule(final String[] arguments) {
         this.arguments = arguments;
     }
 
     @Override
-    protected void configure(){
+    protected void configure() {
         this.bind(OptionParser.class)
             .toProvider(ArgumentsParserProvider.class);
         this.bind(OptionSet.class)
             .toProvider(ArgumentsProvider.class);
     }
 
+    /**
+     * Provider function for supplying the application arguments to, primarily to the
+     * {@link OptionParser} so it can provide the {@link OptionSet}.
+     *
+     * @return The command line arguments supplied during the construction of this module at launch
+     */
     @Provides
     @Named(ARGUMENTS)
-    public String[] getArguments(){
+    public String[] getArguments() {
         return this.arguments;
     }
 }

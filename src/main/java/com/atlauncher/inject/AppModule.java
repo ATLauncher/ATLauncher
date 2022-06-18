@@ -22,6 +22,12 @@ import com.atlauncher.data.Settings;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
+/**
+ * A Guice module for binding various application specific components such as, the {@link Settings}.
+ *
+ * Node(s):
+ *   - This needs to be constructed at launch so the {@link Settings} can be injected everywhere.
+ */
 public final class AppModule extends AbstractModule{
     @Override
     protected void configure(){
