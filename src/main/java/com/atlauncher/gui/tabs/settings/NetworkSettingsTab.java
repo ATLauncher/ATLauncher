@@ -24,8 +24,8 @@ import java.awt.event.KeyListener;
 
 import javax.swing.*;
 
-import com.atlauncher.gui.tabs.settings.INetworkSettingsViewModel.ProxyCheckState;
 import com.atlauncher.gui.tabs.settings.INetworkSettingsViewModel.ProxyType;
+import com.atlauncher.listener.CheckState;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
@@ -233,15 +233,15 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         });
 
         viewModel.addOnProxyCheckListener(state -> {
-            if (state instanceof ProxyCheckState.NotChecking) {
+            if (state instanceof CheckState.NotChecking) {
                 resetProxyChecker();
-            } else if (state instanceof ProxyCheckState.CheckPending) {
+            } else if (state instanceof CheckState.CheckPending) {
                 setProxyChecker("Proxy change pending", "/assets/icon/warning.png");
-            } else if (state instanceof ProxyCheckState.Checking) {
+            } else if (state instanceof CheckState.Checking) {
                 setProxyChecker("Checking proxy", "/assets/image/loading-bars-small.gif");
                 setProxySettingsEnabled(false);
-            } else if (state instanceof ProxyCheckState.Checked) {
-                if (((ProxyCheckState.Checked) state).valid) {
+            } else if (state instanceof CheckState.Checked) {
+                if (((CheckState.Checked) state).valid) {
                     resetProxyChecker();
                 } else {
                     setProxyChecker("Invalid!", "/assets/icon/error.png");

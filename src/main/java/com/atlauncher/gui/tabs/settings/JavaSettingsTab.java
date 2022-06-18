@@ -28,8 +28,10 @@ import javax.swing.*;
 
 import com.atlauncher.constants.Constants.ScreenResolution;
 import com.atlauncher.gui.tabs.settings.IJavaSettingsViewModel.MaxRamWarning;
+import com.atlauncher.listener.CheckState;
 import com.atlauncher.listener.CheckingKeyListener;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -58,13 +60,15 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JSpinner heightField;
     private final JComboBox<ComboItem<ScreenResolution>> commonScreenSizes;
     private final JLabelWithHover javaPathLabel;
-    private JTextField javaPath;
+    private final JTextField javaPath;
+    private final JLabelWithHover javaPathChecker;
     private final JComboBox<String> installedJavasComboBox;
     private final JButton javaPathResetButton;
     private final JButton javaBrowseButton;
     private final JLabelWithHover javaParametersLabel;
     private final JTextArea javaParameters;
     private final JButton javaParametersResetButton;
+    private final JLabelWithHover javaParamChecker;
     private final JLabelWithHover startMinecraftMaximisedLabel;
     private final JCheckBox startMinecraftMaximised;
     private final JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
@@ -91,12 +95,12 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
                 .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
-                .build(), RESTART_BORDER);
+            .build(), RESTART_BORDER);
 
         initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
-                        .build());
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
+                .build());
 
         JPanel initialMemoryPanel = new JPanel();
         initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -143,9 +147,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
-                new HTMLBuilder().center().split(100)
-                        .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."))
-                        .build());
+            new HTMLBuilder().center().split(100)
+                .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."))
+                .build());
         add(maximumMemoryLabel, gbc);
 
         JPanel maximumMemoryPanel = new JPanel();
@@ -153,7 +157,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         if (viewModel.isJava32Bit()) {
             maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
                     .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
-                    .build(), RESTART_BORDER));
+                .build(), RESTART_BORDER));
         }
         maximumMemoryPanel.add(maximumMemoryLabel);
 
@@ -201,7 +205,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
-                GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
+            GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
         add(permGenLabel, gbc);
 
         gbc.gridx++;
@@ -239,7 +243,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         windowSizeLabel = new JLabelWithHover(GetText.tr("Window Size") + ":", HELP_ICON,
-                GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
+            GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
         add(windowSizeLabel, gbc);
 
         gbc.gridx++;
@@ -250,7 +254,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         windowSizePanel.setLayout(new BoxLayout(windowSizePanel, BoxLayout.X_AXIS));
 
         SpinnerNumberModel widthModel = new SpinnerNumberModel(App.settings.windowWidth, 1, OS.getMaximumWindowWidth(),
-                1);
+            1);
         widthField = new JSpinner(widthModel);
         widthField.setEditor(new JSpinner.NumberEditor(widthField, "#"));
         widthField.addChangeListener(e ->
@@ -258,7 +262,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         viewModel.addOnWidthChanged(widthModel::setValue);
 
         SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.windowHeight, 1,
-                OS.getMaximumWindowHeight(), 1);
+            OS.getMaximumWindowHeight(), 1);
         heightField = new JSpinner(heightModel);
         heightField.setEditor(new JSpinner.NumberEditor(heightField, "#"));
         heightField.addChangeListener(e ->
@@ -301,9 +305,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what you're doing, just set this to the path where the bin folder is for the version of Java you want to use. If you mess up, click the Reset button to go back to the default"))
-                        .build());
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what you're doing, just set this to the path where the bin folder is for the version of Java you want to use. If you mess up, click the Reset button to go back to the default"))
+                .build());
         add(javaPathLabel, gbc);
 
         gbc.gridx++;
@@ -346,7 +350,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPath = new JTextField(32);
         javaPath.addKeyListener(new CheckingKeyListener(
             ignored -> viewModel.setJavaPath(javaPath.getText()),
-            invalid -> SwingUtilities.invokeLater(this::invalidJavaPath)
+            invalid -> SwingUtilities.invokeLater(this::invalidJavaPath),
+            this::setJavaPathCheckState
         ));
 
         viewModel.addOnJavaPathChanged(javaPath::setText);
@@ -355,12 +360,16 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
 
         javaPathResetButton = new JButton(GetText.tr("Reset"));
-        javaPathResetButton.addActionListener(e -> viewModel.resetJavaPath());
+        javaPathResetButton.addActionListener(e -> {
+            viewModel.resetJavaPath();
+            resetJavaPathCheckLabel();
+        });
 
         javaPathPanelBottom.add(javaPathResetButton);
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
 
         javaBrowseButton = new JButton(GetText.tr("Browse"));
+        javaPathChecker = new JLabelWithHover("", null, null);
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File(viewModel.getJavaPath()));
@@ -384,6 +393,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         });
 
         javaPathPanelBottom.add(javaBrowseButton);
+        javaPathPanelBottom.add(javaPathChecker, gbc);
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
 
         javaPathPanel.add(javaPathPanelTop);
         javaPathPanel.add(Box.createVerticalStrut(5));
@@ -399,7 +410,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_END;
         javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
-                GetText.tr("Extra Java command line paramaters can be added here."));
+            GetText.tr("Extra Java command line paramaters can be added here."));
         add(javaParametersLabel, gbc);
 
         gbc.gridx++;
@@ -411,25 +422,30 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
         javaParameters = new JTextArea(6, 40);
+        javaParamChecker = new JLabelWithHover("", null, null);
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
         javaParameters.addKeyListener(new CheckingKeyListener(
             ignored -> viewModel.setJavaParams(javaParameters.getText()),
-            invalid -> SwingUtilities.invokeLater(this::invalidJavaParameters)
+            invalid -> SwingUtilities.invokeLater(this::invalidJavaParameters),
+            this::setJavaParamCheckState
         ));
         viewModel.addOnJavaParamsChanged(javaParameters::setText);
-
-        javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e ->
-            viewModel.resetJavaParams()
-        );
 
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(Box.createHorizontalStrut(5));
 
         Box paramsResetBox = Box.createVerticalBox();
+        javaParametersResetButton = new JButton(GetText.tr("Reset"));
+        javaParametersResetButton.addActionListener(e ->
+            viewModel.resetJavaParams()
+        );
         paramsResetBox.add(javaParametersResetButton);
         paramsResetBox.add(Box.createVerticalGlue());
+
+        paramsResetBox.add(javaParamChecker, gbc);
+        paramsResetBox.add(Box.createVerticalGlue());
+
         javaParametersPanel.add(paramsResetBox);
 
         add(javaParametersPanel, gbc);
@@ -441,8 +457,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         startMinecraftMaximisedLabel = new JLabelWithHover(GetText.tr("Start Minecraft Maximised") + "?", HELP_ICON,
-                GetText.tr(
-                        "Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
+            GetText.tr(
+                "Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
         add(startMinecraftMaximisedLabel, gbc);
 
         gbc.gridx++;
@@ -463,8 +479,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(GetText.tr("Ignore Java Checks On Launch") + "?",
-                HELP_ICON, GetText.tr(
-                        "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
+            HELP_ICON, GetText.tr(
+            "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
         add(ignoreJavaOnInstanceLaunchLabel, gbc);
 
         gbc.gridx++;
@@ -484,13 +500,13 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         useJavaProvidedByMinecraftLabel = new JLabelWithHover(GetText.tr("Use Java Provided By Minecraft") + "?",
-                HELP_ICON,
-                new HTMLBuilder().center().text(GetText.tr(
-                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing.{0}",
-                        (OS.isArm() && !OS.isMacArm()) ? GetText.tr(
-                                "<br/><br/>This setting cannot be changed if using an ARM based computer as it's not compatable and will not be used.")
-                                : ""))
-                        .build());
+            HELP_ICON,
+            new HTMLBuilder().center().text(GetText.tr(
+                    "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing.{0}",
+                    (OS.isArm() && !OS.isMacArm()) ? GetText.tr(
+                        "<br/><br/>This setting cannot be changed if using an ARM based computer as it's not compatable and will not be used.")
+                        : ""))
+                .build());
         add(useJavaProvidedByMinecraftLabel, gbc);
 
         gbc.gridx++;
@@ -543,7 +559,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         useSystemGlfwLabel = new JLabelWithHover(GetText.tr("Use System GLFW") + "?", HELP_ICON, new HTMLBuilder()
-                .center().text(GetText.tr("Use the systems install for GLFW native library.")).build());
+            .center().text(GetText.tr("Use the systems install for GLFW native library.")).build());
         add(useSystemGlfwLabel, gbc);
 
         gbc.gridx++;
@@ -562,7 +578,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         useSystemOpenAlLabel = new JLabelWithHover(GetText.tr("Use System OpenAL") + "?", HELP_ICON, new HTMLBuilder()
-                .center().text(GetText.tr("Use the systems install for OpenAL native library.")).build());
+            .center().text(GetText.tr("Use the systems install for OpenAL native library.")).build());
         add(useSystemOpenAlLabel, gbc);
 
         gbc.gridx++;
@@ -587,6 +603,63 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             .build()).setType(DialogManager.ERROR).show();
     }
 
+    private void setLabelState(JLabelWithHover label, String tooltip, String path) {
+        try {
+            label.setToolTipText(tooltip);
+            ImageIcon icon = Utils.getIconImage(path);
+            label.setIcon(icon);
+            icon.setImageObserver(label);
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+    private void resetJavaPathCheckLabel() {
+        setLabelState(javaPathChecker, "Visualize java path checker", "/assets/icon/question.png");
+    }
+
+    private void setJavaPathCheckState(CheckState state) {
+        if (state instanceof CheckState.NotChecking) {
+            resetJavaPathCheckLabel();
+        } else if (state instanceof CheckState.CheckPending) {
+            setLabelState(javaPathChecker, "Java path change pending", "/assets/icon/warning.png");
+        } else if (state instanceof CheckState.Checking) {
+            setLabelState(javaPathChecker, "Checking java path", "/assets/image/loading-bars-small.gif");
+
+            javaPath.setEnabled(false);
+        } else if (state instanceof CheckState.Checked) {
+            if (((CheckState.Checked) state).valid) {
+                resetJavaPathCheckLabel();
+            } else {
+                setLabelState(javaPathChecker, "Invalid!", "/assets/icon/error.png");
+            }
+            javaPath.setEnabled(true);
+        }
+    }
+
+    private void resetJavaParamCheckLabel() {
+        setLabelState(javaParamChecker, "Visualize java param checker", "/assets/icon/question.png");
+
+    }
+
+    private void setJavaParamCheckState(CheckState state) {
+        if (state instanceof CheckState.NotChecking) {
+            resetJavaPathCheckLabel();
+        } else if (state instanceof CheckState.CheckPending) {
+            setLabelState(javaParamChecker, "Java params change pending", "/assets/icon/warning.png");
+        } else if (state instanceof CheckState.Checking) {
+            setLabelState(javaParamChecker, "Checking java params", "/assets/image/loading-bars-small.gif");
+
+            javaParameters.setEnabled(false);
+        } else if (state instanceof CheckState.Checked) {
+            if (((CheckState.Checked) state).valid) {
+                resetJavaPathCheckLabel();
+            } else {
+                setLabelState(javaParamChecker, "Invalid!", "/assets/icon/error.png");
+            }
+            javaParameters.setEnabled(true);
+        }
+    }
+
     @Override
     public String getTitle() {
         return GetText.tr("Java/Minecraft");
@@ -601,29 +674,29 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     public void onRelocalization() {
         this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
                 "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
-                .build());
+            .build());
 
         this.initialMemoryLabel.setText(GetText.tr("Initial Memory/Ram") + ":");
         this.initialMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
                 "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
-                .build());
+            .build());
 
         this.maximumMemoryLabel.setText(GetText.tr("Maximum Memory/Ram") + ":");
         this.maximumMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100)
-                .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft.")).build());
+            .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft.")).build());
 
         this.permGenLabel.setText(GetText.tr("PermGen Size") + ":");
         this.permGenLabel
-                .setToolTipText(GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
+            .setToolTipText(GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
 
         this.windowSizeLabel.setText(GetText.tr("Window Size") + ":");
         this.windowSizeLabel.setToolTipText(
-                GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
+            GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
 
         this.javaPathLabel.setText(GetText.tr("Java Path") + ":");
         this.javaPathLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
                 "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"))
-                .build());
+            .build());
 
         this.javaPathResetButton.setText(GetText.tr("Reset"));
 
@@ -636,20 +709,20 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         this.startMinecraftMaximisedLabel.setText(GetText.tr("Start Minecraft Maximised") + "?");
         this.startMinecraftMaximisedLabel.setToolTipText(GetText
-                .tr("Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
+            .tr("Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
 
         this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java Checks On Launch") + "?");
         this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(
-                "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
+            "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
 
         this.useJavaProvidedByMinecraftLabel.setText(GetText.tr("Use Java Provided By Minecraft") + "?");
         this.useJavaProvidedByMinecraftLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
                 "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
-                .build());
+            .build());
 
         this.disableLegacyLaunchingLabel.setText(GetText.tr("Disable Legacy Launching") + "?");
         this.disableLegacyLaunchingLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
                 "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
-                .build());
+            .build());
     }
 }

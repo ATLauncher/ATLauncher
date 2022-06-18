@@ -17,6 +17,8 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
+import com.atlauncher.listener.CheckState;
+
 import java.util.function.Consumer;
 
 /**
@@ -62,25 +64,7 @@ public interface INetworkSettingsViewModel extends IAbstractSettingsViewModel {
 
     void addOnProxyTypeChanged(Consumer<Integer> onChanged);
 
-    void addOnProxyCheckListener(Consumer<ProxyCheckState> onChecked);
+    void addOnProxyCheckListener(Consumer<CheckState> onChecked);
 
-    abstract class ProxyCheckState {
 
-        static class NotChecking extends ProxyCheckState {
-        }
-
-        static class CheckPending extends ProxyCheckState {
-        }
-
-        static class Checking extends ProxyCheckState {
-        }
-
-        static class Checked extends ProxyCheckState {
-            final boolean valid;
-
-            Checked(boolean valid) {
-                this.valid = valid;
-            }
-        }
-    }
 }

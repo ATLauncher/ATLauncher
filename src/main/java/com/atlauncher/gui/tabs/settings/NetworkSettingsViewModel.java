@@ -3,6 +3,7 @@ package com.atlauncher.gui.tabs.settings;
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.listener.CheckState;
 import com.atlauncher.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +19,7 @@ import java.util.function.Consumer;
 public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     private static final Logger LOG = LogManager.getLogger(NetworkSettingsViewModel.class);
 
-    private Consumer<ProxyCheckState> _addOnProxyCheckedListener;
+    private Consumer<CheckState> _addOnProxyCheckedListener;
     private boolean proxySettingsChanged = false;
     private long lastChangeToProxy = 0;
     private static final long proxyCheckDelay = 1000;
@@ -27,19 +28,19 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         while (App.settings.enableProxy) {
             if (proxySettingsChanged) {
                 _addOnProxyCheckedListener.accept(
-                    new ProxyCheckState.CheckPending()
+                    new CheckState.CheckPending()
                 );
                 if ((lastChangeToProxy + proxyCheckDelay) < System.currentTimeMillis()) {
                     proxySettingsChanged = false;
 
                     _addOnProxyCheckedListener.accept(
-                        new ProxyCheckState.Checking()
+                        new CheckState.Checking()
                     );
 
                     boolean newState = checkHost();
 
                     _addOnProxyCheckedListener.accept(
-                        new ProxyCheckState.Checked(newState)
+                        new CheckState.Checked(newState)
                     );
                 }
             }
@@ -143,7 +144,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         if (!b && proxyCheckThread.isAlive()) {
             // Stop the proxy check if it is running
             proxyCheckThread.interrupt();
-            _addOnProxyCheckedListener.accept(new ProxyCheckState.NotChecking());
+            _addOnProxyCheckedListener.accept(new CheckState.NotChecking());
         } else {
             // Restart the proxy check thread
             if (!proxyCheckThread.isAlive() || proxyCheckThread.isInterrupted()) {
@@ -231,8 +232,8 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public void addOnProxyCheckListener(Consumer<ProxyCheckState> onChecked) {
-        onChecked.accept(new ProxyCheckState.NotChecking());
+    public void addOnProxyCheckListener(Consumer<CheckState> onChecked) {
+        onChecked.accept(new CheckState.NotChecking());
         _addOnProxyCheckedListener = onChecked;
     }
 

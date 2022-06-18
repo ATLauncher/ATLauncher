@@ -40,7 +40,7 @@ public class CheckingKeyListener extends Thread implements KeyListener {
     private long lastType = 0;
     private boolean changed = false;
     private final Consumer<Void> invalid;
-    private final Consumer<Boolean> isLoading;
+    private final Consumer<CheckState> checkStateConsumer;
     private final long checkDelay;
 
     /**
@@ -71,13 +71,13 @@ public class CheckingKeyListener extends Thread implements KeyListener {
     public CheckingKeyListener(
         Function<Void, Boolean> check,
         Consumer<Void> invalid,
-        Consumer<Boolean> isLoading
+        Consumer<CheckState> checkStateConsumer
     ) {
         this(
             1000,
             check,
             invalid,
-            isLoading
+            checkStateConsumer
         );
     }
 
@@ -92,12 +92,13 @@ public class CheckingKeyListener extends Thread implements KeyListener {
         long checkDelay,
         Function<Void, Boolean> check,
         Consumer<Void> invalid,
-        Consumer<Boolean> isLoading
+        Consumer<CheckState> checkStateConsumer
     ) {
         this.checkDelay = checkDelay;
         this.check = check;
         this.invalid = invalid;
-        this.isLoading = isLoading;
+        this.checkStateConsumer = checkStateConsumer;
+        checkStateConsumer.accept(new CheckState.NotChecking());
         start();
     }
 
@@ -110,18 +111,21 @@ public class CheckingKeyListener extends Thread implements KeyListener {
             } catch (InterruptedException e) {
                 LOG.error("Failed to delay check thread", e);
             } finally {
-                if (changed && lastType + checkDelay < System.currentTimeMillis()) {
-                    isLoading.accept(true);
-                    boolean valid = check.apply(null);
-                    isLoading.accept(false);
-                    changed = false;
+                if (changed) {
+                    checkStateConsumer.accept(new CheckState.CheckPending());
+                    if ( lastType + checkDelay < System.currentTimeMillis()) {
+                        checkStateConsumer.accept(new CheckState.Checking());
+                        boolean valid = check.apply(null);
+                        checkStateConsumer.accept(new CheckState.Checked(valid));
+                        changed = false;
 
-                    if (!valid) {
-                        LOG.debug("Check thread reporting check fail");
-                        SwingUtilities.invokeLater(() -> {
-                            invalid.accept(null);
+                        if (!valid) {
+                            LOG.debug("Check thread reporting check fail");
+                            SwingUtilities.invokeLater(() -> {
+                                invalid.accept(null);
 
-                        });
+                            });
+                        }
                     }
                 }
             }
