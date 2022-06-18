@@ -31,6 +31,8 @@ import java.util.function.Function;
  * 16 / 06 / 2022
  * <p>
  * Ensures that the typed data is correct
+ * <p>
+ * Note, use [check] to also save the text
  */
 public class CheckingKeyListener extends Thread implements KeyListener {
     private static final Logger LOG = LogManager.getLogger();
@@ -38,6 +40,7 @@ public class CheckingKeyListener extends Thread implements KeyListener {
     private long lastType = 0;
     private boolean changed = false;
     private final Consumer<Void> invalid;
+    private final Consumer<Boolean> isLoading;
     private final long checkDelay;
 
     /**
@@ -53,7 +56,28 @@ public class CheckingKeyListener extends Thread implements KeyListener {
         this(
             1000,
             check,
-            invalid
+            invalid,
+            ignored -> {
+            }
+        );
+    }
+
+    /**
+     * Constructor, sets delay to 1 second
+     *
+     * @param check   check if the typed text is valid, return result
+     * @param invalid invoked when the check fails
+     */
+    public CheckingKeyListener(
+        Function<Void, Boolean> check,
+        Consumer<Void> invalid,
+        Consumer<Boolean> isLoading
+    ) {
+        this(
+            1000,
+            check,
+            invalid,
+            isLoading
         );
     }
 
@@ -67,11 +91,13 @@ public class CheckingKeyListener extends Thread implements KeyListener {
     public CheckingKeyListener(
         long checkDelay,
         Function<Void, Boolean> check,
-        Consumer<Void> invalid
+        Consumer<Void> invalid,
+        Consumer<Boolean> isLoading
     ) {
         this.checkDelay = checkDelay;
         this.check = check;
         this.invalid = invalid;
+        this.isLoading = isLoading;
         start();
     }
 
@@ -85,7 +111,9 @@ public class CheckingKeyListener extends Thread implements KeyListener {
                 LOG.error("Failed to delay check thread", e);
             } finally {
                 if (changed && lastType + checkDelay < System.currentTimeMillis()) {
+                    isLoading.accept(true);
                     boolean valid = check.apply(null);
+                    isLoading.accept(false);
                     changed = false;
 
                     if (!valid) {
