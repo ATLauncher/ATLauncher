@@ -27,7 +27,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
 
 @SuppressWarnings("serial")
 public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener {
@@ -47,8 +46,6 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Analytics.sendEvent("SkinUpdater", "Run", "Tool");
-
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), viewModel.accountCount(),
             GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
 

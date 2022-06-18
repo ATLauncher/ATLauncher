@@ -30,7 +30,6 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
 
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
     private static final Logger LOG = LogManager.getLogger(NetworkCheckerToolPanel.class);
@@ -54,8 +53,6 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Analytics.sendEvent("NetworkChecker", "Run", "Tool");
-
         int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Network Checker"))
             .setContent(new HTMLBuilder().center().split(75).text(GetText.tr(
                     "Please note that the data from this tool is sent to ATLauncher so we can diagnose possible issues in your setup. This test may take up to 10 minutes or longer to complete and you will be unable to do anything while it's running. Please also keep in mind that this test will use some of your bandwidth, it will use approximately 100MB.<br/><br/>Do you wish to continue?"))

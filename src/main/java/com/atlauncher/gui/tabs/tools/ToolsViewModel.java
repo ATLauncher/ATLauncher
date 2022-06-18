@@ -143,6 +143,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     @Override
     public void runNetworkChecker(Consumer<Void> onTaskComplete, Consumer<Void> onFail, Consumer<Void> onSuccess) {
+        Analytics.sendEvent("NetworkChecker", "Run", "Tool");
         StringBuilder results = new StringBuilder();
 
         // Connection to CDN
@@ -454,6 +455,8 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     @Override
     public void updateSkins(Consumer<Void> onTaskComplete) {
+        Analytics.sendEvent("SkinUpdater", "Run", "Tool");
+
         Data.ACCOUNTS.forEach(account -> {
             account.updateSkin();
             onTaskComplete.accept(null);
