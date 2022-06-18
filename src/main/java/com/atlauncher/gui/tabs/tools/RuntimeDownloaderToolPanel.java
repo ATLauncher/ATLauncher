@@ -88,7 +88,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
 
         dialog.start();
 
-        if (dialog.getReturnValue()) {
+        if (!dialog.getReturnValue()) {
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
                 .setContent(new HTMLBuilder().center()
                     .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
