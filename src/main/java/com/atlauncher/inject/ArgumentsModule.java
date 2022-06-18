@@ -23,6 +23,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * A Guice Module for binding the app arguments.
@@ -45,9 +46,11 @@ public final class ArgumentsModule extends AbstractModule {
     @Override
     protected void configure() {
         this.bind(OptionParser.class)
-            .toProvider(ArgumentsParserProvider.class);
+            .toProvider(ArgumentsParserProvider.class)
+            .in(Singleton.class);
         this.bind(OptionSet.class)
-            .toProvider(ArgumentsProvider.class);
+            .toProvider(ArgumentsProvider.class)
+            .in(Singleton.class);
     }
 
     /**
