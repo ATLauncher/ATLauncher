@@ -1576,9 +1576,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (this.curseForgeManifest != null) {
             if (Files.exists(curseForgeExtractedPath
-                    .resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides") + "/mods"))) {
+                    .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides") + "/mods"))) {
                 try (Stream<Path> list = Files.list(curseForgeExtractedPath
-                        .resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides") + "/mods"))) {
+                        .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides") + "/mods"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
@@ -1589,11 +1589,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             if (Files.exists(
-                    curseForgeExtractedPath.resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides")
-                            + "/mods/" + packVersion.minecraft))) {
+                    curseForgeExtractedPath
+                            .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")
+                                    + "/mods/" + packVersion.minecraft))) {
                 try (Stream<Path> list = Files.list(
-                        curseForgeExtractedPath.resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides")
-                                + "/mods/" + packVersion.minecraft))) {
+                        curseForgeExtractedPath
+                                .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")
+                                        + "/mods/" + packVersion.minecraft))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
                             .filter(p -> p.toString().toLowerCase().endsWith(".jar")
                                     || p.toString().toLowerCase().endsWith(".zip"))
@@ -2706,7 +2708,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireSubProgressUnknown();
             fireTask(GetText.tr("Copying Overrides"));
             Utils.copyDirectory(this.curseForgeExtractedPath
-                    .resolve(Optional.of(curseForgeManifest.overrides).orElse("overrides")).toFile(),
+                    .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")).toFile(),
                     this.root.toFile(), false);
         } else if (modrinthManifest != null) {
             fireSubProgressUnknown();

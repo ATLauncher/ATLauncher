@@ -10,6 +10,9 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Old launcher logs not being deleted after 14 days
 - Fix issues importing from Flatpak [#605] (thanks @Doomsdayrs)
+- Issue importing CurseForge format zips with missing overrides in json
+- Fix default instance sort setting labeled incorrectly [#615] (thanks @Doomsdayrs)
+- Fix mods logger on launch not actually logging everything that was added
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)
@@ -18,3 +21,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Update to Java 17 for the Windows installer [#601]
 - Ask user to confirm deleting user data when uninstalling on Windows
 - Implement view model for ToolsTab [#612]
+- Implement view model for NewsTab [#611]
