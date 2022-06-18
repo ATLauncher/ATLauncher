@@ -41,7 +41,7 @@ public class AccountsViewModel implements IAccountsViewModel {
     private static final Logger LOG = LogManager.getLogger(AccountsViewModel.class);
 
     @Override
-    public int accountCount(){
+    public int accountCount() {
         return AccountManager.getAccounts().size();
     }
 
@@ -256,12 +256,10 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void updateUsername() {
         AbstractAccount account = getSelectedAccount();
-        if (account instanceof MojangAccount){
-            Analytics.sendEvent("UpdateUsername", "Account");
-            account.updateUsername();
-            AccountManager.saveAccounts();
-            pushNewAccounts();
-        }
+        Analytics.sendEvent("UpdateUsername", "Account");
+        account.updateUsername();
+        AccountManager.saveAccounts();
+        pushNewAccounts();
     }
 
     @Override
