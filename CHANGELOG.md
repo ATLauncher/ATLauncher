@@ -21,3 +21,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Update to Java 17 for the Windows installer [#601]
 - Ask user to confirm deleting user data when uninstalling on Windows
 - Implement view model for NewsTab [#611]
+- Add AspectJ [#620]
+- Add MonitorPerformanceAdvice [#620]
+- Add RepaintAdvice [#620]
