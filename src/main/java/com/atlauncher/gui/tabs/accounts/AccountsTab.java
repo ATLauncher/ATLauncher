@@ -287,7 +287,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         updateSkin.addActionListener(e -> {
             viewModel.updateSkin();
 
-            // Have this done via listener
+            // TODO Have this done via listener
+            //  To describe, userSkin icon should be reactive, not active.
             AbstractAccount account = viewModel.getSelectedAccount();
             userSkin.setIcon(account.getMinecraftSkin());
         });
