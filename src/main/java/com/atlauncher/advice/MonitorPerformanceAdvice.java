@@ -24,10 +24,21 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
+/**
+ * Aspect class for handling the monitor performance advice such as:
+ *  - {@link MonitorPerformance}
+ */
 @Aspect
 public final class MonitorPerformanceAdvice{
+    /**
+     * Advice code for handling {@link MonitorPerformance}.
+     * @param joinPoint The current {@link ProceedingJoinPoint}.
+     * @return The value returned by the {@link ProceedingJoinPoint}.
+     * @throws Throwable Anything potentially thrown by the {@link ProceedingJoinPoint}.
+     */
     @Around("@annotation(com.atlauncher.utils.MonitorPerformance) && execution(* *(..))")
     public Object aroundMonitorPerformance(final ProceedingJoinPoint joinPoint) throws Throwable{
+        // get the label to use for the PerformanceManager specified by the @MonitorPerformance annotation, default to the function name if empty.
         final MonitorPerformance monitor = ((MethodSignature) joinPoint.getSignature()).getMethod()
             .getDeclaredAnnotation(MonitorPerformance.class);
         final String monitorLabel = monitor.value().trim();
@@ -35,6 +46,7 @@ public final class MonitorPerformanceAdvice{
             ? ((MethodSignature) joinPoint.getSignature()).getMethod().getName()
             : monitorLabel;
 
+        // wrap the code, and trap the result so it can be returned. This is still safe on void since they are the same when compiled but with slightly different bytecode.
         PerformanceManager.start(label);
         final Object result = joinPoint.proceed();
         PerformanceManager.end(label);

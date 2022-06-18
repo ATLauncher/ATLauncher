@@ -22,8 +22,42 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation used to wrap code for performance monitoring.
+ *
+ * Rather than doing such:
+ * ```java
+ * public void myFunction(){
+ *   PerformanceManager.start();
+ *
+ *   // do some things
+ *
+ *   PerformanceManager.stop();
+ * }
+ * ```
+ *
+ * This can be abbreviated to:
+ * ```java
+ * @MonitorPerformance(
+ *   value = "" // or some other value
+ * )
+ * public void myFunction(){
+ *   // do some things
+ * }
+ * ```
+ *
+ * After compilation, they will be effectively the same.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface MonitorPerformance{
-    String value();
+    /**
+     * The label to supply to the {@link com.atlauncher.managers.PerformanceManager}.
+     *
+     * Note(s)
+     *  - default, or empty string, for the value will use the name of the function this is attached to.
+     *
+     * @return The label to use for the telemetry span.
+     */
+    String value() default "";
 }

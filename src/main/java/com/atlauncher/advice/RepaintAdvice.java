@@ -23,8 +23,16 @@ import org.aspectj.lang.annotation.Aspect;
 
 import javax.swing.JComponent;
 
+/**
+ * Aspect class for handling the Swing repaint advice such as:
+ *  - {@link com.atlauncher.utils.RepaintAfter}
+ */
 @Aspect
 public final class RepaintAdvice{
+    /**
+     * Advice code for handling {@link com.atlauncher.utils.RepaintAfter}
+     * @param joinPoint - The current {@link JoinPoint}
+     */
     @After("@annotation(com.atlauncher.utils.RepaintAfter) && execution(* *(..))")
     public void repaintAfter(final JoinPoint joinPoint){
         ((JComponent) joinPoint.getThis()).repaint();
