@@ -78,7 +78,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         add(bottomPanel, BorderLayout.SOUTH);
         saveButton.addActionListener(arg0 -> {
             if (networkSettingsTab.canConnectWithProxy()) {
-                modsSettingsTab.save();
                 networkSettingsTab.save();
                 App.settings.save();
                 SettingsManager.post();
