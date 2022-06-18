@@ -20,3 +20,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Update dependencies
 - Update to Java 17 for the Windows installer [#601]
 - Ask user to confirm deleting user data when uninstalling on Windows
+- Implement view model for NewsTab [#611]
