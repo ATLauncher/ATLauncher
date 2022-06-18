@@ -1,5 +1,5 @@
 import java.text.SimpleDateFormat
-import java.util.stream.Collectors
+import groovy.json.JsonSlurper
 
 buildscript {
     repositories {
@@ -43,41 +43,41 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.java.dev.jna:jna:5.11.0'
-    implementation 'net.java.dev.jna:jna-platform:5.11.0'
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'org.tukaani:xz:1.9'
-    implementation 'com.mojang:authlib:1.5.21'
-    implementation 'net.iharder:base64:2.3.9'
-    implementation 'com.github.Vatuu:discord-rpc:1.6.2'
-    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    implementation 'org.zeroturnaround:zt-zip:1.15'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.squareup.okhttp3:okhttp-tls:4.9.3'
-    implementation 'net.mikehardy:google-analytics-java:2.0.11'
-    implementation 'io.sentry:sentry:5.7.0'
-    implementation 'org.mini2Dx:gettext-lib:1.10.4'
-    implementation 'org.apache.logging.log4j:log4j-api:2.17.2'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
-    implementation 'com.sangupta:murmur:1.0.0'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'org.apache.commons:commons-text:1.9'
-    implementation 'com.formdev:flatlaf:2.3'
-    implementation 'com.formdev:flatlaf-extras:2.3'
-    implementation 'com.github.oshi:oshi-core:6.1.6'
-    implementation 'net.freeutils:jlhttp:2.6'
-    implementation 'joda-time:joda-time:2.10.14'
-    implementation 'org.apache.commons:commons-compress:1.21'
-    implementation 'org.commonmark:commonmark:0.19.0'
-    implementation 'com.github.hypfvieh:dbus-java:3.3.1'
+    implementation "net.java.dev.jna:jna:${findProperty("jna.version")}"
+    implementation "net.java.dev.jna:jna-platform:${findProperty("jna.version")}"
+    implementation "com.google.code.gson:gson:${findProperty("gson.version")}"
+    implementation "com.google.guava:guava:${findProperty("guava.version")}"
+    implementation "org.tukaani:xz:${findProperty("xz.version")}"
+    implementation "com.mojang:authlib:${findProperty("authlib.version")}"
+    implementation "net.iharder:base64:${findProperty("base64.version")}"
+    implementation "com.github.Vatuu:discord-rpc:${findProperty("discord-rpc.version")}"
+    implementation "net.sf.jopt-simple:jopt-simple:${findProperty("jopt-simple.version")}"
+    implementation "org.zeroturnaround:zt-zip:${findProperty("zt-zip.version")}"
+    implementation "com.squareup.okhttp3:okhttp:${findProperty("okhttp.version")}"
+    implementation "com.squareup.okhttp3:okhttp-tls:${findProperty("okhttp.version")}"
+    implementation "net.mikehardy:google-analytics-java:${findProperty("google-analytics.version")}"
+    implementation "io.sentry:sentry:${findProperty("sentry.version")}"
+    implementation "org.mini2Dx:gettext-lib:${findProperty("get-text.version")}"
+    implementation "org.apache.logging.log4j:log4j-api:${findProperty("log4j.version")}"
+    implementation "org.apache.logging.log4j:log4j-core:${findProperty("log4j.version")}"
+    implementation "com.sangupta:murmur:${findProperty("murmur.version")}"
+    implementation "org.apache.commons:commons-lang3:${findProperty("commons-lang.version")}"
+    implementation "org.apache.commons:commons-text:${findProperty("commons-text.version")}"
+    implementation "com.formdev:flatlaf:${findProperty("flat-laf.version")}"
+    implementation "com.formdev:flatlaf-extras:${findProperty("flat-laf.version")}"
+    implementation "com.github.oshi:oshi-core:${findProperty("oshi-core.version")}"
+    implementation "net.freeutils:jlhttp:${findProperty("jlhttp.version")}"
+    implementation "joda-time:joda-time:${findProperty("joda-time.version")}"
+    implementation "org.apache.commons:commons-compress:${findProperty("commons-compress.version")}"
+    implementation "org.commonmark:commonmark:${findProperty("commonmark.version")}"
+    implementation "com.github.hypfvieh:dbus-java:${findProperty("dbus-java.version")}"
 
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testImplementation 'org.assertj:assertj-swing-junit:3.17.1'
-    testImplementation 'org.mock-server:mockserver-netty:5.13.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
+    testImplementation "junit:junit:${findProperty("junit.version")}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${findProperty("junit-jupiter.version")}"
+    testImplementation "org.assertj:assertj-swing-junit:${findProperty("assertj-swing-junit.version")}"
+    testImplementation "org.mock-server:mockserver-netty:${findProperty("mockserver-netty.version")}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${findProperty("junit-jupiter.version")}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${findProperty("junit-jupiter.version")}"
 }
 
 application {
