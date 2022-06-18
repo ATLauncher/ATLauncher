@@ -57,7 +57,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp-tls:${findProperty("okhttp.version")}"
     implementation "net.mikehardy:google-analytics-java:${findProperty("google-analytics.version")}"
     implementation "io.sentry:sentry:${findProperty("sentry.version")}"
-    implementation "org.mini2Dx:gettext-lib:${findProperty("get-text.version")}"
+    implementation "org.mini2Dx:gettext-lib:${findProperty("gettext-lib.version")}"
     implementation "org.apache.logging.log4j:log4j-api:${findProperty("log4j.version")}"
     implementation "org.apache.logging.log4j:log4j-core:${findProperty("log4j.version")}"
     implementation "com.sangupta:murmur:${findProperty("murmur.version")}"
