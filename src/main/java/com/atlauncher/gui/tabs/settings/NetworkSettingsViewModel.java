@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -63,6 +64,8 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
                     _addOnProxyCheckedListener.accept(
                         new CheckState.Checked(valid)
                     );
+                    if (valid)
+                        SettingsManager.post();
                 }
             }
 
@@ -72,7 +75,6 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
             }
         }
     };
-
 
     private Thread proxyCheckThread = new Thread(threadRunnable);
 
@@ -190,7 +192,6 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     public void setProxyHost(String host) {
         changedProxySettings();
         App.settings.proxyHost = host;
-        SettingsManager.post();
     }
 
     @Override

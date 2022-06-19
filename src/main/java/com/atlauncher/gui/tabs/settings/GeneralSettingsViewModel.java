@@ -22,17 +22,16 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.manager.SettingsValidityManager;
 import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.formdev.flatlaf.FlatLaf;
-import org.checkerframework.checker.units.qual.A;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -60,7 +59,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     };
     Consumer<Boolean> _addOnUseRecycleBinChanged;
 
-    public GeneralSettingsViewModel(){
+    public GeneralSettingsViewModel() {
         SettingsManager.addListener(this);
     }
 
@@ -236,10 +235,47 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         }
     }
 
+    private boolean downloadPathChanged = false;
+    private long downloadPathLastChange = 0;
+    private static final long downloadPathSaveDelay = 500;
+    private final Runnable downloadSaveTaskRunnable = () -> {
+        while (true) {
+            if (downloadPathChanged) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException ignored) {
+                } finally {
+                    SettingsValidityManager.post("downloadPath", false);
+                    if (downloadPathLastChange + downloadPathSaveDelay < System.currentTimeMillis()) {
+                        downloadPathChanged = false;
+                        SettingsManager.post();
+                        SettingsValidityManager.post("downloadPath", true);
+                        break;
+                    }
+                }
+
+            }
+        }
+    };
+
+    private Thread downloadSaveThread = null;
+
+    @Override
+    public void resetCustomDownloadPath() {
+        App.settings.customDownloadsPath = FileSystem.getUserDownloadsPath(false).toString();
+        SettingsManager.post();
+    }
+
     @Override
     public void setCustomsDownloadPath(String value) {
         App.settings.customDownloadsPath = value;
-        SettingsManager.post();
+
+        downloadPathChanged = true;
+        downloadPathLastChange = System.currentTimeMillis();
+        if (downloadSaveThread == null || !downloadSaveThread.isAlive() || downloadSaveThread.isInterrupted()) {
+            downloadSaveThread = new Thread(downloadSaveTaskRunnable);
+            downloadSaveThread.start();
+        }
     }
 
     @Override

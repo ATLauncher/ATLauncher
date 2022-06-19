@@ -60,9 +60,13 @@ public interface IGeneralSettingsViewModel extends IAbstractSettingsViewModel {
 
     void addInstanceSortingChanged(Consumer<Integer> onChanged);
 
+
+    void resetCustomDownloadPath();
+
     void setCustomsDownloadPath(String value);
 
     void addOnCustomsDownloadPathChanged(Consumer<String> onChanged);
+
 
     void setKeepLauncherOpen(boolean b);
 

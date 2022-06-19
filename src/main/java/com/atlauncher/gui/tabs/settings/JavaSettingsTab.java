@@ -358,7 +358,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                viewModel.setJavaPath(javaPath.getText());
+                if (!keyEvent.isActionKey())
+                    viewModel.setJavaPath(javaPath.getText());
             }
         });
 
@@ -449,7 +450,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                viewModel.setJavaParams(javaParameters.getText());
+                if (!keyEvent.isActionKey())
+                    viewModel.setJavaParams(javaParameters.getText());
             }
         });
         viewModel.addOnJavaParamsChanged(javaParameters::setText);

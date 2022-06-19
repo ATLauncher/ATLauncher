@@ -55,7 +55,6 @@ public final class SettingsValidityManager {
     }
 
     public static synchronized void post(String setting, boolean validity) {
-        LOG.debug("Posting value for setting (" + setting + ") as " + validity);
         validities.put(setting, validity);
         new Thread(() -> {
             for (Consumer<Boolean> listener : listeners) {

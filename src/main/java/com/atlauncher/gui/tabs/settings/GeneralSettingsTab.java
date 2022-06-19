@@ -301,7 +301,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         customDownloadsPath.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
-                viewModel.setCustomsDownloadPath(customDownloadsPath.getText());
             }
 
             @Override
@@ -311,14 +310,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-
+                if (!keyEvent.isActionKey())
+                    viewModel.setCustomsDownloadPath(customDownloadsPath.getText());
             }
         });
 
 
         customDownloadsPathResetButton = new JButton(GetText.tr("Reset"));
         customDownloadsPathResetButton.addActionListener(
-            e -> customDownloadsPath.setText(FileSystem.getUserDownloadsPath(false).toString()));
+            e -> viewModel.resetCustomDownloadPath());
         customDownloadsPathBrowseButton = new JButton(GetText.tr("Browse"));
         customDownloadsPathBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();

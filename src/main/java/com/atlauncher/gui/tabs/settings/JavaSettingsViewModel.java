@@ -302,6 +302,8 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
 
                         if (!valid) {
                             LOG.debug("javaParamCheckThread: Check thread reporting check fail");
+                        } else {
+                            SettingsManager.post();
                         }
                     }
                 }
@@ -318,7 +320,6 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         javaPathChanged = true;
         if (!javaPathCheckThread.isAlive())
             javaPathCheckThread.start();
-        SettingsManager.post();
     }
 
     @Override
@@ -369,7 +370,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
 
                         if (!valid) {
                             LOG.debug("javaParamCheckThread: Check thread reporting check fail");
-                        }
+                        } else SettingsManager.post();
                     }
                 }
             }
@@ -397,7 +398,6 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         javaParamChanged = true;
         if (!javaParamCheckThread.isAlive())
             javaParamCheckThread.start();
-        SettingsManager.post();
     }
 
     @Override

@@ -168,7 +168,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                viewModel.setProxyHost(proxyHost.getText());
+                if (!keyEvent.isActionKey())
+                    viewModel.setProxyHost(proxyHost.getText());
             }
         });
         viewModel.addOnProxyHostChanged(proxyHost::setText);
