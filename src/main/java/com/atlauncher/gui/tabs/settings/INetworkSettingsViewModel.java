@@ -47,6 +47,7 @@ public interface INetworkSettingsViewModel extends IAbstractSettingsViewModel {
     void addOnEnableProxyChanged(Consumer<Boolean> onChanged);
 
     void setProxyHost(String host);
+    void setProxyHostPending();
 
     void addOnProxyHostChanged(Consumer<String> onChanged);
 

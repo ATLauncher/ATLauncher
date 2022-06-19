@@ -26,6 +26,7 @@ import javax.swing.*;
 
 import com.atlauncher.gui.tabs.settings.INetworkSettingsViewModel.ProxyType;
 import com.atlauncher.data.CheckState;
+import com.atlauncher.listener.DelayedSavingKeyListener;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
@@ -157,21 +158,11 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
         proxyHost = new JTextField(20);
-        proxyHost.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                if (!keyEvent.isActionKey())
-                    viewModel.setProxyHost(proxyHost.getText());
-            }
-        });
+        proxyHost.addKeyListener(new DelayedSavingKeyListener(
+            500,
+            () -> viewModel.setProxyHost(proxyHost.getText()),
+            viewModel::setProxyHostPending
+        ));
         viewModel.addOnProxyHostChanged(proxyHost::setText);
         add(proxyHost, gbc);
 

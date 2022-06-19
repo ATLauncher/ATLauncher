@@ -31,6 +31,7 @@ import javax.swing.*;
 import com.atlauncher.constants.Constants.ScreenResolution;
 import com.atlauncher.gui.tabs.settings.IJavaSettingsViewModel.MaxRamWarning;
 import com.atlauncher.data.CheckState;
+import com.atlauncher.listener.DelayedSavingKeyListener;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
@@ -347,21 +348,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         javaPath = new JTextField(32);
         javaPathChecker = new JLabelWithHover("", null, null);
-        javaPath.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                if (!keyEvent.isActionKey())
-                    viewModel.setJavaPath(javaPath.getText());
-            }
-        });
+        javaPath.addKeyListener(new DelayedSavingKeyListener(
+            500,
+            () -> viewModel.setJavaPath(javaPath.getText()),
+            viewModel::setJavaPathPending
+        ));
 
         viewModel.addOnJavaPathChanged(javaPath::setText);
         viewModel.addOnJavaPathCheckerListener(this::setJavaPathCheckState);
@@ -438,22 +429,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParamChecker = new JLabelWithHover("", null, null);
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
-        javaParameters.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                if (!keyEvent.isActionKey())
-                    viewModel.setJavaParams(javaParameters.getText());
-            }
-        });
+        javaParameters.addKeyListener(new DelayedSavingKeyListener(
+            500,
+            () -> viewModel.setJavaParams(javaParameters.getText()),
+            viewModel::setJavaParamsPending
+        ));
         viewModel.addOnJavaParamsChanged(javaParameters::setText);
         viewModel.addOnJavaParamsCheckerListener(this::setJavaParamCheckState);
 
@@ -539,21 +519,24 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useJavaProvidedByMinecraft = new JCheckBox();
         useJavaProvidedByMinecraft.setEnabled(viewModel.getUseJavaFromMinecraftEnabled());
-        useJavaProvidedByMinecraft.addItemListener(e -> {
-            viewModel.setJavaFromMinecraft(e.getStateChange() == ItemEvent.SELECTED);
-            if (e.getStateChange() == ItemEvent.DESELECTED) {
-                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                    .setType(DialogManager.WARNING)
-                    .setContent(GetText.tr(
-                        "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
-                    .show();
+        useJavaProvidedByMinecraft.addItemListener(e ->
+            viewModel.setJavaFromMinecraft(e.getStateChange() == ItemEvent.SELECTED));
+        viewModel.addOnJavaFromMinecraftChanged(enabled -> {
+            useJavaProvidedByMinecraft.setEnabled(enabled);
+            if (!enabled) {
+                SwingUtilities.invokeLater(() -> {
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                            "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
+                        .show();
 
-                if (ret != 0) {
-                    viewModel.setJavaFromMinecraft(true);
-                }
+                    if (ret != 0) {
+                        viewModel.setJavaFromMinecraft(true);
+                    }
+                });
             }
         });
-        viewModel.addOnJavaFromMinecraftChanged(useJavaProvidedByMinecraft::setSelected);
         add(useJavaProvidedByMinecraft, gbc);
 
         // Disable Legacy Launching

@@ -291,7 +291,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                     javaPathCheckStateConsumer.accept(new CheckState.CheckPending());
                     if (javaPathLastChange + javaPathCheckDelay < System.currentTimeMillis()) {
                         // Prevent user from saving while checking
-                        SettingsValidityManager.post("javaPath", false);
+                        setJavaPathPending();
                         javaPathCheckStateConsumer.accept(new CheckState.Checking());
 
                         File jPath = new File(App.settings.javaPath, "bin");
@@ -320,6 +320,11 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         javaPathChanged = true;
         if (!javaPathCheckThread.isAlive())
             javaPathCheckThread.start();
+    }
+
+    @Override
+    public void setJavaPathPending() {
+        SettingsValidityManager.post("javaPath", false);
     }
 
     @Override
@@ -357,7 +362,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                     javaParamCheckStateConsumer.accept(new CheckState.CheckPending());
                     if (javaParamLastChange + javaParamCheckDelay < System.currentTimeMillis()) {
                         // Prevent user from saving while checking
-                        SettingsValidityManager.post("javaParam", false);
+                        setJavaParamsPending();
                         javaParamCheckStateConsumer.accept(new CheckState.Checking());
 
                         String params = App.settings.javaParameters;
@@ -398,6 +403,11 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         javaParamChanged = true;
         if (!javaParamCheckThread.isAlive())
             javaParamCheckThread.start();
+    }
+
+    @Override
+    public void setJavaParamsPending() {
+        SettingsValidityManager.post("javaParam", false);
     }
 
     @Override

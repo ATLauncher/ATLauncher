@@ -115,6 +115,7 @@ public interface IJavaSettingsViewModel extends IAbstractSettingsViewModel {
      * Set the java path
      */
     void setJavaPath(String path);
+    void setJavaPathPending();
 
     String getJavaPath();
 
@@ -128,6 +129,7 @@ public interface IJavaSettingsViewModel extends IAbstractSettingsViewModel {
      * Set the java params
      */
     void setJavaParams(String params);
+    void setJavaParamsPending();
 
     void addOnJavaParamsChanged(Consumer<String> onChanged);
 

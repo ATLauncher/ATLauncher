@@ -53,7 +53,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
                     proxySettingsChanged = false;
 
                     // Do not let user save while checking
-                    SettingsValidityManager.post("proxy", false);
+                    setProxyHostPending();
 
                     _addOnProxyCheckedListener.accept(
                         new CheckState.Checking()
@@ -192,6 +192,11 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     public void setProxyHost(String host) {
         changedProxySettings();
         App.settings.proxyHost = host;
+    }
+
+    @Override
+    public void setProxyHostPending() {
+        SettingsValidityManager.post("proxy", false);
     }
 
     @Override
