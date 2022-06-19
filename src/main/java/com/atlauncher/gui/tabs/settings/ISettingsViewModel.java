@@ -15,24 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.gui.tabs.settings;
 
-public abstract class CheckState {
+import java.util.function.Consumer;
 
-    public static class NotChecking extends CheckState {
-    }
+/**
+ * 19 / 06 / 2022
+ */
+public interface ISettingsViewModel {
+    void save();
 
-    public static class CheckPending extends CheckState {
-    }
-
-    public static class Checking extends CheckState {
-    }
-
-    public static class Checked extends CheckState {
-        public final boolean valid;
-
-        public Checked(boolean valid) {
-            this.valid = valid;
-        }
-    }
+    void addOnSaveEnabledChanged(Consumer<Boolean> onChanged);
 }

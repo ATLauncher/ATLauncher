@@ -21,6 +21,7 @@ import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.CheckState;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.manager.SettingsValidityManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import org.apache.logging.log4j.LogManager;
@@ -269,6 +270,8 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     @Override
     public void resetJavaPath() {
         App.settings.javaPath = OS.getDefaultJavaPath();
+        javaPathLastChange = System.currentTimeMillis();
+        javaPathChanged = true;
         SettingsManager.post();
     }
 
@@ -287,18 +290,18 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                 if (javaPathChanged) {
                     javaPathCheckStateConsumer.accept(new CheckState.CheckPending());
                     if (javaPathLastChange + javaPathCheckDelay < System.currentTimeMillis()) {
+                        // Prevent user from saving while checking
+                        SettingsValidityManager.post("javaPath", false);
                         javaPathCheckStateConsumer.accept(new CheckState.Checking());
 
                         File jPath = new File(App.settings.javaPath, "bin");
                         boolean valid = jPath.exists();
                         javaPathCheckStateConsumer.accept(new CheckState.Checked(valid));
                         javaPathChanged = false;
+                        SettingsValidityManager.post("javaPath", valid);
 
                         if (!valid) {
                             LOG.debug("javaParamCheckThread: Check thread reporting check fail");
-                            SwingUtilities.invokeLater(() -> {
-                                javaPathCheckStateConsumer.accept(null);
-                            });
                         }
                     }
                 }
@@ -352,6 +355,8 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                 if (javaParamChanged) {
                     javaParamCheckStateConsumer.accept(new CheckState.CheckPending());
                     if (javaParamLastChange + javaParamCheckDelay < System.currentTimeMillis()) {
+                        // Prevent user from saving while checking
+                        SettingsValidityManager.post("javaParam", false);
                         javaParamCheckStateConsumer.accept(new CheckState.Checking());
 
                         String params = App.settings.javaParameters;
@@ -360,12 +365,10 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                             || params.contains("-XX:MetaspaceSize"));
                         javaParamCheckStateConsumer.accept(new CheckState.Checked(valid));
                         javaParamChanged = false;
+                        SettingsValidityManager.post("javaParam", valid);
 
                         if (!valid) {
                             LOG.debug("javaParamCheckThread: Check thread reporting check fail");
-                            SwingUtilities.invokeLater(() -> {
-                                javaParamCheckStateConsumer.accept(null);
-                            });
                         }
                     }
                 }

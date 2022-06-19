@@ -1,9 +1,27 @@
+/*
+ * ATLauncher - https://github.com/ATLauncher/ATLauncher
+ * Copyright (C) 2013-2022 ATLauncher
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.data.CheckState;
+import com.atlauncher.evnt.manager.SettingsValidityManager;
 import com.atlauncher.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,14 +51,17 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
                 if ((lastChangeToProxy + proxyCheckDelay) < System.currentTimeMillis()) {
                     proxySettingsChanged = false;
 
+                    // Do not let user save while checking
+                    SettingsValidityManager.post("proxy", false);
+
                     _addOnProxyCheckedListener.accept(
                         new CheckState.Checking()
                     );
 
-                    boolean newState = checkHost();
-
+                    boolean valid = checkHost();
+                    SettingsValidityManager.post("proxy", valid);
                     _addOnProxyCheckedListener.accept(
-                        new CheckState.Checked(newState)
+                        new CheckState.Checked(valid)
                     );
                 }
             }
@@ -141,6 +162,10 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     public void setEnableProxy(Boolean b) {
         App.settings.enableProxy = b;
         SettingsManager.post();
+        // Ensure proxy validity is set to true when disabled
+        if (!b)
+            SettingsValidityManager.post("proxy", true);
+
         if (!b && proxyCheckThread.isAlive()) {
             // Stop the proxy check if it is running
             proxyCheckThread.interrupt();

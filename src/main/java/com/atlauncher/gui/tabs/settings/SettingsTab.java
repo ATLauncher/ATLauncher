@@ -31,17 +31,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.SettingsManager;
-import com.atlauncher.evnt.manager.ThemeManager;
-import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
-import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
-import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
-import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
-import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
-import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
-import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.network.Analytics;
-import com.formdev.flatlaf.FlatLaf;
 
 @SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
@@ -59,6 +49,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final JButton saveButton = new JButton(GetText.tr("Save"));
 
     public SettingsTab() {
+        ISettingsViewModel viewModel = new SettingsViewModel();
         RelocalizationManager.addListener(this);
         setLayout(new BorderLayout());
 
@@ -76,10 +67,12 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         bottomPanel.add(saveButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
-        saveButton.addActionListener(arg0 -> {
-            App.settings.save();
-            SettingsManager.post();
-            App.TOASTER.pop("Settings Saved");
+        saveButton.addActionListener(arg0 -> viewModel.save());
+        viewModel.addOnSaveEnabledChanged(saveValidity -> {
+            saveButton.setEnabled(saveValidity);
+            if (!saveValidity)
+                saveButton.setToolTipText(GetText.tr("Review settings"));
+            else saveButton.setToolTipText(null);
         });
 
         tabbedPane.addChangeListener(e -> Analytics
