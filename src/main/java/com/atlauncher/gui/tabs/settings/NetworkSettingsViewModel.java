@@ -3,7 +3,7 @@ package com.atlauncher.gui.tabs.settings;
 import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.evnt.manager.SettingsManager;
-import com.atlauncher.listener.CheckState;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -25,7 +25,7 @@ import java.awt.event.KeyListener;
 import javax.swing.*;
 
 import com.atlauncher.gui.tabs.settings.INetworkSettingsViewModel.ProxyType;
-import com.atlauncher.listener.CheckState;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;

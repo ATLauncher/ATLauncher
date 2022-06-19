@@ -1,4 +1,4 @@
-package com.atlauncher.listener;
+package com.atlauncher.data;
 
 public abstract class CheckState {
 

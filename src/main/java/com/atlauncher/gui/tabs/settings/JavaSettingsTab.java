@@ -28,7 +28,7 @@ import javax.swing.*;
 
 import com.atlauncher.constants.Constants.ScreenResolution;
 import com.atlauncher.gui.tabs.settings.IJavaSettingsViewModel.MaxRamWarning;
-import com.atlauncher.listener.CheckState;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.listener.CheckingKeyListener;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;

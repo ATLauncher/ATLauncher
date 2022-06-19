@@ -17,7 +17,7 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import com.atlauncher.listener.CheckState;
+import com.atlauncher.data.CheckState;
 
 import java.util.function.Consumer;
 
