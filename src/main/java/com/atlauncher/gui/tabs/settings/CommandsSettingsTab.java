@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
+import com.atlauncher.listener.DelayedSavingKeyListener;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -81,20 +82,10 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
         nextColumn();
 
         preLaunchCommand = new JTextField(App.settings.preLaunchCommand, 32);
-        preLaunchCommand.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-                viewModel.setPreLaunchCommand(preLaunchCommand.getText());
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-            }
-        });
+        preLaunchCommand.addKeyListener(new DelayedSavingKeyListener(
+            500,
+            () -> viewModel.setPreLaunchCommand(preLaunchCommand.getText()),
+            viewModel::setPreLaunchCommandPending));
         viewModel.addOnPreLaunchCommandChanged(preLaunchCommand::setText);
         preLaunchCommand.setPreferredSize(new Dimension(516, 24));
         add(preLaunchCommand, gbc);
@@ -112,20 +103,11 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
         nextColumn();
 
         postExitCommand = new JTextField(App.settings.postExitCommand, 32);
-        postExitCommand.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-                viewModel.setPostExitCommand(postExitCommand.getText());
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-            }
-        });
+        postExitCommand.addKeyListener(new DelayedSavingKeyListener(
+            500,
+            () -> viewModel.setPostExitCommand(postExitCommand.getText()),
+            viewModel::setPostExitCommandPending
+        ));
         viewModel.addOnPostExitCommandChanged(postExitCommand::setText);
         postExitCommand.setPreferredSize(new Dimension(516, 24));
         add(postExitCommand, gbc);
@@ -144,20 +126,10 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
 
         wrapperCommand = new JTextField(App.settings.wrapperCommand, 32);
         wrapperCommand.setPreferredSize(new Dimension(516, 24));
-        wrapperCommand.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-                viewModel.setWrapperCommand(postExitCommand.getText());
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-            }
-        });
+        wrapperCommand.addKeyListener(new DelayedSavingKeyListener(
+            500,
+            () -> viewModel.setWrapperCommand(wrapperCommand.getText()),
+            viewModel::setWrapperCommandPending));
         viewModel.addOnWrapperCommandChanged(wrapperCommand::setText);
         add(wrapperCommand, gbc);
 

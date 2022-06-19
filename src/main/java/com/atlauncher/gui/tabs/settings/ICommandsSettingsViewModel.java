@@ -28,14 +28,17 @@ public interface ICommandsSettingsViewModel extends IAbstractSettingsViewModel {
     void addOnEnableCommandsChanged(Consumer<Boolean> onChanged);
 
     void setPreLaunchCommand(String text);
+    void setPreLaunchCommandPending();
 
     void addOnPreLaunchCommandChanged(Consumer<String> setText);
 
     void setPostExitCommand(String text);
+    void setPostExitCommandPending();
 
     void addOnPostExitCommandChanged(Consumer<String> setText);
 
     void setWrapperCommand(String text);
+    void setWrapperCommandPending();
 
     void addOnWrapperCommandChanged(Consumer<String> setText);
 }

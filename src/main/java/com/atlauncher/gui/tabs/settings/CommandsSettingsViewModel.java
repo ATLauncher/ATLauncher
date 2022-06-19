@@ -19,6 +19,9 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.manager.SettingsValidityManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.Consumer;
 
@@ -26,6 +29,8 @@ import java.util.function.Consumer;
  * 15 / 06 / 2022
  */
 public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
+    private static final Logger LOG = LogManager.getLogger(CommandsSettingsViewModel.class);
+
     private String nullIfEmpty(String str) {
         if (str.isEmpty())
             return null;
@@ -38,7 +43,7 @@ public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
     private Consumer<String> _addOnPostExitCommandChanged;
     private Consumer<String> _addOnWrapperCommandChanged;
 
-    public CommandsSettingsViewModel(){
+    public CommandsSettingsViewModel() {
         SettingsManager.addListener(this);
     }
 
@@ -65,7 +70,13 @@ public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
     @Override
     public void setPreLaunchCommand(String text) {
         App.settings.preLaunchCommand = nullIfEmpty(text);
+        SettingsValidityManager.post("preLaunchCommand", true);
         SettingsManager.post();
+    }
+
+    @Override
+    public void setPreLaunchCommandPending() {
+        SettingsValidityManager.post("preLaunchCommand", false);
     }
 
     @Override
@@ -77,7 +88,13 @@ public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
     @Override
     public void setPostExitCommand(String text) {
         App.settings.postExitCommand = nullIfEmpty(text);
+        SettingsValidityManager.post("setPostExitCommand", true);
         SettingsManager.post();
+    }
+
+    @Override
+    public void setPostExitCommandPending() {
+        SettingsValidityManager.post("setPostExitCommand", false);
     }
 
     @Override
@@ -89,7 +106,13 @@ public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
     @Override
     public void setWrapperCommand(String text) {
         App.settings.wrapperCommand = nullIfEmpty(text);
+        SettingsValidityManager.post("wrapperCommand", true);
         SettingsManager.post();
+    }
+
+    @Override
+    public void setWrapperCommandPending() {
+        SettingsValidityManager.post("wrapperCommand", false);
     }
 
     @Override

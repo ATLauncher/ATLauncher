@@ -64,6 +64,7 @@ public interface IGeneralSettingsViewModel extends IAbstractSettingsViewModel {
     void resetCustomDownloadPath();
 
     void setCustomsDownloadPath(String value);
+    void setCustomsDownloadPathPending();
 
     void addOnCustomsDownloadPathChanged(Consumer<String> onChanged);
 

@@ -17,12 +17,8 @@
  */
 package com.atlauncher.gui.tabs.settings;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.Point;
 import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,9 +34,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.atlauncher.gui.tabs.settings.IGeneralSettingsViewModel.LauncherTheme;
+import com.atlauncher.listener.DelayedSavingKeyListener;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
@@ -298,22 +294,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         customDownloadsPath = new JTextField(16);
         viewModel.addOnCustomsDownloadPathChanged(customDownloadsPath::setText);
-        customDownloadsPath.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                if (!keyEvent.isActionKey())
-                    viewModel.setCustomsDownloadPath(customDownloadsPath.getText());
-            }
-        });
+        customDownloadsPath.addKeyListener(new DelayedSavingKeyListener(
+            500,
+            () -> viewModel.setCustomsDownloadPath(customDownloadsPath.getText()),
+            viewModel::setCustomsDownloadPathPending
+        ));
 
 
         customDownloadsPathResetButton = new JButton(GetText.tr("Reset"));
