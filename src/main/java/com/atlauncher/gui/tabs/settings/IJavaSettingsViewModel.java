@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.constants.Constants.ScreenResolution;
+import com.atlauncher.data.CheckState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -112,28 +113,25 @@ public interface IJavaSettingsViewModel extends IAbstractSettingsViewModel {
 
     /**
      * Set the java path
-     *
-     * @param path the path
-     * @return true if valid
      */
-    boolean setJavaPath(String path);
+    void setJavaPath(String path);
 
     String getJavaPath();
 
     void addOnJavaPathChanged(Consumer<String> onChanged);
 
+    void addOnJavaPathCheckerListener(Consumer<CheckState> consumer);
 
     void resetJavaParams();
 
     /**
      * Set the java params
-     *
-     * @param params parameters
-     * @return true if valid
      */
-    boolean setJavaParams(String params);
+    void setJavaParams(String params);
 
     void addOnJavaParamsChanged(Consumer<String> onChanged);
+
+    void addOnJavaParamsCheckerListener(Consumer<CheckState> consumer);
 
 
     void setStartMinecraftMax(Boolean b);

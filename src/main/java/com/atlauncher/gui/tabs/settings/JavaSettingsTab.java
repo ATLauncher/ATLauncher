@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 
 import javax.swing.*;
@@ -29,7 +31,6 @@ import javax.swing.*;
 import com.atlauncher.constants.Constants.ScreenResolution;
 import com.atlauncher.gui.tabs.settings.IJavaSettingsViewModel.MaxRamWarning;
 import com.atlauncher.data.CheckState;
-import com.atlauncher.listener.CheckingKeyListener;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import org.mini2Dx.gettext.GetText;
@@ -338,23 +339,30 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             installedJavasComboBox.setSelectedIndex(selectedIndex);
             installedJavasComboBox.addActionListener(e -> {
                     String path = ((String) installedJavasComboBox.getSelectedItem());
-                    boolean valid = viewModel.setJavaPath(path);
-                    if (!valid) {
-                        invalidJavaPath();
-                    }
+                    viewModel.setJavaPath(path);
                 }
             );
             javaPathPanelTop.add(installedJavasComboBox);
         }
 
         javaPath = new JTextField(32);
-        javaPath.addKeyListener(new CheckingKeyListener(
-            ignored -> viewModel.setJavaPath(javaPath.getText()),
-            invalid -> SwingUtilities.invokeLater(this::invalidJavaPath),
-            this::setJavaPathCheckState
-        ));
+        javaPath.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                viewModel.setJavaPath(javaPath.getText());
+            }
+        });
 
         viewModel.addOnJavaPathChanged(javaPath::setText);
+        viewModel.addOnJavaPathCheckerListener(this::setJavaPathCheckState);
 
         javaPathPanelBottom.add(javaPath);
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
@@ -425,12 +433,23 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaParamChecker = new JLabelWithHover("", null, null);
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
-        javaParameters.addKeyListener(new CheckingKeyListener(
-            ignored -> viewModel.setJavaParams(javaParameters.getText()),
-            invalid -> SwingUtilities.invokeLater(this::invalidJavaParameters),
-            this::setJavaParamCheckState
-        ));
+        javaParameters.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                viewModel.setJavaParams(javaParameters.getText());
+            }
+        });
         viewModel.addOnJavaParamsChanged(javaParameters::setText);
+        viewModel.addOnJavaParamsCheckerListener(this::setJavaParamCheckState);
 
         javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(Box.createHorizontalStrut(5));
@@ -631,6 +650,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 resetJavaPathCheckLabel();
             } else {
                 setLabelState(javaPathChecker, "Invalid!", "/assets/icon/error.png");
+                invalidJavaPath();
             }
             javaPath.setEnabled(true);
         }
@@ -643,7 +663,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     private void setJavaParamCheckState(CheckState state) {
         if (state instanceof CheckState.NotChecking) {
-            resetJavaPathCheckLabel();
+            resetJavaParamCheckLabel();
         } else if (state instanceof CheckState.CheckPending) {
             setLabelState(javaParamChecker, "Java params change pending", "/assets/icon/warning.png");
         } else if (state instanceof CheckState.Checking) {
@@ -652,9 +672,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             javaParameters.setEnabled(false);
         } else if (state instanceof CheckState.Checked) {
             if (((CheckState.Checked) state).valid) {
-                resetJavaPathCheckLabel();
+                resetJavaParamCheckLabel();
             } else {
                 setLabelState(javaParamChecker, "Invalid!", "/assets/icon/error.png");
+                invalidJavaParameters();
             }
             javaParameters.setEnabled(true);
         }

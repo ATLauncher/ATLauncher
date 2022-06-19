@@ -19,14 +19,20 @@ package com.atlauncher.gui.tabs.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -266,15 +272,50 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         SettingsManager.post();
     }
 
+    private long javaPathLastChange = 0;
+    private boolean javaPathChanged = false;
+    private static final long javaPathCheckDelay = 2000;
+    private Consumer<CheckState> javaPathCheckStateConsumer;
+    private final Thread javaPathCheckThread = new Thread(() -> {
+        LOG.debug("Running javaParamCheckThread");
+        while (true) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                LOG.error("javaParamCheckThread : Failed to delay check thread", e);
+            } finally {
+                if (javaPathChanged) {
+                    javaPathCheckStateConsumer.accept(new CheckState.CheckPending());
+                    if (javaPathLastChange + javaPathCheckDelay < System.currentTimeMillis()) {
+                        javaPathCheckStateConsumer.accept(new CheckState.Checking());
+
+                        File jPath = new File(App.settings.javaPath, "bin");
+                        boolean valid = jPath.exists();
+                        javaPathCheckStateConsumer.accept(new CheckState.Checked(valid));
+                        javaPathChanged = false;
+
+                        if (!valid) {
+                            LOG.debug("javaParamCheckThread: Check thread reporting check fail");
+                            SwingUtilities.invokeLater(() -> {
+                                javaPathCheckStateConsumer.accept(null);
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    });
+
     @Override
-    public boolean setJavaPath(String path) {
+    public void setJavaPath(String path) {
         App.settings.javaPath = path;
         App.settings.usingCustomJavaPath =
             !path.equalsIgnoreCase(OS.getDefaultJavaPath());
+        javaPathLastChange = System.currentTimeMillis();
+        javaPathChanged = true;
+        if (!javaPathCheckThread.isAlive())
+            javaPathCheckThread.start();
         SettingsManager.post();
-
-        File jPath = new File(path, "bin");
-        return jPath.exists();
     }
 
     @Override
@@ -283,27 +324,77 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
+    public void addOnJavaPathCheckerListener(Consumer<CheckState> consumer) {
+        consumer.accept(new CheckState.NotChecking());
+        javaPathCheckStateConsumer = consumer;
+    }
+
+    @Override
     public void addOnJavaPathChanged(Consumer<String> onChanged) {
         onChanged.accept(getJavaPath());
         _addOnJavaPathChanged = onChanged;
     }
 
+    private static final Logger LOG = LogManager.getLogger();
+
+    private long javaParamLastChange = 0;
+    private boolean javaParamChanged = false;
+    private static final long javaParamCheckDelay = 2000;
+    private Consumer<CheckState> javaParamCheckStateConsumer;
+    private final Thread javaParamCheckThread = new Thread(() -> {
+        LOG.debug("Running javaParamCheckThread");
+        while (true) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                LOG.error("javaParamCheckThread : Failed to delay check thread", e);
+            } finally {
+                if (javaParamChanged) {
+                    javaParamCheckStateConsumer.accept(new CheckState.CheckPending());
+                    if (javaParamLastChange + javaParamCheckDelay < System.currentTimeMillis()) {
+                        javaParamCheckStateConsumer.accept(new CheckState.Checking());
+
+                        String params = App.settings.javaParameters;
+                        boolean valid = !(params.contains("-Xms") || params.contains("-Xmx")
+                            || params.contains("-XX:PermSize")
+                            || params.contains("-XX:MetaspaceSize"));
+                        javaParamCheckStateConsumer.accept(new CheckState.Checked(valid));
+                        javaParamChanged = false;
+
+                        if (!valid) {
+                            LOG.debug("javaParamCheckThread: Check thread reporting check fail");
+                            SwingUtilities.invokeLater(() -> {
+                                javaParamCheckStateConsumer.accept(null);
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    @Override
+    public void addOnJavaParamsCheckerListener(Consumer<CheckState> consumer) {
+        consumer.accept(new CheckState.NotChecking());
+        javaParamCheckStateConsumer = consumer;
+    }
 
     @Override
     public void resetJavaParams() {
         App.settings.javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
+        javaParamLastChange = System.currentTimeMillis();
+        javaParamChanged = true;
         SettingsManager.post();
     }
 
     @Override
-    public boolean setJavaParams(String params) {
+    public void setJavaParams(String params) {
         App.settings.javaParameters = params;
+        javaParamLastChange = System.currentTimeMillis();
+        javaParamChanged = true;
+        if (!javaParamCheckThread.isAlive())
+            javaParamCheckThread.start();
         SettingsManager.post();
-
-
-        return !(params.contains("-Xms") || params.contains("-Xmx")
-            || params.contains("-XX:PermSize")
-            || params.contains("-XX:MetaspaceSize"));
     }
 
     @Override
