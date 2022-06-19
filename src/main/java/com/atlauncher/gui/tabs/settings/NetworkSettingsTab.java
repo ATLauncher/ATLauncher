@@ -35,6 +35,8 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 
+import static com.atlauncher.constants.UIConstants.SPACING_SMALL;
+
 @SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private final JLabelWithHover concurrentConnectionsLabel;
@@ -173,7 +175,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         add(proxyHost, gbc);
 
         gbc.gridx++;
-
+        gbc.insets = new Insets(0, SPACING_SMALL, 0, 0);
         proxyHostCheckingLabel = new JLabelWithHover("", null, null);
         add(proxyHostCheckingLabel, gbc);
 

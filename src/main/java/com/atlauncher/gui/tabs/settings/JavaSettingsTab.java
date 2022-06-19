@@ -346,6 +346,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         }
 
         javaPath = new JTextField(32);
+        javaPathChecker = new JLabelWithHover("", null, null);
         javaPath.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
@@ -365,6 +366,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         viewModel.addOnJavaPathCheckerListener(this::setJavaPathCheckState);
 
         javaPathPanelBottom.add(javaPath);
+
+        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
+
+        javaPathPanelBottom.add(javaPathChecker, gbc);
+
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
 
         javaPathResetButton = new JButton(GetText.tr("Reset"));
@@ -377,7 +383,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
 
         javaBrowseButton = new JButton(GetText.tr("Browse"));
-        javaPathChecker = new JLabelWithHover("", null, null);
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File(viewModel.getJavaPath()));
@@ -401,7 +406,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         });
 
         javaPathPanelBottom.add(javaBrowseButton);
-        javaPathPanelBottom.add(javaPathChecker, gbc);
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
 
         javaPathPanel.add(javaPathPanelTop);
