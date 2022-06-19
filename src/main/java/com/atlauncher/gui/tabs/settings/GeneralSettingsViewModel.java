@@ -143,7 +143,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     private void pushSelectedTheme() {
-        for (int index = 0; index < getLanguages().length; index++) {
+        for (int index = 0; index < getThemes().size(); index++) {
             if (getThemes().get(index).id.equals(App.settings.theme))
                 _addOnSelectedThemeChanged.accept(index);
         }
