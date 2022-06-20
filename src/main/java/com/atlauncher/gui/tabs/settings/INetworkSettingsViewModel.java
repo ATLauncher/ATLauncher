@@ -64,8 +64,4 @@ public interface INetworkSettingsViewModel extends IAbstractSettingsViewModel {
     void setProxyType(ProxyType type);
 
     void addOnProxyTypeChanged(Consumer<Integer> onChanged);
-
-    void addOnProxyCheckListener(Consumer<CheckState> onChecked);
-
-
 }

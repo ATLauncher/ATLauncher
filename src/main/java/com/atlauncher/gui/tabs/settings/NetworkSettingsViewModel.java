@@ -38,55 +38,8 @@ import java.util.function.Consumer;
 public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     private static final Logger LOG = LogManager.getLogger(NetworkSettingsViewModel.class);
 
-    private Consumer<CheckState> _addOnProxyCheckedListener;
-    private boolean proxySettingsChanged = false;
-    private long lastChangeToProxy = 0;
-    private static final long proxyCheckDelay = 1000;
-    private final Runnable threadRunnable = () -> {
-        // Ignore if proxy is disabled
-        while (App.settings.enableProxy) {
-            if (proxySettingsChanged) {
-                _addOnProxyCheckedListener.accept(
-                    new CheckState.CheckPending()
-                );
-                if ((lastChangeToProxy + proxyCheckDelay) < System.currentTimeMillis()) {
-                    proxySettingsChanged = false;
-
-                    // Do not let user save while checking
-                    setProxyHostPending();
-
-                    _addOnProxyCheckedListener.accept(
-                        new CheckState.Checking()
-                    );
-
-                    boolean valid = checkHost();
-                    SettingsValidityManager.post("proxy", valid);
-                    _addOnProxyCheckedListener.accept(
-                        new CheckState.Checked(valid)
-                    );
-                    if (valid)
-                        SettingsManager.post();
-                }
-            }
-
-            try {
-                TimeUnit.MILLISECONDS.sleep(200);
-            } catch (InterruptedException ignored) {
-            }
-        }
-    };
-
-    private Thread proxyCheckThread = new Thread(threadRunnable);
-
-
-    private void changedProxySettings() {
-        lastChangeToProxy = System.currentTimeMillis();
-        proxySettingsChanged = true;
-    }
-
     public NetworkSettingsViewModel() {
         SettingsManager.addListener(this);
-        proxyCheckThread.start();
     }
 
     @Override
@@ -164,21 +117,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     public void setEnableProxy(Boolean b) {
         App.settings.enableProxy = b;
         SettingsManager.post();
-        // Ensure proxy validity is set to true when disabled
-        if (!b)
-            SettingsValidityManager.post("proxy", true);
-
-        if (!b && proxyCheckThread.isAlive()) {
-            // Stop the proxy check if it is running
-            proxyCheckThread.interrupt();
-            _addOnProxyCheckedListener.accept(new CheckState.NotChecking());
-        } else {
-            // Restart the proxy check thread
-            if (!proxyCheckThread.isAlive() || proxyCheckThread.isInterrupted()) {
-                proxyCheckThread = new Thread(threadRunnable);
-                proxyCheckThread.start();
-            }
-        }
+        SettingsValidityManager.post("proxy", true);
     }
 
 
@@ -190,8 +129,8 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public void setProxyHost(String host) {
-        changedProxySettings();
         App.settings.proxyHost = host;
+        SettingsValidityManager.post("proxy", true);
     }
 
     @Override
@@ -212,7 +151,6 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public void setProxyPort(int port) {
-        changedProxySettings();
         App.settings.proxyPort = port;
         SettingsManager.post();
     }
@@ -225,7 +163,6 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public void setProxyType(ProxyType type) {
-        changedProxySettings();
         App.settings.proxyType = type.name();
         SettingsManager.post();
     }
@@ -234,38 +171,6 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     public void addOnProxyTypeChanged(Consumer<Integer> onChanged) {
         _addOnProxyTypeChanged = onChanged;
         pushProxyType();
-    }
-
-    private boolean checkHost() {
-        Proxy.Type theType;
-        switch (App.settings.proxyType) {
-            case "HTTP":
-                theType = Proxy.Type.HTTP;
-                break;
-            case "SOCKS":
-                theType = Proxy.Type.SOCKS;
-                break;
-            case "DIRECT":
-                theType = Proxy.Type.DIRECT;
-                break;
-            default:
-                return false;
-        }
-
-        try {
-            return Utils.testProxy(
-                new Proxy(theType, new InetSocketAddress(App.settings.proxyHost, getProxyPort()))
-            );
-        } catch (Exception e) {
-            LOG.error("Error checking proxy", e);
-            return false;
-        }
-    }
-
-    @Override
-    public void addOnProxyCheckListener(Consumer<CheckState> onChecked) {
-        onChecked.accept(new CheckState.NotChecking());
-        _addOnProxyCheckedListener = onChecked;
     }
 
     private void pushProxyType() {

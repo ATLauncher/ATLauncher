@@ -61,8 +61,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private final JLabelWithHover proxyTypeLabel;
     private JComboBox<ComboItem<ProxyType>> proxyType;
 
-    private final JLabel proxyHostCheckingLabel;
-
     public NetworkSettingsTab() {
         INetworkSettingsViewModel viewModel = new NetworkSettingsViewModel();
         RelocalizationManager.addListener(this);
@@ -168,8 +166,6 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         gbc.gridx++;
         gbc.insets = new Insets(0, SPACING_SMALL, 0, 0);
-        proxyHostCheckingLabel = new JLabelWithHover("", null, null);
-        add(proxyHostCheckingLabel, gbc);
 
         // Proxy Port Settings
         gbc.gridx = 0;
@@ -223,46 +219,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         viewModel.addOnEnableProxyChanged(enabled -> {
             enableProxy.setSelected(enabled);
-            setProxySettingsEnabled(enabled);
+            proxyHost.setEnabled(enabled);
+            proxyPort.setEnabled(enabled);
+            proxyType.setEnabled(enabled);
         });
-
-        viewModel.addOnProxyCheckListener(state -> {
-            if (state instanceof CheckState.NotChecking) {
-                resetProxyChecker();
-            } else if (state instanceof CheckState.CheckPending) {
-                setProxyChecker("Proxy change pending", "/assets/icon/warning.png");
-            } else if (state instanceof CheckState.Checking) {
-                setProxyChecker("Checking proxy", "/assets/image/loading-bars-small.gif");
-                setProxySettingsEnabled(false);
-            } else if (state instanceof CheckState.Checked) {
-                if (((CheckState.Checked) state).valid) {
-                    resetProxyChecker();
-                } else {
-                    setProxyChecker("Invalid!", "/assets/icon/error.png");
-                }
-                setProxySettingsEnabled(true);
-            }
-        });
-    }
-
-    private void setProxySettingsEnabled(boolean enabled) {
-        proxyHost.setEnabled(enabled);
-        proxyPort.setEnabled(enabled);
-        proxyType.setEnabled(enabled);
-    }
-
-    private void setProxyChecker(String tooltip, String path) {
-        try {
-            proxyHostCheckingLabel.setToolTipText(tooltip);
-            ImageIcon icon = Utils.getIconImage(path);
-            proxyHostCheckingLabel.setIcon(icon);
-            icon.setImageObserver(proxyHostCheckingLabel);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    private void resetProxyChecker() {
-        setProxyChecker("Visualize the proxy check", "/assets/icon/question.png");
     }
 
     @Override
