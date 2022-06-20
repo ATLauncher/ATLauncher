@@ -36,7 +36,6 @@ import java.util.function.Consumer;
  * 18 / 06 / 2022
  */
 public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
-    private static final Logger LOG = LogManager.getLogger(NetworkSettingsViewModel.class);
 
     public NetworkSettingsViewModel() {
         SettingsManager.addListener(this);
