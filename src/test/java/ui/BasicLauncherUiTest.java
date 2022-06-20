@@ -18,10 +18,12 @@
 package ui;
 
 import java.awt.Dialog;
+import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 import org.assertj.swing.core.GenericTypeMatcher;
+import org.assertj.swing.core.KeyPressInfo;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.data.Index;
 import org.assertj.swing.finder.WindowFinder;
@@ -76,7 +78,9 @@ public class BasicLauncherUiTest extends AbstractUiTest {
                 "3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3.png");
 
         usernameField.setText("test@example.com");
+        usernameField.pressAndReleaseKey(KeyPressInfo.keyCode(KeyEvent.VK_M));
         passwordField.setText("password");
+        passwordField.pressAndReleaseKey(KeyPressInfo.keyCode(KeyEvent.VK_D));
 
         // login
         loginButton.click();
