@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs;
+package com.atlauncher.gui.tabs.tools;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -23,6 +23,7 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import com.atlauncher.gui.tabs.Tab;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.tabs.tools.DebugModePanel;
@@ -43,12 +44,13 @@ public class ToolsTab extends JPanel implements Tab {
 
         mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-        mainPanel.add(new NetworkCheckerToolPanel());
-        mainPanel.add(new LogClearerToolPanel());
-        mainPanel.add(new DebugModePanel());
-        mainPanel.add(new RuntimeDownloaderToolPanel());
-        mainPanel.add(new DownloadClearerToolPanel());
-        mainPanel.add(new SkinUpdaterToolPanel());
+        final IToolsViewModel viewModel = new ToolsViewModel();
+        mainPanel.add(new NetworkCheckerToolPanel(viewModel));
+        mainPanel.add(new LogClearerToolPanel(viewModel));
+        mainPanel.add(new DebugModePanel(viewModel));
+        mainPanel.add(new RuntimeDownloaderToolPanel(viewModel));
+        mainPanel.add(new DownloadClearerToolPanel(viewModel));
+        mainPanel.add(new SkinUpdaterToolPanel(viewModel));
 
         add(mainPanel, BorderLayout.CENTER);
     }

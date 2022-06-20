@@ -17,201 +17,89 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
-import com.atlauncher.Network;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.data.Runtime;
-import com.atlauncher.data.Runtimes;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.Download;
-import com.atlauncher.utils.ArchiveUtils;
-import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Java;
-import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-
-import okhttp3.OkHttpClient;
 
 @SuppressWarnings("serial")
-public class RuntimeDownloaderToolPanel extends AbstractToolPanel implements ActionListener {
-    private static final Logger LOG = LogManager.getLogger(RuntimeDownloaderToolPanel.class);
+public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
 
     protected final JButton REMOVE_BUTTON = new JButton(GetText.tr("Remove"));
+    private final IToolsViewModel viewModel;
 
-    public RuntimeDownloaderToolPanel() {
+    public RuntimeDownloaderToolPanel(IToolsViewModel viewModel) {
         super(GetText.tr("Runtime Downloader"));
+        this.viewModel = viewModel;
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText
                 .tr("Use this to automatically install and use a recommended version of Java to use with ATLauncher."))
-                .build());
+            .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.addActionListener(this);
+        LAUNCH_BUTTON.addActionListener(e -> downloadRuntime());
 
         BOTTOM_PANEL.add(REMOVE_BUTTON);
-        REMOVE_BUTTON.addActionListener(this);
+        REMOVE_BUTTON.addActionListener(e -> removeRuntime());
         REMOVE_BUTTON.setFont(App.THEME.getNormalFont().deriveFont(16f));
 
-        setButtonEnabledStates();
-    }
-
-    private void setButtonEnabledStates() {
-        LAUNCH_BUTTON.setEnabled(!OS.isLinux());
-        REMOVE_BUTTON.setEnabled(!OS.isLinux() && Java.hasInstalledRuntime());
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == REMOVE_BUTTON) {
-            removeRuntime();
-        } else {
-            downloadRuntime();
-        }
-
-        setButtonEnabledStates();
+        viewModel.onCanDownloadRuntimeChanged(LAUNCH_BUTTON::setEnabled);
+        viewModel.onCanRemoveDownloadChanged(REMOVE_BUTTON::setEnabled);
     }
 
     private void removeRuntime() {
-        Analytics.sendEvent("RuntimeDownloader", "Remove", "Tool");
-
-        String oldPath = App.settings.javaPath;
-
-        if (FileUtils.deleteDirectory(FileSystem.RUNTIMES)) {
-            DialogManager
-                    .okDialog().setTitle(GetText.tr("Runtime Downloader")).setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("Downloaded runtimes have been removed.")).build())
-                    .setType(DialogManager.INFO).show();
-
-            // switch back to use default
-            App.settings.javaPath = OS.getDefaultJavaPath();
-            App.settings.save();
-
-            // remove the path from any custom paths set for instances
-            InstanceManager.getInstances().stream()
-                    .filter(i -> i.launcher.javaPath != null && i.launcher.javaPath.contains(oldPath)).forEach(i -> {
-                        i.launcher.javaPath = null;
-                        i.save();
-                    });
-        } else {
-            LOG.error("Runtime removal failed!");
-            DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
+        viewModel.removeRuntime(
+            onFail -> {
+                DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
                     .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("An error occurred removing the runtime. Please check the logs.")).build())
+                        .text(GetText.tr("An error occurred removing the runtime. Please check the logs.")).build())
                     .setType(DialogManager.ERROR).show();
-        }
+            },
+            onSuccess -> {
+                DialogManager
+                    .okDialog().setTitle(GetText.tr("Runtime Downloader")).setContent(new HTMLBuilder().center()
+                        .text(GetText.tr("Downloaded runtimes have been removed.")).build())
+                    .setType(DialogManager.INFO).show();
+            }
+        );
     }
 
     private void downloadRuntime() {
-        Analytics.sendEvent("RuntimeDownloader", "Run", "Tool");
-
-        final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Runtime Downloader"), 3,
-                GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Runtime Downloader"), 3,
+            GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
-            Runtimes runtimes = Download.build().cached()
-                    .setUrl(String.format("%s/launcher/json/runtimes.json", Constants.DOWNLOAD_SERVER))
-                    .asClass(Runtimes.class);
-            dialog.doneTask();
-
-            Runtime runtime = runtimes.getRuntimeForOS();
-
-            if (runtime != null) {
-                File runtimeFolder = FileSystem.RUNTIMES.resolve(runtime.version).toFile();
-                File releaseFile = new File(runtimeFolder, "release");
-
-                // no need to download/extract
-                if (releaseFile.exists()) {
-                    dialog.setReturnValue(runtimeFolder.getAbsolutePath());
-                }
-
-                if (!runtimeFolder.exists()) {
-                    runtimeFolder.mkdirs();
-                }
-
-                String url = String.format("%s/%s", Constants.DOWNLOAD_SERVER, runtime.url);
-                String fileName = url.substring(url.lastIndexOf("/") + 1);
-                File downloadFile = new File(runtimeFolder, fileName);
-                File unpackedFile = new File(runtimeFolder, fileName.replace(".xz", ""));
-
-                OkHttpClient httpClient = Network.createProgressClient(dialog);
-
-                com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(url)
-                        .hash(runtime.sha1).size(runtime.size).withHttpClient(httpClient)
-                        .downloadTo(downloadFile.toPath());
-
-                if (download.needToDownload()) {
-                    dialog.setLabel(GetText.tr("Downloading"));
-                    dialog.setTotalBytes(runtime.size);
-
-                    try {
-                        download.downloadFile();
-                    } catch (IOException e1) {
-                        LOG.error("error", e1);
-                        dialog.setReturnValue(null);
-                    }
-
-                    dialog.clearDownloadedBytes();
-                }
-
-                dialog.doneTask();
-
-                dialog.setLabel(GetText.tr("Extracting"));
-
-                try {
-                    Utils.unXZFile(downloadFile, unpackedFile);
-                } catch (IOException e2) {
-                    LOG.error("error", e2);
-                    dialog.setReturnValue(null);
-                }
-
-                ArchiveUtils.extract(unpackedFile.toPath(), runtimeFolder.toPath());
-                Utils.delete(unpackedFile);
-
-                dialog.setReturnValue(runtimeFolder.getAbsolutePath());
-            }
+            dialog.setReturnValue(
+                viewModel.downloadRuntime(
+                    dialog,
+                    taskComplete -> dialog.doneTask(),
+                    dialog::setLabel,
+                    clear -> dialog.clearDownloadedBytes()
+                )
+            );
 
             dialog.close();
         }));
 
         dialog.start();
 
-        if (dialog.getReturnValue() == null) {
-            LOG.error("Runtime downloaded failed to run!");
+        if (!dialog.getReturnValue()) {
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
         } else {
-            LOG.info("Runtime downloaded!");
-
-            String path = dialog.getReturnValue();
-
-            App.settings.javaPath = path;
-            App.settings.save();
-
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("The recommended version of Java has been installed and set to be used."))
-                            .build())
-                    .setType(DialogManager.INFO).show();
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("The recommended version of Java has been installed and set to be used."))
+                    .build())
+                .setType(DialogManager.INFO).show();
         }
     }
 }
