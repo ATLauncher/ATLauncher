@@ -383,7 +383,13 @@ public class DisableableMod implements Serializable {
                     }
 
                     if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
-                            && !instance.launcher.loaderVersion.isFabric()) {
+                            && !instance.launcher.loaderVersion.isFabric()
+                            && !instance.launcher.loaderVersion.isQuilt()) {
+                        return false;
+                    }
+
+                    if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
+                            && !instance.launcher.loaderVersion.isQuilt()) {
                         return false;
                     }
 
