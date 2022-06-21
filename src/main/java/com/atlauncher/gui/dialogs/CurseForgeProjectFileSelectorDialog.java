@@ -230,6 +230,13 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                                             && m.modrinthProject.id.equals(Constants.MODRINTH_QSL_MOD_ID));
                                 }
 
+                                // don't show CurseForge dependency when grabbed from Modrinth
+                                if (dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID
+                                        && installedMod.isFromModrinth()
+                                        && installedMod.modrinthProject.id.equals(Constants.MODRINTH_FABRIC_MOD_ID)) {
+                                    return true;
+                                }
+
                                 return installedMod.isFromCurseForge()
                                         && installedMod.getCurseForgeModId() == dependency.modId;
                             }))
