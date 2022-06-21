@@ -147,6 +147,14 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                                             return true;
                                         }
 
+                                        // don't show Fabric dependency when QSL is installed
+                                        if (dependency.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)
+                                                && installedMod.isFromModrinth()
+                                                && installedMod.modrinthProject.id
+                                                        .equals(Constants.MODRINTH_QSL_MOD_ID)) {
+                                            return true;
+                                        }
+
                                         return installedMod.isFromModrinth()
                                                 && installedMod.modrinthProject.id.equals(dependency.projectId);
                                     }))
