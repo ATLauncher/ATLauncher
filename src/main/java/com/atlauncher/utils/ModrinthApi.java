@@ -156,7 +156,18 @@ public class ModrinthApi {
                 queryParamsString += "&";
             }
 
-            queryParamsString += String.format("loaders=[\"%s\"]", loaderVersion.isFabric() ? "fabric" : "forge");
+            List<String> loaders = new ArrayList<>();
+
+            if (loaderVersion.isForge()) {
+                loaders.add("forge");
+            } else if (loaderVersion.isFabric()) {
+                loaders.add("fabric");
+            } else if (loaderVersion.isQuilt()) {
+                loaders.add("fabric");
+                loaders.add("quilt");
+            }
+
+            queryParamsString += String.format("loaders=%s", Gsons.DEFAULT_SLIM.toJson(loaders));
         }
 
         return Download.build()
