@@ -21,24 +21,82 @@ import java.util.function.Consumer;
 
 /**
  * 15 / 06 / 2022
+ * <p>
+ * View model for {@link CommandsSettingsTab}
  */
 public interface ICommandsSettingsViewModel extends IAbstractSettingsViewModel {
+
+    /**
+     * Set commands enabled or not
+     *
+     * @param b if commands are enabled
+     */
     void setEnableCommands(boolean b);
 
+    /**
+     * Listen to command enable state change
+     *
+     * @param onChanged invoked when the command state is changed
+     */
     void addOnEnableCommandsChanged(Consumer<Boolean> onChanged);
 
+
+    /**
+     * Set the pre-launch command
+     *
+     * @param text pre-launch command
+     */
     void setPreLaunchCommand(String text);
+
+    /**
+     * Inform the settings that the pre-launch command has not been stored yet
+     */
     void setPreLaunchCommandPending();
 
+    /**
+     * Listen to the pre-launch command being changed
+     *
+     * @param setText invoked when the pre-launch command is changed
+     */
     void addOnPreLaunchCommandChanged(Consumer<String> setText);
 
+
+    /**
+     * Set the post-exit command
+     *
+     * @param text post-exit command
+     */
     void setPostExitCommand(String text);
+
+    /**
+     * Inform the settings that the post-exit command has not been stored yet
+     */
     void setPostExitCommandPending();
 
+    /**
+     * Listen to the post-exit command being changed
+     *
+     * @param setText invoked when the post-exit command is changed
+     */
     void addOnPostExitCommandChanged(Consumer<String> setText);
 
+
+    /**
+     * Set the wrapper command
+     *
+     * @param text wrapper command
+     */
     void setWrapperCommand(String text);
+
+    /**
+     * Inform the settings that the wrapper command has not been stored yet
+     */
     void setWrapperCommandPending();
 
+    /**
+     * Listen to the wrapper command being changed
+     *
+     * @param setText invoked when the wrapper command is changed
+     */
     void addOnWrapperCommandChanged(Consumer<String> setText);
 }

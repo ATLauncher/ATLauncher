@@ -21,6 +21,8 @@ import java.util.function.Consumer;
 
 /**
  * 15 / 06 / 2022
+ *
+ * View model for {@link LoggingSettingsTab}
  */
 public interface ILoggingSettingsViewModel extends IAbstractSettingsViewModel  {
     void setLoggingLevel(String level);

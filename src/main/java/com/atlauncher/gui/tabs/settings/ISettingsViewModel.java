@@ -21,9 +21,21 @@ import java.util.function.Consumer;
 
 /**
  * 19 / 06 / 2022
+ *
+ * View model for {@link SettingsTab}
  */
 public interface ISettingsViewModel {
+    /**
+     * Save settings
+     */
     void save();
 
+    /**
+     * Listen to the save button being enabled or not.
+     *
+     * This is because certain setting events require the save button to be
+     *  disabled during various operation.
+     * @param onChanged invoked on changed.
+     */
     void addOnSaveEnabledChanged(Consumer<Boolean> onChanged);
 }

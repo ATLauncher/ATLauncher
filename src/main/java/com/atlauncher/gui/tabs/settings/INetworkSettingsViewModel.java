@@ -23,6 +23,8 @@ import java.util.function.Consumer;
 
 /**
  * 15 / 06 / 2022
+ *
+ * View model for {@link NetworkSettingsTab}
  */
 public interface INetworkSettingsViewModel extends IAbstractSettingsViewModel {
 
@@ -57,6 +59,9 @@ public interface INetworkSettingsViewModel extends IAbstractSettingsViewModel {
 
     void addOnProxyPortChanged(Consumer<Integer> onChanged);
 
+    /**
+     * Proxy type to be shown in UI, ordered as originally shown.
+     */
     enum ProxyType {
         HTTP, SOCKS, DIRECT
     }

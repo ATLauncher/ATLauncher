@@ -24,13 +24,31 @@ import java.util.function.Consumer;
 
 /**
  * 15 / 06 / 2022
+ *
+ * View model for {@link BackupsSettingsTab}
  */
 public interface IBackupsSettingsViewModel extends IAbstractSettingsViewModel {
+    /**
+     * Listen to back up mode changes
+     * @param onSelectedItem invoked when back up mode changed
+     */
     void onBackupModeSelected(Consumer<Integer> onSelectedItem);
 
+    /**
+     * Set the backup mode
+     * @param item backup mode
+     */
     void setBackupMode(BackupMode item);
 
+    /**
+     * Listen to auto backup changes
+     * @param onChanged invoked when auto backup state changed
+     */
     void addOnEnableAutoBackupChanged(Consumer<Boolean> onChanged);
 
+    /**
+     * Set if auto backup is available
+     * @param enabled if auto backup should be enabled or not
+     */
     void setEnableAutoBackup(boolean enabled);
 }

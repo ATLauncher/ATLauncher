@@ -28,6 +28,15 @@ import java.util.function.Consumer;
  * <p>
  * Why are there functions here that are acronym?
  * The settings name would be too long otherwise.
+ * </p>
+ * <p>
+ * EAMBD : enableAddedModsByDefault
+ * <p>
+ * DCMOC : dontCheckModsOnCurseForge
+ * <p>
+ * DCMOM : dontCheckModsOnModrinth
+ * <p>
+ * View model for {@link ModsSettingsTab}
  */
 public interface IModsSettingsViewModel extends IAbstractSettingsViewModel {
 

@@ -26,10 +26,18 @@ import java.util.function.Consumer;
 
 /**
  * 15 / 06 / 2022
+ *
+ * View model for {@link JavaSettingsTab}
  */
 public interface IJavaSettingsViewModel extends IAbstractSettingsViewModel {
+    /**
+     * @return Is the current java 32 bit
+     */
     boolean isJava32Bit();
 
+    /**
+     * @return total system ram
+     */
     Integer getSystemRam();
 
     boolean isInitialMemoryWarningShown();
