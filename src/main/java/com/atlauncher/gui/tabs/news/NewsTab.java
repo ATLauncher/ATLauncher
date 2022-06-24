@@ -33,6 +33,11 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import com.atlauncher.FileSystem;
+import com.atlauncher.gui.panels.HierarchyPanel;
+import com.atlauncher.gui.tabs.Tab;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.tabs.Tab;
@@ -45,7 +50,8 @@ import com.atlauncher.viewmodel.impl.NewsViewModel;
  * latest news.
  */
 @SuppressWarnings("serial")
-public class NewsTab extends JPanel implements Tab {
+public class NewsTab extends HierarchyPanel implements Tab {
+    private static final Logger LOG = LogManager.getLogger(NewsTab.class);
     private final HTMLEditorKit NEWS_KIT = new HTMLEditorKit() {
         {
             StyleSheet styleSheet = new StyleSheet();
@@ -80,12 +86,26 @@ public class NewsTab extends JPanel implements Tab {
         this.add(scrollPane, BorderLayout.CENTER);
 
         viewModel.addOnReloadListener(html -> {
-            this.NEWS_PANE.setText("");
-            this.NEWS_PANE.setText(html);
-            this.NEWS_PANE.setCaretPosition(0);
+            // Because reload() is a public function, we need to ensure it
+            // does not trigger setting the UI when the UI is hidden
+            if (isShowing()) {
+                this.NEWS_PANE.setText("");
+                this.NEWS_PANE.setText(html);
+                this.NEWS_PANE.setCaretPosition(0);
+            }
         });
+    }
 
-        this.reload();
+    @Override
+    protected void onShow() {
+        LOG.debug("NewsTab.onShow");
+        reload();
+    }
+
+    @Override
+    protected void onHide() {
+        LOG.debug("NewsTab.onHide");
+        NEWS_PANE.setText(null);
     }
 
     /**
