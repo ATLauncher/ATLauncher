@@ -45,6 +45,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
@@ -391,6 +392,23 @@ public class App {
             new LauncherFrame(openLauncher);
             ss.close();
         });
+
+        /*
+        Setup GC thread.
+        This is a temporary solution to an internal memory leak.
+        TODO solve the memory leak and remove the below code.
+         */
+        Thread gcThread = new Thread(() -> {
+            while (true) {
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException ignored) {
+                } finally {
+                    System.gc();
+                }
+            }
+        });
+        gcThread.start();
     }
 
     public static void ensureDiscordIsInitialized() {
