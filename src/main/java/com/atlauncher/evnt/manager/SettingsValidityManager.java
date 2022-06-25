@@ -28,6 +28,11 @@ import java.util.function.Consumer;
 
 /**
  * 19 / 06 / 2022
+ * <p>
+ * Manages the validity of the settings.
+ * <p>
+ * This is used by the {@link com.atlauncher.gui.tabs.settings.SettingsTab} to
+ * enable / disable the save button with changes to the settings
  */
 public final class SettingsValidityManager {
     private static final Logger LOG = LogManager.getLogger(SettingsValidityManager.class);
@@ -35,6 +40,9 @@ public final class SettingsValidityManager {
 
     public static HashMap<String, Boolean> validities = new HashMap<>();
 
+    /**
+     * @return are all settings valid?
+     */
     private static boolean isValidAtAll() {
         if (!validities.isEmpty())
             for (boolean validity : validities.values()) {
@@ -44,15 +52,28 @@ public final class SettingsValidityManager {
         return true;
     }
 
+    /**
+     * Add listener to be invoked
+     * @param listener listener
+     */
     public static synchronized void addListener(@NotNull Consumer<Boolean> listener) {
         listener.accept(isValidAtAll());
         listeners.add(listener);
     }
 
+    /**
+     * Remove listener
+     * @param listener listener
+     */
     public static synchronized void removeListener(@NotNull Consumer<Boolean> listener) {
         listeners.remove(listener);
     }
 
+    /**
+     * Post a new setting state
+     * @param setting the setting key
+     * @param validity if it is valid or not
+     */
     public static synchronized void post(String setting, boolean validity) {
         validities.put(setting, validity);
         new Thread(() -> {
