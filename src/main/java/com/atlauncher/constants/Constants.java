@@ -145,7 +145,14 @@ public class Constants {
         new ScreenResolution(3840, 2160)
     };
 
+    /**
+     * Represents a screen resolution
+     */
     public static class ScreenResolution {
+
+        /**
+         * Width and height
+         */
         public final int width, height;
 
         public ScreenResolution(int width, int height) {
