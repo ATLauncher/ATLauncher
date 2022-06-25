@@ -10,3 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Implement HierarchyPanel for basic life cycle, first to NewsTab
