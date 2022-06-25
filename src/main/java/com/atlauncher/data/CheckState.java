@@ -17,18 +17,37 @@
  */
 package com.atlauncher.data;
 
+/**
+ * Represents the state of checking of a field
+ */
 public abstract class CheckState {
 
-    public static class NotChecking extends CheckState {
-    }
+    /**
+     * Not checking the field
+     */
+    public static final CheckState NotChecking = new CheckState() {
+    };
 
-    public static class CheckPending extends CheckState {
-    }
+    /**
+     * A check is pending
+     */
+    public static final CheckState CheckPending = new CheckState() {
+    };
 
-    public static class Checking extends CheckState {
-    }
+    /**
+     * Checking the field
+     */
+    public static final CheckState Checking = new CheckState() {
+    };
 
+    /**
+     * The field was checked
+     */
     public static class Checked extends CheckState {
+
+        /**
+         * Is the field valid or not
+         */
         public final boolean valid;
 
         public Checked(boolean valid) {

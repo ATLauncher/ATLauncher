@@ -632,11 +632,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     private void setJavaPathCheckState(CheckState state) {
-        if (state instanceof CheckState.NotChecking) {
+        if (state == CheckState.NotChecking) {
             resetJavaPathCheckLabel();
-        } else if (state instanceof CheckState.CheckPending) {
+        } else if (state == CheckState.CheckPending) {
             setLabelState(javaPathChecker, "Java path change pending", "/assets/icon/warning.png");
-        } else if (state instanceof CheckState.Checking) {
+        } else if (state == CheckState.Checking) {
             setLabelState(javaPathChecker, "Checking java path", "/assets/image/loading-bars-small.gif");
 
             javaPath.setEnabled(false);
@@ -657,11 +657,11 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     private void setJavaParamCheckState(CheckState state) {
-        if (state instanceof CheckState.NotChecking) {
+        if (state == CheckState.NotChecking) {
             resetJavaParamCheckLabel();
-        } else if (state instanceof CheckState.CheckPending) {
+        } else if (state == CheckState.CheckPending) {
             setLabelState(javaParamChecker, "Java params change pending", "/assets/icon/warning.png");
-        } else if (state instanceof CheckState.Checking) {
+        } else if (state == CheckState.Checking) {
             setLabelState(javaParamChecker, "Checking java params", "/assets/image/loading-bars-small.gif");
 
             javaParameters.setEnabled(false);

@@ -287,11 +287,11 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                 LOG.error("javaParamCheckThread : Failed to delay check thread", e);
             } finally {
                 if (javaPathChanged) {
-                    javaPathCheckStateConsumer.accept(new CheckState.CheckPending());
+                    javaPathCheckStateConsumer.accept(CheckState.CheckPending);
                     if (javaPathLastChange + javaPathCheckDelay < System.currentTimeMillis()) {
                         // Prevent user from saving while checking
                         setJavaPathPending();
-                        javaPathCheckStateConsumer.accept(new CheckState.Checking());
+                        javaPathCheckStateConsumer.accept(CheckState.Checking);
 
                         File jPath = new File(App.settings.javaPath, "bin");
                         boolean valid = jPath.exists();
@@ -333,7 +333,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
 
     @Override
     public void addOnJavaPathCheckerListener(Consumer<CheckState> consumer) {
-        consumer.accept(new CheckState.NotChecking());
+        consumer.accept(CheckState.NotChecking);
         javaPathCheckStateConsumer = consumer;
     }
 
@@ -358,11 +358,11 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                 LOG.error("javaParamCheckThread : Failed to delay check thread", e);
             } finally {
                 if (javaParamChanged) {
-                    javaParamCheckStateConsumer.accept(new CheckState.CheckPending());
+                    javaParamCheckStateConsumer.accept(CheckState.CheckPending);
                     if (javaParamLastChange + javaParamCheckDelay < System.currentTimeMillis()) {
                         // Prevent user from saving while checking
                         setJavaParamsPending();
-                        javaParamCheckStateConsumer.accept(new CheckState.Checking());
+                        javaParamCheckStateConsumer.accept(CheckState.Checking);
 
                         String params = App.settings.javaParameters;
                         boolean valid = !(params.contains("-Xms") || params.contains("-Xmx")
@@ -383,7 +383,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
 
     @Override
     public void addOnJavaParamsCheckerListener(Consumer<CheckState> consumer) {
-        consumer.accept(new CheckState.NotChecking());
+        consumer.accept(CheckState.NotChecking);
         javaParamCheckStateConsumer = consumer;
     }
 
