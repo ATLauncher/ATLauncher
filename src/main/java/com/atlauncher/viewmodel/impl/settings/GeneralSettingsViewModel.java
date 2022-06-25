@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.settings;
+package com.atlauncher.viewmodel.impl.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -27,11 +27,11 @@ import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import com.atlauncher.viewmodel.base.settings.IGeneralSettingsViewModel;
 import com.formdev.flatlaf.FlatLaf;
 
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**

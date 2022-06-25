@@ -23,6 +23,8 @@ import java.awt.event.ItemEvent;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import com.atlauncher.viewmodel.base.settings.ILoggingSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.LoggingSettingsViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;

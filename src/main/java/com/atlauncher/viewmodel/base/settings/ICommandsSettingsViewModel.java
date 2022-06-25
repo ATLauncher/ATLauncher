@@ -15,7 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.settings;
+package com.atlauncher.viewmodel.base.settings;
+
+import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
 
 import java.util.function.Consumer;
 

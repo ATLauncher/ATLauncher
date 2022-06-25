@@ -22,18 +22,18 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 
 import javax.swing.*;
 
 import com.atlauncher.constants.Constants.ScreenResolution;
-import com.atlauncher.gui.tabs.settings.IJavaSettingsViewModel.MaxRamWarning;
+import com.atlauncher.viewmodel.base.settings.IJavaSettingsViewModel;
+import com.atlauncher.viewmodel.base.settings.IJavaSettingsViewModel.MaxRamWarning;
 import com.atlauncher.data.CheckState;
 import com.atlauncher.listener.DelayedSavingKeyListener;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.viewmodel.impl.settings.JavaSettingsViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;

@@ -15,12 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.settings;
+package com.atlauncher.viewmodel.impl.settings;
 
-import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.App;
+import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.evnt.manager.SettingsValidityManager;
+import com.atlauncher.viewmodel.base.settings.ISettingsViewModel;
+
+import java.util.function.Consumer;
 
 /**
- * 15 / 06 / 2022
+ * 19 / 06 / 2022
  */
-interface IAbstractSettingsViewModel extends SettingsListener {
+public class SettingsViewModel implements ISettingsViewModel {
+    @Override
+    public void save() {
+        App.settings.save();
+        SettingsManager.post();
+        App.TOASTER.pop("Settings Saved");
+    }
+
+    @Override
+    public void addOnSaveEnabledChanged(Consumer<Boolean> onChanged) {
+        SettingsValidityManager.addListener(onChanged);
+    }
 }

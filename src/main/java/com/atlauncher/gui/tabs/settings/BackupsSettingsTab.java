@@ -24,6 +24,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.viewmodel.base.settings.IBackupsSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.BackupsSettingsViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.constants.UIConstants;

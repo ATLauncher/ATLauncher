@@ -26,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.atlauncher.gui.tabs.Tab;
+import com.atlauncher.viewmodel.base.settings.ISettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.SettingsViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;

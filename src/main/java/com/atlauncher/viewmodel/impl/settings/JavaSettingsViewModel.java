@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.settings;
+package com.atlauncher.viewmodel.impl.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
@@ -24,16 +24,15 @@ import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.evnt.manager.SettingsValidityManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.viewmodel.base.settings.IJavaSettingsViewModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**

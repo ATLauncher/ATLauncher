@@ -19,16 +19,14 @@ package com.atlauncher.gui.tabs.settings;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.*;
 
-import com.atlauncher.gui.tabs.settings.INetworkSettingsViewModel.ProxyType;
-import com.atlauncher.data.CheckState;
+import com.atlauncher.viewmodel.base.settings.INetworkSettingsViewModel;
+import com.atlauncher.viewmodel.base.settings.INetworkSettingsViewModel.ProxyType;
 import com.atlauncher.listener.DelayedSavingKeyListener;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.viewmodel.impl.settings.NetworkSettingsViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.constants.UIConstants;

@@ -17,7 +17,6 @@
  */
 package com.atlauncher.evnt.manager;
 
-import com.atlauncher.gui.tabs.settings.NetworkSettingsViewModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;

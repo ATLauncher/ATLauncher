@@ -33,8 +33,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.atlauncher.gui.tabs.settings.IGeneralSettingsViewModel.LauncherTheme;
+import com.atlauncher.viewmodel.base.settings.IGeneralSettingsViewModel;
+import com.atlauncher.viewmodel.base.settings.IGeneralSettingsViewModel.LauncherTheme;
 import com.atlauncher.listener.DelayedSavingKeyListener;
+import com.atlauncher.viewmodel.impl.settings.GeneralSettingsViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;

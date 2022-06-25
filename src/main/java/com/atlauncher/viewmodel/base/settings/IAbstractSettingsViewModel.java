@@ -15,27 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.settings;
+package com.atlauncher.viewmodel.base.settings;
 
-import java.util.function.Consumer;
+import com.atlauncher.evnt.listener.SettingsListener;
 
 /**
- * 19 / 06 / 2022
- *
- * View model for {@link SettingsTab}
+ * 15 / 06 / 2022
  */
-public interface ISettingsViewModel {
-    /**
-     * Save settings
-     */
-    void save();
-
-    /**
-     * Listen to the save button being enabled or not.
-     *
-     * This is because certain setting events require the save button to be
-     *  disabled during various operation.
-     * @param onChanged invoked on changed.
-     */
-    void addOnSaveEnabledChanged(Consumer<Boolean> onChanged);
+interface IAbstractSettingsViewModel extends SettingsListener {
 }

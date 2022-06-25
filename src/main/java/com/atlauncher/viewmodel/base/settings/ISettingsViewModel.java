@@ -15,27 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.settings;
+package com.atlauncher.viewmodel.base.settings;
 
-import com.atlauncher.App;
-import com.atlauncher.evnt.manager.SettingsManager;
-import com.atlauncher.evnt.manager.SettingsValidityManager;
+import com.atlauncher.gui.tabs.settings.SettingsTab;
 
 import java.util.function.Consumer;
 
 /**
  * 19 / 06 / 2022
+ *
+ * View model for {@link SettingsTab}
  */
-public class SettingsViewModel implements ISettingsViewModel {
-    @Override
-    public void save() {
-        App.settings.save();
-        SettingsManager.post();
-        App.TOASTER.pop("Settings Saved");
-    }
+public interface ISettingsViewModel {
+    /**
+     * Save settings
+     */
+    void save();
 
-    @Override
-    public void addOnSaveEnabledChanged(Consumer<Boolean> onChanged) {
-        SettingsValidityManager.addListener(onChanged);
-    }
+    /**
+     * Listen to the save button being enabled or not.
+     *
+     * This is because certain setting events require the save button to be
+     *  disabled during various operation.
+     * @param onChanged invoked on changed.
+     */
+    void addOnSaveEnabledChanged(Consumer<Boolean> onChanged);
 }
