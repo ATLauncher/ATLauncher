@@ -29,3 +29,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement RxJava in all update managers [#795]
 - Update all github actions workflows and allow downloading translations to a branch
 - Make HierarchyPanel intercept Relocalization [#836]
+- Implement HierarchyPanel for basic life cycle, first to NewsTab
