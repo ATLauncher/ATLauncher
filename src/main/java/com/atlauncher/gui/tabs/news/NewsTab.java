@@ -103,7 +103,7 @@ public class NewsTab extends HierarchyPanel implements Tab {
     }
 
     @Override
-    protected void onHide() {
+    protected void onDestroy() {
         LOG.debug("NewsTab.onHide");
         NEWS_PANE.setText(null);
     }

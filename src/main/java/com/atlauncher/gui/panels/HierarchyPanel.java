@@ -42,19 +42,19 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
             if (isShowing()) {
                 onShow();
             } else {
-                onHide();
+                onDestroy();
                 System.gc(); // Run GC to clear out any now stale data
             }
         }
     }
 
     /**
-     * Render the UI
+     * Populate the UI, so the user can view it
      */
     protected abstract void onShow();
 
     /**
      * Destroy the UI
      */
-    protected abstract void onHide();
+    protected abstract void onDestroy();
 }
