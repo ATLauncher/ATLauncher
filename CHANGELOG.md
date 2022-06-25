@@ -23,4 +23,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement view model for ToolsTab [#612]
 - Implement view model for AccountsTab [#607]
 - Implement view model for NewsTab [#611]
-- Implement view model for SettingsTab [#617]
+- Implement view model for SettingsTabs [#617]
