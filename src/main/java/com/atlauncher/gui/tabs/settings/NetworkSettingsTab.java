@@ -159,7 +159,12 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
             () -> viewModel.setProxyHost(proxyHost.getText()),
             viewModel::setProxyHostPending
         ));
-        viewModel.addOnProxyHostChanged(proxyHost::setText);
+        viewModel.addOnProxyHostChanged(proxyHostText ->
+        {
+            if (!proxyHost.getText().equals(proxyHostText)) {
+                proxyHost.setText(proxyHostText);
+            }
+        });
         add(proxyHost, gbc);
 
         gbc.gridx++;

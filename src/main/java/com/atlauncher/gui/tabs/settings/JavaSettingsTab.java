@@ -354,7 +354,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             viewModel::setJavaPathPending
         ));
 
-        viewModel.addOnJavaPathChanged(javaPath::setText);
+        viewModel.addOnJavaPathChanged(path -> {
+            if (!javaPath.getText().equals(path))
+                javaPath.setText(path);
+        });
         viewModel.addOnJavaPathCheckerListener(this::setJavaPathCheckState);
 
         javaPathPanelBottom.add(javaPath);
@@ -434,7 +437,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             () -> viewModel.setJavaParams(javaParameters.getText()),
             viewModel::setJavaParamsPending
         ));
-        viewModel.addOnJavaParamsChanged(javaParameters::setText);
+        viewModel.addOnJavaParamsChanged(params -> {
+            if (!javaParameters.getText().equals(params))
+                javaParameters.setText(params);
+        });
         viewModel.addOnJavaParamsCheckerListener(this::setJavaParamCheckState);
 
         javaParametersPanel.add(javaParameters);

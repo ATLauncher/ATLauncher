@@ -295,7 +295,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         customDownloadsPathPanel.setLayout(new BoxLayout(customDownloadsPathPanel, BoxLayout.X_AXIS));
 
         customDownloadsPath = new JTextField(16);
-        viewModel.addOnCustomsDownloadPathChanged(customDownloadsPath::setText);
+        viewModel.addOnCustomsDownloadPathChanged(path -> {
+            if (!customDownloadsPath.getText().equalsIgnoreCase(path))
+                customDownloadsPath.setText(path);
+        });
         customDownloadsPath.addKeyListener(new DelayedSavingKeyListener(
             500,
             () -> viewModel.setCustomsDownloadPath(customDownloadsPath.getText()),

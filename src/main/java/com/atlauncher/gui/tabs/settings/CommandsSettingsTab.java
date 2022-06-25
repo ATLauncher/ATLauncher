@@ -88,7 +88,10 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
             500,
             () -> viewModel.setPreLaunchCommand(preLaunchCommand.getText()),
             viewModel::setPreLaunchCommandPending));
-        viewModel.addOnPreLaunchCommandChanged(preLaunchCommand::setText);
+        viewModel.addOnPreLaunchCommandChanged(newText -> {
+            if (!preLaunchCommand.getText().equals(newText))
+                preLaunchCommand.setText(newText);
+        });
         preLaunchCommand.setPreferredSize(new Dimension(516, 24));
         add(preLaunchCommand, gbc);
 
@@ -110,7 +113,10 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
             () -> viewModel.setPostExitCommand(postExitCommand.getText()),
             viewModel::setPostExitCommandPending
         ));
-        viewModel.addOnPostExitCommandChanged(postExitCommand::setText);
+        viewModel.addOnPostExitCommandChanged(newText -> {
+            if (!postExitCommand.getText().equals(newText))
+                postExitCommand.setText(newText);
+        });
         postExitCommand.setPreferredSize(new Dimension(516, 24));
         add(postExitCommand, gbc);
 
@@ -132,7 +138,10 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
             500,
             () -> viewModel.setWrapperCommand(wrapperCommand.getText()),
             viewModel::setWrapperCommandPending));
-        viewModel.addOnWrapperCommandChanged(wrapperCommand::setText);
+        viewModel.addOnWrapperCommandChanged(newText -> {
+            if (!wrapperCommand.getText().equals(newText))
+                wrapperCommand.setText(newText);
+        });
         add(wrapperCommand, gbc);
 
         nextRow();
