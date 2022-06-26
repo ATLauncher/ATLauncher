@@ -17,6 +17,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix issue with Quilt mods showing as updates for Fabric instances [#622]
 - Don't show Fabric dependency when QSL is installed
 - Issue when checking for updates on Modrinth not using correct loaders
+- Hashes not verified when adding a mod from CurseForge to an instance [#626]
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)

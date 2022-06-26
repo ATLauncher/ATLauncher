@@ -77,6 +77,7 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
@@ -1265,8 +1266,11 @@ public class Instance extends MinecraftVersion {
         // delete mod files that are the same mod id
         sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
 
-        // TODO: for some reason we never checked hashes, even when downloading from the
-        // api, so do that at some point when it's not 4am on a weekday
+        Optional<CurseForgeFileHash> md5Hash = file.hashes.stream().filter(h -> h.isMd5())
+                .findFirst();
+        Optional<CurseForgeFileHash> sha1Hash = file.hashes.stream().filter(h -> h.isSha1())
+                .findFirst();
+
         if (file.downloadUrl == null) {
             if (!App.settings.seenCurseForgeProjectDistributionDialog) {
                 App.settings.seenCurseForgeProjectDistributionDialog = true;
@@ -1283,6 +1287,16 @@ public class Instance extends MinecraftVersion {
             dialog.setIndeterminate();
             String filename = file.fileName.replace(" ", "+");
             File fileLocation = downloadLocation.toFile();
+            // if file downloaded already, but hashes don't match, delete it
+            if (fileLocation.exists()
+                    && ((md5Hash.isPresent()
+                            && !Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(md5Hash.get().value)))
+                            || (sha1Hash.isPresent()
+                                    && !Hashing.sha1(fileLocation.toPath())
+                                            .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                FileUtils.delete(fileLocation.toPath());
+            }
+
             if (!fileLocation.exists()) {
                 File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(), filename);
                 if (downloadsFolderFile.exists()) {
@@ -1337,6 +1351,16 @@ public class Instance extends MinecraftVersion {
                             }
                         }
                     }
+
+                    // file downloaded, but hashes don't match, delete it
+                    if (fileLocation.exists()
+                            && ((md5Hash.isPresent() && !Hashing.md5(fileLocation.toPath())
+                                    .equals(Hashing.toHashCode(md5Hash.get().value)))
+                                    || (sha1Hash.isPresent()
+                                            && !Hashing.sha1(fileLocation.toPath())
+                                                    .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                        FileUtils.delete(fileLocation.toPath());
+                    }
                 }
             }
 
@@ -1371,6 +1395,12 @@ public class Instance extends MinecraftVersion {
                 }
             }
 
+            if (md5Hash.isPresent()) {
+                download = download.hash(md5Hash.get().value);
+            } else if (sha1Hash.isPresent()) {
+                download = download.hash(sha1Hash.get().value);
+            }
+
             if (download.needToDownload()) {
                 try {
                     download.downloadFile();
@@ -1394,8 +1424,7 @@ public class Instance extends MinecraftVersion {
         // add this mod
         this.launcher.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
                 mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
-                        : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds
-                                : Type.mods),
+                        : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds : Type.mods),
                 null, mod.summary, false, true, true, false, mod, file));
 
         this.save();
