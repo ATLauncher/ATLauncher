@@ -256,13 +256,15 @@ public class ImportPackUtils {
             try {
                 ModrinthProject project = ModrinthApi.getProject(version.projectId);
 
-                new InstanceInstallerDialog(project, version);
+                if (project != null) {
+                    new InstanceInstallerDialog(project, version);
+
+                    return true;
+                }
             } catch (Exception e) {
                 LOG.error("Failed to install Modrinth pack", e);
                 return false;
             }
-
-            return true;
         }
 
         Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toString().toLowerCase());

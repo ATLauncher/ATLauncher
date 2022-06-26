@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't show Fabric dependency when QSL is installed
 - Issue when checking for updates on Modrinth not using correct loaders
 - Hashes not verified when adding a mod from CurseForge to an instance [#626]
+- Importing mrpack files that don't return a valid project from Modrinth api failing
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)
