@@ -19,6 +19,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue when checking for updates on Modrinth not using correct loaders
 - Hashes not verified when adding a mod from CurseForge to an instance [#626]
 - Importing mrpack files that don't return a valid project from Modrinth api failing
+- Manually added mods not being checked on CF/MR when exporting instances
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)
