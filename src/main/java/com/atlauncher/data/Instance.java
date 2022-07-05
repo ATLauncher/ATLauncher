@@ -28,11 +28,13 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -2095,8 +2097,10 @@ public class Instance extends MinecraftVersion {
         FileUtils.createDirectory(tempDir);
 
         // create modrinth.index.json
-        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modrinth.index.json").toFile())) {
-            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+        try (FileOutputStream fos = new FileOutputStream(tempDir.resolve("modrinth.index.json").toFile());
+                OutputStreamWriter osw = new OutputStreamWriter(fos,
+                        StandardCharsets.UTF_8)) {
+            Gsons.MINECRAFT.toJson(manifest, osw);
         } catch (JsonIOException | IOException e) {
             LOG.error("Failed to save modrinth.index.json", e);
 
