@@ -172,8 +172,18 @@ public class MinecraftManager {
         }
 
         return Data.MINECRAFT.entrySet().stream()
-                .filter(e -> e.getValue().type == VersionManifestVersionType.RELEASE
-                        && e.getKey().startsWith(version.substring(0, version.lastIndexOf("."))))
+                .filter(e -> {
+                    if (e.getValue().type != VersionManifestVersionType.RELEASE) {
+                        return false;
+                    }
+
+                    // no patch version (for instance 1.19, 1.18, etc)
+                    if (version.split("\\.").length == 2) {
+                        return e.getKey().startsWith(version);
+                    }
+
+                    return e.getKey().startsWith(version.substring(0, version.lastIndexOf(".")));
+                })
                 .map(e -> e.getValue()).collect(Collectors.toList());
     }
 
