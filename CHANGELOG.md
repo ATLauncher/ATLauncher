@@ -23,6 +23,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Force modrinth.index.json to UTF-8 charset
 - Issue with major version mod restrictions not working for 1 dot versions [#629]
 - Issue with date format and instance title format settings not remembering value on load [#610]
+- Inject DigiCert G2 root cert to support new Azure Mojang CDN SSL certs on old Java
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)
