@@ -70,7 +70,7 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
             boolean sortDescending, String search,
             int page) {
-        this.packs.stream().forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
+        this.packs.stream().forEach(pack -> this.cards.add(new ATLauncherPackCard(pack, true)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
