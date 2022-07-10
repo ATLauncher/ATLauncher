@@ -56,7 +56,7 @@ public final class Analytics implements SettingsListener {
         Rectangle screenBounds = OS.getScreenVirtualBounds();
         String screenResolution = String.format("%dx%d", screenBounds.width, screenBounds.height);
 
-        return new DefaultRequest().userAgent(Network.USER_AGENT).clientId(App.settings.analyticsClientId)
+        return new DefaultRequest().userAgent(Network.ANALYTICS_USER_AGENT).clientId(App.settings.analyticsClientId)
                 .customDimension(1, Java.getLauncherJavaVersion()).customDimension(2, System.getProperty("os.name"))
                 .customDimension(3, System.getProperty("os.arch")).screenResolution(screenResolution);
     }

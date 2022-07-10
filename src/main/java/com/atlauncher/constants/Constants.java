@@ -46,6 +46,7 @@ public class Constants {
     // Launcher config
     public static final LauncherVersion VERSION;
     public static final String LAUNCHER_NAME = "ATLauncher";
+    public static final String LAUNCHER_WEBSITE = "https://atlauncher.com";
     public static final String DEFAULT_THEME_CLASS = "com.atlauncher.themes.Dark";
     public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";

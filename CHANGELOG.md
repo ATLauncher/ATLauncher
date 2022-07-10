@@ -34,3 +34,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement view model for ToolsTab [#612]
 - Implement view model for AccountsTab [#607]
 - Implement view model for NewsTab [#611]
+- Use a new user agent for non analytics requests to better follow api guidelines

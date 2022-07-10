@@ -63,10 +63,14 @@ public final class Network {
 
     public static OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
 
-    public static final String USER_AGENT = String.format(
+    public static final String ANALYTICS_USER_AGENT = String.format(
             "Mozilla/5.0 (%s) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36 %s/%s Java/%s",
-            OS.getUserAgentString(), Constants.LAUNCHER_NAME, Constants.VERSION.toStringForLogging(),
+            OS.getUserAgentString(), Constants.LAUNCHER_NAME, Constants.VERSION.toStringForUserAgent(),
             Java.getLauncherJavaVersion());
+
+    public static final String USER_AGENT = String.format(
+            "%s/%s (+%s)", Constants.LAUNCHER_NAME, Constants.VERSION.toStringForUserAgent(),
+            Constants.LAUNCHER_WEBSITE);
 
     static {
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
