@@ -225,7 +225,8 @@ public class CurseForgeApi {
             List<CurseForgeProject> projects = getProjects(addonIds);
 
             if (projects != null) {
-                return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
+                return projects.stream().distinct()
+                        .collect(Collectors.toMap(p -> p.id, p -> p, (existing, replacement) -> existing));
             }
         } catch (Throwable t) {
             LOG.error("Error trying to get CurseForge projects as map", t);

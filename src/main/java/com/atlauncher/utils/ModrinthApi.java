@@ -272,7 +272,7 @@ public class ModrinthApi {
             List<ModrinthProject> projects = getProjects(projectIds);
 
             if (projects != null) {
-                return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p));
+                return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p, (existing, replacement) -> existing));
             }
         } catch (Throwable t) {
             LOG.error("Error trying to get Modrinth projects as map", t);
