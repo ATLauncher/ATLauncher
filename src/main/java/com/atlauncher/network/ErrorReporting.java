@@ -45,20 +45,23 @@ public final class ErrorReporting {
             Sentry.init(options -> {
                 options.setDsn(Constants.SENTRY_DSN);
                 options.setBeforeSend((event, hint) -> {
-                    Throwable t = (Throwable) hint;
+                    try {
+                        Throwable t = event.getThrowable();
 
-                    if (t == null || t.getMessage() == null || sentEvents.contains(t.getMessage())) {
-                        return null;
+                        if (t == null || t.getMessage() == null || sentEvents.contains(t.getMessage())) {
+                            return null;
+                        }
+
+                        if (ignoredMessages.stream().anyMatch(m -> t.getMessage().contains(m))) {
+                            return null;
+                        }
+
+                        sentEvents.add(t.getMessage());
+
+                        event.setServerName(null); // Don't send server names, they're useless
+                        return event;
+                    } catch (Throwable ignored) {
                     }
-
-                    if (ignoredMessages.stream()
-                            .anyMatch(m -> t.getMessage().contains(m) || hint.getClass().toString().contains(m))) {
-                        return null;
-                    }
-
-                    sentEvents.add(t.getMessage());
-
-                    event.setServerName(null); // Don't send server names, they're useless
                     return event;
                 });
                 options.setDebug(Utils.isDevelopment());
@@ -182,7 +185,7 @@ public final class ErrorReporting {
 
     public static void captureException(Throwable t) {
         if (sentryInitialised && Sentry.isEnabled()) {
-            Sentry.captureException(t, t);
+            Sentry.captureException(t);
         }
     }
 }
