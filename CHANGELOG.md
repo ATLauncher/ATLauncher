@@ -26,6 +26,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Inject DigiCert G2 root cert to support new Azure Mojang CDN SSL certs on old Java
 - Analytics not coming through correctly for featured ATLauncher packs
 - Issues with getting projects as map for CurseForge/Modrinth having duplicate ids
+- Fix layout shift when switching to/from ATLauncher featured packs tab
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)

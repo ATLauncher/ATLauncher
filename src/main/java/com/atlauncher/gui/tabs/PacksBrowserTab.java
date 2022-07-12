@@ -19,6 +19,7 @@ package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.AdjustmentEvent;
@@ -118,6 +119,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         actionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         actionsPanel
                 .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
+        actionsPanel.setPreferredSize(new Dimension(0, 34));
 
         minecraftVersionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
         minecraftVersionPanel.add(minecraftVersionLabel);
