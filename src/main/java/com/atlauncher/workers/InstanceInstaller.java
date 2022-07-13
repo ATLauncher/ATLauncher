@@ -1205,7 +1205,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (versionJson != null && versionJson.libraries != null) {
             Optional<Library> forgeLibrary = versionJson.libraries.stream()
                     .filter(l -> l.name.startsWith("net.minecraftforge:forge:")
-                            || l.name.startsWith("net.minecraftforge:minecraftforge:"))
+                            || l.name.startsWith("net.minecraftforge:minecraftforge:")
+                            || l.name.startsWith("net.minecraftforge:fmlloader:"))
                     .findFirst();
             Optional<Library> fabricLibrary = versionJson.libraries.stream()
                     .filter(l -> l.name.startsWith("net.fabricmc:fabric-loader:")).findFirst();
