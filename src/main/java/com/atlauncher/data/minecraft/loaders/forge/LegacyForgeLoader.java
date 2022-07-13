@@ -172,8 +172,11 @@ public class LegacyForgeLoader implements Loader {
 
         // first download the universal/client/server zip
         Download forgeDownload = Download.build().setUrl(this.downloadUrl).downloadTo(downloadPath)
-                .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient)
-                .copyTo(instanceInstaller.root.resolve("bin/modpack.jar"));
+                .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient);
+
+        if (!instanceInstaller.isServer) {
+            forgeDownload = forgeDownload.copyTo(instanceInstaller.root.resolve("bin/modpack.jar"));
+        }
 
         if (downloadSize != null) {
             forgeDownload = forgeDownload.size(this.downloadSize);
@@ -212,7 +215,6 @@ public class LegacyForgeLoader implements Loader {
 
     @Override
     public void runProcessors() {
-
     }
 
     @Override
@@ -232,7 +234,7 @@ public class LegacyForgeLoader implements Loader {
 
     @Override
     public String getServerJar() {
-        return "test.jar"; // TODO: figure out
+        return downloadPath.getFileName().toString().replace(".zip", ".jar");
     }
 
     @Override

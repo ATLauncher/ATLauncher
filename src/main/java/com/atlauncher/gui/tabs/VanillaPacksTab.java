@@ -75,6 +75,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public final class VanillaPacksTab extends JPanel implements Tab {
@@ -585,6 +586,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         createServerButton.setEnabled(false);
         createInstanceButton.setEnabled(false);
 
+        // Legacy Forge doesn't support servers easily
+        boolean enableCreateServers = selectedLoader != LoaderType.FORGE
+                || !Utils.matchVersion(selectedMinecraftVersion, "1.5", true, true);
+
         Runnable r = () -> {
             List<LoaderVersion> loaderVersions = new ArrayList<>();
 
@@ -603,7 +608,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 loaderTypeFabricRadioButton.setEnabled(true);
                 loaderTypeForgeRadioButton.setEnabled(true);
                 loaderTypeQuiltRadioButton.setEnabled(true);
-                createServerButton.setEnabled(true);
+                createServerButton.setEnabled(enableCreateServers);
                 createInstanceButton.setEnabled(true);
                 return;
             }
@@ -643,7 +648,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             loaderTypeForgeRadioButton.setEnabled(true);
             loaderTypeQuiltRadioButton.setEnabled(true);
             loaderVersionsDropDown.setEnabled(true);
-            createServerButton.setEnabled(true);
+            createServerButton.setEnabled(enableCreateServers);
             createInstanceButton.setEnabled(true);
 
             // update the name and description fields if they're not dirty
