@@ -3,9 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.18.3
+## 3.4.19.0
 
 ### New Features
+- Support Forge 1.6.1 and below [#530]
 
 ### Fixes
 - Old launcher logs not being deleted after 14 days

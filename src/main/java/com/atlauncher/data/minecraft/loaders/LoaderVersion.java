@@ -17,31 +17,29 @@
  */
 package com.atlauncher.data.minecraft.loaders;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.atlauncher.data.Instance;
+import com.atlauncher.utils.Pair;
 
 public class LoaderVersion {
     public String version;
     public String rawVersion;
     public boolean recommended;
-    public Long size;
-    public String hash;
     public String type;
 
-    public LoaderVersion(String version, String rawVersion, boolean recommended, String type, Long size, String hash) {
+    public Map<String, Pair<String, Long>> downloadables = new HashMap<>();
+
+    public LoaderVersion(String version, String rawVersion, boolean recommended, String type) {
         this.version = version;
         this.rawVersion = rawVersion;
         this.recommended = recommended;
         this.type = type;
-        this.size = size;
-        this.hash = hash;
-    }
-
-    public LoaderVersion(String version, String rawVersion, boolean recommended, String type) {
-        this(version, rawVersion, recommended, type, null, null);
     }
 
     public LoaderVersion(String version, boolean recommended, String type) {
-        this(version, version, recommended, type, null, null);
+        this(version, version, recommended, type);
     }
 
     public LoaderVersion(String version) {

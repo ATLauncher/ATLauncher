@@ -31,4 +31,22 @@ public class ATLauncherApiForgeVersion {
 
     @SerializedName("installer_size")
     public Long installerSize;
+
+    @SerializedName("universal_sha1_hash")
+    public String universalSha1Hash;
+
+    @SerializedName("universal_size")
+    public Long universalSize;
+
+    @SerializedName("client_sha1_hash")
+    public String clientSha1Hash;
+
+    @SerializedName("client_size")
+    public Long clientSize;
+
+    @SerializedName("server_sha1_hash")
+    public String serverSha1Hash;
+
+    @SerializedName("server_size")
+    public Long serverSize;
 }

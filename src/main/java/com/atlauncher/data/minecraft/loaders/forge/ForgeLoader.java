@@ -43,6 +43,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
@@ -72,12 +73,15 @@ public class ForgeLoader implements Loader {
             this.version = versionOverride.version;
             this.rawVersion = versionOverride.rawVersion;
 
-            if (versionOverride.size != null) {
-                this.installerSize = versionOverride.size;
-            }
+            Pair<String, Long> installerDownloadable = versionOverride.downloadables.get("installer");
+            if (installerDownloadable != null) {
+                if (installerDownloadable.right() != null) {
+                    this.installerSize = installerDownloadable.right();
+                }
 
-            if (versionOverride.hash != null) {
-                this.installerSha1 = versionOverride.hash;
+                if (installerDownloadable.left() != null) {
+                    this.installerSha1 = installerDownloadable.left();
+                }
             }
         } else if (metadata.containsKey("version")) {
             this.version = (String) metadata.get("version");
@@ -298,8 +302,32 @@ public class ForgeLoader implements Loader {
                     new ArrayList<String>());
 
             return data.getData().stream().filter(fv -> !disabledVersions.contains(fv.version))
-                    .map(version -> new LoaderVersion(version.version, version.rawVersion, version.recommended, "Forge",
-                            version.installerSize, version.installerSha1Hash))
+                    .map(version -> {
+                        LoaderVersion lv = new LoaderVersion(version.version, version.rawVersion, version.recommended,
+                                "Forge");
+
+                        if (version.installerSha1Hash != null && version.installerSize != null) {
+                            lv.downloadables.put("installer",
+                                    new Pair<String, Long>(version.installerSha1Hash, version.installerSize));
+                        }
+
+                        if (version.universalSha1Hash != null && version.universalSize != null) {
+                            lv.downloadables.put("universal",
+                                    new Pair<String, Long>(version.universalSha1Hash, version.universalSize));
+                        }
+
+                        if (version.clientSha1Hash != null && version.clientSize != null) {
+                            lv.downloadables.put("client",
+                                    new Pair<String, Long>(version.clientSha1Hash, version.clientSize));
+                        }
+
+                        if (version.serverSha1Hash != null && version.serverSize != null) {
+                            lv.downloadables.put("server",
+                                    new Pair<String, Long>(version.serverSha1Hash, version.serverSize));
+                        }
+
+                        return lv;
+                    })
                     .collect(Collectors.toList());
         } catch (IOException e) {
             return new ArrayList<LoaderVersion>();

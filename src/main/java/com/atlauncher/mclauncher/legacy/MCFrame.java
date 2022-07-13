@@ -22,8 +22,11 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
-import com.atlauncher.utils.Utils;
+import javax.imageio.ImageIO;
 
 import net.minecraft.Launcher;
 
@@ -34,7 +37,7 @@ public class MCFrame extends Frame {
         super(title);
 
         try {
-            setIconImage(Utils.getImage("/assets/image/old-minecraft-icon.png"));
+            setIconImage(MCFrame.getImage("/assets/image/old-minecraft-icon.png"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,6 +66,21 @@ public class MCFrame extends Frame {
                 System.exit(0);
             }
         });
+    }
+
+    public static BufferedImage getImage(String img) {
+        InputStream stream = MCFrame.class.getResourceAsStream(img);
+
+        if (stream == null) {
+            return null;
+        }
+
+        try {
+            return ImageIO.read(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void start(Applet mcApplet, String user, String session, Dimension winSize, boolean maximize) {
