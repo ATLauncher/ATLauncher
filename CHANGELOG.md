@@ -29,6 +29,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issues with getting projects as map for CurseForge/Modrinth having duplicate ids
 - Fix layout shift when switching to/from ATLauncher featured packs tab
 - Issue with newer Forge versions not being detected from Technic pack zip files
+- Instance account override resetting on every startup of the launcher
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)

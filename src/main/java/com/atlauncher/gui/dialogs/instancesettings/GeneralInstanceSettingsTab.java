@@ -83,7 +83,8 @@ public class GeneralInstanceSettingsTab extends JPanel {
         for (int i = 0; i < account.getItemCount(); i++) {
             ComboItem<String> item = account.getItemAt(i);
 
-            if (item.getValue() != null && item.getValue().equalsIgnoreCase(instance.launcher.account)) {
+            if ((item.getValue() == null && instance.launcher.account == null)
+                    || (item.getValue() != null && item.getValue().equalsIgnoreCase(instance.launcher.account))) {
                 account.setSelectedIndex(i);
                 break;
             }
