@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Support Forge 1.6.1 and below [#530]
+- Add in skin uploader
 
 ### Fixes
 - Old launcher logs not being deleted after 14 days

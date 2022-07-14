@@ -78,6 +78,11 @@ public interface IAccountsViewModel {
     void updateUsername();
 
     /**
+     * Change the skin of an account
+     */
+    void changeSkin();
+
+    /**
      * Update the skin of an account
      */
     void updateSkin();

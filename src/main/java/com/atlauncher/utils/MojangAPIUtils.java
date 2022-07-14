@@ -17,17 +17,32 @@
  */
 package com.atlauncher.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.atlauncher.Gsons;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.atlauncher.network.Download;
+import com.atlauncher.network.DownloadException;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * Various utility methods for interacting with the Mojang API.
  */
 public class MojangAPIUtils {
+    private static final Logger LOG = LogManager.getLogger(MojangAPIUtils.class);
+
     /**
      * Gets a UUID of a Minecraft account from a given username.
      *
@@ -39,6 +54,33 @@ public class MojangAPIUtils {
                 .asClass(ProfileResponse.class);
 
         return profile.getId();
+    }
+
+    public static boolean uploadSkin(AbstractAccount account, File skinPath, String skinType) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), skinPath);
+
+        MultipartBody body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("variant", skinType)
+                .addFormDataPart("file", "skin.png", requestBody)
+                .build();
+
+        try {
+            JsonObject response = Download.build().setUrl("https://api.minecraftservices.com/minecraft/profile/skins")
+                    .header("Authorization", "Bearer " + account.getAccessToken())
+                    .header("Content-Type", "multipart/form-data").post(body)
+                    .asClassWithThrow(JsonObject.class);
+
+            LOG.info(Gsons.DEFAULT.toJson(response));
+
+            return true;
+        } catch (DownloadException e) {
+            LOG.error("Error updating skin. Response was {}", e.response);
+        } catch (IOException e) {
+            LOG.error("Error updating skin", e);
+        }
+
+        return false;
     }
 
     public static String getCurrentUsername(String uuid) {

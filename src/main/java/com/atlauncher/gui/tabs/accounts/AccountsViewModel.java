@@ -17,22 +17,24 @@
  */
 package com.atlauncher.gui.tabs.accounts;
 
-import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.LoginResponse;
-import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.MojangAccount;
-import com.atlauncher.managers.AccountManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Authentication;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.data.MojangAccount;
+import com.atlauncher.gui.dialogs.ChangeSkinDialog;
+import com.atlauncher.managers.AccountManager;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.Authentication;
 
 /**
  * 12 / 06 / 2022
@@ -63,12 +65,10 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void pushNewAccounts() {
         _onAccountsChanged.accept(
-            accounts().stream()
-                .map(account -> account.minecraftUsername)
-                .collect(Collectors.toList())
-        );
+                accounts().stream()
+                        .map(account -> account.minecraftUsername)
+                        .collect(Collectors.toList()));
     }
-
 
     private Consumer<AbstractAccount> selected;
     private int selectedAccountIndex = -1;
@@ -137,7 +137,6 @@ public class AccountsViewModel implements IAccountsViewModel {
         loginRemember = rememberLogin;
     }
 
-
     private String clientToken = null;
 
     @NotNull
@@ -162,11 +161,10 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     private void addNewAccount(LoginResponse response) {
         MojangAccount account = new MojangAccount(loginUsername,
-            loginPassword,
-            response,
-            loginRemember,
-            getClientToken()
-        );
+                loginPassword,
+                response,
+                loginRemember,
+                getClientToken());
 
         AccountManager.addAccount(account);
         pushNewAccounts();
@@ -227,8 +225,7 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void login() {
-        loginResponse =
-            Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
+        loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
     }
 
     @Override
@@ -239,14 +236,13 @@ public class AccountsViewModel implements IAccountsViewModel {
         if (abstractAccount instanceof MicrosoftAccount) {
             MicrosoftAccount account = (MicrosoftAccount) abstractAccount;
             boolean success = account
-                .refreshAccessToken(true);
+                    .refreshAccessToken(true);
 
             if (!success) {
                 account.mustLogin = true;
             }
 
             AccountManager.saveAccounts();
-
 
             return success;
         }
@@ -260,6 +256,13 @@ public class AccountsViewModel implements IAccountsViewModel {
         account.updateUsername();
         AccountManager.saveAccounts();
         pushNewAccounts();
+    }
+
+    @Override
+    public void changeSkin() {
+        AbstractAccount account = getSelectedAccount();
+
+        new ChangeSkinDialog(account);
     }
 
     @Override

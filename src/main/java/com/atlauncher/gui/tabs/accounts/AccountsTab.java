@@ -83,6 +83,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private JButton loginWithMicrosoftButton;
     private JMenuItem refreshAccessTokenMenuItem;
     private final JMenuItem updateSkin;
+    private final JMenuItem changeSkin;
     private final JPopupMenu contextMenu; // Right click menu
 
     @SuppressWarnings("unchecked")
@@ -282,6 +283,17 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         rightPanel.add(bottomPanel, BorderLayout.CENTER);
 
         contextMenu = new JPopupMenu();
+
+        changeSkin = new JMenuItem(GetText.tr("Change Skin"));
+        changeSkin.addActionListener(e -> {
+            viewModel.changeSkin();
+
+            // TODO Have this done via listener
+            //  To describe, userSkin icon should be reactive, not active.
+            AbstractAccount account = viewModel.getSelectedAccount();
+            userSkin.setIcon(account.getMinecraftSkin());
+        });
+        contextMenu.add(changeSkin);
 
         updateSkin = new JMenuItem(GetText.tr("Reload Skin"));
         updateSkin.addActionListener(e -> {

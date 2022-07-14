@@ -24,19 +24,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
@@ -58,24 +49,13 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.ModPlatform;
-import com.atlauncher.data.curseforge.CurseForgeFingerprint;
-import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.minecraft.FabricMod;
-import com.atlauncher.data.minecraft.MCMod;
-import com.atlauncher.data.modrinth.ModrinthProject;
-import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
-import com.atlauncher.utils.Hashing;
-import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
 
 public class EditModsDialog extends JDialog {
@@ -253,7 +233,8 @@ public class EditModsDialog extends JDialog {
                             type = com.atlauncher.data.Type.shaderpack;
                         }
                         if (type != null) {
-                            DisableableMod mod = DisableableMod.generateMod(file, type, App.settings.enableAddedModsByDefault);
+                            DisableableMod mod = DisableableMod.generateMod(file, type,
+                                    App.settings.enableAddedModsByDefault);
                             File copyTo = App.settings.enableAddedModsByDefault ? mod.getFile(instance)
                                     : mod.getDisabledFile(instance);
 
