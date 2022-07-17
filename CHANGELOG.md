@@ -33,6 +33,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Instance account override resetting on every startup of the launcher
 - Exception in AddModsDialog when Modrinth/CurseForge api call fails
 - Issue with scanning for antivirus failing and causing NPE
+- Remove some errors from being reported remotely
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)

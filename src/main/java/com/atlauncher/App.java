@@ -56,6 +56,7 @@ import javax.swing.text.DefaultEditorKit;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.mini2Dx.gettext.GetText;
 
@@ -648,7 +649,7 @@ public class App {
                 Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
                 setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon-osx.png"));
             } catch (Exception ex) {
-                LOG.error("Failed to set dock icon", ex);
+                LOG.error(MarkerManager.getMarker("NoReporting"), "Failed to set dock icon", ex);
             }
         }
 
