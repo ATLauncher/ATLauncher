@@ -87,7 +87,9 @@ public class Authentication {
                 response.setOffline();
                 LOG.error("Authentication servers unavailable");
             } catch (AuthenticationException e) {
-                if (e.getMessage().contains("410")) {
+                if (e.getMessage() == null) {
+                    response.setErrorMessage("No error was returned from Mojang");
+                } else if (e.getMessage().contains("410")) {
                     response.setErrorMessage(GetText.tr(
                             "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
                 } else {
