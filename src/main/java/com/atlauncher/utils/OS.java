@@ -609,7 +609,7 @@ public enum OS {
 
     public static boolean isUsingAntivirus() {
         if (isWindows()) {
-            return getAntivirusProcesses().size() != 0;
+            return Optional.ofNullable(getAntivirusProcesses()).orElse(new ArrayList<>()).size() != 0;
         }
 
         return false;

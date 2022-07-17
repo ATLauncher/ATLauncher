@@ -32,6 +32,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with newer Forge versions not being detected from Technic pack zip files
 - Instance account override resetting on every startup of the launcher
 - Exception in AddModsDialog when Modrinth/CurseForge api call fails
+- Issue with scanning for antivirus failing and causing NPE
 
 ### Misc
 - Switch to using Log4j2 for application logging [#533] (thanks @s0cks)
