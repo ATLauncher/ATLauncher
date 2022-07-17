@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Support Forge 1.6.1 and below [#530]
 - Add in skin uploader
 - Show error and prevent launching when in a headless environment on Linux
+- Add clone item to edit instance menu
 
 ### Fixes
 - Old launcher logs not being deleted after 14 days
