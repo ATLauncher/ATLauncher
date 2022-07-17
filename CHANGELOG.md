@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Force load Minecraft versions if they don't exist when getting a version [#631]
 
 ### Misc

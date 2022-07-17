@@ -47,6 +47,7 @@ import com.google.gson.reflect.TypeToken;
 
 public class MinecraftManager {
     private static final Logger LOG = LogManager.getLogger(MinecraftManager.class);
+    private static boolean forceReloaded = false;
 
     public static void loadMinecraftVersions() {
         loadMinecraftVersions(false);
@@ -153,6 +154,11 @@ public class MinecraftManager {
     }
 
     public static VersionManifestVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
+        if (!Data.MINECRAFT.containsKey(version) && !forceReloaded) {
+            forceReloaded = true;
+            MinecraftManager.loadMinecraftVersions(true);
+        }
+
         if (!Data.MINECRAFT.containsKey(version)) {
             throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
         }
