@@ -484,13 +484,6 @@ public enum OS {
     }
 
     /**
-     * If the system is running in headless mode.
-     */
-    public static boolean isHeadless() {
-        return GraphicsEnvironment.isHeadless();
-    }
-
-    /**
      * This restarts the launcher with an option set of arguments to add.
      *
      * @param args a List of arguments to pass when starting the launcher

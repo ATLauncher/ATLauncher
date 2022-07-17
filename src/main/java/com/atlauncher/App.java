@@ -18,6 +18,7 @@
 package com.atlauncher;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -493,9 +494,19 @@ public class App {
             return;
         }
 
+        if (OS.isLinux() && GraphicsEnvironment.isHeadless()) {
+            DialogManager.okDialog().setTitle("Using Headless Java").setContent(new HTMLBuilder().center().text(
+                    "You're running ATLauncher with a headless version of Java installed on your system.<br/><br/>ATLauncher cannot run with a headless version of Java. Please uninstall it and install a non headless version of Java to continue.<br/><br/>If you're unsure how, please Google for instructions for your specific distro.")
+                    .build())
+                    .setType(DialogManager.ERROR).show();
+            System.exit(0);
+        }
+
         if (Files.exists(FileSystem.BASE_DIR)
                 && (Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
-                && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1) {
+                && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1)
+
+        {
             matched = true;
 
             if (DialogManager.optionDialog().setTitle("Warning")
