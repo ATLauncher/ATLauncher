@@ -530,13 +530,13 @@ public final class AddModsDialog extends JDialog {
 
         contentPanel.removeAll();
 
-        prevButton.setEnabled(page > 0);
-        nextButton.setEnabled(mods.size() == Constants.CURSEFORGE_PAGINATION_SIZE);
-
-        if (mods.size() == 0) {
+        if (mods == null || mods.size() == 0) {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
+            prevButton.setEnabled(page > 0);
+            nextButton.setEnabled(mods.size() == Constants.CURSEFORGE_PAGINATION_SIZE);
+
             contentPanel.setLayout(new WrapLayout());
 
             mods.forEach(mod -> {
@@ -567,13 +567,13 @@ public final class AddModsDialog extends JDialog {
 
         contentPanel.removeAll();
 
-        prevButton.setEnabled(page > 0);
-        nextButton.setEnabled((searchResult.offset + searchResult.limit) < searchResult.totalHits);
-
-        if (searchResult.hits.size() == 0) {
+        if (searchResult == null || searchResult.hits.size() == 0) {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
+            prevButton.setEnabled(page > 0);
+            nextButton.setEnabled((searchResult.offset + searchResult.limit) < searchResult.totalHits);
+
             contentPanel.setLayout(new WrapLayout());
 
             searchResult.hits.forEach(mod -> {
