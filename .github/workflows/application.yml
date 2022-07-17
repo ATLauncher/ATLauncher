@@ -99,74 +99,74 @@ jobs:
       - name: Download built artifacts
         uses: actions/download-artifact@v2
 
-      - name: Read changelog
-        id: changelog
-        uses: pCYSl5EDgo/cat@cde404f088c582552b0fe4e24ecb3159445fde2a
-        with:
-          path: ./CHANGELOG.md
+      # - name: Read changelog
+      #   id: changelog
+      #   uses: pCYSl5EDgo/cat@cde404f088c582552b0fe4e24ecb3159445fde2a
+      #   with:
+      #     path: ./CHANGELOG.md
 
-      - name: Remove the top part of the changelog
-        id: remove-top-of-changelog
-        uses: frabert/replace-string-action@v1.2
-        with:
-          string: ${{ steps.changelog.outputs.text }}
-          pattern: '^.*?(### (New Features|Fixes|Misc)\n.*)$'
-          replace-with: '$1'
-          flags: gs
+      # - name: Remove the top part of the changelog
+      #   id: remove-top-of-changelog
+      #   uses: frabert/replace-string-action@v1.2
+      #   with:
+      #     string: ${{ steps.changelog.outputs.text }}
+      #     pattern: '^.*?(### (New Features|Fixes|Misc)\n.*)$'
+      #     replace-with: '$1'
+      #     flags: gs
 
-      - name: Clean up the changelog to only have used sections
-        id: clean-changelog
-        run: |
-          awk '/^$/ {if (i) {b=b $0 "\n"} else {print $0 }; next} /^###/ {i=1; b=$0; next} {if (i) {print b}; i=0; print $0; next}' <<'EOF' > fixed-changelog.md
-          ${{ steps.remove-top-of-changelog.outputs.replaced }}
-          EOF
-          echo 'cleaned-changelog<<EOF' >> $GITHUB_ENV
-          cat fixed-changelog.md >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+      # - name: Clean up the changelog to only have used sections
+      #   id: clean-changelog
+      #   run: |
+      #     awk '/^$/ {if (i) {b=b $0 "\n"} else {print $0 }; next} /^###/ {i=1; b=$0; next} {if (i) {print b}; i=0; print $0; next}' <<'EOF' > fixed-changelog.md
+      #     ${{ steps.remove-top-of-changelog.outputs.replaced }}
+      #     EOF
+      #     echo 'cleaned-changelog<<EOF' >> $GITHUB_ENV
+      #     cat fixed-changelog.md >> $GITHUB_ENV
+      #     echo 'EOF' >> $GITHUB_ENV
 
-      - name: Create ATLauncher Version
-        uses: ATLauncher/release-atlauncher-action@master
-        timeout-minutes: 30
-        with:
-          api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
-          version: ${{ needs.build.outputs.clean-version }}
-          changelog: ${{ env.cleaned-changelog }}
-          files: |
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
+      # - name: Create ATLauncher Version
+      #   uses: ATLauncher/release-atlauncher-action@master
+      #   timeout-minutes: 30
+      #   with:
+      #     api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
+      #     version: ${{ needs.build.outputs.clean-version }}
+      #     changelog: ${{ env.cleaned-changelog }}
+      #     files: |
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: v${{ needs.build.outputs.clean-version }}
-          target_commitish: master
-          name: ${{ needs.build.outputs.clean-version }}
-          body: ${{ env.cleaned-changelog }}
-          prerelease: false
-          draft: false
-          files: |
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
+      # - name: Create GitHub Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag_name: v${{ needs.build.outputs.clean-version }}
+      #     target_commitish: master
+      #     name: ${{ needs.build.outputs.clean-version }}
+      #     body: ${{ env.cleaned-changelog }}
+      #     prerelease: false
+      #     draft: false
+      #     files: |
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
+      #       ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
 
-      - name: Create Sentry release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        with:
-          environment: production
-          version: "${{ needs.build.outputs.clean-version }}"
+      # - name: Create Sentry release
+      #   uses: getsentry/action-release@v1
+      #   env:
+      #     SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      #     SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      #     SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+      #   with:
+      #     environment: production
+      #     version: "${{ needs.build.outputs.clean-version }}"
 
-      - name: Package up AUR versions
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          event-type: aur-publish
-          client-payload: '{"version": "${{ needs.build.outputs.clean-version }}"}'
+      # - name: Package up AUR versions
+      #   uses: peter-evans/repository-dispatch@v1
+      #   with:
+      #     token: ${{ secrets.BOT_GITHUB_TOKEN }}
+      #     event-type: aur-publish
+      #     client-payload: '{"version": "${{ needs.build.outputs.clean-version }}"}'
 
       - name: Update version
         run: |
