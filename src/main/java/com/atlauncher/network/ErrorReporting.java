@@ -88,7 +88,7 @@ public final class ErrorReporting {
             try {
                 Sentry.close();
             } catch (Exception e) {
-                LogManager.logStackTrace("Error disabling error reporting", e);
+                LogManager.logStackTrace("Error disabling error reporting", e, false);
             }
 
             sentryInitialised = false;

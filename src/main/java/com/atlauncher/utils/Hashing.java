@@ -22,12 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.atlauncher.managers.LogManager;
-import com.google.common.hash.HashCode;
-import com.sangupta.murmur.Murmur2;
-
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.atlauncher.managers.LogManager;
 import com.google.common.hash.HashCode;
 import com.sangupta.murmur.Murmur2;
 

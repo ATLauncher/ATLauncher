@@ -25,8 +25,6 @@ import javax.swing.JLabel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public class DebugModePanel extends AbstractToolPanel {
@@ -39,9 +37,9 @@ public class DebugModePanel extends AbstractToolPanel {
                 .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.setEnabled(!OS.isUsingFlatpak() && !LogManager.showDebug);
+        LAUNCH_BUTTON.setEnabled(viewModel.isLaunchInDebugEnabled());
 
-        if (!LogManager.showDebug) {
+        if (!viewModel.isLaunchInDebugEnabled()) {
             LAUNCH_BUTTON.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {

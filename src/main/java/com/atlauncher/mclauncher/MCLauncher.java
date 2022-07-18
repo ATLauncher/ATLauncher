@@ -34,6 +34,7 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
@@ -111,8 +112,14 @@ public class MCLauncher {
                         .filter(file -> Files.isRegularFile(file)
                                 && (file.toString().endsWith(".jar") || file.toString().endsWith(".zip")))
                         .forEach(file -> {
-                            LogManager.info(
-                                    " - " + file.toString().replace(instance.ROOT.resolve("mods").toString(), ""));
+                            String filename = file.toString().replace(instance.ROOT.resolve("mods").toString(), "");
+                            DisableableMod mod = instance.launcher.mods.parallelStream()
+                                    .filter(m -> filename.contains(m.file)).findFirst().orElse(null);
+
+                            boolean isCustomAdded = filename.lastIndexOf(File.separator) == 0
+                                    && (mod == null || mod.userAdded);
+
+                            LogManager.info(String.format(" - %s%s", filename, isCustomAdded ? " (Added)" : ""));
                         });
             }
 

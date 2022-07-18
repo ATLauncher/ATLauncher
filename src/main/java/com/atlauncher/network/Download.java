@@ -88,6 +88,11 @@ public final class Download {
             }
 
             return this.response.isSuccessful();
+        } catch (DownloadException exc) {
+            LogManager.logStackTrace("error fetching download from " + this.url, exc);
+            if (exc.hasResponse()) {
+                LogManager.error("response: " + exc.getResponse());
+            }
         } catch (IOException e) {
             LogManager.logStackTrace(e);
 
