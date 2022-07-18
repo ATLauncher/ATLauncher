@@ -19,9 +19,6 @@ package com.atlauncher.managers;
 
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.Gsons;
@@ -32,8 +29,6 @@ import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.TechnicApi;
 
 public class TechnicModpackUpdateManager {
-    private static final Logger LOG = LogManager.getLogger(TechnicModpackUpdateManager.class);
-
     public static TechnicModpack getUpToDateModpack(Instance instance) {
         return Data.TECHNIC_INSTANCE_LATEST_VERSION.get(instance);
     }
@@ -48,7 +43,7 @@ public class TechnicModpackUpdateManager {
         }
 
         PerformanceManager.start();
-        LOG.info("Checking for updates to Technic Modpack instances");
+        LogManager.info("Checking for updates to Technic Modpack instances");
 
         boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
                 .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).map(i -> {
@@ -60,10 +55,10 @@ public class TechnicModpackUpdateManager {
                         technicModpack = TechnicApi.getModpackBySlugWithThrow(i.launcher.technicModpack.name);
                     } catch (DownloadException e) {
                         if (e.response != null) {
-                            LOG.debug(Gsons.DEFAULT.toJson(e.response));
+                            LogManager.debug(Gsons.DEFAULT.toJson(e.response));
 
                             if (e.statusCode == 404) {
-                                LOG.error(String.format(
+                                LogManager.error(String.format(
                                         "Technic pack with name of %s no longer exists, disabling update checks.",
                                         i.launcher.technicModpack.displayName));
                                 i.launcher.checkForUpdates = false;
@@ -71,7 +66,7 @@ public class TechnicModpackUpdateManager {
                             }
                         }
                     } catch (IOException e) {
-                        LOG.error(e);
+                        LogManager.logStackTrace(e);
                     }
 
                     if (technicModpack == null) {

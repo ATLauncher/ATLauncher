@@ -28,9 +28,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.curseforge.CurseForgeFile;
@@ -43,11 +40,10 @@ import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCInstanceConfig;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 
 public class ImportPackUtils {
-    private static final Logger LOG = LogManager.getLogger(ImportPackUtils.class);
-
     public static boolean loadFromUrl(String url) {
         if (url.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
             return loadFromCurseForgeUrl(url);
@@ -64,14 +60,14 @@ public class ImportPackUtils {
 
             return loadFromFile(saveTo.toFile());
         } catch (IOException e) {
-            LOG.error("Failed to download modpack file");
+            LogManager.error("Failed to download modpack file");
             return false;
         }
     }
 
     public static boolean loadFromCurseForgeUrl(String url) {
         if (!url.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
-            LOG.error("Cannot install as the url was not a CurseForge modpack url");
+            LogManager.error("Cannot install as the url was not a CurseForge modpack url");
             return false;
         }
 
@@ -80,7 +76,7 @@ public class ImportPackUtils {
         Matcher matcher = pattern.matcher(url);
 
         if (!matcher.find() || matcher.groupCount() < 2) {
-            LOG.error("Cannot install as the url was not a valid CurseForge modpack url");
+            LogManager.error("Cannot install as the url was not a valid CurseForge modpack url");
             return false;
         }
 
@@ -88,23 +84,25 @@ public class ImportPackUtils {
         Integer projectId = null;
         Integer fileId = null;
 
-        LOG.debug("{}", matcher.groupCount());
+        LogManager.debug(matcher.groupCount() + "");
+
         if (matcher.groupCount() == 2 && matcher.group(2) != null) {
             fileId = Integer.parseInt(matcher.group(2));
         }
 
-        LOG.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
+        LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
 
         CurseForgeProject project = CurseForgeApi.getModPackBySlug(packSlug);
         projectId = project.id;
         fileId = project.mainFileId;
 
         if (projectId == null || fileId == null) {
-            LOG.error("Cannot install as the id's couldn't be found. Try using a specific files install link instead.");
+            LogManager.error(
+                    "Cannot install as the id's couldn't be found. Try using a specific files install link instead.");
             return false;
         }
 
-        LOG.debug("Resolved to project id {} and file id of {}", projectId, fileId);
+        LogManager.debug("Resolved to project id " + projectId + " and file id of " + fileId);
 
         CurseForgeFile curseFile = CurseForgeApi.getFileForProject(projectId, fileId);
         Path tempZip = FileSystem.TEMP.resolve(curseFile.fileName);
@@ -128,7 +126,7 @@ public class ImportPackUtils {
 
             download.downloadFile();
         } catch (IOException e) {
-            LOG.error("Failed to download modpack file from CurseForge");
+            LogManager.error("Failed to download modpack file from CurseForge");
             return false;
         }
 
@@ -137,7 +135,7 @@ public class ImportPackUtils {
 
     public static boolean loadFromModrinthUrl(String url) {
         if (!url.startsWith("https://modrinth.com/modpack")) {
-            LOG.error("Cannot install as the url was not a Modrinth modpack url");
+            LogManager.error("Cannot install as the url was not a Modrinth modpack url");
             return false;
         }
 
@@ -146,25 +144,25 @@ public class ImportPackUtils {
         Matcher matcher = pattern.matcher(url);
 
         if (!matcher.find() || matcher.groupCount() < 1) {
-            LOG.error("Cannot install as the url was not a valid Modrinth modpack url");
+            LogManager.error("Cannot install as the url was not a valid Modrinth modpack url");
             return false;
         }
 
         String packSlug = matcher.group(1);
 
-        LOG.debug("Found pack with slug " + packSlug);
+        LogManager.debug("Found pack with slug " + packSlug);
 
         try {
             ModrinthProject modrinthProject = ModrinthApi.getProject(packSlug);
 
             if (modrinthProject == null) {
-                LOG.info("Failed to get pack from Modrinth");
+                LogManager.info("Failed to get pack from Modrinth");
                 return false;
             }
 
             new InstanceInstallerDialog(modrinthProject);
         } catch (Exception e) {
-            LOG.error("Failed to install Modrinth pack from URL", e);
+            LogManager.logStackTrace("Failed to install Modrinth pack from URL", e);
             return false;
         }
 
@@ -196,9 +194,9 @@ public class ImportPackUtils {
 
             FileUtils.deleteDirectory(tmpDir);
 
-            LOG.error("Unknown format for importing");
+            LogManager.error("Unknown format for importing");
         } catch (Throwable t) {
-            LOG.error("Error in zip file for import", t);
+            LogManager.logStackTrace("Error in zip file for import", t);
         }
 
         return false;
@@ -206,7 +204,7 @@ public class ImportPackUtils {
 
     public static boolean loadCurseForgeFormat(File file, Integer projectId, Integer fileId) {
         if (!file.getName().endsWith(".zip")) {
-            LOG.error("Cannot install as the file was not a zip file");
+            LogManager.error("Cannot install as the file was not a zip file");
             return false;
         }
 
@@ -225,19 +223,19 @@ public class ImportPackUtils {
             }
 
             if (!manifest.manifestType.equals("minecraftModpack")) {
-                LOG.error("Cannot install as the manifest is not a Minecraft Modpack");
+                LogManager.error("Cannot install as the manifest is not a Minecraft Modpack");
                 return false;
             }
 
             if (manifest.manifestVersion != 1) {
-                LOG.warn("Manifest is version {} which may be an issue!", manifest.manifestVersion);
+                LogManager.warn("Manifest is version " + manifest.manifestVersion + " which may be an issue!");
             }
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
             new InstanceInstallerDialog(manifest, tmpDir);
         } catch (Exception e) {
-            LOG.error("Failed to install CurseForge pack", e);
+            LogManager.logStackTrace("Failed to install CurseForge pack", e);
             FileUtils.deleteDirectory(tmpDir);
             return false;
         }
@@ -247,7 +245,7 @@ public class ImportPackUtils {
 
     public static boolean loadModrinthFormat(File file) {
         if (!file.getName().endsWith(".mrpack")) {
-            LOG.error("Cannot install as the file was not a mrpack file");
+            LogManager.error("Cannot install as the file was not a mrpack file");
             return false;
         }
 
@@ -262,7 +260,7 @@ public class ImportPackUtils {
                     return true;
                 }
             } catch (Exception e) {
-                LOG.error("Failed to install Modrinth pack", e);
+                LogManager.logStackTrace("Failed to install Modrinth pack", e);
                 return false;
             }
         }
@@ -275,24 +273,25 @@ public class ImportPackUtils {
                             ModrinthModpackManifest.class);
 
             if (!manifest.game.equals("minecraft")) {
-                LOG.error("Cannot install as the manifest is for game {} and not for Minecraft", manifest.game);
+                LogManager.error(
+                        "Cannot install as the manifest is for game " + manifest.game + " and not for Minecraft");
                 return false;
             }
 
             if (!manifest.dependencies.containsKey("minecraft")) {
-                LOG.error("Cannot install as the manifest doesn't contain a minecraft dependency");
+                LogManager.error("Cannot install as the manifest doesn't contain a minecraft dependency");
                 return false;
             }
 
             if (manifest.formatVersion != 1) {
-                LOG.warn("Manifest is version " + manifest.formatVersion + " which may be an issue!");
+                LogManager.warn("Manifest is version " + manifest.formatVersion + " which may be an issue!");
             }
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
             new InstanceInstallerDialog(manifest, tmpDir);
         } catch (Exception e) {
-            LOG.error("Failed to install Modrinth pack", e);
+            LogManager.logStackTrace("Failed to install Modrinth pack", e);
             FileUtils.deleteDirectory(tmpDir);
             return false;
         }
@@ -310,13 +309,14 @@ public class ImportPackUtils {
             manifest.config = new MultiMCInstanceConfig(props);
 
             if (manifest.formatVersion != 1) {
-                LOG.error("Cannot install as the format is version {} which I cannot install", manifest.formatVersion);
+                LogManager.error("Cannot install as the format is version " + manifest.formatVersion
+                        + " which I cannot install");
                 return false;
             }
 
             new InstanceInstallerDialog(manifest, extractedPath);
         } catch (Exception e) {
-            LOG.error("Failed to install MultiMC pack", e);
+            LogManager.logStackTrace("Failed to install MultiMC pack", e);
             return false;
         }
 

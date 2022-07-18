@@ -37,8 +37,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -53,6 +51,7 @@ import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.ModrinthProjectDependencyCard;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
@@ -61,10 +60,7 @@ import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public class ModrinthVersionSelectorDialog extends JDialog {
-    private static final Logger LOG = LogManager.getLogger(ModrinthVersionSelectorDialog.class);
-
     private int versionsLength = 0;
-
     private int filesLength = 0;
     private final ModrinthProject mod;
     private final Instance instance;
@@ -371,7 +367,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     modrinthVersionsStream = modrinthVersionsStream.filter(
                             v -> v.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                 } catch (InvalidMinecraftVersion e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
 

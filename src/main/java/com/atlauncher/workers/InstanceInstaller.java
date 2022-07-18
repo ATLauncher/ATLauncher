@@ -41,8 +41,6 @@ import java.util.stream.Stream;
 import javax.swing.JDialog;
 import javax.swing.SwingWorker;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -119,6 +117,7 @@ import com.atlauncher.gui.dialogs.BrowserDownloadDialog;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
@@ -142,8 +141,6 @@ import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> implements NetworkProgressable {
-    private static final Logger LOG = LogManager.getLogger(InstanceInstaller.class);
-
     protected double percent = 0.0; // Percent done installing
     protected double subPercent = 0.0; // Percent done sub installing
     protected double totalBytes = 0; // Total number of bytes to download
@@ -251,10 +248,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     @Override
     protected Boolean doInBackground() throws Exception {
         ErrorReporting.recordPackInstall(this.pack.name, this.version.version, this.loaderVersion);
-        LOG.info("Started install of {} version {}", this.pack.name, this.version.version);
+        LogManager.info("Started install of " + this.pack.name + " version " + this.version.version);
 
         if (this.loaderVersion != null) {
-            LOG.info("Using loader version " + this.loaderVersion.version);
+            LogManager.info("Using loader version " + this.loaderVersion.version);
         }
 
         try {
@@ -382,7 +379,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         } catch (Exception e) {
             success(false);
             cancel(true);
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return success(false);
@@ -431,7 +428,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (curseForgeManifest.manifestVersion != 1) {
-            LOG.warn("Manifest is version {} which may be an issue!", this.curseForgeManifest.manifestVersion);
+            LogManager.warn("Manifest is version " + curseForgeManifest.manifestVersion + " which may be an issue!");
         }
 
         this.packVersion = new Version();
@@ -582,7 +579,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .getFileForProject(file.projectID, file.fileID));
 
             if (curseForgeFile.downloadUrl == null) {
-                LOG.debug(String.format(
+                LogManager.debug(String.format(
                         "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
                         curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name, curseForgeProject.id,
                         curseForgeProject.allowModDistribution, curseForgeProject.allowModDistribution == null ? "null"
@@ -600,7 +597,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         modToAdd.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
                         modToAdd.modrinthVersion = modrinthVersion;
 
-                        LOG.debug("Found matching mod from Modrinth called " + modToAdd.modrinthProject.title);
+                        LogManager.debug("Found matching mod from Modrinth called " + modToAdd.modrinthProject.title);
 
                         return modToAdd;
                     }
@@ -903,7 +900,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
 
                     if (modsManifest == null) {
-                        LOG.error(String.format("Mod %s is not available to be downloaded for this pack", f.name));
+                        LogManager
+                                .error(String.format("Mod %s is not available to be downloaded for this pack", f.name));
                         return true;
                     }
 
@@ -914,7 +912,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .findFirst();
 
                     if (!modInfo.isPresent()) {
-                        LOG.error(String.format("Mod %s is not available to be downloaded for this pack", f.name));
+                        LogManager
+                                .error(String.format("Mod %s is not available to be downloaded for this pack", f.name));
                         return true;
                     }
 
@@ -1037,7 +1036,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     .getFileForProject(curseProjectId, curseFileId));
 
                     if (curseForgeFile.downloadUrl == null) {
-                        LOG.debug(String.format(
+                        LogManager.debug(String.format(
                                 "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
                                 curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name,
                                 curseForgeProject.id,
@@ -1057,7 +1056,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                 modToAdd.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
                                 modToAdd.modrinthVersion = modrinthVersion;
 
-                                LOG.debug(
+                                LogManager.debug(
                                         "Found matching mod from Modrinth called " + modToAdd.modrinthProject.title);
 
                                 return modToAdd;
@@ -1183,7 +1182,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             try (FileReader fileReader = new FileReader(versionJsonPath.toFile())) {
                 versionJson = Gsons.MINECRAFT.fromJson(fileReader, MinecraftVersion.class);
             } catch (Exception e) {
-                LOG.error("Error reading in version.json");
+                LogManager.error("Error reading in version.json");
                 throw e;
             }
 
@@ -1195,7 +1194,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 versionJson = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
                         MinecraftVersion.class);
             } catch (Exception e) {
-                LOG.error("Error reading in version.json from modpack.jar");
+                LogManager.error("Error reading in version.json from modpack.jar");
                 throw e;
             }
 
@@ -1286,7 +1285,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (modrinthManifest.formatVersion != 1) {
-            LOG.warn("Manifest is version " + modrinthManifest.formatVersion + " which may be an issue!");
+            LogManager.warn("Manifest is version " + modrinthManifest.formatVersion + " which may be an issue!");
         }
 
         this.packVersion = new Version();
@@ -1552,7 +1551,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.minecraftVersion = download.asClass(MinecraftVersion.class);
 
         if (this.minecraftVersion == null) {
-            LOG.error("Failed to download Minecraft json.");
+            LogManager.error("Failed to download Minecraft json.");
             this.cancel(true);
             return;
         }
@@ -1661,7 +1660,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
 
@@ -1673,7 +1672,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
 
@@ -1684,7 +1683,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
         }
@@ -1699,7 +1698,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
 
@@ -1716,7 +1715,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
         }
@@ -1729,7 +1728,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
 
@@ -1741,7 +1740,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
 
@@ -1752,7 +1751,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     || p.toString().toLowerCase().endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
         }
@@ -2013,8 +2012,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 String output = Utils.runProcess(root, Java.getPathToJavaExecutable(javaPath),
                         "-jar", getMinecraftJar().getAbsolutePath(), "--initSettings");
-                LOG.debug("initServerSettings output");
-                LOG.debug(output);
+                LogManager.debug("initServerSettings output");
+                LogManager.debug(output);
             } catch (Throwable ignored) {
             }
         }).start();
@@ -2541,7 +2540,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 hideSubProgressBar();
             } catch (IOException e) {
-                LOG.error("Failed to download Java runtime", e);
+                LogManager.logStackTrace("Failed to download Java runtime", e);
             }
         }
     }
@@ -2618,7 +2617,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 for (Mod mod : browserDownloadMods) {
                     if (!browserDownloadDialog.modsDownloaded.stream()
                             .anyMatch(m -> m.curseForgeFileId == mod.curseForgeFileId)) {
-                        LOG.info("Browser download mod " + mod.name + " was skipped");
+                        LogManager.info("Browser download mod " + mod.name + " was skipped");
                         Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
                                 .filter(m -> m.curseForgeFileId == mod.curseForgeFileId).findFirst();
                         if (disableableMod.isPresent()) {
@@ -2638,7 +2637,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         fireTask(GetText.tr("Downloading Browser Mods"));
 
                         if (!mod.download(this)) {
-                            LOG.info("Browser download mod " + mod.name + " was skipped");
+                            LogManager.info("Browser download mod " + mod.name + " was skipped");
                             Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
                                     .filter(m -> m.file == mod.file).findFirst();
                             if (disableableMod.isPresent()) {
@@ -2719,7 +2718,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -2729,7 +2728,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -2739,7 +2738,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -2766,7 +2765,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             try {
                 download.downloadFile();
             } catch (IOException e) {
-                LOG.error("Failed to download Legacy Java Fixer", e);
+                LogManager.logStackTrace("Failed to download Legacy Java Fixer", e);
             }
         } else {
             download.copy();
@@ -2864,7 +2863,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             try {
                                 Files.createDirectories(path);
                             } catch (IOException e) {
-                                LOG.error("error", e);
+                                LogManager.logStackTrace(e);
                             }
                         }
                     });
@@ -2989,7 +2988,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         long hash = Hashing.murmur(dm.getFile(root, this.packVersion.minecraft).toPath());
                         murmurHashes.put(hash, dm);
                     } catch (Throwable t) {
-                        LOG.error("error", t);
+                        LogManager.logStackTrace(t);
                     }
                 });
 
@@ -3021,8 +3020,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                         dm.description = curseForgeProject.summary;
                                     }
 
-                                    LOG.debug("Found matching mod from CurseForge called {}",
-                                            dm.curseForgeFile.displayName);
+                                    LogManager.debug("Found matching mod from CurseForge called "
+                                            + dm.curseForgeFile.displayName);
                                 });
                     }
                 }
@@ -3046,7 +3045,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         sha1Hashes.put(Hashing.sha1(dm.getFile(root, this.packVersion.minecraft).toPath()).toString(),
                                 dm);
                     } catch (Throwable t) {
-                        LOG.error(t);
+                        LogManager.logStackTrace(t);
                     }
                 });
 
@@ -3076,8 +3075,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                 dm.name = project.title;
                                 dm.description = project.description;
 
-                                LOG.debug(String.format("Found matching mod from Modrinth called %s with file %s",
-                                        project.title, version.name));
+                                LogManager
+                                        .debug(String.format("Found matching mod from Modrinth called %s with file %s",
+                                                project.title, version.name));
                             }
                         }
                     }
@@ -3285,7 +3285,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                 try {
                                     Files.delete(path);
                                 } catch (IOException e) {
-                                    LOG.error("error", e);
+                                    LogManager.logStackTrace(e);
                                 }
                             }
                         });
@@ -3301,7 +3301,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     Files.delete(path);
                                 }
                             } catch (IOException e) {
-                                LOG.error("error", e);
+                                LogManager.logStackTrace(e);
                             }
                         });
             }
@@ -3601,14 +3601,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 shareCodeData = response.getData();
             }
         } catch (IOException e) {
-            LOG.error("API call failed", e);
+            LogManager.logStackTrace("API call failed", e);
         }
 
         return shareCodeData;
     }
 
     public void fireTask(String name) {
-        LOG.debug("Instance Installer: {}", name);
+        LogManager.debug("Instance Installer: " + name);
         firePropertyChange("doing", null, name);
     }
 

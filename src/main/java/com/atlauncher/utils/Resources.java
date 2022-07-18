@@ -23,14 +23,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.exceptions.ChunkyException;
+import com.atlauncher.managers.LogManager;
 
 public final class Resources {
-    private static final Logger LOG = LogManager.getLogger(Resources.class);
-
     private static final Map<String, Object> resources = new HashMap<>();
     public static final String[] FONT_FAMILIES = GraphicsEnvironment.getLocalGraphicsEnvironment()
             .getAvailableFontFamilyNames();
@@ -66,7 +62,7 @@ public final class Resources {
                 } else {
                     URL url = Resources.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
-                        LOG.error("Cannot find font {}", name);
+                        LogManager.error("Cannot find font " + name);
                         return new Font("Sans-Serif", Font.PLAIN, 0);
                     } else {
                         Font f = Font.createFont(Font.TRUETYPE_FONT, url.openStream());
@@ -76,7 +72,7 @@ public final class Resources {
                 }
             }
         } catch (Exception ex) {
-            LOG.error("Cannot find font " + name, ex);
+            LogManager.logStackTrace("Cannot find font " + name, ex);
             return new Font("Sans-Serif", Font.PLAIN, 0);
         }
     }

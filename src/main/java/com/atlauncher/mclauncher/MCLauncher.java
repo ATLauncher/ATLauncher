@@ -19,6 +19,7 @@ package com.atlauncher.mclauncher;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,14 +30,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
@@ -44,6 +41,7 @@ import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.mclauncher.legacy.LegacyMCLauncher;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
@@ -55,8 +53,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
 public class MCLauncher {
-    private static final Logger LOG = LogManager.getLogger(MCLauncher.class);
-
     public static final List<String> IGNORED_ARGUMENTS = new ArrayList<String>() {
         {
             // these seem to be tracking/telemetry things
@@ -93,7 +89,7 @@ public class MCLauncher {
 
         logInstanceInformation(instance);
 
-        LOG.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
+        LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
@@ -105,37 +101,31 @@ public class MCLauncher {
     private static void logInstanceInformation(Instance instance) {
         try {
             if (instance.launcher.loaderVersion != null) {
-                LOG.info(String.format("Loader: %s %s", instance.launcher.loaderVersion.type,
+                LogManager.info(String.format("Loader: %s %s", instance.launcher.loaderVersion.type,
                         instance.launcher.loaderVersion.version));
             }
 
             if (instance.ROOT.resolve("mods").toFile().listFiles().length != 0) {
-                LOG.info("Mods:");
+                LogManager.info("Mods:");
                 Files.walk(instance.ROOT.resolve("mods"))
                         .filter(file -> Files.isRegularFile(file)
                                 && (file.toString().endsWith(".jar") || file.toString().endsWith(".zip")))
                         .forEach(file -> {
-                            String filename = file.toString().replace(instance.ROOT.resolve("mods").toString(), "");
-                            DisableableMod mod = instance.launcher.mods.parallelStream()
-                                    .filter(m -> filename.contains(m.file)).findFirst().orElse(null);
-
-                            boolean isCustomAdded = filename.lastIndexOf(File.separator) == 0
-                                    && (mod == null || mod.userAdded);
-
-                            LOG.info(" - {}{}", filename, isCustomAdded ? " (Added)" : "");
+                            LogManager.info(
+                                    " - " + file.toString().replace(instance.ROOT.resolve("mods").toString(), ""));
                         });
             }
 
             if (instance.launcher.mods.stream().anyMatch(m -> m.skipped)) {
                 instance.launcher.mods.stream().filter(m -> m.skipped).forEach(m -> {
-                    LOG.warn(String.format(
+                    LogManager.warn(String.format(
                             "Mod %s (%s) was skipped from downloading during instance installation", m.name, m.file));
                 });
             }
 
             if (instance.shouldUseLegacyLaunch() && Optional.ofNullable(instance.launcher.disableLegacyLaunching)
                     .orElse(App.settings.disableLegacyLaunching)) {
-                LOG.warn(
+                LogManager.warn(
                         "Legacy launching disabled. If you have issues with Minecraft, please enable this setting again");
             }
         } catch (IOException ignored) {
@@ -186,7 +176,7 @@ public class MCLauncher {
         String javaPath = instance.getJavaPath();
 
         if (instance.isUsingJavaRuntime()) {
-            LOG.debug(String.format("Using Java runtime %s (major version %d) at path %s",
+            LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
                     instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
         }
 
@@ -226,7 +216,7 @@ public class MCLauncher {
             for (File file : libraryFiles) {
                 if (!file.getName().equalsIgnoreCase("minecraft.jar")
                         && !file.getName().equalsIgnoreCase("modpack.jar")) {
-                    LOG.info("Added in custom library " + file.getName());
+                    LogManager.info("Added in custom library " + file.getName());
 
                     cpb.append(file);
                     cpb.append(File.pathSeparator);
@@ -249,9 +239,12 @@ public class MCLauncher {
             try {
                 pathh = thisFile.getCanonicalPath();
                 pathh = URLDecoder.decode(pathh, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                pathh = System.getProperty("java.class.path");
+                LogManager.logStackTrace(e);
             } catch (IOException e) {
                 pathh = System.getProperty("java.class.path");
-                LOG.error("error: ", e);
+                LogManager.logStackTrace(e);
             }
             cpb.append(pathh);
         }
@@ -333,7 +326,7 @@ public class MCLauncher {
             for (String arg : javaArguments.split(" ")) {
                 if (!arg.isEmpty()) {
                     if (arguments.toString().contains(arg)) {
-                        LOG.error("Duplicate argument " + arg + " found and not added!");
+                        LogManager.error("Duplicate argument " + arg + " found and not added!");
                         continue;
                     }
 
@@ -438,7 +431,7 @@ public class MCLauncher {
             String username) {
         String argsString = arguments.toString();
 
-        if (!LOG.isDebugEnabled()) {
+        if (!LogManager.showDebug) {
             if (App.settings != null) {
                 argsString = argsString.replace(FileSystem.BASE_DIR.toAbsolutePath().toString(), "USERSDIR");
             }

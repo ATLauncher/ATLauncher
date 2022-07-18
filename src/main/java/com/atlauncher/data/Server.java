@@ -33,8 +33,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -47,6 +45,7 @@ import com.atlauncher.data.minecraft.JavaVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ArchiveUtils;
@@ -56,8 +55,6 @@ import com.google.gson.JsonIOException;
 
 @Json
 public class Server {
-    private static final Logger LOG = LogManager.getLogger(Server.class);
-
     public String name;
     public String pack;
     public Integer packId;
@@ -118,7 +115,7 @@ public class Server {
             serverScript += ".sh";
         }
 
-        LOG.info("Starting server " + name);
+        LogManager.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 
         String javaPath = null;
@@ -128,7 +125,7 @@ public class Server {
 
             if (Files.isDirectory(runtimeDirectory)) {
                 javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LOG.debug(String.format("Using Java runtime %s (major version %d) at path %s",
+                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
                         javaVersion.component, javaVersion.majorVersion, javaPath));
             }
         }
@@ -206,7 +203,7 @@ public class Server {
                             StandardOpenOption.TRUNCATE_EXISTING);
                     tempLaunchFile.toFile().setExecutable(true);
 
-                    LOG.info(String.format("Running \"%s\" from \".launcherrun.sh\"",
+                    LogManager.info(String.format("Running \"%s\" from \".launcherrun.sh\"",
                             String.join(" ", launchScript)));
 
                     launchCommand = "./.launcherrun.sh";
@@ -218,7 +215,7 @@ public class Server {
                 arguments.add(launchCommand);
             }
 
-            LOG.info("Launching server with the following arguments: {}", arguments);
+            LogManager.info("Launching server with the following arguments: " + arguments.toString());
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(getRoot().toFile());
             processBuilder.command(arguments);
@@ -234,7 +231,7 @@ public class Server {
                 System.exit(0);
             }
         } catch (IOException e) {
-            LOG.error("Failed to launch server", e);
+            LogManager.logStackTrace("Failed to launch server", e);
         }
     }
 
@@ -257,7 +254,7 @@ public class Server {
 
         if (progressDialog.getReturnValue()) {
             App.TOASTER.pop(GetText.tr("Backup is complete"));
-            LOG.info("Backup complete and stored at {}", backupZip);
+            LogManager.info(String.format("Backup complete and stored at %s", backupZip.toString()));
         } else {
             App.TOASTER.popError(GetText.tr("Error making backup"));
         }
@@ -323,7 +320,7 @@ public class Server {
                 Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
                 return new ImageIcon(dimg);
             } catch (IOException e) {
-                LOG.error("Error creating scaled image from the custom image of server " + this.name, e);
+                LogManager.logStackTrace("Error creating scaled image from the custom image of server " + this.name, e);
             }
         }
 
@@ -341,7 +338,7 @@ public class Server {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("server.json").toFile())) {
             Gsons.MINECRAFT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
     }
 }

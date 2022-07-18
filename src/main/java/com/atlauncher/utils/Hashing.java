@@ -22,16 +22,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.atlauncher.managers.LogManager;
+import com.google.common.hash.HashCode;
+import com.sangupta.murmur.Murmur2;
+
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.hash.HashCode;
 import com.sangupta.murmur.Murmur2;
 
 public final class Hashing {
-    private static final Logger LOG = LogManager.getLogger(Hashing.class);
-
     public static final HashCode EMPTY_HASH_CODE = HashCode.fromBytes(new byte[1]);
 
     public static HashCode md5(String str) {
@@ -50,7 +50,7 @@ public final class Hashing {
         try {
             return com.google.common.io.Files.asByteSource(file.toFile()).hash(com.google.common.hash.Hashing.md5());
         } catch (IOException e) {
-            LOG.error("Error hashing (MD5) file " + file.toAbsolutePath().toString(), e);
+            LogManager.logStackTrace("Error hashing (MD5) file " + file.toAbsolutePath().toString(), e);
             return EMPTY_HASH_CODE;
         }
     }
@@ -63,7 +63,7 @@ public final class Hashing {
         try {
             return com.google.common.io.Files.asByteSource(file.toFile()).hash(com.google.common.hash.Hashing.sha1());
         } catch (IOException e) {
-            LOG.error("Error hashing (SHA1) file " + file.toAbsolutePath().toString(), e);
+            LogManager.logStackTrace("Error hashing (SHA1) file " + file.toAbsolutePath().toString(), e);
             return EMPTY_HASH_CODE;
         }
     }
@@ -76,7 +76,7 @@ public final class Hashing {
         try {
             return com.google.common.io.Files.asByteSource(file.toFile()).hash(com.google.common.hash.Hashing.sha512());
         } catch (IOException e) {
-            LOG.error("Error hashing (SHA512) file " + file.toAbsolutePath().toString(), e);
+            LogManager.logStackTrace("Error hashing (SHA512) file " + file.toAbsolutePath().toString(), e);
             return EMPTY_HASH_CODE;
         }
     }

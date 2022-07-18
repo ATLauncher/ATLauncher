@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration packages="com.atlauncher.logging" status="WARN">
+<Configuration packages="com.atlauncher.thread">
     <Appenders>
         <Console name="LogToConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
         </Console>
-
-        <LauncherConsole name="LogToLauncherConsole"/>
-
-        <LauncherReporter name="LogToReporter">
-            <Filters>
-                <!-- filter based on ERROR level -->
-                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-                <!-- filter based on errors to not be reported -->
-                <MarkerFilter marker="NoReporting" onMatch="DENY" onMismatch="ACCEPT"/>
-            </Filters>
-        </LauncherReporter>
-
         <RollingFile name="LogToRollingFile" fileName="logs/atlauncher.log" filePattern="logs/old/%d{yyyy-MM-dd-HH-mm-ss}.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
             <Policies>
@@ -29,19 +17,11 @@
             </DefaultRolloverStrategy>
         </RollingFile>
     </Appenders>
-
     <Loggers>
-        <Logger name="Minecraft" level="INFO">
-            <AppenderRef ref="LogToLauncherConsole"/>
-        </Logger>
-
-        <Logger name="com.atlauncher" level="INFO">
+        <Logger name="com.atlauncher" level="debug" additivity="false">
             <AppenderRef ref="LogToRollingFile"/>
-            <Appenderref ref="LogToLauncherConsole"/>
-            <AppenderRef ref="LogToReporter"/>
         </Logger>
-
-        <Root level="ERROR">
+        <Root level="error">
             <AppenderRef ref="LogToConsole"/>
         </Root>
     </Loggers>

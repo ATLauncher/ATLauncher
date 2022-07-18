@@ -25,21 +25,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 public class Forge113Loader extends ForgeLoader {
-    private static final Logger LOG = LogManager.getLogger(Forge113Loader.class);
-
     @Override
     public ForgeInstallProfile getInstallProfile() {
         ForgeInstallProfile installProfile = super.getInstallProfile();
@@ -85,7 +81,7 @@ public class Forge113Loader extends ForgeLoader {
         try {
             version = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "version.json")), Version.class);
         } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return version;
@@ -99,7 +95,8 @@ public class Forge113Loader extends ForgeLoader {
                 try {
                     processor.process(installProfile, this.tempDir, instanceInstaller);
                 } catch (IOException e) {
-                    LOG.error("Failed to process processor with jar {}", processor.getJar(), e);
+                    LogManager.logStackTrace(e);
+                    LogManager.error("Failed to process processor with jar " + processor.getJar());
                     instanceInstaller.cancel(true);
                 }
             }

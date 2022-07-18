@@ -21,13 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadException;
 import com.google.gson.JsonObject;
@@ -41,8 +39,6 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the Mojang API.
  */
 public class MojangAPIUtils {
-    private static final Logger LOG = LogManager.getLogger(MojangAPIUtils.class);
-
     /**
      * Gets a UUID of a Minecraft account from a given username.
      *
@@ -71,13 +67,13 @@ public class MojangAPIUtils {
                     .header("Content-Type", "multipart/form-data").post(body)
                     .asClassWithThrow(JsonObject.class);
 
-            LOG.info(Gsons.DEFAULT.toJson(response));
+            LogManager.info(Gsons.DEFAULT.toJson(response));
 
             return true;
         } catch (DownloadException e) {
-            LOG.error("Error updating skin. Response was {}", e.response);
+            LogManager.error("Error updating skin. Response was " + e.response);
         } catch (IOException e) {
-            LOG.error("Error updating skin", e);
+            LogManager.logStackTrace("Error updating skin", e);
         }
 
         return false;

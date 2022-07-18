@@ -30,9 +30,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -41,6 +38,7 @@ import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadException;
 import com.google.gson.reflect.TypeToken;
@@ -53,8 +51,6 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the Modrinth API.
  */
 public class ModrinthApi {
-    private static final Logger LOG = LogManager.getLogger(ModrinthApi.class);
-
     public static ModrinthSearchResult searchModrinth(List<String> gameVersions, String query, int page, String index,
             List<String> categories, ModrinthProjectType projectType) {
         try {
@@ -88,7 +84,7 @@ public class ModrinthApi {
             return Download.build().cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                     .setUrl(url).asClass(ModrinthSearchResult.class);
         } catch (UnsupportedEncodingException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return null;
@@ -216,7 +212,7 @@ public class ModrinthApi {
         } catch (DownloadException e) {
             // 404 is fine from this endpoint, so anything else, log it
             if (e.statusCode != 404) {
-                LOG.error(e);
+                LogManager.logStackTrace(e);
             }
 
             return null;
@@ -275,7 +271,7 @@ public class ModrinthApi {
                 return projects.stream().distinct().collect(Collectors.toMap(p -> p.id, p -> p, (existing, replacement) -> existing));
             }
         } catch (Throwable t) {
-            LOG.error("Error trying to get Modrinth projects as map", t);
+            LogManager.logStackTrace("Error trying to get Modrinth projects as map", t);
         }
 
         return null;

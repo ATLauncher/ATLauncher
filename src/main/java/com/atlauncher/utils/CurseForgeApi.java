@@ -28,9 +28,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeCategoryForGame;
@@ -38,6 +35,7 @@ import com.atlauncher.data.curseforge.CurseForgeCoreApiResponse;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
 
@@ -49,8 +47,6 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the CurseForge API.
  */
 public class CurseForgeApi {
-    private static final Logger LOG = LogManager.getLogger(CurseForgeApi.class);
-
     public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page, int modLoaderType,
             String sort) {
         return searchCurseForge(null, sectionId, query, page, modLoaderType, sort);
@@ -97,7 +93,7 @@ public class CurseForgeApi {
                 return response.data;
             }
         } catch (UnsupportedEncodingException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return null;
@@ -229,7 +225,7 @@ public class CurseForgeApi {
                         .collect(Collectors.toMap(p -> p.id, p -> p, (existing, replacement) -> existing));
             }
         } catch (Throwable t) {
-            LOG.error("Error trying to get CurseForge projects as map", t);
+            LogManager.logStackTrace("Error trying to get CurseForge projects as map", t);
         }
 
         return null;

@@ -25,11 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.DisableableMod;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.annotations.SerializedName;
 
@@ -39,8 +37,6 @@ import com.google.gson.annotations.SerializedName;
  */
 @Json
 public class Version {
-    private static final Logger LOG = LogManager.getLogger(Version.class);
-
     /**
      * The version this pack's version is.
      */
@@ -360,7 +356,7 @@ public class Version {
             return null;
         }
         if (!this.isColour(key)) {
-            LOG.warn("Colour with key {} not found!", key);
+            LogManager.warn("Colour with key " + key + " not found!");
             return null;
         }
         String colour = this.colours.get(key);
@@ -368,7 +364,7 @@ public class Version {
             colour = colour.replace("#", "");
         }
         if (!colour.matches("[0-9A-Fa-f]{6}")) {
-            LOG.warn("Colour with key {} has invalid value of {}!", key, colour);
+            LogManager.warn("Colour with key " + key + " has invalid value of " + colour + "!");
             return null;
         }
         int r, g, b;
@@ -378,7 +374,7 @@ public class Version {
             b = Integer.parseInt(colour.substring(4, 6), 16);
             return new Color(r, g, b);
         } catch (NumberFormatException e) {
-            LOG.warn("Colour with key {} failed to create object with value of {}!", key, colour);
+            LogManager.warn("Colour with key " + key + " failed to create object with value of " + colour + "!");
             return null;
         }
     }

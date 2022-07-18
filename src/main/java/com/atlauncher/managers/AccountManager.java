@@ -28,8 +28,6 @@ import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -47,8 +45,6 @@ import com.google.gson.reflect.TypeToken;
 
 @SuppressWarnings("deprecation")
 public class AccountManager {
-    private static final Logger LOG = LogManager.getLogger(AccountManager.class);
-
     private static final Type abstractAccountListType = new TypeToken<List<AbstractAccount>>() {
     }.getType();
 
@@ -65,10 +61,10 @@ public class AccountManager {
      */
     public static void loadAccounts() {
         PerformanceManager.start();
-        LOG.debug("Loading accounts");
+        LogManager.debug("Loading accounts");
 
         if (Files.exists(FileSystem.USER_DATA)) {
-            LOG.info("Converting old account format to new format.");
+            LogManager.info("Converting old account format to new format.");
             convertAccounts();
         }
 
@@ -76,7 +72,7 @@ public class AccountManager {
             try (FileReader fileReader = new FileReader(FileSystem.ACCOUNTS.toFile())) {
                 Data.ACCOUNTS.addAll(Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType));
             } catch (Exception e) {
-                LOG.error("Exception loading accounts", e);
+                LogManager.logStackTrace("Exception loading accounts", e);
             }
         }
 
@@ -94,7 +90,7 @@ public class AccountManager {
                 } else {
                     mojangAccount.password = Utils.decrypt(mojangAccount.encryptedPassword);
                     if (mojangAccount.password == null) {
-                        LOG.error("Error reading in saved password from file!");
+                        LogManager.error("Error reading in saved password from file!");
                         mojangAccount.password = "";
                         mojangAccount.remember = false;
                     }
@@ -106,7 +102,7 @@ public class AccountManager {
             Data.SELECTED_ACCOUNT = Data.ACCOUNTS.get(0);
         }
 
-        LOG.debug("Finished loading accounts");
+        LogManager.debug("Finished loading accounts");
         PerformanceManager.end();
     }
 
@@ -130,7 +126,7 @@ public class AccountManager {
         } catch (EOFException e) {
             // Don't log this, it always happens when it gets to the end of the file
         } catch (IOException | ClassNotFoundException e) {
-            LOG.error("Exception while trying to convert accounts from file.", e);
+            LogManager.logStackTrace("Exception while trying to convert accounts from file.", e);
         } finally {
             try {
                 if (objIn != null) {
@@ -140,7 +136,7 @@ public class AccountManager {
                     in.close();
                 }
             } catch (IOException e) {
-                LOG.error(
+                LogManager.logStackTrace(
                         "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
                                 + "accounts.",
                         e);
@@ -152,7 +148,7 @@ public class AccountManager {
         try {
             Files.delete(FileSystem.USER_DATA);
         } catch (IOException e) {
-            LOG.error("Exception trying to remove old userdata file after conversion.", e);
+            LogManager.logStackTrace("Exception trying to remove old userdata file after conversion.", e);
         }
     }
 
@@ -164,7 +160,7 @@ public class AccountManager {
         try (FileWriter fileWriter = new FileWriter(FileSystem.ACCOUNTS.toFile())) {
             Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LOG.error("error:", e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -172,7 +168,7 @@ public class AccountManager {
         String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
 
         Analytics.sendEvent(accountType, "Add", "Account");
-        LOG.info("Added " + accountType + " Account " + account);
+        LogManager.info("Added " + accountType + " Account " + account);
 
         Data.ACCOUNTS.add(account);
 
@@ -216,11 +212,11 @@ public class AccountManager {
      */
     public static void switchAccount(AbstractAccount account) {
         if (account == null) {
-            LOG.info("Logging out of account");
+            LogManager.info("Logging out of account");
             Data.SELECTED_ACCOUNT = null;
             App.settings.lastAccount = null;
         } else {
-            LOG.info("Changed account to " + account);
+            LogManager.info("Changed account to " + account);
             Data.SELECTED_ACCOUNT = account;
             App.settings.lastAccount = account.username;
         }

@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
@@ -44,6 +42,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
 import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
@@ -54,8 +53,6 @@ import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
-    private static final Logger LOG = LogManager.getLogger(DisableableMod.class);
-
     public String name;
     public String version;
     public boolean optional;
@@ -321,12 +318,12 @@ public class DisableableMod implements Serializable {
                     }
                     break;
                 default:
-                    LOG.warn("Unsupported mod for enabling/disabling {}", this.name);
+                    LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
                     break;
             }
         }
         if (dir == null) {
-            LOG.warn("null path returned for mod " + this.name);
+            LogManager.warn("null path returned for mod " + this.name);
             return null;
         }
         return new File(dir, file);
@@ -374,7 +371,7 @@ public class DisableableMod implements Serializable {
                                 file -> file.gameVersions.stream()
                                         .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
                     } catch (InvalidMinecraftVersion e) {
-                        LOG.error(e);
+                        LogManager.logStackTrace(e);
                     }
                 }
 

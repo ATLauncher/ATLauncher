@@ -40,11 +40,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.javafinder.JavaFinder;
 import com.atlauncher.utils.javafinder.JavaInfo;
@@ -52,8 +50,6 @@ import com.atlauncher.utils.javafinder.JavaInfo;
 import okhttp3.tls.Certificates;
 
 public class Java {
-    private static final Logger LOG = LogManager.getLogger(Java.class);
-
     /**
      * Get the Java version that the launcher runs on.
      *
@@ -95,13 +91,13 @@ public class Java {
                 }
             }
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
-        LOG.debug("Got version '{}' for Java at path '{}'", version, executablePath);
+        LogManager.debug(String.format("Got version \"%s\" for Java at path \"%s\"", version, executablePath));
 
         if (version.equals("Unknown")) {
-            LOG.warn("Cannot get Java version from the output of \"{} -version\"", folder.getAbsolutePath());
+            LogManager.warn("Cannot get Java version from the output of \"" + folder.getAbsolutePath() + " -version\"");
         }
 
         return version;
@@ -203,7 +199,7 @@ public class Java {
                     }
                 }
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -246,7 +242,7 @@ public class Java {
     }
 
     private static void injectLetsEncryptCerts() {
-        LOG.info("Injecting Lets Encrypt Certificate");
+        LogManager.info("Injecting Lets Encrypt Certificate");
         Network.addTrustedCertificate(Certificates.decodeCertificatePem("-----BEGIN CERTIFICATE-----\n"
                 + "MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\n"
                 + "TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh\n"
@@ -289,7 +285,7 @@ public class Java {
                         try {
                             return keyStore.getCertificate(alias);
                         } catch (Exception e) {
-                            LOG.error("Failed to get certificate", e);
+                            LogManager.logStackTrace("Failed to get certificate", e);
                             return null;
                         }
                     }));
@@ -303,7 +299,7 @@ public class Java {
                         try {
                             return leKS.getCertificate(alias);
                         } catch (KeyStoreException e) {
-                            LOG.error("Failed to get certificate", e);
+                            LogManager.logStackTrace("Failed to get certificate", e);
                             return null;
                         }
                     }));
@@ -322,14 +318,14 @@ public class Java {
             SSLContext tls = SSLContext.getInstance("TLS");
             tls.init(null, instance.getTrustManagers(), null);
             HttpsURLConnection.setDefaultSSLSocketFactory(tls.getSocketFactory());
-            LOG.info("Injected new root certificates");
+            LogManager.info("Injected new root certificates");
         } catch (Exception e) {
-            LOG.error("Failed to inject new root certificates. Problems might happen", e);
+            LogManager.logStackTrace("Failed to inject new root certificates. Problems might happen", e);
         }
     }
 
     private static void injectDigiCertG2Certs() {
-        LOG.info("Injecting DigiCert G2 Certificate");
+        LogManager.info("Injecting DigiCert G2 Certificate");
         Network.addTrustedCertificate(Certificates.decodeCertificatePem("-----BEGIN CERTIFICATE-----\n"
                 + "MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh\n"
                 + "MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\n"

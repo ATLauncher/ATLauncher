@@ -81,8 +81,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 
@@ -94,13 +92,12 @@ import com.atlauncher.data.minecraft.ExtractRule;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.openmods.OpenEyeReportResponse;
+import com.atlauncher.managers.LogManager;
 import com.google.gson.reflect.TypeToken;
 
 import net.iharder.Base64;
 
 public class Utils {
-    private static final Logger LOG = LogManager.getLogger(Utils.class);
-
     public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW,
             StandardOpenOption.WRITE);
     public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
@@ -137,7 +134,7 @@ public class Utils {
         URL url = App.class.getResource(path);
 
         if (url == null) {
-            LOG.error("Unable to load resource {}", path);
+            LogManager.error("Unable to load resource " + path);
             return null;
         }
 
@@ -164,7 +161,7 @@ public class Utils {
      */
     public static ImageIcon getIconImage(File file) {
         if (!file.exists()) {
-            LOG.error("Unable to load file {}", file.getAbsolutePath());
+            LogManager.error("Unable to load file " + file.getAbsolutePath());
             return null;
         }
 
@@ -192,7 +189,7 @@ public class Utils {
         try {
             return ImageIO.read(stream);
         } catch (IOException e) {
-            LOG.error("Failed to read image", e);
+            LogManager.logStackTrace("Failed to read image", e);
             return null;
         }
     }
@@ -231,7 +228,7 @@ public class Utils {
             writer.close();
             reader.close();
         } catch (IOException e1) {
-            LOG.error("error", e1);
+            LogManager.logStackTrace(e1);
         }
         return result;
     }
@@ -249,7 +246,7 @@ public class Utils {
             delete(from);
             return true;
         } else {
-            LOG.error("Couldn't move file {} to {}", from.getAbsolutePath(), to.getAbsolutePath());
+            LogManager.error("Couldn't move file " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
             return false;
         }
     }
@@ -279,12 +276,14 @@ public class Utils {
         boolean isURI = false;
         if (!from.toString().startsWith("file:")) {
             if (!from.isFile()) {
-                LOG.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                        + " it isn't a file");
+                LogManager
+                        .error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
+                                + " it isn't a file");
             }
             if (!from.exists()) {
-                LOG.error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                        + " it doesn't exist");
+                LogManager
+                        .error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
+                                + " it doesn't exist");
                 return false;
             }
         } else {
@@ -301,7 +300,7 @@ public class Utils {
         try {
             to.createNewFile();
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
             return false;
         }
 
@@ -311,7 +310,8 @@ public class Utils {
         InputStream sourceStream = null;
         OutputStream destinationStream = null;
 
-        LOG.debug("Copying file from {} to {}", from.getAbsolutePath(), to.getAbsolutePath());
+        LogManager.debug("Copying file from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+
         try {
             if (!isURI) {
                 source = new FileInputStream(from).getChannel();
@@ -323,7 +323,7 @@ public class Utils {
                 IOUtils.copy(sourceStream, destinationStream);
             }
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
             return false;
         } finally {
             try {
@@ -341,7 +341,7 @@ public class Utils {
                     destinationStream.close();
                 }
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
                 return false;
             }
         }
@@ -377,9 +377,8 @@ public class Utils {
             delete(sourceLocation);
             return true;
         } else {
-            LOG.error("Couldn't move directory {} to {}",
-                    sourceLocation.getAbsolutePath(),
-                    targetLocation.getAbsolutePath());
+            LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to "
+                    + targetLocation.getAbsolutePath());
             return false;
         }
     }
@@ -431,7 +430,7 @@ public class Utils {
                 out.close();
             }
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
             return false;
         }
         return true;
@@ -493,7 +492,7 @@ public class Utils {
             }
             zipFile.close();
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -516,9 +515,8 @@ public class Utils {
         }
 
         if (!file.delete()) {
-            LOG.error("({}) {} couldn't be deleted",
-                    (file.isFile() ? "File" : "Folder"),
-                    file.getAbsolutePath());
+            LogManager.error(
+                    (file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath() + " couldn't be " + "deleted");
         }
     }
 
@@ -537,7 +535,7 @@ public class Utils {
             try {
                 canonDir = file.getParentFile().getCanonicalFile();
             } catch (IOException e) {
-                LOG.error("Failed to get canonical file", e);
+                LogManager.logStackTrace("Failed to get canonical file", e);
                 return false;
             }
 
@@ -547,7 +545,7 @@ public class Utils {
         try {
             return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
         } catch (IOException e) {
-            LOG.error("Failed to get canonical file", e);
+            LogManager.logStackTrace("Failed to get canonical file", e);
             return false;
         }
     }
@@ -630,7 +628,7 @@ public class Utils {
                 }
             }
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -681,7 +679,7 @@ public class Utils {
             byte[] encVal = c.doFinal(Data.getBytes());
             encryptedValue = Base64.encodeBytes(encVal);
         } catch (Exception e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
         return encryptedValue;
     }
@@ -705,7 +703,7 @@ public class Utils {
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             return Utils.decryptOld(encryptedData);
         } catch (Exception e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
         return decryptedValue;
     }
@@ -926,13 +924,13 @@ public class Utils {
             }
             return found;
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    LOG.error("Unable to close input stream", e);
+                    LogManager.logStackTrace("Unable to close input stream", e);
                 }
             }
         }
@@ -999,7 +997,7 @@ public class Utils {
             }
 
         } catch (Exception e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
 
             return false;
         }
@@ -1042,7 +1040,7 @@ public class Utils {
                 jos.closeEntry();
             }
         } catch (Exception e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
 
             return false;
         }
@@ -1101,8 +1099,8 @@ public class Utils {
         StringBuilder response;
         String request = Utils.getFileContents(report);
         if (request == null) {
-            LOG.error("OpenEye: Couldn't read contents of file '{}'. Pending report sending failed!",
-                    report.getAbsolutePath());
+            LogManager.error("OpenEye: Couldn't read contents of file '" + report.getAbsolutePath() + "'. Pending "
+                    + "report sending failed!");
             return null;
         }
 
@@ -1126,7 +1124,7 @@ public class Utils {
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
             return null; // Report not sent
         }
 
@@ -1142,7 +1140,7 @@ public class Utils {
                 response.append('\r');
             }
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
             return null; // Report sent, but no response
         } finally {
             try {
@@ -1150,7 +1148,7 @@ public class Utils {
                     reader.close();
                 }
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
             }
         }
 
@@ -1167,7 +1165,7 @@ public class Utils {
      */
     public static String getFileContents(File file) {
         if (!file.exists()) {
-            LOG.error("File '{}' doesn't exist so cannot read contents of file!", file.getAbsolutePath());
+            LogManager.error("File '" + file.getAbsolutePath() + "' doesn't exist so cannot read contents of file!");
             return null;
         }
         String contents = null;
@@ -1184,14 +1182,14 @@ public class Utils {
             }
             contents = sb.toString();
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (br != null) {
                     br.close();
                 }
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
             }
         }
         return contents;
@@ -1236,10 +1234,10 @@ public class Utils {
             connection.setRequestProperty("Expires", "0");
             connection.setRequestProperty("Pragma", "no-cache");
             connection.connect();
-            LOG.info("Proxy returned code {} when testing!", connection.getResponseCode());
+            LogManager.info("Proxy returned code " + connection.getResponseCode() + " when testing!");
             return connection.getResponseCode() == 200;
         } catch (IOException e) {
-            LOG.error("Proxy couldn't establish a connection when testing!", e);
+            LogManager.logStackTrace("Proxy couldn't establish a connection when testing!", e);
             return false;
         }
     }
@@ -1310,7 +1308,7 @@ public class Utils {
             pingStats = response.toString();
 
         } catch (IOException e) {
-            LOG.error("IOException while running ping on host " + host, e);
+            LogManager.logStackTrace("IOException while running ping on host " + host, e);
         }
 
         return pingStats;
@@ -1342,7 +1340,7 @@ public class Utils {
             route = response.toString();
 
         } catch (IOException e) {
-            LOG.error("IOException while running traceRoute on host " + host, e);
+            LogManager.logStackTrace("IOException while running traceRoute on host " + host, e);
         }
 
         return route;
@@ -1441,13 +1439,13 @@ public class Utils {
             bytes = new byte[(int) f.length()];
             f.read(bytes);
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         } finally {
             if (f != null) {
                 try {
                     f.close();
                 } catch (IOException e) {
-                    LOG.error("error", e);
+                    LogManager.logStackTrace(e);
                 }
             }
         }
@@ -1476,7 +1474,7 @@ public class Utils {
             }
 
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         } finally {
             try {
                 if (fis != null) {
@@ -1492,7 +1490,7 @@ public class Utils {
                     lis.close();
                 }
             } catch (IOException e) {
-                LOG.error("error", e);
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -1561,7 +1559,7 @@ public class Utils {
                 }
             }
         } catch (Exception e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         } finally {
             returnStr = (returnStr == null ? "NotARandomKeyYes" : returnStr);
         }
@@ -1682,7 +1680,7 @@ public class Utils {
 
             return sb.toString().trim();
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return "";
@@ -1690,7 +1688,7 @@ public class Utils {
 
     public static String runProcess(Path workingDir, String... command) {
         try {
-            LOG.debug(String.format("Running %s in %s", String.join(" ", command), workingDir.toString()));
+            LogManager.debug(String.format("Running %s in %s", String.join(" ", command), workingDir.toString()));
             ProcessBuilder processBuilder = new ProcessBuilder(command);
             processBuilder.directory(workingDir.toFile());
             processBuilder.redirectErrorStream(true);
@@ -1711,7 +1709,7 @@ public class Utils {
 
             return sb.toString().trim();
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return "";

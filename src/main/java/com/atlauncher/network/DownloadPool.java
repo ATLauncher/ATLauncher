@@ -24,16 +24,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 
 @SuppressWarnings("serial")
 public final class DownloadPool extends LinkedList<Download> {
-    private static final Logger LOG = LogManager.getLogger(DownloadPool.class);
-
     private final boolean wait;
 
     public DownloadPool(boolean wait) {
@@ -129,7 +125,7 @@ public final class DownloadPool extends LinkedList<Download> {
                     this.dl.copy();
                 }
             } catch (Exception e) {
-                LOG.error("Error trying to download " + this.dl.to.getFileName(), e);
+                LogManager.logStackTrace("Error trying to download " + this.dl.to.getFileName(), e);
             }
         }
     }

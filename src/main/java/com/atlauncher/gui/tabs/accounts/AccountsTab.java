@@ -41,11 +41,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
@@ -56,16 +53,17 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.accounts.IAccountsViewModel.LoginPostResult;
 import com.atlauncher.gui.tabs.accounts.IAccountsViewModel.LoginPreCheckResult;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
 
 public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
-    private static final Logger LOG = LogManager.getLogger(AccountsTab.class);
     private static final long serialVersionUID = 2493791137600123223L;
 
     private final IAccountsViewModel viewModel;
@@ -99,16 +97,16 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
                 "In order to login and use ATLauncher modpacks, " +
-                    "you must authenticate with your existing " +
-                    "Minecraft/Mojang account. You must own and have paid " +
-                    "for the Minecraft Java edition " +
-                    "(not the Windows 10 edition) and use the same " +
-                    "login here.<br><br>If you don't have an existing " +
-                    "account, you can get one " +
-                    "<a href=\"https://atl.pw/create-account\">by buying " +
-                    "Minecraft here</a>. ATLauncher doesn't work with cracked" +
-                    " accounts."))
-            .build());
+                        "you must authenticate with your existing " +
+                        "Minecraft/Mojang account. You must own and have paid " +
+                        "for the Minecraft Java edition " +
+                        "(not the Windows 10 edition) and use the same " +
+                        "login here.<br><br>If you don't have an existing " +
+                        "account, you can get one " +
+                        "<a href=\"https://atl.pw/create-account\">by buying " +
+                        "Minecraft here</a>. ATLauncher doesn't work with cracked" +
+                        " accounts."))
+                .build());
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -149,8 +147,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridwidth = 1;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        usernameLabel =
-            new JLabel(GetText.tr("Username/Email") + ":");
+        usernameLabel = new JLabel(GetText.tr("Username/Email") + ":");
         bottomPanel.add(usernameLabel, gbc);
 
         gbc.gridx++;
@@ -165,7 +162,8 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (!viewModel.isLoginPasswordSet())
                         passwordField.grabFocus();
-                    else login();
+                    else
+                        login();
                 }
             }
         });
@@ -175,8 +173,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        passwordLabel =
-            new JLabel(GetText.tr("Password") + ":");
+        passwordLabel = new JLabel(GetText.tr("Password") + ":");
         bottomPanel.add(passwordLabel, gbc);
 
         gbc.gridx++;
@@ -188,12 +185,12 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             @Override
             public void keyReleased(KeyEvent e) {
                 viewModel.setLoginPassword(
-                    new String(passwordField.getPassword())
-                );
+                        new String(passwordField.getPassword()));
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (!viewModel.isLoginUsernameSet())
                         usernameField.grabFocus();
-                    else login();
+                    else
+                        login();
                 }
             }
         });
@@ -215,19 +212,19 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             viewModel.setRememberLogin(rememberField.isSelected());
             if (rememberField.isSelected()) {
                 int ret = DialogManager
-                    .optionDialog()
-                    .setTitle(GetText.tr("Security Warning"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "Make sure you only do this on a " +
-                                "computer you trust.<br/>If you do this " +
-                                "on a shared computer, your password may be " +
-                                "stolen.<br/>Do you still want to save " +
-                                "your password?"))
-                        .build())
-                    .setType(DialogManager.ERROR)
-                    .addOption(GetText.tr("Yes"), true)
-                    .addOption(GetText.tr("No"))
-                    .show();
+                        .optionDialog()
+                        .setTitle(GetText.tr("Security Warning"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Make sure you only do this on a " +
+                                        "computer you trust.<br/>If you do this " +
+                                        "on a shared computer, your password may be " +
+                                        "stolen.<br/>Do you still want to save " +
+                                        "your password?"))
+                                .build())
+                        .setType(DialogManager.ERROR)
+                        .addOption(GetText.tr("Yes"), true)
+                        .addOption(GetText.tr("No"))
+                        .show();
 
                 if (ret != 0) {
                     rememberField.setSelected(false);
@@ -252,24 +249,23 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 clearLogin();
             } else {
                 int ret = DialogManager
-                    .yesNoDialog()
-                    .setTitle(GetText.tr("Delete"))
-                    .setContent(GetText.tr("Are you sure you want " +
-                        "to delete this account?"))
-                    .setType(DialogManager.WARNING).show();
+                        .yesNoDialog()
+                        .setTitle(GetText.tr("Delete"))
+                        .setContent(GetText.tr("Are you sure you want " +
+                                "to delete this account?"))
+                        .setType(DialogManager.WARNING).show();
                 if (ret == DialogManager.YES_OPTION) {
                     viewModel.deleteAccount();
                 }
             }
         });
-        loginWithMicrosoftButton =
-            new JButton(GetText.tr("Login with Microsoft"));
+        loginWithMicrosoftButton = new JButton(GetText.tr("Login with Microsoft"));
         loginWithMicrosoftButton.addActionListener(e -> {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
             new LoginWithMicrosoftDialog();
 
-            if (numberOfAccountsBefore !=  viewModel.accountCount()) {
+            if (numberOfAccountsBefore != viewModel.accountCount()) {
                 viewModel.pushNewAccounts();
                 accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
             }
@@ -289,7 +285,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             viewModel.changeSkin();
 
             // TODO Have this done via listener
-            //  To describe, userSkin icon should be reactive, not active.
+            // To describe, userSkin icon should be reactive, not active.
             AbstractAccount account = viewModel.getSelectedAccount();
             userSkin.setIcon(account.getMinecraftSkin());
         });
@@ -300,19 +296,17 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             viewModel.updateSkin();
 
             // TODO Have this done via listener
-            //  To describe, userSkin icon should be reactive, not active.
+            // To describe, userSkin icon should be reactive, not active.
             AbstractAccount account = viewModel.getSelectedAccount();
             userSkin.setIcon(account.getMinecraftSkin());
         });
         contextMenu.add(updateSkin);
 
-        JMenuItem updateUsername =
-            new JMenuItem(GetText.tr("Update Username"));
+        JMenuItem updateUsername = new JMenuItem(GetText.tr("Update Username"));
         updateUsername.addActionListener(e -> viewModel.updateUsername());
         contextMenu.add(updateUsername);
 
-        refreshAccessTokenMenuItem =
-            new JMenuItem(GetText.tr("Refresh Access Token"));
+        refreshAccessTokenMenuItem = new JMenuItem(GetText.tr("Refresh Access Token"));
         refreshAccessTokenMenuItem.setVisible(false);
         refreshAccessTokenMenuItem.addActionListener(e -> {
             refreshAccessToken();
@@ -330,8 +324,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             }
         });
         userSkin.setBorder(
-            BorderFactory.createEmptyBorder(0, 60, 0, 0)
-        );
+                BorderFactory.createEmptyBorder(0, 60, 0, 0));
         add(infoPanel, BorderLayout.NORTH);
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
@@ -346,14 +339,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
      */
     private void refreshAccessToken() {
         MicrosoftAccount account = viewModel.getSelectedAccountAs();
-        if (account == null) return;
+        if (account == null)
+            return;
 
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
-            GetText.tr("Refreshing Access Token"),
-            0,
-            GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-            "Aborting refreshing access token for " + account.minecraftUsername
-        );
+                GetText.tr("Refreshing Access Token"),
+                0,
+                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+                "Aborting refreshing access token for " + account.minecraftUsername);
 
         dialog.addThread(new Thread(() -> {
             boolean success = viewModel.refreshAccessToken();
@@ -366,20 +359,19 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         if (success) {
             DialogManager
-                .okDialog()
-                .setTitle(GetText.tr("Access Token Refreshed"))
-                .setContent(
-                    GetText.tr("Access token refreshed successfully")
-                )
-                .setType(DialogManager.INFO)
-                .show();
+                    .okDialog()
+                    .setTitle(GetText.tr("Access Token Refreshed"))
+                    .setContent(
+                            GetText.tr("Access token refreshed successfully"))
+                    .setType(DialogManager.INFO)
+                    .show();
         } else {
             DialogManager
-                .okDialog()
-                .setTitle(GetText.tr("Failed To Refresh Access Token"))
-                .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
-                .setType(DialogManager.ERROR)
-                .show();
+                    .okDialog()
+                    .setTitle(GetText.tr("Failed To Refresh Access Token"))
+                    .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
+                    .setType(DialogManager.ERROR)
+                    .show();
 
             new LoginWithMicrosoftDialog(account);
         }
@@ -419,11 +411,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 leftButton.setVisible(account instanceof MojangAccount);
                 rightButton.setVisible(true);
                 loginWithMicrosoftButton.setVisible(
-                    account instanceof MicrosoftAccount
-                );
+                        account instanceof MicrosoftAccount);
                 refreshAccessTokenMenuItem.setVisible(
-                    account instanceof MicrosoftAccount
-                );
+                        account instanceof MicrosoftAccount);
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
@@ -444,11 +434,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         viewModel.onAccountsNamesChanged(accounts -> {
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(
-                new ComboItem<>(
-                    null,
-                    GetText.tr("Add An Account")
-                )
-            );
+                    new ComboItem<>(
+                            null,
+                            GetText.tr("Add An Account")));
             for (String account : accounts) {
                 accountsComboBox.addItem(new ComboItem<>(null, account));
             }
@@ -479,20 +467,20 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         LoginPreCheckResult preCheckResult = viewModel.loginPreCheck();
         if (preCheckResult instanceof LoginPreCheckResult.Exists) {
             DialogManager
-                .okDialog()
-                .setTitle(GetText.tr("Account Not Added"))
-                .setContent(GetText.tr("This account already exists."))
-                .setType(DialogManager.ERROR)
-                .show();
+                    .okDialog()
+                    .setTitle(GetText.tr("Account Not Added"))
+                    .setContent(GetText.tr("This account already exists."))
+                    .setType(DialogManager.ERROR)
+                    .show();
             return;
         }
 
-        LOG.info("Logging into Minecraft!");
+        LogManager.info("Logging into Minecraft!");
         final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(
-            GetText.tr("Logging Into Minecraft"),
-            0,
-            GetText.tr("Logging Into Minecraft"),
-            "Aborting login for " + viewModel.getLoginUsername());
+                GetText.tr("Logging Into Minecraft"),
+                0,
+                GetText.tr("Logging Into Minecraft"),
+                "Aborting login for " + viewModel.getLoginUsername());
         dialog.setName("loginDialog");
         dialog.addThread(new Thread(() -> {
             viewModel.login();
@@ -504,33 +492,30 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         if (postResult instanceof LoginPostResult.Error) {
             String error = ((LoginPostResult.Error) postResult).errorContent;
-            LOG.error("error response: {}", error);
+            LogManager.error("error response: " + error);
             DialogManager
-                .okDialog()
-                .setTitle(GetText.tr("Account Not Added"))
-                .setContent(
-                    new HTMLBuilder()
-                        .center()
-                        // #. {0} is the error message from Mojang as to why we couldn't login
-                        .text(GetText.tr(
-                                "Account not added as login " +
-                                    "details were incorrect.<br/><br/>{0}",
-                                error
-                            )
-                        )
-                        .build())
-                .setType(DialogManager.INFO)
-                .show();
+                    .okDialog()
+                    .setTitle(GetText.tr("Account Not Added"))
+                    .setContent(
+                            new HTMLBuilder()
+                                    .center()
+                                    // #. {0} is the error message from Mojang as to why we couldn't login
+                                    .text(GetText.tr(
+                                            "Account not added as login " +
+                                                    "details were incorrect.<br/><br/>{0}",
+                                            error))
+                                    .build())
+                    .setType(DialogManager.INFO)
+                    .show();
         } else {
             if (postResult instanceof LoginPostResult.Edited) {
                 DialogManager
-                    .okDialog()
-                    .setTitle(GetText.tr("Account Edited"))
-                    .setContent(
-                        GetText.tr("Account edited successfully")
-                    )
-                    .setType(DialogManager.INFO)
-                    .show();
+                        .okDialog()
+                        .setTitle(GetText.tr("Account Edited"))
+                        .setContent(
+                                GetText.tr("Account edited successfully"))
+                        .setType(DialogManager.INFO)
+                        .show();
             }
 
             viewModel.pushNewAccounts();

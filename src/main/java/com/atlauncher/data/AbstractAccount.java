@@ -28,8 +28,6 @@ import java.util.UUID;
 
 import javax.swing.ImageIcon;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.FileSystem;
@@ -38,6 +36,7 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
@@ -47,8 +46,6 @@ import com.mojang.util.UUIDTypeAdapter;
  * This class deals with the Accounts in the launcher.
  */
 public abstract class AbstractAccount implements Serializable {
-    private static final Logger LOG = LogManager.getLogger(AbstractAccount.class);
-
     /**
      * Auto generated serial.
      */
@@ -118,11 +115,8 @@ public abstract class AbstractAccount implements Serializable {
             }
 
             if (!currentUsername.equals(this.minecraftUsername)) {
-                LOG.info("The username for account with UUID of {} changed from {} to {}",
-                        this.getUUIDNoDashes(),
-                        this.minecraftUsername,
-                        currentUsername);
-
+                LogManager.info("The username for account with UUID of " + this.getUUIDNoDashes() + " changed from "
+                        + this.minecraftUsername + " to " + currentUsername);
                 this.minecraftUsername = currentUsername;
                 dialog.setReturnValue(true);
             }
@@ -157,8 +151,7 @@ public abstract class AbstractAccount implements Serializable {
         if (!this.skinUpdating) {
             this.skinUpdating = true;
             final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
-
-            LOG.info("Downloading skin for " + this.minecraftUsername);
+            LogManager.info("Downloading skin for " + this.minecraftUsername);
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading Skin"), 0,
                     GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
                     "Aborting downloading Minecraft skin for " + this.minecraftUsername);
@@ -167,7 +160,7 @@ public abstract class AbstractAccount implements Serializable {
                 dialog.setReturnValue(false);
                 String skinURL = getSkinUrl();
                 if (skinURL == null) {
-                    LOG.warn("Couldn't download skin because the url found was NULL. Using default skin");
+                    LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
                     if (!file.exists()) {
                         String skinFilename = "default.png";
 
@@ -181,7 +174,7 @@ public abstract class AbstractAccount implements Serializable {
                             java.nio.file.Files.copy(
                                     Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
                         } catch (IOException e) {
-                            LOG.error("error copying skin", e);
+                            LogManager.logStackTrace(e);
                         }
 
                         dialog.setReturnValue(true);
@@ -210,14 +203,14 @@ public abstract class AbstractAccount implements Serializable {
                                             Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
                                             file.toPath());
                                 } catch (IOException e) {
-                                    LOG.error("error updating skin", e);
+                                    LogManager.logStackTrace(e);
                                 }
 
                                 dialog.setReturnValue(true);
                             }
                         }
                     } catch (IOException e) {
-                        LOG.error("error updating skin", e);
+                        LogManager.logStackTrace(e);
                     }
                     com.atlauncher.evnt.manager.AccountManager.post();
                 }

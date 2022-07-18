@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -41,6 +38,7 @@ import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Pair;
@@ -50,8 +48,6 @@ import com.google.gson.reflect.TypeToken;
 import okhttp3.OkHttpClient;
 
 public class ForgeLoader implements Loader {
-    private static final Logger LOG = LogManager.getLogger(ForgeLoader.class);
-
     protected String installerUrl;
     protected String version;
     protected String rawVersion;
@@ -91,10 +87,10 @@ public class ForgeLoader implements Loader {
                 this.rawVersion = (String) metadata.get("rawVersion");
             }
         } else if ((boolean) metadata.get("latest")) {
-            LOG.debug("Downloading latest Forge version");
+            LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
         } else if ((boolean) metadata.get("recommended")) {
-            LOG.debug("Downloading recommended Forge version");
+            LogManager.debug("Downloading recommended Forge version");
             this.version = getRecommendedVersion(this.minecraft);
         }
 
@@ -212,7 +208,7 @@ public class ForgeLoader implements Loader {
             installProfile = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "install_profile.json")),
                     ForgeInstallProfile.class);
         } catch (Throwable e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return installProfile;
@@ -229,7 +225,7 @@ public class ForgeLoader implements Loader {
             versionInfo = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "version.json")),
                     ForgeInstallProfile.class);
         } catch (Throwable e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         return versionInfo;

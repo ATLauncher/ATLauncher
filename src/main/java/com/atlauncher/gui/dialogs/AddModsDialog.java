@@ -37,8 +37,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -60,6 +58,7 @@ import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.panels.NoCurseModsPanel;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
@@ -69,8 +68,6 @@ import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 @SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
-    private static final Logger LOG = LogManager.getLogger(AddModsDialog.class);
-
     private final Instance instance;
 
     private boolean updating = false;
@@ -485,7 +482,7 @@ public final class AddModsDialog extends JDialog {
                         versionsToSearchFor.addAll(MinecraftManager.getMajorMinecraftVersions(this.instance.id).stream()
                                 .map(mv -> mv.id).collect(Collectors.toList()));
                     } catch (InvalidMinecraftVersion e) {
-                        LOG.error("error", e);
+                        LogManager.logStackTrace(e);
                         versionsToSearchFor = null;
                     }
                 } else if (App.settings.addModRestriction == AddModRestriction.NONE) {

@@ -29,8 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -40,13 +38,12 @@ import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 
 public class MojangAccount extends AbstractAccount {
-    private static final Logger LOG = LogManager.getLogger(MojangAccount.class);
-
     /**
      * Auto generated serial.
      */
@@ -134,7 +131,7 @@ public class MojangAccount extends AbstractAccount {
     @Override
     public String getCurrentUsername() {
         if (this.uuid == null) {
-            LOG.error("The account {} has no UUID associated with it !", this.minecraftUsername);
+            LogManager.error("The account " + this.minecraftUsername + " has no UUID associated with it !");
             return null;
         }
 
@@ -178,7 +175,7 @@ public class MojangAccount extends AbstractAccount {
             }
             reader.close();
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
             response = null;
         }
 
@@ -215,12 +212,12 @@ public class MojangAccount extends AbstractAccount {
         LoginResponse response = null;
 
         if (this.getAccessToken() != null) {
-            LOG.info("Trying to login with access token!");
+            LogManager.info("Trying to login with access token!");
             response = Authentication.login(this, false);
         }
 
         if (response == null || (response.hasError() && !response.isOffline())) {
-            LOG.error("Access token is NOT valid! Will attempt to get another one!");
+            LogManager.error("Access token is NOT valid! Will attempt to get another one!");
 
             if (!this.remember) {
                 JPanel panel = new JPanel();
@@ -235,14 +232,14 @@ public class MojangAccount extends AbstractAccount {
 
                 if (ret == DialogManager.OK_OPTION) {
                     if (passwordField.getPassword().length == 0) {
-                        LOG.error("Aborting login for {}, no password entered", this.minecraftUsername);
+                        LogManager.error("Aborting login for " + this.minecraftUsername + ", no password entered");
                         App.launcher.setMinecraftLaunched(false);
                         return null;
                     }
 
                     this.setPassword(new String(passwordField.getPassword()));
                 } else {
-                    LOG.error("Aborting login for {}", this.minecraftUsername);
+                    LogManager.error("Aborting login for " + this.minecraftUsername);
                     App.launcher.setMinecraftLaunched(false);
                     return null;
                 }
@@ -252,7 +249,7 @@ public class MojangAccount extends AbstractAccount {
         }
 
         if (response.hasError() && !response.isOffline()) {
-            LOG.error("error: {}", response.getErrorMessage());
+            LogManager.error(response.getErrorMessage());
 
             DialogManager
                     .okDialog().setTitle(

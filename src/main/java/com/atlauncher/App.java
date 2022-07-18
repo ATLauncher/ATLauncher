@@ -54,11 +54,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -74,11 +69,11 @@ import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
-import com.atlauncher.utils.LoggingUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.extras.FlatInspector;
@@ -101,8 +96,6 @@ import oshi.software.os.OperatingSystem;
  * application is launched.
  */
 public class App {
-    private static final Logger LOG = LogManager.getLogger();
-
     public static String[] PASSED_ARGS;
 
     /**
@@ -133,10 +126,10 @@ public class App {
     public static boolean discordInitialized = false;
 
     /**
-     * This allows skipping the setup Dialog on first run. This is mainly used for
+     * This allows skipping the setup dialog on first run. This is mainly used for
      * automation tests. It can be skipped with the below command line argument.
      * <p/>
-     * --skip-setup-Dialog
+     * --skip-setup-dialog
      */
     public static boolean skipSetupDialog = false;
 
@@ -266,7 +259,6 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
-        LoggingUtils.redirectSystemOutLogs();
         PASSED_ARGS = args;
 
         // Parse all the command line arguments
@@ -284,10 +276,10 @@ public class App {
         setupOSSpecificThings();
 
         try {
-            LOG.info("Organising filesystem");
+            LogManager.info("Organising filesystem");
             FileSystem.organise();
         } catch (IOException e) {
-            LOG.error("Error organising filesystem", e);
+            LogManager.logStackTrace("Error organising filesystem", e, false);
         }
 
         // Load the settings from json, convert old properties config and validate it
@@ -319,6 +311,7 @@ public class App {
         SwingUtilities.invokeLater(() -> ss.setVisible(true));
 
         console = new LauncherConsole();
+        LogManager.start();
 
         if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
@@ -328,7 +321,7 @@ public class App {
         try {
             Language.init();
         } catch (IOException e1) {
-            LOG.error("Error loading language", e1);
+            LogManager.logStackTrace("Error loading language", e1);
         }
 
         if (!noConsole && settings.enableConsole) {
@@ -341,23 +334,23 @@ public class App {
                 // Try to enable the tray icon.
                 trySystemTrayIntegration();
             } catch (Exception e) {
-                LOG.error(e);
+                LogManager.logStackTrace(e, false);
             }
         }
 
         // log out the system information to the console
         logSystemInformation(args);
 
-        LOG.info("Showing splash screen and loading everything");
+        LogManager.info("Showing splash screen and loading everything");
         launcher.loadEverything(); // Loads everything that needs to be loaded
-        LOG.info("Launcher finished loading everything");
+        LogManager.info("Launcher finished loading everything");
 
         if (settings.firstTimeRun) {
             if (skipSetupDialog) {
                 App.settings.firstTimeRun = false;
                 App.settings.save();
             } else {
-                LOG.warn("Launcher not setup. Loading Setup Dialog");
+                LogManager.warn("Launcher not setup. Loading Setup Dialog");
                 new SetupDialog();
             }
         }
@@ -369,14 +362,14 @@ public class App {
                     i -> i.getName().equalsIgnoreCase(autoLaunch) || i.getSafeName().equalsIgnoreCase(autoLaunch))
                     .findFirst();
             if (instance.isPresent()) {
-                LOG.info("Opening Instance " + instance.get().launcher.name);
+                LogManager.info("Opening Instance " + instance.get().launcher.name);
                 if (instance.get().launch()) {
                     open = false;
                 } else {
-                    LOG.error("Error Opening Instance " + instance.get().launcher.name);
+                    LogManager.error("Error Opening Instance " + instance.get().launcher.name);
                 }
             } else {
-                LOG.error("Couldn't find instance with name of " + autoLaunch + " to auto launch.");
+                LogManager.error("Couldn't find instance with name of " + autoLaunch + " to auto launch.");
             }
         }
 
@@ -384,12 +377,12 @@ public class App {
             if (PackManager.addPack(packCodeToAdd)) {
                 Pack packAdded = PackManager.getSemiPublicPackByCode(packCodeToAdd);
                 if (packAdded != null) {
-                    LOG.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
+                    LogManager.info("The pack " + packAdded.getName() + " was automatically added to the launcher!");
                 } else {
-                    LOG.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
+                    LogManager.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
                 }
             } else {
-                LOG.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
+                LogManager.error("Error automatically adding semi public pack with code of " + packCodeToAdd + "!");
             }
         }
 
@@ -412,41 +405,41 @@ public class App {
 
                 Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
             } catch (Throwable e) {
-                LOG.error("Failed to initialize Discord integration", e);
+                LogManager.logStackTrace("Failed to initialize Discord integration", e);
                 discordInitialized = false;
             }
         }
     }
 
     private static void logSystemInformation(String[] args) {
-        LOG.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
+        LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
-        LOG.info(String.format("App Arguments: %s", Gsons.DEFAULT_SLIM.toJson(args)));
+        LogManager.info(String.format("App Arguments: %s", Gsons.DEFAULT_SLIM.toJson(args)));
 
-        LOG.info(String.format("JVM Arguments: %s",
+        LogManager.info(String.format("JVM Arguments: %s",
                 Gsons.DEFAULT_SLIM.toJson(ManagementFactory.getRuntimeMXBean().getInputArguments())));
 
         SwingUtilities.invokeLater(
-                () -> Java.getInstalledJavas().forEach(version -> LOG.debug(Gsons.DEFAULT.toJson(version))));
+                () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
-        LOG.info("Java Version: "
+        LogManager.info("Java Version: "
                 + String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
 
-        LOG.info("Java Path: " + settings.javaPath);
+        LogManager.info("Java Path: " + settings.javaPath);
 
-        LOG.info("64 Bit Java: " + Java.is64Bit());
+        LogManager.info("64 Bit Java: " + Java.is64Bit());
 
         int maxRam = OS.getMaximumRam();
-        LOG.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
+        LogManager.info("RAM Available: " + (maxRam == 0 ? "Unknown" : maxRam + "MB"));
 
-        LOG.info("Launcher Directory: " + FileSystem.BASE_DIR);
+        LogManager.info("Launcher Directory: " + FileSystem.BASE_DIR);
 
         if (OS.isMac()) {
-            LOG.info("Using Mac App? " + (OS.isUsingMacApp() ? "Yes" : "No"));
+            LogManager.info("Using Mac App? " + (OS.isUsingMacApp() ? "Yes" : "No"));
         }
 
         if (OS.isUsingFlatpak()) {
-            LOG.info("Using Flatpak!");
+            LogManager.info("Using Flatpak!");
         }
 
         try {
@@ -456,32 +449,33 @@ public class App {
             List<GraphicsCard> cards = hal.getGraphicsCards();
             if (cards.size() != 0) {
                 for (GraphicsCard card : cards) {
-                    LOG.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
+                    LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
                             + " " + (card.getVRam() / 1048576) + "MB VRAM");
                 }
             }
 
             CentralProcessor cpu = hal.getProcessor();
-            LOG.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
+            LogManager.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
                     cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
 
             OperatingSystem os = systemInfo.getOperatingSystem();
 
-            LOG.info("Operating System: " + os.getFamily() + " (" + os.getVersionInfo() + ")");
-            LOG.info("Bitness: " + os.getBitness());
-            LOG.info("Uptime: " + os.getSystemUptime());
-            LOG.info("Manufacturer: " + os.getManufacturer());
+            LogManager.info("Operating System: " + os.getFamily() + " (" + os.getVersionInfo() + ")");
+            LogManager.info("Bitness: " + os.getBitness());
+            LogManager.info("Uptime: " + os.getSystemUptime());
+            LogManager.info("Manufacturer: " + os.getManufacturer());
 
             if (OS.isWindows() && OS.isUsingAntivirus()) {
-                LOG.error(
+                LogManager.warn(
                         "A running antivirus process was found on your system. If you notice any issues running Minecraft or downloading files, please whitelist ATLauncher and its folder in your antivirus program/s listed below.");
 
                 for (OSProcess process : OS.getAntivirusProcesses()) {
-                    LOG.info(String.format("Process %s (running at %s)", process.getName(), process.getPath()));
+                    LogManager.info(String.format("Process %s (running at %s)", process.getName(),
+                            process.getPath()));
                 }
             }
         } catch (Throwable t) {
-            LOG.error("error: ", t);
+            LogManager.logStackTrace(t);
         }
     }
 
@@ -553,7 +547,7 @@ public class App {
 
             if (javaOptions != null && (javaOptions.toLowerCase().contains("-xmx")
                     || javaOptions.toLowerCase().contains("-xms") || javaOptions.toLowerCase().contains("-xss"))) {
-                LOG.warn("_JAVA_OPTIONS environment variable detected: " + javaOptions);
+                LogManager.warn("_JAVA_OPTIONS environment variable detected: " + javaOptions);
 
                 if (!settings.ignoreJavaOptionsWarning) {
                     int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
@@ -579,7 +573,7 @@ public class App {
 
     private static void checkForBadFolderInstall() {
         if (!settings.ignoreOneDriveWarning && FileSystem.BASE_DIR.toString().contains("OneDrive")) {
-            LOG.warn("ATLauncher installed within OneDrive!");
+            LogManager.warn("ATLauncher installed within OneDrive!");
 
             int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
                     .setTitle(GetText.tr("ATLauncher installed within OneDrive"))
@@ -599,7 +593,7 @@ public class App {
 
         if (OS.isWindows() && !settings.ignoreProgramFilesWarning
                 && FileSystem.BASE_DIR.toString().contains("Program Files")) {
-            LOG.warn("ATLauncher installed within Program Files!");
+            LogManager.warn("ATLauncher installed within Program Files!");
 
             int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
                     .setTitle(GetText.tr("ATLauncher installed within Program Files"))
@@ -622,7 +616,7 @@ public class App {
         try {
             if ((!testFile.exists() && !testFile.createNewFile())
                     || !FileSystem.BASE_DIR.resolve(".test").toFile().canWrite()) {
-                LOG.error("ATLauncher cannot write files!");
+                LogManager.error("ATLauncher cannot write files!");
 
                 DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -634,7 +628,7 @@ public class App {
                 System.exit(0);
             }
         } catch (IOException e) {
-            LOG.error("ATLauncher cannot write files!");
+            LogManager.error("ATLauncher cannot write files!");
 
             DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -660,7 +654,7 @@ public class App {
                 Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
                 setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon-osx.png"));
             } catch (Exception ex) {
-                LOG.error(MarkerManager.getMarker("NoReporting"), "Failed to set dock icon", ex);
+                LogManager.logStackTrace("Failed to set dock icon", ex);
             }
         }
 
@@ -698,7 +692,7 @@ public class App {
             try (FileReader fileReader = new FileReader(FileSystem.SETTINGS.toFile())) {
                 settings = Gsons.DEFAULT.fromJson(fileReader, Settings.class);
             } catch (Throwable t) {
-                LOG.error("Error loading settings, using defaults", t, false);
+                LogManager.logStackTrace("Error loading settings, using defaults", t, false);
                 settings = new Settings();
             }
         } else {
@@ -711,14 +705,14 @@ public class App {
                 properties.load(fileReader);
                 settings.convert(properties);
             } catch (Throwable t) {
-                LOG.error("Error loading settings, using defaults", t, false);
+                LogManager.logStackTrace("Error loading settings, using defaults", t, false);
                 settings = new Settings();
             }
 
             try {
                 Files.delete(FileSystem.LAUNCHER_CONFIG);
             } catch (IOException e) {
-                LOG.warn("Failed to delete old launcher config.");
+                LogManager.warn("Failed to delete old launcher config.");
             }
         }
 
@@ -895,32 +889,39 @@ public class App {
             System.exit(0);
         }
 
-        if (options.has("debug")) {
-            Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
-        }
-
         if (options.has("updated")) {
             wasUpdated = true;
         }
 
+        if (options.has("debug")) {
+            LogManager.showDebug = true;
+            LogManager.debugLevel = 1;
+            LogManager.debug("Debug logging is enabled! Please note that this will remove any censoring of user data!");
+        }
+
+        if (options.has("debug-level")) {
+            LogManager.debugLevel = (Integer) options.valueOf("debug-level");
+            LogManager.debug("Debug level has been set to " + options.valueOf("debug-level") + "!");
+        }
+
         skipSetupDialog = options.has("skip-setup-dialog");
         if (skipSetupDialog) {
-            LOG.debug("Skipping setup dialog!");
+            LogManager.debug("Skipping setup dialog!");
         }
 
         skipTrayIntegration = options.has("skip-tray-integration");
         if (skipTrayIntegration) {
-            LOG.debug("Skipping tray integration!");
+            LogManager.debug("Skipping tray integration!");
         }
 
         disableAnalytics = options.has("disable-analytics");
         if (disableAnalytics) {
-            LOG.debug("Disabling analytics!");
+            LogManager.debug("Disabling analytics!");
         }
 
         disableErrorReporting = options.has("disable-error-reporting");
         if (disableErrorReporting) {
-            LOG.debug("Disabling error reporting!");
+            LogManager.debug("Disabling error reporting!");
         }
 
         if (options.has("working-dir")) {
@@ -932,41 +933,41 @@ public class App {
             String baseLauncherDomain = String.valueOf(options.valueOf("base-launcher-domain"));
 
             Constants.setBaseLauncherDomain(baseLauncherDomain);
-            LOG.warn("Base launcher domain set to " + baseLauncherDomain);
+            LogManager.warn("Base launcher domain set to " + baseLauncherDomain);
         }
 
         if (options.has("base-cdn-domain")) {
             String baseCdnDomain = String.valueOf(options.valueOf("base-cdn-domain"));
 
             Constants.setBaseCdnDomain(baseCdnDomain);
-            LOG.warn("Base cdn domain set to " + baseCdnDomain);
+            LogManager.warn("Base cdn domain set to " + baseCdnDomain);
         }
 
         if (options.has("base-cdn-path")) {
             String baseCdnPath = String.valueOf(options.valueOf("base-cdn-path"));
 
             Constants.setBaseCdnPath(baseCdnPath);
-            LOG.warn("Base cdn path set to " + baseCdnPath);
+            LogManager.warn("Base cdn path set to " + baseCdnPath);
         }
 
         allowAllSslCerts = options.has("allow-all-ssl-certs");
         if (allowAllSslCerts) {
-            LOG.warn("Allowing all ssl certs. This is insecure and should only be used for development.");
+            LogManager.warn("Allowing all ssl certs. This is insecure and should only be used for development.");
         }
 
         noLauncherUpdate = options.has("no-launcher-update");
         if (noLauncherUpdate) {
-            LOG.debug("Not updating the launcher!");
+            LogManager.debug("Not updating the launcher!");
         }
 
         noConsole = options.has("no-console");
         if (noConsole) {
-            LOG.debug("Not showing console!");
+            LogManager.debug("Not showing console!");
         }
 
         closeLauncher = options.has("close-launcher");
         if (closeLauncher) {
-            LOG.debug("Closing launcher once Minecraft is launched!");
+            LogManager.debug("Closing launcher once Minecraft is launched!");
         }
 
         if (options.has("proxy-type") && options.has("proxy-host") && options.has("proxy-port")) {
@@ -977,7 +978,7 @@ public class App {
             Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.valueOf(proxyType),
                     new InetSocketAddress(proxyHost, proxyPort));
 
-            LOG.warn("Proxy set to " + proxy);
+            LogManager.warn("Proxy set to " + proxy);
 
             ProxySelector.setDefault(new ProxySelector() {
                 @Override
@@ -987,7 +988,7 @@ public class App {
 
                 @Override
                 public void connectFailed(URI uri, SocketAddress sa, IOException e) {
-                    LOG.error("Connection could not be established to proxy at socket [" + sa + "]", e);
+                    LogManager.logStackTrace("Connection could not be established to proxy at socket [" + sa + "]", e);
                 }
             });
         }
@@ -995,7 +996,7 @@ public class App {
         if (options.has("config-override")) {
             configOverride = (String) options.valueOf("config-override");
 
-            LOG.warn("Config overridden: " + configOverride);
+            LogManager.warn("Config overridden: " + configOverride);
         }
     }
 }

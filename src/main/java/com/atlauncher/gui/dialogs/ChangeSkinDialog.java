@@ -40,8 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -50,6 +48,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.MojangAPIUtils;
@@ -57,8 +56,6 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ChangeSkinDialog extends JDialog {
-    private static final Logger LOG = LogManager.getLogger(ChangeSkinDialog.class);
-
     private JTextField skinPath;
     private JComboBox<ComboItem<String>> skinType;
     private File selectedSkinFile;
@@ -160,7 +157,7 @@ public class ChangeSkinDialog extends JDialog {
                     skinPath.setText(selectedPath.getAbsolutePath());
                     uploadButton.setEnabled(true);
                 } catch (IOException err) {
-                    LOG.error("Error reading in skin", err);
+                    LogManager.logStackTrace("Error reading in skin", err);
                 }
             }
         });

@@ -46,13 +46,11 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Update;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
@@ -66,8 +64,6 @@ import oshi.software.os.OperatingSystem.ProcessSorting;
 
 public enum OS {
     LINUX, WINDOWS, OSX;
-
-    private static final Logger LOG = LogManager.getLogger(OS.class);
 
     private static int memory = 0;
     private static SystemInfo systemInfo = null;
@@ -152,7 +148,7 @@ public enum OS {
         try {
             OS.openWebBrowser(new URI(url));
         } catch (Exception e) {
-            LOG.error("Error opening web browser!", e);
+            LogManager.logStackTrace("Error opening web browser!", e);
         }
     }
 
@@ -163,7 +159,7 @@ public enum OS {
         try {
             OS.openWebBrowser(url.toURI());
         } catch (URISyntaxException e) {
-            LOG.error("Error opening web browser!", e);
+            LogManager.logStackTrace("Error opening web browser!", e);
         }
     }
 
@@ -178,10 +174,10 @@ public enum OS {
             } else if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(uri);
             } else {
-                LOG.error("Cannot open web browser as no supported methods were found");
+                LogManager.error("Cannot open web browser as no supported methods were found");
             }
         } catch (Exception e) {
-            LOG.error("Error opening web browser!", e);
+            LogManager.logStackTrace("Error opening web browser!", e);
         }
     }
 
@@ -195,7 +191,6 @@ public enum OS {
     public static void openFileExplorer(Path path, boolean toFile) {
         try {
             if ((toFile || !Files.isDirectory(path)) && OS.isWindows()) {
-                LOG.info("/select,{}", path.toAbsolutePath());
                 Runtime.getRuntime().exec("explorer /select," + path.toAbsolutePath());
             } else {
                 Path pathToOpen = path;
@@ -210,11 +205,11 @@ public enum OS {
                         || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
                     Runtime.getRuntime().exec("xdg-open " + pathToOpen.toString());
                 } else {
-                    LOG.error("Cannot open file explorer as no supported methods were found");
+                    LogManager.error("Cannot open file explorer as no supported methods were found");
                 }
             }
         } catch (Exception e) {
-            LOG.error("Error opening file explorer!", e);
+            LogManager.logStackTrace("Error opening file explorer!", e);
         }
     }
 
@@ -364,7 +359,7 @@ public enum OS {
             }
         } catch (SecurityException | InvocationTargetException | IllegalAccessException | IllegalArgumentException
                 | NoSuchMethodException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
         PerformanceManager.end();
         return ram;
@@ -385,7 +380,7 @@ public enum OS {
 
             ram = (int) (globalMemory.getTotal() / 1048576);
         } catch (Throwable t) {
-            LOG.error("error", t);
+            LogManager.logStackTrace(t);
         }
 
         PerformanceManager.end();
@@ -495,7 +490,7 @@ public enum OS {
             path = thisFile.getCanonicalPath();
             path = URLDecoder.decode(path, "UTF-8");
         } catch (IOException e) {
-            LOG.error("error", e);
+            LogManager.logStackTrace(e);
         }
 
         List<String> arguments = new ArrayList<>();

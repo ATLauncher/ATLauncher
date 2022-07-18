@@ -28,9 +28,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -44,8 +41,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class PackManager {
-    private static final Logger LOG = LogManager.getLogger(PackManager.class);
-
     public static List<Pack> getPacks() {
         return Data.PACKS;
     }
@@ -55,7 +50,7 @@ public class PackManager {
      */
     public static void loadPacks() {
         PerformanceManager.start();
-        LOG.debug("Loading packs");
+        LogManager.debug("Loading packs");
         Data.PACKS.clear();
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
@@ -63,9 +58,9 @@ public class PackManager {
             Data.PACKS.addAll(Gsons.DEFAULT_ALT
                     .fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
-            LOG.error("error: ", e);
+            LogManager.logStackTrace(e);
         }
-        LOG.debug("Finished loading packs");
+        LogManager.debug("Finished loading packs");
         PerformanceManager.end();
     }
 
@@ -268,7 +263,7 @@ public class PackManager {
      */
     public static void loadUsers() {
         PerformanceManager.start();
-        LOG.debug("Loading users");
+        LogManager.debug("Loading users");
         List<PackUsers> packUsers = new ArrayList<>();
 
         try {
@@ -277,14 +272,14 @@ public class PackManager {
             packUsers.addAll(
                     Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
-            LOG.error("error: ", e);
+            LogManager.logStackTrace(e);
         }
 
         for (PackUsers pu : packUsers) {
             pu.addUsers();
         }
 
-        LOG.debug("Finished loading users");
+        LogManager.debug("Finished loading users");
         PerformanceManager.end();
     }
 
@@ -299,7 +294,7 @@ public class PackManager {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile() && file.getName().endsWith(".png") && !packImageFilenames.contains(file.getName())) {
-                    LOG.info("Pack image no longer used, deleting file " + file.getName());
+                    LogManager.info("Pack image no longer used, deleting file " + file.getName());
                     file.delete();
                 }
             }

@@ -20,64 +20,26 @@ package com.atlauncher.utils;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
+import com.atlauncher.evnt.LogEvent.LogType;
+import com.atlauncher.managers.LogManager;
 
 public class SystemOutInterceptor extends PrintStream {
-    private final Logger logger;
+    private final LogType logType;
 
-    private SystemOutInterceptor(final String name, final OutputStream os) {
-        super(os, true);
-        this.logger = LogManager.getLogger(name);
+    public SystemOutInterceptor(OutputStream out, LogType type) {
+        super(out, true);
+
+        logType = type;
     }
 
-    protected Logger getLogger() {
-        return this.logger;
-    }
+    @Override
+    public void print(String s) {
+        super.print(s);
 
-    public static SystemOutInterceptor asDebug(final OutputStream os) {
-        return new DebugOutInterceptor(os);
-    }
-
-    public static SystemOutInterceptor asInfo(final OutputStream os) {
-        return new InfoOutInterceptor(os);
-    }
-
-    public static SystemOutInterceptor asError(final OutputStream os) {
-        return new ErrorOutInterceptor(os);
-    }
-
-    private static final class DebugOutInterceptor extends SystemOutInterceptor {
-        DebugOutInterceptor(final OutputStream os) {
-            super("debug-osi", os);
-        }
-
-        @Override
-        public void print(@Nullable String val) {
-            this.getLogger().debug(val);
-        }
-    }
-
-    private static final class InfoOutInterceptor extends SystemOutInterceptor {
-        InfoOutInterceptor(final OutputStream os) {
-            super("default-osi", os);
-        }
-
-        @Override
-        public void print(@Nullable String val) {
-            this.getLogger().info(val);
-        }
-    }
-
-    private static final class ErrorOutInterceptor extends SystemOutInterceptor {
-        ErrorOutInterceptor(final OutputStream os) {
-            super("error-osi", os);
-        }
-
-        @Override
-        public void print(@Nullable String val) {
-            this.getLogger().error(val);
+        if (logType == LogType.ERROR) {
+            LogManager.error(s);
+        } else {
+            LogManager.debug(s);
         }
     }
 }

@@ -22,8 +22,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +31,7 @@ import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Authentication;
 
@@ -40,8 +39,6 @@ import com.atlauncher.utils.Authentication;
  * 12 / 06 / 2022
  */
 public class AccountsViewModel implements IAccountsViewModel {
-    private static final Logger LOG = LogManager.getLogger(AccountsViewModel.class);
-
     @Override
     public int accountCount() {
         return AccountManager.getAccounts().size();
@@ -194,7 +191,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         }
 
         Analytics.sendEvent("Edit", "Account");
-        LOG.info("Edited Account {}", account);
+        LogManager.info("Edited Account " + account);
         pushNewAccounts();
     }
 

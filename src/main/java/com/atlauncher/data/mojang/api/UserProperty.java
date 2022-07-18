@@ -19,15 +19,11 @@ package com.atlauncher.data.mojang.api;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.annot.Json;
+import com.atlauncher.managers.LogManager;
 
 @Json
 public class UserProperty {
-    private static final Logger LOG = LogManager.getLogger(UserProperty.class);
-
     private long timestamp;
     private String profileId;
     private String profileName;
@@ -52,7 +48,7 @@ public class UserProperty {
 
     public ProfileTexture getTexture(String name) {
         if (!textures.containsKey(name)) {
-            LOG.error("No texture " + name + " for account " + this.profileName);
+            LogManager.error("No texture " + name + " for account " + this.profileName);
             return null;
         }
 

@@ -27,8 +27,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.atlauncher.Data;
@@ -46,7 +44,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class MinecraftManager {
-    private static final Logger LOG = LogManager.getLogger(MinecraftManager.class);
     private static boolean forceReloaded = false;
 
     public static void loadMinecraftVersions() {
@@ -58,7 +55,7 @@ public class MinecraftManager {
      */
     public static void loadMinecraftVersions(boolean force) {
         PerformanceManager.start();
-        LOG.debug("Loading Minecraft versions");
+        LogManager.debug("Loading Minecraft versions");
 
         Data.MINECRAFT.clear();
 
@@ -75,14 +72,14 @@ public class MinecraftManager {
 
             versionManifest = download.asClassWithThrow(VersionManifest.class);
         } catch (IOException e) {
-            LOG.error("error: ", e);
+            LogManager.logStackTrace(e);
 
             if (Files.exists(manifestPath)) {
                 try {
                     versionManifest = Gsons.DEFAULT.fromJson(new FileReader(manifestPath.toFile()),
                             VersionManifest.class);
                 } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
-                    LOG.error("error: ", e1);
+                    LogManager.logStackTrace(e1);
                 }
             }
         }
@@ -95,7 +92,7 @@ public class MinecraftManager {
 
         loadAdditiveVersions();
 
-        LOG.debug("Finished loading Minecraft versions");
+        LogManager.debug("Finished loading Minecraft versions");
         PerformanceManager.end();
     }
 
@@ -110,7 +107,7 @@ public class MinecraftManager {
             try {
                 additiveVersionsManifest = Gsons.DEFAULT.fromJson(new FileReader(additiveManifestPath.toFile()), type);
             } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
-                LOG.error("error: ", e1);
+                LogManager.logStackTrace(e1);
             }
         }
 
@@ -130,7 +127,7 @@ public class MinecraftManager {
      */
     public static void loadJavaRuntimes(boolean force) {
         PerformanceManager.start();
-        LOG.debug("Loading Java runtimes");
+        LogManager.debug("Loading Java runtimes");
 
         try {
             Download download = Download.build().setUrl(Constants.MINECRAFT_JAVA_RUNTIME_URL);
@@ -142,10 +139,10 @@ public class MinecraftManager {
             Data.JAVA_RUNTIMES = download.asClassWithThrow(JavaRuntimes.class);
         } catch (IOException e) {
             // safe to ignore, we'll just not use it
-            LOG.error("error: ", e);
+            LogManager.logStackTrace(e);
         }
 
-        LOG.debug("Finished loading Java runtimes");
+        LogManager.debug("Finished loading Java runtimes");
         PerformanceManager.end();
     }
 

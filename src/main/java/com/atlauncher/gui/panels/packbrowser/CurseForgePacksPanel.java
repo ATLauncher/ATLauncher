@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.constants.Constants;
@@ -44,12 +42,11 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
-    private static final Logger LOG = LogManager.getLogger(CurseForgePacksPanel.class);
-
     GridBagConstraints gbc = new GridBagConstraints();
 
     boolean hasMorePages = true;
@@ -223,7 +220,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
                 Matcher matcher = pattern.matcher(id);
 
                 if (!matcher.find() || matcher.groupCount() < 2) {
-                    LOG.error("Cannot install as the url was not a valid CurseForge modpack url");
+                    LogManager.error("Cannot install as the url was not a valid CurseForge modpack url");
                     progressDialog.doneTask();
                     progressDialog.close();
                     return;

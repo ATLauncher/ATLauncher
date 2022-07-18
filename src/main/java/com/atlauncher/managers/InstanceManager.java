@@ -24,9 +24,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -39,8 +36,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 public class InstanceManager {
-    private static final Logger LOG = LogManager.getLogger(InstanceManager.class);
-
     public static List<Instance> getInstances() {
         return Data.INSTANCES;
     }
@@ -56,7 +51,7 @@ public class InstanceManager {
      */
     public static void loadInstances() {
         PerformanceManager.start();
-        LOG.debug("Loading instances");
+        LogManager.debug("Loading instances");
         Data.INSTANCES.clear();
 
         for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
@@ -69,21 +64,21 @@ public class InstanceManager {
                 try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
                     instance = Gsons.MINECRAFT.fromJson(fileReader, Instance.class);
                     instance.ROOT = instanceDir.toPath();
-                    LOG.debug("Loaded instance from " + instanceDir);
+                    LogManager.debug("Loaded instance from " + instanceDir);
 
                     if (instance.launcher == null) {
                         instance = null;
                         throw new JsonSyntaxException("Error parsing instance.json as Instance");
                     }
                 } catch (JsonIOException | JsonSyntaxException e) {
-                    LOG.error("Failed to load instance in the folder " + instanceDir, e);
+                    LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e);
                     continue;
                 }
 
                 if (instance.launcher.curseForgeManifest != null
                         && instance.launcher.curseForgeManifest.projectID != null
                         && instance.launcher.curseForgeManifest.fileID != null) {
-                    LOG.error(String.format("Converting instance \"%s\" CurseForge information",
+                    LogManager.info(String.format("Converting instance \"%s\" CurseForge information",
                             instance.launcher.name));
                     instance.launcher.curseForgeProject = CurseForgeApi
                             .getProjectById(instance.launcher.curseForgeManifest.projectID);
@@ -96,7 +91,7 @@ public class InstanceManager {
                 }
 
                 if (instance.launcher.numPlays == null) {
-                    LOG.info(String.format("Converting instance \"%s\" numPlays/lastPlayed",
+                    LogManager.info(String.format("Converting instance \"%s\" numPlays/lastPlayed",
                             instance.launcher.name));
                     instance.launcher.numPlays = instance.numPlays;
                     instance.launcher.lastPlayed = instance.lastPlayed;
@@ -106,15 +101,16 @@ public class InstanceManager {
 
                 if (instance.launcher.account != null
                         && !AccountManager.isAccountByName(instance.launcher.account)) {
-                    LOG.warn(String.format("No account with name of %s, so setting instance account back to default",
-                            instance.launcher.account));
+                    LogManager.warn(
+                            String.format("No account with name of %s, so setting instance account back to default",
+                                    instance.launcher.account));
                     instance.launcher.account = null;
                     instance.save();
                 }
 
                 Data.INSTANCES.add(instance);
             } catch (Exception e2) {
-                LOG.error("Failed to load instance in the folder " + instanceDir, e2);
+                LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
                 continue;
             }
         }
@@ -130,7 +126,7 @@ public class InstanceManager {
             }
         });
 
-        LOG.debug("Finished loading instances");
+        LogManager.debug("Finished loading instances");
         PerformanceManager.end();
     }
 
@@ -209,7 +205,7 @@ public class InstanceManager {
         Instance clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), Instance.class);
 
         if (clonedInstance == null) {
-            LOG.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
+            LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.launcher.name = clonedName;
             clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());

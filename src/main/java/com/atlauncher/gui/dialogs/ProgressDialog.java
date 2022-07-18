@@ -28,18 +28,15 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.interfaces.NetworkProgressable;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
+
+import org.mini2Dx.gettext.GetText;
 
 @SuppressWarnings("serial")
 public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
-    private static final Logger LOG = LogManager.getLogger(ProgressDialog.class);
-
     private final String labelText; // The text to add to the JLabel
     private final JProgressBar progressBar; // The Progress Bar
     private final JProgressBar subProgressBar; // The Progress Bar
@@ -89,7 +86,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
             public void windowClosing(WindowEvent e) {
                 wasClosed = true;
                 if (closedLogMessage != null) {
-                    LOG.error(closedLogMessage);
+                    LogManager.error(closedLogMessage);
                 }
                 if (thread != null) {
                     if (thread.isAlive()) {

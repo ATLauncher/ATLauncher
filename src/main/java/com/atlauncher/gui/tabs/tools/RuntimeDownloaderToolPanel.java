@@ -39,7 +39,7 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText
                 .tr("Use this to automatically install and use a recommended version of Java to use with ATLauncher."))
-            .build());
+                .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(e -> downloadRuntime());
@@ -54,34 +54,32 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
 
     private void removeRuntime() {
         viewModel.removeRuntime(
-            onFail -> {
-                DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                    .setContent(new HTMLBuilder().center()
-                        .text(GetText.tr("An error occurred removing the runtime. Please check the logs.")).build())
-                    .setType(DialogManager.ERROR).show();
-            },
-            onSuccess -> {
-                DialogManager
-                    .okDialog().setTitle(GetText.tr("Runtime Downloader")).setContent(new HTMLBuilder().center()
-                        .text(GetText.tr("Downloaded runtimes have been removed.")).build())
-                    .setType(DialogManager.INFO).show();
-            }
-        );
+                onFail -> {
+                    DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
+                            .setContent(new HTMLBuilder().center()
+                                    .text(GetText.tr("An error occurred removing the runtime. Please check the logs."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                },
+                onSuccess -> {
+                    DialogManager
+                            .okDialog().setTitle(GetText.tr("Runtime Downloader")).setContent(new HTMLBuilder().center()
+                                    .text(GetText.tr("Downloaded runtimes have been removed.")).build())
+                            .setType(DialogManager.INFO).show();
+                });
     }
 
     private void downloadRuntime() {
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Runtime Downloader"), 3,
-            GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
+                GetText.tr("Downloading. Please Wait!"), "Runtime Downloader Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
             dialog.setReturnValue(
-                viewModel.downloadRuntime(
-                    dialog,
-                    taskComplete -> dialog.doneTask(),
-                    dialog::setLabel,
-                    clear -> dialog.clearDownloadedBytes()
-                )
-            );
+                    viewModel.downloadRuntime(
+                            dialog,
+                            taskComplete -> dialog.doneTask(),
+                            dialog::setLabel,
+                            clear -> dialog.clearDownloadedBytes()));
 
             dialog.close();
         }));
@@ -90,16 +88,16 @@ public class RuntimeDownloaderToolPanel extends AbstractToolPanel {
 
         if (!dialog.getReturnValue()) {
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                .setContent(new HTMLBuilder().center()
-                    .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
-                    .build())
-                .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("An error occurred downloading the runtime. Please check the logs."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
         } else {
             DialogManager.okDialog().setTitle(GetText.tr("Runtime Downloader"))
-                .setContent(new HTMLBuilder().center()
-                    .text(GetText.tr("The recommended version of Java has been installed and set to be used."))
-                    .build())
-                .setType(DialogManager.INFO).show();
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The recommended version of Java has been installed and set to be used."))
+                            .build())
+                    .setType(DialogManager.INFO).show();
         }
     }
 }

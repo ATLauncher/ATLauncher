@@ -29,8 +29,6 @@ import java.util.stream.Collectors;
 import javax.swing.JPanel;
 
 import org.apache.commons.text.WordUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.constants.UIConstants;
@@ -46,12 +44,11 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ModrinthApi;
 
 public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
-    private static final Logger LOG = LogManager.getLogger(ModrinthPacksPanel.class);
-
     GridBagConstraints gbc = new GridBagConstraints();
 
     boolean hasMorePages = true;
@@ -208,7 +205,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
             Matcher matcher = pattern.matcher(id);
 
             if (!matcher.find() || matcher.groupCount() < 1) {
-                LOG.error("Cannot install as the url was not a valid Modrinth modpack url");
+                LogManager.error("Cannot install as the url was not a valid Modrinth modpack url");
                 return;
             }
 

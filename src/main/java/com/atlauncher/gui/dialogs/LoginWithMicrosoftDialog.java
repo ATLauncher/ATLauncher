@@ -33,8 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -51,6 +49,7 @@ import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
@@ -60,8 +59,6 @@ import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
-    private static final Logger LOG = LogManager.getLogger(LoginWithMicrosoftDialog.class);
-
     private static final HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
     private static final VirtualHost host = server.getVirtualHost(null);
 
@@ -116,7 +113,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         try {
             startServer();
         } catch (IOException e) {
-            LOG.error("Error starting web server for Microsoft login", e);
+            LogManager.logStackTrace("Error starting web server for Microsoft login", e);
 
             close();
         }
@@ -136,7 +133,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             if (req.getParams().containsKey("error")) {
                 res.getHeaders().add("Content-Type", "text/plain");
                 res.send(500, GetText.tr("Error logging in. Check console for more information"));
-                LOG.error("Error logging into Microsoft account: {}", URLDecoder
+                LogManager.error("Error logging into Microsoft account: " + URLDecoder
                         .decode(req.getParams().get("error_description"), StandardCharsets.UTF_8.toString()));
                 close();
                 return 0;
@@ -152,7 +149,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             try {
                 acquireAccessToken(req.getParams().get("code"));
             } catch (Exception e) {
-                LOG.error("Error acquiring accessToken", e);
+                LogManager.logStackTrace("Error acquiring accessToken", e);
                 res.getHeaders().add("Content-Type", "text/html");
                 res.send(500, GetText.tr("Error logging in. Check console for more information"));
                 close();
@@ -217,14 +214,14 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             xstsAuthResponse = MicrosoftAuthAPI.getXstsToken(xblToken);
         } catch (DownloadException e) {
             if (e.response != null) {
-                LOG.debug(Gsons.DEFAULT.toJson(e.response));
+                LogManager.debug(Gsons.DEFAULT.toJson(e.response));
                 XboxLiveAuthErrorResponse xboxLiveAuthErrorResponse = Gsons.DEFAULT.fromJson(e.response,
                         XboxLiveAuthErrorResponse.class);
 
                 String error = xboxLiveAuthErrorResponse.getErrorMessageForCode();
 
                 if (error != null) {
-                    LOG.warn(error);
+                    LogManager.warn(error);
                     DialogManager.okDialog().setTitle(GetText.tr("Error logging into Xbox Live"))
                             .setContent(new HTMLBuilder().center().text(error).build()).setType(DialogManager.ERROR)
                             .show();

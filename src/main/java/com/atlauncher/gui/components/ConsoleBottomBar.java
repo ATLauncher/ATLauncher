@@ -27,8 +27,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -38,12 +36,12 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.thread.PasteUpload;
 
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
-    private static final Logger LOG = LogManager.getLogger(ConsoleBottomBar.class);
 
     private final JButton clearButton = new JButton(GetText.tr("Clear"));
     private final JButton copyLogButton = new JButton(GetText.tr("Copy Log"));
@@ -72,12 +70,12 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     private void addActionListeners() {
         clearButton.addActionListener(e -> {
             App.console.clearConsole();
-            LOG.info("Console Cleared");
+            LogManager.info("Console Cleared");
         });
         copyLogButton.addActionListener(e -> {
             Analytics.sendEvent("CopyLog", "Launcher");
             App.TOASTER.pop("Copied Log to clipboard");
-            LOG.info("Copied Log to clipboard");
+            LogManager.info("Copied Log to clipboard");
             StringSelection text = new StringSelection(App.console.getLog());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(text, null);
@@ -94,7 +92,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                     Thread.currentThread().interrupt();
                     dialog.setReturnValue(null);
                 } catch (ExecutionException ex) {
-                    LOG.error("Exception while uploading paste", ex);
+                    LogManager.logStackTrace("Exception while uploading paste", ex);
                     dialog.setReturnValue(null);
                 }
 
@@ -107,13 +105,13 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
                 Analytics.sendEvent("UploadLog", "Launcher");
                 App.TOASTER.pop("Log uploaded and link copied to clipboard");
-                LOG.info("Log uploaded and link copied to clipboard: {}", result);
+                LogManager.info("Log uploaded and link copied to clipboard: " + result);
                 StringSelection text = new StringSelection(result);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(text, null);
             } else {
                 App.TOASTER.popError("Log failed to upload!");
-                LOG.error("Log failed to upload: {}", result);
+                LogManager.error("Log failed to upload: " + result);
             }
         });
         killMinecraftButton.addActionListener(arg0 -> {

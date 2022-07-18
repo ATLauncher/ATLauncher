@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
@@ -33,6 +30,7 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.utils.Pair;
@@ -42,8 +40,6 @@ import com.atlauncher.workers.InstanceInstaller;
 import okhttp3.OkHttpClient;
 
 public class LegacyForgeLoader implements Loader {
-    private static final Logger LOG = LogManager.getLogger(LegacyForgeLoader.class);
-
     protected String version;
     protected String rawVersion;
 
@@ -98,10 +94,10 @@ public class LegacyForgeLoader implements Loader {
                 this.rawVersion = (String) metadata.get("rawVersion");
             }
         } else if ((boolean) metadata.get("latest")) {
-            LOG.debug("Downloading latest Forge version");
+            LogManager.debug("Downloading latest Forge version");
             this.version = this.getLatestVersion();
         } else if ((boolean) metadata.get("recommended")) {
-            LOG.debug("Downloading recommended Forge version");
+            LogManager.debug("Downloading recommended Forge version");
             this.version = getRecommendedVersion(this.minecraft);
         }
 
