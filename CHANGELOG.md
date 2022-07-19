@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with NPEs when checking for CurseForge mod updates [#608]
 
 ### Misc
 - Remove headless dependency from debian package

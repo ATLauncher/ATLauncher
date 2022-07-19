@@ -380,7 +380,7 @@ public class EditModsDialog extends JDialog {
         progressDialog.addThread(new Thread(() -> {
             for (ModsJCheckBox mod : mods) {
                 if (mod.isSelected() && mod.getDisableableMod().isUpdatable()) {
-                    mod.getDisableableMod().checkForUpdate(this, instance);
+                    mod.getDisableableMod().checkForUpdate(progressDialog, instance);
                 }
                 progressDialog.doneTask();
             }

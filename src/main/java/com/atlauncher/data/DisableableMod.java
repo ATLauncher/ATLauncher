@@ -411,6 +411,10 @@ public class DisableableMod implements Serializable {
                 return ((Boolean) dialog.getReturnValue()) == true;
             }
 
+            if (dialog.getReturnValue() == null) {
+                return false;
+            }
+
             new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instance,
                     curseForgeFileId);
         } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()
