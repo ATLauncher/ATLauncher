@@ -1,9 +1,9 @@
 Package: atlauncher
-Version: 1.0-1
+Version: 1.2-1
 Section: games
 Priority: optional
 Architecture: all
-Depends: default-jre-headless | java8-runtime-headless | java8-runtime | java-8-runtime, wget, desktop-file-utils
+Depends: java17-runtime | java-17-runtime | java8-runtime | java-8-runtime, wget, desktop-file-utils
 Installed-Size: 2220
 Maintainer: Ryan Dowling <ryan.dowling@atlauncher.com>
 Description: A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
