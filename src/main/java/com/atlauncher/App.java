@@ -865,6 +865,8 @@ public class App {
         parser.accepts("close-launcher", "If the launcher should be closed after launching an instance.")
                 .withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug", "If debug logging should be enabled.").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("debug-level", "The level of debug logging that should be logged.").withRequiredArg()
+                .ofType(Integer.class);
         parser.accepts("launch",
                 "The name of an instance to automatically launch. Can be the instances directory name in the file system or the full name of the instance.")
                 .withRequiredArg().ofType(String.class);
