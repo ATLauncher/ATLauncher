@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with NPEs when checking for CurseForge mod updates [#608]
 - Add --debug-level option back in
 - Noisy logs around images for instance/server cards
+- Some incorrect colours on light themes
 
 ### Misc
 - Remove headless dependency from debian package

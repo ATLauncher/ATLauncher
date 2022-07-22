@@ -55,7 +55,6 @@ public final class ModCard extends JPanel {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(Color.WHITE);
         g2.drawString(this.mod.getName(), 10, 10);
         g2.setColor(this.mod.isOptional() ? Color.GREEN : Color.RED);
         g2.drawString(this.mod.isOptional() ? "Optional" : "Required",
