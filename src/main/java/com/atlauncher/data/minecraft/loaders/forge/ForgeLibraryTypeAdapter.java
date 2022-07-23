@@ -57,10 +57,9 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
             library.downloads = new Gson().fromJson(object.get("downloads").getAsJsonObject(), Downloads.class);
 
             if (library.downloads.artifact.url.isEmpty()) {
-                // forge installer provides this out the zip, but when the file is removed from
-                // shared libraries, we need to change the url to grab the launcher jar (same)
-                library.downloads.artifact.url = Constants.FORGE_MAVEN_BASE
-                        + library.downloads.artifact.path.replace(".jar", "-launcher.jar");
+                // forge installer provides this out the zip (14.23.5.2851 and later), but when
+                // the file is removed from shared libraries, we need to add the url
+                library.downloads.artifact.url = Constants.FORGE_MAVEN_BASE + library.downloads.artifact.path;
             }
 
             // use our own mirror for Forge downloads

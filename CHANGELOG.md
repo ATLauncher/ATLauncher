@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add --debug-level option back in
 - Noisy logs around images for instance/server cards
 - Some incorrect colours on light themes
+- Issue with main Forge library not downloading correctly from our CDN
 
 ### Misc
 - Remove headless dependency from debian package
