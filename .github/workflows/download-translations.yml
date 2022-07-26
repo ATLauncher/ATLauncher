@@ -1,0 +1,30 @@
+name: Download Translations
+
+on: [workflow_dispatch]
+
+jobs:
+  download-translations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download translations from crowdin
+        uses: crowdin/github-action@1.4.10
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          skip_untranslated_strings: true
+          skip_untranslated_files: true
+          export_only_approved: true
+          push_translations: false
+          project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
+          token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Commit changed files
+        uses: EndBug/add-and-commit@v7.0.0
+        with:
+          add: 'packaging/aur/'
+          message: 'chore: update translations'

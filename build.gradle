@@ -4,9 +4,15 @@ import java.util.stream.Collectors
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url 'https://jitpack.io'
+            content {
+                includeGroup "com.github.RyanTheAllmighty.gettext"
+            }
+        }
     }
     dependencies {
-        classpath 'org.mini2Dx:gettext-gradle-plugin:1.10.4'
+        classpath 'com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:aab5c30bf8'
     }
 }
 

@@ -234,19 +234,27 @@ start translating.
 
 ### Updating the template file
 
+Every push to master will automatically add any new strings that need translating via GitHub actions.
+
+#### Manual Steps
+
 If new strings are added to the launcher, the template file will need to be updated in order to take into account the
 new strings.
 
 In order to do this, run `./gradlew generatePots` which will scan the source files and create a
 `build/gettext/translations.pot` file.
 
-Note that out of the box, this will not generate in the correct format. The file should be opened with
-[POEdit](https://poedit.net/), which will automatically fix the file, which then you can save to `translations.pot` in
-the root directory.
+Note that out of the box, this will not generate in the correct format. You must run the `deduplicateTranslations` script in
+the `scripts/deduplicateTranslations` folder which will use Docker to fix the `translations.pot` file.
 
 This file can then be uploaded to Crowdin by ATLauncher staff to give access to the translators.
 
 ### Adding new languages from Crowdin
+
+Running [this action](https://github.com/ATLauncher/ATLauncher/actions/workflows/download-translations.yml) will
+download all approved translations strings and make a commit to master with then changed language files.
+
+#### Manual Steps
 
 Once a language has been translated enough to add support to the launcher (or update support) there's a few steps we
 need to take.
