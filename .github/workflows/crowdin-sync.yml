@@ -3,6 +3,8 @@ name: Crowdin Sync
 on:
   push:
     branches: [master]
+    paths:
+      - 'src/main/java/com/atlauncher/**'
 
 jobs:
   synchronize-with-crowdin:
