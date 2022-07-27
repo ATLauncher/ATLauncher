@@ -40,7 +40,8 @@ public class LibraryTypeAdapter implements JsonDeserializer<Library> {
         } else {
             library = new Gson().fromJson(object, Library.class);
 
-            if (library.name.contains("forge") && library.downloads.artifact.url.endsWith("-launcher.jar")) {
+            if (library.name.contains("forge") && library.downloads != null && library.downloads.artifact != null
+                    && library.downloads.artifact.url.endsWith("-launcher.jar")) {
                 library.downloads.artifact.url = library.downloads.artifact.url.replace("-launcher.jar", ".jar");
             }
         }
