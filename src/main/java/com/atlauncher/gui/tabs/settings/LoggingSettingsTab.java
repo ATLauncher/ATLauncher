@@ -37,8 +37,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
 
     private final JCheckBox enableAnalytics;
 
-    private JCheckBox enableOpenEyeReporting;
-
     public LoggingSettingsTab() {
         // Forge Logging Level
         gbc.gridx = 0;
@@ -80,15 +78,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         enableLogs = new JCheckBox();
-        enableLogs.addActionListener(e -> {
-            if (!enableLogs.isSelected()) {
-                enableOpenEyeReporting.setSelected(false);
-                enableOpenEyeReporting.setEnabled(false);
-            } else {
-                enableOpenEyeReporting.setSelected(true);
-                enableOpenEyeReporting.setEnabled(true);
-            }
-        });
         if (App.settings.enableLogs) {
             enableLogs.setSelected(true);
         }
@@ -115,38 +104,12 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
             enableAnalytics.setSelected(true);
         }
         add(enableAnalytics, gbc);
-
-        // Enable OpenEye Reporting
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover enableOpenEyeReportingLabel = new JLabelWithHover(GetText.tr("Enable OpenEye Reporting") + "?",
-                HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "OpenEye is a mod/project created by the OpenMods team which aims to help gather statistics and crash logs from Minecraft in order to help users and modders discover and fix issues with mods. With the OpenEye mod installed (each ModPack chooses if they wish to install it or not, it's not installed by default to all packs by the Launcher) everytime Minecraft crashes the OpenEye report is sent to OpenEye for analysis and if a note from the modder has been added on the cause/fix it will be displayed to you. For more information please see http://openeye.openblocks.info"))
-                        .build());
-        add(enableOpenEyeReportingLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableOpenEyeReporting = new JCheckBox();
-        if (!App.settings.enableLogs) {
-            enableOpenEyeReporting.setEnabled(false);
-        }
-        if (App.settings.enableOpenEyeReporting) {
-            enableOpenEyeReporting.setSelected(true);
-        }
-        add(enableOpenEyeReporting, gbc);
     }
 
     public void save() {
         App.settings.forgeLoggingLevel = (String) forgeLoggingLevel.getSelectedItem();
         App.settings.enableLogs = enableLogs.isSelected();
         App.settings.enableAnalytics = enableAnalytics.isSelected();
-        App.settings.enableOpenEyeReporting = enableOpenEyeReporting.isSelected();
     }
 
     @Override

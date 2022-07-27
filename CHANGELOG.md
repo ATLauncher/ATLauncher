@@ -16,3 +16,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Remove headless dependency from debian package
+- Remove openeye reporting

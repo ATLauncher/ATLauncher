@@ -116,7 +116,6 @@ public class Settings {
     public boolean enableLogs = true;
     public boolean enableAnalytics = true;
     public String analyticsClientId = UUID.randomUUID().toString();
-    public boolean enableOpenEyeReporting = true;
 
     // Backups
     public boolean enableAutomaticBackupAfterLaunch = false;
@@ -261,11 +260,6 @@ public class Settings {
         String importedEnableAnalytics = properties.getProperty("enableanalytics");
         if (importedEnableAnalytics != null) {
             enableAnalytics = Boolean.parseBoolean(importedEnableAnalytics);
-        }
-
-        String importedEnableOpenEyeReporting = properties.getProperty("enableopeneyereporting");
-        if (importedEnableOpenEyeReporting != null) {
-            enableOpenEyeReporting = Boolean.parseBoolean(importedEnableOpenEyeReporting);
         }
 
         String importedLastAccount = properties.getProperty("lastaccount");
