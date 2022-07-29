@@ -53,10 +53,18 @@ public class ATLauncherLaf extends FlatLaf {
 
     /**
      * If user has disabled custom fonts or is using a language without a font, then
-     * we should be using the base "sansserif" font to let the OS font take over.
+     * we should use the base "sansserif" font to let the OS font take over.
      */
     private static boolean useBaseFont() {
-        return App.settings.disableCustomFonts || Language.localesWithoutFonts.contains(Language.selectedLocale);
+        return App.settings.disableCustomFonts || Language.localesWithoutFont.contains(Language.selectedLocale);
+    }
+
+    /**
+     * If user has disabled custom fonts or is using a language without a tab font,
+     * then we should use the base "sansserif" font to let the OS font take over.
+     */
+    private static boolean useTabFont() {
+        return App.settings.disableCustomFonts || Language.localesWithoutTabFont.contains(Language.selectedLocale);
     }
 
     public Font getNormalFont() {
@@ -84,7 +92,7 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     public Font getTabFont() {
-        if (useBaseFont()) {
+        if (useTabFont()) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 32f);
         } else {
             return Resources.makeFont(tabFontName).deriveFont(Font.PLAIN, 32f);

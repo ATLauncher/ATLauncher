@@ -35,7 +35,8 @@ import com.atlauncher.utils.Utils;
 public class Language {
     public final static List<Locale> locales = new ArrayList<>();
     public final static Map<String, Locale> languages = new LinkedHashMap<>();
-    public final static List<Locale> localesWithoutFonts = new ArrayList<>();
+    public final static List<Locale> localesWithoutFont = new ArrayList<>();
+    public final static List<Locale> localesWithoutTabFont = new ArrayList<>();
     public static String selected = Locale.ENGLISH.getDisplayName();
     public static Locale selectedLocale = Locale.ENGLISH;
 
@@ -71,12 +72,20 @@ public class Language {
         locales.add(new Locale("tr", "TR")); // Turkish
         locales.add(new Locale("uk", "UA")); // Ukranian
 
-        localesWithoutFonts.add(new Locale("ar", "SA"));
-        localesWithoutFonts.add(new Locale("zh", "CN"));
-        localesWithoutFonts.add(new Locale("zh", "TW"));
-        localesWithoutFonts.add(new Locale("he", "IL"));
-        localesWithoutFonts.add(new Locale("ja", "JP"));
-        localesWithoutFonts.add(new Locale("ko", "KR"));
+        localesWithoutFont.add(new Locale("ar", "SA"));
+        localesWithoutFont.add(new Locale("zh", "CN"));
+        localesWithoutFont.add(new Locale("zh", "TW"));
+        localesWithoutFont.add(new Locale("he", "IL"));
+        localesWithoutFont.add(new Locale("ja", "JP"));
+        localesWithoutFont.add(new Locale("ko", "KR"));
+
+        localesWithoutTabFont.add(new Locale("ar", "SA"));
+        localesWithoutTabFont.add(new Locale("zh", "CN"));
+        localesWithoutTabFont.add(new Locale("zh", "TW"));
+        localesWithoutTabFont.add(new Locale("he", "IL"));
+        localesWithoutTabFont.add(new Locale("el", "GR"));
+        localesWithoutTabFont.add(new Locale("ja", "JP"));
+        localesWithoutTabFont.add(new Locale("ko", "KR"));
     }
 
     public static void init() throws IOException {
