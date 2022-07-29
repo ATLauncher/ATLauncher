@@ -74,5 +74,6 @@ public class NilCard extends JPanel implements RelocalizationListener {
     public void onRelocalization() {
         TitledBorder border = (TitledBorder) this.getBorder();
         border.setTitle(GetText.tr("Nothing To Show"));
+        border.setTitleFont(App.THEME.getBoldFont().deriveFont(15f));
     }
 }

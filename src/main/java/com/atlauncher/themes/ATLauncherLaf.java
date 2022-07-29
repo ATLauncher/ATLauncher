@@ -17,10 +17,18 @@
  */
 package com.atlauncher.themes;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Language;
@@ -181,5 +189,53 @@ public class ATLauncherLaf extends FlatLaf {
 
         // if no theme specific icon, then return path to where a general one should be
         return "/assets/" + path + "/" + icon + ".png";
+    }
+
+    public void updateUIFonts() {
+        EventQueue.invokeLater(() -> {
+            for (Window w : Window.getWindows()) {
+                updateFontInComponentTree(w);
+            }
+        });
+    }
+
+    private void updateFontInComponentTree(Component c) {
+        if (c instanceof JComponent) {
+            JComponent jc = (JComponent) c;
+            JPopupMenu jpm = jc.getComponentPopupMenu();
+            if (jpm != null) {
+                updateFontInComponentTree(jpm);
+            }
+        }
+        Component[] children = null;
+        if (c instanceof JMenu) {
+            children = ((JMenu) c).getMenuComponents();
+        } else if (c instanceof Container) {
+            children = ((Container) c).getComponents();
+        }
+        if (children != null) {
+            for (Component child : children) {
+                updateFontInComponentTree(child);
+            }
+        }
+
+        Font f = c.getFont();
+        if (f != null) {
+            Font newFont = App.THEME.getNormalFont();
+
+            if (f.isBold()) {
+                newFont = App.THEME.getBoldFont();
+            }
+
+            if (f.getSize() == 32f) {
+                newFont = App.THEME.getTabFont();
+            } else if (f.getSize() == 17f) {
+                newFont = App.THEME.getNormalFont().deriveFont(17.0F);
+            } else {
+                newFont = newFont.deriveFont(f.getSize());
+            }
+
+            c.setFont(newFont);
+        }
     }
 }

@@ -15,6 +15,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with main Forge library not downloading correctly from our CDN
 - Allow theme fonts for some languages
 - Use base font for tabs on languages that don't support the font used
+- Some relocalisation not happening for some text/components
 
 ### Misc
 - Remove headless dependency from debian package

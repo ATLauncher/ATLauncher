@@ -99,6 +99,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 if (reloadTheme) {
                     App.loadTheme(App.settings.theme);
                     FlatLaf.updateUILater();
+                    App.THEME.updateUIFonts();
                     ThemeManager.post();
                 }
                 App.TOASTER.pop("Settings Saved");

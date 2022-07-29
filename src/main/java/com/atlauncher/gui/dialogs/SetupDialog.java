@@ -98,6 +98,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         language.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 Language.setLanguage((String) language.getSelectedItem());
+                App.THEME.updateUIFonts();
             }
         });
         middle.add(language, gbc);

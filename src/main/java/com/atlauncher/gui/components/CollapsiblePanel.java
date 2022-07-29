@@ -46,7 +46,9 @@ import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.listener.ThemeListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
@@ -59,7 +61,7 @@ import com.atlauncher.utils.Utils;
  * The user-triggered collapsible panel containing the component (trigger) in
  * the titled border
  */
-public class CollapsiblePanel extends JPanel implements ThemeListener {
+public class CollapsiblePanel extends JPanel implements ThemeListener, RelocalizationListener {
     public static final long serialVersionUID = -343234;
 
     CollapsibleTitledBorder border; // includes upper left component and line type
@@ -194,6 +196,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
         placeTitleComponent();
 
         ThemeManager.addListener(this);
+        RelocalizationManager.addListener(this);
     }
 
     /**
@@ -468,6 +471,11 @@ public class CollapsiblePanel extends JPanel implements ThemeListener {
 
         // force state
         setCollapsed(collapsed);
+    }
+
+    @Override
+    public void onRelocalization() {
+        arrow.setFont(App.THEME.getBoldFont().deriveFont(15f));
     }
 
 }
