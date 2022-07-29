@@ -285,6 +285,13 @@ public class App {
         // Load the settings from json, convert old properties config and validate it
         loadSettings();
 
+        try {
+            Language.init();
+            Language.setLanguage(settings.language);
+        } catch (IOException e1) {
+            LogManager.logStackTrace("Error loading language", e1);
+        }
+
         // inject any certs into the keystore that we need (Let's Encrypt for example)
         Java.injectNeededCerts();
 
@@ -317,13 +324,6 @@ public class App {
             // Show the console if enabled.
             console.setVisible(true);
         }
-
-        try {
-            Language.init();
-        } catch (IOException e1) {
-            LogManager.logStackTrace("Error loading language", e1);
-        }
-
         if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
             SwingUtilities.invokeLater(() -> console.setVisible(true));

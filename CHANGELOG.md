@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Allow theme fonts for some languages
 - Use base font for tabs on languages that don't support the font used
 - Some relocalisation not happening for some text/components
+- Load language from settings and earlier in boot process
 
 ### Misc
 - Remove headless dependency from debian package
