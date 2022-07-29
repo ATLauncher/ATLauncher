@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:f51c4d3aa2'
+        classpath 'com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:aab5c30bf8'
     }
 }
 
