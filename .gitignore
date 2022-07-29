@@ -26,3 +26,6 @@ testLauncher/
 java_pid*.hprof
 *.log
 mockserver_keystore_*
+
+# crowdin config
+crowdin.yml

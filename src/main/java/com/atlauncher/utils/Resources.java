@@ -62,6 +62,10 @@ public final class Resources {
                 } else {
                     URL url = Resources.class.getResource("/assets/font/" + name + ".ttf");
                     if (url == null) {
+                        url = Resources.class.getResource("/assets/font/" + name + ".otf");
+                    }
+
+                    if (url == null) {
                         LogManager.error("Cannot find font " + name);
                         return new Font("Sans-Serif", Font.PLAIN, 0);
                     } else {

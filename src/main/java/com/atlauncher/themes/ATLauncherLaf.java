@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Language;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Resources;
 import com.formdev.flatlaf.FlatDarculaLaf;
@@ -51,11 +52,11 @@ public class ATLauncherLaf extends FlatLaf {
     }
 
     /**
-     * If user has disabled custom fonts or is using a non English language, then we
-     * should be using the base "sansserif" font.
+     * If user has disabled custom fonts or is using a language without a font, then
+     * we should be using the base "sansserif" font to let the OS font take over.
      */
     private static boolean useBaseFont() {
-        return App.settings.disableCustomFonts || !App.settings.language.equalsIgnoreCase("English");
+        return App.settings.disableCustomFonts || Language.localesWithoutFonts.contains(Language.selectedLocale);
     }
 
     public Font getNormalFont() {
@@ -68,7 +69,7 @@ public class ATLauncherLaf extends FlatLaf {
 
     public Font getBoldFont() {
         if (useBaseFont()) {
-            return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);
+            return Resources.makeFont("sansserif").deriveFont(Font.BOLD, 12f);
         } else {
             return Resources.makeFont(defaultFontName).deriveFont(Font.BOLD, 12f);
         }

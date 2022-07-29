@@ -19,7 +19,7 @@ package com.atlauncher.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,21 +30,59 @@ import org.mini2Dx.gettext.PoFile;
 import com.atlauncher.App;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Utils;
 
 public class Language {
     public final static List<Locale> locales = new ArrayList<>();
-    public final static Map<String, Locale> languages = new HashMap<>();
+    public final static Map<String, Locale> languages = new LinkedHashMap<>();
+    public final static List<Locale> localesWithoutFonts = new ArrayList<>();
     public static String selected = Locale.ENGLISH.getDisplayName();
+    public static Locale selectedLocale = Locale.ENGLISH;
 
     // add in the languages we have support for
     static {
-        locales.add(Locale.ENGLISH);
+        locales.add(Locale.ENGLISH); // English
+        locales.add(new Locale("af", "ZA")); // Afrikaans
+        locales.add(new Locale("ar", "SA")); // Arabic
+        locales.add(new Locale("ca", "ES")); // Catalan
+        locales.add(new Locale("zh", "CN")); // Chinese Simplified
+        locales.add(new Locale("zh", "TW")); // Chinese Traditional
+        locales.add(new Locale("cs", "CZ")); // Czech
+        locales.add(new Locale("da", "DK")); // Danish
+        locales.add(new Locale("nl", "NL")); // Dutch
+        locales.add(new Locale("fi", "FI")); // Finnish
+        locales.add(new Locale("fr", "FR")); // French
+        locales.add(new Locale("de", "DE")); // German
+        locales.add(new Locale("el", "GR")); // Greek
+        locales.add(new Locale("he", "IL")); // Hebrew
+        locales.add(new Locale("hu", "HU")); // Hungarian
+        locales.add(new Locale("it", "IT")); // Italian
+        locales.add(new Locale("ja", "JP")); // Japanese
+        locales.add(new Locale("ko", "KR")); // Korean
+        locales.add(new Locale("no", "NO")); // Norwegian
+        locales.add(new Locale("pl", "PL")); // Polish
+        locales.add(new Locale("pt", "PT")); // Portuguese
+        locales.add(new Locale("pt", "BR")); // Portuguese, Brazilian
+        locales.add(new Locale("ro", "RO")); // Romanian
+        locales.add(new Locale("ru", "RU")); // Russian
+        locales.add(new Locale("sr", "SP")); // Serbian
+        locales.add(new Locale("es", "ES")); // Spanish
+        locales.add(new Locale("sv", "SE")); // Swedish
+        locales.add(new Locale("tr", "TR")); // Turkish
+        locales.add(new Locale("uk", "UA")); // Ukranian
+
+        localesWithoutFonts.add(new Locale("ar", "SA"));
+        localesWithoutFonts.add(new Locale("zh", "CN"));
+        localesWithoutFonts.add(new Locale("zh", "TW"));
+        localesWithoutFonts.add(new Locale("he", "IL"));
+        localesWithoutFonts.add(new Locale("ja", "JP"));
+        localesWithoutFonts.add(new Locale("ko", "KR"));
     }
 
     public static void init() throws IOException {
         for (Locale locale : locales) {
-            if (App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po") != null) {
-                System.out.println(locale.toString());
+            if (Utils.getResourceInputStream(
+                    "/assets/lang/" + locale.getLanguage() + "-" + locale.getCountry() + ".po") != null) {
                 languages.put(locale.getDisplayName(), locale);
                 LogManager.debug("Loaded language " + locale.getDisplayName() + " with key of " + locale);
             }
@@ -71,13 +109,16 @@ public class Language {
         if (locale != Locale.ENGLISH) {
             try {
                 GetText.add(
-                        new PoFile(locale, App.class.getResourceAsStream("/assets/lang/" + locale.toString() + ".po")));
+                        new PoFile(locale, App.class.getResourceAsStream(
+                                "/assets/lang/" + locale.getLanguage() + "-" + locale.getCountry() + ".po")));
             } catch (IOException e) {
                 LogManager.logStackTrace("Failed loading language po file for " + language, e);
                 locale = Locale.ENGLISH;
                 selected = Locale.ENGLISH.getDisplayName();
             }
         }
+
+        selectedLocale = locale;
 
         GetText.setLocale(locale);
         RelocalizationManager.post();

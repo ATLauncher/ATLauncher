@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Noisy logs around images for instance/server cards
 - Some incorrect colours on light themes
 - Issue with main Forge library not downloading correctly from our CDN
+- Allow theme fonts for some languages
 
 ### Misc
 - Remove headless dependency from debian package
