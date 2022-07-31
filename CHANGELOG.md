@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Clarify the error popup after launch when needing Java 16 on Java 8 Minecraft
 
 ### Misc
