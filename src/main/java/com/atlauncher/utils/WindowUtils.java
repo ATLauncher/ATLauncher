@@ -15,21 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.components;
+package com.atlauncher.utils;
 
-import java.awt.FlowLayout;
+import java.awt.Dimension;
+import java.awt.Window;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
+public class WindowUtils {
 
-@SuppressWarnings("serial")
-public final class ToolsPanel extends JPanel {
-    public ToolsPanel() {
-        super(new FlowLayout(FlowLayout.CENTER));
+    private static final int HEIGHT_PADDING = 20;
+    private static final int WIDTH_PADDING = 50;
+
+    public static void resizeForContent(Window window) {
+        resizeForContent(window, true);
     }
 
-    public ToolsPanel add(JButton button) {
-        super.add(button);
-        return this;
+    public static void resizeForContent(Window window, boolean addPadding) {
+        window.pack();
+
+        if (addPadding) {
+            Dimension preferredSize = window.getPreferredSize();
+            window.setSize(new Dimension(preferredSize.width + WIDTH_PADDING,
+                    preferredSize.height + HEIGHT_PADDING));
+        } else {
+            window.setSize(window.getPreferredSize());
+        }
     }
+
 }

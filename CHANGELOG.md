@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Clarify the error popup after launch when needing Java 16 on Java 8 Minecraft
 - Change text when installing loader to indicate it may take some time
+- Make some dialog windows resize as needed to fit the content
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders

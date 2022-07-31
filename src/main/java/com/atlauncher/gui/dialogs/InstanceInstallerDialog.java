@@ -40,6 +40,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -102,6 +103,7 @@ import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.WindowUtils;
 
 import okhttp3.CacheControl;
 
@@ -215,7 +217,6 @@ public class InstanceInstallerDialog extends JDialog {
             handleInstanceInstall(object);
         }
 
-        setSize(450, 240);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
         setResizable(false);
@@ -232,6 +233,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         // Middle Panel Stuff
         middle = new JPanel();
+        middle.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         middle.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -398,6 +400,9 @@ public class InstanceInstallerDialog extends JDialog {
         add(top, BorderLayout.NORTH);
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
+
+        WindowUtils.resizeForContent(this);
+
         setVisible(true);
     }
 
