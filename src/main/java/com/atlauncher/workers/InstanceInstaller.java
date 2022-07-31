@@ -2884,7 +2884,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             String minecraftFolder = Files.exists(multiMCExtractedPath.resolve(".minecraft")) ? ".minecraft"
                     : "minecraft";
 
-            fireTask(GetText.tr("Copying " + minecraftFolder + " folder"));
+            fireTask(GetText.tr("Copying {0} folder", minecraftFolder));
             Utils.copyDirectory(this.multiMCExtractedPath.resolve(minecraftFolder + "/").toFile(), this.root.toFile(),
                     false);
         } else if (technicModpack != null) {
