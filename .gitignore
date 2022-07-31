@@ -11,6 +11,7 @@ run/
 .settings/
 .classpath
 .project
+.idea/
 
 # Launcher Test Run Directory
 testLauncher/
