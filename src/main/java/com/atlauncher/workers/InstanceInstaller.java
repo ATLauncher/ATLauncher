@@ -2552,7 +2552,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Installing Loader"));
+        fireTask(GetText.tr("Installing Loader (May Take Some Time)"));
         fireSubProgressUnknown();
 
         // run any processors that the loader needs
