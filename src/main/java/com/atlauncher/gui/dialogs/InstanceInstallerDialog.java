@@ -947,19 +947,22 @@ public class InstanceInstallerDialog extends JDialog {
                 return;
             }
 
-            loaderVersionLabel.setText(GetText.tr("Fabric Version") + ": ");
+            // #. {0} is the loader (Fabric/Forge/Quilt)
+            loaderVersionLabel.setText(GetText.tr("{0} Version", "Fabric") + ": ");
         } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("forge")) {
             if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == false) {
                 return;
             }
 
-            loaderVersionLabel.setText(GetText.tr("Forge Version") + ": ");
+            // #. {0} is the loader (Fabric/Forge/Quilt)
+            loaderVersionLabel.setText(GetText.tr("{0} Version", "Forge") + ": ");
         } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("quilt")) {
             if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == false) {
                 return;
             }
 
-            loaderVersionLabel.setText(GetText.tr("Quilt Version") + ": ");
+            // #. {0} is the loader (Fabric/Forge/Quilt)
+            loaderVersionLabel.setText(GetText.tr("{0} Version", "Quilt") + ": ");
         } else {
             loaderVersionLabel.setText(GetText.tr("Loader Version") + ": ");
         }

@@ -116,15 +116,24 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem renameMenuItem = new JMenuItem(GetText.tr("Rename"));
     private final JMenuItem changeDescriptionMenuItem = new JMenuItem(GetText.tr("Change Description"));
     private final JMenuItem changeImageMenuItem = new JMenuItem(GetText.tr("Change Image"));
-    private final JMenuItem addFabricMenuItem = new JMenuItem(GetText.tr("Add Fabric"));
-    private final JMenuItem changeFabricVersionMenuItem = new JMenuItem(GetText.tr("Change Fabric Version"));
-    private final JMenuItem removeFabricMenuItem = new JMenuItem(GetText.tr("Remove Fabric"));
-    private final JMenuItem addForgeMenuItem = new JMenuItem(GetText.tr("Add Forge"));
-    private final JMenuItem changeForgeVersionMenuItem = new JMenuItem(GetText.tr("Change Forge Version"));
-    private final JMenuItem removeForgeMenuItem = new JMenuItem(GetText.tr("Remove Forge"));
-    private final JMenuItem addQuiltMenuItem = new JMenuItem(GetText.tr("Add Quilt"));
-    private final JMenuItem changeQuiltVersionMenuItem = new JMenuItem(GetText.tr("Change Quilt Version"));
-    private final JMenuItem removeQuiltMenuItem = new JMenuItem(GetText.tr("Remove Quilt"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem addFabricMenuItem = new JMenuItem(GetText.tr("Add {0}", "Fabric"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem changeFabricVersionMenuItem = new JMenuItem(GetText.tr("Change {0} Version", "Fabric"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem removeFabricMenuItem = new JMenuItem(GetText.tr("Remove {0}", "Fabric"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem addForgeMenuItem = new JMenuItem(GetText.tr("Add {0}", "Forge"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem changeForgeVersionMenuItem = new JMenuItem(GetText.tr("Change {0} Version", "Forge"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem removeForgeMenuItem = new JMenuItem(GetText.tr("Remove {0}", "Forge"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem addQuiltMenuItem = new JMenuItem(GetText.tr("Add {0}", "Quilt"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem changeQuiltVersionMenuItem = new JMenuItem(GetText.tr("Change {0} Version", "Quilt"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem removeQuiltMenuItem = new JMenuItem(GetText.tr("Remove {0}", "Quilt"));
     private final DropDownButton editInstanceButton = new DropDownButton(GetText.tr("Edit Instance"),
             editInstancePopupMenu);
 

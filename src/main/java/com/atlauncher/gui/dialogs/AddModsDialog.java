@@ -80,24 +80,29 @@ public final class AddModsDialog extends JDialog {
     private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
 
-    // #. Fabric API is the name of a mod, so should be left untranslated
-    private final JButton installFabricApiButton = new JButton(GetText.tr("Install Fabric API"));
+    // #. {0} is the loader api (Fabric API/QSL)
+    private final JButton installFabricApiButton = new JButton(GetText.tr("Install {0}", "Fabric API"));
 
-    // #. Fabric/Fabric API is the name of a mod, so should be left untranslated
     private final JLabel fabricApiWarningLabel = new JLabel(
             "<html><p align=\"center\" style=\"color: "
                     + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
-                    + "\">Before installing Fabric mods, you should install Fabric API first!</p></html>");
+                    // #. {0} is the loader (Fabric/Quilt), {1} is the loader api (Fabric API/QSL)
+                    + "\">" + GetText.tr("Before installing {0} mods, you should install {1} first!",
+                            "Fabric", "Fabric API")
+                    + "</p></html>");
 
-    // #. Quilt Standard Libraries is the name of a mod, so should be left
     private final JButton installQuiltStandardLibrariesButton = new JButton(
-            GetText.tr("Install Quilt Standard Libraries"));
+            // #. {0} is the loader api (Fabric API/QSL)
+            GetText.tr("Install {0}", "Quilt Standard Libraries"));
 
-    // #. Quilt/Quilt Standard Libraries is the name of a mod, so should be left
     private final JLabel quiltStandardLibrariesWarningLabel = new JLabel(
             "<html><p align=\"center\" style=\"color: "
                     + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
-                    + "\">Before installing Quilt mods, you should install Quilt Standard Libraries first!</p></html>");
+                    + "\">"
+                    // #. {0} is the loader (Fabric/Quilt), {1} is the loader api (Fabric API/QSL)
+                    + GetText.tr("Before installing {0} mods, you should install {1} first!",
+                            "Quilt", "Quilt Standard Libraries")
+                    + "</p></html>");
 
     private JScrollPane jscrollPane;
     private JButton nextButton;
@@ -188,7 +193,9 @@ public final class AddModsDialog extends JDialog {
                     .getValue() == ModPlatform.CURSEFORGE;
             if (isCurseForge) {
                 final ProgressDialog<CurseForgeProject> curseForgeProjectLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
+                        // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                        GetText.tr("Getting {0} Information", "Fabric API"), 0,
+                        GetText.tr("Getting {0} Information", "Fabric API"),
                         "Aborting Getting Fabric API Information");
 
                 curseForgeProjectLookupDialog.addThread(new Thread(() -> {
@@ -203,9 +210,12 @@ public final class AddModsDialog extends JDialog {
                 CurseForgeProject mod = curseForgeProjectLookupDialog.getReturnValue();
 
                 if (mod == null) {
-                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting Fabric API Information"))
+                    // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting {0} Information"))
+                            // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "There was an error getting Fabric API information from CurseForge. Please try again later."))
+                                    "There was an error getting {0} information from {1}. Please try again later.",
+                                    "CurseForge"))
                                     .build())
                             .setType(DialogManager.ERROR).show();
                     return;
@@ -223,7 +233,10 @@ public final class AddModsDialog extends JDialog {
                 }
             } else {
                 final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Fabric API Information"), 0, GetText.tr("Getting Fabric API Information"),
+                        // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                        GetText.tr("Getting {0} Information", "Fabric API"), 0,
+                        // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                        GetText.tr("Getting {0} Information", "Fabric API"),
                         "Aborting Getting Fabric API Information");
 
                 modrinthProjectLookupDialog.addThread(new Thread(() -> {
@@ -238,9 +251,12 @@ public final class AddModsDialog extends JDialog {
                 ModrinthProject mod = modrinthProjectLookupDialog.getReturnValue();
 
                 if (mod == null) {
-                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting Fabric API Information"))
+                    // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting {0} Information"))
+                            // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "There was an error getting Fabric API information from Modrinth. Please try again later."))
+                                    "There was an error getting {0} information from {1}. Please try again later.",
+                                    "Modrinth"))
                                     .build())
                             .setType(DialogManager.ERROR).show();
                     return;
@@ -261,8 +277,10 @@ public final class AddModsDialog extends JDialog {
 
         this.installQuiltStandardLibrariesButton.addActionListener(e -> {
             final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
-                    GetText.tr("Getting Quilt Standard Libaries Information"), 0,
-                    GetText.tr("Getting Quilt Standard Libaries Information"),
+                    // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                    GetText.tr("Getting {0} Information", "Quilt Standard Libaries"), 0,
+                    // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                    GetText.tr("Getting {0} Information", "Quilt Standard Libaries"),
                     "Aborting Getting Quilt Standard Libaries Information");
 
             modrinthProjectLookupDialog.addThread(new Thread(() -> {
@@ -277,9 +295,13 @@ public final class AddModsDialog extends JDialog {
             ModrinthProject mod = modrinthProjectLookupDialog.getReturnValue();
 
             if (mod == null) {
-                DialogManager.okDialog().setTitle(GetText.tr("Error Getting Quilt Standard Libaries Information"))
+                DialogManager.okDialog()
+                        // #. {0} is the loader api were getting info from (Fabric/Quilt)
+                        .setTitle(GetText.tr("Error Getting {0} Information", "Quilt Standard Libaries"))
+                        // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "There was an error getting Quilt Standard Libaries information from Modrinth. Please try again later."))
+                                "There was an error getting {0} information from {1}. Please try again later.",
+                                "Quilt Standard Libaries", "Modrinth"))
                                 .build())
                         .setType(DialogManager.ERROR).show();
                 return;

@@ -403,7 +403,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadPackVersionJson() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Downloading Pack Version Definition"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "ATLauncher"));
         fireSubProgressUnknown();
 
         this.packVersion = com.atlauncher.network.Download.build().cached()
@@ -420,7 +421,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionFromCurseForgeManifest() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From CurseForge"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "CurseForge"));
         fireSubProgressUnknown();
 
         if (!curseForgeManifest.manifestType.equals("minecraftModpack")) {
@@ -636,7 +638,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionFromCurseForge() throws Exception {
         addPercent(5);
 
-        fireTask(GetText.tr("Downloading Manifest From CurseForge"));
+        // #. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
+        fireTask(GetText.tr("Downloading Manifest From {0}", "CurseForge"));
         fireSubProgressUnknown();
 
         Path manifestFile = this.temp.resolve(version._curseForgeFile.fileName.toLowerCase());
@@ -750,7 +753,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionFromModrinth() throws Exception {
         addPercent(5);
 
-        fireTask(GetText.tr("Downloading Manifest From Modrinth"));
+        // #. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
+        fireTask(GetText.tr("Downloading Manifest From {0}", "Modrinth"));
         fireSubProgressUnknown();
 
         ModrinthFile file = version._modrinthVersion.getPrimaryFile();
@@ -792,7 +796,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionFromModpacksCh() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From Modpacks.ch"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "Modpacks.ch"));
         fireSubProgressUnknown();
 
         this.modpacksChPackVersionManifest = com.atlauncher.network.Download.build()
@@ -1094,7 +1099,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionFromTechnicSolder() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From Technic Solder"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "Technic Solder"));
         fireSubProgressUnknown();
 
         String minecraftVersion = technicModpack.minecraft;
@@ -1152,7 +1158,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         technicModpackExtractedPath = unzipLocation;
 
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From Technic Zip"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "Technic Zip"));
         fireSubProgressUnknown();
 
         if (technicModpack.minecraft == null) {
@@ -1272,7 +1279,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionFromModrinthManifest() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From Modrinth"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "Modrinth"));
         fireSubProgressUnknown();
 
         if (!modrinthManifest.game.equals("minecraft")) {
@@ -1366,7 +1374,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionFromMultiMC() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition From MultiMC"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "MultiMC"));
         fireSubProgressUnknown();
 
         if (multiMCManifest.formatVersion != 1) {
@@ -1462,7 +1471,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionForVanilla() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Generating Pack Version Definition For Vanilla Minecraft"));
+        // #. {0} is the platform the modpack is from
+        fireTask(GetText.tr("Generating Pack Version From {0}", "Vanilla Minecraft"));
         fireSubProgressUnknown();
 
         this.packVersion = new Version();
@@ -2753,7 +2763,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Installing Legacy Java Fixer"));
+        fireTask(GetText.tr("Installing {0}", "Legacy Java Fixer"));
         fireSubProgressUnknown();
 
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
@@ -2977,7 +2987,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Checking Mods On CurseForge"));
+        // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
+        fireTask(GetText.tr("Checking Mods On {0}", "CurseForge"));
         fireSubProgressUnknown();
 
         Map<Long, DisableableMod> murmurHashes = new HashMap<>();
@@ -3034,7 +3045,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Checking Mods On Modrinth"));
+        // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
+        fireTask(GetText.tr("Checking Mods On {0}", "Modrinth"));
         fireSubProgressUnknown();
 
         Map<String, DisableableMod> sha1Hashes = new HashMap<>();

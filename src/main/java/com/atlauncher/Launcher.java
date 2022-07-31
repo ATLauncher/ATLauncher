@@ -397,7 +397,7 @@ public class Launcher {
                         .setContent(new HTMLBuilder().center()
                                 .text(GetText.tr("Update failed. Please click Ok to close "
                                         + "the launcher and open up the downloads page.<br/><br/>Download "
-                                        + "the update and replace the old " + Constants.LAUNCHER_NAME + " file."))
+                                        + "the update and replace the old exe/jar file."))
                                 .build())
                         .setType(DialogManager.ERROR).show();
                 OS.openWebBrowser("https://atlauncher.com/downloads");

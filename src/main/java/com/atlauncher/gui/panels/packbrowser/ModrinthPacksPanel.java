@@ -213,10 +213,13 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         }
 
         String packToLookup = packLookup;
-        ProgressDialog<ModrinthProject> progressDialog = new ProgressDialog<>(GetText.tr("Looking Up Pack On Modrinth"),
+        // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+        ProgressDialog<ModrinthProject> progressDialog = new ProgressDialog<>(GetText.tr("Looking Up Pack On {0}", "Modrinth"),
                 0,
-                GetText.tr("Looking Up Pack On Modrinth"),
-                GetText.tr("Cancelling Looking Up Pack On Modrinth"));
+                // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+                GetText.tr("Looking Up Pack On {0}", "Modrinth"),
+                // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+                GetText.tr("Cancelling Looking Up Pack On {0}", "Modrinth"));
         progressDialog.addThread(new Thread(() -> {
             progressDialog.setReturnValue(ModrinthApi.getProject(packToLookup));
             progressDialog.doneTask();

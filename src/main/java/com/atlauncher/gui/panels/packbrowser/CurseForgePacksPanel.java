@@ -207,10 +207,13 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     public void addById(String id) {
 
         ProgressDialog<CurseForgeProject> progressDialog = new ProgressDialog<>(
-                GetText.tr("Looking Up Pack On CurseForge"),
+                // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+                GetText.tr("Looking Up Pack On {0}", "CurseForge"),
                 0,
-                GetText.tr("Looking Up Pack On CurseForge"),
-                GetText.tr("Cancelling Looking Up Pack On CurseForge"));
+                // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+                GetText.tr("Looking Up Pack On {0}", "CurseForge"),
+                // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+                GetText.tr("Cancelling Looking Up Pack On {0}", "Modrinth"));
         progressDialog.addThread(new Thread(() -> {
             CurseForgeProject project = null;
 

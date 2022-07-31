@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Change text when installing loader to indicate it may take some time
 
 ### Misc
+- Change translations using loader/mod platforms to use placeholders

@@ -133,9 +133,12 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover dontCheckModsOnCurseForgeLabel = new JLabelWithHover(
-                GetText.tr("Don't Check Mods On CurseForge?"), HELP_ICON,
+                // #. {0} is the platform (e.g. CurseForge/Modrinth)
+                GetText.tr("Don't Check Mods On {0}?", "CurseForge"), HELP_ICON,
+                // #. {0} is the platform (e.g. CurseForge/Modrinth)
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "When installing packs or adding mods manually to instances, we check for the file on CurseForge to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher but may solve some issues installing packs due to running out of memory."))
+                        "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher.",
+                        "CurseForge"))
                         .build());
         add(dontCheckModsOnCurseForgeLabel, gbc);
 
@@ -153,9 +156,12 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover dontCheckModsOnModrinthLabel = new JLabelWithHover(
-                GetText.tr("Don't Check Mods On Modrinth?"), HELP_ICON,
+                // #. {0} is the platform (e.g. CurseForge/Modrinth)
+                GetText.tr("Don't Check Mods On {0}?", "Modrinth"), HELP_ICON,
+                // #. {0} is the platform (e.g. CurseForge/Modrinth)
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "When installing packs or adding mods manually to instances, we check for the file on Modrinth to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher."))
+                        "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher.",
+                        "Modrinth"))
                         .build());
         add(dontCheckModsOnModrinthLabel, gbc);
 

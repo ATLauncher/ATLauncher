@@ -136,7 +136,8 @@ public class ModsJCheckBox extends JCheckBox {
         contextMenu.add(new JPopupMenu.Separator());
 
         if (getDisableableMod().hasFullCurseForgeInformation()) {
-            JMenuItem openOnCurseForge = new JMenuItem(GetText.tr("Open On CurseForge"));
+            // #. {0} is the platform to open the website for (e.g. CurseForge/Modrinth)
+            JMenuItem openOnCurseForge = new JMenuItem(GetText.tr("Open On {0}", "CurseForge"));
             openOnCurseForge
                     .addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseForgeProject.getWebsiteUrl()));
             contextMenu.add(openOnCurseForge);
@@ -147,7 +148,8 @@ public class ModsJCheckBox extends JCheckBox {
         if (getDisableableMod().isFromModrinth()) {
             ModrinthProject modrinthMod = getDisableableMod().modrinthProject;
 
-            JMenuItem openOnModrinth = new JMenuItem(GetText.tr("Open On Modrinth"));
+            // #. {0} is the platform to open the website for (e.g. CurseForge/Modrinth)
+            JMenuItem openOnModrinth = new JMenuItem(GetText.tr("Open On {0}", "Modrinth"));
             openOnModrinth.addActionListener(
                     e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", modrinthMod.slug)));
             contextMenu.add(openOnModrinth);
@@ -230,7 +232,8 @@ public class ModsJCheckBox extends JCheckBox {
         if (getDisableableMod().isFromCurseForge() && getDisableableMod().isFromModrinth()) {
             contextMenu.add(new JPopupMenu.Separator());
 
-            JMenuItem reinstallFromCurseForge = new JMenuItem(GetText.tr("Reinstall From CurseForge"));
+            // #. {0} is the platform to reinstall the mod from (e.g. CurseForge/Modrinth)
+            JMenuItem reinstallFromCurseForge = new JMenuItem(GetText.tr("Reinstall From {0}", "CurseForge"));
             reinstallFromCurseForge.addActionListener(e -> {
                 getDisableableMod().reinstall(dialog, dialog.instance, ModPlatform.CURSEFORGE);
 
@@ -238,7 +241,8 @@ public class ModsJCheckBox extends JCheckBox {
             });
             contextMenu.add(reinstallFromCurseForge);
 
-            JMenuItem reinstallFromModrinth = new JMenuItem(GetText.tr("Reinstall From Modrinth"));
+            // #. {0} is the platform to reinstall the mod from (e.g. CurseForge/Modrinth)
+            JMenuItem reinstallFromModrinth = new JMenuItem(GetText.tr("Reinstall From {0}", "Modrinth"));
             reinstallFromModrinth.addActionListener(e -> {
                 getDisableableMod().reinstall(dialog, dialog.instance, ModPlatform.MODRINTH);
 
@@ -248,7 +252,8 @@ public class ModsJCheckBox extends JCheckBox {
 
             contextMenu.add(new JPopupMenu.Separator());
 
-            JMenuItem checkForUpdatesOnCurseForge = new JMenuItem(GetText.tr("Check For Updates On CurseForge"));
+            // #. {0} is the platform to check for updates from (e.g. CurseForge/Modrinth)
+            JMenuItem checkForUpdatesOnCurseForge = new JMenuItem(GetText.tr("Check For Updates On {0}", "CurseForge"));
             checkForUpdatesOnCurseForge.addActionListener(e -> {
                 boolean updated = false;
 
@@ -263,7 +268,8 @@ public class ModsJCheckBox extends JCheckBox {
             });
             contextMenu.add(checkForUpdatesOnCurseForge);
 
-            JMenuItem checkForUpdatesOnModrinth = new JMenuItem(GetText.tr("Check For Updates On Modrinth"));
+            // #. {0} is the platform to check for updates from (e.g. CurseForge/Modrinth)
+            JMenuItem checkForUpdatesOnModrinth = new JMenuItem(GetText.tr("Check For Updates On {0}", "Modrinth"));
             checkForUpdatesOnModrinth.addActionListener(e -> {
                 boolean updated = false;
 
