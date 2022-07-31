@@ -125,8 +125,8 @@ public final class DialogManager {
         return this;
     }
 
-    public DialogManager setTitle(String title) {
-        this.title = title;
+    public DialogManager setTitle(CharSequence title) {
+        this.title = title.toString();
         return this;
     }
 
@@ -160,8 +160,8 @@ public final class DialogManager {
         return this;
     }
 
-    public DialogManager addOption(String option) {
-        return this.addOption(option, false);
+    public DialogManager addOption(CharSequence option) {
+        return this.addOption(option.toString(), false);
     }
 
     public Object[] getOptions() {

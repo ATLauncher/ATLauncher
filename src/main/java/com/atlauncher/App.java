@@ -54,6 +54,8 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -549,7 +551,7 @@ public class App {
                 LogManager.warn("_JAVA_OPTIONS environment variable detected: " + javaOptions);
 
                 if (!settings.ignoreJavaOptionsWarning) {
-                    int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
+                    int ret = DialogManager.yesNoDialog().addOption(Sentence.INF_DONT_REMIND_AGAIN)
                             .setTitle("Warning")
                             .setContent(new HTMLBuilder().center().text(
                                     "We've detected that you have a _JAVA_OPTIONS environment variable which may cause issues installing and playing Minecraft.<br/><br/>Do you want to fix this now so you don't have any issues in the future?")
@@ -574,8 +576,8 @@ public class App {
         if (!settings.ignoreOneDriveWarning && FileSystem.BASE_DIR.toString().contains("OneDrive")) {
             LogManager.warn("ATLauncher installed within OneDrive!");
 
-            int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
-                    .setTitle(GetText.tr("ATLauncher installed within OneDrive"))
+            int ret = DialogManager.yesNoDialog().addOption(Sentence.INF_DONT_REMIND_AGAIN)
+                    .setTitle(Sentence.ERR_WRONG_INSTALL_LOCATION.insert(Noun.ONEDRIVE))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"))
                             .build())
@@ -594,8 +596,8 @@ public class App {
                 && FileSystem.BASE_DIR.toString().contains("Program Files")) {
             LogManager.warn("ATLauncher installed within Program Files!");
 
-            int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
-                    .setTitle(GetText.tr("ATLauncher installed within Program Files"))
+            int ret = DialogManager.yesNoDialog().addOption(Sentence.INF_DONT_REMIND_AGAIN)
+                    .setTitle(Sentence.ERR_WRONG_INSTALL_LOCATION.insert(Noun.PROGRAM_FILES))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "We have detected that you're running ATLauncher from within Program Files.<br/><br/>This can cause serious issues and you should move the folder outside of Program Files.<br/><br/>Do you want to close the launcher and do this now?"))
                             .build())
@@ -617,7 +619,7 @@ public class App {
                     || !FileSystem.BASE_DIR.resolve(".test").toFile().canWrite()) {
                 LogManager.error("ATLauncher cannot write files!");
 
-                DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
+                DialogManager.okDialog().setTitle(Sentence.ERR_CANNOT_WRITE_FILES)
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
                                 .build())
@@ -629,7 +631,7 @@ public class App {
         } catch (IOException e) {
             LogManager.error("ATLauncher cannot write files!");
 
-            DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
+            DialogManager.okDialog().setTitle(Sentence.ERR_CANNOT_WRITE_FILES)
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
                             .build())

@@ -28,6 +28,9 @@ import java.util.UUID;
 
 import javax.swing.ImageIcon;
 
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.FileSystem;
@@ -103,9 +106,11 @@ public abstract class AbstractAccount implements Serializable {
     public abstract String getSkinUrl();
 
     public void updateUsername() {
-        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Checking For Username Change"), 0,
-                GetText.tr("Checking Username Change For {0}", this.minecraftUsername),
-                "Aborting checking for username change for " + this.minecraftUsername);
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
+            Sentence.INF_CHECKING_XY.insert(Noun.USERNAME).insert(Verb.CHANGE, Verb.FUTURE),
+            0,
+            Sentence.INF_CHECKING_XY.insert(Noun.USERNAME).insert(Verb.CHANGE, Verb.FUTURE).insert(minecraftUsername),
+            "Aborting checking for username change for " + this.minecraftUsername);
 
         dialog.addThread(new Thread(() -> {
             String currentUsername = getCurrentUsername();
@@ -129,8 +134,9 @@ public abstract class AbstractAccount implements Serializable {
         dialog.start();
 
         if (dialog.getReturnValue() == null) {
-            DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
-                    .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
+            DialogManager.okDialog().setTitle(Sentence.INF_NO_X.insert(Noun.CHANGE))
+                .setContent(Sentence.INF_YOUR_XYZ.insert(Noun.USERNAME).insert(Noun.HAS_NOT).insert(Verb.CHANGE, Verb.PAST))
+                .setType(DialogManager.INFO).show();
         } else if (dialog.getReturnValue()) {
             AccountManager.saveAccounts();
             DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))

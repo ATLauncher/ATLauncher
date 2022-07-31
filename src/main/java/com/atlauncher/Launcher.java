@@ -34,6 +34,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -125,7 +128,7 @@ public class Launcher {
         if (OS.isWindows() && !Java.is64Bit() && OS.is64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
-            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Running 32 Bit Java on 64 Bit Windows"))
+            int ret = DialogManager.yesNoDialog().setTitle(Sentence.ERR_WRONG_JAVA_ARCHITECTURE)
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
                             "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?"))
                             .build())
@@ -172,8 +175,10 @@ public class Launcher {
             LogManager.info("Downloading Launcher Update");
             Analytics.sendEvent("Update", "Launcher");
 
-            ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Launcher Update"), 1,
-                    GetText.tr("Downloading Launcher Update"));
+            ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(
+                Sentence.INF_DOWNLOADING_X.insert(Noun.LAUNCHER).append(Noun.UPDATE),
+                1,
+                Sentence.INF_DOWNLOADING_X.insert(Noun.LAUNCHER).append(Noun.UPDATE));
             progressDialog.addThread(new Thread(() -> {
                 com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
@@ -263,8 +268,10 @@ public class Launcher {
     }
 
     public void downloadUpdatedFiles() {
-        ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Updates"), 1,
-                GetText.tr("Downloading Updates"));
+        ProgressDialog progressDialog = new ProgressDialog(
+            Sentence.INF_DOWNLOADING_X.insert(Noun.UPDATE),
+            1,
+            Sentence.INF_DOWNLOADING_X.insert(Noun.UPDATE));
         progressDialog.addThread(new Thread(() -> {
             DownloadPool pool = new DownloadPool();
             OkHttpClient httpClient = Network.createProgressClient(progressDialog);
@@ -350,7 +357,7 @@ public class Launcher {
         dialog.setLocationRelativeTo(App.launcher.getParent());
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
-        dialog.add(new JLabel(GetText.tr("Updating Launcher. Please Wait")));
+        dialog.add(new JLabel(Sentence.BASE_XY.insert(Verb.UPDATE).insert(Noun.LAUNCHER).append(", ", Sentence.PRT_PLEASE_WAIT).toString()));
         App.TASKPOOL.execute(() -> {
             if (hasUpdatedFiles()) {
                 downloadUpdatedFiles(); // Downloads updated files on the server
@@ -383,7 +390,7 @@ public class Launcher {
                         .setContent(new HTMLBuilder().center().split(80).text(GetText.tr(
                                 "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."))
                                 .build())
-                        .addOption(GetText.tr("Visit Downloads Page")).setType(DialogManager.INFO).show();
+                        .addOption(Sentence.INF_VISIT_X.insert(Noun.DL_PAGE)).setType(DialogManager.INFO).show();
 
                 if (ret == 1) {
                     OS.openWebBrowser("https://atlauncher.com/downloads");

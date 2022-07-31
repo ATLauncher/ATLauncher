@@ -50,20 +50,20 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     private double totalBytes = 0; // Total number of bytes to download
     private double downloadedBytes = 0; // Total number of bytes downloaded
 
-    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
-            boolean showProgressBar, Window parent) {
+    public ProgressDialog(CharSequence title, int initMax, CharSequence initLabelText, CharSequence initClosedLogMessage,
+                          boolean showProgressBar, Window parent) {
         super(parent, ModalityType.DOCUMENT_MODAL);
-        this.labelText = initLabelText;
-        this.closedLogMessage = initClosedLogMessage;
+        this.labelText = initLabelText.toString();
+        this.closedLogMessage = initClosedLogMessage.toString();
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/icon.png"));
         setSize(300, 100);
-        setTitle(title);
+        setTitle(title.toString());
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
         setResizable(false);
 
-        label.setText(initLabelText);
+        label.setText(initLabelText.toString());
         label.setHorizontalAlignment(SwingConstants.CENTER);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -98,32 +98,32 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         });
     }
 
-    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage,
+    public ProgressDialog(CharSequence title, int initMax, CharSequence initLabelText, CharSequence initClosedLogMessage,
             boolean showProgressBar) {
         this(title, initMax, initLabelText, initClosedLogMessage, showProgressBar, App.launcher.getParent());
     }
 
-    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage, Window parent) {
+    public ProgressDialog(CharSequence title, int initMax, CharSequence initLabelText, CharSequence initClosedLogMessage, Window parent) {
         this(title, initMax, initLabelText, initClosedLogMessage, true, parent);
     }
 
-    public ProgressDialog(String title, int initMax, String initLabelText, String initClosedLogMessage) {
+    public ProgressDialog(CharSequence title, int initMax, CharSequence initLabelText, CharSequence initClosedLogMessage) {
         this(title, initMax, initLabelText, initClosedLogMessage, true);
     }
 
-    public ProgressDialog(String title, int initMax, String initLabelText, Window parent) {
+    public ProgressDialog(CharSequence title, int initMax, CharSequence initLabelText, Window parent) {
         this(title, initMax, initLabelText, null, true, parent);
     }
 
-    public ProgressDialog(String title, int initMax, String initLabelText) {
+    public ProgressDialog(CharSequence title, int initMax, CharSequence initLabelText) {
         this(title, initMax, initLabelText, null, true);
     }
 
-    public ProgressDialog(String title) {
+    public ProgressDialog(CharSequence title) {
         this(title, 0, title, null, true);
     }
 
-    public ProgressDialog(String title, boolean showProgressBar, Window parent) {
+    public ProgressDialog(CharSequence title, boolean showProgressBar, Window parent) {
         this(title, 0, title, null, showProgressBar, parent);
     }
 
