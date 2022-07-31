@@ -23,7 +23,7 @@ import java.awt.Image;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 
 import org.mini2Dx.gettext.GetText;
@@ -41,7 +41,7 @@ import com.atlauncher.utils.Utils;
 public class NilCard extends JPanel implements RelocalizationListener {
     private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png").getImage();
 
-    private final JTextArea error = new JTextArea();
+    private final JTextPane error = new JTextPane();
 
     public NilCard(String message) {
         super(new BorderLayout());
@@ -50,11 +50,10 @@ public class NilCard extends JPanel implements RelocalizationListener {
         this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
 
+        this.error.setContentType("text/html");
         this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.error.setEditable(false);
         this.error.setHighlighter(null);
-        this.error.setLineWrap(true);
-        this.error.setWrapStyleWord(true);
         this.error.setText(message);
 
         JSplitPane splitter = new JSplitPane();

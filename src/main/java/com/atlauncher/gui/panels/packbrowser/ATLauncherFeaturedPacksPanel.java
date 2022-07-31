@@ -87,10 +87,7 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
         }
 
         if (count == 0) {
-            contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.")),
-                    gbc);
+            contentPanel.add(new NilCard(GetText.tr("There are no packs to display.")), gbc);
         }
     }
 

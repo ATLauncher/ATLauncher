@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -41,7 +42,9 @@ import com.atlauncher.utils.sort.InstanceSortingStrategy;
 public final class InstancesListPanel extends JPanel
         implements InstancesSortEventListener, InstancesSearchEventListener, RelocalizationListener {
     private static NilCard createNilCard() {
-        return new NilCard(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
+        return new NilCard(new HTMLBuilder()
+                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+                .build());
     }
 
     private static Stream<Instance> createInstanceStream(final Pattern searchPattern,
@@ -130,6 +133,8 @@ public final class InstancesListPanel extends JPanel
 
     @Override
     public void onRelocalization() {
-        this.nilCard.setMessage(GetText.tr("There are no instances to display.\n\nInstall one from the Packs tab."));
+        this.nilCard.setMessage(new HTMLBuilder()
+                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+                .build());
     }
 }

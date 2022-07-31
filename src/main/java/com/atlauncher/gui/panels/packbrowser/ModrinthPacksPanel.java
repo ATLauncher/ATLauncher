@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import org.apache.commons.text.WordUtils;
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
@@ -64,8 +65,9 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         if (searchResult == null || searchResult.hits.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                    new NilCard(new HTMLBuilder().text(GetText
+                            .tr("There are no packs to display.<br/><br/>Try removing your search query and try again."))
+                            .build()),
                     gbc);
             return;
         }
@@ -214,7 +216,8 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
         String packToLookup = packLookup;
         // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
-        ProgressDialog<ModrinthProject> progressDialog = new ProgressDialog<>(GetText.tr("Looking Up Pack On {0}", "Modrinth"),
+        ProgressDialog<ModrinthProject> progressDialog = new ProgressDialog<>(
+                GetText.tr("Looking Up Pack On {0}", "Modrinth"),
                 0,
                 // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
                 GetText.tr("Looking Up Pack On {0}", "Modrinth"),

@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -63,8 +64,9 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
             hasMorePages = false;
             contentPanel.removeAll();
             contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                    new NilCard(new HTMLBuilder().text(GetText
+                            .tr("There are no packs to display.<br/><br/>Try removing your search query and try again."))
+                            .build()),
                     gbc);
             return;
         }

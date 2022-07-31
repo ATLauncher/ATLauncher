@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -102,8 +103,9 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
 
         if (count == 0) {
             contentPanel.add(
-                    new NilCard(GetText
-                            .tr("There are no packs to display.\n\nTry removing your search query and try again.")),
+                    new NilCard(new HTMLBuilder().text(GetText
+                            .tr("There are no packs to display.<br/><br/>Try removing your search query and try again."))
+                            .build()),
                     gbc);
         }
     }

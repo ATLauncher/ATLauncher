@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -121,7 +122,8 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         });
 
         if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));
+            nilCard = new NilCard(new HTMLBuilder().text(
+                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
             panel.add(nilCard, gbc);
         }
 
@@ -156,7 +158,8 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
 
         if (nilCard != null) {
-            nilCard.setMessage(GetText.tr("There are no servers to display.\n\nInstall one from the Packs tab."));
+            nilCard.setMessage(new HTMLBuilder().text(
+                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
         }
     }
 }
