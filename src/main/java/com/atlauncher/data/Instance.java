@@ -589,6 +589,7 @@ public class Instance extends MinecraftVersion {
             }
 
             if (runtimesForSystem.containsKey(javaVersion.component)) {
+                // #. {0} is the version of Java were downloading
                 progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}", javaVersion.majorVersion));
 
                 JavaRuntime runtimeToDownload = runtimesForSystem.get(javaVersion.component).get(0);
@@ -2380,6 +2381,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void backup(BackupMode backupMode) {
+        // #. {0} is the name of the instance
         final JDialog dialog = new JDialog(App.launcher.getParent(), GetText.tr("Backing Up {0}", launcher.name),
                 ModalityType.DOCUMENT_MODAL);
         dialog.setSize(300, 100);
@@ -2388,6 +2390,7 @@ public class Instance extends MinecraftVersion {
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
+        // #. {0} is the name of the instance
         JLabel doing = new JLabel(GetText.tr("Backing Up {0}", launcher.name));
         doing.setHorizontalAlignment(JLabel.CENTER);
         doing.setVerticalAlignment(JLabel.TOP);
@@ -2561,16 +2564,20 @@ public class Instance extends MinecraftVersion {
         }
 
         if (success) {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("{0} Installed", launcher.loaderVersion.getLoaderType()))
                     .setContent(
                             new HTMLBuilder().center()
+                                    // #. {0} is the loader (Forge/Fabric/Quilt) {1} is the version
                                     .text(GetText.tr("{0} {1} has been installed.",
                                             launcher.loaderVersion.getLoaderType(), loaderVersion.version))
                                     .build())
                     .setType(DialogManager.INFO).show();
         } else {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("{0} Not Installed", launcher.loaderVersion.getLoaderType()))
                     .setContent(new HTMLBuilder().center()
+                            // #. {0} is the loader (Forge/Fabric/Quilt)
                             .text(GetText.tr("{0} has not been installed. Check the console for more information.",
                                     launcher.loaderVersion.getLoaderType()))
                             .build())
@@ -2606,12 +2613,16 @@ public class Instance extends MinecraftVersion {
         }
 
         if (success) {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("{0} Installed", loaderType))
                     .setContent(new HTMLBuilder().center()
+                            // #. {0} is the loader (Forge/Fabric/Quilt) {1} is the version
                             .text(GetText.tr("{0} {1} has been installed.", loaderType, loaderVersion.version)).build())
                     .setType(DialogManager.INFO).show();
         } else {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("{0} Not Installed", loaderType))
+                    // #. {0} is the loader (Forge/Fabric/Quilt)
                     .setContent(new HTMLBuilder().center().text(GetText
                             .tr("{0} has not been installed. Check the console for more information.", loaderType))
                             .build())
@@ -2621,7 +2632,9 @@ public class Instance extends MinecraftVersion {
 
     private LoaderVersion showLoaderVersionSelector(LoaderType loaderType) {
         ProgressDialog<List<LoaderVersion>> progressDialog = new ProgressDialog<>(
+                // #. {0} is the loader (Forge/Fabric/Quilt)
                 GetText.tr("Checking For {0} Versions", loaderType), 0,
+                // #. {0} is the loader (Forge/Fabric/Quilt)
                 GetText.tr("Checking For {0} Versions", loaderType));
         progressDialog.addThread(new Thread(() -> {
             if (loaderType == LoaderType.FABRIC) {
@@ -2640,10 +2653,12 @@ public class Instance extends MinecraftVersion {
         List<LoaderVersion> loaderVersions = progressDialog.getReturnValue();
 
         if (loaderVersions == null || loaderVersions.size() == 0) {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("No Versions Available For {0}", loaderType))
                     .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("{0} has not been {1} as there are no versions available.", loaderType,
-                                    launcher.loaderVersion == null ? GetText.tr("installed") : GetText.tr("changed")))
+                            // #. {0} is the loader (Forge/Fabric/Quilt)
+                            .text(GetText.tr("{0} has not been installed/updated as there are no versions available.",
+                                    loaderType))
                             .build())
                     .setType(DialogManager.ERROR).show();
             return null;
@@ -2697,6 +2712,7 @@ public class Instance extends MinecraftVersion {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         Box box = Box.createHorizontalBox();
+        // #. {0} is the loader (Forge/Fabric/Quilt)
         box.add(new JLabel(GetText.tr("Select {0} Version To Install", loaderType)));
         box.add(Box.createHorizontalGlue());
 
@@ -2706,7 +2722,9 @@ public class Instance extends MinecraftVersion {
         panel.add(Box.createVerticalStrut(20));
 
         int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), panel,
+                // #. {0} is the loader (Forge/Fabric/Quilt)
                 launcher.loaderVersion == null ? GetText.tr("Installing {0}", loaderType)
+                        // #. {0} is the loader (Forge/Fabric/Quilt)
                         : GetText.tr("Changing {0} Version", loaderType),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
@@ -2742,13 +2760,17 @@ public class Instance extends MinecraftVersion {
         if (success) {
             App.launcher.reloadInstancesPanel();
 
+            // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))
                     .setContent(new HTMLBuilder().center()
+                            // #. {0} is the loader (Forge/Fabric/Quilt)
                             .text(GetText.tr("{0} has been removed from this instance.", loaderType)).build())
                     .setType(DialogManager.INFO).show();
         } else {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("{0} Not Removed", loaderType))
                     .setContent(new HTMLBuilder().center().text(
+                            // #. {0} is the loader (Forge/Fabric/Quilt)
                             GetText.tr("{0} has not been removed. Check the console for more information.", loaderType))
                             .build())
                     .setType(DialogManager.ERROR).show();

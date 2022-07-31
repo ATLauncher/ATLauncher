@@ -2763,6 +2763,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
+        // #. {0} is the name of a mod we're installing
         fireTask(GetText.tr("Installing {0}", "Legacy Java Fixer"));
         fireSubProgressUnknown();
 
@@ -2894,7 +2895,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             String minecraftFolder = Files.exists(multiMCExtractedPath.resolve(".minecraft")) ? ".minecraft"
                     : "minecraft";
 
-            fireTask(GetText.tr("Copying {0} folder", minecraftFolder));
+            fireTask(GetText.tr("Copying minecraft folder"));
             Utils.copyDirectory(this.multiMCExtractedPath.resolve(minecraftFolder + "/").toFile(), this.root.toFile(),
                     false);
         } else if (technicModpack != null) {

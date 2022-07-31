@@ -83,6 +83,7 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
+        // #. {0} is the platform name (ATLauncher, CurseForge, Technic, etc)
         contentPanel.add(new LoadingPanel(GetText.tr("Loading {0} Packs...", getPlatformName())), gbc);
 
         // load in the packs

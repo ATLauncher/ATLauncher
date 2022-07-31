@@ -373,30 +373,37 @@ public abstract class Installable {
 
     private String getDialogTitle(String name) {
         if (removingLoader) {
+            // #. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
             return GetText.tr("Removing {0} {1}", instance.launcher.loaderVersion.type,
                     instance.launcher.loaderVersion.version);
         }
 
         if (addingLoader) {
+            // #. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
             return GetText.tr("Adding {0} {1}", getLoaderVersion().type, getLoaderVersion().version);
         }
 
         if (changingLoader) {
+            // #. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
             return GetText.tr("Installing {0} {1}", getLoaderVersion().type, getLoaderVersion().version);
         }
 
         if (isReinstall) {
             if (isServer) {
+                // #. {0} is the name of the pack
                 return GetText.tr("Reinstalling {0} Server", name);
             }
 
+            // #. {0} is the name of the pack
             return GetText.tr("Reinstalling {0}", name);
         }
 
         if (isServer) {
+            // #. {0} is the name of the pack
             return GetText.tr("Installing {0} Server", name);
         }
 
+        // #. {0} is the name of the pack
         return GetText.tr("Installing {0}", name);
     }
 

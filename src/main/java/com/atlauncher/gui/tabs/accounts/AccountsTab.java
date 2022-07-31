@@ -343,7 +343,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             return;
 
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
-                GetText.tr("Refreshing Access Token"),
+                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
                 0,
                 GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
                 "Aborting refreshing access token for " + account.minecraftUsername);

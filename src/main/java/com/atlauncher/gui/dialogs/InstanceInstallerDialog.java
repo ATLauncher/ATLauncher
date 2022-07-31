@@ -818,10 +818,11 @@ public class InstanceInstallerDialog extends JDialog {
 
         isReinstall = true; // We're reinstalling
 
-        // #. {0} is the name of the pack the user is installing
         if (isUpdate) {
+            // #. {0} is the name of the instance the user is updating
             setTitle(GetText.tr("Updating {0}", instance.launcher.name));
         } else {
+            // #. {0} is the name of the instance the user is reinstalling
             setTitle(GetText.tr("Reinstalling {0}", instance.launcher.name));
         }
     }

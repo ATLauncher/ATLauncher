@@ -61,6 +61,7 @@ public class InstanceSettingsDialog extends JDialog {
     final GridBagConstraints gbc = new GridBagConstraints();
 
     public InstanceSettingsDialog(Instance instance) {
+        // #. {0} is the name of the instance
         super(App.launcher.getParent(), GetText.tr("{0} Settings", instance.launcher.name),
                 ModalityType.DOCUMENT_MODAL);
         this.instance = instance;

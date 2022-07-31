@@ -13,3 +13,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders
+- Add more context to some strings

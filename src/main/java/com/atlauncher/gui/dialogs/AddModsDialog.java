@@ -195,6 +195,7 @@ public final class AddModsDialog extends JDialog {
                 final ProgressDialog<CurseForgeProject> curseForgeProjectLookupDialog = new ProgressDialog<>(
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Fabric API"), 0,
+                        // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Fabric API"),
                         "Aborting Getting Fabric API Information");
 

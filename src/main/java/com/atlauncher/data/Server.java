@@ -174,7 +174,7 @@ public class Server {
                 } else {
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "The server couldn't be launched as we don't know how to launcher it.<br/><br/>Please open the server folder and run the {0} file manually.",
+                                    "The server couldn't be launched as we don't know how to launch it.<br/><br/>Please open the server folder and run the {0} file manually.",
                                     serverScript))
                                     .build())
                             .setType(DialogManager.ERROR).show();
@@ -244,6 +244,7 @@ public class Server {
         String filename = "Server-" + getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
         Path backupZip = FileSystem.BACKUPS.resolve(filename);
 
+        // #. {0} is the name of the server we're backing up
         ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Backing Up {0}", name));
         progressDialog.addThread(new Thread(() -> {
             boolean success = ArchiveUtils.createZip(getRoot(), backupZip);
