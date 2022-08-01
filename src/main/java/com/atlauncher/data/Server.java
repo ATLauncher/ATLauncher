@@ -34,8 +34,6 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;

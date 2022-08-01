@@ -42,8 +42,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;

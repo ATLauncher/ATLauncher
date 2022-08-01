@@ -28,8 +28,6 @@ import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;

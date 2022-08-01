@@ -33,8 +33,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -44,6 +42,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.Utils;
 
 public class LauncherConsole extends JFrame implements RelocalizationListener {
@@ -119,7 +118,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     private void setupContextMenu() {
         contextMenu = new JPopupMenu();
 
-        copy = new JMenuItem(GetText.tr("Copy"));
+        copy = new JMenuItem(Verb.COPY.toString(Verb.FUTURE));
         copy.addActionListener(e -> {
             StringSelection text = new StringSelection(console.getSelectedText());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -157,7 +156,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     public void setupLanguage() {
         LogManager.debug("Setting up language for console");
-        copy.setText(GetText.tr("Copy"));
+        copy.setText(Verb.COPY.toString(Verb.FUTURE));
         bottomBar.setupLanguage();
         LogManager.debug("Finished setting up language for console");
     }
@@ -168,7 +167,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
     @Override
     public void onRelocalization() {
-        copy.setText(GetText.tr("Copy"));
+        copy.setText(Verb.COPY.toString(Verb.FUTURE));
         bottomBar.setupLanguage();
     }
 }

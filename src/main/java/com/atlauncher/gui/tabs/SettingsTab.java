@@ -25,8 +25,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.RelocalizationListener;

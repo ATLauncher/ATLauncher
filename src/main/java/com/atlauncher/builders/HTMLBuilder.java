@@ -28,8 +28,8 @@ public final class HTMLBuilder {
         return this;
     }
 
-    public HTMLBuilder text(String text) {
-        this.text = text;
+    public HTMLBuilder text(CharSequence text) {
+        this.text = text.toString();
 
         return this;
     }

@@ -23,8 +23,6 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.gui.tabs.Tab;
 
 @SuppressWarnings("serial")

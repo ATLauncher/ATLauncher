@@ -30,8 +30,6 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.Border;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;

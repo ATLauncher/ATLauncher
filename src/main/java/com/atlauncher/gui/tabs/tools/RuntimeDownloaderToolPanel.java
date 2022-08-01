@@ -20,8 +20,6 @@ package com.atlauncher.gui.tabs.tools;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.gui.dialogs.ProgressDialog;

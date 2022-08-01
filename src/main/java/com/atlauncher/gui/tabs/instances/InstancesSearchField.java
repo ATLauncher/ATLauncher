@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.JTextField;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.icons.FlatSearchIcon;

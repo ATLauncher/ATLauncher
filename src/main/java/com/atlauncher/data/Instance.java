@@ -70,8 +70,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -140,6 +138,8 @@ import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
@@ -314,7 +314,7 @@ public class Instance extends MinecraftVersion {
                 return launcher.description;
             }
 
-            return GetText.tr("No Description");
+            return Sentence.INF_NO_X.capitalize().insert(Noun.DESCRIPTION).toString();
         }
     }
 

@@ -11,11 +11,13 @@ public interface SentenceBuilderStub extends SubStr, Capitalizable<SentenceBuild
 
     SentenceBuilder insert(Word word, int alt, SentenceBuilder.AltUsage altUsage);
 
-    SentenceBuilder insert(String str);
+    SentenceBuilder insert(CharSequence seq);
 
     default SentenceBuilder append(CharSequence seq) {
-        return append(" ", seq);
+        return append(seq.length() < 3 ? "" : " ", seq);
     }
 
     SentenceBuilder append(CharSequence delimiter, CharSequence seq);
+
+    SentenceBuilder capitalize();
 }

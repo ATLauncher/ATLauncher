@@ -17,8 +17,6 @@
  */
 package com.atlauncher.utils.sort;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;

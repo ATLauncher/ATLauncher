@@ -28,8 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.LogManager;

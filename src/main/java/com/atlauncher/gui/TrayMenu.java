@@ -23,8 +23,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
@@ -33,15 +31,23 @@ import com.atlauncher.evnt.listener.ConsoleOpenListener;
 import com.atlauncher.evnt.manager.ConsoleCloseManager;
 import com.atlauncher.evnt.manager.ConsoleOpenManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, ConsoleOpenListener {
 
-    private final JMenuItem killMinecraftButton = new JMenuItem(GetText.tr("Kill Minecraft"));
-    private final JMenuItem toggleConsoleButton = new JMenuItem(GetText.tr("Toggle Console"));
-    private final JMenuItem openLauncherFolderButton = new JMenuItem(GetText.tr("Open Launcher Folder"));
-    private final JMenuItem quitButton = new JMenuItem(GetText.tr("Quit"));
+    private final JMenuItem killMinecraftButton = new JMenuItem(Sentence.ACT_KILL_X.insert(Noun.MINECRAFT).toString());
+    private final JMenuItem toggleConsoleButton = new JMenuItem(Sentence.ACT_TOGGLE_X.insert(Noun.CONSOLE).toString());
+    private final JMenuItem openLauncherFolderButton = new JMenuItem(Sentence.BASE_ABC.capitalize()
+        .insert(Verb.OPEN, Verb.FUTURE)
+        .insert(Noun.LAUNCHER)
+        .insert(Noun.DIRECTORY)
+        .toString()
+    );
+    private final JMenuItem quitButton = new JMenuItem(Verb.CLOSE.toString(Verb.FUTURE));
 
     public TrayMenu() {
         super();
@@ -64,10 +70,8 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
     private void addActionListeners() {
         this.killMinecraftButton.addActionListener(e -> SwingUtilities.invokeLater(() -> {
             if (App.launcher.minecraftLaunched) {
-                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"))
-                                .build())
+                int ret = DialogManager.yesNoDialog().setTitle(Sentence.ACT_KILL_X.insert(Noun.MINECRAFT))
+                        .setContent(new HTMLBuilder().center().text(Sentence.MSG_KILL_MINECRAFT).build())
                         .setType(DialogManager.ERROR).show();
 
                 if (ret == DialogManager.YES_OPTION) {
@@ -97,11 +101,19 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
 
     @Override
     public void onConsoleClose() {
-        this.toggleConsoleButton.setText(GetText.tr("Show Console"));
+        this.toggleConsoleButton.setText(Sentence.BASE_AB.capitalize()
+            .insert(Verb.OPEN, Verb.FUTURE)
+            .insert(Noun.CONSOLE)
+            .toString()
+        );
     }
 
     @Override
     public void onConsoleOpen() {
-        this.toggleConsoleButton.setText(GetText.tr("Hide Console"));
+        this.toggleConsoleButton.setText(Sentence.BASE_AB.capitalize()
+            .insert(Verb.CLOSE, Verb.FUTURE)
+            .insert(Noun.CONSOLE)
+            .toString()
+        );
     }
 }

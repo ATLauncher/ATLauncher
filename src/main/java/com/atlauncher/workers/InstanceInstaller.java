@@ -41,8 +41,6 @@ import java.util.stream.Stream;
 import javax.swing.JDialog;
 import javax.swing.SwingWorker;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -123,6 +121,10 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.SentenceBuilder;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
@@ -404,7 +406,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadPackVersionJson() throws Exception {
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "ATLauncher"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.GENERATE, Verb.PRESENT)
+                .insert(Noun.PACK)
+                .insert(Noun.VERSION)
+                .append(Sentence.PRT_FROM_X.insert(Noun.ATLAUNCHER)));
         fireSubProgressUnknown();
 
         this.packVersion = com.atlauncher.network.Download.build().cached()
@@ -422,7 +428,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionFromCurseForgeManifest() throws Exception {
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "CurseForge"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.GENERATE, Verb.PRESENT)
+            .insert(Noun.PACK)
+            .insert(Noun.VERSION)
+            .append(Sentence.PRT_FROM_X.insert(Noun.CURSEFORGE)));
         fireSubProgressUnknown();
 
         if (!curseForgeManifest.manifestType.equals("minecraftModpack")) {
@@ -625,9 +635,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             App.settings.save();
 
             DialogManager.okDialog().setType(DialogManager.WARNING)
-                    .setTitle(GetText.tr("Mods Not Available"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                    .setTitle(Sentence.PRT_X_NOT_Y.capitalize()
+                        .insert(Noun.MOD, manualDownloadMods.size())
+                        .insert(Noun.AVAILABLE))
+                    .setContent(new HTMLBuilder().center().text(Sentence.MSG_MODS_NOT_AVAILABLE)
                             .build())
                     .show();
         }
@@ -639,7 +650,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         addPercent(5);
 
         // #. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Downloading Manifest From {0}", "CurseForge"));
+        fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.MANIFEST)
+                .append(Sentence.PRT_FROM_X.insert(Noun.CURSEFORGE)));
         fireSubProgressUnknown();
 
         Path manifestFile = this.temp.resolve(version._curseForgeFile.fileName.toLowerCase());
@@ -650,9 +664,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 App.settings.save();
 
                 DialogManager.okDialog().setType(DialogManager.WARNING)
-                        .setTitle(GetText.tr("Mod Not Available"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "We were unable to download this modpack.<br/>This is likely due to the author of the modpack disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the modpack manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the modpack.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                        .setTitle(Sentence.PRT_X_NOT_Y.capitalize()
+                            .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly)
+                            .insert(Noun.AVAILABLE))
+                        .setContent(new HTMLBuilder().center().text(Sentence.MSG_MODS_NOT_AVAILABLE)
                                 .build())
                         .show();
             }
@@ -675,21 +690,34 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         }
 
                         retValue = DialogManager.optionDialog()
-                                .setTitle(GetText.tr("Downloading") + " "
-                                        + filename)
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "Browser opened to download file {0}",
-                                        filename)
-                                        + "<br/><br/>" + GetText.tr("Please save this file to the following location")
-                                        + "<br/><br/>"
-                                        + (OS.isUsingMacApp()
-                                                ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
-                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                        + " or<br/>"
-                                                        + FileSystem.getUserDownloadsPath().toFile()))
-                                        .build())
-                                .addOption(GetText.tr("Open Folder"), true)
-                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
+                            .setTitle(Sentence.BASE_AB.capitalize()
+                                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                                .insert(filename))
+                            .setContent(new HTMLBuilder().center().text(
+                                Sentence.PRT_X_TO_Y.capitalize()
+                                    .insert(Sentence.BASE_AB
+                                        .insert(Noun.BROWSER)
+                                        .insert(Verb.OPEN, Verb.PAST))
+                                    .insert(Sentence.BASE_ABC
+                                        .insert(Verb.DOWNLOAD)
+                                        .insert(Noun.FILE)
+                                        .insert(filename))
+                                    + "<br/><br/>" + Sentence.MSG_SAVE_FILE_TO
+                                    + "<br/><br/>" + (OS.isUsingMacApp()
+                                    ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
+                                    : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                    + " or<br/>"
+                                    + FileSystem.getUserDownloadsPath().toFile()))
+                                .build())
+                            .addOption(Sentence.BASE_AB.capitalize()
+                                .insert(Verb.OPEN)
+                                .insert(Noun.DIRECTORY), true)
+                            .addOption(Sentence.BASE_ABC.capitalize()
+                                .insert(Noun.ME, 1, SentenceBuilder.AltUsage.PluralOnly)
+                                .insert(Noun.HAS, 0, SentenceBuilder.AltUsage.PluralOnly)
+                                .insert(Verb.DOWNLOAD, Verb.PAST)
+                                .append(Sentence.PRT_THIS_X.insert(Noun.FILE)))
+                            .setType(DialogManager.INFO)
                                 .showWithFileMonitoring(fileLocation, downloadsFolderFile,
                                         version._curseForgeFile.fileLength, 1);
 
@@ -735,7 +763,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             manifestDownload.downloadFile();
         }
 
-        fireTask(GetText.tr("Extracting Manifest"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.EXTRACT, Verb.PRESENT)
+            .insert(Noun.FILE));
         fireSubProgressUnknown();
 
         curseForgeManifest = Gsons.MINECRAFT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "manifest.json")),
@@ -754,7 +784,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         addPercent(5);
 
         // #. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Downloading Manifest From {0}", "Modrinth"));
+        fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.MANIFEST)
+                .append(Sentence.PRT_FROM_X.insert(Noun.MODRINTH)));
         fireSubProgressUnknown();
 
         ModrinthFile file = version._modrinthVersion.getPrimaryFile();
@@ -778,7 +811,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         manifestDownload.downloadFile();
 
-        fireTask(GetText.tr("Extracting Manifest"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.EXTRACT, Verb.PRESENT)
+            .insert(Noun.MANIFEST));
         fireSubProgressUnknown();
 
         modrinthManifest = Gsons.MINECRAFT.fromJson(
@@ -797,7 +832,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionFromModpacksCh() throws Exception {
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "Modpacks.ch"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.GENERATE, Verb.PRESENT)
+                .insert(Noun.PACK)
+                .insert(Noun.VERSION)
+                .append(Sentence.PRT_FROM_X.insert(Noun.MODPACKS_CH)));
         fireSubProgressUnknown();
 
         this.modpacksChPackVersionManifest = com.atlauncher.network.Download.build()
@@ -929,9 +968,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         // if not all non downloadable mods, we can't install
         if (nonDownloadableMods != 0) {
             DialogManager.okDialog().setType(DialogManager.ERROR)
-                    .setTitle(GetText.tr("{0} Mods Not Available", nonDownloadableMods))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "Some of the mods for this pack are not available to download.<br/><br/>At this time you can only install this pack via FTB launcher."))
+                    .setTitle(Sentence.PRT_X_NOT_Y.capitalize()
+                        // cast to int because theres never gonna be that many mods in one pack
+                        .insert(Noun.MOD, (int)nonDownloadableMods)
+                        .insert(Noun.AVAILABLE))
+                    .setContent(new HTMLBuilder().center().text(Sentence.MSG_MODS_NOT_DOWNLOADABLE)
                             .build())
                     .show();
             throw new Exception("Cannot install pack as there are files we cannot download");
@@ -1087,9 +1128,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             App.settings.save();
 
             DialogManager.okDialog().setType(DialogManager.WARNING)
-                    .setTitle(GetText.tr("Mods Not Available"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                    .setTitle(Sentence.PRT_X_NOT_Y.capitalize()
+                        .insert(Noun.MOD, manualDownloadMods.size())
+                        .insert(Noun.AVAILABLE))
+                    .setContent(new HTMLBuilder().center().text(Sentence.MSG_MODS_NOT_AVAILABLE)
                             .build())
                     .show();
         }
@@ -1100,7 +1142,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionFromTechnicSolder() throws Exception {
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "Technic Solder"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.GENERATE, Verb.PRESENT)
+                .insert(Noun.PACK)
+                .insert(Noun.VERSION)
+                .append(Sentence.PRT_FROM_X.insert(Noun.TECHNIC_SOLDER)));
         fireSubProgressUnknown();
 
         String minecraftVersion = technicModpack.minecraft;
@@ -1140,7 +1186,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void generatePackVersionFromTechnicZip() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Downloading modpack.zip"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+            .insert("modpack.zip"));
         fireSubProgressUnknown();
 
         Path tempZip = FileSystem.TEMP.resolve("technic-" + technicModpack.name + "-modpack.zip");
@@ -1159,7 +1207,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "Technic Zip"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.GENERATE, Verb.PRESENT)
+            .insert(Noun.PACK)
+            .insert(Noun.VERSION)
+            .append(Sentence.PRT_FROM_X.insert("Technic Zip")));
         fireSubProgressUnknown();
 
         if (technicModpack.minecraft == null) {
@@ -1280,7 +1332,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionFromModrinthManifest() throws Exception {
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "Modrinth"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.GENERATE, Verb.PRESENT)
+            .insert(Noun.PACK)
+            .insert(Noun.VERSION)
+            .append(Sentence.PRT_FROM_X.insert(Noun.MODRINTH)));
         fireSubProgressUnknown();
 
         if (!modrinthManifest.game.equals("minecraft")) {
@@ -1375,7 +1431,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionFromMultiMC() throws Exception {
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "MultiMC"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.GENERATE, Verb.PRESENT)
+            .insert(Noun.PACK)
+            .insert(Noun.VERSION)
+            .append(Sentence.PRT_FROM_X.insert(Noun.MULTIMC)));
         fireSubProgressUnknown();
 
         if (multiMCManifest.formatVersion != 1) {
@@ -1472,7 +1532,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void generatePackVersionForVanilla() throws Exception {
         addPercent(5);
         // #. {0} is the platform the modpack is from
-        fireTask(GetText.tr("Generating Pack Version From {0}", "Vanilla Minecraft"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.GENERATE, Verb.PRESENT)
+            .insert(Noun.PACK)
+            .insert(Noun.VERSION)
+            .append(Sentence.PRT_FROM_X.insert(Sentence.BASE_AB
+                .insert(Noun.VANILLA)
+                .insert(Noun.MINECRAFT))));
         fireSubProgressUnknown();
 
         this.packVersion = new Version();
@@ -1543,7 +1609,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadMinecraftVersionJson() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Downloading Minecraft Definition"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+            .insert(Noun.MINECRAFT)
+            .insert(Noun.DEFINITION));
         fireSubProgressUnknown();
 
         minecraftVersionManifest = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
@@ -1566,7 +1635,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadLoader() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Downloading Loader"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+            .insert(Noun.LOADER));
         fireSubProgressUnknown();
 
         this.loader.downloadAndExtractInstaller();
@@ -2153,7 +2224,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Organising Resources"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.ORGANIZE, Verb.PRESENT)
+            .insert(Noun.RESOURCE, 2, SentenceBuilder.AltUsage.PluralOnly));
         fireSubProgressUnknown();
         this.totalBytes = this.downloadedBytes = 0;
 
@@ -2184,7 +2257,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         DownloadPool smallPool = pool.downsize();
 
         if (smallPool.size() != 0) {
-            fireTask(GetText.tr("Downloading Resources"));
+            fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.RESOURCE, 2, SentenceBuilder.AltUsage.PluralOnly));
             this.setTotalBytes(smallPool.totalSize());
             this.fireSubProgress(0);
             smallPool.downloadAll();
@@ -2192,7 +2267,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         // copy resources to instance
         if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
-            fireTask(GetText.tr("Organising Resources"));
+            fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.ORGANIZE, Verb.PRESENT)
+                .insert(Noun.RESOURCE, 2, SentenceBuilder.AltUsage.PluralOnly));
             fireSubProgressUnknown();
 
             index.objects.forEach((key, object) -> {
@@ -2213,7 +2290,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadMinecraft() throws Exception {
         addPercent(5);
-        fireTask(GetText.tr("Downloading Minecraft"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+            .insert(Noun.MINECRAFT));
         fireSubProgressUnknown();
         totalBytes = 0;
         downloadedBytes = 0;
@@ -2255,7 +2334,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Downloading Logging Client"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+            .insert(Noun.LOGGING)
+            .insert(Noun.CLIENT));
         fireSubProgressUnknown();
 
         LoggingFile loggingFile = this.minecraftVersion.logging.client.file;
@@ -2371,7 +2453,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadLibraries() {
         addPercent(5);
-        fireTask(GetText.tr("Downloading Libraries"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.ORGANIZE, Verb.PRESENT)
+            .insert(Noun.LIBRARY, 2, SentenceBuilder.AltUsage.PluralOnly));
         fireSubProgressUnknown();
 
         OkHttpClient httpClient = Network.createProgressClient(this);
@@ -2420,7 +2504,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void organiseLibraries() {
         addPercent(5);
-        fireTask(GetText.tr("Organising Libraries"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.ORGANIZE, Verb.PRESENT)
+            .insert(Noun.LIBRARY, 2, SentenceBuilder.AltUsage.PluralOnly));
         fireSubProgressUnknown();
 
         if (isServer) {
@@ -2489,7 +2575,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (runtimesForSystem.containsKey(minecraftVersion.javaVersion.component)) {
-            fireTask(GetText.tr("Downloading Java Runtime {0}", minecraftVersion.javaVersion.majorVersion));
+            fireTask(Sentence.BASE_ABCD.capitalize()
+                    .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                    .insert(Noun.JAVA)
+                    .insert(Noun.RUNTIME)
+                    .insert(String.valueOf(minecraftVersion.javaVersion.majorVersion)));
             fireSubProgressUnknown();
 
             JavaRuntime runtimeToDownload = runtimesForSystem.get(minecraftVersion.javaVersion.component).get(0);
@@ -2557,7 +2647,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Installing Loader (May Take Some Time)"));
+        fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.INSTALL, Verb.PRESENT)
+                .insert(Noun.LOADER)
+                .append(". ", Sentence.PRT_PLEASE_WAIT_LONG.capitalize()));
         fireSubProgressUnknown();
 
         // run any processors that the loader needs
@@ -2573,7 +2666,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Downloading Mods"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+            .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly));
         fireSubProgressUnknown();
 
         OkHttpClient httpClient = Network.createProgressClient(this);
@@ -2614,7 +2709,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 .collect(Collectors.toList());
         if (browserDownloadMods.size() != 0) {
             if (curseForgeManifest != null || modpacksChPackManifest != null) {
-                fireTask(GetText.tr("Downloading Browser Mods"));
+                fireTask(Sentence.BASE_ABC.capitalize()
+                    .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                    .insert(Noun.BROWSER)
+                    .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly));
 
                 BrowserDownloadDialog browserDownloadDialog = new BrowserDownloadDialog(this.dialog,
                         browserDownloadMods);
@@ -2639,7 +2737,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 for (Mod mod : browserDownloadMods) {
                     if (!isCancelled()) {
-                        fireTask(GetText.tr("Downloading Browser Mods"));
+                        fireTask(Sentence.BASE_ABC.capitalize()
+                            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                            .insert(Noun.BROWSER)
+                            .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly));
 
                         if (!mod.download(this)) {
                             LogManager.info("Browser download mod " + mod.name + " was skipped");
@@ -2670,7 +2771,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Installing Mods"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.INSTALL, Verb.PRESENT)
+            .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly));
         fireSubProgressUnknown();
 
         double subPercentPerMod = 100.0 / this.selectedMods.size();
@@ -2690,7 +2793,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        fireTask(GetText.tr("Downloading Mods"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+            .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly));
         fireSubProgressUnknown();
 
         OkHttpClient httpClient = Network.createProgressClient(this);
@@ -2759,7 +2864,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         // #. {0} is the name of a mod we're installing
-        fireTask(GetText.tr("Installing {0}", "Legacy Java Fixer"));
+        fireTask(Sentence.BASE_AB.capitalize()
+            .insert(Verb.INSTALL, Verb.PRESENT)
+            .insert("Legacy Java Fixer"));
         fireSubProgressUnknown();
 
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
@@ -2826,13 +2933,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (curseForgeManifest != null) {
             fireSubProgressUnknown();
-            fireTask(GetText.tr("Copying Overrides"));
+            fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.COPY, Verb.PRESENT)
+                .insert(Noun.OVERRIDE, 2, SentenceBuilder.AltUsage.PluralOnly));
             Utils.copyDirectory(this.curseForgeExtractedPath
                     .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")).toFile(),
                     this.root.toFile(), false);
         } else if (modrinthManifest != null) {
             fireSubProgressUnknown();
-            fireTask(GetText.tr("Copying Overrides"));
+            fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.COPY, Verb.PRESENT)
+                .insert(Noun.OVERRIDE, 2, SentenceBuilder.AltUsage.PluralOnly));
             Utils.copyDirectory(this.modrinthExtractedPath.resolve("overrides").toFile(), this.root.toFile(), false);
 
             if (isServer && Files.isDirectory(this.modrinthExtractedPath.resolve("server-overrides"))) {
@@ -2844,7 +2955,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
         } else if (modpacksChPackManifest != null) {
             fireSubProgressUnknown();
-            fireTask(GetText.tr("Calculating Files To Download"));
+            fireTask(Sentence.PRT_X_TO_Y.capitalize()
+                .insert(Sentence.BASE_AB
+                    .insert(Verb.CALCULATE, Verb.PRESENT)
+                    .insert(Noun.FILE, 2, SentenceBuilder.AltUsage.PluralOnly)
+                .insert(Verb.DOWNLOAD)));
 
             List<com.atlauncher.network.Download> filesToDownload = modpacksChPackVersionManifest.files.parallelStream()
                     .filter(f -> f.type != ModpacksChPackVersionManifestFileType.MOD).map(file -> {
@@ -2858,7 +2973,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         return download;
                     }).collect(Collectors.toList());
 
-            fireTask(GetText.tr("Creating Config Directories"));
+            fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.CREATE, Verb.PRESENT)
+                .insert(Noun.CONFIG)
+                .insert(Noun.DIRECTORY, 2, SentenceBuilder.AltUsage.PluralOnly));
 
             modpacksChPackVersionManifest.files.stream()
                     .filter(f -> f.type != ModpacksChPackVersionManifestFileType.MOD)
@@ -2874,7 +2992,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         }
                     });
 
-            fireTask(GetText.tr("Downloading Configs"));
+            fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.CONFIG, 2, SentenceBuilder.AltUsage.PluralOnly));
 
             DownloadPool pool = new DownloadPool();
             pool.addAll(filesToDownload);
@@ -2890,17 +3010,25 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             String minecraftFolder = Files.exists(multiMCExtractedPath.resolve(".minecraft")) ? ".minecraft"
                     : "minecraft";
 
-            fireTask(GetText.tr("Copying minecraft folder"));
+            fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.COPY, Verb.PRESENT)
+                .insert(Noun.MINECRAFT)
+                .insert(Noun.DIRECTORY));
             Utils.copyDirectory(this.multiMCExtractedPath.resolve(minecraftFolder + "/").toFile(), this.root.toFile(),
                     false);
         } else if (technicModpack != null) {
             if (technicModpackExtractedPath != null) {
                 fireSubProgressUnknown();
-                fireTask(GetText.tr("Copying modpack.zip files"));
+                fireTask(Sentence.BASE_ABC.capitalize()
+                    .insert(Verb.COPY, Verb.PRESENT)
+                    .insert("modpack.zip")
+                    .insert(Noun.FILE, 2, SentenceBuilder.AltUsage.PluralOnly));
                 Utils.copyDirectory(this.technicModpackExtractedPath.toFile(), this.root.toFile(), false);
             }
         } else if (!pack.vanillaInstance) {
-            fireTask(GetText.tr("Downloading Configs"));
+            fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.CONFIG, 2, SentenceBuilder.AltUsage.PluralOnly));
 
             File configs = this.temp.resolve("Configs.zip").toFile();
             String path = "packs/" + pack.getSafeName() + "/versions/" + version.version + "/Configs.zip";
@@ -2923,7 +3051,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             fireSubProgressUnknown();
-            fireTask(GetText.tr("Extracting Configs"));
+            fireTask(Sentence.BASE_AB.capitalize()
+                .insert(Verb.EXTRACT, Verb.PRESENT)
+                .insert(Noun.CONFIG, 2, SentenceBuilder.AltUsage.PluralOnly));
 
             ArchiveUtils.extract(configs.toPath(), this.root);
             Utils.delete(configs);
@@ -2934,7 +3064,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         addPercent(5);
 
         if (this.pack.curseForgeProject != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.INSTANCE)
+                .insert(Noun.IMAGE));
             CurseForgeAttachment attachment = this.pack.curseForgeProject.getLogo().orElse(null);
 
             if (attachment != null) {
@@ -2946,7 +3079,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 imageDownload.downloadFile();
             }
         } else if (modpacksChPackManifest != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.INSTANCE)
+                .insert(Noun.IMAGE));
             ModpacksChPackArt art = this.modpacksChPackManifest.art.stream()
                     .filter(a -> a.type == ModpacksChPackArtType.SQUARE).findFirst().orElse(null);
 
@@ -2961,7 +3097,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 imageDownload.downloadFile();
             }
         } else if (technicModpack != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                .insert(Noun.INSTANCE)
+                .insert(Noun.IMAGE));
             TechnicModpackAsset logo = this.technicModpack.logo;
 
             if (logo != null && logo.url != null && !logo.url.isEmpty()) {
@@ -2984,7 +3123,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Checking Mods On {0}", "CurseForge"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+                .insert(Verb.CHECK, Verb.PRESENT)
+                .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly)
+                .append(Sentence.PRT_ON_X.insert(Noun.CURSEFORGE)));
         fireSubProgressUnknown();
 
         Map<Long, DisableableMod> murmurHashes = new HashMap<>();
@@ -3042,7 +3184,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Checking Mods On {0}", "Modrinth"));
+        fireTask(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.CHECK, Verb.PRESENT)
+            .insert(Noun.MOD, 2, SentenceBuilder.AltUsage.PluralOnly)
+            .append(Sentence.PRT_ON_X.insert(Noun.MODRINTH)));
         fireSubProgressUnknown();
 
         Map<String, DisableableMod> sha1Hashes = new HashMap<>();
@@ -3615,9 +3760,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         return shareCodeData;
     }
 
-    public void fireTask(String name) {
-        LogManager.debug("Instance Installer: " + name);
-        firePropertyChange("doing", null, name);
+    public void fireTask(CharSequence text) {
+        LogManager.debug("Instance Installer: " + text);
+        firePropertyChange("doing", null, text);
     }
 
     protected void fireProgress(double percent) {

@@ -36,8 +36,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;

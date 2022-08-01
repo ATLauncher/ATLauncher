@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;

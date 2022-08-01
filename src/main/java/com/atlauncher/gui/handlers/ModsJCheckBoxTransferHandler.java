@@ -31,8 +31,6 @@ import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;

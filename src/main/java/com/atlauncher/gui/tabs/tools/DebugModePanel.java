@@ -22,8 +22,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 
 @SuppressWarnings("serial")

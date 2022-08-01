@@ -26,8 +26,6 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;

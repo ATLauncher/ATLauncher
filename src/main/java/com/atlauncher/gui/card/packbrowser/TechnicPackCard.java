@@ -29,8 +29,6 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.technic.TechnicModpackSlim;
 import com.atlauncher.evnt.listener.RelocalizationListener;

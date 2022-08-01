@@ -24,12 +24,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.mini2Dx.gettext.GetText;
-import org.mini2Dx.gettext.PoFile;
-
 import com.atlauncher.App;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.strings.SentenceBuilder;
 import com.atlauncher.utils.Utils;
 
 public class Language {
@@ -116,6 +114,7 @@ public class Language {
         }
 
         if (locale != Locale.ENGLISH) {
+            /*
             try {
                 GetText.add(
                         new PoFile(locale, App.class.getResourceAsStream(
@@ -125,11 +124,13 @@ public class Language {
                 locale = Locale.ENGLISH;
                 selected = Locale.ENGLISH.getDisplayName();
             }
+            */
         }
 
         selectedLocale = locale;
 
-        GetText.setLocale(locale);
+        // todo: handle errors where the specified locale does not exist
+        SentenceBuilder.setLocale(locale);
         RelocalizationManager.post();
     }
 

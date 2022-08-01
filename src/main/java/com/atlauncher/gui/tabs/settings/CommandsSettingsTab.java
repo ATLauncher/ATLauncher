@@ -27,8 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;

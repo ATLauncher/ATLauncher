@@ -25,8 +25,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 
 @SuppressWarnings("serial")

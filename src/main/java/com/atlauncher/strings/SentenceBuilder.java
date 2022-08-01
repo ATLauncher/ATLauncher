@@ -15,6 +15,7 @@ public final class SentenceBuilder implements SentenceBuilderStub {
     static final Properties nouns = new Properties();
     static final Properties verbs = new Properties();
     static final Properties sentences = new Properties();
+    private boolean capitalize = false;
 
     static {
         setLocale(Language.selectedLocale);
@@ -28,9 +29,9 @@ public final class SentenceBuilder implements SentenceBuilderStub {
             verbs.clear();
             sentences.clear();
 
-            nouns.load(ClassLoader.getSystemResourceAsStream("assets/lang/Nouns_" + locale + ".properties"));
-            verbs.load(ClassLoader.getSystemResourceAsStream("assets/lang/Verbs_" + locale + ".properties"));
-            sentences.load(ClassLoader.getSystemResourceAsStream("assets/lang/Sentences_" + locale + ".properties"));
+            nouns.load(ClassLoader.getSystemResourceAsStream("assets/lang/"+locale+"/Nouns.properties"));
+            verbs.load(ClassLoader.getSystemResourceAsStream("assets/lang/"+locale+"/Verbs.properties"));
+            sentences.load(ClassLoader.getSystemResourceAsStream("assets/lang/"+locale+"/Sentences.properties"));
         } catch (IOException e) {
             throw new RuntimeException("Unable to load localization", e);
         }
@@ -39,10 +40,14 @@ public final class SentenceBuilder implements SentenceBuilderStub {
     public static void main(String[] args) {
         int n = 3;
         System.out.println(
-            Sentence.INF_CHECKING_XY
-                .insert(Noun.MOD, n, NumberOnly)
-                .insert(Noun.UPDATE, n, PluralOnly)
-                .append(Sentence.PRT_FOR_X.insert(Noun.CURSEFORGE)));
+            Sentence.BASE_ABC.capitalize()
+                .insert(Verb.CHECK)
+                .insert(Noun.MOD, n)
+                .insert(Sentence.PRT_FOR_X.insert(Noun.UPDATE, n, PluralOnly))
+                .append(Sentence.PRT_FROM_X.insert(Noun.CURSEFORGE))
+                .append(". ", Sentence.PRT_PLEASE_WAIT.capitalize())
+                .append("", "!")
+        );
     }
 
     private final Sentence sentence;
@@ -60,8 +65,8 @@ public final class SentenceBuilder implements SentenceBuilderStub {
     }
 
     @Override
-    public SentenceBuilder insert(String str) {
-        words.add(new WordUsage(str));
+    public SentenceBuilder insert(CharSequence seq) {
+        words.add(new WordUsage(seq));
         return this;
     }
 
@@ -100,20 +105,20 @@ public final class SentenceBuilder implements SentenceBuilderStub {
     }
 
     private static class WordUsage {
-        private final String str;
+        private final CharSequence seq;
         private final Word word;
         private final int alt;
         private final AltUsage altUsage;
 
-        public WordUsage(String str) {
-            this.str = str;
+        public WordUsage(CharSequence seq) {
+            this.seq = seq;
             this.word = null;
             this.alt = 0;
             this.altUsage = Default;
         }
 
         public WordUsage(Word word, int alt, AltUsage altUsage) {
-            this.str = null;
+            this.seq = null;
             this.word = word;
             this.alt = alt;
             this.altUsage = altUsage;
@@ -121,8 +126,8 @@ public final class SentenceBuilder implements SentenceBuilderStub {
 
         @Override
         public String toString() {
-            if (str != null)
-                return str;
+            if (seq != null)
+                return seq.toString();
             else if (word instanceof Noun && !((Noun) word).unique)
                 switch (altUsage) {
                     default:

@@ -26,7 +26,9 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 
-import org.mini2Dx.gettext.GetText;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 
 import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -43,18 +45,21 @@ public class NilCard extends JPanel implements RelocalizationListener {
 
     private final JTextPane error = new JTextPane();
 
-    public NilCard(String message) {
+    public NilCard(CharSequence message) {
         super(new BorderLayout());
         RelocalizationManager.addListener(this);
 
-        this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
+        this.setBorder(new TitledBorder(null,
+            Sentence.PRT_X_TO_Y.capitalize().insert(Noun.NOTHING).insert(Verb.SHOW).toString(),
+            TitledBorder.DEFAULT_JUSTIFICATION,
+            TitledBorder.DEFAULT_POSITION,
+            App.THEME.getBoldFont().deriveFont(15f)));
 
         this.error.setContentType("text/html");
         this.error.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.error.setEditable(false);
         this.error.setHighlighter(null);
-        this.error.setText(message);
+        this.error.setText(message.toString());
 
         JSplitPane splitter = new JSplitPane();
         splitter.setEnabled(false);
@@ -72,7 +77,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
     @Override
     public void onRelocalization() {
         TitledBorder border = (TitledBorder) this.getBorder();
-        border.setTitle(GetText.tr("Nothing To Show"));
+        border.setTitle(Sentence.PRT_X_TO_Y.capitalize().insert(Noun.NOTHING).insert(Verb.SHOW).toString());
         border.setTitleFont(App.THEME.getBoldFont().deriveFont(15f));
     }
 }

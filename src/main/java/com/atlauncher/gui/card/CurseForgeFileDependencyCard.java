@@ -30,8 +30,6 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;

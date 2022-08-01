@@ -20,8 +20,6 @@ package com.atlauncher.data.json;
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Pack;
 import com.atlauncher.managers.DialogManager;

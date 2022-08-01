@@ -22,8 +22,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
@@ -34,6 +32,10 @@ import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.SentenceBuilder;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -434,14 +436,20 @@ public class Mod {
                         }
 
                         retValue = DialogManager.optionDialog()
-                                .setTitle(GetText.tr("Downloading") + " "
-                                        + (serverFile == null ? (isFilePattern() ? getName() : getFile())
-                                                : (isFilePattern() ? getName() : getServerFile())))
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "Browser opened to download file {0}",
-                                        (serverFile == null ? (isFilePattern() ? getName() : getFile())
-                                                : (isFilePattern() ? getName() : getServerFile())))
-                                        + "<br/><br/>" + GetText.tr("Please save this file to the following location")
+                                .setTitle(Sentence.BASE_AB.capitalize()
+                                    .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                                    .insert((serverFile == null ? (isFilePattern() ? getName() : getFile())
+                                        : (isFilePattern() ? getName() : getServerFile()))))
+                                .setContent(new HTMLBuilder().center().text(Sentence.PRT_X_TO_Y.capitalize()
+                                        .insert(Sentence.BASE_AB
+                                            .insert(Noun.BROWSER)
+                                            .insert(Verb.OPEN, Verb.PAST))
+                                        .insert(Sentence.BASE_AB
+                                            .insert(Verb.DOWNLOAD)
+                                            .insert(Noun.FILE))
+                                        .append((serverFile == null ? (isFilePattern() ? getName() : getFile())
+                                            : (isFilePattern() ? getName() : getServerFile())))
+                                        + "<br/><br/>" + Sentence.MSG_SAVE_FILE_TO
                                         + "<br/><br/>"
                                         + (OS.isUsingMacApp()
                                                 ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
@@ -450,9 +458,18 @@ public class Mod {
                                                                 + " or<br/>"
                                                                 + FileSystem.getUserDownloadsPath().toFile())))
                                         .build())
-                                .addOption(GetText.tr("Open Folder"), true)
-                                .addOption(GetText.tr("I've Downloaded This File"))
-                                .addOption(GetText.tr("Skip Mod (Pack May Break)")).setType(DialogManager.INFO)
+                                .addOption(Sentence.BASE_AB.capitalize()
+                                        .insert(Verb.OPEN)
+                                        .insert(Noun.DIRECTORY), true)
+                                .addOption(Sentence.BASE_ABC.capitalize()
+                                    .insert(Noun.ME, 1, SentenceBuilder.AltUsage.PluralOnly)
+                                    .insert(Noun.HAS, 0, SentenceBuilder.AltUsage.PluralOnly)
+                                    .insert(Verb.DOWNLOAD, Verb.PAST)
+                                    .append(Sentence.PRT_THIS_X.insert(Noun.FILE)))
+                                .addOption(Sentence.BASE_AB.capitalize()
+                                        .insert(Verb.SKIP)
+                                        .insert(Noun.MOD)
+                                        .append(Sentence.MSG_PACK_MAY_BREAK)).setType(DialogManager.INFO)
                                 .showWithFileMonitoring(fileLocation, downloadsFolderFile, filesize, 1);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
@@ -590,19 +607,33 @@ public class Mod {
                 OS.openWebBrowser(this.serverUrl);
 
                 int ret = DialogManager.optionDialog()
-                        .setTitle(GetText.tr("Downloading") + " " + (serverFile == null ? getFile() : getServerFile()))
+                        .setTitle(Sentence.BASE_AB.capitalize()
+                            .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                            .insert((serverFile == null ? getFile() : getServerFile())))
                         .setContent(new HTMLBuilder().center()
-                                .text(GetText.tr("Browser opened to download file {0}",
-                                        (serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
-                                        + GetText.tr("Please save this file to the following location") + "<br/><br/>"
+                                .text(Sentence.PRT_X_TO_Y.capitalize()
+                                        .insert(Sentence.BASE_AB
+                                            .insert(Noun.BROWSER)
+                                            .insert(Verb.OPEN, Verb.PAST))
+                                        .insert(Sentence.BASE_AB
+                                            .insert(Verb.DOWNLOAD)
+                                            .insert(Noun.FILE))
+                                        .append((serverFile == null ? getFile() : getServerFile())) + "<br/><br/>"
+                                        + Sentence.MSG_SAVE_FILE_TO + "<br/><br/>"
                                         + (OS.isUsingMacApp()
                                                 ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
                                                 : FileSystem.DOWNLOADS.toAbsolutePath().toString()
                                                         + " or<br/>"
                                                         + FileSystem.getUserDownloadsPath().toFile()))
                                 .build())
-                        .setType(DialogManager.INFO).addOption(GetText.tr("Open Folder"), true)
-                        .addOption(GetText.tr("I've Downloaded This File")).show();
+                        .setType(DialogManager.INFO).addOption(Sentence.BASE_AB.capitalize()
+                        .insert(Verb.OPEN)
+                        .insert(Noun.DIRECTORY), true)
+                        .addOption(Sentence.BASE_ABC.capitalize()
+                            .insert(Noun.ME, 1, SentenceBuilder.AltUsage.PluralOnly)
+                            .insert(Noun.HAS, 0, SentenceBuilder.AltUsage.PluralOnly)
+                            .insert(Verb.DOWNLOAD, Verb.PAST)
+                            .append(Sentence.PRT_THIS_X.insert(Noun.FILE))).show();
 
                 if (ret == DialogManager.CLOSED_OPTION) {
                     installer.cancel(true);

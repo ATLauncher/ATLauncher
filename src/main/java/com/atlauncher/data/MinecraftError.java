@@ -17,8 +17,6 @@
  */
 package com.atlauncher.data;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;

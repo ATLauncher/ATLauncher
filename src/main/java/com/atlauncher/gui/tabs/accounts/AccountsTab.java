@@ -41,8 +41,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;

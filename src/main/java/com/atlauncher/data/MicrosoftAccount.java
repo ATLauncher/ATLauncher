@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;

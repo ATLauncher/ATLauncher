@@ -23,8 +23,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.mini2Dx.gettext.GetText;
-
 @SuppressWarnings("serial")
 public class NoCurseModsPanel extends JPanel {
     public NoCurseModsPanel(boolean hasSearch) {

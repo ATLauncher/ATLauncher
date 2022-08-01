@@ -24,8 +24,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")

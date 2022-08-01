@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.joda.time.format.ISODateTimeFormat;
-import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.curseforge.CurseForgeFile;

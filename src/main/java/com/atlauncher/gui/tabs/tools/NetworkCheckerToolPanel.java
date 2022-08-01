@@ -22,8 +22,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.gui.dialogs.ProgressDialog;

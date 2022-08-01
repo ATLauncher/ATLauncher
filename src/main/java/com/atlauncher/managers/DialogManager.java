@@ -29,8 +29,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import com.atlauncher.App;
-
-import org.mini2Dx.gettext.GetText;
+import com.atlauncher.strings.Noun;
 
 public final class DialogManager {
     public static final int OPTION_TYPE = 0;
@@ -78,7 +77,7 @@ public final class DialogManager {
     public static DialogManager okDialog() {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(GetText.tr("Ok"), true);
+        dialog.addOption(Noun.OK, true);
 
         return dialog;
     }
@@ -86,8 +85,8 @@ public final class DialogManager {
     public static DialogManager okCancelDialog() {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(GetText.tr("Ok"), true);
-        dialog.addOption(GetText.tr("Cancel"));
+        dialog.addOption(Noun.OK, true);
+        dialog.addOption(Noun.CANCEL);
 
         return dialog;
     }
@@ -99,8 +98,8 @@ public final class DialogManager {
     public static DialogManager yesNoDialog(boolean yesDefault) {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(GetText.tr("Yes"), yesDefault);
-        dialog.addOption(GetText.tr("No"), !yesDefault);
+        dialog.addOption(Noun.YES, yesDefault);
+        dialog.addOption(Noun.NO, !yesDefault);
 
         return dialog;
     }
@@ -108,9 +107,9 @@ public final class DialogManager {
     public static DialogManager yesNoCancelDialog() {
         DialogManager dialog = new DialogManager(DialogManager.CONFIRM_TYPE);
 
-        dialog.addOption(GetText.tr("Yes"), true);
-        dialog.addOption(GetText.tr("No"));
-        dialog.addOption(GetText.tr("Cancel"));
+        dialog.addOption(Noun.YES, true);
+        dialog.addOption(Noun.NO);
+        dialog.addOption(Noun.CANCEL);
 
         return dialog;
     }
@@ -150,11 +149,11 @@ public final class DialogManager {
         return this;
     }
 
-    public DialogManager addOption(String option, boolean isDefault) {
-        this.options.add(option);
+    public DialogManager addOption(CharSequence option, boolean isDefault) {
+        this.options.add(option.toString());
 
         if (isDefault) {
-            this.defaultOption = option;
+            this.defaultOption = option.toString();
         }
 
         return this;

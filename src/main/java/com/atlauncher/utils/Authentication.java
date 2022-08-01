@@ -17,8 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MojangAccount;

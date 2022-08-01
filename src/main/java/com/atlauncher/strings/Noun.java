@@ -3,20 +3,66 @@ package com.atlauncher.strings;
 @SuppressWarnings("NullableProblems")
 public enum Noun implements Word {
     MOD,
+    PACK,
     UPDATE,
+    VERSION,
+    CONFIG,
+    MANIFEST,
+    FILE,
+    IMAGE,
+    DEFINITION,
+    RESOURCE,
+    LIBRARY,
+    CLIENT,
+    RUNTIME,
+    OVERRIDE,
     LAUNCHER,
+    DESCRIPTION,
     DL_PAGE(true),
     ERROR,
     USERNAME,
     CHANGE,
+    INSTANCE,
+    SERVER,
+    NEWS(true),
+    NOTHING(true),
+    CATEGORY,
 
+    PACK_IDENTIFIER(true),
+
+    ME,
     HAS,
     HAS_NOT,
 
+    DIRECTORY,
+    JAVA(true),
     ONEDRIVE(true),
     PROGRAM_FILES(true),
 
+    VANILLA(true),
+    MINECRAFT(true),
+    CONSOLE(true),
+    BROWSER(true),
+
+    LOADER,
+    FORGE(true),
+    FABRIC(true),
+    QUILT(true),
+
+    ATLAUNCHER(true),
     CURSEFORGE(true),
+    MODRINTH(true),
+    MODPACKS_CH(true),
+    TECHNIC_SOLDER(true),
+    MULTIMC(true),
+
+    // non-nouns
+    AVAILABLE(true),
+    LOGGING(true),
+    OK(true),
+    CANCEL(true),
+    YES(true),
+    NO(true),
     ;
 
     final boolean unique;
@@ -27,6 +73,14 @@ public enum Noun implements Word {
 
     Noun(boolean unique) {
         this.unique = unique;
+    }
+
+    public String singular() {
+        return toString(1);
+    }
+
+    public String plural() {
+        return toString(0);
     }
 
     public String toString(int n) {

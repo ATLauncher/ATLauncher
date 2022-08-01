@@ -34,8 +34,10 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import com.atlauncher.gui.tabs.Tab;
-import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.OS;
 
 /**
@@ -117,7 +119,7 @@ public class NewsTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return GetText.tr("News");
+        return Sentence.BASE_A.capitalize().insert(Noun.NEWS).toString();
     }
 
     @Override
@@ -129,7 +131,7 @@ public class NewsTab extends JPanel implements Tab {
 
         public ContextMenu() {
             super();
-            JMenuItem COPY_ITEM = new JMenuItem(GetText.tr("Copy"));
+            JMenuItem COPY_ITEM = new JMenuItem(Sentence.BASE_A.capitalize().insert(Verb.COPY).toString());
             COPY_ITEM.addActionListener(e -> {
                 StringSelection text = new StringSelection(NEWS_PANE.getSelectedText());
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(text, null);

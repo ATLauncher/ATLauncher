@@ -30,8 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -40,6 +38,9 @@ import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 @SuppressWarnings("serial")
@@ -76,7 +77,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
                 }
             }
         });
-        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        searchBox.putClientProperty("JTextField.placeholderText", Sentence.BASE_A.capitalize().insert(Verb.SEARCH));
         searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchBox.putClientProperty("JTextField.showClearButton", true);
         searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
@@ -122,8 +123,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         });
 
         if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(new HTMLBuilder().text(
-                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
+            nilCard = new NilCard(new HTMLBuilder().text(GetText.tr(Sentence.MSG_NO_SERVERS)).build());
             panel.add(nilCard, gbc);
         }
 
@@ -145,7 +145,8 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
     @Override
     public String getTitle() {
-        return GetText.tr("Servers");
+        // todo use server count to display "server" instead of "servers" when theres only one?
+        return Sentence.BASE_A.capitalize().insert(Noun.SERVER.plural()).toString();
     }
 
     @Override
@@ -155,11 +156,10 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
     @Override
     public void onRelocalization() {
-        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        searchBox.putClientProperty("JTextField.placeholderText", Sentence.BASE_A.capitalize().insert(Verb.SEARCH).toString());
 
         if (nilCard != null) {
-            nilCard.setMessage(new HTMLBuilder().text(
-                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
+            nilCard.setMessage(new HTMLBuilder().text(GetText.tr(Sentence.MSG_NO_SERVERS.toString())).build());
         }
     }
 }

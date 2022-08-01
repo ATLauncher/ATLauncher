@@ -37,8 +37,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.RelocalizationListener;

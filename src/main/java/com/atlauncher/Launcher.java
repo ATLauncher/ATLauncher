@@ -37,7 +37,6 @@ import javax.swing.JLabel;
 import com.atlauncher.strings.Noun;
 import com.atlauncher.strings.Sentence;
 import com.atlauncher.strings.Verb;
-import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -129,8 +128,7 @@ public class Launcher {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
             int ret = DialogManager.yesNoDialog().setTitle(Sentence.ERR_WRONG_JAVA_ARCHITECTURE)
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?"))
+                    .setContent(new HTMLBuilder().center().text(Sentence.MSG_WRONG_JAVA_ARCHITECTURE)
                             .build())
                     .setType(DialogManager.ERROR).show();
 
@@ -357,7 +355,7 @@ public class Launcher {
         dialog.setLocationRelativeTo(App.launcher.getParent());
         dialog.setLayout(new FlowLayout());
         dialog.setResizable(false);
-        dialog.add(new JLabel(Sentence.BASE_XY.insert(Verb.UPDATE).insert(Noun.LAUNCHER).append(", ", Sentence.PRT_PLEASE_WAIT).toString()));
+        dialog.add(new JLabel(Sentence.BASE_AB.insert(Verb.UPDATE).insert(Noun.LAUNCHER).append(", ", Sentence.PRT_PLEASE_WAIT).toString()));
         App.TASKPOOL.execute(() -> {
             if (hasUpdatedFiles()) {
                 downloadUpdatedFiles(); // Downloads updated files on the server
@@ -386,10 +384,9 @@ public class Launcher {
         LogManager.debug("Checking for launcher update");
         if (launcherHasUpdate()) {
             if (App.noLauncherUpdate) {
-                int ret = DialogManager.okDialog().setTitle("Launcher Update Available")
-                        .setContent(new HTMLBuilder().center().split(80).text(GetText.tr(
-                                "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."))
-                                .build())
+                int ret = DialogManager.okDialog().setTitle(Sentence.INF_X_AVAILABLE.capitalize()
+                        .insert(Sentence.BASE_AB.insert(Noun.LAUNCHER).insert(Noun.UPDATE)))
+                        .setContent(new HTMLBuilder().center().split(80).text(Sentence.MSG_LAUNCHER_UPDATE_AVAILABLE).build())
                         .addOption(Sentence.INF_VISIT_X.insert(Noun.DL_PAGE)).setType(DialogManager.INFO).show();
 
                 if (ret == 1) {
@@ -402,12 +399,8 @@ public class Launcher {
             if (!App.wasUpdated) {
                 downloadUpdate(); // Update the Launcher
             } else {
-                DialogManager.okDialog().setTitle("Update Failed!")
-                        .setContent(new HTMLBuilder().center()
-                                .text(GetText.tr("Update failed. Please click Ok to close "
-                                        + "the launcher and open up the downloads page.<br/><br/>Download "
-                                        + "the update and replace the old exe/jar file."))
-                                .build())
+                DialogManager.okDialog().setTitle(Sentence.BASE_AB.insert(Noun.UPDATE).insert(Verb.FAIL, Verb.PAST).append("!"))
+                        .setContent(new HTMLBuilder().center().text(Sentence.MSG_LAUNCHER_UPDATE_FAILED).build())
                         .setType(DialogManager.ERROR).show();
                 OS.openWebBrowser("https://atlauncher.com/downloads");
                 System.exit(0);

@@ -35,8 +35,6 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.json.Mod;

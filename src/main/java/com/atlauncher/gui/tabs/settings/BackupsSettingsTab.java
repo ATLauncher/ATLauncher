@@ -22,8 +22,6 @@ import java.awt.GridBagConstraints;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.BackupMode;

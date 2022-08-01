@@ -24,14 +24,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.EventListenerList;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
 import com.atlauncher.gui.tabs.instances.InstancesSearchEvent;
 import com.atlauncher.gui.tabs.instances.InstancesSearchEventListener;
 import com.atlauncher.gui.tabs.instances.InstancesSortEvent;
 import com.atlauncher.gui.tabs.instances.InstancesSortEventListener;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
 import com.atlauncher.utils.Utils;
 
 public class InstancesTab extends JPanel implements Tab {
@@ -72,7 +72,7 @@ public class InstancesTab extends JPanel implements Tab {
 
     @Override
     public String getTitle() {
-        return GetText.tr("Instances");
+        return Sentence.BASE_A.capitalize().insert(Noun.INSTANCE.plural()).toString();
     }
 
     @Override

@@ -41,8 +41,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -62,6 +60,10 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.SentenceBuilder;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
@@ -71,15 +73,15 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
-    private final JLabel minecraftVersionLabel = new JLabel(GetText.tr("Minecraft:"));
+    private final JLabel minecraftVersionLabel = new JLabel(Sentence.BASE_A.capitalize().insert(Noun.MINECRAFT).append(":").toString());
     private final JComboBox<ComboItem<String>> minecraftVersionComboBox = new JComboBox<>();
 
     private final JPanel categoriesPanel = new JPanel();
-    private final JLabel categoriesLabel = new JLabel(GetText.tr("Category:"));
+    private final JLabel categoriesLabel = new JLabel(Sentence.BASE_A.capitalize().insert(Noun.CATEGORY).append(":").toString());
     private final JComboBox<ComboItem<String>> categoriesComboBox = new JComboBox<>();
 
     private final JPanel sortPanel = new JPanel();
-    private final JLabel sortLabel = new JLabel(GetText.tr("Sort:"));
+    private final JLabel sortLabel = new JLabel(Sentence.BASE_A.capitalize().insert(Verb.SORT).append(":").toString());
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
     private boolean sortDescending = true;
     private final JButton ascendingSortButton = new JButton(Utils.getIconImage(App.THEME.getIconPath("ascending")));
@@ -87,7 +89,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     private final JPanel spacer = new JPanel();
     private final JTextField searchField = new JTextField(16);
-    private final JButton addManuallyButton = new JButton(GetText.tr("Add Manually"));
+    private final JButton addManuallyButton = new JButton(Sentence.ACT_X_MANUALLY.capitalize().insert(Verb.ADD).toString());
 
     private final JPanel platformMessageJPanel = new JPanel(new BorderLayout());
     private final JLabel platformMessageJLabel = new JLabel();
@@ -206,7 +208,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                 }
             }
         });
-        searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        searchField.putClientProperty("JTextField.placeholderText", Sentence.BASE_A.capitalize().insert(Verb.SEARCH).toString());
         searchField.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchField.putClientProperty("JTextField.showClearButton", true);
         searchField.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
@@ -219,8 +221,22 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
                     .getSelectedComponent();
 
-            String id = DialogManager.okDialog().setTitle(GetText.tr("Add Pack By ID/Slug/URL"))
-                    .setContent(GetText.tr("Enter an ID/slug/url for a pack to add manually:")).showInput();
+            String id = DialogManager.okDialog().setTitle(Sentence.PRT_X_BY_Y.capitalize()
+                    .insert(Sentence.BASE_AB.insert(Verb.ADD).insert(Noun.PACK))
+                    .insert(Noun.PACK_IDENTIFIER))
+                // good lord this is horribly overengineered
+                .setContent(Sentence.PRT_X_OF_Y.capitalize()
+                    .insert(Sentence.BASE_ABC
+                        .insert(Verb.ENTER)
+                        .insert("an") // todo: find better way of implementing this! hardcoded strings break localization
+                        .insert(Noun.PACK_IDENTIFIER))
+                    .insert(Sentence.PRT_X_TO_Y
+                        .insert(Sentence.BASE_AB
+                            .insert("a")
+                            .insert(Noun.PACK))
+                        .insert(Sentence.ACT_X_MANUALLY.insert(Verb.ADD)))
+                    .append(":")
+                ).showInput();
 
             if (id != null && !id.isEmpty()) {
                 selectedPanel.addById(id);
@@ -333,7 +349,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
         // add in minecraft versions combo box items if the platform supports it
         if (selectedPanel.supportsMinecraftVersionFiltering()) {
-            minecraftVersionComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Versions")));
+            minecraftVersionComboBox.addItem(new ComboItem<>(null, Sentence.PRT_ALL_X.capitalize()
+                .insert(Noun.VERSION, 2, SentenceBuilder.AltUsage.PluralOnly)
+                .toString()));
 
             List<VersionManifestVersion> versionsToShow = selectedPanel
                     .getSupportedMinecraftVersionsForFiltering().size() != 0
@@ -352,7 +370,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
         // add in categories combo box items if the platform supports it
         if (selectedPanel.hasCategories()) {
             new Thread(() -> {
-                categoriesComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Categories")));
+                categoriesComboBox.addItem(new ComboItem<String>(null, Sentence.PRT_ALL_X.capitalize()
+                    .insert(Noun.CATEGORY, 2, SentenceBuilder.AltUsage.PluralOnly)
+                    .toString()));
                 for (Map.Entry<String, String> entry : selectedPanel.getCategoryFields().entrySet()) {
                     categoriesComboBox.addItem(new ComboItem<String>(entry.getKey(), entry.getValue()));
                 }
@@ -509,7 +529,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     @Override
     public String getTitle() {
-        return GetText.tr("Packs");
+        return Noun.PACK.capitalize(0);
     }
 
     @Override
@@ -520,10 +540,10 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
 
     @Override
     public void onRelocalization() {
-        categoriesLabel.setText(GetText.tr("Category:"));
-        sortLabel.setText(GetText.tr("Sort:"));
+        categoriesLabel.setText(Noun.CATEGORY.singular()+':');
+        sortLabel.setText(Verb.SORT.future()+':');
 
-        searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        searchField.putClientProperty("JTextField.placeholderText", Verb.SEARCH.future());
     }
 
     @Override

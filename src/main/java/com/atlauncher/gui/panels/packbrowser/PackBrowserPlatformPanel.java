@@ -24,8 +24,6 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.panels.LoadingPanel;

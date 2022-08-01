@@ -29,8 +29,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;

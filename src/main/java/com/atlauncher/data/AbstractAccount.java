@@ -31,7 +31,6 @@ import javax.swing.ImageIcon;
 import com.atlauncher.strings.Noun;
 import com.atlauncher.strings.Sentence;
 import com.atlauncher.strings.Verb;
-import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.gui.dialogs.ProgressDialog;

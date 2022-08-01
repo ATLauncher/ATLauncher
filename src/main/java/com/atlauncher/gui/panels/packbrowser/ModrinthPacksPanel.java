@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import javax.swing.JPanel;
 
 import org.apache.commons.text.WordUtils;
-import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
