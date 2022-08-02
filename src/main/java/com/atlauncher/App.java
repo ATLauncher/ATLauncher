@@ -438,6 +438,10 @@ public class App {
             LogManager.info("Using Mac App? " + (OS.isUsingMacApp() ? "Yes" : "No"));
         }
 
+        if (OS.isArm()) {
+            LogManager.info("Arm: " + OS.getArch());
+        }
+
         if (OS.isUsingFlatpak()) {
             LogManager.info("Using Flatpak!");
         }
