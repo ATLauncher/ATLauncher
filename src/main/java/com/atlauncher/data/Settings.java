@@ -71,7 +71,7 @@ public class Settings {
     public boolean keepLauncherOpen = true;
     public boolean enableConsole = true;
     public boolean enableTrayMenu = true;
-    public boolean enableDiscordIntegration = true;
+    public boolean enableDiscordIntegration = !OS.isArm();
     public boolean enableFeralGamemode = OS.isLinux() && Utils.executableInPath("gamemoderun");
     private boolean disableAddModRestrictions = false;
     public boolean disableCustomFonts = false;

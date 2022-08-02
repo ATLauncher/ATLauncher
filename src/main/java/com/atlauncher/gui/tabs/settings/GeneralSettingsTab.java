@@ -400,6 +400,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         if (App.settings.enableDiscordIntegration) {
             enableDiscordIntegration.setSelected(true);
         }
+        enableDiscordIntegration.setEnabled(!OS.isArm());
         add(enableDiscordIntegration, gbc);
 
         // Enable Feral Gamemode

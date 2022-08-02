@@ -395,7 +395,7 @@ public class App {
     }
 
     public static void ensureDiscordIsInitialized() {
-        if (!discordInitialized) {
+        if (!OS.isArm() && !discordInitialized) {
             try {
                 DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
                 DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);

@@ -34,6 +34,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -110,6 +111,8 @@ public class GeneralInstanceSettingsTab extends JPanel {
         enableDiscordIntegration.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
         enableDiscordIntegration.addItem(new ComboItem<>(true, GetText.tr("Yes")));
         enableDiscordIntegration.addItem(new ComboItem<>(false, GetText.tr("No")));
+
+        enableDiscordIntegration.setEnabled(!OS.isArm());
 
         if (instance.launcher.enableDiscordIntegration == null) {
             enableDiscordIntegration.setSelectedIndex(0);

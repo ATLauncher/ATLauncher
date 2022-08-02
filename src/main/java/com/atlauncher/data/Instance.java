@@ -1055,7 +1055,7 @@ public class Instance extends MinecraftVersion {
                 }
 
                 try {
-                    if (Optional.ofNullable(this.launcher.enableDiscordIntegration)
+                    if (!OS.isArm() && Optional.ofNullable(this.launcher.enableDiscordIntegration)
                             .orElse(App.settings.enableDiscordIntegration)) {
                         App.ensureDiscordIsInitialized();
 
@@ -1149,7 +1149,7 @@ public class Instance extends MinecraftVersion {
                     App.launcher.getParent().setVisible(true);
                 }
                 long end = System.currentTimeMillis();
-                if (App.discordInitialized) {
+                if (!OS.isArm() && App.discordInitialized) {
                     try {
                         DiscordRPC.discordClearPresence();
                     } catch (Throwable t) {
