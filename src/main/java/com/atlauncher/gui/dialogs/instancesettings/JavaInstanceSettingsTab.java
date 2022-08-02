@@ -365,8 +365,9 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         add(javaPathPanel, gbc);
 
-        boolean isUsingMinecraftProvidedJava = Optional.ofNullable(instance.launcher.useJavaProvidedByMinecraft)
-                .orElse(App.settings.useJavaProvidedByMinecraft);
+        boolean isUsingMinecraftProvidedJava = (!OS.isArm() || OS.isMacArm())
+                && Optional.ofNullable(instance.launcher.useJavaProvidedByMinecraft)
+                        .orElse(App.settings.useJavaProvidedByMinecraft);
         javaMinecraftProvidedLabel.setVisible(isUsingMinecraftProvidedJava);
         javaPathDummy.setVisible(isUsingMinecraftProvidedJava);
 
