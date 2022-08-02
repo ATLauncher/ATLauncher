@@ -48,17 +48,17 @@ public class Library {
         }
 
         if (OS.isWindows() && this.natives.containsKey("windows") && this.downloads.classifiers
-                .containsKey(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
+                .containsKey(this.natives.get("windows").replace("${arch}", OS.getNativesArch()))) {
             return true;
         }
 
         if (OS.isLinux() && this.natives.containsKey("linux") && this.downloads.classifiers
-                .containsKey(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
+                .containsKey(this.natives.get("linux").replace("${arch}", OS.getNativesArch()))) {
             return true;
         }
 
         if (OS.isMac() && this.natives.containsKey("osx") && this.downloads.classifiers
-                .containsKey(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"))) {
+                .containsKey(this.natives.get("osx").replace("${arch}", OS.getNativesArch()))) {
             return true;
         }
 
@@ -68,12 +68,12 @@ public class Library {
     public Download getNativeDownloadForOS() {
         if (OS.isWindows() && this.natives != null && this.natives.containsKey("windows")) {
             return this.downloads.classifiers
-                    .get(this.natives.get("windows").replace("${arch}", OS.is64Bit() ? "64" : "32"));
+                    .get(this.natives.get("windows").replace("${arch}", OS.getNativesArch()));
         }
 
         if (OS.isLinux() && this.natives != null && this.natives.containsKey("linux")) {
             return this.downloads.classifiers
-                    .get(this.natives.get("linux").replace("${arch}", OS.is64Bit() ? "64" : "32"));
+                    .get(this.natives.get("linux").replace("${arch}", OS.getNativesArch()));
         }
 
         if (OS.isMac() && this.natives != null && this.natives.containsKey("osx")) {
@@ -81,12 +81,12 @@ public class Library {
             if (this.downloads.classifiers.containsKey(this.natives.get("osx") + "-arm64") && OS.isMacArm()
                     && OS.is64Bit()) {
                 return this.downloads.classifiers
-                        .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32") + "-arm64");
+                        .get(this.natives.get("osx").replace("${arch}", OS.getNativesArch()) + "-arm64");
             }
 
             // else fall back to the standard natives, ARM based Macs can run in Rosetta
             return this.downloads.classifiers
-                    .get(this.natives.get("osx").replace("${arch}", OS.is64Bit() ? "64" : "32"));
+                    .get(this.natives.get("osx").replace("${arch}", OS.getNativesArch()));
         }
 
         return null;

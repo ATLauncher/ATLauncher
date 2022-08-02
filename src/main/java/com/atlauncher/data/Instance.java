@@ -454,7 +454,7 @@ public class Instance extends MinecraftVersion {
      * Minecraft jar and libraries, as well as organise the libraries, ready to be
      * played.
      */
-    public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir) {
+    public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir, Path lwjglNativesTempDir) {
         PerformanceManager.start();
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
@@ -547,7 +547,11 @@ public class Instance extends MinecraftVersion {
         this.libraries.stream()
                 .filter(library -> library.shouldInstall() && library.downloads.artifact != null
                         && library.downloads.artifact.url != null && !library.hasNativeForOS())
-                .distinct().forEach(library -> {
+                .distinct()
+                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(this)
+                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(this, l)
+                        : l)
+                .forEach(library -> {
                     com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                             .setUrl(library.downloads.artifact.url)
                             .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
@@ -557,13 +561,18 @@ public class Instance extends MinecraftVersion {
                     librariesPool.add(download);
                 });
 
-        this.libraries.stream().filter(Library::hasNativeForOS).forEach(library -> {
-            com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
+        this.libraries.stream().filter(Library::hasNativeForOS)
+                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(this)
+                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(this, l)
+                        : l)
+                .forEach(library -> {
+                    com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
 
-            librariesPool.add(new com.atlauncher.network.Download().setUrl(download.url)
-                    .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1).size(download.size)
-                    .withHttpClient(httpClient));
-        });
+                    librariesPool.add(new com.atlauncher.network.Download().setUrl(download.url)
+                            .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1)
+                            .size(download.size)
+                            .withHttpClient(httpClient));
+                });
 
         DownloadPool smallLibrariesPool = librariesPool.downsize();
 
@@ -708,27 +717,74 @@ public class Instance extends MinecraftVersion {
         PerformanceManager.start("Extracting Natives");
         boolean useSystemGlfw = Optional.ofNullable(launcher.useSystemGlfw).orElse(App.settings.useSystemGlfw);
         boolean useSystemOpenAl = Optional.ofNullable(launcher.useSystemOpenAl).orElse(App.settings.useSystemOpenAl);
-        this.libraries.stream().filter(Library::shouldInstall).forEach(library -> {
-            if (library.hasNativeForOS()) {
-                if ((library.name.contains("glfw") && useSystemGlfw)
-                        || (library.name.contains("openal") && useSystemOpenAl)) {
-                    return;
-                }
+        this.libraries.stream().filter(Library::shouldInstall)
+                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(this)
+                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(this, l)
+                        : l)
+                .forEach(library -> {
+                    if (library.hasNativeForOS()) {
+                        if ((library.name.contains("glfw") && useSystemGlfw)
+                                || (library.name.contains("openal") && useSystemOpenAl)) {
+                            return;
+                        }
 
-                Path nativePath = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path);
+                        Path nativePath = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path);
 
-                ArchiveUtils.extract(nativePath, nativesTempDir, name -> {
-                    if (library.extract != null && library.extract.shouldExclude(name)) {
-                        return null;
+                        ArchiveUtils.extract(nativePath, nativesTempDir, name -> {
+                            if (library.extract != null && library.extract.shouldExclude(name)) {
+                                return null;
+                            }
+
+                            // keep META-INF folder as per normal
+                            if (name.startsWith("META-INF")) {
+                                return name;
+                            }
+
+                            // don't extract folders
+                            if (name.endsWith("/")) {
+                                return null;
+                            }
+
+                            // if it has a / then extract just to root
+                            if (name.contains("/")) {
+                                return name.substring(name.lastIndexOf("/") + 1);
+                            }
+
+                            return name;
+                        });
                     }
-
-                    return name;
                 });
-            }
-        });
 
         progressDialog.doneTask();
         PerformanceManager.end("Extracting Natives");
+
+        if (Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this)) {
+            PerformanceManager.start("Extracting Legacy LWJGL");
+            progressDialog.setLabel(GetText.tr("Extracting Legacy LWJGL"));
+
+            LWJGLLibrary library = Data.LWJGL_VERSIONS.getLegacyLWJGLLibrary();
+
+            if (library != null) {
+                com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(library.url)
+                        .downloadTo(FileSystem.LIBRARIES.resolve(library.path)).unzipTo(lwjglNativesTempDir)
+                        .hash(library.sha1).size(library.size).withHttpClient(httpClient);
+
+                if (download.needToDownload()) {
+                    progressDialog.setTotalBytes(library.size);
+
+                    try {
+                        download.downloadFile();
+                    } catch (IOException e) {
+                        LogManager.logStackTrace(e);
+                    }
+                } else {
+                    download.runPostProcessors();
+                }
+            }
+
+            progressDialog.doneTask();
+            PerformanceManager.end("Extracting Legacy LWJGL");
+        }
 
         if (usesCustomMinecraftJar()) {
             PerformanceManager.start("Creating custom minecraft.jar");
@@ -825,6 +881,8 @@ public class Instance extends MinecraftVersion {
         }
 
         Path nativesTempDir = FileSystem.TEMP.resolve("natives-" + UUID.randomUUID().toString().replace("-", ""));
+        Path lwjglNativesTempDir = FileSystem.TEMP
+                .resolve("lwjgl-natives-" + UUID.randomUUID().toString().replace("-", ""));
 
         try {
             Files.createDirectory(nativesTempDir);
@@ -832,11 +890,20 @@ public class Instance extends MinecraftVersion {
             LogManager.logStackTrace(e2, false);
         }
 
-        ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"), 7,
+        if (Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this)) {
+            try {
+                Files.createDirectory(lwjglNativesTempDir);
+            } catch (IOException e2) {
+                LogManager.logStackTrace(e2, false);
+            }
+        }
+
+        ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"),
+                Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this) ? 8 : 7,
                 GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
-            prepareDialog.setReturnValue(prepareForLaunch(prepareDialog, nativesTempDir));
+            prepareDialog.setReturnValue(prepareForLaunch(prepareDialog, nativesTempDir, lwjglNativesTempDir));
             prepareDialog.close();
         }));
         prepareDialog.start();
@@ -848,6 +915,7 @@ public class Instance extends MinecraftVersion {
         }
 
         Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, offline ? "PlayOffline" : "Play",
+
                 getAnalyticsCategory());
 
         Thread launcher = new Thread(() -> {
@@ -917,7 +985,9 @@ public class Instance extends MinecraftVersion {
                         }
                     }
 
-                    process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir, wrapperCommand, username);
+                    process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir,
+                            Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                            wrapperCommand, username);
                 } else if (account instanceof MicrosoftAccount) {
                     MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
 
@@ -958,7 +1028,9 @@ public class Instance extends MinecraftVersion {
                         }
                     }
 
-                    process = MCLauncher.launch(microsoftAccount, this, nativesTempDir, wrapperCommand, username);
+                    process = MCLauncher.launch(microsoftAccount, this, nativesTempDir,
+                            Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                            wrapperCommand, username);
                 }
 
                 if (process == null) {
@@ -1139,6 +1211,9 @@ public class Instance extends MinecraftVersion {
                 }
                 if (Files.isDirectory(nativesTempDir)) {
                     FileUtils.deleteDirectory(nativesTempDir);
+                }
+                if (Files.isDirectory(lwjglNativesTempDir)) {
+                    FileUtils.deleteDirectory(lwjglNativesTempDir);
                 }
                 if (usesCustomMinecraftJar() && Files.exists(getCustomMinecraftJarLibraryPath())) {
                     FileUtils.delete(getCustomMinecraftJarLibraryPath());

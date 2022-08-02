@@ -46,7 +46,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,7 +63,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -1528,6 +1526,22 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static boolean matchWholeVersion(String version, String matches, boolean equal) {
+        String[] versionParts = version.split("\\.", 3);
+        String[] matchedParts = matches.split("\\.", 3);
+
+        if (equal && versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
+                && versionParts[2].equals(matchedParts[2])) {
+            return true;
+        }
+
+        return Integer.parseInt(versionParts[0]) > Integer.parseInt(matchedParts[0])
+                || (versionParts[0].equals(matchedParts[0])
+                        && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1]))
+                || (versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
+                        && Integer.parseInt(versionParts[2]) > Integer.parseInt(matchedParts[2]));
     }
 
     public static MCMod getMCModForFile(File file) {

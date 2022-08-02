@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
@@ -65,12 +66,13 @@ public class MCLauncher {
     };
 
     public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir,
+            Path lwjglNativesTempDir,
             String wrapperCommand, String username) throws Exception {
-        return launch(account, instance, null, nativesTempDir.toFile(), wrapperCommand, username);
+        return launch(account, instance, null, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
     public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
-            String wrapperCommand, String username) throws Exception {
+            Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
         String props = "[]";
 
         if (!response.isOffline()) {
@@ -78,12 +80,13 @@ public class MCLauncher {
             props = gson.toJson(response.getAuth().getUserProperties());
         }
 
-        return launch(account, instance, props, nativesTempDir.toFile(), wrapperCommand, username);
+        return launch(account, instance, props, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
-            String wrapperCommand, String username) throws Exception {
-        List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(), username);
+            Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
+        List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(),
+                lwjglNativesTempDir, username);
         if (wrapperCommand != null && !wrapperCommand.isEmpty()) {
             arguments = wrapArguments(wrapperCommand, arguments);
         }
@@ -169,7 +172,7 @@ public class MCLauncher {
     }
 
     private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
-            String nativesDir, String username) {
+            String nativesDir, Path lwjglNativesTempDir, String username) {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
 
@@ -200,6 +203,9 @@ public class MCLauncher {
         instance.libraries.stream().filter(
                 library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
+                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(instance)
+                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(instance, l)
+                        : l)
                 .forEach(library -> {
                     String path = FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile()
                             .getAbsolutePath();
@@ -210,12 +216,16 @@ public class MCLauncher {
                     }
                 });
 
-        instance.libraries.stream().filter(Library::hasNativeForOS).forEach(library -> {
-            com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
+        instance.libraries.stream().filter(Library::hasNativeForOS)
+                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(instance)
+                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(instance, l)
+                        : l)
+                .forEach(library -> {
+                    com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
 
-            cpb.append(FileSystem.LIBRARIES.resolve(download.path).toFile().getAbsolutePath());
-            cpb.append(File.pathSeparator);
-        });
+                    cpb.append(FileSystem.LIBRARIES.resolve(download.path).toFile().getAbsolutePath());
+                    cpb.append(File.pathSeparator);
+                });
 
         File binFolder = instance.getBinDirectory();
         File[] libraryFiles = binFolder.listFiles();
@@ -360,6 +370,11 @@ public class MCLauncher {
         // if there's no -Djava.library.path already, then add it (for older versions)
         if (!arguments.stream().anyMatch(arg -> arg.startsWith("-Djava.library.path="))) {
             arguments.add("-Djava.library.path=" + nativesDir);
+        }
+
+        // if lwjglNativesTempDir isn't null we need to pass the lwjgl librarypath
+        if (lwjglNativesTempDir != null) {
+            arguments.add("-Dorg.lwjgl.librarypath=" + lwjglNativesTempDir.toAbsolutePath().toString());
         }
 
         // if there's no classpath already, then add it (for older versions)

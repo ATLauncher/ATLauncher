@@ -18,14 +18,16 @@
 package com.atlauncher.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mockStatic;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.atlauncher.utils.javafinder.JavaInfo;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import com.atlauncher.utils.javafinder.JavaInfo;
 
 public class OSTest {
     private List<JavaInfo> installedJavas;
@@ -115,4 +117,96 @@ public class OSTest {
         assertEquals(null, OS.getPreferredJavaPath(installedJavas));
     }
 
+    @Test
+    public void testGetLWJGLClassifier() {
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(true);
+            utilities.when(OS::isMac).thenReturn(false);
+            utilities.when(OS::isLinux).thenReturn(false);
+            utilities.when(OS::isArm).thenReturn(true);
+            utilities.when(OS::is64Bit).thenReturn(true);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("windows-arm64", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(true);
+            utilities.when(OS::isMac).thenReturn(false);
+            utilities.when(OS::isLinux).thenReturn(false);
+            utilities.when(OS::isArm).thenReturn(false);
+            utilities.when(OS::is64Bit).thenReturn(false);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("windows-x86", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(true);
+            utilities.when(OS::isMac).thenReturn(false);
+            utilities.when(OS::isLinux).thenReturn(false);
+            utilities.when(OS::isArm).thenReturn(false);
+            utilities.when(OS::is64Bit).thenReturn(true);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("windows", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(false);
+            utilities.when(OS::isMac).thenReturn(true);
+            utilities.when(OS::isLinux).thenReturn(false);
+            utilities.when(OS::isArm).thenReturn(true);
+            utilities.when(OS::is64Bit).thenReturn(true);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("macos-arm64", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(false);
+            utilities.when(OS::isMac).thenReturn(true);
+            utilities.when(OS::isLinux).thenReturn(false);
+            utilities.when(OS::isArm).thenReturn(false);
+            utilities.when(OS::is64Bit).thenReturn(true);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("macos", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(false);
+            utilities.when(OS::isMac).thenReturn(false);
+            utilities.when(OS::isLinux).thenReturn(true);
+            utilities.when(OS::isArm).thenReturn(true);
+            utilities.when(OS::is64Bit).thenReturn(true);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("linux-arm64", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(false);
+            utilities.when(OS::isMac).thenReturn(false);
+            utilities.when(OS::isLinux).thenReturn(true);
+            utilities.when(OS::isArm).thenReturn(true);
+            utilities.when(OS::is64Bit).thenReturn(false);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("linux-arm32", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(false);
+            utilities.when(OS::isMac).thenReturn(false);
+            utilities.when(OS::isLinux).thenReturn(true);
+            utilities.when(OS::isArm).thenReturn(false);
+            utilities.when(OS::is64Bit).thenReturn(true);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("linux", OS.getLWJGLClassifier());
+        }
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isWindows).thenReturn(false);
+            utilities.when(OS::isMac).thenReturn(false);
+            utilities.when(OS::isLinux).thenReturn(true);
+            utilities.when(OS::isArm).thenReturn(false);
+            utilities.when(OS::is64Bit).thenReturn(false);
+            utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
+            assertEquals("linux-x86", OS.getLWJGLClassifier());
+        }
+    }
 }

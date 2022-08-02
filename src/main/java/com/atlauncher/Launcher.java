@@ -102,6 +102,7 @@ public class Launcher {
         NewsManager.loadNews(); // Load the news
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
+        MinecraftManager.loadLWJGLVersions(); // Load info about the different LWJGL versions
 
         // Load info about the different java runtimes
         App.TASKPOOL.execute(() -> {

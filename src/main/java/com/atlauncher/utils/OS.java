@@ -602,4 +602,32 @@ public enum OS {
 
         return false;
     }
+
+    public static String getLWJGLClassifier() {
+        StringBuilder builder = new StringBuilder();
+
+        if (isWindows()) {
+            builder.append("windows");
+        } else if (isMac()) {
+            builder.append("macos");
+        } else {
+            builder.append("linux");
+        }
+
+        if (isArm()) {
+            if (is64Bit()) {
+                builder.append("-arm64");
+            } else {
+                builder.append("-arm32");
+            }
+        } else if (!is64Bit()) {
+            builder.append("-x86");
+        }
+
+        return builder.toString();
+    }
+
+    public static String getNativesArch() {
+        return OS.is64Bit() ? "64" : "32";
+    }
 }

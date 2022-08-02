@@ -33,6 +33,7 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.LWJGLVersions;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -116,6 +117,27 @@ public class MinecraftManager {
                 Data.MINECRAFT.put(version.id, version);
             });
         }
+    }
+
+    /**
+     * Loads info about the different LWJGL versions
+     */
+    public static void loadLWJGLVersions() {
+        PerformanceManager.start();
+
+        Data.LWJGL_VERSIONS = null;
+
+        Path lwjglPath = FileSystem.JSON.resolve("lwjgl.json");
+
+        if (Files.exists(lwjglPath)) {
+            try {
+                Data.LWJGL_VERSIONS = Gsons.DEFAULT.fromJson(new FileReader(lwjglPath.toFile()), LWJGLVersions.class);
+            } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
+                LogManager.logStackTrace(e1);
+            }
+        }
+
+        PerformanceManager.end();
     }
 
     public static void loadJavaRuntimes() {

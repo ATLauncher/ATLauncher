@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.LWJGLVersions;
 import com.atlauncher.data.News;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
@@ -51,6 +52,7 @@ public final class Data {
     public static final List<Server> SERVERS = new LinkedList<>();
 
     public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
+    public static LWJGLVersions LWJGL_VERSIONS = null;
     public static JavaRuntimes JAVA_RUNTIMES = null;
 
     // CurseForge instance update checking
