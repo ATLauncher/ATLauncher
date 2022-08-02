@@ -1054,25 +1054,29 @@ public class Instance extends MinecraftVersion {
                     System.exit(0);
                 }
 
-                if (Optional.ofNullable(this.launcher.enableDiscordIntegration)
-                        .orElse(App.settings.enableDiscordIntegration)) {
-                    App.ensureDiscordIsInitialized();
+                try {
+                    if (Optional.ofNullable(this.launcher.enableDiscordIntegration)
+                            .orElse(App.settings.enableDiscordIntegration)) {
+                        App.ensureDiscordIsInitialized();
 
-                    String playing = this.launcher.pack
-                            + (this.launcher.multiMCManifest != null ? " (" + this.launcher.version + ")" : "");
+                        String playing = this.launcher.pack
+                                + (this.launcher.multiMCManifest != null ? " (" + this.launcher.version + ")" : "");
 
-                    DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
-                    presence.setDetails(playing);
-                    presence.setStartTimestamps(System.currentTimeMillis());
+                        DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
+                        presence.setDetails(playing);
+                        presence.setStartTimestamps(System.currentTimeMillis());
 
-                    if (this.getPack() != null && this.getPack().hasDiscordImage()) {
-                        presence.setBigImage(this.getPack().getSafeName().toLowerCase(), playing);
-                        presence.setSmallImage("atlauncher", "ATLauncher");
-                    } else {
-                        presence.setBigImage("atlauncher", playing);
+                        if (this.getPack() != null && this.getPack().hasDiscordImage()) {
+                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(), playing);
+                            presence.setSmallImage("atlauncher", "ATLauncher");
+                        } else {
+                            presence.setBigImage("atlauncher", playing);
+                        }
+
+                        DiscordRPC.discordUpdatePresence(presence.build());
                     }
-
-                    DiscordRPC.discordUpdatePresence(presence.build());
+                } catch (Throwable t) {
+                    // ignored
                 }
 
                 App.launcher.showKillMinecraft(process);
@@ -1146,7 +1150,11 @@ public class Instance extends MinecraftVersion {
                 }
                 long end = System.currentTimeMillis();
                 if (App.discordInitialized) {
-                    DiscordRPC.discordClearPresence();
+                    try {
+                        DiscordRPC.discordClearPresence();
+                    } catch (Throwable t) {
+                        // ignored
+                    }
                 }
                 int exitValue = 0; // Assume we exited fine
                 try {
