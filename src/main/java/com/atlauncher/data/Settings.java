@@ -96,7 +96,7 @@ public class Settings {
     public String javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
-    public boolean useJavaProvidedByMinecraft = true;
+    public boolean useJavaProvidedByMinecraft = !OS.isArm() || OS.isMacArm();
     public boolean disableLegacyLaunching = false;
     public boolean useSystemGlfw = false;
     public boolean useSystemOpenAl = false;
