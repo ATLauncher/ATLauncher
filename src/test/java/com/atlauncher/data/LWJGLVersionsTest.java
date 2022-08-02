@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +61,7 @@ public class LWJGLVersionsTest {
 
         lwjgl2MajorVersion = new LWJGLMajorVersion();
         lwjgl2MajorVersion.version = 2;
-        lwjgl2MajorVersion.versions = List.of(lwjgl2Version);
+        lwjgl2MajorVersion.versions = Arrays.asList(lwjgl2Version);
 
         LWJGLLibrary linuxArm32Library = new LWJGLLibrary();
         linuxArm32Library.name = "org.lwjgl:lwjgl:3.3.1:natives-linux-arm32";
@@ -77,18 +77,21 @@ public class LWJGLVersionsTest {
         starLwjglLibrary.size = 724243;
         starLwjglLibrary.sha1 = "ae58664f88e18a9bb2c77b063833ca7aaec484cb";
 
-        Map<String, LWJGLLibrary> lwjglVersionLibrary = Map.of("linux-arm32", linuxArm32Library, "*", starLwjglLibrary);
+        Map<String, LWJGLLibrary> lwjglVersionLibrary = new HashMap<>();
+        lwjglVersionLibrary.put("linux-arm32", linuxArm32Library);
+        lwjglVersionLibrary.put("*", starLwjglLibrary);
 
         lwjgl3Version = new LWJGLVersion();
         lwjgl3Version.version = "3.3.1";
-        lwjgl3Version.libraries = Map.of("lwjgl", lwjglVersionLibrary);
+        lwjgl3Version.libraries = new HashMap<>();
+        lwjgl3Version.libraries.put("lwjgl", lwjglVersionLibrary);
 
         lwjgl3MajorVersion = new LWJGLMajorVersion();
         lwjgl3MajorVersion.version = 3;
-        lwjgl3MajorVersion.versions = List.of(lwjgl3Version);
+        lwjgl3MajorVersion.versions = Arrays.asList(lwjgl3Version);
 
-        LWJGL_VERSIONS.legacyLwjglVersions = List.of("1.12.2");
-        LWJGL_VERSIONS.versions = List.of(lwjgl2MajorVersion, lwjgl3MajorVersion);
+        LWJGL_VERSIONS.legacyLwjglVersions = Arrays.asList("1.12.2");
+        LWJGL_VERSIONS.versions = Arrays.asList(lwjgl2MajorVersion, lwjgl3MajorVersion);
 
         lwjgl2Library = new Library();
         lwjgl2Library.name = "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209";
@@ -107,14 +110,16 @@ public class LWJGLVersionsTest {
 
         lwjgl3Pre119NativesLibrary = new Library();
         lwjgl3Pre119NativesLibrary.name = "org.lwjgl:lwjgl:3.3.1";
-        lwjgl3Pre119NativesLibrary.natives = Map.of("linux", "natives-linux");
+        lwjgl3Pre119NativesLibrary.natives = new HashMap<>();
+        lwjgl3Pre119NativesLibrary.natives.put("linux", "natives-linux");
         lwjgl3Pre119NativesLibrary.downloads = new Downloads();
         lwjgl3Pre119NativesLibrary.downloads.artifact = new Download();
         lwjgl3Pre119NativesLibrary.downloads.artifact.sha1 = "ae58664f88e18a9bb2c77b063833ca7aaec484cb";
         Download linuxNativesDownload = new Download();
         linuxNativesDownload.path = "org/lwjgl/lwjgl/3.3.1/lwjgl-3.3.1-natives-linux.jar";
         linuxNativesDownload.sha1 = "05359f3aa50d36352815fc662ea73e1c00d22170";
-        lwjgl3Pre119NativesLibrary.downloads.classifiers = Map.of("natives-linux", linuxNativesDownload);
+        lwjgl3Pre119NativesLibrary.downloads.classifiers = new HashMap<>();
+        lwjgl3Pre119NativesLibrary.downloads.classifiers.put("natives-linux", linuxNativesDownload);
 
         lwjgl3OSXArmLibrary = new Library();
         lwjgl3OSXArmLibrary.name = "org.lwjgl:lwjgl:3.3.1:natives-macos-arm64";
@@ -143,7 +148,7 @@ public class LWJGLVersionsTest {
     public void testShouldReplaceLWJGL3AsTrueWhenNoMacOSArmLibrary() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3NativesLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3NativesLibrary);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
@@ -156,7 +161,7 @@ public class LWJGLVersionsTest {
     public void testShouldReplaceLWJGL3AsTrueWhenNotMacOSArm() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
@@ -169,7 +174,7 @@ public class LWJGLVersionsTest {
     public void testShouldReplaceLWJGL3AsFalseWhenMacOSArm() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
@@ -182,7 +187,7 @@ public class LWJGLVersionsTest {
     public void testShouldReplaceLWJGL3AsFalseWhenLegacyLWJGL() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.12.2";
-        minecraftVersion.libraries = List.of(lwjgl2Library);
+        minecraftVersion.libraries = Arrays.asList(lwjgl2Library);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
@@ -195,7 +200,7 @@ public class LWJGLVersionsTest {
     public void testShouldReplaceLWJGL3AsFalseWhenNotArm() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(false);
@@ -208,7 +213,7 @@ public class LWJGLVersionsTest {
     public void testShouldUseLegacyLWJGLAsTrueWhenLegacyLWJGL() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.12.2";
-        minecraftVersion.libraries = List.of(lwjgl2Library);
+        minecraftVersion.libraries = Arrays.asList(lwjgl2Library);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
@@ -221,7 +226,7 @@ public class LWJGLVersionsTest {
     public void testShouldUseLegacyLWJGLAsFalseWhenLegacyLWJGLButNotLinux() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.12.2";
-        minecraftVersion.libraries = List.of(lwjgl2Library);
+        minecraftVersion.libraries = Arrays.asList(lwjgl2Library);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
@@ -234,7 +239,7 @@ public class LWJGLVersionsTest {
     public void testShouldUseLegacyLWJGLAsFalseWhenNotLegacyLWJGL() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3NativesLibrary, lwjgl3OSXArmLibrary);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
@@ -287,7 +292,7 @@ public class LWJGLVersionsTest {
     public void testGetReplacementLWJGL3LibraryReturnsOriginalLibraryWhenLibraryIsntLWJGL() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(nonLwjglLibrary);
+        minecraftVersion.libraries = Arrays.asList(nonLwjglLibrary);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isWindows).thenReturn(false);
@@ -305,7 +310,7 @@ public class LWJGLVersionsTest {
     public void testGetReplacementLWJGL3LibraryReturnsOriginalLibraryWhenLibraryIsntLWJGL3() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl2Library);
+        minecraftVersion.libraries = Arrays.asList(lwjgl2Library);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isWindows).thenReturn(false);
@@ -322,7 +327,7 @@ public class LWJGLVersionsTest {
     public void testGetReplacementLWJGL3LibraryReturnsOriginalLibraryWhenLibrarySha1IsTheSame() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3Library);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3Library);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isWindows).thenReturn(false);
@@ -339,7 +344,7 @@ public class LWJGLVersionsTest {
     public void testGetReplacementLWJGL3LibraryReturnsOriginalLibraryWhenNativesLibrarySha1IsTheSame() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3NativesLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3NativesLibrary);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isWindows).thenReturn(false);
@@ -357,7 +362,7 @@ public class LWJGLVersionsTest {
     public void testGetReplacementLWJGL3LibraryReturnsNewLibraryWhenShaDoesntMatch() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3Library);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3Library);
 
         lwjgl3Library.downloads.artifact.sha1 = "fff8664f88e18a9bb2c77b063833ca7aaec484cb";
 
@@ -379,7 +384,7 @@ public class LWJGLVersionsTest {
     public void testGetReplacementLWJGL3LibraryReturnsNewNativesLibraryWhenShaDoesntMatch() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
-        minecraftVersion.libraries = List.of(lwjgl3NativesLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3NativesLibrary);
 
         lwjgl3NativesLibrary.downloads.artifact.sha1 = "fff8664f88e18a9bb2c77b063833ca7aaec484cb";
 
@@ -402,7 +407,7 @@ public class LWJGLVersionsTest {
     public void testGetReplacementLWJGL3LibraryReturnsNewPre119NativesLibraryWhenShaDoesntMatch() {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.18.2";
-        minecraftVersion.libraries = List.of(lwjgl3Pre119NativesLibrary);
+        minecraftVersion.libraries = Arrays.asList(lwjgl3Pre119NativesLibrary);
 
         lwjgl3Pre119NativesLibrary.downloads.artifact.sha1 = "fff8664f88e18a9bb2c77b063833ca7aaec484cb";
 
