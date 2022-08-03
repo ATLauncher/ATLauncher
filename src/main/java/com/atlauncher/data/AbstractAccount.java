@@ -98,6 +98,8 @@ public abstract class AbstractAccount implements Serializable {
 
     public abstract void updateSkinPreCheck();
 
+    public abstract void changeSkinPreCheck();
+
     public abstract String getSkinUrl();
 
     public void updateUsername() {

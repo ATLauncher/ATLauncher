@@ -194,6 +194,7 @@ public class ChangeSkinDialog extends JDialog {
             ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Updating Skin"), 0,
                     GetText.tr("Updating Skin"));
             progressDialog.addThread(new Thread(() -> {
+                account.changeSkinPreCheck();
                 progressDialog.setReturnValue(MojangAPIUtils.uploadSkin(account, selectedSkinFile,
                         ((ComboItem<String>) (skinType.getSelectedItem())).getValue()));
                 progressDialog.close();

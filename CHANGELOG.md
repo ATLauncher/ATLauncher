@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Disable Discord integration for Arm devices
 - Setup dialog showing languages not available
 - Launch in debug mode tool panel not working
+- Updating skins not checking for valid access token first
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders

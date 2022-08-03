@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
@@ -62,12 +61,10 @@ public class MojangAPIUtils {
                 .build();
 
         try {
-            JsonObject response = Download.build().setUrl("https://api.minecraftservices.com/minecraft/profile/skins")
+            Download.build().setUrl("https://api.minecraftservices.com/minecraft/profile/skins")
                     .header("Authorization", "Bearer " + account.getAccessToken())
                     .header("Content-Type", "multipart/form-data").post(body)
                     .asClassWithThrow(JsonObject.class);
-
-            LogManager.info(Gsons.DEFAULT.toJson(response));
 
             return true;
         } catch (DownloadException e) {

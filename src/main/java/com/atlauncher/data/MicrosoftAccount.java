@@ -127,6 +127,11 @@ public class MicrosoftAccount extends AbstractAccount {
     }
 
     @Override
+    public void changeSkinPreCheck() {
+        this.refreshAccessToken();
+    }
+
+    @Override
     public String getSkinUrl() {
         Profile profile = null;
 
