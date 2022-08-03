@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Change text when installing loader to indicate it may take some time
 - Make some dialog windows resize as needed to fit the content
 - Disable Discord integration for Arm devices
+- Setup dialog showing languages not available
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders
