@@ -15,6 +15,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Make some dialog windows resize as needed to fit the content
 - Disable Discord integration for Arm devices
 - Setup dialog showing languages not available
+- Launch in debug mode tool panel not working
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders

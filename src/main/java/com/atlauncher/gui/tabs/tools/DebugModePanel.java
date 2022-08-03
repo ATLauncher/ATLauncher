@@ -39,7 +39,7 @@ public class DebugModePanel extends AbstractToolPanel {
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.setEnabled(viewModel.isLaunchInDebugEnabled());
 
-        if (!viewModel.isLaunchInDebugEnabled()) {
+        if (viewModel.isLaunchInDebugEnabled()) {
             LAUNCH_BUTTON.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
