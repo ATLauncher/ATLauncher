@@ -77,7 +77,7 @@ public final class FileSystem {
      * @throws IOException
      */
     public static void organise() throws IOException {
-        deleteDirectories();
+        deleteOldThings();
 
         cleanTempDirectory();
 
@@ -86,7 +86,7 @@ public final class FileSystem {
         createDirectories();
     }
 
-    private static void deleteDirectories() throws IOException {
+    private static void deleteOldThings() throws IOException {
         if (Files.exists(CONFIGS.resolve("Jars"))) {
             FileUtils.delete(CONFIGS.resolve("Jars"));
         }
@@ -105,6 +105,14 @@ public final class FileSystem {
 
         if (Files.exists(CONFIGS.resolve("tools"))) {
             FileUtils.delete(CONFIGS.resolve("tools"));
+        }
+
+        if (Files.exists(JSON.resolve("version_manifest.json"))) {
+            FileUtils.delete(JSON.resolve("version_manifest.json"));
+        }
+
+        if (Files.exists(JSON.resolve("additive_versions.json"))) {
+            FileUtils.delete(JSON.resolve("additive_versions.json"));
         }
     }
 
