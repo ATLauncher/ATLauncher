@@ -17,6 +17,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Setup dialog showing languages not available
 - Launch in debug mode tool panel not working
 - Updating skins not checking for valid access token first
+- Remove forcing of IPv4
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders

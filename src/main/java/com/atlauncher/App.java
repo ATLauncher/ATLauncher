@@ -244,11 +244,6 @@ public class App {
     public static TrayIcon trayIcon;
 
     static {
-        // Prefer to use IPv4 if `java.net.preferIPv6Addresses` is set
-        if (System.getProperty("java.net.preferIPv6Addresses") == null) {
-            System.setProperty("java.net.preferIPv4Stack", "true");
-        }
-
         // Sets up where all uncaught exceptions go to.
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionStrainer());
     }
