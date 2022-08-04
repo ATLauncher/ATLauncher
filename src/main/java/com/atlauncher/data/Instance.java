@@ -129,6 +129,7 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
@@ -548,8 +549,8 @@ public class Instance extends MinecraftVersion {
                 .filter(library -> library.shouldInstall() && library.downloads.artifact != null
                         && library.downloads.artifact.url != null && !library.hasNativeForOS())
                 .distinct()
-                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(this)
-                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(this, l)
+                .map(l -> LWJGLManager.shouldReplaceLWJGL3(this)
+                        ? LWJGLManager.getReplacementLWJGL3Library(this, l)
                         : l)
                 .forEach(library -> {
                     com.atlauncher.network.Download download = new com.atlauncher.network.Download()
@@ -562,8 +563,8 @@ public class Instance extends MinecraftVersion {
                 });
 
         this.libraries.stream().filter(Library::hasNativeForOS)
-                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(this)
-                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(this, l)
+                .map(l -> LWJGLManager.shouldReplaceLWJGL3(this)
+                        ? LWJGLManager.getReplacementLWJGL3Library(this, l)
                         : l)
                 .forEach(library -> {
                     com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
@@ -718,8 +719,8 @@ public class Instance extends MinecraftVersion {
         boolean useSystemGlfw = Optional.ofNullable(launcher.useSystemGlfw).orElse(App.settings.useSystemGlfw);
         boolean useSystemOpenAl = Optional.ofNullable(launcher.useSystemOpenAl).orElse(App.settings.useSystemOpenAl);
         this.libraries.stream().filter(Library::shouldInstall)
-                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(this)
-                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(this, l)
+                .map(l -> LWJGLManager.shouldReplaceLWJGL3(this)
+                        ? LWJGLManager.getReplacementLWJGL3Library(this, l)
                         : l)
                 .forEach(library -> {
                     if (library.hasNativeForOS()) {
@@ -758,11 +759,11 @@ public class Instance extends MinecraftVersion {
         progressDialog.doneTask();
         PerformanceManager.end("Extracting Natives");
 
-        if (Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this)) {
+        if (LWJGLManager.shouldUseLegacyLWJGL(this)) {
             PerformanceManager.start("Extracting Legacy LWJGL");
             progressDialog.setLabel(GetText.tr("Extracting Legacy LWJGL"));
 
-            LWJGLLibrary library = Data.LWJGL_VERSIONS.getLegacyLWJGLLibrary();
+            LWJGLLibrary library = LWJGLManager.getLegacyLWJGLLibrary();
 
             if (library != null) {
                 com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(library.url)
@@ -890,7 +891,7 @@ public class Instance extends MinecraftVersion {
             LogManager.logStackTrace(e2, false);
         }
 
-        if (Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this)) {
+        if (LWJGLManager.shouldUseLegacyLWJGL(this)) {
             try {
                 Files.createDirectory(lwjglNativesTempDir);
             } catch (IOException e2) {
@@ -899,7 +900,7 @@ public class Instance extends MinecraftVersion {
         }
 
         ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"),
-                Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this) ? 8 : 7,
+                LWJGLManager.shouldUseLegacyLWJGL(this) ? 8 : 7,
                 GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
@@ -986,7 +987,7 @@ public class Instance extends MinecraftVersion {
                     }
 
                     process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir,
-                            Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
                             wrapperCommand, username);
                 } else if (account instanceof MicrosoftAccount) {
                     MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
@@ -1029,7 +1030,7 @@ public class Instance extends MinecraftVersion {
                     }
 
                     process = MCLauncher.launch(microsoftAccount, this, nativesTempDir,
-                            Data.LWJGL_VERSIONS.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
                             wrapperCommand, username);
                 }
 

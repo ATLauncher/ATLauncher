@@ -50,6 +50,7 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
@@ -102,7 +103,7 @@ public class Launcher {
         NewsManager.loadNews(); // Load the news
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
-        MinecraftManager.loadLWJGLVersions(); // Load info about the different LWJGL versions
+        LWJGLManager.loadLWJGLVersions(); // Load info about the different LWJGL versions
 
         // Load info about the different java runtimes
         App.TASKPOOL.execute(() -> {

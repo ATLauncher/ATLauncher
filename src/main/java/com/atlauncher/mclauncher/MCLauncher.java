@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.atlauncher.App;
-import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
@@ -43,6 +42,7 @@ import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
+import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.mclauncher.legacy.LegacyMCLauncher;
 import com.atlauncher.network.ErrorReporting;
@@ -203,8 +203,8 @@ public class MCLauncher {
         instance.libraries.stream().filter(
                 library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
-                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(instance)
-                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(instance, l)
+                .map(l -> LWJGLManager.shouldReplaceLWJGL3(instance)
+                        ? LWJGLManager.getReplacementLWJGL3Library(instance, l)
                         : l)
                 .forEach(library -> {
                     String path = FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile()
@@ -217,8 +217,8 @@ public class MCLauncher {
                 });
 
         instance.libraries.stream().filter(Library::hasNativeForOS)
-                .map(l -> Data.LWJGL_VERSIONS.shouldReplaceLWJGL3(instance)
-                        ? Data.LWJGL_VERSIONS.getReplacementLWJGL3Library(instance, l)
+                .map(l -> LWJGLManager.shouldReplaceLWJGL3(instance)
+                        ? LWJGLManager.getReplacementLWJGL3Library(instance, l)
                         : l)
                 .forEach(library -> {
                     com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();

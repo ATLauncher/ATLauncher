@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data;
+package com.atlauncher.managers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,13 +31,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import com.atlauncher.Data;
+import com.atlauncher.data.LWJGLLibrary;
+import com.atlauncher.data.LWJGLMajorVersion;
+import com.atlauncher.data.LWJGLVersion;
+import com.atlauncher.data.LWJGLVersions;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.utils.OS;
 
-public class LWJGLVersionsTest {
+public class LWJGLManagerTest {
     private final LWJGLVersions LWJGL_VERSIONS = new LWJGLVersions();
 
     private LWJGLMajorVersion lwjgl2MajorVersion;
@@ -126,6 +131,8 @@ public class LWJGLVersionsTest {
 
         nonLwjglLibrary = new Library();
         nonLwjglLibrary.name = "com.github.oshi:oshi-core:5.8.5";
+
+        Data.LWJGL_VERSIONS = LWJGL_VERSIONS;
     }
 
     @Test
@@ -133,7 +140,7 @@ public class LWJGLVersionsTest {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.12.2";
 
-        assertTrue(LWJGL_VERSIONS.usesLegacyLWJGL(minecraftVersion));
+        assertTrue(LWJGLManager.usesLegacyLWJGL(minecraftVersion));
     }
 
     @Test
@@ -141,7 +148,7 @@ public class LWJGLVersionsTest {
         MinecraftVersion minecraftVersion = new MinecraftVersion();
         minecraftVersion.id = "1.19.1";
 
-        assertFalse(LWJGL_VERSIONS.usesLegacyLWJGL(minecraftVersion));
+        assertFalse(LWJGLManager.usesLegacyLWJGL(minecraftVersion));
     }
 
     @Test
@@ -153,7 +160,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::isMacArm).thenReturn(false);
-            assertTrue(LWJGL_VERSIONS.shouldReplaceLWJGL3(minecraftVersion));
+            assertTrue(LWJGLManager.shouldReplaceLWJGL3(minecraftVersion));
         }
     }
 
@@ -166,7 +173,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::isMacArm).thenReturn(false);
-            assertTrue(LWJGL_VERSIONS.shouldReplaceLWJGL3(minecraftVersion));
+            assertTrue(LWJGLManager.shouldReplaceLWJGL3(minecraftVersion));
         }
     }
 
@@ -179,7 +186,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::isMacArm).thenReturn(true);
-            assertFalse(LWJGL_VERSIONS.shouldReplaceLWJGL3(minecraftVersion));
+            assertFalse(LWJGLManager.shouldReplaceLWJGL3(minecraftVersion));
         }
     }
 
@@ -192,7 +199,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::isMacArm).thenReturn(false);
-            assertFalse(LWJGL_VERSIONS.shouldReplaceLWJGL3(minecraftVersion));
+            assertFalse(LWJGLManager.shouldReplaceLWJGL3(minecraftVersion));
         }
     }
 
@@ -205,7 +212,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(false);
             utilities.when(OS::isMacArm).thenReturn(false);
-            assertFalse(LWJGL_VERSIONS.shouldReplaceLWJGL3(minecraftVersion));
+            assertFalse(LWJGLManager.shouldReplaceLWJGL3(minecraftVersion));
         }
     }
 
@@ -218,7 +225,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::isLinux).thenReturn(true);
-            assertTrue(LWJGL_VERSIONS.shouldUseLegacyLWJGL(minecraftVersion));
+            assertTrue(LWJGLManager.shouldUseLegacyLWJGL(minecraftVersion));
         }
     }
 
@@ -231,7 +238,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::isLinux).thenReturn(false);
-            assertFalse(LWJGL_VERSIONS.shouldUseLegacyLWJGL(minecraftVersion));
+            assertFalse(LWJGLManager.shouldUseLegacyLWJGL(minecraftVersion));
         }
     }
 
@@ -244,7 +251,7 @@ public class LWJGLVersionsTest {
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::isLinux).thenReturn(true);
-            assertFalse(LWJGL_VERSIONS.shouldUseLegacyLWJGL(minecraftVersion));
+            assertFalse(LWJGLManager.shouldUseLegacyLWJGL(minecraftVersion));
         }
     }
 
@@ -264,7 +271,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::is64Bit).thenReturn(true);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
-            assertEquals(arm64Library, LWJGL_VERSIONS.getLegacyLWJGLLibrary());
+            assertEquals(arm64Library, LWJGLManager.getLegacyLWJGLLibrary());
         }
     }
 
@@ -284,7 +291,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::is64Bit).thenReturn(false);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
-            assertEquals(arm32Library, LWJGL_VERSIONS.getLegacyLWJGLLibrary());
+            assertEquals(arm32Library, LWJGLManager.getLegacyLWJGLLibrary());
         }
     }
 
@@ -302,7 +309,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::is64Bit).thenReturn(false);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
             assertEquals(nonLwjglLibrary,
-                    LWJGL_VERSIONS.getReplacementLWJGL3Library(minecraftVersion, nonLwjglLibrary));
+                    LWJGLManager.getReplacementLWJGL3Library(minecraftVersion, nonLwjglLibrary));
         }
     }
 
@@ -319,7 +326,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::is64Bit).thenReturn(false);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
-            assertEquals(lwjgl2Library, LWJGL_VERSIONS.getReplacementLWJGL3Library(minecraftVersion, lwjgl2Library));
+            assertEquals(lwjgl2Library, LWJGLManager.getReplacementLWJGL3Library(minecraftVersion, lwjgl2Library));
         }
     }
 
@@ -336,7 +343,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::isArm).thenReturn(true);
             utilities.when(OS::is64Bit).thenReturn(false);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
-            assertEquals(lwjgl3Library, LWJGL_VERSIONS.getReplacementLWJGL3Library(minecraftVersion, lwjgl3Library));
+            assertEquals(lwjgl3Library, LWJGLManager.getReplacementLWJGL3Library(minecraftVersion, lwjgl3Library));
         }
     }
 
@@ -354,7 +361,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::is64Bit).thenReturn(false);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
             assertEquals(lwjgl3NativesLibrary,
-                    LWJGL_VERSIONS.getReplacementLWJGL3Library(minecraftVersion, lwjgl3NativesLibrary));
+                    LWJGLManager.getReplacementLWJGL3Library(minecraftVersion, lwjgl3NativesLibrary));
         }
     }
 
@@ -374,7 +381,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::is64Bit).thenReturn(false);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
 
-            Library mappedLibrary = LWJGL_VERSIONS.getReplacementLWJGL3Library(minecraftVersion, lwjgl3Library);
+            Library mappedLibrary = LWJGLManager.getReplacementLWJGL3Library(minecraftVersion, lwjgl3Library);
             assertNotEquals(lwjgl3Library, mappedLibrary);
             assertEquals(lwjgl3Library.name, mappedLibrary.name);
         }
@@ -396,7 +403,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::is64Bit).thenReturn(false);
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
 
-            Library mappedLibrary = LWJGL_VERSIONS.getReplacementLWJGL3Library(minecraftVersion, lwjgl3NativesLibrary);
+            Library mappedLibrary = LWJGLManager.getReplacementLWJGL3Library(minecraftVersion, lwjgl3NativesLibrary);
             assertNotEquals(lwjgl3NativesLibrary, mappedLibrary);
             assertNotEquals(lwjgl3NativesLibrary.name, mappedLibrary.name);
             assertEquals("org.lwjgl:lwjgl:3.3.1:natives-linux-arm32", mappedLibrary.name);
@@ -420,7 +427,7 @@ public class LWJGLVersionsTest {
             utilities.when(OS::getNativesArch).thenReturn("32");
             utilities.when(OS::getLWJGLClassifier).thenCallRealMethod();
 
-            Library mappedLibrary = LWJGL_VERSIONS.getReplacementLWJGL3Library(minecraftVersion,
+            Library mappedLibrary = LWJGLManager.getReplacementLWJGL3Library(minecraftVersion,
                     lwjgl3Pre119NativesLibrary);
             assertNotEquals(lwjgl3Pre119NativesLibrary, mappedLibrary);
             assertEquals(lwjgl3Pre119NativesLibrary.name, mappedLibrary.name);
