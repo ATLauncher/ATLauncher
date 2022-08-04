@@ -28,6 +28,8 @@ public class VersionManifestVersion {
     public VersionManifestVersionType type;
     public String url;
     public String time;
+    public long size;
+    public String sha1;
     public String releaseTime;
 
     public static DateTime release_1_2_5 = ISODateTimeFormat.dateTimeParser()

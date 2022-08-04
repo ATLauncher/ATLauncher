@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Launch in debug mode tool panel not working
 - Updating skins not checking for valid access token first
 - Remove forcing of IPv4
+- Use CDN to get Minecraft version information [#631]
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders

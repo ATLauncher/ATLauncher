@@ -20,7 +20,6 @@ package com.atlauncher.managers;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,81 +40,33 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.network.Download;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 public class MinecraftManager {
-    private static boolean forceReloaded = false;
-
-    public static void loadMinecraftVersions() {
-        loadMinecraftVersions(false);
-    }
-
     /**
      * Loads info about the different Minecraft versions
      */
-    public static void loadMinecraftVersions(boolean force) {
+    public static void loadMinecraftVersions() {
         PerformanceManager.start();
         LogManager.debug("Loading Minecraft versions");
 
         Data.MINECRAFT.clear();
 
-        VersionManifest versionManifest = null;
-        Path manifestPath = FileSystem.JSON.resolve("version_manifest.json");
-
         try {
-            Download download = Download.build().setUrl(Constants.MINECRAFT_VERSION_MANIFEST_URL)
-                    .downloadTo(manifestPath);
+            Path manifestPath = FileSystem.JSON.resolve("minecraft_versions.json");
+            VersionManifest versionManifest = Gsons.DEFAULT.fromJson(
+                    new FileReader(manifestPath.toFile()), VersionManifest.class);
 
-            if (!force) {
-                download = download.cached();
+            if (versionManifest != null) {
+                versionManifest.versions.forEach((version) -> {
+                    Data.MINECRAFT.put(version.id, version);
+                });
             }
-
-            versionManifest = download.asClassWithThrow(VersionManifest.class);
-        } catch (IOException e) {
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
-
-            if (Files.exists(manifestPath)) {
-                try {
-                    versionManifest = Gsons.DEFAULT.fromJson(new FileReader(manifestPath.toFile()),
-                            VersionManifest.class);
-                } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
-                    LogManager.logStackTrace(e1);
-                }
-            }
         }
-
-        if (versionManifest != null) {
-            versionManifest.versions.forEach((version) -> {
-                Data.MINECRAFT.put(version.id, version);
-            });
-        }
-
-        loadAdditiveVersions();
 
         LogManager.debug("Finished loading Minecraft versions");
         PerformanceManager.end();
-    }
-
-    private static void loadAdditiveVersions() {
-        List<VersionManifestVersion> additiveVersionsManifest = null;
-        Path additiveManifestPath = FileSystem.JSON.resolve("additive_versions.json");
-
-        java.lang.reflect.Type type = new TypeToken<List<VersionManifestVersion>>() {
-        }.getType();
-
-        if (Files.exists(additiveManifestPath)) {
-            try {
-                additiveVersionsManifest = Gsons.DEFAULT.fromJson(new FileReader(additiveManifestPath.toFile()), type);
-            } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
-                LogManager.logStackTrace(e1);
-            }
-        }
-
-        if (additiveVersionsManifest != null) {
-            additiveVersionsManifest.forEach((version) -> {
-                Data.MINECRAFT.put(version.id, version);
-            });
-        }
     }
 
     public static void loadJavaRuntimes() {
@@ -151,11 +102,6 @@ public class MinecraftManager {
     }
 
     public static VersionManifestVersion getMinecraftVersion(String version) throws InvalidMinecraftVersion {
-        if (!Data.MINECRAFT.containsKey(version) && !forceReloaded) {
-            forceReloaded = true;
-            MinecraftManager.loadMinecraftVersions(true);
-        }
-
         if (!Data.MINECRAFT.containsKey(version)) {
             throw new InvalidMinecraftVersion("No Minecraft version found matching " + version);
         }

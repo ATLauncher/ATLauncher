@@ -466,16 +466,10 @@ public class Instance extends MinecraftVersion {
             VersionManifestVersion minecraftVersionManifest = MinecraftManager
                     .getMinecraftVersion(id);
 
-            String[] urlParts = minecraftVersionManifest.url.split("/");
-            String sha1 = urlParts[urlParts.length - 2];
-
             com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
                     .cached()
-                    .setUrl(minecraftVersionManifest.url).withHttpClient(httpClient);
-
-            if (sha1.length() == 40) {
-                download = download.hash(sha1);
-            }
+                    .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
+                    .size(minecraftVersionManifest.size).withHttpClient(httpClient);
 
             MinecraftVersion minecraftVersion = download.asClass(MinecraftVersion.class);
 

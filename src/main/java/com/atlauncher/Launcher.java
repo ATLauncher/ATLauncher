@@ -339,7 +339,7 @@ public class Launcher {
             reloadLauncherData();
         }
 
-        MinecraftManager.loadMinecraftVersions(force); // Load info about the different Minecraft versions
+        MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
         MinecraftManager.loadJavaRuntimes(force); // Load info about the different java runtimes
     }
 

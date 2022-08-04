@@ -343,7 +343,9 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                                             selectedPanel.getSupportedMinecraftVersionTypesForFiltering());
 
             for (VersionManifestVersion mv : versionsToShow) {
-                minecraftVersionComboBox.addItem(new ComboItem<String>(mv.id, mv.id));
+                if (mv != null) {
+                    minecraftVersionComboBox.addItem(new ComboItem<String>(mv.id, mv.id));
+                }
             }
         }
 

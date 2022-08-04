@@ -1548,15 +1548,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         minecraftVersionManifest = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
 
-        String[] urlParts = minecraftVersionManifest.url.split("/");
-        String sha1 = urlParts[urlParts.length - 2];
-
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().cached()
-                .setUrl(minecraftVersionManifest.url).downloadTo(this.temp.resolve("minecraft.json"));
-
-        if (sha1.length() == 40) {
-            download = download.hash(sha1);
-        }
+                .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
+                .size(minecraftVersionManifest.size).downloadTo(this.temp.resolve("minecraft.json"));
 
         this.minecraftVersion = download.asClass(MinecraftVersion.class);
 
