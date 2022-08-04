@@ -180,7 +180,8 @@ public class Processor {
         // we pass in some extra params for the forge installer tools DEOBF_REALMS task
         if (this.args.contains("DEOBF_REALMS")) {
             args.add("--json");
-            args.add(instanceInstaller.temp.resolve("minecraft.json").toAbsolutePath().toString());
+            args.add(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(instanceInstaller.minecraftVersionManifest.id + ".json")
+                    .toAbsolutePath().toString());
             args.add("--libs");
             args.add(FileSystem.LIBRARIES.toFile().getAbsolutePath());
         }

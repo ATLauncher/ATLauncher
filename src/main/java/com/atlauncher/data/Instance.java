@@ -467,9 +467,10 @@ public class Instance extends MinecraftVersion {
                     .getMinecraftVersion(id);
 
             com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
-                    .cached()
                     .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
-                    .size(minecraftVersionManifest.size).withHttpClient(httpClient);
+                    .size(minecraftVersionManifest.size)
+                    .downloadTo(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json"))
+                    .withHttpClient(httpClient);
 
             MinecraftVersion minecraftVersion = download.asClass(MinecraftVersion.class);
 

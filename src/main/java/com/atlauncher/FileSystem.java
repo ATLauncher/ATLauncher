@@ -46,6 +46,7 @@ public final class FileSystem {
     public static final Path IMAGES = CONFIGS.resolve("images");
     public static final Path SKINS = IMAGES.resolve("skins");
     public static final Path JSON = CONFIGS.resolve("json");
+    public static final Path MINECRAFT_VERSIONS_JSON = JSON.resolve("minecraft");
     public static final Path THEMES = CONFIGS.resolve("themes");
 
     public static final Path ASSETS = BASE_DIR.resolve("assets");
@@ -220,6 +221,7 @@ public final class FileSystem {
         FileUtils.createDirectory(IMAGES);
         FileUtils.createDirectory(SKINS);
         FileUtils.createDirectory(JSON);
+        FileUtils.createDirectory(MINECRAFT_VERSIONS_JSON);
         FileUtils.createDirectory(THEMES);
 
         FileUtils.createDirectory(ASSETS);

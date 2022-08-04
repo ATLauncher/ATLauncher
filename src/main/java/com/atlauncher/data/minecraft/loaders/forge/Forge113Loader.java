@@ -46,7 +46,8 @@ public class Forge113Loader extends ForgeLoader {
                 new Data(instanceInstaller.getMinecraftJarLibrary("client").getAbsolutePath(),
                         instanceInstaller.getMinecraftJarLibrary("server").getAbsolutePath()));
         installProfile.data.put("MINECRAFT_VERSION",
-                new Data(instanceInstaller.temp.resolve("minecraft.json").toAbsolutePath().toString()));
+                new Data(FileSystem.MINECRAFT_VERSIONS_JSON
+                        .resolve(instanceInstaller.minecraftVersionManifest.id + ".json").toAbsolutePath().toString()));
         installProfile.data.put("INSTALLER", new Data(installerPath.toAbsolutePath().toString()));
         installProfile.data.put("LIBRARY_DIR", new Data(FileSystem.LIBRARIES.toAbsolutePath().toString()));
 
