@@ -2159,7 +2159,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         MojangAssetIndex assetIndex = this.minecraftVersion.assetIndex;
 
-        AssetIndex index = com.atlauncher.network.Download.build().cached().setUrl(assetIndex.url).hash(assetIndex.sha1)
+        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
                 .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
                 .asClass(AssetIndex.class);
 
@@ -2261,7 +2261,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         LoggingFile loggingFile = this.minecraftVersion.logging.client.file;
         setTotalBytes(loggingFile.size);
 
-        com.atlauncher.network.Download.build().cached().setUrl(loggingFile.url).hash(loggingFile.sha1)
+        com.atlauncher.network.Download.build().setUrl(loggingFile.url).hash(loggingFile.sha1)
                 .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
                 .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this)).downloadFile();
 
@@ -2495,7 +2495,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             JavaRuntime runtimeToDownload = runtimesForSystem.get(minecraftVersion.javaVersion.component).get(0);
 
             try {
-                JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build().cached()
+                JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build()
                         .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
                         .hash(runtimeToDownload.manifest.sha1).downloadTo(FileSystem.MINECRAFT_RUNTIMES
                                 .resolve(minecraftVersion.javaVersion.component).resolve("manifest.json"))

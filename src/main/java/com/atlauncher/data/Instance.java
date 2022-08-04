@@ -512,7 +512,7 @@ public class Instance extends MinecraftVersion {
 
                 LoggingFile loggingFile = logging.client.file;
 
-                com.atlauncher.network.Download loggerDownload = com.atlauncher.network.Download.build().cached()
+                com.atlauncher.network.Download loggerDownload = com.atlauncher.network.Download.build()
                         .setUrl(loggingFile.url).hash(loggingFile.sha1)
                         .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
                         .withHttpClient(httpClient);
@@ -600,7 +600,7 @@ public class Instance extends MinecraftVersion {
                 JavaRuntime runtimeToDownload = runtimesForSystem.get(javaVersion.component).get(0);
 
                 try {
-                    JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build().cached()
+                    JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build()
                             .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
                             .hash(runtimeToDownload.manifest.sha1).downloadTo(FileSystem.MINECRAFT_RUNTIMES
                                     .resolve(javaVersion.component).resolve("manifest.json"))

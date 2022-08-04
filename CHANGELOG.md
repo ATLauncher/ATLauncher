@@ -20,6 +20,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Updating skins not checking for valid access token first
 - Remove forcing of IPv4
 - Use CDN to get Minecraft version information [#631]
+- Remove some unecessary caching on HTTP requests
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders
