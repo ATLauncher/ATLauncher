@@ -21,6 +21,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove forcing of IPv4
 - Use CDN to get Minecraft version information [#631]
 - Remove some unecessary caching on HTTP requests
+- Updating Modrinth mods sometimes always thinking there's an update
 
 ### Misc
 - Change translations using loader/mod platforms to use placeholders

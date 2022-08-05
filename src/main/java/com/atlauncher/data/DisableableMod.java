@@ -447,6 +447,7 @@ public class DisableableMod implements Serializable {
                 }
 
                 if (versionsStream.noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
+                        .minusSeconds(1)
                         .isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
                     dialog.setReturnValue(null);
                     dialog.close();
