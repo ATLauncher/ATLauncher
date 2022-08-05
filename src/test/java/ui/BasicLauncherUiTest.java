@@ -38,7 +38,6 @@ import org.assertj.swing.timing.Pause;
 import org.assertj.swing.timing.Timeout;
 import org.junit.Test;
 
-import com.atlauncher.constants.Constants;
 import com.atlauncher.gui.card.InstanceCard;
 
 import ui.mocks.MockHelper;
@@ -102,10 +101,9 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         mainTabsFixture.selectTab("Vanilla Packs");
         Pause.pause(1, TimeUnit.SECONDS);
 
-        MockHelper.mockCdnJson(mockServer, "GET", "/containers/atl/packs/VanillaMinecraft/versions/1.16.4/Configs.json",
-                "vanilla-1-16-4-configs.json");
-        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
-                "/v1/packages/99586066f9142b08f3f2e705ec306cae2ab860f5/1.16.4.json", "1.16.4.json");
+        MockHelper.mockJson(mockServer, "GET", "download.nodecdn.net",
+                "/containers/atl/meta/minecraft/v1/packages/99586066f9142b08f3f2e705ec306cae2ab860f5/1.16.4.json",
+                "1.16.4.json");
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
                 "/v1/packages/f8e11ca03b475dd655755b945334c7a0ac2c3b43/1.16.json", "1.16.json");
         MockHelper.mockPng(mockServer, "GET", "resources.download.minecraft.net",
@@ -118,8 +116,6 @@ public class BasicLauncherUiTest extends AbstractUiTest {
                 "/v1/objects/9150e6e5de6d49a83113ed3be5719aed2a387523/client-1.12.xml", "client-1.12.xml");
         MockHelper.mockJar(mockServer, "GET", "launcher.mojang.com",
                 "/v1/objects/4addb91039ae452c5612f288bfe6ce925dac92c5/client.jar", "client-1-16-4.jar");
-        MockHelper.mockNoResponseSuccess(mockServer, "POST", Constants.API_HOST,
-                "/v1/launcher/pack/VanillaMinecraft/installed/");
 
         JPanelFixture vanillaPacksPanel = this.frame.panel("vanillaPacksPanel");
         vanillaPacksPanel.requireVisible();

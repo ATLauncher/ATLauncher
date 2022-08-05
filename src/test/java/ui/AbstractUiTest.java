@@ -24,10 +24,6 @@ import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import com.atlauncher.App;
-import com.atlauncher.constants.Constants;
-import com.atlauncher.utils.FileUtils;
-
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
@@ -41,6 +37,10 @@ import org.mockserver.integration.ClientAndServer;
 import org.mockserver.logging.MockServerLogger;
 import org.mockserver.socket.PortFactory;
 import org.mockserver.socket.tls.KeyStoreFactory;
+
+import com.atlauncher.App;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.utils.FileUtils;
 
 import ui.mocks.MockHelper;
 
@@ -114,10 +114,10 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         MockHelper.mockFileResponse(mockServer, "packsnew.json");
         MockHelper.mockFileResponse(mockServer, "version.json");
         MockHelper.mockFileResponse(mockServer, "config.json");
+        MockHelper.mockFileResponse(mockServer, "minecraft_versions.json");
+        MockHelper.mockFileResponse(mockServer, "lwjgl.json");
 
         // files from Minecraft servers
-        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com", "/mc/game/version_manifest.json",
-                "version_manifest.json");
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
                 "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json", "java_runtimes.json");
     }

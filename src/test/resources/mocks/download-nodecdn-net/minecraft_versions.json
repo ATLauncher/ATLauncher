@@ -1,0 +1,17 @@
+{
+  "latest": {
+    "release": "1.16.4",
+    "snapshot": "1.16.4"
+  },
+  "versions": [
+    {
+      "id": "1.16.4",
+      "type": "release",
+      "url": "https://download.nodecdn.net/containers/atl/meta/minecraft/v1/packages/99586066f9142b08f3f2e705ec306cae2ab860f5/1.16.4.json",
+      "time": "2022-02-25T13:15:31+00:00",
+      "releaseTime": "2020-10-29T15:49:37+00:00",
+      "size": 3654,
+      "sha1": "99586066f9142b08f3f2e705ec306cae2ab860f5"
+    }
+  ]
+}

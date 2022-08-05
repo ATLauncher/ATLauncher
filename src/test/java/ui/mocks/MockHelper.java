@@ -27,18 +27,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mockserver.client.ForwardChainExpectation;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.model.BinaryBody;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
+
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.utils.Hashing;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import org.mockserver.client.ForwardChainExpectation;
-import org.mockserver.integration.ClientAndServer;
-import org.mockserver.model.BinaryBody;
-import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 
 public class MockHelper {
     public static Map<String, Path> mockedFilePaths = new HashMap<>();
@@ -50,6 +50,9 @@ public class MockHelper {
         mockedFilePaths.put("packsnew.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/packsnew.json"));
         mockedFilePaths.put("version.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/version.json"));
         mockedFilePaths.put("config.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/config.json"));
+        mockedFilePaths.put("lwjgl.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/lwjgl.json"));
+        mockedFilePaths.put("minecraft_versions.json",
+                Paths.get("src/test/resources/mocks/download-nodecdn-net/minecraft_versions.json"));
     }
 
     public static void mockFilesJson(ClientAndServer mockServer) {
@@ -104,6 +107,20 @@ public class MockHelper {
             config.size = (int) Files.size(mockedFilePaths.get("config.json"));
             config.sha1 = Hashing.sha1(mockedFilePaths.get("config.json")).toString();
             downloadableFiles.add(config);
+
+            DownloadableFile lwjgl = new DownloadableFile();
+            lwjgl.name = "lwjgl.json";
+            lwjgl.folder = "json";
+            lwjgl.size = (int) Files.size(mockedFilePaths.get("lwjgl.json"));
+            lwjgl.sha1 = Hashing.sha1(mockedFilePaths.get("lwjgl.json")).toString();
+            downloadableFiles.add(lwjgl);
+
+            DownloadableFile minecraftVersions = new DownloadableFile();
+            minecraftVersions.name = "minecraft_versions.json";
+            minecraftVersions.folder = "json";
+            minecraftVersions.size = (int) Files.size(mockedFilePaths.get("minecraft_versions.json"));
+            minecraftVersions.sha1 = Hashing.sha1(mockedFilePaths.get("minecraft_versions.json")).toString();
+            downloadableFiles.add(minecraftVersions);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,32 +183,33 @@ public class MockHelper {
                     .when(HttpRequest.request().withMethod(method).withHeader("Host", host).withPath(path));
 
             switch (responseType) {
-            case MOJANG_LOGIN:
-                expectation.respond(request -> {
-                    JsonObject requestBody = JsonParser.parseString(request.getBodyAsString()).getAsJsonObject();
-                    String clientToken = requestBody.get("clientToken").getAsString();
+                case MOJANG_LOGIN:
+                    expectation.respond(request -> {
+                        JsonObject requestBody = JsonParser.parseString(request.getBodyAsString()).getAsJsonObject();
+                        String clientToken = requestBody.get("clientToken").getAsString();
 
-                    return HttpResponse.response().withStatusCode(200).withHeader("Content-Type", "application/json")
-                            .withBody(new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8)
-                                    .replace("{{CLIENT_TOKEN}}", clientToken));
-                });
-                break;
-            case PNG:
-            case XML:
-            case JAR:
-            case TXT:
-                expectation.respond(HttpResponse.response().withStatusCode(200)
-                        .withHeader("Content-Type", getContentType(responseType))
-                        .withHeader("Content-Disposition",
-                                "form-data; name=\"" + responseFile + "\"; filename=\"" + responseFile + "\"")
-                        .withBody(BinaryBody.binary(Files.readAllBytes(filePath))));
-                break;
-            case JSON:
-            default:
-                expectation.respond(
-                        HttpResponse.response().withStatusCode(200).withHeader("Content-Type", "application/json")
-                                .withBody(new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8)));
-                break;
+                        return HttpResponse.response().withStatusCode(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8)
+                                        .replace("{{CLIENT_TOKEN}}", clientToken));
+                    });
+                    break;
+                case PNG:
+                case XML:
+                case JAR:
+                case TXT:
+                    expectation.respond(HttpResponse.response().withStatusCode(200)
+                            .withHeader("Content-Type", getContentType(responseType))
+                            .withHeader("Content-Disposition",
+                                    "form-data; name=\"" + responseFile + "\"; filename=\"" + responseFile + "\"")
+                            .withBody(BinaryBody.binary(Files.readAllBytes(filePath))));
+                    break;
+                case JSON:
+                default:
+                    expectation.respond(
+                            HttpResponse.response().withStatusCode(200).withHeader("Content-Type", "application/json")
+                                    .withBody(new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8)));
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -200,17 +218,17 @@ public class MockHelper {
 
     private static String getContentType(ResponseType responseType) {
         switch (responseType) {
-        case JAR:
-            return "application/java-archive";
-        case XML:
-            return "application/xml";
-        case TXT:
-            return "plain/text";
-        case PNG:
-            return "image/png";
-        case JSON:
-        default:
-            return "application/json";
+            case JAR:
+                return "application/java-archive";
+            case XML:
+                return "application/xml";
+            case TXT:
+                return "plain/text";
+            case PNG:
+                return "image/png";
+            case JSON:
+            default:
+                return "application/json";
         }
     }
 }
