@@ -263,7 +263,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover javaMinecraftProvidedLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
                 new HTMLBuilder().center().text(GetText.tr(
-                        "This version of Minecraft provides a specific version of Java to be used with it, so you cannot set a custom Java path.<br/><br/>In order to manually set a path, you must disable this option (highly not recommended) in the Java settings of the launcher."))
+                        "This version of Minecraft provides a specific version of Java to be used with it, so you cannot set a custom Java path.<br/><br/>In order to manually set a path, you must disable this option (highly not recommended)."))
                         .build());
         add(javaMinecraftProvidedLabel, gbc);
 

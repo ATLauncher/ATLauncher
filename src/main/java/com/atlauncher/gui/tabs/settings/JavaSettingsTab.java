@@ -54,6 +54,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.javafinder.JavaInfo;
@@ -76,7 +77,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JComboBox<String> commonScreenSizes;
     private final JLabelWithHover javaPathLabel;
     private JTextField javaPath;
-    private final JComboBox<JavaInfo> installedJavasComboBox;
+    private final JComboBox<ComboItem<JavaInfo>> installedJavasComboBox;
     private final JButton javaPathResetButton;
     private final JButton javaBrowseButton;
     private final JLabelWithHover javaParametersLabel;
@@ -329,6 +330,24 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridwidth = 1;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover javaMinecraftProvidedLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr(
+                        "This version of Minecraft provides a specific version of Java to be used with it, so you cannot set a custom Java path.<br/><br/>In order to manually set a path, you must disable this option (highly not recommended)."))
+                        .build());
+        add(javaMinecraftProvidedLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        final JLabel javaPathDummy = new JLabel("Uses Java provided by Minecraft");
+        javaPathDummy.setEnabled(false);
+        add(javaPathDummy, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
                         "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what you're doing, just set this to the path where the bin folder is for the version of Java you want to use. If you mess up, click the Reset button to go back to the default"))
@@ -350,27 +369,33 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         installedJavasComboBox = new JComboBox<>();
         installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
         List<JavaInfo> installedJavas = Java.getInstalledJavas();
-        int selectedIndex = 0;
+
+        installedJavasComboBox.addItem(new ComboItem<JavaInfo>(null, GetText.tr("Select Java Path To Autofill")));
 
         for (JavaInfo javaInfo : installedJavas) {
-            installedJavasComboBox.addItem(javaInfo);
-
-            if (javaInfo.rootPath.equalsIgnoreCase(App.settings.javaPath)) {
-                selectedIndex = installedJavasComboBox.getItemCount() - 1;
-            }
+            installedJavasComboBox.addItem(new ComboItem<JavaInfo>(javaInfo, javaInfo.toString()));
         }
 
-        if (installedJavasComboBox.getItemCount() != 0) {
-            installedJavasComboBox.setSelectedIndex(selectedIndex);
-            installedJavasComboBox.addActionListener(
-                    e -> javaPath.setText(((JavaInfo) installedJavasComboBox.getSelectedItem()).rootPath));
+        if (installedJavasComboBox.getItemCount() != 1) {
+            installedJavasComboBox.addActionListener(e -> {
+                JavaInfo selectedItem = ((ComboItem<JavaInfo>) installedJavasComboBox.getSelectedItem())
+                        .getValue();
+
+                if (selectedItem != null) {
+                    javaPath.setText(selectedItem.rootPath);
+                }
+                installedJavasComboBox.setSelectedIndex(0);
+            });
             javaPathPanelTop.add(installedJavasComboBox);
         }
 
         javaPath = new JTextField(32);
         javaPath.setText(App.settings.javaPath);
         javaPathResetButton = new JButton(GetText.tr("Reset"));
-        javaPathResetButton.addActionListener(e -> javaPath.setText(OS.getDefaultJavaPath()));
+        javaPathResetButton.addActionListener(e -> {
+            javaPath.setText(OS.getDefaultJavaPath());
+            installedJavasComboBox.setSelectedIndex(0);
+        });
         javaBrowseButton = new JButton(GetText.tr("Browse"));
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
@@ -391,6 +416,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                 } else {
                     javaPath.setText(selectedPath.getAbsolutePath());
                 }
+                installedJavasComboBox.setSelectedIndex(0);
             }
         });
 
@@ -403,6 +429,13 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPathPanel.add(javaPathPanelTop);
         javaPathPanel.add(Box.createVerticalStrut(5));
         javaPathPanel.add(javaPathPanelBottom);
+
+        boolean isUsingMinecraftProvidedJava = (!OS.isArm() || OS.isMacArm())
+                && App.settings.useJavaProvidedByMinecraft;
+        javaMinecraftProvidedLabel.setVisible(isUsingMinecraftProvidedJava);
+        javaPathDummy.setVisible(isUsingMinecraftProvidedJava);
+        javaPathLabel.setVisible(!isUsingMinecraftProvidedJava);
+        javaPathPanel.setVisible(!isUsingMinecraftProvidedJava);
 
         add(javaPathPanel, gbc);
 
@@ -505,8 +538,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    SwingUtilities.invokeLater(() -> {
+                SwingUtilities.invokeLater(() -> {
+                    if (!useJavaProvidedByMinecraft.isSelected()) {
                         int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
                                 .setType(DialogManager.WARNING)
                                 .setContent(GetText.tr(
@@ -516,8 +549,14 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                         if (ret != 0) {
                             useJavaProvidedByMinecraft.setSelected(true);
                         }
-                    });
-                }
+                    }
+
+                    javaMinecraftProvidedLabel.setVisible(useJavaProvidedByMinecraft.isSelected());
+                    javaPathDummy.setVisible(useJavaProvidedByMinecraft.isSelected());
+
+                    javaPathLabel.setVisible(!useJavaProvidedByMinecraft.isSelected());
+                    javaPathPanel.setVisible(!useJavaProvidedByMinecraft.isSelected());
+                });
             }
         });
         add(useJavaProvidedByMinecraft, gbc);
