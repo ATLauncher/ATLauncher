@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Add support for ARM devices [#576]
   - This is entirely beta at this point and may or may not work. Please report any issues in our [Discord](https://atl.pw/discord)
+  - If you notice issues, please turn off ARM Support in the General Settings page
 - Cache Minecraft version manifests
 
 ### Fixes

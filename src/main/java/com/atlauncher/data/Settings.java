@@ -77,6 +77,7 @@ public class Settings {
     public boolean disableCustomFonts = false;
     public boolean useNativeFilePicker = OS.isMac();
     public boolean useRecycleBin = true;
+    public boolean enableArmSupport = true;
 
     // Mods
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;

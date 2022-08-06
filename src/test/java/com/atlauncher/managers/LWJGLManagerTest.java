@@ -31,11 +31,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.data.LWJGLLibrary;
 import com.atlauncher.data.LWJGLMajorVersion;
 import com.atlauncher.data.LWJGLVersion;
 import com.atlauncher.data.LWJGLVersions;
+import com.atlauncher.data.Settings;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
 import com.atlauncher.data.minecraft.Library;
@@ -133,6 +135,9 @@ public class LWJGLManagerTest {
         nonLwjglLibrary.name = "com.github.oshi:oshi-core:5.8.5";
 
         Data.LWJGL_VERSIONS = LWJGL_VERSIONS;
+
+        App.settings = new Settings();
+        App.settings.enableArmSupport = true;
     }
 
     @Test
@@ -149,6 +154,32 @@ public class LWJGLManagerTest {
         minecraftVersion.id = "1.19.1";
 
         assertFalse(LWJGLManager.usesLegacyLWJGL(minecraftVersion));
+    }
+
+    @Test
+    public void testShouldUseLegacyLWJGLAsTrue() {
+        MinecraftVersion minecraftVersion = new MinecraftVersion();
+        minecraftVersion.id = "1.12.2";
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isArm).thenReturn(true);
+            utilities.when(OS::isLinux).thenReturn(true);
+            assertTrue(LWJGLManager.shouldUseLegacyLWJGL(minecraftVersion));
+        }
+    }
+
+    @Test
+    public void testShouldUseLegacyLWJGLAsFalseWhenSettingDisabled() {
+        MinecraftVersion minecraftVersion = new MinecraftVersion();
+        minecraftVersion.id = "1.12.2";
+
+        App.settings.enableArmSupport = false;
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isArm).thenReturn(true);
+            utilities.when(OS::isLinux).thenReturn(true);
+            assertFalse(LWJGLManager.shouldUseLegacyLWJGL(minecraftVersion));
+        }
     }
 
     @Test

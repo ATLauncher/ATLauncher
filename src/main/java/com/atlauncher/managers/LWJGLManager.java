@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -33,7 +34,6 @@ import com.atlauncher.data.LWJGLVersions;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
@@ -63,10 +63,6 @@ public class LWJGLManager {
 
     public static boolean usesLegacyLWJGL(MinecraftVersion minecraftVersion) {
         return Data.LWJGL_VERSIONS.legacyLwjglVersions.contains(minecraftVersion.id);
-    }
-
-    public static boolean usesLegacyLWJGL(VersionManifestVersion manifestVersion) {
-        return Data.LWJGL_VERSIONS.legacyLwjglVersions.contains(manifestVersion.id);
     }
 
     public static LWJGLLibrary getLegacyLWJGLLibrary() {
@@ -222,7 +218,7 @@ public class LWJGLManager {
      * We only replace LWJGL 2 if the user is on linux ARM
      */
     public static boolean shouldUseLegacyLWJGL(MinecraftVersion minecraftVersion) {
-        return usesLegacyLWJGL(minecraftVersion) && OS.isArm() && OS.isLinux();
+        return App.settings.enableArmSupport && usesLegacyLWJGL(minecraftVersion) && OS.isArm() && OS.isLinux();
     }
 
     /**
@@ -230,7 +226,7 @@ public class LWJGLManager {
      * Minecraft provides natives for it already)
      */
     public static boolean shouldReplaceLWJGL3(MinecraftVersion minecraftVersion) {
-        return !usesLegacyLWJGL(minecraftVersion)
+        return App.settings.enableArmSupport && !usesLegacyLWJGL(minecraftVersion)
                 && (OS.isArm() && (!OS.isMacArm() || !minecraftVersion.libraries.stream().anyMatch(
                         l -> l.name.startsWith("org.lwjgl:lwjgl") && l.name.endsWith("natives-macos-arm64"))));
     }
