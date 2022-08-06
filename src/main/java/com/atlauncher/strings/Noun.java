@@ -9,6 +9,7 @@ public enum Noun implements Word {
     CONFIG,
     MANIFEST,
     FILE,
+    TASK,
     IMAGE,
     DEFINITION,
     RESOURCE,
@@ -50,6 +51,9 @@ public enum Noun implements Word {
     QUILT(true),
 
     ATLAUNCHER(true),
+    ATLAUNCHER_FEAT(true),
+    FTB(true),
+    TECHNIC(true),
     CURSEFORGE(true),
     MODRINTH(true),
     MODPACKS_CH(true),
@@ -59,6 +63,7 @@ public enum Noun implements Word {
     // non-nouns
     AVAILABLE(true),
     LOGGING(true),
+    DONE(true),
     OK(true),
     CANCEL(true),
     YES(true),

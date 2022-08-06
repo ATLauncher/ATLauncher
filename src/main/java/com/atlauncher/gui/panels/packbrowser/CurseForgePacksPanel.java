@@ -43,6 +43,7 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.strings.Noun;
 import com.atlauncher.utils.CurseForgeApi;
 
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
@@ -103,8 +104,8 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getPlatformName() {
-        return "CurseForge";
+    public Noun getPlatformName() {
+        return Noun.CURSEFORGE;
     }
 
     @Override

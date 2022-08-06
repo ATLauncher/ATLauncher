@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.strings.Noun;
 import org.apache.commons.text.WordUtils;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -105,8 +106,8 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getPlatformName() {
-        return "Modrinth";
+    public Noun getPlatformName() {
+        return Noun.MODRINTH;
     }
 
     @Override

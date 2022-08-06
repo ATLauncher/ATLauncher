@@ -23,6 +23,9 @@ import javax.swing.event.HyperlinkEvent;
 import com.atlauncher.annot.Json;
 import com.atlauncher.data.Pack;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.OS;
 
 @Json
@@ -46,9 +49,13 @@ public class Messages {
                 OS.openWebBrowser(e.getURL());
             }
         });
-        return DialogManager.optionDialog().setTitle(GetText.tr("Installing")).setContent(ep)
-                .setType(DialogManager.WARNING).addOption(GetText.tr("Ok"), true).addOption(GetText.tr("Cancel"))
-                .show();
+        return DialogManager.optionDialog()
+            .setTitle(Verb.INSTALL.capitalize(Verb.PRESENT))
+            .setContent(ep)
+            .setType(DialogManager.WARNING)
+            .addOption(Noun.OK.capitalize(), true)
+            .addOption(Noun.CANCEL.capitalize())
+            .show();
     }
 
     public String getUpdateMessage() {
@@ -67,8 +74,14 @@ public class Messages {
                 OS.openWebBrowser(e.getURL());
             }
         });
-        return DialogManager.optionDialog().setTitle(GetText.tr("Reinstalling") + " " + pack.getName()).setContent(ep)
-                .setType(DialogManager.WARNING).addOption(GetText.tr("Ok"), true).addOption(GetText.tr("Cancel"))
-                .show();
+        return DialogManager.optionDialog()
+            .setTitle(Sentence.BASE_AB.capitalize()
+                .insert(Verb.REINSTALL, Verb.PRESENT)
+                .insert(pack.getName()))
+            .setContent(ep)
+            .setType(DialogManager.WARNING)
+            .addOption(Noun.OK.capitalize(), true)
+            .addOption(Noun.CANCEL.capitalize())
+            .show();
     }
 }

@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.strings.Noun;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -110,8 +111,8 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getPlatformName() {
-        return "ATLauncher";
+    public Noun getPlatformName() {
+        return Noun.ATLAUNCHER;
     }
 
     @Override

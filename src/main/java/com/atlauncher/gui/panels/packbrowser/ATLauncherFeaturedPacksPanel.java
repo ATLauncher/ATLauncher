@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.strings.Noun;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.atlauncher.constants.UIConstants;
@@ -91,8 +92,8 @@ public class ATLauncherFeaturedPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getPlatformName() {
-        return "ATLauncher Featured";
+    public Noun getPlatformName() {
+        return Noun.ATLAUNCHER_FEAT;
     }
 
     @Override

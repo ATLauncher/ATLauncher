@@ -34,6 +34,7 @@ import com.atlauncher.data.technic.TechnicModpackSlim;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.TechnicPackCard;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.strings.Noun;
 import com.atlauncher.utils.TechnicApi;
 
 public class TechnicPacksPanel extends PackBrowserPlatformPanel {
@@ -83,8 +84,8 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getPlatformName() {
-        return "Technic";
+    public Noun getPlatformName() {
+        return Noun.TECHNIC;
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.packbrowser.FTBPackCard;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.strings.Noun;
 import com.atlauncher.utils.ModpacksChApi;
 
 public class FTBPacksPanel extends PackBrowserPlatformPanel {
@@ -103,8 +104,8 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
     }
 
     @Override
-    public String getPlatformName() {
-        return "FTB";
+    public Noun getPlatformName() {
+        return Noun.FTB;
     }
 
     @Override

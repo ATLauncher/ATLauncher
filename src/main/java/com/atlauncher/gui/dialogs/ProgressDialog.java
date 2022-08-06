@@ -31,6 +31,8 @@ import javax.swing.SwingConstants;
 import com.atlauncher.App;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -137,7 +139,11 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     }
 
     public void doneTask() {
-        this.progressBar.setString(++this.tasksDone + "/" + tasksToDo + " " + GetText.tr("Tasks Done"));
+        this.progressBar.setString(Sentence.PRT_X_OF_Y.capitalize()
+            .insert(String.valueOf(++this.tasksDone))
+            .insert(Noun.TASK, tasksToDo)
+            .append(Noun.DONE)
+            .toString());
         this.progressBar.setValue(this.tasksDone);
         this.clearDownloadedBytes();
         this.label.setText(this.labelText);
