@@ -46,6 +46,36 @@ merged should be resolved by creating a new issue and feature branch.
 An example of a good name for a feature branch is say there is an issue (#44) which is about not being able to delete a
 pack. A good name for a feature branch would be `feature/44-unable-to-delete-packs` and go from there.
 
+## Contributing Content
+
+This section aids with contributing various content resources.
+
+### Localizable Strings
+
+Strings are localized using the custom SentenceBuilder API.
+This aids with keeping localization tasks low, while maximizing details contained in UI texts.
+
+This API mainly consists of 3 enums, that contain components for sentences:
+
+| Enum        | Resource                                    | Description                                                                                                                  |
+|-------------|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| `Noun`      | `assets/lang/<locale>/Nouns.properties`     | Contains all words that may or may not be pluralized. Some words may be flagged as `unique` and do not use pluralization.    |
+| `Verb`      | `assets/lang/<locale>/Verbs.properties`     | Contains all words that have a future/imperative form, a present form and a past form.                                       |
+| `Sentences` | `assets/lang/<locale>/Sentences.properties` | Contains sentence strucutres or parts, such as compound sentences or base sentences to insert other words or sentences into. |
+
+Strings are constructed via the following fluent syntax:
+```java
+int modCount = 5;
+String str = Sentence.BASE_AB.capitalize()  // a two-part sentence that is capitalized
+    .insert(Verb.CHECK, Verb.PRESENT)       // "checking"
+    .insert(Noun.MOD, modCount)             // "5 mods"
+    .append(Sentence.PRT_ON_X               // "on"
+        .insert(Noun.CURSEFORGE));          // "CurseForge"
+// str == "Checking 5 mods on CurseForge"
+```
+
+If you need a word that is not contained in resources yet, feel free to adapt to the existing Noun/Verb system to add it and its respective alternative forms.
+
 ## Issue and Pull Request Labels
 
 This section lists the labels we use to help us track and manage issues and pull requests. While some labels are not
