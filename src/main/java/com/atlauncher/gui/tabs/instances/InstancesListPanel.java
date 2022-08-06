@@ -35,13 +35,14 @@ import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.InstanceManager;
+import com.atlauncher.strings.Sentence;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 
 public final class InstancesListPanel extends JPanel
         implements InstancesSortEventListener, InstancesSearchEventListener, RelocalizationListener {
     private static NilCard createNilCard() {
         return new NilCard(new HTMLBuilder()
-                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+                .text(Sentence.MSG_NO_INSTANCES)
                 .build());
     }
 
@@ -132,7 +133,7 @@ public final class InstancesListPanel extends JPanel
     @Override
     public void onRelocalization() {
         this.nilCard.setMessage(new HTMLBuilder()
-                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+                .text(Sentence.MSG_NO_INSTANCES)
                 .build());
     }
 }

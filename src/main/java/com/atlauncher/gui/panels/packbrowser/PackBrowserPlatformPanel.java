@@ -27,9 +27,13 @@ import javax.swing.JPanel;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.gui.panels.LoadingPanel;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.SentenceBuilder;
+import com.atlauncher.strings.Verb;
 
 public abstract class PackBrowserPlatformPanel extends JPanel {
-    public abstract String getPlatformName();
+    public abstract Noun getPlatformName();
 
     public abstract String getPlatformMessage();
 
@@ -82,7 +86,13 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         // #. {0} is the platform name (ATLauncher, CurseForge, Technic, etc)
-        contentPanel.add(new LoadingPanel(GetText.tr("Loading {0} Packs...", getPlatformName())), gbc);
+        contentPanel.add(new LoadingPanel(Sentence.BASE_ABC.capitalize()
+            .insert(Verb.LOAD, Verb.PRESENT)
+            .insert(getPlatformName())
+            .insert(Noun.PACK, 2, SentenceBuilder.AltUsage.PluralOnly)
+            .append("...")
+            .toString()
+        ), gbc);
 
         // load in the packs
         loadPacks(contentPanel, minecraftVersion, category, sort, sortDescending, search, page);

@@ -123,7 +123,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         });
 
         if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(new HTMLBuilder().text(GetText.tr(Sentence.MSG_NO_SERVERS)).build());
+            nilCard = new NilCard(new HTMLBuilder().text(Sentence.MSG_NO_SERVERS).build());
             panel.add(nilCard, gbc);
         }
 
@@ -146,7 +146,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     @Override
     public String getTitle() {
         // todo use server count to display "server" instead of "servers" when theres only one?
-        return Sentence.BASE_A.capitalize().insert(Noun.SERVER.plural()).toString();
+        return Noun.SERVER.capitalize(0);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         searchBox.putClientProperty("JTextField.placeholderText", Sentence.BASE_A.capitalize().insert(Verb.SEARCH).toString());
 
         if (nilCard != null) {
-            nilCard.setMessage(new HTMLBuilder().text(GetText.tr(Sentence.MSG_NO_SERVERS.toString())).build());
+            nilCard.setMessage(new HTMLBuilder().text(Sentence.MSG_NO_SERVERS.toString()).build());
         }
     }
 }

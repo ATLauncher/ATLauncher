@@ -32,13 +32,14 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 
 public final class InstancesNavigationPanel extends JPanel implements RelocalizationListener {
     private final InstancesTab parent;
 
-    private final JButton importButton = new JButton(GetText.tr("Import"));
+    private final JButton importButton = new JButton(Verb.IMPORT.capitalize());
     private final InstancesSearchField searchField;
     private final JComboBox<InstanceSortingStrategy> sortingBox = new JComboBox<>(InstanceSortingStrategies.values());
 
@@ -77,8 +78,8 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
 
     @Override
     public void onRelocalization() {
-        this.importButton.setText(GetText.tr("Import"));
-        this.searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        this.importButton.setText(Verb.IMPORT.capitalize());
+        this.searchField.putClientProperty("JTextField.placeholderText", Verb.SEARCH.capitalize());
         this.sortingBox.repaint();
     }
 }

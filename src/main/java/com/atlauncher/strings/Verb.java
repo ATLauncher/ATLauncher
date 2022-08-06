@@ -23,9 +23,12 @@ public enum Verb implements Word {
     EXTRACT,
     ORGANIZE,
     INSTALL,
+    REINSTALL,
     CALCULATE,
     CREATE,
     SKIP,
+    IMPORT,
+    LOAD,
     ;
 
     public static final int FUTURE = -1;

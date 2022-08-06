@@ -343,10 +343,11 @@ public class DisableableMod implements Serializable {
                 && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<Object> dialog = new ProgressDialog<>(
                     // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "CurseForge"), 0,
+                GetText.tr("Checking For Update On {0}", "CurseForge"),
+                0,
                     // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "CurseForge"),
-                    "Cancelled checking for update on CurseForge", parent);
+                GetText.tr("Checking For Update On {0}", "CurseForge"),
+                "Cancelled checking for update on CurseForge", parent);
             dialog.addThread(new Thread(() -> {
                 List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
 

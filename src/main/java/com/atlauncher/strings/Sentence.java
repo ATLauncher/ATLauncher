@@ -40,6 +40,7 @@ public enum Sentence implements SentenceBuilderStub {
 
     MSG_KILL_MINECRAFT,
     MSG_NO_SERVERS,
+    MSG_NO_INSTANCES,
     MSG_MODS_NOT_AVAILABLE,
     MSG_MODS_NOT_DOWNLOADABLE,
     MSG_SAVE_FILE_TO,
