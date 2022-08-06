@@ -171,14 +171,6 @@ public class ImportPackUtils {
 
     public static boolean loadFromFile(File file) {
         try {
-            if (ArchiveUtils.archiveContainsFile(file.toPath(), "manifest.json")) {
-                return loadCurseForgeFormat(file, null, null);
-            }
-
-            if (ArchiveUtils.archiveContainsFile(file.toPath(), "modrinth.index.json")) {
-                return loadModrinthFormat(file);
-            }
-
             Path tmpDir = FileSystem.TEMP.resolve("multimcimport" + file.getName().toString().toLowerCase());
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
@@ -193,6 +185,14 @@ public class ImportPackUtils {
             }
 
             FileUtils.deleteDirectory(tmpDir);
+            
+            if (ArchiveUtils.archiveContainsFile(file.toPath(), "manifest.json")) {
+                return loadCurseForgeFormat(file, null, null);
+            }
+
+            if (ArchiveUtils.archiveContainsFile(file.toPath(), "modrinth.index.json")) {
+                return loadModrinthFormat(file);
+            }
 
             LogManager.error("Unknown format for importing");
         } catch (Throwable t) {
