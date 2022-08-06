@@ -81,16 +81,28 @@ public class FileUtils {
         }
     }
 
+    public static boolean deleteDirectoryQuietly(Path dir) {
+        return deleteDirectory(dir, true);
+    }
+
     public static boolean deleteDirectory(Path dir) {
+        return deleteDirectory(dir, false);
+    }
+
+    private static boolean deleteDirectory(Path dir, boolean quiet) {
         if (!Files.exists(dir) || !Files.isDirectory(dir)) {
-            LogManager.error("Cannot delete directory " + dir + " as it doesn't exist or isn't a directory!");
+            if (!quiet) {
+                LogManager.error("Cannot delete directory " + dir + " as it doesn't exist or isn't a directory!");
+            }
             return false;
         }
 
         try {
             Files.walkFileTree(dir, new DeleteDirVisitor());
         } catch (IOException e) {
-            LogManager.logStackTrace("Error trying to delete the directory " + dir, e, false);
+            if (!quiet) {
+                LogManager.logStackTrace("Error trying to delete the directory " + dir, e, false);
+            }
             return false;
         }
 

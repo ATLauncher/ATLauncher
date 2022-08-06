@@ -1214,10 +1214,10 @@ public class Instance extends MinecraftVersion {
                     App.launcher.updateData();
                 }
                 if (Files.isDirectory(nativesTempDir)) {
-                    FileUtils.deleteDirectory(nativesTempDir);
+                    FileUtils.deleteDirectoryQuietly(nativesTempDir);
                 }
                 if (Files.isDirectory(lwjglNativesTempDir)) {
-                    FileUtils.deleteDirectory(lwjglNativesTempDir);
+                    FileUtils.deleteDirectoryQuietly(lwjglNativesTempDir);
                 }
                 if (usesCustomMinecraftJar() && Files.exists(getCustomMinecraftJarLibraryPath())) {
                     FileUtils.delete(getCustomMinecraftJarLibraryPath());
