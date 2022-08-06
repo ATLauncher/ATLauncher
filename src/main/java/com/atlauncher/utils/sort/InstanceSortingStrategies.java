@@ -20,20 +20,25 @@ package com.atlauncher.utils.sort;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 
 public enum InstanceSortingStrategies implements InstanceSortingStrategy, RelocalizationListener {
-    BY_NAME(GetText.tr("By Name")) {
+    BY_NAME {
         @Override
         public int compare(Instance lhs, Instance rhs) {
             return lhs.getName().compareToIgnoreCase(rhs.getName());
         }
 
         @Override
-        public void onRelocalization() {
-            this.setName(GetText.tr("By Name"));
+        public String getName() {
+            return Sentence.PRT_BY_X.capitalize()
+                .insert(Noun.NAME)
+                .toString();
         }
     },
-    BY_LAST_PLAYED(GetText.tr("By Last Played")) {
+    BY_LAST_PLAYED {
         @Override
         public int compare(Instance lhs, Instance rhs) {
             long lhsEpoch = lhs.getLastPlayedOrEpoch().toEpochMilli();
@@ -47,11 +52,13 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
-            this.setName(GetText.tr("By Last Played"));
+        public String getName() {
+            return Sentence.PRT_BY_X.capitalize()
+                .insert(Sentence.PRT_LAST_X.insert(Verb.PLAY, Verb.PAST))
+                .toString();
         }
     },
-    BY_NUMBER_OF_PLAYS(GetText.tr("By Number of Plays")) {
+    BY_NUMBER_OF_PLAYS {
         @Override
         public int compare(Instance lhs, Instance rhs) {
             if (lhs.getNumberOfPlays() > rhs.getNumberOfPlays()) {
@@ -63,29 +70,30 @@ public enum InstanceSortingStrategies implements InstanceSortingStrategy, Reloca
         }
 
         @Override
-        public void onRelocalization() {
-            this.setName(GetText.tr("By Number of Plays"));
+        public String getName() {
+            return Sentence.PRT_BY_X.capitalize()
+                .insert(Noun.PLAYCOUNT)
+                .toString();
         }
     };
 
-    private String name;
-
-    InstanceSortingStrategies(final String name) {
-        this.name = name;
+    InstanceSortingStrategies() {
         RelocalizationManager.addListener(this);
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     @Override
     public String getName() {
-        return this.name;
+        // should be implemented by each enum constant
+        throw new AbstractMethodError();
     }
 
     @Override
     public String toString() {
-        return this.name;
+        return getName();
+    }
+
+    @Override
+    public void onRelocalization() {
+        // do nothing
     }
 }

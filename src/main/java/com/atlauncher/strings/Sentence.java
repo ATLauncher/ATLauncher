@@ -10,7 +10,9 @@ public enum Sentence implements SentenceBuilderStub {
     BASE_ABC,
     BASE_ABCD,
 
+    @Deprecated
     ACT_KILL_X,
+    @Deprecated
     ACT_TOGGLE_X,
     ACT_X_MANUALLY,
 
@@ -35,6 +37,9 @@ public enum Sentence implements SentenceBuilderStub {
     PRT_ALL_X,
     PRT_X_OF_Y,
     PRT_FROM_X,
+    PRT_LAST_X,
+    PRT_BY_X,
+    @Deprecated
     PRT_X_BY_Y,
     PRT_X_NOT_Y,
     PRT_PLEASE_WAIT,

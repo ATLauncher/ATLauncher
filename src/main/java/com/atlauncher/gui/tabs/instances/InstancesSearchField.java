@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.strings.Verb;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public final class InstancesSearchField extends JTextField implements KeyListener {
@@ -37,7 +38,7 @@ public final class InstancesSearchField extends JTextField implements KeyListene
 
         this.setMaximumSize(new Dimension(190, 23));
         this.addKeyListener(this);
-        this.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        this.putClientProperty("JTextField.placeholderText", Verb.SEARCH.capitalize(Verb.FUTURE));
         this.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         this.putClientProperty("JTextField.showClearButton", true);
         this.putClientProperty("JTextField.clearCallback", (Runnable) () -> {

@@ -36,17 +36,22 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.Verb;
 import com.atlauncher.thread.PasteUpload;
 
 @SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
 
-    private final JButton clearButton = new JButton(GetText.tr("Clear"));
-    private final JButton copyLogButton = new JButton(GetText.tr("Copy Log"));
-    private final JButton uploadLogButton = new JButton(GetText.tr("Upload Log"));
-    private final JButton killMinecraftButton = new JButton(GetText.tr("Kill Minecraft"));
+    private final JButton clearButton = new JButton();
+    private final JButton copyLogButton = new JButton();
+    private final JButton uploadLogButton = new JButton();
+    private final JButton killMinecraftButton = new JButton();
 
     public ConsoleBottomBar() {
+        onRelocalization();
+
         this.addActionListeners(); // Setup Action Listeners
 
         JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 13));
@@ -80,8 +85,16 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
         });
         uploadLogButton.addActionListener(e -> {
             String result;
-            final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Uploading Logs"), 0,
-                    GetText.tr("Uploading Logs"), "Aborting Uploading Logs", App.console);
+            final ProgressDialog<String> dialog = new ProgressDialog<>(
+                Sentence.BASE_AB.capitalize()
+                    .insert(Verb.UPLOAD, Verb.PRESENT)
+                    .insert(Noun.LOG),
+                0,
+                Sentence.BASE_AB.capitalize()
+                    .insert(Verb.UPLOAD, Verb.PRESENT)
+                    .insert(Noun.LOG),
+                "Aborting Uploading Logs",
+                App.console);
 
             dialog.addThread(new Thread(() -> {
                 try {
@@ -113,9 +126,11 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             }
         });
         killMinecraftButton.addActionListener(arg0 -> {
-            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft") + "?")
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves."))
+            int ret = DialogManager.yesNoDialog().setTitle(Sentence.BASE_AB.capitalize()
+                    .insert(Verb.KILL)
+                    .insert(Noun.MINECRAFT)
+                    .append("?"))
+                    .setContent(new HTMLBuilder().center().text(Sentence.MSG_KILL_MINECRAFT)
                             .build())
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
@@ -140,9 +155,18 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
 
     @Override
     public void onRelocalization() {
-        clearButton.setText(GetText.tr("Clear"));
-        copyLogButton.setText(GetText.tr("Copy Log"));
-        uploadLogButton.setText(GetText.tr("Upload Log"));
-        killMinecraftButton.setText(GetText.tr("Kill Minecraft"));
+        clearButton.setText(Verb.CLEAR.capitalize());
+        copyLogButton.setText(Sentence.BASE_AB.capitalize()
+            .insert(Verb.COPY)
+            .insert(Noun.LOG)
+            .toString());
+        uploadLogButton.setText(Sentence.BASE_AB.capitalize()
+            .insert(Verb.UPLOAD)
+            .insert(Noun.LOG)
+            .toString());
+        killMinecraftButton.setText(Sentence.BASE_AB.capitalize()
+            .insert(Verb.KILL)
+            .insert(Noun.MINECRAFT)
+            .toString());
     }
 }

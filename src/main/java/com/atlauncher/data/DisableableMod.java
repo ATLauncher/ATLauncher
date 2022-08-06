@@ -28,6 +28,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.atlauncher.strings.Noun;
+import com.atlauncher.strings.Sentence;
+import com.atlauncher.strings.SentenceBuilder;
+import com.atlauncher.strings.Verb;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.atlauncher.App;
@@ -343,10 +347,16 @@ public class DisableableMod implements Serializable {
                 && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<Object> dialog = new ProgressDialog<>(
                     // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                GetText.tr("Checking For Update On {0}", "CurseForge"),
+                Sentence.BASE_A.capitalize()
+                    .insert(Verb.CHECK, Verb.PRESENT)
+                    .append(Sentence.PRT_FOR_X.insert(Noun.UPDATE, 2, SentenceBuilder.AltUsage.PluralOnly))
+                    .append(Sentence.PRT_ON_X.insert(Noun.CURSEFORGE)),
                 0,
                     // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                GetText.tr("Checking For Update On {0}", "CurseForge"),
+                Sentence.BASE_A.capitalize()
+                    .insert(Verb.CHECK, Verb.PRESENT)
+                    .append(Sentence.PRT_FOR_X.insert(Noun.UPDATE, 2, SentenceBuilder.AltUsage.PluralOnly))
+                    .append(Sentence.PRT_ON_X.insert(Noun.CURSEFORGE)),
                 "Cancelled checking for update on CurseForge", parent);
             dialog.addThread(new Thread(() -> {
                 List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
@@ -423,11 +433,19 @@ public class DisableableMod implements Serializable {
         } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
             ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "Modrinth"), 0,
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "Modrinth"), "Cancelled checking for update on Modrinth",
-                    parent);
+                // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
+                Sentence.BASE_A.capitalize()
+                    .insert(Verb.CHECK, Verb.PRESENT)
+                    .append(Sentence.PRT_FOR_X.insert(Noun.UPDATE, 2, SentenceBuilder.AltUsage.PluralOnly))
+                    .append(Sentence.PRT_ON_X.insert(Noun.MODRINTH)),
+                0,
+                // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
+                Sentence.BASE_A.capitalize()
+                    .insert(Verb.CHECK, Verb.PRESENT)
+                    .append(Sentence.PRT_FOR_X.insert(Noun.UPDATE, 2, SentenceBuilder.AltUsage.PluralOnly))
+                    .append(Sentence.PRT_ON_X.insert(Noun.MODRINTH)),
+                "Cancelled checking for update on Modrinth",
+                parent);
             dialog.addThread(new Thread(() -> {
                 ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
                 List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
@@ -481,11 +499,19 @@ public class DisableableMod implements Serializable {
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
                 && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    GetText.tr("Getting Files From {0}", "CurseForge"),
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    0, GetText.tr("Getting Files From {0}", "CurseForge"), "Cancelled getting files from CurseForge",
-                    parent);
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                Sentence.BASE_AB.capitalize()
+                    .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                    .insert(Noun.FILE, 2, SentenceBuilder.AltUsage.PluralOnly)
+                    .append(Sentence.PRT_FROM_X.insert(Noun.CURSEFORGE)),
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                0,
+                Sentence.BASE_AB.capitalize()
+                    .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                    .insert(Noun.FILE, 2, SentenceBuilder.AltUsage.PluralOnly)
+                    .append(Sentence.PRT_FROM_X.insert(Noun.CURSEFORGE)),
+                "Cancelled getting files from CurseForge",
+                parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
                 dialog.close();
@@ -496,10 +522,19 @@ public class DisableableMod implements Serializable {
         } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    GetText.tr("Getting Files From {0}", "Modrinth"), 0,
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    GetText.tr("Getting Files From {0}", "Modrinth"), "Cancelled getting files from Modrinth", parent);
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                Sentence.BASE_AB.capitalize()
+                    .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                    .insert(Noun.FILE, 2, SentenceBuilder.AltUsage.PluralOnly)
+                    .append(Sentence.PRT_FROM_X.insert(Noun.MODRINTH)),
+                0,
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                Sentence.BASE_AB.capitalize()
+                    .insert(Verb.DOWNLOAD, Verb.PRESENT)
+                    .insert(Noun.FILE, 2, SentenceBuilder.AltUsage.PluralOnly)
+                    .append(Sentence.PRT_FROM_X.insert(Noun.MODRINTH)),
+                "Cancelled getting files from Modrinth",
+                parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(ModrinthApi.getProject(modrinthProject.id));
                 dialog.close();

@@ -20,6 +20,9 @@ public enum Verb implements Word {
     ENTER,
     GENERATE,
     DOWNLOAD,
+    UPLOAD,
+    CLEAR,
+    KILL,
     EXTRACT,
     ORGANIZE,
     INSTALL,
@@ -29,6 +32,7 @@ public enum Verb implements Word {
     SKIP,
     IMPORT,
     LOAD,
+    PLAY
     ;
 
     public static final int FUTURE = -1;
