@@ -33,12 +33,16 @@ public class MinecraftError {
         switch (error) {
             case MinecraftError.OUT_OF_MEMORY:
                 MinecraftError.showOutOfMemoryPopup();
+                return;
             case MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6:
                 MinecraftError.showConcurrentModificationError16();
+                return;
             case MinecraftError.USING_NEWER_JAVA_THAN_8:
                 MinecraftError.showUsingNewerJavaThan8Popup();
+                return;
             case MinecraftError.NEED_TO_USE_JAVA_16_OR_NEWER:
                 MinecraftError.showNeedToUseJava16OrNewerPopup();
+                return;
         }
     }
 
