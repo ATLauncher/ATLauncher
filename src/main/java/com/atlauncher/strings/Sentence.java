@@ -15,14 +15,20 @@ public enum Sentence implements SentenceBuilderStub {
     ACT_X_MANUALLY,
 
     INF_DONT_REMIND_AGAIN,
+    @Deprecated
     INF_DOWNLOADING_X,
+    @Deprecated
     INF_VISIT_X,
+    @Deprecated
     INF_CHECKING_XY,
+    @Deprecated
     INF_NO_X,
+    @Deprecated
     INF_YOUR_XYZ,
+    @Deprecated
     INF_X_AVAILABLE,
-    PRT_X_TO_Y,
 
+    PRT_X_TO_Y,
     PRT_THIS_X,
     PRT_FOR_X,
     PRT_ON_X,
