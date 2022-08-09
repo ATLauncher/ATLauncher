@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with multiple detected error popups showing after launch [#642]
 - Don't show Java setting when using Java provided by Minecraft (match Instance settings)
 - Remove error when failing to delete lwjgl/natives temp directory [#639]
+- Issue installing some mods from Modpacks.ch packs due to some null CurseForge information
 
 ### Misc

@@ -970,7 +970,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         List<Pair<CurseForgeProject, CurseForgeFile>> manualDownloadMods = new ArrayList<>();
 
-        List<CurseForgeFile> filesForManualDownload = modpacksChPackVersionManifest.files.parallelStream()
+        List<CurseForgeFile> filesForManualDownload = modpacksChPackVersionManifest.files.stream()
                 .map(file -> {
                     if (file.url != null && !file.url.isEmpty()) {
                         return null;
@@ -983,7 +983,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                             || m.filename.replace("_", " ").equalsIgnoreCase(file.name))
                                     .findFirst();
 
-                    int curseFileId = modInfo.isPresent() ? modInfo.get().curseFile : file.curseforge.file;
+                    int curseFileId = (modInfo.isPresent() && modInfo.get() != null
+                            && modInfo.get().curseFile != null)
+                                    ? modInfo.get().curseFile
+                                    : file.curseforge.file;
 
                     Optional<CurseForgeFile> curseForgeFile = filesFound.stream().filter(f -> f.id == curseFileId)
                             .findFirst();
@@ -1028,8 +1031,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                             || m.filename.replace("_", " ").equalsIgnoreCase(file.name))
                                     .findFirst();
 
-                    int curseProjectId = modInfo.isPresent() ? modInfo.get().curseProject : file.curseforge.project;
-                    int curseFileId = modInfo.isPresent() ? modInfo.get().curseFile : file.curseforge.file;
+                    int curseProjectId = (modInfo.isPresent() && modInfo.get() != null
+                            && modInfo.get().curseProject != null) ? modInfo.get().curseProject
+                                    : file.curseforge.project;
+                    int curseFileId = (modInfo.isPresent() && modInfo.get() != null
+                            && modInfo.get().curseFile != null) ? modInfo.get().curseFile : file.curseforge.file;
 
                     CurseForgeProject curseForgeProject = Optional
                             .ofNullable(foundProjects.get(curseProjectId))
