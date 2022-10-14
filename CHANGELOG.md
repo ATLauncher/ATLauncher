@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Update commons-text to 1.10.0 for CVE-2022-42889
 
 ### Misc
