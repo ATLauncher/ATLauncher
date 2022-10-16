@@ -138,6 +138,9 @@ public class LWJGLManagerTest {
 
         App.settings = new Settings();
         App.settings.enableArmSupport = true;
+
+        Data.CONFIG = new HashMap<>();
+        Data.CONFIG.put("useLwjglReplacement", true);
     }
 
     @Test
@@ -174,6 +177,20 @@ public class LWJGLManagerTest {
         minecraftVersion.id = "1.12.2";
 
         App.settings.enableArmSupport = false;
+
+        try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
+            utilities.when(OS::isArm).thenReturn(true);
+            utilities.when(OS::isLinux).thenReturn(true);
+            assertFalse(LWJGLManager.shouldUseLegacyLWJGL(minecraftVersion));
+        }
+    }
+
+    @Test
+    public void testShouldUseLegacyLWJGLAsFalseWhenConfigToggledOff() {
+        MinecraftVersion minecraftVersion = new MinecraftVersion();
+        minecraftVersion.id = "1.12.2";
+
+        Data.CONFIG.put("useLwjglReplacement", false);
 
         try (MockedStatic<OS> utilities = mockStatic(OS.class)) {
             utilities.when(OS::isArm).thenReturn(true);

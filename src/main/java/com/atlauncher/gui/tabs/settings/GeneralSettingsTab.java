@@ -45,6 +45,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Language;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -73,7 +74,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JCheckBox rememberWindowSizePosition;
     private final JCheckBox useNativeFilePicker;
     private final JCheckBox useRecycleBin;
-    private final JCheckBox enableArmSupport;
+    private JCheckBox enableArmSupport;
 
     public GeneralSettingsTab() {
         // Language
@@ -515,25 +516,27 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         useRecycleBin.setSelected(App.settings.useRecycleBin);
         add(useRecycleBin, gbc);
 
-        // Enable ARM Support
+        if (ConfigManager.getConfigItem("useLwjglReplacement", false) == true) {
+            // Enable ARM Support
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover enableArmSupportLabel = new JLabelWithHover(GetText.tr("Enable ARM Support?"), HELP_ICON,
-                new HTMLBuilder().center().split(100)
-                        .text(GetText
-                                .tr("Support for ARM devices is still experimental. If you experience issues on an ARM based device, please turn this off."))
-                        .build());
-        add(enableArmSupportLabel, gbc);
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            JLabelWithHover enableArmSupportLabel = new JLabelWithHover(GetText.tr("Enable ARM Support?"), HELP_ICON,
+                    new HTMLBuilder().center().split(100)
+                            .text(GetText
+                                    .tr("Support for ARM devices is still experimental. If you experience issues on an ARM based device, please turn this off."))
+                            .build());
+            add(enableArmSupportLabel, gbc);
 
-        gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableArmSupport = new JCheckBox();
-        enableArmSupport.setSelected(App.settings.enableArmSupport);
-        add(enableArmSupport, gbc);
+            gbc.gridx++;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            enableArmSupport = new JCheckBox();
+            enableArmSupport.setSelected(App.settings.enableArmSupport);
+            add(enableArmSupport, gbc);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -600,7 +603,10 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         App.settings.useNativeFilePicker = useNativeFilePicker.isSelected();
         App.settings.useRecycleBin = useRecycleBin.isSelected();
-        App.settings.enableArmSupport = enableArmSupport.isSelected();
+
+        if (ConfigManager.getConfigItem("useLwjglReplacement", false) == true) {
+            App.settings.enableArmSupport = enableArmSupport.isSelected();
+        }
     }
 
     @Override
