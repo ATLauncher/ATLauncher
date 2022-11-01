@@ -30,13 +30,13 @@ import java.util.function.Consumer;
  */
 public interface IVanillaPacksViewModel {
 
-    void addOnFontChanged(Consumer<Font> consumer);
+    void addOnFontChanged(@NotNull Consumer<Font> consumer);
 
     void setName(@NotNull String name);
-    void addOnNameChanged(Consumer<String> name);
+    void addOnNameChanged(@NotNull Consumer<String> name);
 
     void setDescription(@NotNull String description);
-    void addOnDescriptionChanged(Consumer<String> name);
+    void addOnDescriptionChanged(@NotNull Consumer<String> name);
 
     boolean showReleaseOption();
 
@@ -50,23 +50,23 @@ public interface IVanillaPacksViewModel {
 
     void setReleaseSelected(boolean b);
 
-    void addOnReleaseEnabledChanged(Consumer<Boolean> onChanged);
+    void addOnReleaseEnabledChanged(@NotNull Consumer<Boolean> onChanged);
 
     void setExperimentSelected(boolean b);
 
-    void addOnExperimentEnabledChanged(Consumer<Boolean> onChanged);
+    void addOnExperimentEnabledChanged(@NotNull Consumer<Boolean> onChanged);
 
     void setSnapshotSelected(boolean b);
 
-    void addOnSnapshotEnabledChanged(Consumer<Boolean> onChanged);
+    void addOnSnapshotEnabledChanged(@NotNull Consumer<Boolean> onChanged);
 
     void setOldAlphaSelected(boolean b);
 
-    void addOnOldAlphaEnabledChanged(Consumer<Boolean> onChanged);
+    void addOnOldAlphaEnabledChanged(@NotNull Consumer<Boolean> onChanged);
 
     void setOldBetaSelected(boolean b);
 
-    void addOnOldBetaEnabledChanged(Consumer<Boolean> onChanged);
+    void addOnOldBetaEnabledChanged(@NotNull Consumer<Boolean> onChanged);
 
     class MCVersionRow {
         public final String id, date, type;
@@ -80,23 +80,24 @@ public interface IVanillaPacksViewModel {
 
     void setMinecraftVersion(String valueAt);
 
-    void addOnMinecraftVersionsChanged(Consumer<MCVersionRow[]> onChanged);
+    void addOnMinecraftVersionsChanged(@NotNull Consumer<MCVersionRow[]> onChanged);
 
     boolean showFabricOption();
-    void addOnFabricVisibleChanged(Consumer<Boolean> onChanged);
+    void addOnFabricVisibleChanged(@NotNull Consumer<Boolean> onChanged);
 
     boolean showForgeOption();
-    void addOnForgeVisibleChanged(Consumer<Boolean> onChanged);
+    void addOnForgeVisibleChanged(@NotNull Consumer<Boolean> onChanged);
 
     boolean showQuiltOption();
-    void addOnQuiltVisibleChanged(Consumer<Boolean> onChanged);
+    void addOnQuiltVisibleChanged(@NotNull Consumer<Boolean> onChanged);
 
     void setLoaderType(@Nullable LoaderType loader);
 
     void setLoaderVersion(String loaderVersion);
-    void addOnLoaderVersionsChanged(Consumer<String[]> consumer);
+    void addOnLoaderVersionsChanged(@NotNull Consumer<String[]> consumer);
 
-    void addOnLoaderLoadingListener(Consumer<Boolean> consumer);
+    void addOnLoaderLoadingListener(@NotNull Consumer<Boolean> consumer);
+    void addOnLoaderGroupEnabledListener(@NotNull Consumer<Boolean> consumer);
 
     List<String> getFabricDisabledMCVersions();
 
@@ -105,7 +106,7 @@ public interface IVanillaPacksViewModel {
     List<String> getQuiltDisabledMCVersions();
 
 
-    void addOnCreateServerVisibleChanged(Consumer<Boolean> consumer);
+    void addOnCreateServerVisibleChanged(@NotNull Consumer<Boolean> consumer);
     void createServer();
 
     void createInstance();
