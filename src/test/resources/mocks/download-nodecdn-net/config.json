@@ -1,4 +1,5 @@
 {
+  "useLwjglReplacement": true,
   "useGraphql": {
     "loaderVersions": false,
     "news": false
