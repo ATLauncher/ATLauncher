@@ -911,9 +911,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
 
                     Optional<ModpacksChPackVersionManifestMod> modInfo = modsManifest.mods.parallelStream()
-                            .filter(m -> m.filename.equalsIgnoreCase(f.name)
+                            .filter(m -> m.filename != null && (m.filename.equalsIgnoreCase(f.name)
                                     || m.filename.equalsIgnoreCase(f.name.replace("_", ""))
-                                    || m.filename.replace("_", " ").equalsIgnoreCase(f.name))
+                                    || m.filename.replace("_", " ").equalsIgnoreCase(f.name)))
                             .findFirst();
 
                     if (!modInfo.isPresent()) {
@@ -950,9 +950,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
 
                     Optional<ModpacksChPackVersionManifestMod> modInfo = modsManifest.mods.parallelStream()
-                            .filter(m -> m.filename.equalsIgnoreCase(f.name)
+                            .filter(m -> m.filename != null && (m.filename.equalsIgnoreCase(f.name)
                                     || m.filename.equalsIgnoreCase(f.name.replace("_", ""))
-                                    || m.filename.replace("_", " ").equalsIgnoreCase(f.name))
+                                    || m.filename.replace("_", " ").equalsIgnoreCase(f.name)))
                             .findFirst();
 
                     if (!modInfo.isPresent()) {
@@ -978,9 +978,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                     Optional<ModpacksChPackVersionManifestMod> modInfo = modsManifest == null ? Optional.empty()
                             : modsManifest.mods.parallelStream()
-                                    .filter(m -> m.filename.equalsIgnoreCase(file.name)
+                                    .filter(m -> m.filename != null && (m.filename.equalsIgnoreCase(file.name)
                                             || m.filename.equalsIgnoreCase(file.name.replace("_", ""))
-                                            || m.filename.replace("_", " ").equalsIgnoreCase(file.name))
+                                            || m.filename.replace("_", " ").equalsIgnoreCase(file.name)))
                                     .findFirst();
 
                     int curseFileId = (modInfo.isPresent() && modInfo.get() != null
@@ -1026,15 +1026,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                     Optional<ModpacksChPackVersionManifestMod> modInfo = modsManifest == null ? Optional.empty()
                             : modsManifest.mods.parallelStream()
-                                    .filter(m -> m.filename.equalsIgnoreCase(file.name)
-                                            || m.filename.equalsIgnoreCase(file.name.replace("_", ""))
-                                            || m.filename.replace("_", " ").equalsIgnoreCase(file.name))
+                                    .filter(m -> {
+                                        return m.filename != null && (m.filename.equalsIgnoreCase(file.name)
+                                                || m.filename.equalsIgnoreCase(file.name.replace("_", ""))
+                                                || m.filename.replace("_", " ").equalsIgnoreCase(file.name));
+                                    })
                                     .findFirst();
 
-                    int curseProjectId = (modInfo.isPresent() && modInfo.get() != null
+                    int curseProjectId = ((file.curseforge == null || file.curseforge.project == null || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
                             && modInfo.get().curseProject != null) ? modInfo.get().curseProject
                                     : file.curseforge.project;
-                    int curseFileId = (modInfo.isPresent() && modInfo.get() != null
+                    int curseFileId = ((file.curseforge == null || file.curseforge.project == null || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
                             && modInfo.get().curseFile != null) ? modInfo.get().curseFile : file.curseforge.file;
 
                     CurseForgeProject curseForgeProject = Optional

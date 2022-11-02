@@ -317,10 +317,6 @@ public class App {
 
         if (!noConsole && settings.enableConsole) {
             // Show the console if enabled.
-            console.setVisible(true);
-        }
-        if (!noConsole && settings.enableConsole) {
-            // Show the console if enabled.
             SwingUtilities.invokeLater(() -> console.setVisible(true));
         }
 

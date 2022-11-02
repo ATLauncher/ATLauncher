@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Use config flag for LWJGL replacement [#576]
+- Issue with downloading some packs from modpacks.ch [#660]
 
 ### Misc
