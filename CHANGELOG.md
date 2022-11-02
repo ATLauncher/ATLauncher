@@ -3,12 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.20.3
+## 3.4.20.4
 
 ### New Features
 
 ### Fixes
-- Use config flag for LWJGL replacement [#576]
-- Issue with downloading some packs from modpacks.ch [#660]
 
 ### Misc
