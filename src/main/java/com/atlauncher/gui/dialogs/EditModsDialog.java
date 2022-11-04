@@ -26,7 +26,10 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractButton;
@@ -47,13 +50,21 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.curseforge.CurseForgeFingerprint;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
 
 public class EditModsDialog extends JDialog {
@@ -67,6 +78,7 @@ public class EditModsDialog extends JDialog {
     private JButton enableButton;
     private JButton disableButton;
     private JButton removeButton;
+    private JButton refreshMetadataButton;
     private JCheckBox selectAllEnabledModsCheckbox, selectAllDisabledModsCheckbox;
     private ArrayList<ModsJCheckBox> enabledMods, disabledMods;
 
@@ -297,9 +309,10 @@ public class EditModsDialog extends JDialog {
         removeButton.setEnabled(false);
         bottomPanel.add(removeButton);
 
-        JButton closeButton = new JButton(GetText.tr("Close"));
-        closeButton.addActionListener(e -> dispose());
-        bottomPanel.add(closeButton);
+        refreshMetadataButton = new JButton(GetText.tr("Refresh Metadata"));
+        refreshMetadataButton.addActionListener(e -> refreshMetadata());
+        refreshMetadataButton.setEnabled(false);
+        bottomPanel.add(refreshMetadataButton);
     }
 
     private void loadMods() {
@@ -363,6 +376,8 @@ public class EditModsDialog extends JDialog {
                 || (enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected)));
         enableButton.setEnabled(disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected));
         disableButton.setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected));
+        refreshMetadataButton
+                .setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected));
 
         selectAllEnabledModsCheckbox
                 .setSelected(enabledMods.size() != 0 && enabledMods.stream().allMatch(AbstractButton::isSelected));
@@ -463,6 +478,140 @@ public class EditModsDialog extends JDialog {
             }
             reloadPanels();
         }
+    }
+
+    private void refreshMetadata() {
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Refreshing Metadata"), 0,
+                GetText.tr("Refreshing Metadata"),
+                "Aborting refreshing metadata");
+        dialog.addThread(new Thread(() -> {
+
+            List<ModsJCheckBox> modsToRefresh = new ArrayList<>();
+            modsToRefresh
+                    .addAll(enabledMods.parallelStream().filter(ModsJCheckBox::isSelected)
+                            .collect(Collectors.toList()));
+            modsToRefresh
+                    .addAll(disabledMods.parallelStream().filter(ModsJCheckBox::isSelected)
+                            .collect(Collectors.toList()));
+
+            // TODO: Generalise this, cause fuck me I've copy pasted this like 10 times now
+            if (!App.settings.dontCheckModsOnCurseForge) {
+                Map<Long, ModsJCheckBox> murmurHashes = new HashMap<>();
+
+                modsToRefresh.stream()
+                        .filter(mjc -> mjc.getDisableableMod().getFile(instance.ROOT, instance.id) != null)
+                        .forEach(mjc -> {
+                            try {
+                                long hash = Hashing
+                                        .murmur(mjc.getDisableableMod().getFile(instance.ROOT, instance.id).toPath());
+                                murmurHashes.put(hash, mjc);
+                            } catch (Throwable t) {
+                                LogManager.logStackTrace(t);
+                            }
+                        });
+
+                if (murmurHashes.size() != 0) {
+                    CurseForgeFingerprint fingerprintResponse = CurseForgeApi
+                            .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+
+                    if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
+                        int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
+                                .toArray();
+
+                        if (projectIdsFound.length != 0) {
+                            Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
+                                    .getProjectsAsMap(projectIdsFound);
+
+                            if (foundProjects != null) {
+                                fingerprintResponse.exactMatches.stream().filter(em -> em != null && em.file != null
+                                        && murmurHashes.containsKey(em.file.packageFingerprint)).forEach(foundMod -> {
+                                            DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint)
+                                                    .getDisableableMod();
+
+                                            // add CurseForge information
+                                            dm.curseForgeProjectId = foundMod.id;
+                                            dm.curseForgeFile = foundMod.file;
+                                            dm.curseForgeFileId = foundMod.file.id;
+
+                                            CurseForgeProject curseForgeProject = foundProjects.get(foundMod.id);
+
+                                            if (curseForgeProject != null) {
+                                                dm.curseForgeProject = curseForgeProject;
+                                                dm.name = curseForgeProject.name;
+                                                dm.description = curseForgeProject.summary;
+                                            }
+
+                                            LogManager.debug("Found matching mod from CurseForge called "
+                                                    + dm.curseForgeFile.displayName);
+                                        });
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!App.settings.dontCheckModsOnModrinth) {
+                Map<String, ModsJCheckBox> sha1Hashes = new HashMap<>();
+
+                modsToRefresh.stream()
+                        .filter(mjc -> mjc.getDisableableMod().getFile(instance.ROOT, instance.id) != null)
+                        .forEach(mjc -> {
+                            try {
+                                sha1Hashes.put(
+                                        Hashing.sha1(
+                                                mjc.getDisableableMod().getFile(instance.ROOT, instance.id).toPath())
+                                                .toString(),
+                                        mjc);
+                            } catch (Throwable t) {
+                                LogManager.logStackTrace(t);
+                            }
+                        });
+
+                if (sha1Hashes.size() != 0) {
+                    Set<String> keys = sha1Hashes.keySet();
+                    Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
+                            .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
+
+                    if (modrinthVersions != null && modrinthVersions.size() != 0) {
+                        String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
+                                .toArray(String[]::new);
+
+                        if (projectIdsFound.length != 0) {
+                            Map<String, ModrinthProject> foundProjects = ModrinthApi.getProjectsAsMap(projectIdsFound);
+
+                            if (foundProjects != null) {
+                                for (Map.Entry<String, ModrinthVersion> entry : modrinthVersions.entrySet()) {
+                                    ModrinthVersion version = entry.getValue();
+                                    ModrinthProject project = foundProjects.get(version.projectId);
+
+                                    if (project != null) {
+                                        DisableableMod dm = sha1Hashes.get(entry.getKey()).getDisableableMod();
+
+                                        // add Modrinth information
+                                        dm.modrinthProject = project;
+                                        dm.modrinthVersion = version;
+                                        dm.name = project.title;
+                                        dm.description = project.description;
+
+                                        LogManager
+                                                .debug(String.format(
+                                                        "Found matching mod from Modrinth called %s with file %s",
+                                                        project.title, version.name));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            instance.save();
+
+            dialog.close();
+        }));
+        dialog.start();
+
+        reloadPanels();
     }
 
     public void reloadPanels() {
