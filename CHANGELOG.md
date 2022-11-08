@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in ability to refresh metadata on mods in an instance to recheck mods on CF/MR
+- Show and autoselect primary file from Modrinth when there's multiple files [#661]
 
 ### Fixes
 

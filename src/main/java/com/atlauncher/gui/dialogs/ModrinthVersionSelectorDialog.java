@@ -293,32 +293,28 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 reloadDependenciesPanel();
 
                 filesDropdown.removeAllItems();
-                filesDropdown.addItem(new ComboItem<ModrinthFile>(null, GetText.tr("Select A File")));
                 if (version.files.size() > 1) {
-                    version.files
-                            .forEach(file -> filesDropdown.addItem(new ComboItem<ModrinthFile>(file, file.filename)));
+                    int selectedIndex = 0;
 
-                    // ensures that font width is taken into account
                     for (ModrinthFile file : version.files) {
+                        filesDropdown.addItem(new ComboItem<ModrinthFile>(file, file.toString()));
+
+                        if (file.primary) {
+                            selectedIndex = filesDropdown.getItemCount() - 1;
+                        }
+
+                        // ensures that font width is taken into account
                         filesLength = Math.max(filesLength,
-                                getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.filename) + 100);
+                                getFontMetrics(App.THEME.getNormalFont()).stringWidth(file.toString()) + 100);
                     }
 
                     // ensures that the dropdown is at least 200 px wide and has a maximum width of
                     // 350 px to prevent overflow
                     filesDropdown.setPreferredSize(new Dimension(Math.min(350, Math.max(200, filesLength)), 25));
-                    addButton.setEnabled(false);
+                    filesDropdown.setSelectedIndex(selectedIndex);
                 }
 
                 filesPanel.setVisible(version.files.size() > 1);
-            }
-        });
-
-        filesDropdown.addActionListener(e -> {
-            ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
-            if (version != null && filesDropdown.getSelectedItem() != null) {
-                ModrinthFile file = ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
-                addButton.setEnabled(version.files.size() == 1 || file != null);
             }
         });
 
@@ -409,6 +405,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             versionsDropdown.setEnabled(true);
             versionsLabel.setVisible(true);
             versionsDropdown.setVisible(true);
+            addButton.setEnabled(true);
             viewModButton.setEnabled(true);
             viewFileButton.setEnabled(true);
         };
