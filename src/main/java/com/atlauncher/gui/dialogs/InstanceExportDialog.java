@@ -237,12 +237,16 @@ public class InstanceExportDialog extends JDialog {
         // get all files ignoring ATLauncher specific things as well as naughtys
         File[] files = instance.getRoot().toFile()
                 .listFiles(pathname -> !pathname.getName().equalsIgnoreCase("disabledmods")
-                        && !pathname.getName().equalsIgnoreCase("jarmods")
                         && !pathname.getName().equalsIgnoreCase("instance.json")
                         && !pathname.getName().equalsIgnoreCase(".fabric")
                         && !pathname.getName().equalsIgnoreCase(".quilt"));
 
         for (File filename : files) {
+            // skip any folders with no files inside
+            if (filename.isDirectory() && filename.listFiles().length == 0) {
+                continue;
+            }
+
             JCheckBox checkBox = new JCheckBox(filename.getName());
 
             checkBox.addItemListener(e -> {

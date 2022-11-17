@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Show and autoselect primary file from Modrinth when there's multiple files [#661]
 
 ### Fixes
+- Exporting instances not allowing exporting the jarmods folder for an instance [#670]
 
 ### Misc
