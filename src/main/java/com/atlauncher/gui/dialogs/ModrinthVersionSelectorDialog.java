@@ -261,7 +261,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
         addButton.addActionListener(e -> {
             ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
-            ModrinthFile file = ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
+            ModrinthFile file = filesDropdown.getSelectedItem() == null ? null
+                    : ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
 
             ProgressDialog progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
