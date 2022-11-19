@@ -150,6 +150,7 @@ public class FabricLoader implements Loader {
             ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 
             List<File> libraryFiles = this.getLibraryFiles();
+            boolean shadeLibraries = !Utils.matchWholeVersion(version.loader.version, "0.12.5", false);
 
             Set<String> addedEntries = new HashSet<>();
             {
@@ -157,9 +158,21 @@ public class FabricLoader implements Loader {
                 zipOutputStream.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
 
                 Manifest manifest = new Manifest();
-                manifest.getMainAttributes().put(new Attributes.Name("Manifest-Version"), "1.0");
-                manifest.getMainAttributes().put(new Attributes.Name("Main-Class"),
+                manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+                manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS,
                         "net.fabricmc.loader.launch.server.FabricServerLauncher");
+
+                if (!shadeLibraries) {
+                    String classPathString = getLibraries().stream()
+                            .map(library -> instanceInstaller.root
+                                    .relativize(instanceInstaller.root.resolve("libraries")
+                                            .resolve(library.downloads.artifact.path))
+                                    .normalize().toString())
+                            .collect(Collectors.joining(" "));
+                    System.out.println(classPathString);
+                    manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, classPathString);
+                }
+
                 manifest.write(zipOutputStream);
 
                 zipOutputStream.closeEntry();
@@ -171,24 +184,26 @@ public class FabricLoader implements Loader {
                                 + "\n").getBytes(StandardCharsets.UTF_8));
                 zipOutputStream.closeEntry();
 
-                byte[] buffer = new byte[32768];
+                if (shadeLibraries) {
+                    byte[] buffer = new byte[32768];
 
-                for (File f : libraryFiles) {
-                    try (FileInputStream is = new FileInputStream(f); JarInputStream jis = new JarInputStream(is)) {
-                        JarEntry entry;
-                        while ((entry = jis.getNextJarEntry()) != null) {
-                            if (!addedEntries.contains(entry.getName())
-                                    && !manifestPattern.matcher(entry.getName()).matches()) {
-                                JarEntry newEntry = new JarEntry(entry.getName());
-                                zipOutputStream.putNextEntry(newEntry);
+                    for (File f : libraryFiles) {
+                        try (FileInputStream is = new FileInputStream(f); JarInputStream jis = new JarInputStream(is)) {
+                            JarEntry entry;
+                            while ((entry = jis.getNextJarEntry()) != null) {
+                                if (!addedEntries.contains(entry.getName())
+                                        && !manifestPattern.matcher(entry.getName()).matches()) {
+                                    JarEntry newEntry = new JarEntry(entry.getName());
+                                    zipOutputStream.putNextEntry(newEntry);
 
-                                int r;
-                                while ((r = jis.read(buffer, 0, buffer.length)) >= 0) {
-                                    zipOutputStream.write(buffer, 0, r);
+                                    int r;
+                                    while ((r = jis.read(buffer, 0, buffer.length)) >= 0) {
+                                        zipOutputStream.write(buffer, 0, r);
+                                    }
+
+                                    zipOutputStream.closeEntry();
+                                    addedEntries.add(entry.getName());
                                 }
-
-                                zipOutputStream.closeEntry();
-                                addedEntries.add(entry.getName());
                             }
                         }
                     }
