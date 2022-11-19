@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Exporting instances not allowing exporting the jarmods folder for an instance [#670]
 - The Fabric server generation not working on Java 17 versions of Minecraft
+- The Quilt server generation not working at all
 
 ### Misc

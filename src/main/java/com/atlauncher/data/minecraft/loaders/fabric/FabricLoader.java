@@ -163,14 +163,12 @@ public class FabricLoader implements Loader {
                         "net.fabricmc.loader.launch.server.FabricServerLauncher");
 
                 if (!shadeLibraries) {
-                    String classPathString = getLibraries().stream()
+                    manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, getLibraries().stream()
                             .map(library -> instanceInstaller.root
                                     .relativize(instanceInstaller.root.resolve("libraries")
                                             .resolve(library.downloads.artifact.path))
                                     .normalize().toString())
-                            .collect(Collectors.joining(" "));
-                    System.out.println(classPathString);
-                    manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, classPathString);
+                            .collect(Collectors.joining(" ")));
                 }
 
                 manifest.write(zipOutputStream);

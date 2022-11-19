@@ -18,7 +18,6 @@
 package com.atlauncher.data.minecraft.loaders.quilt;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -163,41 +160,18 @@ public class QuiltLoader implements Loader {
                 zipOutputStream.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
 
                 Manifest manifest = new Manifest();
-                manifest.getMainAttributes().put(new Attributes.Name("Manifest-Version"), "1.0");
-                manifest.getMainAttributes().put(new Attributes.Name("Main-Class"),
+                manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+                manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS,
                         "org.quiltmc.loader.impl.launch.server.QuiltServerLauncher");
+                manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, getLibraries().stream()
+                        .map(library -> instanceInstaller.root
+                                .relativize(instanceInstaller.root.resolve("libraries")
+                                        .resolve(library.downloads.artifact.path))
+                                .normalize().toString())
+                        .collect(Collectors.joining(" ")));
                 manifest.write(zipOutputStream);
 
                 zipOutputStream.closeEntry();
-
-                addedEntries.add("quilt-server-launch.properties");
-                zipOutputStream.putNextEntry(new ZipEntry("quilt-server-launch.properties"));
-                zipOutputStream.write(
-                        ("launch.mainClass=" + this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer)
-                                + "\n").getBytes(StandardCharsets.UTF_8));
-                zipOutputStream.closeEntry();
-
-                byte[] buffer = new byte[32768];
-
-                for (File f : libraryFiles) {
-                    try (FileInputStream is = new FileInputStream(f); JarInputStream jis = new JarInputStream(is)) {
-                        JarEntry entry;
-                        while ((entry = jis.getNextJarEntry()) != null) {
-                            if (!addedEntries.contains(entry.getName())) {
-                                JarEntry newEntry = new JarEntry(entry.getName());
-                                zipOutputStream.putNextEntry(newEntry);
-
-                                int r;
-                                while ((r = jis.read(buffer, 0, buffer.length)) >= 0) {
-                                    zipOutputStream.write(buffer, 0, r);
-                                }
-
-                                zipOutputStream.closeEntry();
-                                addedEntries.add(entry.getName());
-                            }
-                        }
-                    }
-                }
             }
 
             zipOutputStream.close();
