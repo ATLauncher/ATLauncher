@@ -458,9 +458,7 @@ public class Launcher {
     }
 
     public void reloadServersPanel() {
-        if (serversPanel != null) {
-            this.serversPanel.reload(); // Reload the servers panel
-        }
+        ServerManager.post();
     }
 
     /**
