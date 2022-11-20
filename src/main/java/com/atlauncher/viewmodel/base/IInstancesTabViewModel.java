@@ -15,10 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.instances;
+package com.atlauncher.viewmodel.base;
 
-import java.util.EventListener;
+import com.atlauncher.data.Instance;
+import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import org.jetbrains.annotations.NotNull;
 
-public interface InstancesSortEventListener extends EventListener {
-    void onSort(final InstancesSortEvent event);
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+
+/**
+ * 20 / 11 / 2022
+ */
+public interface IInstancesTabViewModel {
+    void setSort(@NotNull InstanceSortingStrategy strategy);
+
+    void setSearch(@Nullable Pattern search);
+
+    void setOnViewChanged(@NotNull Consumer<List<Instance>> consumer);
 }
