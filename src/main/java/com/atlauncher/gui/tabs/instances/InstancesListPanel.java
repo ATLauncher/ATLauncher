@@ -68,15 +68,16 @@ public final class InstancesListPanel extends JPanel
                 this.add(new InstanceCard(instance), gbc);
                 gbc.gridy++;
             });
+
+            if (this.getComponentCount() == 0) {
+                this.add(this.nilCard, gbc);
+            }
+
             validate();
             repaint();
             parent.validate();
             parent.repaint();
         });
-
-        if (this.getComponentCount() == 0) {
-            this.add(this.nilCard, gbc);
-        }
     }
 
     @Override
