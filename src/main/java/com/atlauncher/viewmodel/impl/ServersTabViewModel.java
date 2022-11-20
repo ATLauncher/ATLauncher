@@ -65,7 +65,8 @@ public class ServersTabViewModel implements IServersTabViewModel, ServerManager.
         }).collect(Collectors.toList());
 
         onChangeViewListener.accept(mutatedServers);
-        onViewPositionChangedListener.accept(currentPosition);
+        if (onViewPositionChangedListener != null)
+            onViewPositionChangedListener.accept(currentPosition);
     }
 
     @Override
