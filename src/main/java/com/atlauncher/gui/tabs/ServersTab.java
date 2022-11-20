@@ -23,12 +23,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.regex.Pattern;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
 import com.atlauncher.viewmodel.impl.ServersTabViewModel;
@@ -40,7 +38,6 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
-import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
@@ -50,7 +47,6 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
     private JPanel panel;
     private JScrollPane scrollPane;
-    private int currentPosition = 0;
 
     private NilCard nilCard;
 
@@ -101,6 +97,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         gbc.fill = GridBagConstraints.BOTH;
 
         viewModel.addOnChangeViewListener(servers -> {
+            viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
             panel.removeAll();
             gbc.gridy = 0;
 
@@ -120,7 +117,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             panel.add(nilCard, gbc);
         }
 
-        SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(currentPosition));
+        viewModel.addOnViewPositionChangedListener(scrollPane.getVerticalScrollBar()::setValue);
     }
 
     @Override

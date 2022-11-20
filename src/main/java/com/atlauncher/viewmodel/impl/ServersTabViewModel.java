@@ -3,12 +3,9 @@ package com.atlauncher.viewmodel.impl;
 import com.atlauncher.data.Server;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
-import kotlin.collections.EmptyList;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -46,6 +43,20 @@ public class ServersTabViewModel implements IServersTabViewModel, ServerManager.
         onSearchChangeListener = consumer;
     }
 
+    private int currentPosition = 0;
+    private Consumer<Integer> onViewPositionChangedListener;
+
+    @Override
+    public void setViewPosition(int position) {
+        currentPosition = position;
+    }
+
+    @Override
+    public void addOnViewPositionChangedListener(Consumer<Integer> consumer) {
+        onViewPositionChangedListener = consumer;
+        onViewPositionChangedListener.accept(currentPosition);
+    }
+
     private void post() {
         List<Server> mutatedServers = sourceServers.stream().filter(server -> {
             if (search != null)
@@ -54,6 +65,7 @@ public class ServersTabViewModel implements IServersTabViewModel, ServerManager.
         }).collect(Collectors.toList());
 
         onChangeViewListener.accept(mutatedServers);
+        onViewPositionChangedListener.accept(currentPosition);
     }
 
     @Override

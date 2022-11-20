@@ -20,4 +20,20 @@ public interface IServersTabViewModel {
 
     void addOnSearchChangeListener(Consumer<String> consumer);
 
+    /**
+     * Used to save the position the user was looking at
+     *
+     * @param position position the user was at
+     */
+    void setViewPosition(int position);
+
+    /**
+     * Watch when the position is changed, this is used to restore the view.
+     * <p>
+     * Note, that the consumer is only called
+     *  after a change to search or servers.
+     *
+     * @param consumer consumer to take new scroll position
+     */
+    void addOnViewPositionChangedListener(Consumer<Integer> consumer);
 }
