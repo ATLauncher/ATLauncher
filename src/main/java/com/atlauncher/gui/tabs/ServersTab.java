@@ -54,11 +54,11 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
     public ServersTab() {
         setLayout(new BorderLayout());
-        loadContent();
+        createView();
         RelocalizationManager.addListener(this);
     }
 
-    public void loadContent() {
+    public void createView() {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
