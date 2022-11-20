@@ -106,16 +106,17 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
                 gbc.gridy++;
             });
 
+
+            if (panel.getComponentCount() == 0) {
+                nilCard = new NilCard(new HTMLBuilder().text(
+                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
+                panel.add(nilCard, gbc);
+            }
+
             validate();
             repaint();
             searchBox.requestFocus();
         });
-
-        if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(new HTMLBuilder().text(
-                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
-            panel.add(nilCard, gbc);
-        }
 
         viewModel.addOnViewPositionChangedListener(scrollPane.getVerticalScrollBar()::setValue);
     }
