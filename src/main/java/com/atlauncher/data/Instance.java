@@ -573,7 +573,8 @@ public class Instance extends MinecraftVersion {
                 });
 
         // legacy forge, so check the libs folder
-        if (this.getLoaderVersion().isForge() && Utils.matchVersion(id, "1.5", true, true)) {
+        if (launcher.loaderVersion != null && launcher.loaderVersion.isForge()
+                && Utils.matchVersion(id, "1.5", true, true)) {
             List<FMLLibrary> fmlLibraries = FMLLibrariesConstants.fmlLibraries.get(id);
 
             if (fmlLibraries != null) {
