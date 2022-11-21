@@ -24,14 +24,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
-import com.atlauncher.constants.Constants;
-
 public class LegacyMCLauncher {
     public static void main(String[] args) {
         String workingDirectory = args[0];
         String username = args[1];
         String session = args[2];
-        String instanceName = args[3];
+        String frameTitle = args[3];
         int screenWidth = Integer.parseInt(args[4]);
         int screenHeight = Integer.parseInt(args[5]);
         boolean maximize = Boolean.parseBoolean(args[6]);
@@ -74,7 +72,7 @@ public class LegacyMCLauncher {
             try {
                 Class<?> MCAppletClass = cl.loadClass("net.minecraft.client.MinecraftApplet");
                 Applet mcappl = (Applet) MCAppletClass.newInstance();
-                MCFrame mcWindow = new MCFrame(Constants.LAUNCHER_NAME + " - " + instanceName);
+                MCFrame mcWindow = new MCFrame(frameTitle);
                 mcWindow.start(mcappl, username, session, winSize, maximize);
             } catch (InstantiationException e) {
                 System.out.println("Applet wrapper failed! Falling back " + "to compatibility mode.");

@@ -84,6 +84,21 @@ public final class FileSystem {
         renameDirectories();
 
         createDirectories();
+
+        copyResourcesOutJar();
+    }
+
+    public static void copyResourcesOutJar() throws IOException {
+        Path legacyLaunchLibrariesJar = FileSystem.LIBRARIES.resolve("launcher/legacy-launch.jar");
+
+        if (!Files.exists(legacyLaunchLibrariesJar) || Files.size(legacyLaunchLibrariesJar) != 8368l) {
+            if (!Files.isDirectory(FileSystem.LIBRARIES.resolve("launcher"))) {
+                Files.createDirectory(FileSystem.LIBRARIES.resolve("launcher"));
+            }
+
+            Files.copy(FileSystem.class.getResourceAsStream("/legacy-launch-jar"),
+                    legacyLaunchLibrariesJar, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     private static void deleteOldThings() throws IOException {

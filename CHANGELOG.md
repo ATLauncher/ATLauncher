@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Do launch checking on old Forge FML libraries and cache downloads
 
 ### Fixes
+- Legacy Forge not launching
 
 ### Misc
