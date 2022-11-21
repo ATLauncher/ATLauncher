@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in new tool for deleting all libraries
+- Do launch checking on old Forge FML libraries and cache downloads
 
 ### Fixes
 

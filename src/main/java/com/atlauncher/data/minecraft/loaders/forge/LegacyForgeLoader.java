@@ -197,7 +197,8 @@ public class LegacyForgeLoader implements Loader {
             fmlLibraries.forEach((library) -> {
                 com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                         .setUrl(String.format("%s/fmllibs/%s", Constants.DOWNLOAD_SERVER, library.name))
-                        .downloadTo(instanceInstaller.root.resolve("lib/" + library.name)).hash(library.sha1Hash)
+                        .downloadTo(FileSystem.LIBRARIES.resolve("fmllib/" + library.name))
+                        .copyTo(instanceInstaller.root.resolve("lib/" + library.name)).hash(library.sha1Hash)
                         .size(library.size)
                         .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient);
 

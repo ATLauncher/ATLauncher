@@ -104,6 +104,8 @@ import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
+import com.atlauncher.data.minecraft.loaders.forge.FMLLibrariesConstants;
+import com.atlauncher.data.minecraft.loaders.forge.FMLLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
@@ -569,6 +571,23 @@ public class Instance extends MinecraftVersion {
                             .size(download.size)
                             .withHttpClient(httpClient));
                 });
+
+        // legacy forge, so check the libs folder
+        if (this.getLoaderVersion().isForge() && Utils.matchVersion(id, "1.5", true, true)) {
+            List<FMLLibrary> fmlLibraries = FMLLibrariesConstants.fmlLibraries.get(id);
+
+            if (fmlLibraries != null) {
+                fmlLibraries.forEach((library) -> {
+                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                            .setUrl(String.format("%s/fmllibs/%s", Constants.DOWNLOAD_SERVER, library.name))
+                            .downloadTo(FileSystem.LIBRARIES.resolve("fmllib/" + library.name))
+                            .copyTo(ROOT.resolve("lib/" + library.name)).hash(library.sha1Hash)
+                            .size(library.size).withHttpClient(httpClient);
+
+                    librariesPool.add(download);
+                });
+            }
+        }
 
         DownloadPool smallLibrariesPool = librariesPool.downsize();
 
