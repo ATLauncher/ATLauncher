@@ -172,6 +172,8 @@ public class AccountManager {
 
         Data.ACCOUNTS.add(account);
 
+        account.updateSkin();
+
         if (Data.ACCOUNTS.size() > 1) {
             // not first account? ask if they want to switch to it
             int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))

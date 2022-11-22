@@ -83,11 +83,6 @@ public abstract class AbstractAccount implements Serializable {
      */
     public List<String> collapsedServers = new ArrayList<>();
 
-    /**
-     * If the skin is currently being updated.
-     */
-    public boolean skinUpdating = false;
-
     public abstract String getAccessToken();
 
     public abstract String getSessionToken();
@@ -147,84 +142,80 @@ public abstract class AbstractAccount implements Serializable {
      * Updates this Account's skin by redownloading the Minecraft skin from Mojang's
      * skin server.
      */
-    public void updateSkin() {
-        updateSkinPreCheck();
+    public synchronized void updateSkin() {
+        final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
+        LogManager.info("Downloading skin for " + this.minecraftUsername);
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading Skin"), 0,
+                GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
+                "Aborting downloading Minecraft skin for " + this.minecraftUsername);
+        final UUID uid = this.getRealUUID();
+        dialog.addThread(new Thread(() -> {
+            updateSkinPreCheck();
 
-        if (!this.skinUpdating) {
-            this.skinUpdating = true;
-            final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
-            LogManager.info("Downloading skin for " + this.minecraftUsername);
-            final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Downloading Skin"), 0,
-                    GetText.tr("Downloading Skin For {0}", this.minecraftUsername),
-                    "Aborting downloading Minecraft skin for " + this.minecraftUsername);
-            final UUID uid = this.getRealUUID();
-            dialog.addThread(new Thread(() -> {
-                dialog.setReturnValue(false);
-                String skinURL = getSkinUrl();
-                if (skinURL == null) {
-                    LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
-                    if (!file.exists()) {
-                        String skinFilename = "default.png";
+            dialog.setReturnValue(false);
+            String skinURL = getSkinUrl();
+            if (skinURL == null) {
+                LogManager.warn("Couldn't download skin because the url found was NULL. Using default skin");
+                if (!file.exists()) {
+                    String skinFilename = "default.png";
 
-                        // even UUID's use the alex skin
-                        if ((uid.hashCode() & 1) != 0) {
-                            skinFilename = "default-alex.png";
-                        }
-
-                        // Only copy over the default skin if there is no skin for the user
-                        try {
-                            java.nio.file.Files.copy(
-                                    Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
-                        } catch (IOException e) {
-                            LogManager.logStackTrace(e);
-                        }
-
-                        dialog.setReturnValue(true);
+                    // even UUID's use the alex skin
+                    if ((uid.hashCode() & 1) != 0) {
+                        skinFilename = "default-alex.png";
                     }
-                } else {
+
+                    // Only copy over the default skin if there is no skin for the user
                     try {
-                        HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
-                        if (conn.getResponseCode() == 200) {
-                            if (file.exists()) {
-                                Utils.delete(file);
-                            }
-                            Download.build().setUrl(skinURL).downloadTo(file.toPath()).downloadFile();
-                            dialog.setReturnValue(true);
-                        } else {
-                            if (!file.exists()) {
-                                String skinFilename = "default.png";
-
-                                // even UUID's use the alex skin
-                                if ((uid.hashCode() & 1) != 0) {
-                                    skinFilename = "default-alex.png";
-                                }
-
-                                // Only copy over the default skin if there is no skin for the user
-                                try {
-                                    java.nio.file.Files.copy(
-                                            Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
-                                            file.toPath());
-                                } catch (IOException e) {
-                                    LogManager.logStackTrace(e);
-                                }
-
-                                dialog.setReturnValue(true);
-                            }
-                        }
+                        java.nio.file.Files.copy(
+                                Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
                     } catch (IOException e) {
                         LogManager.logStackTrace(e);
                     }
-                    com.atlauncher.evnt.manager.AccountManager.post();
+
+                    dialog.setReturnValue(true);
                 }
-                dialog.close();
-            }));
-            dialog.start();
-            if (!dialog.getReturnValue()) {
-                DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(GetText.tr("Error downloading skin. Please try again later!"))
-                        .setType(DialogManager.ERROR).show();
+            } else {
+                try {
+                    HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
+                    if (conn.getResponseCode() == 200) {
+                        if (file.exists()) {
+                            Utils.delete(file);
+                        }
+                        Download.build().setUrl(skinURL).downloadTo(file.toPath()).downloadFile();
+                        dialog.setReturnValue(true);
+                    } else {
+                        if (!file.exists()) {
+                            String skinFilename = "default.png";
+
+                            // even UUID's use the alex skin
+                            if ((uid.hashCode() & 1) != 0) {
+                                skinFilename = "default-alex.png";
+                            }
+
+                            // Only copy over the default skin if there is no skin for the user
+                            try {
+                                java.nio.file.Files.copy(
+                                        Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
+                                        file.toPath());
+                            } catch (IOException e) {
+                                LogManager.logStackTrace(e);
+                            }
+
+                            dialog.setReturnValue(true);
+                        }
+                    }
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+                com.atlauncher.evnt.manager.AccountManager.post();
             }
-            this.skinUpdating = false;
+            dialog.close();
+        }));
+        dialog.start();
+        if (!dialog.getReturnValue()) {
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(GetText.tr("Error downloading skin. Please try again later!"))
+                    .setType(DialogManager.ERROR).show();
         }
     }
 

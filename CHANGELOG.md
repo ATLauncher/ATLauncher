@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in new instance title format "Instance Name (Version)" [#663]
 
 ### Fixes
+- Issue with skins not updating after changing them [#671]
 
 ### Misc
