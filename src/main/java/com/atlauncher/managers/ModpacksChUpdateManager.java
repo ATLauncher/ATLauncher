@@ -58,7 +58,7 @@ public class ModpacksChUpdateManager {
                     }
 
                     ModpacksChPackVersion latestVersion = packManifest.versions.stream().sorted(
-                            Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
+                            Comparator.comparingInt((ModpacksChPackVersion version) -> version.id).reversed())
                             .findFirst().orElse(null);
 
                     if (latestVersion == null) {
