@@ -374,6 +374,9 @@ public final class AddModsDialog extends JDialog {
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                     .getValue() == ModPlatform.CURSEFORGE;
 
+            boolean resourcePacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                    .equals("Resource Packs");
+
             String platformMessage = null;
 
             sortComboBox.removeAllItems();
@@ -383,6 +386,9 @@ public final class AddModsDialog extends JDialog {
                 sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
             }
             sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+            if (resourcePacksSelected) {
+                sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
+            }
 
             if (isCurseForge) {
                 platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
