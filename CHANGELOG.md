@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with skins not updating after changing them [#671]
 - Switch to using id rather than updated time when checking modpacks.ch updates
+- Anaytics having wrong category on Add Mods dialog for pagination and search
 
 ### Misc

@@ -452,7 +452,6 @@ public final class AddModsDialog extends JDialog {
 
         boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                 .getValue() == ModPlatform.CURSEFORGE;
-
         Analytics.sendEvent(page, "Previous", "Navigation", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
 
         getMods();
@@ -465,7 +464,6 @@ public final class AddModsDialog extends JDialog {
 
         boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                 .getValue() == ModPlatform.CURSEFORGE;
-
         Analytics.sendEvent(page, "Next", "Navigation", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
 
         getMods();
@@ -551,7 +549,9 @@ public final class AddModsDialog extends JDialog {
     private void searchForMods() {
         String query = searchField.getText();
 
-        Analytics.sendEvent(query, "Search", "CurseForgeMod");
+        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                .getValue() == ModPlatform.CURSEFORGE;
+        Analytics.sendEvent(query, "Search", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
 
         getMods();
     }
