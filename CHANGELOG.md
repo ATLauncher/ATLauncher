@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in new instance title format "Instance Name (Version)" [#663]
+- Add in support for Modrinth resource packs
 
 ### Fixes
 - Issue with skins not updating after changing them [#671]
