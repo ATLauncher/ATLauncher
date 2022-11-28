@@ -796,7 +796,7 @@ public class InstanceInstallerDialog extends JDialog {
                 ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                 instance.launcher.modpacksChPackManifest.id))
-                        .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                        .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                         .asClass(ModpacksChPackManifest.class);
                 dialog.setReturnValue(packManifest);
                 dialog.close();
