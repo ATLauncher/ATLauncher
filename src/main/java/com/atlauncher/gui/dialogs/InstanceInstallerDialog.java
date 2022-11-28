@@ -541,6 +541,7 @@ public class InstanceInstallerDialog extends JDialog {
                     packVersion.version = v.name;
                     packVersion.hasLoader = true;
                     packVersion._modpacksChId = v.id;
+                    packVersion._modpacksChType = v.type;
                     return packVersion;
                 }).filter(pv -> pv != null).collect(Collectors.toList());
 
