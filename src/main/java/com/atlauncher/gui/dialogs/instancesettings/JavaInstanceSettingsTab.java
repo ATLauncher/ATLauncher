@@ -586,6 +586,18 @@ public class JavaInstanceSettingsTab extends JPanel {
         return defaultValue;
     }
 
+    public boolean isValidJavaParamaters() {
+        if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
+                || javaParameters.getText().contains("-XX:PermSize")
+                || javaParameters.getText().contains("-XX:MetaspaceSize")) {
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
+                    .build()).setType(DialogManager.ERROR).show();
+            return false;
+        }
+        return true;
+    }
+
     public void saveSettings() {
         Integer initialMemory = (Integer) this.initialMemory.getValue();
         Integer maximumMemory = (Integer) this.maximumMemory.getValue();

@@ -16,5 +16,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Anaytics having wrong category on Add Mods dialog for pagination and search
 - Keep section dropdown the same when switching platform in Add Mods dialog
 - Updates for instances not showing the button until a restart [#677]
+- Issue with instance settings allowing setting of memory java params
 
 ### Misc
