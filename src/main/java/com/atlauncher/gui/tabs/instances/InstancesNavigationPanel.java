@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -39,14 +40,16 @@ import com.atlauncher.utils.sort.InstanceSortingStrategy;
 
 public final class InstancesNavigationPanel extends JPanel implements RelocalizationListener {
     private final InstancesTab parent;
+    private final IInstancesTabViewModel viewModel;
 
     private final JButton importButton = new JButton(GetText.tr("Import"));
     private final InstancesSearchField searchField;
     private final JComboBox<InstanceSortingStrategy> sortingBox = new JComboBox<>(InstanceSortingStrategies.values());
 
-    public InstancesNavigationPanel(final InstancesTab parent) {
+    public InstancesNavigationPanel(final InstancesTab parent,final IInstancesTabViewModel viewModel) {
         this.parent = parent;
-        this.searchField = new InstancesSearchField(parent);
+        this.viewModel = viewModel;
+        this.searchField = new InstancesSearchField(parent,viewModel);
         this.sortingBox.setMaximumSize(new Dimension(190, 23));
 
         if (App.settings.defaultInstanceSorting != InstanceSortingStrategies.BY_NAME) {
@@ -72,7 +75,7 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
         // item listeners
         this.sortingBox.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.parent.fireSortEvent(new InstancesSortEvent(e.getSource(), (InstanceSortingStrategy) e.getItem()));
+                this.viewModel.setSort((InstanceSortingStrategy) e.getItem());
             }
         });
     }

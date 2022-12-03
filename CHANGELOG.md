@@ -20,4 +20,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with instance settings allowing setting of memory java params
 
 ### Misc
+- Implement view model for InstancesTab [#675]
 - Implement view model for ServersTab [#674]

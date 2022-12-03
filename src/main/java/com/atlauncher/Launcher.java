@@ -448,9 +448,7 @@ public class Launcher {
      * Reloads the panel used for Instances
      */
     public void reloadInstancesPanel() {
-        if (instancesPanel != null) {
-            this.instancesPanel.reload(); // Reload the instances panel
-        }
+        InstanceManager.post();
     }
 
     public void setServersPanel(ServersTab serversPanel) {

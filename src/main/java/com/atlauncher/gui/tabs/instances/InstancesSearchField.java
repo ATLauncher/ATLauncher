@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JTextField;
 
+import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -32,10 +33,12 @@ import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public final class InstancesSearchField extends JTextField implements KeyListener {
     private final InstancesTab parent;
+    private final IInstancesTabViewModel viewModel;
 
-    public InstancesSearchField(final InstancesTab parent) {
+    public InstancesSearchField(final InstancesTab parent,final IInstancesTabViewModel viewModel) {
         super(16);
         this.parent = parent;
+        this.viewModel = viewModel;
 
         this.setMaximumSize(new Dimension(190, 23));
         this.addKeyListener(this);
@@ -44,7 +47,7 @@ public final class InstancesSearchField extends JTextField implements KeyListene
         this.putClientProperty("JTextField.showClearButton", true);
         this.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
             setText("");
-            this.parent.fireSearchEvent(new InstancesSearchEvent(this, null));
+            viewModel.setSearch(null);
         });
     }
 
@@ -64,7 +67,7 @@ public final class InstancesSearchField extends JTextField implements KeyListene
     public void keyReleased(KeyEvent e) {
         if (e.getKeyChar() == KeyEvent.VK_ENTER) {
             Analytics.sendEvent(this.getText(), "Search", "Instance");
-            this.parent.fireSearchEvent(new InstancesSearchEvent(e.getSource(), this.getSearchPattern()));
+            this.viewModel.setSearch(this.getSearchPattern());
         }
     }
 }

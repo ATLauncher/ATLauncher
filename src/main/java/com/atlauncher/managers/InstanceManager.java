@@ -19,10 +19,7 @@ package com.atlauncher.managers;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import com.atlauncher.App;
 import com.atlauncher.Data;
@@ -35,7 +32,27 @@ import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import javax.swing.*;
+
 public class InstanceManager {
+    private static final List<Listener> listeners = new LinkedList<>();
+
+    public static synchronized void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public static synchronized void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+
+    public static synchronized void post() {
+        SwingUtilities.invokeLater(() -> {
+            for (Listener listener : listeners) {
+                listener.onInstancesChanged();
+            }
+        });
+    }
+
     public static List<Instance> getInstances() {
         return Data.INSTANCES;
     }
@@ -146,7 +163,7 @@ public class InstanceManager {
     public static void removeInstance(Instance instance) {
         if (Data.INSTANCES.remove(instance)) {
             FileUtils.delete(instance.getRoot(), true);
-            App.launcher.reloadInstancesPanel();
+            post();
         }
     }
 
@@ -213,7 +230,11 @@ public class InstanceManager {
             Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());
             clonedInstance.save();
             Data.INSTANCES.add(clonedInstance);
-            App.launcher.reloadInstancesPanel();
+            post();
         }
+    }
+
+    public interface Listener{
+        void onInstancesChanged();
     }
 }
