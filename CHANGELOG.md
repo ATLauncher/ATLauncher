@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in new instance title format "Instance Name (Version)" [#663]
 - Add in support for Modrinth resource packs
 - Show if Modpacks.ch pack version is Alpha/Beta
+- Add button when allocating more than 8GB ram to explain more
 
 ### Fixes
 - Issue with skins not updating after changing them [#671]

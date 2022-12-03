@@ -206,11 +206,16 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
                 if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
                     maximumMemoryEightGBWarningShown = true;
-                    DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                    int ret = DialogManager.okDialog().setTitle(GetText.tr("Warning"))
                             .setType(DialogManager.WARNING)
                             .setContent(GetText.tr(
                                     "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
+                            .addOption(GetText.tr("More Explanation"))
                             .show();
+
+                    if (ret == 1) {
+                        OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
+                    }
                 } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
                         && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
                         && !maximumMemoryHalfWarningShown) {
