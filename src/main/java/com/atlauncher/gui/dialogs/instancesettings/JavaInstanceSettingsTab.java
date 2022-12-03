@@ -193,11 +193,16 @@ public class JavaInstanceSettingsTab extends JPanel {
 
                 if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
                     maximumMemoryEightGBWarningShown = true;
-                    DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                    int ret = DialogManager.okDialog().setTitle(GetText.tr("Warning"))
                             .setType(DialogManager.WARNING)
                             .setContent(GetText.tr(
                                     "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
+                            .addOption(GetText.tr("More Explanation"))
                             .show();
+
+                    if (ret == 1) {
+                        OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
+                    }
                 } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
                         && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
                         && !maximumMemoryHalfWarningShown) {
@@ -584,6 +589,18 @@ public class JavaInstanceSettingsTab extends JPanel {
         }
 
         return defaultValue;
+    }
+
+    public boolean isValidJavaParamaters() {
+        if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
+                || javaParameters.getText().contains("-XX:PermSize")
+                || javaParameters.getText().contains("-XX:MetaspaceSize")) {
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
+                    .build()).setType(DialogManager.ERROR).show();
+            return false;
+        }
+        return true;
     }
 
     public void saveSettings() {

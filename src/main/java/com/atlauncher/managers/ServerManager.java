@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.LinkedList;
 
-import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -32,7 +32,27 @@ import com.atlauncher.data.Server;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
+import javax.swing.SwingUtilities;
+
 public class ServerManager {
+    private static final List<Listener> listeners = new LinkedList<>();
+
+    public static synchronized void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public static synchronized void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+
+    public static synchronized void post() {
+        SwingUtilities.invokeLater(() -> {
+            for (Listener listener : listeners) {
+                listener.onServersChanged();
+            }
+        });
+    }
+
     public static List<Server> getServers() {
         return Data.SERVERS;
     }
@@ -92,19 +112,33 @@ public class ServerManager {
         return servers;
     }
 
+
+    /**
+     * Note, this method ignores ConstantConditions warning, as it always has.
+     *
+     * @param server server to add
+     * @return if the server was added or not
+     */
+    @SuppressWarnings("ConstantConditions")
     public static boolean addServer(Server server) {
-        return Data.SERVERS.add(server);
+        boolean added = Data.SERVERS.add(server);
+        if (added) post();
+        return added;
     }
 
     public static void removeServer(Server server) {
         if (Data.SERVERS.remove(server)) {
             FileUtils.delete(server.getRoot(), true);
-            App.launcher.reloadServersPanel();
+            post();
         }
     }
 
     public static boolean isServer(String name) {
         return Data.SERVERS.stream()
                 .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+    }
+
+    public interface Listener {
+        void onServersChanged();
     }
 }

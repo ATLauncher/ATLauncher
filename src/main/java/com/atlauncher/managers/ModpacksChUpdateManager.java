@@ -50,7 +50,7 @@ public class ModpacksChUpdateManager {
                     ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                             .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                     i.launcher.modpacksChPackManifest.id))
-                            .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                            .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                             .asClass(ModpacksChPackManifest.class);
 
                     if (packManifest == null) {
@@ -58,7 +58,7 @@ public class ModpacksChUpdateManager {
                     }
 
                     ModpacksChPackVersion latestVersion = packManifest.versions.stream().sorted(
-                            Comparator.comparingInt((ModpacksChPackVersion version) -> version.updated).reversed())
+                            Comparator.comparingInt((ModpacksChPackVersion version) -> version.id).reversed())
                             .findFirst().orElse(null);
 
                     if (latestVersion == null) {
@@ -69,6 +69,12 @@ public class ModpacksChUpdateManager {
                     // time write), then refresh instances panel
                     if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
                             && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                        wasUpdated = true;
+                    }
+
+                    // updated if there is no latest version stored yet but the instance has update
+                    if (!Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
+                            && latestVersion.id != i.launcher.modpacksChPackVersionManifest.id) {
                         wasUpdated = true;
                     }
 

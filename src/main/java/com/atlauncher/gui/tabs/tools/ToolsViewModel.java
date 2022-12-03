@@ -114,6 +114,15 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
     }
 
     @Override
+    public void deleteLibraries() {
+        Analytics.sendEvent("LibrariesDeleter", "Run", "Tool");
+
+        for (File file : FileSystem.LIBRARIES.toFile().listFiles()) {
+            Utils.delete(file);
+        }
+    }
+
+    @Override
     public void clearLogs() {
         Analytics.sendEvent("LogClearer", "Run", "Tool");
 

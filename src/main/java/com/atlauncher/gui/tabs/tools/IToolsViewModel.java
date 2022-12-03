@@ -52,6 +52,15 @@ public interface IToolsViewModel {
      */
     void clearDownloads();
 
+    // LibrariesDeleterToolPanel
+
+    /**
+     * Delete libraries used by Minecraft for launching the game
+     */
+    void deleteLibraries();
+
+    // LogClearerToolPanel
+
     /**
      * Clear out launcher logs
      */

@@ -60,7 +60,13 @@ public class ModrinthModpackUpdateManager {
                     // if there is a change to the latestversion for an instance (but not a first
                     // time write), then refresh instances panel
                     if (Data.MODRINTH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && Data.MODRINTH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
+                            && !Data.MODRINTH_INSTANCE_LATEST_VERSION.get(i).id.equals(latestVersion.id)) {
+                        wasUpdated = true;
+                    }
+
+                    // updated if there is no latest version stored yet but the instance has update
+                    if (!Data.MODRINTH_INSTANCE_LATEST_VERSION.containsKey(i)
+                            && !i.launcher.modrinthVersion.id.equals(latestVersion.id)) {
                         wasUpdated = true;
                     }
 

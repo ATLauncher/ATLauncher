@@ -20,9 +20,12 @@ package com.atlauncher.data.modpacksch;
 import com.google.gson.annotations.SerializedName;
 
 public enum ModpacksChPackVersionType {
-    @SerializedName("Beta")
+    @SerializedName(value = "alpha", alternate = { "Alpha" })
+    ALPHA,
+
+    @SerializedName(value = "beta", alternate = { "Beta" })
     BETA,
 
-    @SerializedName("Release")
+    @SerializedName(value = "release", alternate = { "Release" })
     RELEASE
 }

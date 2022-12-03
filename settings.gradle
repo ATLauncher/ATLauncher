@@ -6,3 +6,4 @@
  */
 rootProject.name = name
 include('app')
+include('legacy-launch')

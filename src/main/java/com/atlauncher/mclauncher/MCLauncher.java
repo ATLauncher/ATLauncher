@@ -19,8 +19,6 @@ package com.atlauncher.mclauncher;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,7 +42,6 @@ import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.mclauncher.legacy.LegacyMCLauncher;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -249,21 +246,18 @@ public class MCLauncher {
         }
 
         if (instance.usesLegacyLaunch()) {
-            cpb.append(File.pathSeparator);
+            Path legacyLaunchJarPath = FileSystem.LIBRARIES.resolve("launcher/legacy-launch.jar");
 
-            File thisFile = new File(MCLauncher.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-            String pathh = null;
             try {
-                pathh = thisFile.getCanonicalPath();
-                pathh = URLDecoder.decode(pathh, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                pathh = System.getProperty("java.class.path");
-                LogManager.logStackTrace(e);
+                if (!Files.exists(legacyLaunchJarPath) || Files.size(legacyLaunchJarPath) != 8368l) {
+                    FileSystem.copyResourcesOutJar();
+                }
             } catch (IOException e) {
-                pathh = System.getProperty("java.class.path");
-                LogManager.logStackTrace(e);
+                LogManager.logStackTrace("Failed to copy legacy-launch.jar to libraries folder", e);
             }
-            cpb.append(pathh);
+
+            cpb.append(File.pathSeparator);
+            cpb.append(legacyLaunchJarPath.toAbsolutePath().toString());
         }
 
         List<String> arguments = new ArrayList<>();
@@ -384,12 +378,12 @@ public class MCLauncher {
         }
 
         if (instance.usesLegacyLaunch()) {
-            arguments.add(LegacyMCLauncher.class.getCanonicalName());
+            arguments.add("com.atlauncher.mclauncher.legacy.LegacyMCLauncher");
             // Start or passed in arguments
             arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
             arguments.add(username); // Username
             arguments.add(account.getSessionToken()); // Session
-            arguments.add(instance.getName()); // Instance Name
+            arguments.add(Constants.LAUNCHER_NAME + " - " + instance.getName()); // Frame title
             arguments.add(App.settings.windowWidth + ""); // Window Width
             arguments.add(App.settings.windowHeight + ""); // Window Height
             if (App.settings.maximiseMinecraft) {

@@ -79,6 +79,12 @@ public class CurseForgeUpdateManager {
                             wasUpdated = true;
                         }
 
+                        // updated if there is no latest version stored yet but the instance has update
+                        if (!Data.CURSEFORGE_INSTANCE_LATEST_VERSION.containsKey(i)
+                                && latestVersion.id != i.launcher.curseForgeFile.id) {
+                            wasUpdated = true;
+                        }
+
                         Data.CURSEFORGE_INSTANCE_LATEST_VERSION.put(i, latestVersion);
 
                         return wasUpdated;

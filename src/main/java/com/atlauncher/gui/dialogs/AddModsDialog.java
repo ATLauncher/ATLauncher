@@ -153,10 +153,9 @@ public final class AddModsDialog extends JDialog {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
         sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
-        sectionComboBox.setVisible(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE);
 
         if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
+            sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
             sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
             sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
             sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
@@ -375,11 +374,25 @@ public final class AddModsDialog extends JDialog {
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                     .getValue() == ModPlatform.CURSEFORGE;
 
+            boolean resourcePacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                    .equals("Resource Packs");
+
             String platformMessage = null;
 
             sortComboBox.removeAllItems();
+            sectionComboBox.removeAllItems();
+
+            if (instance.launcher.loaderVersion != null) {
+                sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
+            }
+            sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+            if (resourcePacksSelected) {
+                sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
+            }
+
             if (isCurseForge) {
                 platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
+                sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
                 sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
                 sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
                 sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
@@ -390,8 +403,6 @@ public final class AddModsDialog extends JDialog {
                 sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
                 sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
             }
-
-            sectionComboBox.setVisible(isCurseForge);
 
             if (platformMessage != null) {
                 platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
@@ -445,7 +456,9 @@ public final class AddModsDialog extends JDialog {
             page -= 1;
         }
 
-        Analytics.sendEvent(page, "Previous", "Navigation", "CurseForgeMod");
+        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                .getValue() == ModPlatform.CURSEFORGE;
+        Analytics.sendEvent(page, "Previous", "Navigation", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
 
         getMods();
     }
@@ -455,7 +468,9 @@ public final class AddModsDialog extends JDialog {
             page += 1;
         }
 
-        Analytics.sendEvent(page, "Next", "Navigation", "CurseForgeMod");
+        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                .getValue() == ModPlatform.CURSEFORGE;
+        Analytics.sendEvent(page, "Next", "Navigation", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
 
         getMods();
     }
@@ -512,15 +527,20 @@ public final class AddModsDialog extends JDialog {
                     versionsToSearchFor = null;
                 }
 
-                if (this.instance.launcher.loaderVersion.isFabric()) {
-                    setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
+                if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+                    setModrinthMods(ModrinthApi.searchResourcePacks(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
-                } else if (this.instance.launcher.loaderVersion.isQuilt()) {
-                    setModrinthMods(ModrinthApi.searchModsForQuiltOrFabric(versionsToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
-                } else if (this.instance.launcher.loaderVersion.isForge()) {
-                    setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                } else {
+                    if (this.instance.launcher.loaderVersion.isFabric()) {
+                        setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    } else if (this.instance.launcher.loaderVersion.isQuilt()) {
+                        setModrinthMods(ModrinthApi.searchModsForQuiltOrFabric(versionsToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    } else if (this.instance.launcher.loaderVersion.isForge()) {
+                        setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                    }
                 }
             }
 
@@ -535,7 +555,9 @@ public final class AddModsDialog extends JDialog {
     private void searchForMods() {
         String query = searchField.getText();
 
-        Analytics.sendEvent(query, "Search", "CurseForgeMod");
+        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                .getValue() == ModPlatform.CURSEFORGE;
+        Analytics.sendEvent(query, "Search", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
 
         getMods();
     }

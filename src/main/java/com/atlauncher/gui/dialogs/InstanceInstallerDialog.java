@@ -541,6 +541,7 @@ public class InstanceInstallerDialog extends JDialog {
                     packVersion.version = v.name;
                     packVersion.hasLoader = true;
                     packVersion._modpacksChId = v.id;
+                    packVersion._modpacksChType = v.type;
                     return packVersion;
                 }).filter(pv -> pv != null).collect(Collectors.toList());
 
@@ -795,7 +796,7 @@ public class InstanceInstallerDialog extends JDialog {
                 ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                 instance.launcher.modpacksChPackManifest.id))
-                        .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
+                        .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                         .asClass(ModpacksChPackManifest.class);
                 dialog.setReturnValue(packManifest);
                 dialog.close();
