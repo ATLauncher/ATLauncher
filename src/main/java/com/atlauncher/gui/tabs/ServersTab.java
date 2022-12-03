@@ -23,13 +23,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.regex.Pattern;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
+import com.atlauncher.viewmodel.base.IServersTabViewModel;
+import com.atlauncher.viewmodel.impl.ServersTabViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -38,7 +38,6 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
-import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
@@ -46,33 +45,31 @@ import com.formdev.flatlaf.icons.FlatSearchIcon;
 public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     private JTextField searchBox;
 
-    private String searchText = null;
-
     private JPanel panel;
     private JScrollPane scrollPane;
-    private int currentPosition = 0;
 
     private NilCard nilCard;
 
+    private final IServersTabViewModel viewModel = new ServersTabViewModel();
+
     public ServersTab() {
         setLayout(new BorderLayout());
-        loadContent(false);
+        createView();
         RelocalizationManager.addListener(this);
     }
 
-    public void loadContent(boolean keepFilters) {
+    public void createView() {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         searchBox = new JTextField(16);
-        if (keepFilters) {
-            searchBox.setText(this.searchText);
-        }
+        viewModel.addOnSearchChangeListener(searchBox::setText);
         searchBox.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    Analytics.sendEvent(searchBox.getText(), "Search", "Server");
-                    reload();
+                    String text = searchBox.getText();
+                    Analytics.sendEvent(text, "Search", "Server");
+                    viewModel.setSearch(text);
                 }
             }
         });
@@ -80,8 +77,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchBox.putClientProperty("JTextField.showClearButton", true);
         searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            searchBox.setText("");
-            reload();
+            viewModel.setSearch("");
         });
         topPanel.add(searchBox);
 
@@ -100,47 +96,29 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         gbc.insets = UIConstants.FIELD_INSETS_SMALL;
         gbc.fill = GridBagConstraints.BOTH;
 
-        ServerManager.getServersSorted().forEach(server -> {
-            if (keepFilters) {
-                boolean showServer = true;
+        viewModel.addOnChangeViewListener(servers -> {
+            viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+            panel.removeAll();
+            gbc.gridy = 0;
 
-                if (searchText != null) {
-                    if (!Pattern.compile(Pattern.quote(searchText), Pattern.CASE_INSENSITIVE).matcher(server.name)
-                            .find()) {
-                        showServer = false;
-                    }
-                }
-
-                if (showServer) {
-                    panel.add(new ServerCard(server), gbc);
-                    gbc.gridy++;
-                }
-            } else {
+            servers.forEach(server -> {
                 panel.add(new ServerCard(server), gbc);
                 gbc.gridy++;
+            });
+
+
+            if (panel.getComponentCount() == 0) {
+                nilCard = new NilCard(new HTMLBuilder().text(
+                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
+                panel.add(nilCard, gbc);
             }
+
+            validate();
+            repaint();
+            searchBox.requestFocus();
         });
 
-        if (panel.getComponentCount() == 0) {
-            nilCard = new NilCard(new HTMLBuilder().text(
-                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
-            panel.add(nilCard, gbc);
-        }
-
-        SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(currentPosition));
-    }
-
-    public void reload() {
-        this.currentPosition = scrollPane.getVerticalScrollBar().getValue();
-        this.searchText = searchBox.getText();
-        if (this.searchText.isEmpty()) {
-            this.searchText = null;
-        }
-        removeAll();
-        loadContent(true);
-        validate();
-        repaint();
-        searchBox.requestFocus();
+        viewModel.addOnViewPositionChangedListener(scrollPane.getVerticalScrollBar()::setValue);
     }
 
     @Override
