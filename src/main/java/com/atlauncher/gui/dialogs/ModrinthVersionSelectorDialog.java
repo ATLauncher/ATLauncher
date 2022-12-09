@@ -65,6 +65,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private final ModrinthProject mod;
     private final Instance instance;
     private String installedVersionId = null;
+    private boolean selectNewest = true;
 
     private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
     private JScrollPane scrollPane;
@@ -112,6 +113,18 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         this.mod = mod;
         this.instance = instance;
         this.installedVersionId = installedVersionId;
+
+        setupComponents();
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, Instance instance,
+            String installedVersionId, boolean selectNewest) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+
+        this.mod = mod;
+        this.instance = instance;
+        this.installedVersionId = installedVersionId;
+        this.selectNewest = selectNewest;
 
         setupComponents();
     }
@@ -391,7 +404,9 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                         .filter(f -> f.id.equalsIgnoreCase(this.installedVersionId)).findFirst().orElse(null);
 
                 if (installedFile != null) {
-                    versionsDropdown.setSelectedItem(installedFile);
+                    if (!selectNewest) {
+                        versionsDropdown.setSelectedItem(installedFile);
+                    }
 
                     // #. {0} is the name of the mod that the user already has installed
                     installedJLabel.setText(GetText.tr("The version currently installed is {0}", installedFile.name));

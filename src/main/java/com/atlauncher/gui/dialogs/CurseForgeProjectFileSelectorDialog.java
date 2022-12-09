@@ -61,6 +61,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     private final CurseForgeProject mod;
     private final Instance instance;
     private Integer installedFileId = null;
+    private boolean selectNewest = true;
 
     private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
     private JScrollPane scrollPane;
@@ -92,6 +93,18 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         this.mod = mod;
         this.instance = instance;
         this.installedFileId = installedFileId;
+
+        setupComponents();
+    }
+
+    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance,
+            int installedFileId, boolean selectNewest) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+
+        this.mod = mod;
+        this.instance = instance;
+        this.installedFileId = installedFileId;
+        this.selectNewest = selectNewest;
 
         setupComponents();
     }
@@ -360,7 +373,9 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                         .orElse(null);
 
                 if (installedFile != null) {
-                    filesDropdown.setSelectedItem(installedFile);
+                    if (!selectNewest) {
+                        filesDropdown.setSelectedItem(installedFile);
+                    }
 
                     // #. {0} is the name of the file that the user already has installed
                     installedJLabel.setText(GetText.tr("The version currently installed is {0}", installedFile));

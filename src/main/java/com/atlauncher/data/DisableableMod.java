@@ -492,7 +492,7 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId);
+            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId, false);
         } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(
@@ -506,7 +506,7 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instance, modrinthVersion.id);
+            new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instance, modrinthVersion.id, false);
         }
 
         return true;
