@@ -49,7 +49,6 @@ public final class InstancesListPanel extends JPanel
         super(new GridBagLayout());
         this.parent = parent;
         this.viewModel = viewModel;
-        this.setName("instancesPanel");
         this.createView();
         RelocalizationManager.addListener(this);
     }

@@ -22,13 +22,13 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
-import com.atlauncher.viewmodel.impl.InstancesTabViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
+import com.atlauncher.viewmodel.impl.InstancesTabViewModel;
 
 public class InstancesTab extends JPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;
@@ -39,6 +39,7 @@ public class InstancesTab extends JPanel implements Tab {
     private final JScrollPane scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
 
     public InstancesTab() {
+        this.setName("instancesPanel");
         this.setLayout(new BorderLayout());
         this.add(this.navigationPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
