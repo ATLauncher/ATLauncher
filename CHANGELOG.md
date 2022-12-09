@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Keep section dropdown the same when switching platform in Add Mods dialog
 - Updates for instances not showing the button until a restart [#677]
 - Issue with instance settings allowing setting of memory java params
+- Adding mods from CurseForge not filtering out Quilt files on non Quilt instances
 
 ### Misc
 - Implement view model for InstancesTab [#675]

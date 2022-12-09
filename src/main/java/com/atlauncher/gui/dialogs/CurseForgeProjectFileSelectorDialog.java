@@ -291,20 +291,24 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 }
             }
 
-            // filter out mods that are explicitely for Forge/Fabric (but not dual loader)
-            // and not our loader
+            // filter out files not for our loader
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Fabric") && loaderVersion != null
+                if (cf.gameVersions.contains("Fabric") && loaderVersion != null
                         && (loaderVersion.isFabric() || loaderVersion.isQuilt())) {
-                    return false;
+                    return true;
                 }
 
-                if (cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge") && loaderVersion != null
-                        && !loaderVersion.isFabric() && !loaderVersion.isQuilt()) {
-                    return false;
+                if (cf.gameVersions.contains("Forge") && loaderVersion != null
+                        && loaderVersion.isForge()) {
+                    return true;
                 }
 
-                return true;
+                if (cf.gameVersions.contains("Quilt") && loaderVersion != null
+                        && loaderVersion.isQuilt()) {
+                    return true;
+                }
+
+                return false;
             });
 
             files.addAll(curseForgeFilesStream.collect(Collectors.toList()));
