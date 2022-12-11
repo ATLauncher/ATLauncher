@@ -49,10 +49,10 @@ public class ModpacksChPackManifest {
     }
 
     public String getWebsiteUrl() {
-        return String.format("https://feed-the-beast.com/modpack/%s", getSlug());
+        return String.format("https://feed-the-beast.com/modpacks/%d-%s", id, getSlug());
     }
 
     public String getSlug() {
-        return name.replace("+", " Plus").toLowerCase(Locale.ROOT).replaceAll("\\W", "_").replaceAll("_{2,}", "_");
+        return name.replace("+", " Plus").toLowerCase(Locale.ROOT).replaceAll("\\W", "-").replaceAll("-{2,}", "-");
     }
 }
