@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add in support for Modrinth resource packs
 - Show if Modpacks.ch pack version is Alpha/Beta
 - Add button when allocating more than 8GB ram to explain more
+- Set limits and validation on connection timeout
 
 ### Fixes
 - Issue with skins not updating after changing them [#671]

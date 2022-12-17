@@ -81,6 +81,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         SpinnerNumberModel concurrentConnectionsModel = new SpinnerNumberModel(App.settings.concurrentConnections, null,
                 null, 1);
         concurrentConnectionsModel.setMinimum(1);
+        concurrentConnectionsModel.setMaximum(100);
         concurrentConnections = new JSpinner(concurrentConnectionsModel);
         add(concurrentConnections, gbc);
 
@@ -99,6 +100,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         SpinnerNumberModel connectionTimeoutModel = new SpinnerNumberModel(App.settings.connectionTimeout, null, null,
                 1);
         connectionTimeoutModel.setMinimum(1);
+        connectionTimeoutModel.setMaximum(600);
         connectionTimeout = new JSpinner(connectionTimeoutModel);
         add(connectionTimeout, gbc);
 

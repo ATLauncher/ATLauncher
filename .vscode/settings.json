@@ -29,4 +29,5 @@
     ],
     "java.codeGeneration.generateComments": true,
     "git.inputValidationLength": 100,
+    "java.compile.nullAnalysis.mode": "automatic",
 }
