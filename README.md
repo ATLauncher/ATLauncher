@@ -149,53 +149,15 @@ To get started with the code and plug in your own data, you need to edit the
 By using this source code you don't get permissions to use our CDN/files/assets/modpacks. See the License section at the
 bottom for more.
 
-See below for explanations as to what some of the constant values mean.
+Most of of them should be self explanatory, if not please stop by our [Discord](https://atl.pw/discord) and ask in the
+`#development` channel if you need help understanding any of the values.
 
-Note that this doesn't cover everything, most of them should be self explanatory, if not please stop by our
-[Discord](https://atl.pw/discord) and ask in the `#development` channel.
+A couple values in the constants file are specific for ATLauncher and shouldn't be used in any forks. These are the
+CurseForge Core api key and the Microsoft Login Client ID.
 
-Also pay special attention to the `CURSEFORGE_CORE_API_KEY` value. This is our CurseForge Core key, and you should seek
-out your own key for any forked projects. You can apply for a key through CurseForge through
-[this link](https://forms.monday.com/forms/dce5ccb7afda9a1c21dab1a1aa1d84eb).
-
-### VERSION
-
-This is a LauncherVersion object passed in the reserved, major, minor, revision ints for this
-version of the launcher. See the 'Versioning System' section below.
-
-### API_BASE_URL
-
-This is a link to your server side API for processing of stats. This is optional and can be removed.
-We do not give implementation code, this is your own doing.
-
-### PASTE_CHECK_URL
-
-This is a link to the url where an instance of [stikked](https://github.com/claudehohl/Stikked) is running
-(For instance <https://www.mypaste.com>) this is how the launcher knows if the paste was successful by checking the
-response from the API for the url of the software.
-
-_Please note that the domain given above IS NOT REAL. You must install [stikked](https://github.com/claudehohl/Stikked)
-on your own domain and reference it, the domain is only there as an example of what a valid value is._
-
-### PASTE_API_URL
-
-Same as above
-
-### SERVERS
-
-This is an array of
-[Server](https://github.com/ATLauncher/ATLauncher/blob/master/src/main/java/com/atlauncher/data/Server.java)
-type elements the launcher uses as a base to download files.
-
-### LAUNCHER_NAME
-
-This is the name of the launcher.
-
-### How to make your data
-
-To make the data the Launcher needs you will need to figure out your own server side way of doing that. You can create a
-system to do it automatically or you can manually do it by just popping the files on the server. The best way to get the
-file structure and contents is to examine the source code and the ATLauncher files it downloads.
+You can apply for a CurseForge Core key through
+[this link](https://forms.monday.com/forms/dce5ccb7afda9a1c21dab1a1aa1d84eb) and a Microsoft Login Client ID through
+[this link](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
 
 ## Versioning System
 
