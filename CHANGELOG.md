@@ -24,6 +24,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - FTB pack links not working [#681]
 - Update LaunchServer.bat to work with double quotes in javapath and print more info [#682]
 - Issue with Arm based Mac not using Java runtimes [#684]
+- Installing mods from CurseForge with EmbeddedLibrary dependencies not showing it
 
 ### Misc
 - Implement view model for InstancesTab [#675]
