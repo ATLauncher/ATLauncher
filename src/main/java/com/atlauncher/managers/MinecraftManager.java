@@ -31,13 +31,11 @@ import org.joda.time.format.ISODateTimeFormat;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
-import com.atlauncher.network.Download;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -69,27 +67,18 @@ public class MinecraftManager {
         PerformanceManager.end();
     }
 
-    public static void loadJavaRuntimes() {
-        loadJavaRuntimes(false);
-    }
-
     /**
      * Loads info about the java runtimes for Minecraft
      */
-    public static void loadJavaRuntimes(boolean force) {
+    public static void loadJavaRuntimes() {
         PerformanceManager.start();
         LogManager.debug("Loading Java runtimes");
 
         try {
-            Download download = Download.build().setUrl(Constants.MINECRAFT_JAVA_RUNTIME_URL);
-
-            if (!force) {
-                download = download.cached();
-            }
-
-            Data.JAVA_RUNTIMES = download.asClassWithThrow(JavaRuntimes.class);
-        } catch (IOException e) {
-            // safe to ignore, we'll just not use it
+            Path javaRuntimesPath = FileSystem.JSON.resolve("java_runtimes.json");
+            Data.JAVA_RUNTIMES = Gsons.DEFAULT.fromJson(
+                    new FileReader(javaRuntimesPath.toFile()), JavaRuntimes.class);
+        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
 

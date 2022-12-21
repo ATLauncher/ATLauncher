@@ -31,6 +31,10 @@ public class JavaRuntimes {
     public Map<String, List<JavaRuntime>> linux;
     @SerializedName("linux-i386")
     public Map<String, List<JavaRuntime>> linuxI386;
+    @SerializedName("linux-arm")
+    public Map<String, List<JavaRuntime>> linuxArm;
+    @SerializedName("linux-arm64")
+    public Map<String, List<JavaRuntime>> linuxArm64;
 
     @SerializedName("mac-os")
     public Map<String, List<JavaRuntime>> macOs;
@@ -58,7 +62,15 @@ public class JavaRuntimes {
                 return macOs;
             case LINUX:
                 if (!OS.is64Bit()) {
+                    if (OS.isArm()) {
+                        return linuxArm;
+                    }
+
                     return linuxI386;
+                }
+
+                if (OS.isArm()) {
+                    return linuxArm64;
                 }
 
                 return linux;
@@ -83,7 +95,15 @@ public class JavaRuntimes {
                 return "mac-os";
             case LINUX:
                 if (!OS.is64Bit()) {
+                    if (OS.isArm()) {
+                        return "linux-arm";
+                    }
+
                     return "linux-i386";
+                }
+
+                if (OS.isArm()) {
+                    return "linux-arm64";
                 }
 
                 return "linux";

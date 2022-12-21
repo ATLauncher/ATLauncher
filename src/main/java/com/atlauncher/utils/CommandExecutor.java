@@ -170,7 +170,7 @@ public class CommandExecutor {
         String javaPath = Optional.ofNullable(instance.launcher.javaPath).orElse(App.settings.javaPath);
 
         // are we using Mojangs provided runtime?
-        if (instance.javaVersion != null && (!OS.isArm() || OS.isMacArm()) && App.settings.useJavaProvidedByMinecraft) {
+        if (instance.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
             Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
                     .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
 

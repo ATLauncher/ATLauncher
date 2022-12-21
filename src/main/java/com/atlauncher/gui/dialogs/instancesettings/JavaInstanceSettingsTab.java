@@ -370,9 +370,8 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         add(javaPathPanel, gbc);
 
-        boolean isUsingMinecraftProvidedJava = (!OS.isArm() || OS.isMacArm())
-                && Optional.ofNullable(instance.launcher.useJavaProvidedByMinecraft)
-                        .orElse(App.settings.useJavaProvidedByMinecraft);
+        boolean isUsingMinecraftProvidedJava = Optional.ofNullable(instance.launcher.useJavaProvidedByMinecraft)
+                .orElse(App.settings.useJavaProvidedByMinecraft);
         javaMinecraftProvidedLabel.setVisible(isUsingMinecraftProvidedJava);
         javaPathDummy.setVisible(isUsingMinecraftProvidedJava);
 
@@ -422,10 +421,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         JLabelWithHover useJavaProvidedByMinecraftLabel = new JLabelWithHover(
                 GetText.tr("Use Java Provided By Minecraft") + "?", HELP_ICON,
                 new HTMLBuilder().center().text(GetText.tr(
-                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing.{0}",
-                        (OS.isArm() && !OS.isMacArm()) ? GetText.tr(
-                                "<br/><br/>This setting cannot be changed if using an ARM based computer as it's not compatable and will not be used.")
-                                : ""))
+                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
                         .build());
         add(useJavaProvidedByMinecraftLabel, gbc);
 
@@ -444,8 +440,6 @@ public class JavaInstanceSettingsTab extends JPanel {
         } else {
             useJavaProvidedByMinecraft.setSelectedIndex(2);
         }
-
-        useJavaProvidedByMinecraft.setEnabled(!OS.isArm() || OS.isMacArm());
 
         useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
             @Override

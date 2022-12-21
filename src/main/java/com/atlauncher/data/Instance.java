@@ -601,17 +601,10 @@ public class Instance extends MinecraftVersion {
 
         // download Java runtime
         PerformanceManager.start("Java Runtime");
-        if (javaVersion != null && Data.JAVA_RUNTIMES != null && (!OS.isArm() || OS.isMacArm()) && Optional
+        if (javaVersion != null && Data.JAVA_RUNTIMES != null && Optional
                 .ofNullable(launcher.useJavaProvidedByMinecraft).orElse(App.settings.useJavaProvidedByMinecraft)) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
             String runtimeSystemString = JavaRuntimes.getSystem();
-
-            // if the runtime isn't found, try a force refresh of them
-            if (!runtimesForSystem.containsKey(javaVersion.component)) {
-                MinecraftManager.loadJavaRuntimes(true);
-
-                runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
-            }
 
             if (runtimesForSystem.containsKey(javaVersion.component)) {
                 // #. {0} is the version of Java were downloading

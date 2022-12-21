@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Show if Modpacks.ch pack version is Alpha/Beta
 - Add button when allocating more than 8GB ram to explain more
 - Set limits and validation on connection timeout
+- Switch to using own hosted version of Java runtimes to support ARM
 
 ### Fixes
 - Issue with skins not updating after changing them [#671]

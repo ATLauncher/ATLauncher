@@ -435,8 +435,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPathPanel.add(Box.createVerticalStrut(5));
         javaPathPanel.add(javaPathPanelBottom);
 
-        boolean isUsingMinecraftProvidedJava = (!OS.isArm() || OS.isMacArm())
-                && App.settings.useJavaProvidedByMinecraft;
+        boolean isUsingMinecraftProvidedJava = App.settings.useJavaProvidedByMinecraft;
         javaMinecraftProvidedLabel.setVisible(isUsingMinecraftProvidedJava);
         javaPathDummy.setVisible(isUsingMinecraftProvidedJava);
         javaPathLabel.setVisible(!isUsingMinecraftProvidedJava);
@@ -530,7 +529,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         useJavaProvidedByMinecraftLabel = new JLabelWithHover(GetText.tr("Use Java Provided By Minecraft") + "?",
                 HELP_ICON,
                 new HTMLBuilder().center().text(GetText.tr(
-                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing.<br/><br/>This setting cannot be changed if using an ARM based computer as it's not compatable and will not be used."))
+                        "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
                         .build());
         add(useJavaProvidedByMinecraftLabel, gbc);
 
@@ -539,7 +538,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useJavaProvidedByMinecraft = new JCheckBox();
         useJavaProvidedByMinecraft.setSelected(App.settings.useJavaProvidedByMinecraft);
-        useJavaProvidedByMinecraft.setEnabled(!OS.isArm() || OS.isMacArm());
         useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {

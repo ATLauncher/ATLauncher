@@ -103,12 +103,8 @@ public class Launcher {
         NewsManager.loadNews(); // Load the news
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
+        MinecraftManager.loadJavaRuntimes(); // Load info about the different java runtimes
         LWJGLManager.loadLWJGLVersions(); // Load info about the different LWJGL versions
-
-        // Load info about the different java runtimes
-        App.TASKPOOL.execute(() -> {
-            MinecraftManager.loadJavaRuntimes();
-        });
 
         AccountManager.loadAccounts(); // Load the saved Accounts
 
@@ -340,7 +336,7 @@ public class Launcher {
         }
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
-        MinecraftManager.loadJavaRuntimes(force); // Load info about the different java runtimes
+        MinecraftManager.loadJavaRuntimes(); // Load info about the different java runtimes
     }
 
     public void reloadLauncherData() {

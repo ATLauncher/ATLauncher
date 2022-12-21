@@ -1033,10 +1033,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     })
                                     .findFirst();
 
-                    int curseProjectId = ((file.curseforge == null || file.curseforge.project == null || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
+                    int curseProjectId = ((file.curseforge == null || file.curseforge.project == null
+                            || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
                             && modInfo.get().curseProject != null) ? modInfo.get().curseProject
                                     : file.curseforge.project;
-                    int curseFileId = ((file.curseforge == null || file.curseforge.project == null || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
+                    int curseFileId = ((file.curseforge == null || file.curseforge.project == null
+                            || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
                             && modInfo.get().curseFile != null) ? modInfo.get().curseFile : file.curseforge.file;
 
                     CurseForgeProject curseForgeProject = Optional
@@ -2008,8 +2010,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         new Thread(() -> {
             try {
                 Path javaPath = Paths.get(OS.getJavaHome());
-                if (minecraftVersion.javaVersion != null && (!OS.isArm() || OS.isMacArm())
-                        && App.settings.useJavaProvidedByMinecraft) {
+                if (minecraftVersion.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
                     Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES
                             .resolve(minecraftVersion.javaVersion.component)
                             .resolve(JavaRuntimes.getSystem()).resolve(minecraftVersion.javaVersion.component);
@@ -2482,19 +2483,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         addPercent(5);
 
         if (minecraftVersion.javaVersion == null || Data.JAVA_RUNTIMES == null
-                || (OS.isArm() && !OS.isMacArm()) || !App.settings.useJavaProvidedByMinecraft) {
+                || !App.settings.useJavaProvidedByMinecraft) {
             return;
         }
 
         Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
         String runtimeSystemString = JavaRuntimes.getSystem();
-
-        // if the runtime isn't found, try a force refresh of them
-        if (!runtimesForSystem.containsKey(minecraftVersion.javaVersion.component)) {
-            MinecraftManager.loadJavaRuntimes(true);
-
-            runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
-        }
 
         if (runtimesForSystem.containsKey(minecraftVersion.javaVersion.component)) {
             fireTask(GetText.tr("Downloading Java Runtime {0}", minecraftVersion.javaVersion.majorVersion));
