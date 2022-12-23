@@ -54,6 +54,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.text.DefaultEditorKit;
 
+import com.atlauncher.utils.ArgumentCleaner;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -254,10 +255,11 @@ public class App {
      * @param args all the arguments passed in from the command line
      */
     public static void main(String[] args) {
-        PASSED_ARGS = args;
+        String[] cleanedArguments = ArgumentCleaner.clean(args);
+        PASSED_ARGS = cleanedArguments;
 
         // Parse all the command line arguments
-        parseCommandLineArguments(args);
+        parseCommandLineArguments(cleanedArguments);
 
         // Initialize the error reporting unless disabled by command line
         if (!disableErrorReporting) {
@@ -330,7 +332,7 @@ public class App {
         }
 
         // log out the system information to the console
-        logSystemInformation(args);
+        logSystemInformation(cleanedArguments);
 
         LogManager.info("Showing splash screen and loading everything");
         launcher.loadEverything(); // Loads everything that needs to be loaded
