@@ -17,6 +17,7 @@
  */
 package com.atlauncher;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -29,20 +30,70 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class FileSystem {
+    /**
+     * Enforce compliant linux directory usage
+     */
+    public static boolean USE_XDG = false;
+
+    /**
+     * Enumeration for XDG Base Directories
+     */
+    private enum XDG {
+        /**
+         * User-specific configuration files
+         */
+        CONFIG("XDG_CONFIG_HOME", "$HOME/.local/share"),
+        /**
+         * User-specific data
+         */
+        DATA("XDG_DATA_HOME", "$HOME/.config"),
+        /**
+         * Non-essential user-specific data
+         */
+        CACHE("XDG_CACHE_HOME", " $HOME/.local/state");
+        /**
+         * Environment key to check
+         */
+        final String value;
+
+        /**
+         * Directory that should be used by default
+         */
+        final String defaultValue;
+
+        XDG(String value, String defaultValue) {
+            this.value = value;
+            this.defaultValue = defaultValue;
+        }
+    }
+
     private static Path CACHED_USER_DOWNLOADS = null;
     public static final Path BASE_DIR = FileSystem.getCoreGracefully();
-    public static final Path LOGS = BASE_DIR.resolve("logs");
-    public static final Path BACKUPS = BASE_DIR.resolve("backups");
-    public static final Path CACHE = BASE_DIR.resolve("cache");
+
+    public static final Path LOGS =
+        resolveDirectory(XDG.DATA, "logs", BASE_DIR.resolve("logs"));
+
+    public static final Path BACKUPS =
+        resolveDirectory(XDG.DATA, "backups", BASE_DIR.resolve("backups"));
+
+    public static final Path CACHE =
+        resolveDirectory(XDG.CACHE, null, BASE_DIR.resolve("cache"));
     public static final Path APOLLO_CACHE = CACHE.resolve("apolloCache");
     public static final Path REMOTE_IMAGE_CACHE = CACHE.resolve("remote_image");
-    public static final Path LOADERS = BASE_DIR.resolve("loaders");
-    public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
+
+    public static final Path LOADERS =
+        resolveDirectory(XDG.DATA, "loaders", BASE_DIR.resolve("loaders"));
+
+    public static final Path RUNTIMES =
+        resolveDirectory(XDG.DATA, "runtimes", BASE_DIR.resolve("runtimes"));
     public static final Path MINECRAFT_RUNTIMES = RUNTIMES.resolve("minecraft");
 
-    public static final Path CONFIGS = BASE_DIR.resolve("configs");
+    public static final Path CONFIGS =
+        resolveDirectory(XDG.CONFIG, null, BASE_DIR.resolve("configs"));
     public static final Path COMMON = CONFIGS.resolve("common");
     public static final Path IMAGES = CONFIGS.resolve("images");
     public static final Path SKINS = IMAGES.resolve("skins");
@@ -50,21 +101,31 @@ public final class FileSystem {
     public static final Path MINECRAFT_VERSIONS_JSON = JSON.resolve("minecraft");
     public static final Path THEMES = CONFIGS.resolve("themes");
 
-    public static final Path ASSETS = BASE_DIR.resolve("assets");
+    public static final Path ASSETS =
+        resolveDirectory(XDG.DATA, "assets", BASE_DIR.resolve("assets"));
     public static final Path RESOURCES_LOG_CONFIGS = ASSETS.resolve("log_configs");
     public static final Path RESOURCES_VIRTUAL = ASSETS.resolve("virtual");
     public static final Path RESOURCES_OBJECTS = ASSETS.resolve("objects");
     public static final Path RESOURCES_INDEXES = ASSETS.resolve("indexes");
     public static final Path RESOURCES_VIRTUAL_LEGACY = RESOURCES_VIRTUAL.resolve("legacy");
 
-    public static final Path LIBRARIES = BASE_DIR.resolve("libraries");
+    public static final Path LIBRARIES =
+        resolveDirectory(XDG.DATA, "libraries", BASE_DIR.resolve("libraries"));
 
-    public static final Path DOWNLOADS = BASE_DIR.resolve("downloads");
+    public static final Path DOWNLOADS =
+        resolveDirectory(XDG.DATA, "downloads", BASE_DIR.resolve("downloads"));
     public static final Path TECHNIC_DOWNLOADS = DOWNLOADS.resolve("technic");
-    public static final Path INSTANCES = BASE_DIR.resolve("instances");
-    public static final Path SERVERS = BASE_DIR.resolve("servers");
-    public static final Path TEMP = BASE_DIR.resolve("temp");
-    public static final Path FAILED_DOWNLOADS = BASE_DIR.resolve("faileddownloads");
+
+    public static final Path INSTANCES =
+        resolveDirectory(XDG.DATA, "instances", BASE_DIR.resolve("instances"));
+
+    public static final Path SERVERS =
+        resolveDirectory(XDG.DATA, "servers", BASE_DIR.resolve("servers"));
+
+    public static final Path TEMP = resolveTemp();
+
+    public static final Path FAILED_DOWNLOADS =
+        resolveDirectory(XDG.DATA, "faileddownloads", BASE_DIR.resolve("faileddownloads"));
 
     public static final Path USER_DATA = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
@@ -98,7 +159,7 @@ public final class FileSystem {
             }
 
             Files.copy(FileSystem.class.getResourceAsStream("/legacy-launch-jar"),
-                    legacyLaunchLibrariesJar, StandardCopyOption.REPLACE_EXISTING);
+                legacyLaunchLibrariesJar, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
@@ -142,7 +203,7 @@ public final class FileSystem {
                 return Paths.get(App.settings.customDownloadsPath);
             } catch (Exception e) {
                 LogManager.logStackTrace(
-                        "Problem when reading custom downloads path, defaulting to user downloads folder.", e);
+                    "Problem when reading custom downloads path, defaulting to user downloads folder.", e);
             }
         }
 
@@ -153,9 +214,9 @@ public final class FileSystem {
         try {
             if (OS.isWindows()) {
                 String output = Utils.runProcess("reg", "query",
-                        "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "/f",
-                        "{374DE290-123F-4565-9164-39C4925E467B}", "/t",
-                        "REG_EXPAND_SZ", "/s");
+                    "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "/f",
+                    "{374DE290-123F-4565-9164-39C4925E467B}", "/t",
+                    "REG_EXPAND_SZ", "/s");
 
                 for (String line : output.split("\\r?\\n")) {
                     if (line.contains("REG_EXPAND_SZ")) {
@@ -214,7 +275,7 @@ public final class FileSystem {
 
             // case insensitive file systems
             if (Files.exists(to) && Files.isSameFile(from, to)
-                    && to.toRealPath().getFileName().toString().equals(from.getFileName().toString())) {
+                && to.toRealPath().getFileName().toString().equals(from.getFileName().toString())) {
                 needToMove = true;
             }
 
@@ -273,7 +334,7 @@ public final class FileSystem {
             try {
                 return Paths.get(
                         App.class.getProtectionDomain().getCodeSource().getLocation().toURI().getSchemeSpecificPart())
-                        .getParent();
+                    .getParent();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
                 return Paths.get(System.getProperty("user.dir"), Constants.LAUNCHER_NAME);
@@ -282,4 +343,53 @@ public final class FileSystem {
             return Paths.get(System.getProperty("user.dir"));
         }
     }
+
+    /**
+     * Attempt to resolve the directory
+     *
+     * @param xdg         Directory as specified by XDG Base Directories
+     * @param subDir      If set, a subdirectory will be used
+     * @param defaultPath Directory to fall back on
+     * @return Resolved directory
+     */
+    private static Path resolveDirectory(@NotNull XDG xdg, @Nullable String subDir, @NotNull Path defaultPath) {
+        // Only resolve compliance when enabled
+        if (USE_XDG) {
+            String envPath = System.getenv(xdg.value);
+
+            if (!envPath.isEmpty()) {
+                File envDir = new File(envPath, Constants.LAUNCHER_NAME);
+
+                // Append sub dir
+                if (subDir != null)
+                    envDir = new File(envDir, subDir);
+
+                return envDir.toPath();
+            } else {
+                // XDG is not set, attempting compliant
+                File compliantDefault = new File(xdg.defaultValue, Constants.LAUNCHER_NAME);
+
+                // Append sub dir
+                if (subDir != null)
+                    compliantDefault = new File(compliantDefault, subDir);
+
+                return compliantDefault.toPath();
+            }
+        }
+        return defaultPath;
+    }
+
+    /**
+     * Resolve the temp directory.
+     * On linux, there is a dedicated temp directory that clears out.
+     *
+     * @return temp directory to use
+     */
+    private static Path resolveTemp() {
+        if (USE_XDG) {
+            return new File("/tmp", "ATLauncher").toPath();
+        }
+        return BASE_DIR.resolve("temp");
+    }
+
 }

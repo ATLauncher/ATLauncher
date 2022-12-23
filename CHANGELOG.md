@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.28.2O
 
 ### New Features
+- Add flag to use XDG Base Directories
 
 ### Fixes
 - Make Console sizing a bit more responsive and flexible with sizes

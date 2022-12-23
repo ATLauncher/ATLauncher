@@ -99,6 +99,7 @@ import oshi.software.os.OperatingSystem;
  * application is launched.
  */
 public class App {
+    private static String OPTION_XDG_DIR = "use-xdg-dirs";
     public static String[] PASSED_ARGS;
 
     /**
@@ -898,6 +899,9 @@ public class App {
         parser.accepts("proxy-port", "The port of the proxy to use.").withRequiredArg().ofType(Integer.class);
         parser.accepts("config-override", "A JSON string to override the launchers config.").withRequiredArg()
                 .ofType(String.class);
+        parser.accepts(OPTION_XDG_DIR,"Use XDG base directories on linux")
+            .withOptionalArg()
+            .ofType(Boolean.class);
         parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
 
         OptionSet options = parser.parse(args);
@@ -1026,5 +1030,7 @@ public class App {
 
             LogManager.warn("Config overridden: " + configOverride);
         }
+
+        FileSystem.USE_XDG = options.has(OPTION_XDG_DIR) && OS.isLinux();
     }
 }
