@@ -1031,6 +1031,13 @@ public class App {
             LogManager.warn("Config overridden: " + configOverride);
         }
 
-        FileSystem.IS_PORTABLE = options.has(OPTION_PORTABLE);
+        IS_PORTABLE = options.has(OPTION_PORTABLE);
     }
+
+
+    /**
+     * Run the launcher in portable mode,
+     * with all directories in a single folder.
+     */
+    public static boolean IS_PORTABLE = false;
 }

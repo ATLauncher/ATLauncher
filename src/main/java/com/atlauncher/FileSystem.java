@@ -34,11 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class FileSystem {
-    /**
-     * Run the launcher in portable mode,
-     * with all directories in a single folder.
-     */
-    public static boolean IS_PORTABLE = false;
 
     /**
      * If the launcher should use XDG Compliant directories
@@ -46,7 +41,7 @@ public final class FileSystem {
      * @return false if in portable more, true when on linux and not portable
      */
     private static boolean useXdg() {
-        return !IS_PORTABLE && OS.isLinux();
+        return !App.IS_PORTABLE && OS.isLinux();
     }
 
     /**
