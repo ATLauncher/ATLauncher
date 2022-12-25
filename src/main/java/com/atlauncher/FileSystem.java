@@ -44,6 +44,10 @@ public final class FileSystem {
         return !App.IS_PORTABLE && OS.isLinux();
     }
 
+    private static String getHomeDir() {
+        return System.getProperty("user.home");
+    }
+
     /**
      * Enumeration for XDG Base Directories
      */
@@ -51,15 +55,15 @@ public final class FileSystem {
         /**
          * User-specific configuration files
          */
-        CONFIG("XDG_CONFIG_HOME", "~/.local/share"),
+        CONFIG("XDG_CONFIG_HOME", getHomeDir() + "/.config"),
         /**
          * User-specific data
          */
-        DATA("XDG_DATA_HOME", "~/.config"),
+        DATA("XDG_DATA_HOME", getHomeDir() + "/.local/share"),
         /**
          * Non-essential user-specific data
          */
-        CACHE("XDG_CACHE_HOME", "~/.local/state");
+        CACHE("XDG_CACHE_HOME", getHomeDir() + "/.cache");
         /**
          * Environment key to check
          */
@@ -272,7 +276,7 @@ public final class FileSystem {
             LogManager.logStackTrace("Problem when reading in registry", e);
         }
 
-        CACHED_USER_DOWNLOADS = Paths.get(System.getProperty("user.home"), "Downloads");
+        CACHED_USER_DOWNLOADS = Paths.get(getHomeDir(), "Downloads");
         return CACHED_USER_DOWNLOADS;
     }
 
