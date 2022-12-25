@@ -36,12 +36,13 @@ import org.jetbrains.annotations.Nullable;
 public final class FileSystem {
     /**
      * Run the launcher in portable mode,
-     *  with all directories in a single folder.
+     * with all directories in a single folder.
      */
     public static boolean IS_PORTABLE = false;
 
     /**
-     * If should use XDG Compliant directories
+     * If the launcher should use XDG Compliant directories
+     *
      * @return false if in portable more, true when on linux and not portable
      */
     private static boolean useXdg() {
@@ -83,26 +84,32 @@ public final class FileSystem {
     private static Path CACHED_USER_DOWNLOADS = null;
     public static final Path BASE_DIR = FileSystem.getCoreGracefully();
 
+    private static final Path B_LOGS = BASE_DIR.resolve("logs");
     public static final Path LOGS =
-        resolveDirectory(XDG.DATA, "logs", BASE_DIR.resolve("logs"));
+        resolveDirectory(XDG.DATA, "logs", B_LOGS);
 
+    private static final Path B_BACKUPS = BASE_DIR.resolve("backups");
     public static final Path BACKUPS =
-        resolveDirectory(XDG.DATA, "backups", BASE_DIR.resolve("backups"));
+        resolveDirectory(XDG.DATA, "backups", B_BACKUPS);
 
+    private static final Path B_CACHE = BASE_DIR.resolve("cache");
     public static final Path CACHE =
-        resolveDirectory(XDG.CACHE, null, BASE_DIR.resolve("cache"));
+        resolveDirectory(XDG.CACHE, null, B_CACHE);
     public static final Path APOLLO_CACHE = CACHE.resolve("apolloCache");
     public static final Path REMOTE_IMAGE_CACHE = CACHE.resolve("remote_image");
 
+    private static final Path B_LOADERS = BASE_DIR.resolve("loaders");
     public static final Path LOADERS =
-        resolveDirectory(XDG.DATA, "loaders", BASE_DIR.resolve("loaders"));
+        resolveDirectory(XDG.DATA, "loaders", B_LOADERS);
 
+    private static final Path B_RUNTIMES = BASE_DIR.resolve("runtimes");
     public static final Path RUNTIMES =
-        resolveDirectory(XDG.DATA, "runtimes", BASE_DIR.resolve("runtimes"));
+        resolveDirectory(XDG.DATA, "runtimes", B_RUNTIMES);
     public static final Path MINECRAFT_RUNTIMES = RUNTIMES.resolve("minecraft");
 
+    private static final Path B_CONFIGS = BASE_DIR.resolve("configs");
     public static final Path CONFIGS =
-        resolveDirectory(XDG.CONFIG, null, BASE_DIR.resolve("configs"));
+        resolveDirectory(XDG.CONFIG, null, B_CONFIGS);
     public static final Path COMMON = CONFIGS.resolve("common");
     public static final Path IMAGES = CONFIGS.resolve("images");
     public static final Path SKINS = IMAGES.resolve("skins");
@@ -110,31 +117,37 @@ public final class FileSystem {
     public static final Path MINECRAFT_VERSIONS_JSON = JSON.resolve("minecraft");
     public static final Path THEMES = CONFIGS.resolve("themes");
 
+    private static final Path B_ASSETS = BASE_DIR.resolve("assets");
     public static final Path ASSETS =
-        resolveDirectory(XDG.DATA, "assets", BASE_DIR.resolve("assets"));
+        resolveDirectory(XDG.DATA, "assets", B_ASSETS);
     public static final Path RESOURCES_LOG_CONFIGS = ASSETS.resolve("log_configs");
     public static final Path RESOURCES_VIRTUAL = ASSETS.resolve("virtual");
     public static final Path RESOURCES_OBJECTS = ASSETS.resolve("objects");
     public static final Path RESOURCES_INDEXES = ASSETS.resolve("indexes");
     public static final Path RESOURCES_VIRTUAL_LEGACY = RESOURCES_VIRTUAL.resolve("legacy");
 
+    private static final Path B_LIBRARIES = BASE_DIR.resolve("libraries");
     public static final Path LIBRARIES =
-        resolveDirectory(XDG.DATA, "libraries", BASE_DIR.resolve("libraries"));
+        resolveDirectory(XDG.DATA, "libraries", B_LIBRARIES);
 
+    private static final Path B_DOWNLOADS = BASE_DIR.resolve("downloads");
     public static final Path DOWNLOADS =
-        resolveDirectory(XDG.DATA, "downloads", BASE_DIR.resolve("downloads"));
+        resolveDirectory(XDG.DATA, "downloads", B_DOWNLOADS);
     public static final Path TECHNIC_DOWNLOADS = DOWNLOADS.resolve("technic");
 
+    private static final Path B_INSTANCES = BASE_DIR.resolve("instances");
     public static final Path INSTANCES =
-        resolveDirectory(XDG.DATA, "instances", BASE_DIR.resolve("instances"));
+        resolveDirectory(XDG.DATA, "instances", B_INSTANCES);
 
+    private static final Path B_SERVERS = BASE_DIR.resolve("servers");
     public static final Path SERVERS =
-        resolveDirectory(XDG.DATA, "servers", BASE_DIR.resolve("servers"));
+        resolveDirectory(XDG.DATA, "servers", B_SERVERS);
 
     public static final Path TEMP = resolveTemp();
 
+    private static final Path B_FAILEDDOWNLOADS = BASE_DIR.resolve("faileddownloads");
     public static final Path FAILED_DOWNLOADS =
-        resolveDirectory(XDG.DATA, "faileddownloads", BASE_DIR.resolve("faileddownloads"));
+        resolveDirectory(XDG.DATA, "faileddownloads", B_FAILEDDOWNLOADS);
 
     public static final Path USER_DATA = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
