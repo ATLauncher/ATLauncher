@@ -170,6 +170,28 @@ public final class FileSystem {
         createDirectories();
 
         copyResourcesOutJar();
+
+        moveToXDG();
+    }
+
+    /**
+     * Move directories to XDG
+     */
+    private static void moveToXDG() {
+        if (useXdg()) {
+            renameDirectory(B_LOGS, LOGS);
+            renameDirectory(B_BACKUPS, BACKUPS);
+            renameDirectory(B_CACHE, CACHE);
+            renameDirectory(B_LOADERS, LOADERS);
+            renameDirectory(B_RUNTIMES, RUNTIMES);
+            renameDirectory(B_CONFIGS, CONFIGS);
+            renameDirectory(B_ASSETS, ASSETS);
+            renameDirectory(B_LIBRARIES, LIBRARIES);
+            renameDirectory(B_DOWNLOADS, DOWNLOADS);
+            renameDirectory(B_INSTANCES, INSTANCES);
+            renameDirectory(B_SERVERS, SERVERS);
+            renameDirectory(B_FAILEDDOWNLOADS, FAILED_DOWNLOADS);
+        }
     }
 
     public static void copyResourcesOutJar() throws IOException {
