@@ -30,3 +30,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Misc
 - Implement view model for InstancesTab [#675]
 - Implement view model for ServersTab [#674]
+- Add `xrandr` as a dependency for RPM [#691]
