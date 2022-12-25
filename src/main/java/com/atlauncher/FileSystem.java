@@ -401,7 +401,7 @@ public final class FileSystem {
         if (useXdg()) {
             String envPath = System.getenv(xdg.value);
 
-            if (!envPath.isEmpty()) {
+            if (envPath != null && !envPath.isEmpty()) {
                 File envDir = new File(envPath, Constants.LAUNCHER_NAME);
 
                 // Append sub dir
