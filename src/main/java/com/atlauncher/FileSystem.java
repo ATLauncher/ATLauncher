@@ -35,9 +35,18 @@ import org.jetbrains.annotations.Nullable;
 
 public final class FileSystem {
     /**
-     * Enforce compliant linux directory usage
+     * Run the launcher in portable mode,
+     *  with all directories in a single folder.
      */
-    public static boolean USE_XDG = false;
+    public static boolean IS_PORTABLE = false;
+
+    /**
+     * If should use XDG Compliant directories
+     * @return false if in portable more, true when on linux and not portable
+     */
+    private static boolean useXdg() {
+        return !IS_PORTABLE && OS.isLinux();
+    }
 
     /**
      * Enumeration for XDG Base Directories
@@ -354,7 +363,7 @@ public final class FileSystem {
      */
     private static Path resolveDirectory(@NotNull XDG xdg, @Nullable String subDir, @NotNull Path defaultPath) {
         // Only resolve compliance when enabled
-        if (USE_XDG) {
+        if (useXdg()) {
             String envPath = System.getenv(xdg.value);
 
             if (!envPath.isEmpty()) {
@@ -386,7 +395,7 @@ public final class FileSystem {
      * @return temp directory to use
      */
     private static Path resolveTemp() {
-        if (USE_XDG) {
+        if (useXdg()) {
             return new File("/tmp", "ATLauncher").toPath();
         }
         return BASE_DIR.resolve("temp");
