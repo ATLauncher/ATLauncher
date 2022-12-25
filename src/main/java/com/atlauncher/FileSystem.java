@@ -56,15 +56,15 @@ public final class FileSystem {
         /**
          * User-specific configuration files
          */
-        CONFIG("XDG_CONFIG_HOME", "$HOME/.local/share"),
+        CONFIG("XDG_CONFIG_HOME", "~/.local/share"),
         /**
          * User-specific data
          */
-        DATA("XDG_DATA_HOME", "$HOME/.config"),
+        DATA("XDG_DATA_HOME", "~/.config"),
         /**
          * Non-essential user-specific data
          */
-        CACHE("XDG_CACHE_HOME", " $HOME/.local/state");
+        CACHE("XDG_CACHE_HOME", "~/.local/state");
         /**
          * Environment key to check
          */
