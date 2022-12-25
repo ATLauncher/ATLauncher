@@ -395,7 +395,7 @@ public final class FileSystem {
      * @param defaultPath Directory to fall back on
      * @return Resolved directory
      */
-    private static Path resolveDirectory(@NotNull XDG xdg, @Nullable String subDir, @NotNull Path defaultPath) {
+    private static @NotNull Path resolveDirectory(@NotNull XDG xdg, @Nullable String subDir, @NotNull Path defaultPath) {
         // Only resolve compliance when enabled
         if (useXdg()) {
             String envPath = System.getenv(xdg.value);
