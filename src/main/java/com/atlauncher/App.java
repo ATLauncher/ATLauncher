@@ -502,10 +502,7 @@ public class App {
             System.exit(0);
         }
 
-        if (Files.exists(FileSystem.BASE_DIR)
-                && (Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
-                && FileSystem.CONFIGS.getParent().toFile().listFiles().length > 1)
-
+        if (FileSystem.isPortablePopulated())
         {
             matched = true;
 

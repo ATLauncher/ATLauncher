@@ -419,6 +419,21 @@ public final class FileSystem {
     }
 
     /**
+     * Checks if the launcher,
+     * while in portable mode,
+     * is in an empty directory.
+     *
+     * @return true if the directory is populated
+     */
+    public static boolean isPortablePopulated() {
+        if (!useXdg()) {
+            return Files.exists(FileSystem.BASE_DIR)
+                && FileSystem.BASE_DIR.toFile().listFiles().length > 1;
+        }
+        return false;
+    }
+
+    /**
      * Resolve the temp directory.
      * On linux, there is a dedicated temp directory that clears out.
      *
