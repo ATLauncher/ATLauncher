@@ -432,6 +432,7 @@ public final class FileSystem {
     public static boolean isPortablePopulated() {
         if (!useXdg()) {
             return Files.exists(FileSystem.BASE_DIR)
+                && Files.notExists(FileSystem.CONFIGS)
                 && FileSystem.BASE_DIR.toFile().listFiles().length > 2;
         }
         return false;
