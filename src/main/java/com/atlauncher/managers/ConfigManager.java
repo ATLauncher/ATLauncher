@@ -100,6 +100,10 @@ public class ConfigManager {
             Object data = source.get(keyParts[0]);
 
             if (keyParts.length == 1) {
+                if (data == null) {
+                    return defaultValue;
+                }
+
                 return (T) data;
             }
 
