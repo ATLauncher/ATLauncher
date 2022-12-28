@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add button when allocating more than 8GB ram to explain more
 - Set limits and validation on connection timeout
 - Switch to using own hosted version of Java runtimes to support ARM
+- Add ability to specify base Java install folder to scan for Java installs
 
 ### Fixes
 - Issue with skins not updating after changing them [#671]
