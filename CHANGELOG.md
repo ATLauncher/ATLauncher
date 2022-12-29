@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Set limits and validation on connection timeout
 - Switch to using own hosted version of Java runtimes to support ARM
 - Add ability to specify base Java install folder to scan for Java installs
+- Add in revision of executable/git to launcher version
 
 ### Fixes
 - Issue with skins not updating after changing them [#671]

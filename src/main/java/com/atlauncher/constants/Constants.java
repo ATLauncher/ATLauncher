@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LauncherVersion;
+import com.atlauncher.utils.OS;
 
 public class Constants {
     static {
@@ -40,7 +41,8 @@ public class Constants {
         }
 
         VERSION = new LauncherVersion(Integer.parseInt(versionParts[0]), Integer.parseInt(versionParts[1]),
-                Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream);
+                Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream,
+                OS.getRunningProgramHashCode());
     }
 
     // Launcher config

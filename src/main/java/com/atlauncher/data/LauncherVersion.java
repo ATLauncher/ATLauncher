@@ -20,6 +20,8 @@ package com.atlauncher.data;
 import java.util.Locale;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.utils.Hashing;
+import com.google.common.hash.HashCode;
 
 @Json
 public class LauncherVersion {
@@ -28,17 +30,19 @@ public class LauncherVersion {
     private final int minor;
     private final int revision;
     private final String stream;
+    private final HashCode sha1Revision;
 
     public LauncherVersion(int reserved, int major, int minor, int revision) {
-        this(reserved, major, minor, revision, "Release");
+        this(reserved, major, minor, revision, "Release", Hashing.EMPTY_HASH_CODE);
     }
 
-    public LauncherVersion(int reserved, int major, int minor, int revision, String stream) {
+    public LauncherVersion(int reserved, int major, int minor, int revision, String stream, HashCode sha1Revision) {
         this.reserved = reserved;
         this.major = major;
         this.minor = minor;
         this.revision = revision;
         this.stream = stream;
+        this.sha1Revision = sha1Revision;
     }
 
     public int getReserved() {
@@ -98,27 +102,32 @@ public class LauncherVersion {
     @Override
     public String toString() {
         if (this.isReleaseStream()) {
-            return String.format("%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
+            return String.format("%d.%d.%d.%d [%s]", this.reserved, this.major, this.minor, this.revision,
+                    this.sha1Revision);
         }
 
-        return String.format("%d.%d.%d.%d %s", this.reserved, this.major, this.minor, this.revision, this.stream);
+        return String.format("%d.%d.%d.%d %s [%s]", this.reserved, this.major, this.minor, this.revision, this.stream,
+                this.sha1Revision);
     }
 
     public String toStringForLogging() {
         if (this.isReleaseStream()) {
-            return String.format(Locale.ENGLISH, "%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
+            return String.format(Locale.ENGLISH, "%d.%d.%d.%d", this.reserved, this.major, this.minor,
+                    this.revision);
         }
 
-        return String.format(Locale.ENGLISH, "%d.%d.%d.%d %s", this.reserved, this.major, this.minor, this.revision,
-                this.stream);
+        return String.format(Locale.ENGLISH, "%d.%d.%d.%d %s", this.reserved, this.major, this.minor,
+                this.revision, this.stream);
     }
 
     public String toStringForUserAgent() {
         if (this.isReleaseStream()) {
-            return String.format(Locale.ENGLISH, "%d.%d.%d.%d", this.reserved, this.major, this.minor, this.revision);
+            return String.format(Locale.ENGLISH, "%d.%d.%d.%d [%s]", this.reserved, this.major, this.minor,
+                    this.revision, this.sha1Revision);
         }
 
-        return String.format(Locale.ENGLISH, "%d.%d.%d.%d.%s", this.reserved, this.major, this.minor, this.revision,
-                this.stream);
+        return String.format(Locale.ENGLISH, "%d.%d.%d.%d.%s [%s]", this.reserved, this.major, this.minor,
+                this.revision,
+                this.stream, this.sha1Revision);
     }
 }

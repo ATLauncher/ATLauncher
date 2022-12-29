@@ -22,37 +22,45 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import com.atlauncher.utils.Hashing;
+
 public class LauncherVersionTest {
 
-    private static final LauncherVersion testVersion = new LauncherVersion(1, 0, 0, 0, "Release");
+    private static final LauncherVersion testVersion = new LauncherVersion(1, 0, 0, 0, "Release",
+            Hashing.EMPTY_HASH_CODE);
 
     @Test
     public void test() {
         // Test same version - no update
         assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
-                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test older Reserved - launcher had a big update
         assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved() + 1, testVersion.getMajor(),
-                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test older Major - launcher had major update
         assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor() + 1,
-                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test older Minor - launcher had minor update
         assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
-                testVersion.getMinor() + 1, testVersion.getRevision(), testVersion.getStream())));
+                testVersion.getMinor() + 1, testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test older Revision - launcher had a bug fix
         assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
-                testVersion.getMinor(), testVersion.getRevision() + 1, testVersion.getStream())));
+                testVersion.getMinor(), testVersion.getRevision() + 1, testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test user has a beta stream but the real stream comes out
         LauncherVersion betaBuild = new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
-                testVersion.getMinor(), testVersion.getRevision(), "Beta");
+                testVersion.getMinor(), testVersion.getRevision(), "Beta", Hashing.EMPTY_HASH_CODE);
         LauncherVersion releaseBuild = new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
-                testVersion.getMinor(), testVersion.getRevision(), "Release");
+                testVersion.getMinor(), testVersion.getRevision(), "Release", Hashing.EMPTY_HASH_CODE);
         assertTrue(betaBuild.needsUpdate(releaseBuild));
 
         // Test user has a release stream but a beta build comes out
@@ -60,19 +68,23 @@ public class LauncherVersionTest {
 
         // Test newer Reserved - launcher dev version
         assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved() - 1, testVersion.getMajor(),
-                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test newer Major - launcher dev version
         assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor() - 1,
-                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream())));
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test newer Minor - launcher dev version
         assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
-                testVersion.getMinor() - 1, testVersion.getRevision(), testVersion.getStream())));
+                testVersion.getMinor() - 1, testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
         // Test newer Revision - launcher dev version
         assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
-                testVersion.getMinor(), testVersion.getRevision() - 1, testVersion.getStream())));
+                testVersion.getMinor(), testVersion.getRevision() - 1, testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
     }
 
 }
