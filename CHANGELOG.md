@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.28.2O
 
 ### New Features
+- Add support for semantic versioning
 
 ### Fixes
 - Make Console sizing a bit more responsive and flexible with sizes
