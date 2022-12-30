@@ -20,10 +20,7 @@ package com.atlauncher;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
@@ -160,6 +157,8 @@ public final class FileSystem {
      * @throws IOException
      */
     public static void organise() throws IOException {
+        moveToXDG();
+
         deleteOldThings();
 
         cleanTempDirectory();
@@ -169,27 +168,28 @@ public final class FileSystem {
         createDirectories();
 
         copyResourcesOutJar();
-
-        moveToXDG();
     }
 
     /**
      * Move directories to XDG
      */
-    private static void moveToXDG() {
+    private static void moveToXDG() throws IOException {
         if (useXdg()) {
-            renameDirectory(B_LOGS, LOGS);
-            renameDirectory(B_BACKUPS, BACKUPS);
-            renameDirectory(B_CACHE, CACHE);
-            renameDirectory(B_LOADERS, LOADERS);
-            renameDirectory(B_RUNTIMES, RUNTIMES);
-            renameDirectory(B_CONFIGS, CONFIGS);
-            renameDirectory(B_ASSETS, ASSETS);
-            renameDirectory(B_LIBRARIES, LIBRARIES);
-            renameDirectory(B_DOWNLOADS, DOWNLOADS);
-            renameDirectory(B_INSTANCES, INSTANCES);
-            renameDirectory(B_SERVERS, SERVERS);
-            renameDirectory(B_FAILEDDOWNLOADS, FAILED_DOWNLOADS);
+            for (XDG xdg : XDG.values()) {
+                resolveDirectory(xdg, null, Path.of(xdg.defaultValue)).toFile().mkdirs();
+            }
+            Files.move(B_LOGS, LOGS);
+            Files.move(B_BACKUPS, BACKUPS);
+            Files.move(B_CACHE, CACHE);
+            Files.move(B_LOADERS, LOADERS);
+            Files.move(B_RUNTIMES, RUNTIMES);
+            Files.move(B_CONFIGS, CONFIGS);
+            Files.move(B_ASSETS, ASSETS);
+            Files.move(B_LIBRARIES, LIBRARIES);
+            Files.move(B_DOWNLOADS, DOWNLOADS);
+            Files.move(B_INSTANCES, INSTANCES);
+            Files.move(B_SERVERS, SERVERS);
+            Files.move(B_FAILEDDOWNLOADS, FAILED_DOWNLOADS);
         }
     }
 
