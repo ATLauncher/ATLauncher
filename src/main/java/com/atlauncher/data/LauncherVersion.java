@@ -22,21 +22,22 @@ import java.util.Locale;
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Hashing;
 import com.google.common.hash.HashCode;
+import org.jetbrains.annotations.Nullable;
 
 @Json
 public class LauncherVersion {
-    private final int reserved;
+    private final @Nullable Integer reserved;
     private final int major;
     private final int minor;
     private final int revision;
     private final String stream;
     private final HashCode sha1Revision;
 
-    public LauncherVersion(int reserved, int major, int minor, int revision) {
+    public LauncherVersion(@Nullable Integer reserved, int major, int minor, int revision) {
         this(reserved, major, minor, revision, "Release", Hashing.EMPTY_HASH_CODE);
     }
 
-    public LauncherVersion(int reserved, int major, int minor, int revision, String stream, HashCode sha1Revision) {
+    public LauncherVersion(@Nullable Integer reserved, int major, int minor, int revision, String stream, HashCode sha1Revision) {
         this.reserved = reserved;
         this.major = major;
         this.minor = minor;
@@ -45,7 +46,7 @@ public class LauncherVersion {
         this.sha1Revision = sha1Revision;
     }
 
-    public int getReserved() {
+    public @Nullable Integer getReserved() {
         return this.reserved;
     }
 
@@ -74,30 +75,38 @@ public class LauncherVersion {
     }
 
     public boolean needsUpdate(LauncherVersion toThis) {
-        if (this.reserved > toThis.getReserved()) {
+        if (reserved != null && toThis.getReserved() != null) {
+            if (this.reserved > toThis.getReserved()) {
+                return false;
+            } else if (this.reserved < toThis.getReserved()) {
+                return true;
+            }
+        } else {
+            // Because the other one has it null, and this one is not.
+            // This is clearly older (not using semver).
+            if (reserved != null && toThis.getReserved() == null) {
+                return true;
+            }
+        }
+
+        if (this.major > toThis.getMajor()) {
             return false;
-        } else if (this.reserved < toThis.getReserved()) {
+        } else if (this.major < toThis.getMajor()) {
             return true;
         } else {
-            if (this.major > toThis.getMajor()) {
+            if (this.minor > toThis.getMinor()) {
                 return false;
-            } else if (this.major < toThis.getMajor()) {
+            } else if (this.minor < toThis.getMinor()) {
                 return true;
             } else {
-                if (this.minor > toThis.getMinor()) {
+                if (this.revision > toThis.getRevision()) {
                     return false;
-                } else if (this.minor < toThis.getMinor()) {
+                } else if (this.revision < toThis.getRevision()) {
                     return true;
                 } else {
-                    if (this.revision > toThis.getRevision()) {
-                        return false;
-                    } else if (this.revision < toThis.getRevision()) {
-                        return true;
-                    } else {
-                        // if versions are the same, update if current version is not a release stream
-                        // but new version is in release stream
-                        return !this.isReleaseStream() && toThis.isReleaseStream();
-                    }
+                    // if versions are the same, update if current version is not a release stream
+                    // but new version is in release stream
+                    return !this.isReleaseStream() && toThis.isReleaseStream();
                 }
             }
         }

@@ -33,16 +33,42 @@ public class Constants {
                 .collect(Collectors.joining("")).trim();
         String[] versionParts = versionFromFile.split("\\.", 4);
 
+        String reservedS, majorS, minorS, patchS;
         String stream = "Release";
 
-        if (versionParts[3].endsWith(".Beta")) {
-            versionParts[3] = versionParts[3].replace(".Beta", "");
-            stream = "Beta";
+        if (versionParts.length == 3) {
+            reservedS = null;
+            majorS = versionParts[0];
+            minorS = versionParts[1];
+            patchS = versionParts[2];
+        } else {
+            reservedS = versionParts[0];
+            majorS = versionParts[1];
+            minorS = versionParts[2];
+            patchS = versionParts[3];
         }
 
-        VERSION = new LauncherVersion(Integer.parseInt(versionParts[0]), Integer.parseInt(versionParts[1]),
-                Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream,
-                OS.getRunningProgramHashCode());
+
+        if (patchS.endsWith(".Beta")) {
+            patchS = patchS.replace(".Beta", "");
+            stream = "Beta";
+        }
+        Integer reserved;
+
+        if (reservedS == null) {
+            reserved = null;
+        } else {
+            reserved = Integer.parseInt(reservedS);
+        }
+
+        VERSION = new LauncherVersion(
+            reserved,
+            Integer.parseInt(majorS),
+            Integer.parseInt(minorS),
+            Integer.parseInt(patchS),
+            stream,
+            OS.getRunningProgramHashCode()
+        );
     }
 
     // Launcher config
