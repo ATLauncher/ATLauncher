@@ -334,7 +334,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             filesDropdown.removeAllItems();
 
-            // try to filter out non compatable mods (Forge on Fabric and vice versa) if no
+            // try to filter out non compatible mods (Forge on Fabric and vice versa) if no
             // loader gameVersions are set
             if (App.settings.addModRestriction == AddModRestriction.NONE) {
                 files.forEach(version -> filesDropdown.addItem(version));

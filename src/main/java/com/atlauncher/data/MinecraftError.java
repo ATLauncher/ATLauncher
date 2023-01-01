@@ -65,7 +65,7 @@ public class MinecraftError {
     static void showUsingNewerJavaThan8Popup() {
         int ret = DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
                 .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Minecraft has crashed due to not being compatable with your Java version.<br/><br/>Most modded Minecraft is only compatable with Java 8, so you must install Java 8 on your computer."))
+                        "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>Most modded Minecraft is only compatible with Java 8, so you must install Java 8 on your computer."))
                         .build())
                 .addOption(GetText.tr("Download Java 8"), true).setType(DialogManager.INFO).show();
 
@@ -77,7 +77,7 @@ public class MinecraftError {
     static void showNeedToUseJava16OrNewerPopup() {
         DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
                 .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Minecraft has crashed due to not being compatable with your Java version.<br/><br/>This version of Minecraft requires Java 16 or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting.<br/><br/>If it's still not working, you may be using a mod that requires Java 16,<br/>but Minecraft only requires Java 8, so you'll need to uncheck the<br/>\"Use Java Provided By Minecraft\" setting for the instance and<br/>manually provide a path to a Java 16 (or newer) install."))
+                        "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>This version of Minecraft requires Java 16 or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting.<br/><br/>If it's still not working, you may be using a mod that requires Java 16,<br/>but Minecraft only requires Java 8, so you'll need to uncheck the<br/>\"Use Java Provided By Minecraft\" setting for the instance and<br/>manually provide a path to a Java 16 (or newer) install."))
                         .build())
                 .setType(DialogManager.INFO).show();
     }

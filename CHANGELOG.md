@@ -29,6 +29,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with Arm based Mac not using Java runtimes [#684]
 - Installing mods from CurseForge with EmbeddedLibrary dependencies not showing it
 - Issue when config key doesn't exist
+- Some small spelling errors
 
 ### Misc
 - Implement view model for InstancesTab [#675]

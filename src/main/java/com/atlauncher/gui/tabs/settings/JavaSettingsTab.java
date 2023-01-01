@@ -556,7 +556,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(GetText.tr("Ignore Java Checks On Launch") + "?",
                 HELP_ICON, GetText.tr(
-                        "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
+                        "This enables ignoring errors when launching a pack that you don't have a compatible Java version for."));
         add(ignoreJavaOnInstanceLaunchLabel, gbc);
 
         gbc.gridx++;
@@ -761,7 +761,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
         this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java Checks On Launch") + "?");
         this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(
-                "This enables ignoring errors when launching a pack that you don't have a compatable Java version for."));
+                "This enables ignoring errors when launching a pack that you don't have a compatible Java version for."));
 
         this.useJavaProvidedByMinecraftLabel.setText(GetText.tr("Use Java Provided By Minecraft") + "?");
         this.useJavaProvidedByMinecraftLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
