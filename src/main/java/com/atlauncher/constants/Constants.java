@@ -59,6 +59,7 @@ public class Constants {
     public static String BASE_LAUNCHER_PROTOCOL = "https://";
     public static String BASE_LAUNCHER_DOMAIN = "atlauncher.com";
     public static String API_BASE_URL = BASE_LAUNCHER_PROTOCOL + "api." + BASE_LAUNCHER_DOMAIN + "/v1/launcher/";
+    public static String GRAPHQL_ENDPOINT = BASE_LAUNCHER_PROTOCOL + "api." + BASE_LAUNCHER_DOMAIN + "/v2/graphql";
     public static String API_HOST = "api." + BASE_LAUNCHER_DOMAIN;
     public static String PASTE_CHECK_URL = BASE_LAUNCHER_PROTOCOL + "paste." + BASE_LAUNCHER_DOMAIN;
     public static String PASTE_HOST = "paste." + BASE_LAUNCHER_DOMAIN;

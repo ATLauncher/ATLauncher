@@ -32,6 +32,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.apollographql.apollo.ApolloClientAwarenessInterceptor;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.listener.ProgressListener;
@@ -61,6 +62,10 @@ public final class Network {
             .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
             .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
 
+    public static OkHttpClient GRAPHQL_CLIENT = CLIENT.newBuilder()
+            .addInterceptor(new ApolloClientAwarenessInterceptor("Launcher", Constants.VERSION.toStringForLogging()))
+            .build();
+
     public static OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
 
     public static final String ANALYTICS_USER_AGENT = String.format(
@@ -81,6 +86,10 @@ public final class Network {
                 .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
 
+        GRAPHQL_CLIENT = GRAPHQL_CLIENT.newBuilder().connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
+
         CACHED_CLIENT = CACHED_CLIENT.newBuilder().connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
@@ -91,6 +100,7 @@ public final class Network {
                 : Arrays.asList(Protocol.HTTP_2, Protocol.HTTP_1_1);
 
         CLIENT = CLIENT.newBuilder().protocols(protocols).build();
+        GRAPHQL_CLIENT = GRAPHQL_CLIENT.newBuilder().protocols(protocols).build();
         CACHED_CLIENT = CACHED_CLIENT.newBuilder().protocols(protocols).build();
     }
 
@@ -114,6 +124,9 @@ public final class Network {
 
         CLIENT = CLIENT.newBuilder().sslSocketFactory(certificates.sslSocketFactory(), certificates.trustManager())
                 .build();
+
+        GRAPHQL_CLIENT = GRAPHQL_CLIENT.newBuilder()
+                .sslSocketFactory(certificates.sslSocketFactory(), certificates.trustManager()).build();
 
         CACHED_CLIENT = CACHED_CLIENT.newBuilder()
                 .sslSocketFactory(certificates.sslSocketFactory(), certificates.trustManager()).build();
@@ -145,6 +158,15 @@ public final class Network {
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
             CLIENT = CLIENT.newBuilder().sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
+                    .hostnameVerifier(new HostnameVerifier() {
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            return true;
+                        }
+                    }).build();
+
+            GRAPHQL_CLIENT = GRAPHQL_CLIENT.newBuilder()
+                    .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
                     .hostnameVerifier(new HostnameVerifier() {
                         @Override
                         public boolean verify(String hostname, SSLSession session) {

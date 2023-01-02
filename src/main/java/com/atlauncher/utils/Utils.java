@@ -1508,6 +1508,10 @@ public class Utils {
     }
 
     public static boolean matchVersion(String version, String matches, boolean lessThan, boolean equal) {
+        if (version.contains("_")) {
+            return false;
+        }
+
         String[] versionParts = version.split("\\.", 3);
         String[] matchedParts = matches.split("\\.", 2);
 
