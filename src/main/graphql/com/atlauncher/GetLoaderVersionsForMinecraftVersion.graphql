@@ -16,6 +16,9 @@ query GetLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
             serverSha1Hash
             serverSize
         }
+        legacyfabric {
+            version
+        }
         quilt {
             version
         }

@@ -680,15 +680,14 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                                         })
                                         .collect(Collectors.toList()));
                             } else if (selectedLoader == LoaderType.LEGACY_FABRIC) {
-                                // TODO: need to work in backend types
-                                // List<String> disabledVersions = ConfigManager.getConfigItem(
-                                // "loaders.legacyfabric.disabledVersions",
-                                // new ArrayList<String>());
+                                List<String> disabledVersions = ConfigManager.getConfigItem(
+                                        "loaders.legacyfabric.disabledVersions",
+                                        new ArrayList<String>());
 
-                                // loaderVersions.addAll(response.getData().loaderVersions().fabric().stream()
-                                // .filter(fv -> !disabledVersions.contains(fv.version()))
-                                // .map(version -> new LoaderVersion(version.version(), false, "Fabric"))
-                                // .collect(Collectors.toList()));
+                                loaderVersions.addAll(response.getData().loaderVersions().legacyfabric().stream()
+                                        .filter(fv -> !disabledVersions.contains(fv.version()))
+                                        .map(version -> new LoaderVersion(version.version(), false, "Legacy Fabric"))
+                                        .collect(Collectors.toList()));
                             } else if (selectedLoader == LoaderType.QUILT) {
                                 List<String> disabledVersions = ConfigManager.getConfigItem(
                                         "loaders.quilt.disabledVersions",
