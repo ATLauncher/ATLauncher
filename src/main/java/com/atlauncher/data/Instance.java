@@ -107,6 +107,7 @@ import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.FMLLibrariesConstants;
 import com.atlauncher.data.minecraft.loaders.forge.FMLLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
@@ -153,7 +154,9 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -1681,7 +1684,7 @@ public class Instance extends MinecraftVersion {
         manifest.components.add(minecraftComponent);
 
         // fabric loader
-        if (launcher.loaderVersion.type.equals("Fabric")) {
+        if (launcher.loaderVersion.type.equals("Fabric") || launcher.loaderVersion.type.equals("LegacyFabric")) {
             // mappings
             MultiMCComponent fabricMappingsComponent = new MultiMCComponent();
             fabricMappingsComponent.cachedName = "Intermediary Mappings";
@@ -1779,6 +1782,36 @@ public class Instance extends MinecraftVersion {
             FileUtils.deleteDirectory(tempDir);
 
             return false;
+        }
+
+        // if Legacy Fabric, add patch in
+        if (launcher.loaderVersion.type.equals("LegacyFabric")) {
+            FileUtils.createDirectory(tempDir.resolve("patches"));
+
+            JsonObject patch = new JsonObject();
+            patch.addProperty("formatVersion", 1);
+            patch.addProperty("name", "Intermediary Mappings");
+            patch.addProperty("uid", "net.fabricmc.intermediary");
+            patch.addProperty("version", id);
+
+            JsonArray plusLibraries = new JsonArray();
+            JsonObject intermediary = new JsonObject();
+            intermediary.addProperty("name", String.format("net.fabricmc:intermediary:%s", id));
+            intermediary.addProperty("url", Constants.LEGACY_FABRIC_MAVEN);
+            plusLibraries.add(intermediary);
+            patch.add("+libraries", plusLibraries);
+
+            // create net.fabricmc.intermediary.json
+            try (FileWriter fileWriter = new FileWriter(tempDir.resolve("net.fabricmc.intermediary.json").toFile())) {
+                Gsons.MINECRAFT.toJson(patch, fileWriter);
+            } catch (JsonIOException | IOException e) {
+                LogManager.logStackTrace("Failed to save net.fabricmc.intermediary.json", e);
+
+                FileUtils.deleteDirectory(tempDir);
+
+                return false;
+            }
+
         }
 
         // create instance.cfg
@@ -2733,6 +2766,8 @@ public class Instance extends MinecraftVersion {
                 progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
             } else if (loaderType == LoaderType.FORGE) {
                 progressDialog.setReturnValue(ForgeLoader.getChoosableVersions(id));
+            } else if (loaderType == LoaderType.LEGACY_FABRIC) {
+                progressDialog.setReturnValue(LegacyFabricLoader.getChoosableVersions(id));
             } else if (loaderType == LoaderType.QUILT) {
                 progressDialog.setReturnValue(QuiltLoader.getChoosableVersions(id));
             }

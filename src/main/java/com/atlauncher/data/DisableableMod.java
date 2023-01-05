@@ -382,7 +382,8 @@ public class DisableableMod implements Serializable {
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                     if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
                             && (instance.launcher.loaderVersion.isFabric()
-                                    || instance.launcher.loaderVersion.isQuilt())) {
+                            || instance.launcher.loaderVersion.isLegacyFabric()
+                            || instance.launcher.loaderVersion.isQuilt())) {
                         return true;
                     }
 

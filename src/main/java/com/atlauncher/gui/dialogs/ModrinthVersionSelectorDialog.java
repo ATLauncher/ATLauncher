@@ -156,6 +156,14 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                                             return true;
                                         }
 
+                                        // don't show Modrinth dependency when grabbed from CurseForge
+                                        if (dependency.projectId.equals(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)
+                                                && installedMod.isFromCurseForge()
+                                                && installedMod
+                                                        .getCurseForgeFileId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID) {
+                                            return true;
+                                        }
+
                                         // don't show Fabric dependency when QSL is installed
                                         if (dependency.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)
                                                 && installedMod.isFromModrinth()
@@ -360,10 +368,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             if (App.settings.addModRestriction != AddModRestriction.NONE
                     && this.instance.launcher.loaderVersion != null) {
                 modrinthVersionsStream = modrinthVersionsStream
-                        .filter(v -> this.instance.launcher.loaderVersion.isFabric() ? v.loaders.contains("fabric")
-                                : (this.instance.launcher.loaderVersion.isQuilt()
-                                        ? (v.loaders.contains("quilt") || v.loaders.contains("fabric"))
-                                        : v.loaders.contains("forge")));
+                        .filter(v -> (this.instance.launcher.loaderVersion.isFabric()
+                                || this.instance.launcher.loaderVersion.isLegacyFabric()) ? v.loaders.contains("fabric")
+                                        : (this.instance.launcher.loaderVersion.isQuilt()
+                                                ? (v.loaders.contains("quilt") || v.loaders.contains("fabric"))
+                                                : v.loaders.contains("forge")));
             }
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {

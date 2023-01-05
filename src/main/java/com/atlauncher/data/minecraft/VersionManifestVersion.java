@@ -45,6 +45,8 @@ public class VersionManifestVersion {
             .parseDateTime("2017-09-18T08:39:46+00:00");
     public static DateTime release_1_13 = ISODateTimeFormat.dateTimeParser()
             .parseDateTime("2018-07-18T15:11:46+00:00");
+    public static DateTime release_1_13_2 = ISODateTimeFormat.dateTimeParser()
+            .parseDateTime("2018-10-22T11:41:07+00:00");
     public static DateTime release_1_16_3 = ISODateTimeFormat.dateTimeParser()
             .parseDateTime("2020-09-10T13:42:37+00:00");
     public static DateTime release_1_18_1 = ISODateTimeFormat.dateTimeParser()
@@ -56,6 +58,13 @@ public class VersionManifestVersion {
 
     private boolean isAfterOrEqualDate(DateTime a, DateTime b) {
         return a.isAfter(b) || a.isEqual(b);
+    }
+
+    public boolean is1132OrOlder() {
+        DateTime parsedReleaseTime = ISODateTimeFormat.dateTimeParser().parseDateTime(releaseTime);
+
+        // check if the release is before or equal to 1.13.2 release time
+        return isBeforeOrEqualDate(parsedReleaseTime, release_1_13_2);
     }
 
     public boolean hasServer() {

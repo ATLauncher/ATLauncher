@@ -529,7 +529,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 loaderMeta.put("minecraft", packVersion.minecraft);
                 loaderMeta.put("loader", fabricVersionString);
                 packVersion.loader.metadata = loaderMeta;
-                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+
+                // not technically supported, no examples, but should be right
+                if (this.minecraftVersionManifest.is1132OrOlder()) {
+                    packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
+                } else {
+                    packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+                }
             } else {
                 throw new Exception("Loader of id " + loaderVersion.id + " is unknown.");
             }
@@ -881,7 +887,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("minecraft", packVersion.minecraft);
             loaderMeta.put("loader", fabricVersionString);
             packVersion.loader.metadata = loaderMeta;
-            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+
+            // not technically supported, no examples, but should be right
+            if (this.minecraftVersionManifest.is1132OrOlder()) {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
+            } else {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+            }
         } else {
             throw new Exception("Unknown modloader with name of " + modloaderTarget.name);
         }
@@ -1281,7 +1293,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     loaderMeta.put("minecraft", packVersion.minecraft);
                     loaderMeta.put("loader", fabricVersionString);
                     packVersion.loader.metadata = loaderMeta;
-                    packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+
+                    // not technically supported, no examples, but should be right
+                    if (this.minecraftVersionManifest.is1132OrOlder()) {
+                        packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
+                    } else {
+                        packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+                    }
                 }
             }
         }
@@ -1324,7 +1342,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 loaderMeta.put("minecraft", packVersion.minecraft);
                 loaderMeta.put("loader", modrinthManifest.dependencies.get("fabric-loader"));
                 packVersion.loader.metadata = loaderMeta;
-                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+
+                // not technically supported, 1 example which seems to work
+                if (this.minecraftVersionManifest.is1132OrOlder()) {
+                    packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
+                } else {
+                    packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+                }
             } else if (modrinthManifest.dependencies.containsKey("quilt-loader")) {
                 Map<String, Object> loaderMeta = new HashMap<>();
                 loaderMeta.put("minecraft", packVersion.minecraft);
@@ -1465,7 +1489,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("minecraft", minecraftVersion);
             loaderMeta.put("loader", fabricVersionString);
             packVersion.loader.metadata = loaderMeta;
-            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+
+            // should probably look for the patch, but this is sound logic
+            if (this.minecraftVersionManifest.is1132OrOlder()) {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
+            } else {
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+            }
         } else if (quiltLoaderComponent != null) {
             String quiltVersionString = quiltLoaderComponent.version;
 
@@ -1539,6 +1569,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("loader", loaderVersion.version);
             packVersion.loader.metadata = loaderMeta;
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
+        } else if (loaderVersion != null && loaderVersion.isLegacyFabric()) {
+            packVersion.loader = new com.atlauncher.data.json.Loader();
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", version.minecraftVersion.id);
+            loaderMeta.put("loader", loaderVersion.version);
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
         } else if (loaderVersion != null && loaderVersion.isQuilt()) {
             packVersion.loader = new com.atlauncher.data.json.Loader();
             Map<String, Object> loaderMeta = new HashMap<>();

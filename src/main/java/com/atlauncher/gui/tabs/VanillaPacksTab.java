@@ -74,6 +74,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.graphql.GetLoaderVersionsForMinecraftVersionQuery;
@@ -112,6 +113,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     private final JRadioButton loaderTypeNoneRadioButton = new JRadioButton(GetText.tr("None"));
     private final JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
     private final JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
+    private final JRadioButton loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
     private final JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
 
     private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
@@ -363,6 +365,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         loaderTypeButtonGroup.add(loaderTypeNoneRadioButton);
         loaderTypeButtonGroup.add(loaderTypeFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeForgeRadioButton);
+        loaderTypeButtonGroup.add(loaderTypeLegacyFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton);
 
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
@@ -374,6 +377,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true) {
             loaderTypePanel.add(loaderTypeForgeRadioButton);
+        }
+
+        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true) == true) {
+            loaderTypePanel.add(loaderTypeLegacyFabricRadioButton);
         }
 
         if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true) {
@@ -388,6 +395,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         });
         loaderTypeForgeRadioButton.addActionListener(e -> {
             selectedLoaderTypeChanged(LoaderType.FORGE);
+        });
+        loaderTypeLegacyFabricRadioButton.addActionListener(e -> {
+            selectedLoaderTypeChanged(LoaderType.LEGACY_FABRIC);
         });
         loaderTypeQuiltRadioButton.addActionListener(e -> {
             selectedLoaderTypeChanged(LoaderType.QUILT);
@@ -488,6 +498,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             loaderTypeForgeRadioButton.setVisible(
                     !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
                             .contains(newSelectedMinecraftVersion));
+            loaderTypeLegacyFabricRadioButton.setVisible(
+                    !ConfigManager
+                            .getConfigItem("loaders.legacyfabric.disabledMinecraftVersions", new ArrayList<String>())
+                            .contains(newSelectedMinecraftVersion));
             loaderTypeQuiltRadioButton.setVisible(
                     !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
                             .contains(newSelectedMinecraftVersion));
@@ -507,6 +521,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         if (loaderTypeForgeRadioButton.isSelected()) {
             return LoaderType.FORGE;
+        }
+
+        if (loaderTypeLegacyFabricRadioButton.isSelected()) {
+            return LoaderType.LEGACY_FABRIC;
         }
 
         if (loaderTypeQuiltRadioButton.isSelected()) {
@@ -589,6 +607,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         loaderTypeNoneRadioButton.setEnabled(false);
         loaderTypeFabricRadioButton.setEnabled(false);
         loaderTypeForgeRadioButton.setEnabled(false);
+        loaderTypeLegacyFabricRadioButton.setEnabled(false);
         loaderTypeQuiltRadioButton.setEnabled(false);
         loaderVersionsDropDown.setEnabled(false);
         createServerButton.setEnabled(false);
@@ -660,6 +679,16 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                                             return lv;
                                         })
                                         .collect(Collectors.toList()));
+                            } else if (selectedLoader == LoaderType.LEGACY_FABRIC) {
+                                // TODO: need to work in backend types
+                                // List<String> disabledVersions = ConfigManager.getConfigItem(
+                                // "loaders.legacyfabric.disabledVersions",
+                                // new ArrayList<String>());
+
+                                // loaderVersions.addAll(response.getData().loaderVersions().fabric().stream()
+                                // .filter(fv -> !disabledVersions.contains(fv.version()))
+                                // .map(version -> new LoaderVersion(version.version(), false, "Fabric"))
+                                // .collect(Collectors.toList()));
                             } else if (selectedLoader == LoaderType.QUILT) {
                                 List<String> disabledVersions = ConfigManager.getConfigItem(
                                         "loaders.quilt.disabledVersions",
@@ -678,6 +707,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                                 loaderTypeNoneRadioButton.setEnabled(true);
                                 loaderTypeFabricRadioButton.setEnabled(true);
                                 loaderTypeForgeRadioButton.setEnabled(true);
+                                loaderTypeLegacyFabricRadioButton.setEnabled(true);
                                 loaderTypeQuiltRadioButton.setEnabled(true);
                                 createServerButton.setEnabled(enableCreateServers);
                                 createInstanceButton.setEnabled(true);
@@ -719,6 +749,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                             loaderTypeNoneRadioButton.setEnabled(true);
                             loaderTypeFabricRadioButton.setEnabled(true);
                             loaderTypeForgeRadioButton.setEnabled(true);
+                            loaderTypeLegacyFabricRadioButton.setEnabled(true);
                             loaderTypeQuiltRadioButton.setEnabled(true);
                             loaderVersionsDropDown.setEnabled(true);
                             createServerButton.setEnabled(enableCreateServers);
@@ -746,6 +777,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                             loaderTypeNoneRadioButton.setEnabled(true);
                             loaderTypeFabricRadioButton.setEnabled(true);
                             loaderTypeForgeRadioButton.setEnabled(true);
+                            loaderTypeLegacyFabricRadioButton.setEnabled(true);
                             loaderTypeQuiltRadioButton.setEnabled(true);
                             createServerButton.setEnabled(enableCreateServers);
                             createInstanceButton.setEnabled(true);
@@ -760,6 +792,8 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                     loaderVersions.addAll(FabricLoader.getChoosableVersions(selectedMinecraftVersion));
                 } else if (selectedLoader == LoaderType.FORGE) {
                     loaderVersions.addAll(ForgeLoader.getChoosableVersions(selectedMinecraftVersion));
+                } else if (selectedLoader == LoaderType.LEGACY_FABRIC) {
+                    loaderVersions.addAll(LegacyFabricLoader.getChoosableVersions(selectedMinecraftVersion));
                 } else if (selectedLoader == LoaderType.QUILT) {
                     loaderVersions.addAll(QuiltLoader.getChoosableVersions(selectedMinecraftVersion));
                 }
@@ -770,6 +804,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                     loaderTypeNoneRadioButton.setEnabled(true);
                     loaderTypeFabricRadioButton.setEnabled(true);
                     loaderTypeForgeRadioButton.setEnabled(true);
+                    loaderTypeLegacyFabricRadioButton.setEnabled(true);
                     loaderTypeQuiltRadioButton.setEnabled(true);
                     createServerButton.setEnabled(enableCreateServers);
                     createInstanceButton.setEnabled(true);
@@ -809,6 +844,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
                 loaderTypeNoneRadioButton.setEnabled(true);
                 loaderTypeFabricRadioButton.setEnabled(true);
                 loaderTypeForgeRadioButton.setEnabled(true);
+                loaderTypeLegacyFabricRadioButton.setEnabled(true);
                 loaderTypeQuiltRadioButton.setEnabled(true);
                 loaderVersionsDropDown.setEnabled(true);
                 createServerButton.setEnabled(enableCreateServers);

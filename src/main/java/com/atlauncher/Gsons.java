@@ -39,6 +39,8 @@ import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMeta;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibraryTypeAdapter;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricMetaLauncherMeta;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltMetaLauncherMeta;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltMetaLauncherMetaTypeAdapter;
 import com.google.gson.ExclusionStrategy;
@@ -80,6 +82,7 @@ public final class Gsons {
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
+            .registerTypeAdapter(LegacyFabricMetaLauncherMeta.class, new LegacyFabricMetaLauncherMetaTypeAdapter())
             .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())
             .registerTypeAdapter(QuiltMetaLauncherMeta.class, new QuiltMetaLauncherMetaTypeAdapter())
             .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();

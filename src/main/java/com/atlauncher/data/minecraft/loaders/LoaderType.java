@@ -36,6 +36,13 @@ public enum LoaderType {
         }
     },
 
+    @SerializedName("legacyfabric")
+    LEGACY_FABRIC {
+        public String toString() {
+            return "Legacy Fabric";
+        }
+    },
+
     @SerializedName("quilt")
     QUILT {
         public String toString() {
@@ -52,6 +59,14 @@ public enum LoaderType {
             return 2;
         }
 
-        return 3;
+        if (this == QUILT) {
+            return 3;
+        }
+
+        if (this == LEGACY_FABRIC) {
+            return 4;
+        }
+
+        return 0;
     }
 }

@@ -129,6 +129,13 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     // #. {0} is the loader (Forge/Fabric/Quilt)
     private final JMenuItem removeForgeMenuItem = new JMenuItem(GetText.tr("Remove {0}", "Forge"));
     // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem addLegacyFabricMenuItem = new JMenuItem(GetText.tr("Add {0}", "Legacy Fabric"));
+    // #. {0} is the loader (Forge/LegacyFabric/Quilt)
+    private final JMenuItem changeLegacyFabricVersionMenuItem = new JMenuItem(
+            GetText.tr("Change {0} Version", "Legacy Fabric"));
+    // #. {0} is the loader (Forge/LegacyFabric/Quilt)
+    private final JMenuItem removeLegacyFabricMenuItem = new JMenuItem(GetText.tr("Remove {0}", "Legacy Fabric"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
     private final JMenuItem addQuiltMenuItem = new JMenuItem(GetText.tr("Add {0}", "Quilt"));
     // #. {0} is the loader (Forge/Fabric/Quilt)
     private final JMenuItem changeQuiltVersionMenuItem = new JMenuItem(GetText.tr("Change {0} Version", "Quilt"));
@@ -313,6 +320,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeForgeMenuItem);
 
+        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true) == true
+                && !ConfigManager
+                        .getConfigItem("loaders.legacyfabric.disabledMinecraftVersions", new ArrayList<String>())
+                        .contains(instance.id)) {
+            editInstancePopupMenu.add(addLegacyFabricMenuItem);
+            editInstancePopupMenu.add(changeLegacyFabricVersionMenuItem);
+        }
+        editInstancePopupMenu.add(removeLegacyFabricMenuItem);
+
         if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true
                 && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
@@ -344,6 +360,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.addLoader(LoaderType.FORGE);
             setEditInstanceMenuItemVisbility();
         });
+        addLegacyFabricMenuItem.addActionListener(e -> {
+            instance.addLoader(LoaderType.LEGACY_FABRIC);
+            setEditInstanceMenuItemVisbility();
+        });
         addQuiltMenuItem.addActionListener(e -> {
             instance.addLoader(LoaderType.QUILT);
             setEditInstanceMenuItemVisbility();
@@ -354,6 +374,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             setEditInstanceMenuItemVisbility();
         });
         changeForgeVersionMenuItem.addActionListener(e -> {
+            instance.changeLoaderVersion();
+            setEditInstanceMenuItemVisbility();
+        });
+        changeLegacyFabricVersionMenuItem.addActionListener(e -> {
             instance.changeLoaderVersion();
             setEditInstanceMenuItemVisbility();
         });
@@ -370,6 +394,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.removeLoader();
             setEditInstanceMenuItemVisbility();
         });
+        removeLegacyFabricMenuItem.addActionListener(e -> {
+            instance.removeLoader();
+            setEditInstanceMenuItemVisbility();
+        });
         removeQuiltMenuItem.addActionListener(e -> {
             instance.removeLoader();
             setEditInstanceMenuItemVisbility();
@@ -381,12 +409,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         addFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
+        addLegacyFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addQuiltMenuItem.setVisible(instance.launcher.loaderVersion == null);
 
         changeFabricVersionMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
         changeForgeVersionMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
+        changeLegacyFabricVersionMenuItem
+                .setVisible(
+                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric());
         changeQuiltVersionMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
 
@@ -394,6 +426,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
         removeForgeMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
+        removeLegacyFabricMenuItem
+                .setVisible(
+                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric());
         removeQuiltMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
     }

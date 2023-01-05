@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Switch to using own hosted version of Java runtimes to support ARM
 - Add ability to specify base Java install folder to scan for Java installs
 - Add in revision of executable/git to launcher version
+- Add support for Legacy Fabric loader including modpacks [#698]
 
 ### Fixes
 - Issue with skins not updating after changing them [#671]
