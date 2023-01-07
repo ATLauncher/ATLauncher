@@ -531,7 +531,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 packVersion.loader.metadata = loaderMeta;
 
                 // not technically supported, no examples, but should be right
-                if (this.minecraftVersionManifest.is1132OrOlder()) {
+                if (MinecraftManager.getMinecraftVersion(packVersion.minecraft).is1132OrOlder()) {
                     packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
                 } else {
                     packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
@@ -889,7 +889,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             packVersion.loader.metadata = loaderMeta;
 
             // not technically supported, no examples, but should be right
-            if (this.minecraftVersionManifest.is1132OrOlder()) {
+            if (this.version.minecraftVersion.is1132OrOlder()) {
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
             } else {
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
@@ -1295,7 +1295,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     packVersion.loader.metadata = loaderMeta;
 
                     // not technically supported, no examples, but should be right
-                    if (this.minecraftVersionManifest.is1132OrOlder()) {
+                    if (MinecraftManager.getMinecraftVersion(packVersion.minecraft).is1132OrOlder()) {
                         packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
                     } else {
                         packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
@@ -1344,7 +1344,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 packVersion.loader.metadata = loaderMeta;
 
                 // not technically supported, 1 example which seems to work
-                if (this.minecraftVersionManifest.is1132OrOlder()) {
+                if (this.version.minecraftVersion.is1132OrOlder()) {
                     packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
                 } else {
                     packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
@@ -1491,7 +1491,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             packVersion.loader.metadata = loaderMeta;
 
             // should probably look for the patch, but this is sound logic
-            if (this.minecraftVersionManifest.is1132OrOlder()) {
+            if (MinecraftManager.getMinecraftVersion(minecraftVersion).is1132OrOlder()) {
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
             } else {
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";

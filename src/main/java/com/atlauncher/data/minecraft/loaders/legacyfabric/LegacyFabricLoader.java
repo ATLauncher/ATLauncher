@@ -37,6 +37,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlauncher.FileSystem;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
@@ -102,8 +103,8 @@ public class LegacyFabricLoader implements Loader {
     public List<Library> getLibraries() {
         List<Library> libraries = new ArrayList<>();
 
-        libraries.add(new LegacyFabricLibrary(this.version.loader.maven));
-        libraries.add(new LegacyFabricLibrary(this.version.intermediary.maven));
+        libraries.add(new LegacyFabricLibrary(this.version.loader.maven, Constants.FABRIC_MAVEN));
+        libraries.add(new LegacyFabricLibrary(this.version.intermediary.maven, Constants.LEGACY_FABRIC_MAVEN));
         libraries.addAll(this.version.launcherMeta.getLibraries(this.instanceInstaller.isServer));
 
         return libraries;
