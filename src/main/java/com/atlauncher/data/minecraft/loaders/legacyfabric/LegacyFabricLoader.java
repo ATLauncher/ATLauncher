@@ -37,7 +37,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
@@ -51,7 +50,8 @@ import com.google.gson.reflect.TypeToken;
 
 public class LegacyFabricLoader implements Loader {
     protected String minecraft;
-    protected LegacyFabricMetaVersion version;
+    protected String loaderVersion;
+    protected LegacyFabricMetaProfile version;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
     private final Pattern manifestPattern = Pattern.compile("META-INF/[^/]+\\.(SF|DSA|RSA|EC)");
@@ -64,23 +64,27 @@ public class LegacyFabricLoader implements Loader {
         this.instanceInstaller = instanceInstaller;
 
         if (versionOverride != null) {
-            this.version = this.getVersion(versionOverride.version);
+            this.loaderVersion = versionOverride.version;
         } else if (metadata.containsKey("loader")) {
-            this.version = this.getVersion((String) metadata.get("loader"));
+            this.loaderVersion = (String) metadata.get("loader");
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Legacy Fabric version");
-            this.version = this.getLatestVersion();
+            LegacyFabricMetaVersion metaVersion = this.getLatestVersion();
+            this.loaderVersion = metaVersion.loader.version;
         }
+
+        this.version = this.getVersion(this.loaderVersion);
     }
 
-    public LegacyFabricMetaVersion getLoader(String version) {
+    public LegacyFabricMetaProfile getLoader(String version) {
         return Download.build()
-                .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s/%s", this.minecraft,
-                        version))
-                .asClass(LegacyFabricMetaVersion.class);
+                .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s/%s/%s/json",
+                        this.minecraft,
+                        version, instanceInstaller.isServer ? "server" : "profile"))
+                .asClass(LegacyFabricMetaProfile.class);
     }
 
-    public LegacyFabricMetaVersion getVersion(String version) {
+    public LegacyFabricMetaProfile getVersion(String version) {
         return this.getLoader(version);
     }
 
@@ -103,9 +107,7 @@ public class LegacyFabricLoader implements Loader {
     public List<Library> getLibraries() {
         List<Library> libraries = new ArrayList<>();
 
-        libraries.add(new LegacyFabricLibrary(this.version.loader.maven, Constants.FABRIC_MAVEN));
-        libraries.add(new LegacyFabricLibrary(this.version.intermediary.maven, Constants.LEGACY_FABRIC_MAVEN));
-        libraries.addAll(this.version.launcherMeta.getLibraries(this.instanceInstaller.isServer));
+        libraries.addAll(this.version.libraries);
 
         return libraries;
     }
@@ -118,7 +120,7 @@ public class LegacyFabricLoader implements Loader {
 
     @Override
     public String getMainClass() {
-        return this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer);
+        return this.version.mainClass;
     }
 
     @Override
@@ -152,7 +154,7 @@ public class LegacyFabricLoader implements Loader {
             ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 
             List<File> libraryFiles = this.getLibraryFiles();
-            boolean shadeLibraries = !Utils.matchWholeVersion(version.loader.version, "0.12.5", false);
+            boolean shadeLibraries = !Utils.matchWholeVersion(this.loaderVersion, "0.12.5", false);
 
             Set<String> addedEntries = new HashSet<>();
             {
@@ -180,7 +182,7 @@ public class LegacyFabricLoader implements Loader {
                 addedEntries.add("fabric-server-launch.properties");
                 zipOutputStream.putNextEntry(new ZipEntry("fabric-server-launch.properties"));
                 zipOutputStream.write(
-                        ("launch.mainClass=" + this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer)
+                        ("launch.mainClass=" + this.version.mainClass
                                 + "\n").getBytes(StandardCharsets.UTF_8));
                 zipOutputStream.closeEntry();
 
@@ -265,6 +267,6 @@ public class LegacyFabricLoader implements Loader {
 
     @Override
     public LoaderVersion getLoaderVersion() {
-        return new LoaderVersion(version.loader.version, false, "LegacyFabric");
+        return new LoaderVersion(this.loaderVersion, false, "LegacyFabric");
     }
 }

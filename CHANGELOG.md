@@ -31,6 +31,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Installing mods from CurseForge with EmbeddedLibrary dependencies not showing it
 - Issue when config key doesn't exist
 - Some small spelling errors
+- Use profile endpoints when installing Fabric
 
 ### Misc
 - Implement view model for InstancesTab [#675]

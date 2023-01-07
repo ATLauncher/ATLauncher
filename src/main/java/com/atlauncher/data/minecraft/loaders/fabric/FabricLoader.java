@@ -50,7 +50,8 @@ import com.google.gson.reflect.TypeToken;
 
 public class FabricLoader implements Loader {
     protected String minecraft;
-    protected FabricMetaVersion version;
+    protected String loaderVersion;
+    protected FabricMetaProfile version;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
     private final Pattern manifestPattern = Pattern.compile("META-INF/[^/]+\\.(SF|DSA|RSA|EC)");
@@ -63,22 +64,27 @@ public class FabricLoader implements Loader {
         this.instanceInstaller = instanceInstaller;
 
         if (versionOverride != null) {
-            this.version = this.getVersion(versionOverride.version);
+            this.loaderVersion = versionOverride.version;
         } else if (metadata.containsKey("loader")) {
-            this.version = this.getVersion((String) metadata.get("loader"));
+            this.loaderVersion = (String) metadata.get("loader");
         } else if ((boolean) metadata.get("latest")) {
-            LogManager.debug("Downloading latest Fabric version");
-            this.version = this.getLatestVersion();
+            LogManager.debug("Downloading latest Legacy Fabric version");
+            FabricMetaVersion metaVersion = this.getLatestVersion();
+            this.loaderVersion = metaVersion.loader.version;
         }
+
+        this.version = this.getVersion(this.loaderVersion);
     }
 
-    public FabricMetaVersion getLoader(String version) {
+    public FabricMetaProfile getLoader(String version) {
         return Download.build()
-                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s", this.minecraft, version))
-                .asClass(FabricMetaVersion.class);
+                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s/%s/json",
+                        this.minecraft,
+                        version, instanceInstaller.isServer ? "server" : "profile"))
+                .asClass(FabricMetaProfile.class);
     }
 
-    public FabricMetaVersion getVersion(String version) {
+    public FabricMetaProfile getVersion(String version) {
         return this.getLoader(version);
     }
 
@@ -101,9 +107,7 @@ public class FabricLoader implements Loader {
     public List<Library> getLibraries() {
         List<Library> libraries = new ArrayList<>();
 
-        libraries.add(new FabricLibrary(this.version.loader.maven));
-        libraries.add(new FabricLibrary(this.version.intermediary.maven));
-        libraries.addAll(this.version.launcherMeta.getLibraries(this.instanceInstaller.isServer));
+        libraries.addAll(this.version.libraries);
 
         return libraries;
     }
@@ -116,7 +120,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public String getMainClass() {
-        return this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer);
+        return this.version.mainClass;
     }
 
     @Override
@@ -150,7 +154,7 @@ public class FabricLoader implements Loader {
             ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 
             List<File> libraryFiles = this.getLibraryFiles();
-            boolean shadeLibraries = !Utils.matchWholeVersion(version.loader.version, "0.12.5", false);
+            boolean shadeLibraries = !Utils.matchWholeVersion(this.loaderVersion, "0.12.5", false);
 
             Set<String> addedEntries = new HashSet<>();
             {
@@ -178,7 +182,7 @@ public class FabricLoader implements Loader {
                 addedEntries.add("fabric-server-launch.properties");
                 zipOutputStream.putNextEntry(new ZipEntry("fabric-server-launch.properties"));
                 zipOutputStream.write(
-                        ("launch.mainClass=" + this.version.launcherMeta.getMainClass(this.instanceInstaller.isServer)
+                        ("launch.mainClass=" + this.version.mainClass
                                 + "\n").getBytes(StandardCharsets.UTF_8));
                 zipOutputStream.closeEntry();
 
@@ -223,7 +227,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public Arguments getArguments() {
-        return null;
+        return this.version.arguments;
     }
 
     @Override
@@ -263,6 +267,6 @@ public class FabricLoader implements Loader {
 
     @Override
     public LoaderVersion getLoaderVersion() {
-        return new LoaderVersion(version.loader.version, false, "Fabric");
+        return new LoaderVersion(this.loaderVersion, false, "Fabric");
     }
 }

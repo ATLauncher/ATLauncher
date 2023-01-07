@@ -35,10 +35,14 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.ArgumentsTypeAdapter;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LibraryTypeAdapter;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricLibrary;
+import com.atlauncher.data.minecraft.loaders.fabric.FabricLibraryTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMeta;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLibraryTypeAdapter;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLibrary;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLibraryTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricMetaLauncherMeta;
 import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricMetaLauncherMetaTypeAdapter;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltMetaLauncherMeta;
@@ -82,7 +86,9 @@ public final class Gsons {
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
+            .registerTypeAdapter(FabricLibrary.class, new FabricLibraryTypeAdapter())
             .registerTypeAdapter(LegacyFabricMetaLauncherMeta.class, new LegacyFabricMetaLauncherMetaTypeAdapter())
+            .registerTypeAdapter(LegacyFabricLibrary.class, new LegacyFabricLibraryTypeAdapter())
             .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())
             .registerTypeAdapter(QuiltMetaLauncherMeta.class, new QuiltMetaLauncherMetaTypeAdapter())
             .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
