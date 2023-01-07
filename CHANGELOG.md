@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Add warning text when browsing mods on Modrinth for Legacy Fabric
 
 ### Misc

@@ -30,12 +30,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -64,6 +66,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
+import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 @SuppressWarnings("serial")
@@ -100,6 +103,14 @@ public final class AddModsDialog extends JDialog {
                     // #. {0} is the loader (Fabric/Quilt), {1} is the loader api (Fabric API/QSL)
                     + "\">" + GetText.tr("Before installing {0} mods, you should install {1} first!",
                             "Legacy Fabric", "Legacy Fabric API")
+                    + "</p></html>");
+
+    private final JEditorPane legacyFabricModrinthWarningLabel = new JEditorPane("text/html",
+            "<html><p align=\"center\" style=\"color: "
+                    + String.format("#%06x", 0xFFFFFF & UIManager.getColor("yellow").getRGB())
+                    + "\">"
+                    + GetText.tr(
+                            "Modrinth doesn't support filtering accurately for Legacy Fabric, so mods shown may not be installable. Consider using CurseForge or visit <a href=\"https://legacyfabric.net/mods.html\">https://legacyfabric.net/mods.html</a> for a list of compatable mods.")
                     + "</p></html>");
 
     private final JButton installQuiltStandardLibrariesButton = new JButton(
@@ -440,6 +451,10 @@ public final class AddModsDialog extends JDialog {
             this.topPanel.add(installLegacyFabricApiButton, BorderLayout.EAST);
         }
 
+        if (loaderVersion != null && loaderVersion.isLegacyFabric()) {
+            this.topPanel.add(legacyFabricModrinthWarningLabel, BorderLayout.SOUTH);
+        }
+
         if (loaderVersion != null && loaderVersion.isQuilt() && instance.launcher.mods.stream()
                 .noneMatch(m -> m.isFromModrinth()
                         && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
@@ -473,6 +488,15 @@ public final class AddModsDialog extends JDialog {
 
         bottomButtonsPanel.add(prevButton);
         bottomButtonsPanel.add(nextButton);
+
+        legacyFabricModrinthWarningLabel.setVisible(((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                .getValue() == ModPlatform.MODRINTH);
+        legacyFabricModrinthWarningLabel.setEditable(false);
+        legacyFabricModrinthWarningLabel.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                OS.openWebBrowser(e.getURL());
+            }
+        });
 
         platformMessageLabel.setForeground(UIManager.getColor("yellow"));
         bottomPanel.add(platformMessageLabel, BorderLayout.NORTH);
@@ -520,6 +544,8 @@ public final class AddModsDialog extends JDialog {
                 platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
             }
             platformMessageLabel.setVisible(platformMessage != null);
+            legacyFabricModrinthWarningLabel
+                    .setVisible(loaderVersion != null && loaderVersion.isLegacyFabric() && !isCurseForge);
 
             if (searchField.getText().isEmpty()) {
                 loadDefaultMods();
