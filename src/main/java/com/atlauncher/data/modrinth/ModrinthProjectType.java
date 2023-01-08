@@ -27,5 +27,8 @@ public enum ModrinthProjectType {
     MODPACK,
 
     @SerializedName("resourcepack")
-    RESOURCEPACK
+    RESOURCEPACK,
+
+    @SerializedName("shader")
+    SHADER,
 }

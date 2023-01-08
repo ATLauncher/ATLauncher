@@ -182,6 +182,7 @@ public final class AddModsDialog extends JDialog {
             sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
             sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
         } else {
+            sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
             sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
             sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
             sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
@@ -534,6 +535,7 @@ public final class AddModsDialog extends JDialog {
                 sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
             } else {
                 platformMessage = ConfigManager.getConfigItem("platforms.modrinth.message", null);
+                sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
                 sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
                 sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
                 sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
@@ -669,6 +671,9 @@ public final class AddModsDialog extends JDialog {
 
                 if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                     setModrinthMods(ModrinthApi.searchResourcePacks(versionsToSearchFor, query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
+                    setModrinthMods(ModrinthApi.searchShaders(versionsToSearchFor, query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else {
                     if (this.instance.launcher.loaderVersion.isFabric()

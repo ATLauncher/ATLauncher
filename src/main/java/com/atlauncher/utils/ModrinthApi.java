@@ -95,6 +95,11 @@ public class ModrinthApi {
         return searchModrinth(gameVersions, query, page, sort, null, ModrinthProjectType.RESOURCEPACK);
     }
 
+    public static ModrinthSearchResult searchShaders(List<String> gameVersions, String query, int page,
+            String sort) {
+        return searchModrinth(gameVersions, query, page, sort, null, ModrinthProjectType.SHADER);
+    }
+
     public static ModrinthSearchResult searchModsForForge(List<String> gameVersions, String query, int page,
             String sort) {
         return searchModrinth(gameVersions, query, page, sort, Arrays.asList("forge"), ModrinthProjectType.MOD);

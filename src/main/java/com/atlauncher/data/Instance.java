@@ -1504,7 +1504,9 @@ public class Instance extends MinecraftVersion {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
         Path finalLocation = mod.projectType == ModrinthProjectType.MOD
                 ? this.getRoot().resolve("mods").resolve(fileToDownload.filename)
-                : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename);
+                : (mod.projectType == ModrinthProjectType.SHADER
+                        ? this.getRoot().resolve("shaderpacks").resolve(fileToDownload.filename)
+                        : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename));
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
                 .downloadTo(downloadLocation).copyTo(finalLocation)
                 .withHttpClient(Network.createProgressClient(dialog));
@@ -1553,8 +1555,11 @@ public class Instance extends MinecraftVersion {
                         || !installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
                 .collect(Collectors.toList());
 
+        Type modType = mod.projectType == ModrinthProjectType.MOD ? Type.mods
+                : (mod.projectType == ModrinthProjectType.SHADER ? Type.shaderpack : Type.resourcepack);
+
         // add this mod
-        this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, Type.mods,
+        this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
                 null, mod.description, false, true, true, false, mod, version));
 
         this.save();
