@@ -642,14 +642,28 @@ public class App {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                     Constants.LAUNCHER_NAME + " " + Constants.VERSION);
-            try {
-                Class<?> util = Class.forName("com.apple.eawt.Application");
-                Method getApplication = util.getMethod("getApplication");
-                Object application = getApplication.invoke(util);
-                Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
-                setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon-osx.png"));
-            } catch (Exception ex) {
-                LogManager.logStackTrace("Failed to set dock icon", ex);
+            // if using .app, the dock icon should be set by macOS automatically...
+            if (!OS.isUsingMacApp()) {
+                System.setProperty("apple.awt.application.name", Constants.LAUNCHER_NAME); // setting the application name in menu bar
+                try {
+                    if (Java.isSystemJavaNewerThanJava8()) {
+                        // if Java 9 or higher
+                        Class<?> util = Class.forName("java.awt.Taskbar");
+                        Method getTaskbar = util.getMethod("getTaskbar");
+                        Object taskbar = getTaskbar.invoke(util);
+                        Method setIconImage = util.getMethod("setIconImage", Image.class);
+                        setIconImage.invoke(taskbar, Utils.getImage("/assets/image/icon-osx.png"));
+                    } else {
+                        // if Java 8 or lower
+                        Class<?> util = Class.forName("com.apple.eawt.Application");
+                        Method getApplication = util.getMethod("getApplication");
+                        Object application = getApplication.invoke(util);
+                        Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
+                        setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon-osx.png"));
+                    }
+                } catch (Exception ex) {
+                    LogManager.logStackTrace("Failed to set dock icon", ex);
+                }
             }
         }
 
