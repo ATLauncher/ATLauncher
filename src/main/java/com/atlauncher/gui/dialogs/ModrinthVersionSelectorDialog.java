@@ -47,6 +47,7 @@ import com.atlauncher.data.modrinth.ModrinthDependency;
 import com.atlauncher.data.modrinth.ModrinthDependencyType;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.ModrinthProjectDependencyCard;
@@ -366,7 +367,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
             if (App.settings.addModRestriction != AddModRestriction.NONE
-                    && this.instance.launcher.loaderVersion != null) {
+                    && this.instance.launcher.loaderVersion != null && mod.projectType == ModrinthProjectType.MOD) {
                 modrinthVersionsStream = modrinthVersionsStream
                         .filter(v -> (this.instance.launcher.loaderVersion.isFabric()
                                 || this.instance.launcher.loaderVersion.isLegacyFabric()) ? v.loaders.contains("fabric")

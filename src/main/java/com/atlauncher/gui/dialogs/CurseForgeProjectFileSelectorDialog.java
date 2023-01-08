@@ -312,25 +312,28 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 }
             }
 
-            // filter out files not for our loader
-            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersions.contains("Fabric") && loaderVersion != null
-                        && (loaderVersion.isFabric() || loaderVersion.isLegacyFabric() || loaderVersion.isQuilt())) {
-                    return true;
-                }
+            // filter out files not for our loader (if browsing mods)
+            if (mod.getRootCategoryId() == Constants.CURSEFORGE_MODS_SECTION_ID) {
+                curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                    if (cf.gameVersions.contains("Fabric") && loaderVersion != null
+                            && (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()
+                                    || loaderVersion.isQuilt())) {
+                        return true;
+                    }
 
-                if (cf.gameVersions.contains("Forge") && loaderVersion != null
-                        && loaderVersion.isForge()) {
-                    return true;
-                }
+                    if (cf.gameVersions.contains("Forge") && loaderVersion != null
+                            && loaderVersion.isForge()) {
+                        return true;
+                    }
 
-                if (cf.gameVersions.contains("Quilt") && loaderVersion != null
-                        && loaderVersion.isQuilt()) {
-                    return true;
-                }
+                    if (cf.gameVersions.contains("Quilt") && loaderVersion != null
+                            && loaderVersion.isQuilt()) {
+                        return true;
+                    }
 
-                return false;
-            });
+                    return false;
+                });
+            }
 
             files.addAll(curseForgeFilesStream.collect(Collectors.toList()));
 
