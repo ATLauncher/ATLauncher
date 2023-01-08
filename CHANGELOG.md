@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Add warning text when browsing mods on Modrinth for Legacy Fabric
+- Make sure runtime has value before using
 
 ### Misc

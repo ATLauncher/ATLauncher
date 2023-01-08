@@ -609,7 +609,8 @@ public class Instance extends MinecraftVersion {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
             String runtimeSystemString = JavaRuntimes.getSystem();
 
-            if (runtimesForSystem.containsKey(javaVersion.component)) {
+            if (runtimesForSystem.containsKey(javaVersion.component)
+                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
                 // #. {0} is the version of Java were downloading
                 progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}", javaVersion.majorVersion));
 
@@ -2937,17 +2938,24 @@ public class Instance extends MinecraftVersion {
 
         // are we using Mojangs provided runtime?
         if (isUsingJavaRuntime()) {
-            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
-                    .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+            Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
 
-            if (OS.isMac()) {
-                runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
-            }
+            // make sure the runtime is available in the data set (so it's not disabled
+            // remotely)
+            if (runtimesForSystem.containsKey(javaVersion.component)
+                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
+                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                        .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
 
-            if (Files.isDirectory(runtimeDirectory)) {
-                javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                        javaVersion.component, javaVersion.majorVersion, javaPath));
+                if (OS.isMac()) {
+                    runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
+                }
+
+                if (Files.isDirectory(runtimeDirectory)) {
+                    javaPath = runtimeDirectory.toAbsolutePath().toString();
+                    LogManager.info(String.format("Using Java runtime %s (major version %d) at path %s",
+                            javaVersion.component, javaVersion.majorVersion, javaPath));
+                }
             }
         }
 

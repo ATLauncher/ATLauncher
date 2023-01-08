@@ -2527,7 +2527,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
         String runtimeSystemString = JavaRuntimes.getSystem();
 
-        if (runtimesForSystem.containsKey(minecraftVersion.javaVersion.component)) {
+        if (runtimesForSystem.containsKey(minecraftVersion.javaVersion.component)
+                && runtimesForSystem.get(minecraftVersion.javaVersion.component).size() != 0) {
             fireTask(GetText.tr("Downloading Java Runtime {0}", minecraftVersion.javaVersion.majorVersion));
             fireSubProgressUnknown();
 

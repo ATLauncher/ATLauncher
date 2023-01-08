@@ -182,11 +182,6 @@ public class MCLauncher {
         String javaArguments = Optional.ofNullable(instance.launcher.javaArguments).orElse(App.settings.javaParameters);
         String javaPath = instance.getJavaPath();
 
-        if (instance.isUsingJavaRuntime()) {
-            LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                    instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
-        }
-
         File jarMods = instance.getJarModsDirectory();
         File[] jarModFiles = jarMods.listFiles();
         if (jarMods.exists() && jarModFiles != null && jarModFiles.length != 0) {
