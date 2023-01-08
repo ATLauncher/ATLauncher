@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with resource packs not showing files when adding to an instance with a loader [#700]
 - Resource packs from Modrinth not installing correctly [#701]
+- Scanning of missing mods not accounting for jar mods or resource packs
 
 ### Misc

@@ -3000,12 +3000,18 @@ public class Instance extends MinecraftVersion {
         List<Path> files = new ArrayList<>();
 
         // find the mods that have been added by the user manually
-        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"))) {
+        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"),
+                ROOT.resolve("resourcepacks"), ROOT.resolve("jarmods"))) {
+            com.atlauncher.data.Type fileType = path.equals(ROOT.resolve("resourcepacks"))
+                    ? com.atlauncher.data.Type.resourcepack
+                    : (path.equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
+                            : com.atlauncher.data.Type.mods);
+
             try (Stream<Path> stream = Files.list(path)) {
                 files.addAll(stream
                         .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
                                 file -> launcher.mods.stream()
-                                        .noneMatch(mod -> mod.type == com.atlauncher.data.Type.mods
+                                        .noneMatch(mod -> mod.type == fileType
                                                 && mod.file.equals(file.getFileName().toString())))
                         .collect(Collectors.toList()));
             } catch (IOException e) {
@@ -3019,8 +3025,15 @@ public class Instance extends MinecraftVersion {
 
             progressDialog.addThread(new Thread(() -> {
                 List<DisableableMod> mods = files.parallelStream()
-                        .map(file -> DisableableMod.generateMod(file.toFile(), com.atlauncher.data.Type.mods,
-                                file.getParent().equals(ROOT.resolve("mods"))))
+                        .map(file -> {
+                            com.atlauncher.data.Type fileType = file.getParent().equals(ROOT.resolve("resourcepacks"))
+                                    ? com.atlauncher.data.Type.resourcepack
+                                    : (file.getParent().equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
+                                            : com.atlauncher.data.Type.mods);
+
+                            return DisableableMod.generateMod(file.toFile(), fileType,
+                                    !file.getParent().equals(ROOT.resolve("disabledmods")));
+                        })
                         .collect(Collectors.toList());
 
                 if (!App.settings.dontCheckModsOnCurseForge) {
