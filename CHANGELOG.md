@@ -14,3 +14,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Scanning of missing mods not accounting for jar mods or resource packs
 
 ### Misc
+- Use short git hash for version when running locally

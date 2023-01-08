@@ -536,7 +536,7 @@ public enum OS {
             Path path = getRunningProgramPath();
 
             if (Files.isDirectory(path)) {
-                return HashCode.fromString(Utils.runProcess(path, "git", "rev-parse", "HEAD"));
+                return HashCode.fromString(Utils.runProcess(path, "git", "rev-parse", "--short", "HEAD"));
             }
 
             if (!Files.isRegularFile(path)) {
