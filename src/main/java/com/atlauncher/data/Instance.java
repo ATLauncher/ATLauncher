@@ -112,6 +112,7 @@ import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthSide;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
@@ -1501,7 +1502,9 @@ public class Instance extends MinecraftVersion {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
-        Path finalLocation = this.getRoot().resolve("mods").resolve(fileToDownload.filename);
+        Path finalLocation = mod.projectType == ModrinthProjectType.MOD
+                ? this.getRoot().resolve("mods").resolve(fileToDownload.filename)
+                : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename);
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
                 .downloadTo(downloadLocation).copyTo(finalLocation)
                 .withHttpClient(Network.createProgressClient(dialog));
