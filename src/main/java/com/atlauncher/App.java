@@ -135,7 +135,7 @@ public class App {
 
     /**
      * This allows skipping the system tray integration so that the launcher doesn't
-     * even try to show the icon and menu etc, in the users system tray. It can be
+     * even try to show the icon and menu etc., in the users system tray. It can be
      * skipped with the below command line argument.
      * <p/>
      * --skip-tray-integration
@@ -637,33 +637,29 @@ public class App {
     }
 
     private static void setupOSSpecificThings() {
-        // do some Mac specific stuff, setting the name of theapplication and icon
-        if (OS.isMac()) {
+        // do some Mac specific stuff, setting the name of the application and icon
+        // set only when using jar bundle, as if using *.app, macOS sets icon and name automatically and apple.laf.useScreenMenuBar is set using build.gradle
+        if (!OS.isUsingMacApp()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                    Constants.LAUNCHER_NAME + " " + Constants.VERSION);
-            // if using .app, the dock icon should be set by macOS automatically...
-            if (!OS.isUsingMacApp()) {
-                System.setProperty("apple.awt.application.name", Constants.LAUNCHER_NAME); // setting the application name in menu bar
-                try {
-                    if (Java.isSystemJavaNewerThanJava8()) {
-                        // if Java 9 or higher
-                        Class<?> util = Class.forName("java.awt.Taskbar");
-                        Method getTaskbar = util.getMethod("getTaskbar");
-                        Object taskbar = getTaskbar.invoke(util);
-                        Method setIconImage = util.getMethod("setIconImage", Image.class);
-                        setIconImage.invoke(taskbar, Utils.getImage("/assets/image/icon-osx.png"));
-                    } else {
-                        // if Java 8 or lower
-                        Class<?> util = Class.forName("com.apple.eawt.Application");
-                        Method getApplication = util.getMethod("getApplication");
-                        Object application = getApplication.invoke(util);
-                        Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
-                        setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon-osx.png"));
-                    }
-                } catch (Exception ex) {
-                    LogManager.logStackTrace("Failed to set dock icon", ex);
+            System.setProperty("apple.awt.application.name", Constants.LAUNCHER_NAME); // setting the application name in menu bar
+            try {
+                if (Java.isSystemJavaNewerThanJava8()) {
+                    // if Java 9 or higher
+                    Class<?> util = Class.forName("java.awt.Taskbar");
+                    Method getTaskbar = util.getMethod("getTaskbar");
+                    Object taskbar = getTaskbar.invoke(util);
+                    Method setIconImage = util.getMethod("setIconImage", Image.class);
+                    setIconImage.invoke(taskbar, Utils.getImage("/assets/image/icon-osx.png"));
+                } else {
+                    // if Java 8 or lower
+                    Class<?> util = Class.forName("com.apple.eawt.Application");
+                    Method getApplication = util.getMethod("getApplication");
+                    Object application = getApplication.invoke(util);
+                    Method setDockIconImage = util.getMethod("setDockIconImage", Image.class);
+                    setDockIconImage.invoke(application, Utils.getImage("/assets/image/icon-osx.png"));
                 }
+            } catch (Exception ex) {
+                LogManager.logStackTrace("Failed to set dock icon", ex);
             }
         }
 
