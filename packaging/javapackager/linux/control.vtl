@@ -1,0 +1,12 @@
+Package: ${info.name}
+Version: ${info.version}
+Section: games
+Priority: optional
+Architecture: all
+Depends: java17-runtime | java-17-runtime | java8-runtime | java-8-runtime, wget, desktop-file-utils
+Maintainer: ${info.organizationName} <$!{info.organizationEmail}>
+Description: ${info.description}
+Distribution: development
+#if(${info.url})
+Homepage: ${info.url}
+#end

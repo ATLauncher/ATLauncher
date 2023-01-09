@@ -8,11 +8,15 @@ buildscript {
             url 'https://jitpack.io'
             content {
                 includeGroup "com.github.RyanTheAllmighty.gettext"
+                // includeGroup "com.github.fvarrui"
+                // includeGroup "com.github.fvarrui.JavaPackager"
             }
         }
     }
     dependencies {
         classpath 'com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:aab5c30bf8'
+        classpath 'io.github.fvarrui:javapackager:1.6.7'
+        // classpath 'com.github.fvarrui:JavaPackager:9e46a860a8'
     }
 }
 
@@ -22,8 +26,6 @@ plugins {
 
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.adarshr.test-logger' version '3.2.0'
-    id 'edu.sc.seis.macAppBundle' version '2.3.0'
-    id 'edu.sc.seis.launch4j' version '2.5.3'
     id 'de.undercouch.download' version '5.1.0'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'com.github.ben-manes.versions' version '0.42.0'
@@ -31,6 +33,7 @@ plugins {
 }
 
 apply plugin: 'org.mini2Dx.gettext'
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -193,24 +196,278 @@ shadowJar {
     classifier = ''
 }
 
-macAppBundle {
-    mainClassName = 'com.atlauncher.App'
-    appName = 'ATLauncher'
-    appStyle = 'universalJavaApplicationStub'
-    runtimeConfigurationName = 'shadow'
-    jarTask = 'shadowJar'
-    icon = 'src/main/resources/assets/image/icon.icns'
-    javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
-    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
-    javaExtras.put("-Djna.nosys", "true")
-    javaExtras.put("-Djava.net.preferIPv4Stack", "true")
-    javaExtras.put("-Dawt.useSystemAAFontSettings", "on")
-    javaExtras.put("-Dswing.aatext", "true")
-    bundleExtras.put("JVMVersion", project.targetCompatibility.toString() + "+")
+javapackager {
+    mainClass = 'com.atlauncher.App'
+
+    name = "atlauncher"
+    displayName = "ATLauncher"
+
+    assetsDir = file("${projectDir}/packaging/javapackager")
+
+    bundleJre = false
+    customizedJre = false
+
+    generateInstaller = false
+    administratorRequired = false
+
+    runnableJar = file(project.tasks.jar.getArchivePath().getPath())
+    copyDependencies = false
+    administratorRequired = false
+
+    url = "https://atlauncher.com"
+    vmArgs = [
+        "-Djna.nosys=true",
+        "-Djava.net.preferIPv4Stack=true",
+        "-Dawt.useSystemAAFontSettings=on",
+        "-Dswing.aatext=true"
+    ]
+
+    organizationName = "ATLauncher"
+    organizationUrl = "https://atlauncher.com"
 }
 
-copyToResourcesJava {
-    rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
+task copyVersionedJarToUnversionedJar(type: Copy, dependsOn: build) {
+    doFirst {
+        delete "${buildDir}/libs/ATLauncher.jar"
+    }
+    from project.tasks.jar.getArchivePath().getPath()
+    into "${buildDir}/libs"
+    rename "ATLauncher-${version}.jar", "ATLauncher.jar"
+}
+
+task downloadBundledJavaForArmMac(type: Download) {
+    src 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jre_aarch64_mac_hotspot_17.0.5_8.tar.gz'
+    dest file("$buildDir/bundledJre/OpenJDK17U-jre_aarch64_mac_hotspot_17.0.5_8.tar.gz")
+    overwrite false
+}
+task verifyJavaForArmMac(type: Verify, dependsOn: downloadBundledJavaForArmMac) {
+    src file("$buildDir/bundledJre/OpenJDK17U-jre_aarch64_mac_hotspot_17.0.5_8.tar.gz")
+    algorithm 'SHA-256'
+    checksum 'd98b7f5ee6cb4a1c49288bd932008e3e37f9bb5d9a0eb9396ea236786e6ab570'
+}
+task extractJavaForArmMac(type: Copy, dependsOn: verifyJavaForArmMac) {
+    doFirst {
+        delete "$buildDir/bundledJre/armMac/"
+    }
+    from tarTree(resources.gzip("$buildDir/bundledJre/OpenJDK17U-jre_aarch64_mac_hotspot_17.0.5_8.tar.gz"))
+    into file("$buildDir/bundledJre/armMac/")
+}
+task packageForArmMac(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: ['copyVersionedJarToUnversionedJar', 'extractJavaForArmMac']) {
+    platform = 'mac'
+    bundleJre = true
+    jrePath = file("$buildDir/bundledJre/armMac/jdk-17.0.5+8-jre/Contents/Home")
+    runnableJar = file("${buildDir}/libs/ATLauncher.jar")
+    copyDependencies = false
+    outputDirectory = file("${buildDir}/macapp/aarch64/")
+    generateInstaller = true
+
+    macConfig {
+        macStartup = 'ARM64'
+
+        appId = "com.atlauncher.ATLauncher"
+        icnsFile = file("${projectDir}/packaging/javapackager/mac/atlauncher.icns")
+        generateDmg = true
+        generatePkg = false
+        relocateJar = true
+
+        codesignApp = false
+    }
+    doLast {
+        delete "${buildDir}/bundledJre/armMac"
+
+        copy {
+            from("${buildDir}/macapp/aarch64/ATLauncher_${project.version}.dmg") {
+                rename "ATLauncher_${project.version}.dmg", "ATLauncher_${project.version}_aarch64.dmg"
+            }
+            into "${projectDir}/dist"
+        }
+    }
+}
+
+task downloadBundledJavaForx64Mac(type: Download) {
+    src 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jre_x64_mac_hotspot_17.0.5_8.tar.gz'
+    dest file("$buildDir/bundledJre/OpenJDK17U-jre_x64_mac_hotspot_17.0.5_8.tar.gz")
+    overwrite false
+}
+task verifyJavaForx64Mac(type: Verify, dependsOn: downloadBundledJavaForx64Mac) {
+    src file("$buildDir/bundledJre/OpenJDK17U-jre_x64_mac_hotspot_17.0.5_8.tar.gz")
+    algorithm 'SHA-256'
+    checksum 'c4884b6cd8d43497ff46e4fd475ddde5ab91004db435f0c29a801b081662f7ee'
+}
+task extractJavaForx64Mac(type: Copy, dependsOn: verifyJavaForx64Mac) {
+    doFirst {
+        delete "$buildDir/bundledJre/x64Mac/"
+    }
+    from tarTree(resources.gzip("$buildDir/bundledJre/OpenJDK17U-jre_x64_mac_hotspot_17.0.5_8.tar.gz"))
+    into file("$buildDir/bundledJre/x64Mac/")
+}
+task packageForX64Mac(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: ['copyVersionedJarToUnversionedJar', 'extractJavaForx64Mac']) {
+    platform = 'mac'
+    bundleJre = true
+    jrePath = file("$buildDir/bundledJre/x64Mac/jdk-17.0.5+8-jre/Contents/Home")
+    runnableJar = file("${buildDir}/libs/ATLauncher.jar")
+    copyDependencies = false
+    outputDirectory = file("${buildDir}/macapp/x64/")
+    generateInstaller = true
+
+    macConfig {
+        macStartup = 'X86_64'
+
+        appId = "com.atlauncher.ATLauncher"
+        icnsFile = file("${projectDir}/packaging/javapackager/mac/atlauncher.icns")
+        generateDmg = true
+        generatePkg = false
+        relocateJar = true
+
+        codesignApp = false
+    }
+    doLast {
+        delete "${buildDir}/bundledJre/armMac"
+
+        copy {
+            from("${buildDir}/macapp/x64/ATLauncher_${project.version}.dmg") {
+                rename "ATLauncher_${project.version}.dmg", "ATLauncher_${project.version}_x64.dmg"
+            }
+            into "${projectDir}/dist"
+        }
+    }
+}
+task packageForMac(dependsOn: [ 'packageForArmMac', 'packageForX64Mac' ])
+
+task downloadBundledJavaForLinux(type: Download) {
+    src 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jre_x64_linux_hotspot_17.0.5_8.tar.gz'
+    dest file("$buildDir/bundledJre/OpenJDK17U-jre_x64_linux_hotspot_17.0.5_8.tar.gz")
+    overwrite false
+}
+task verifyJavaForLinux(type: Verify, dependsOn: downloadBundledJavaForLinux) {
+    src file("$buildDir/bundledJre/OpenJDK17U-jre_x64_linux_hotspot_17.0.5_8.tar.gz")
+    algorithm 'SHA-256'
+    checksum '11326464a14b63e6328d1d2088a23fb559c0e36b3f380e4c1f8dcbe160a8b95e'
+}
+task extractJavaForLinux(type: Copy, dependsOn: verifyJavaForLinux) {
+    doFirst {
+        delete "$buildDir/bundledJre/linux/"
+    }
+    from tarTree(resources.gzip("$buildDir/bundledJre/OpenJDK17U-jre_x64_linux_hotspot_17.0.5_8.tar.gz"))
+    into file("$buildDir/bundledJre/linux/")
+}
+task packageForLinux(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: ['build', 'extractJavaForLinux']) {
+    platform = 'linux'
+    outputDirectory = file("${buildDir}/linux/")
+
+    linuxConfig {
+        generateInstaller = true
+        generateAppImage = true
+        generateDeb = true
+        generateRpm = true
+        wrapJar = false
+
+        useResourcesAsWorkingDir = true
+
+        bundleJre = true
+        jrePath = file("$buildDir/bundledJre/linux/jdk-17.0.5+8-jre")
+        jreDirectoryName = "jre"
+
+        description = "A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly."
+        categories = [
+            "Game"
+        ]
+        extra = [
+            linuxKeywords: [
+                "game",
+                "Minecraft"
+            ]
+        ]
+    }
+
+    doLast {
+        delete "${buildDir}/bundledJre/linux"
+
+        copy {
+            from("${buildDir}/linux/atlauncher_${project.version}.deb") {
+                rename "atlauncher_${project.version}.deb", "ATLauncher_${project.version}.deb"
+            }
+            from("${buildDir}/linux/atlauncher_${project.version}.rpm") {
+                rename "atlauncher_${project.version}.rpm", "ATLauncher_${project.version}.rpm"
+            }
+            from("${buildDir}/linux/atlauncher.AppImage") {
+                rename "atlauncher.AppImage", "ATLauncher_${project.version}.AppImage"
+            }
+            into "${projectDir}/dist"
+        }
+    }
+}
+
+task downloadBundledJavaForWindows(type: Download) {
+    src 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jre_x64_windows_hotspot_17.0.5_8.zip'
+    dest file("$buildDir/bundledJre/OpenJDK17U-jre_x64_windows_hotspot_17.0.5_8.zip")
+    overwrite false
+}
+task verifyJavaForWindows(type: Verify, dependsOn: downloadBundledJavaForWindows) {
+    src file("$buildDir/bundledJre/OpenJDK17U-jre_x64_windows_hotspot_17.0.5_8.zip")
+    algorithm 'SHA-256'
+    checksum 'd25a2d44c1bd9c57d49c5e98de274cd40970ab057fe304b52eb459de4ee5d8a5'
+}
+task extractJavaForWindows(type: Copy, dependsOn: verifyJavaForWindows) {
+    doFirst {
+        delete "$buildDir/bundledJre/windows/"
+    }
+    from zipTree("$buildDir/bundledJre/OpenJDK17U-jre_x64_windows_hotspot_17.0.5_8.zip")
+    into file("$buildDir/bundledJre/windows/")
+}
+task packageForWindows(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: ['build', 'extractJavaForWindows']) {
+    platform = 'windows'
+    outputDirectory = file("${buildDir}/windows/")
+
+    winConfig {
+        generateInstaller = true
+        generateSetup = true
+        generateMsi = false
+        wrapJar = true
+
+        bundleJre = true
+        jrePath = file("$buildDir/bundledJre/windows/jdk-17.0.5+8-jre")
+        jreDirectoryName = "jre"
+        jreMinVersion = "${project.targetCompatibility.toString()}"
+
+        exeCreationTool = "launch4j"
+
+        copyright = "2013-${currentYear()} ${project.name}"
+        companyName = "${project.name}"
+        productName = "${project.name}"
+        fileVersion = "${project.version}"
+        productVersion = "${project.version}"
+
+        setupMode = "installForCurrentUser"
+        disableWelcomePage = false
+        disableDirPage = false
+        disableRunAfterInstall = false
+        disableFinishedPage = false
+        createDesktopIconTask = true
+        setupLanguages = [
+            "english": "compiler:Default.isl"
+        ]
+
+        additionalResources = [
+            file("${projectDir}/packaging/javapackager/windows/wizardimage.bmp")
+        ]
+
+        icoFile = file("${projectDir}/src/main/resources/assets/image/icon.ico")
+    }
+
+    doLast {
+        delete "${buildDir}/bundledJre/windows"
+
+        copy {
+            from("${buildDir}/windows/ATLauncher_${project.version}.exe") {
+                rename "ATLauncher_${project.version}.exe", "ATLauncher_${project.version}_setup.exe"
+            }
+            from("${buildDir}/windows/ATLauncher/ATLauncher.exe") {
+                rename "ATLauncher.exe", "ATLauncher_${project.version}.exe"
+            }
+            into "${projectDir}/dist"
+        }
+    }
 }
 
 def currentYear() {
@@ -219,70 +476,21 @@ def currentYear() {
     return df.format(new Date())
 }
 
-launch4j {
-    outfile = "ATLauncher-${project.version}.exe"
-    jreMinVersion = "${project.targetCompatibility.toString()}"
-    mainClassName = 'com.atlauncher.App'
-    icon = "${projectDir}/src/main/resources/assets/image/icon.ico"
-    version = "${project.version}"
-    textVersion = "${project.version}"
-    copyright = "2013-${currentYear()} ${project.name}"
-    companyName = "${project.name}"
-    bundledJrePath = "jre/;%JAVA_HOME%;%PATH%"
-    jvmOptions = [
-        "-Djna.nosys=true",
-        "-Djava.net.preferIPv4Stack=true",
-        "-Dawt.useSystemAAFontSettings=on",
-        "-Dswing.aatext=true"
-    ]
-}
-
-artifacts {
-    archives shadowJar
-    archives file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.exe').replace('libs', 'launch4j'))
-    archives file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.zip').replace('libs', 'distributions'))
-}
-
 test {
     if (JavaVersion.current().isJava9Compatible()) {
         jvmArgs '--add-opens=java.base/sun.security.x509=ALL-UNNAMED'
     }
 }
 
-task copyArtifacts(type: Copy) {
-    dependsOn build
-    from shadowJar
-    from file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.exe').replace('libs', 'launch4j'))
-    from file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.zip').replace('libs', 'distributions'))
+task copyFatjar(type: Copy) {
+    from(shadowJar) {
+        rename "ATLauncher-${version}.jar", "ATLauncher_${version}.jar"
+    }
     into "${projectDir}/dist"
-}
-
-task downloadNewerUniversalJavaApplicationStub(type: Download) {
-    description 'Downloads newer universalJavaApplicationStub'
-    src 'https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub'
-    dest file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub")
-    overwrite true
 }
 
 task createTestLauncherDir {
     project.file('testLauncher/dev').mkdirs()
-}
-
-task createMacApp(type: Zip) {
-    dependsOn createApp, shadowJar
-    from("$buildDir/macApp") {
-        include "${project.name}.app/**"
-        exclude "${project.name}.app/Contents/MacOS"
-    }
-    from("$buildDir/macApp") {
-        include "${project.name}.app/Contents/MacOS/**"
-        fileMode 0777
-    }
-    archiveName = "${project.name}-${project.version}.zip"
-}
-
-copyArtifacts.finalizedBy {
-    println 'ATLauncher has been built. Distribution files are located in the dist directory.'
 }
 
 clean.doFirst {
@@ -304,7 +512,5 @@ tasks.named("dependencyUpdates").configure {
     }
 }
 
-build.finalizedBy copyArtifacts
 shadowJar.dependsOn jar
-build.dependsOn createExe, createMacApp
-createApp.finalizedBy downloadNewerUniversalJavaApplicationStub
+build.finalizedBy copyFatjar
