@@ -265,12 +265,18 @@ task packageForArmMac(type: io.github.fvarrui.javapackager.gradle.PackageTask, d
         macStartup = 'ARM64'
 
         appId = "com.atlauncher.ATLauncher"
+        backgroundImage = file("${projectDir}/packaging/javapackager/mac/background.png")
         icnsFile = file("${projectDir}/packaging/javapackager/mac/atlauncher.icns")
         generateDmg = true
         generatePkg = false
         relocateJar = true
 
         codesignApp = false
+
+        iconX = 120
+        iconY = 160
+        appsLinkIconX = 420
+        appsLinkIconY = 160
     }
     doLast {
         delete "${buildDir}/bundledJre/armMac"
@@ -314,12 +320,18 @@ task packageForX64Mac(type: io.github.fvarrui.javapackager.gradle.PackageTask, d
         macStartup = 'X86_64'
 
         appId = "com.atlauncher.ATLauncher"
+        backgroundImage = file("${projectDir}/packaging/javapackager/mac/background.png")
         icnsFile = file("${projectDir}/packaging/javapackager/mac/atlauncher.icns")
         generateDmg = true
         generatePkg = false
         relocateJar = true
 
         codesignApp = false
+
+        iconX = 120
+        iconY = 160
+        appsLinkIconX = 420
+        appsLinkIconY = 160
     }
     doLast {
         delete "${buildDir}/bundledJre/armMac"
