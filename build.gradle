@@ -8,15 +8,12 @@ buildscript {
             url 'https://jitpack.io'
             content {
                 includeGroup "com.github.RyanTheAllmighty.gettext"
-                // includeGroup "com.github.fvarrui"
-                // includeGroup "com.github.fvarrui.JavaPackager"
             }
         }
     }
     dependencies {
         classpath 'com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:aab5c30bf8'
         classpath 'io.github.fvarrui:javapackager:1.6.7'
-        // classpath 'com.github.fvarrui:JavaPackager:9e46a860a8'
     }
 }
 
@@ -265,6 +262,7 @@ task packageForArmMac(type: io.github.fvarrui.javapackager.gradle.PackageTask, d
         macStartup = 'ARM64'
 
         appId = "com.atlauncher.ATLauncher"
+        infoPlist.bundlePackageType = "APPL"
         backgroundImage = file("${projectDir}/packaging/javapackager/mac/background.png")
         icnsFile = file("${projectDir}/packaging/javapackager/mac/atlauncher.icns")
         generateDmg = true
@@ -320,6 +318,7 @@ task packageForX64Mac(type: io.github.fvarrui.javapackager.gradle.PackageTask, d
         macStartup = 'X86_64'
 
         appId = "com.atlauncher.ATLauncher"
+        infoPlist.bundlePackageType = "APPL"
         backgroundImage = file("${projectDir}/packaging/javapackager/mac/background.png")
         icnsFile = file("${projectDir}/packaging/javapackager/mac/atlauncher.icns")
         generateDmg = true
