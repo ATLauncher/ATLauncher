@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue with modlist allowing adding mods multiple times [#702]
+- Issue with mods now showing from CurseForge when not tagged with a loader
 
 ### Misc
