@@ -382,8 +382,8 @@ public class DisableableMod implements Serializable {
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                     if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
                             && (instance.launcher.loaderVersion.isFabric()
-                            || instance.launcher.loaderVersion.isLegacyFabric()
-                            || instance.launcher.loaderVersion.isQuilt())) {
+                                    || instance.launcher.loaderVersion.isLegacyFabric()
+                                    || instance.launcher.loaderVersion.isQuilt())) {
                         return true;
                     }
 
@@ -394,6 +394,12 @@ public class DisableableMod implements Serializable {
 
                     if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
                             && instance.launcher.loaderVersion.isQuilt()) {
+                        return true;
+                    }
+
+                    // if there's no loaders, assume the mod is untagged so we should show it
+                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
+                            && !cf.gameVersions.contains("Quilt")) {
                         return true;
                     }
 
