@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Default Java icon in macOS Dock when using Java 9 or later [#655] (@WhiteBear60)
 
 ### Misc
