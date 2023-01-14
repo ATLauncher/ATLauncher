@@ -638,10 +638,12 @@ public class App {
 
     private static void setupOSSpecificThings() {
         // do some Mac specific stuff, setting the name of the application and icon
-        // set only when using jar bundle, as if using *.app, macOS sets icon and name automatically and apple.laf.useScreenMenuBar is set using build.gradle
-        if (!OS.isUsingMacApp()) {
+        // set only when using jar bundle, as if using *.app, macOS sets icon and name
+        // automatically and apple.laf.useScreenMenuBar is set using build.gradle
+        if (OS.isMac() && !OS.isUsingMacApp()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("apple.awt.application.name", Constants.LAUNCHER_NAME); // setting the application name in menu bar
+            System.setProperty("apple.awt.application.name", Constants.LAUNCHER_NAME); // setting the application name
+                                                                                       // in menu bar
             try {
                 if (Java.isSystemJavaNewerThanJava8()) {
                     // if Java 9 or higher
