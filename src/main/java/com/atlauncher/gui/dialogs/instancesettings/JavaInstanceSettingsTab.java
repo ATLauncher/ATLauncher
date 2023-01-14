@@ -585,6 +585,17 @@ public class JavaInstanceSettingsTab extends JPanel {
         return defaultValue;
     }
 
+    public boolean isValidJavaPath() {
+        File jPath = new File(javaPath.getText(), "bin");
+        if (!jPath.exists()) {
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."))
+                    .build()).setType(DialogManager.ERROR).show();
+            return false;
+        }
+        return true;
+    }
+
     public boolean isValidJavaParamaters() {
         if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
