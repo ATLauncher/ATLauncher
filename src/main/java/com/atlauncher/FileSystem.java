@@ -38,7 +38,12 @@ public final class FileSystem {
      * @return false if in portable more, true when on linux and not portable
      */
     private static boolean useXdg() {
-        return !App.IS_PORTABLE && OS.isLinux();
+        return !App.IS_PORTABLE && OS.isLinux() && xdgPossible();
+    }
+
+    private static boolean xdgPossible() {
+        String envPath = System.getenv(XDG.DATA.value);
+        return envPath != null && !envPath.isEmpty() || getHomeDir() != null;
     }
 
     private static String getHomeDir() {
