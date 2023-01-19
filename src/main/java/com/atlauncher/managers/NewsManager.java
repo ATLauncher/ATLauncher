@@ -23,12 +23,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
+import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.News;
+import com.atlauncher.graphql.GetNewsQuery;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -77,6 +80,27 @@ public class NewsManager {
 
         for (News newsItem : Data.NEWS) {
             news.append(newsItem.getHTML()).append("<hr/>");
+        }
+
+        // remove the last <hr/>
+        news = new StringBuilder(news.substring(0, news.length() - 5));
+        news.append("</html>");
+
+        return news.toString();
+    }
+
+    /**
+     * Takes a list of news items from GraphQL query and transforms into HTML.
+     *
+     * @return The HTML for displaying on the News Panel
+     */
+    public static String getNewsHTML(List<GetNewsQuery.GeneralNew> newsItems) {
+        StringBuilder news = new StringBuilder("<html>");
+        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
+
+        for (GetNewsQuery.GeneralNew newsItem : newsItems) {
+            news.append("<h2>" + newsItem.title() + " (" + formatter.format(newsItem.createdAt()) + ")</h2>" + "<p>"
+                    + newsItem.content() + "</p><hr/>");
         }
 
         // remove the last <hr/>

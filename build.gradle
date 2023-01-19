@@ -27,6 +27,7 @@ plugins {
     id 'de.undercouch.download' version '5.1.0'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'com.github.ben-manes.versions' version '0.42.0'
+    id 'com.apollographql.apollo' version '2.5.14'
 }
 
 apply plugin: 'org.mini2Dx.gettext'
@@ -81,6 +82,8 @@ dependencies {
     implementation 'org.apache.commons:commons-compress:1.21'
     implementation 'org.commonmark:commonmark:0.19.0'
     implementation 'com.github.hypfvieh:dbus-java:3.3.1'
+    implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
+    implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:4.6.1'
@@ -122,7 +125,14 @@ jar {
                 'Multi-Release': 'true'
         )
     }
+}
 
+apollo {
+    customTypeMapping = [
+        "ID" : "java.lang.String",
+        "DateTime" : "java.util.Date"
+    ]
+    packageName = "com.atlauncher.graphql"
 }
 
 gettext {
@@ -149,6 +159,7 @@ license {
     include '**/*.java'
     exclude 'io/github/**/*.java'
     exclude 'net/minecraft/**/*.java'
+    exclude 'com/atlauncher/graphql/**/*.java'
     exclude 'com/atlauncher/gui/layouts/WrapLayout.java'
     newLine = false
     properties {

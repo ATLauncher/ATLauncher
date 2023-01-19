@@ -1,0 +1,7 @@
+query GetNews($first: Int!) {
+    generalNews(first: $first) {
+        title
+        content
+        createdAt
+    }
+}

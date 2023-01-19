@@ -37,6 +37,11 @@
       "disabledMinecraftVersions": [],
       "disabledVersions": []
     },
+    "legacyfabric": {
+      "enabled": true,
+      "disabledMinecraftVersions": [],
+      "disabledVersions": []
+    },
     "quilt": {
       "enabled": true,
       "disabledMinecraftVersions": [],

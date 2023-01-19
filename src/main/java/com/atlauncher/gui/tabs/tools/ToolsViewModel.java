@@ -145,8 +145,9 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
-            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.FORGE_HOST, Constants.QUILT_HOST,
-            Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST, Constants.MODPACKS_CH_HOST };
+            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.FORGE_HOST,
+            Constants.QUILT_HOST, Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST,
+            Constants.MODPACKS_CH_HOST };
 
     @Override
     public int hostsLength() {
@@ -220,6 +221,15 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
         results.append("Tracert to " + Constants.FORGE_HOST + " was ")
                 .append(Utils.traceRoute(Constants.FORGE_HOST)).append("\n\n----------------\n\n");
+        onTaskComplete.accept(null);
+
+        // Connection to Legacy Fabric CDN
+        results.append("Ping results to " + Constants.LEGACY_FABRIC_HOST + " was ")
+                .append(Utils.pingAddress(Constants.LEGACY_FABRIC_HOST));
+        onTaskComplete.accept(null);
+
+        results.append("Tracert to " + Constants.LEGACY_FABRIC_HOST + " was ")
+                .append(Utils.traceRoute(Constants.LEGACY_FABRIC_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Quilt CDN

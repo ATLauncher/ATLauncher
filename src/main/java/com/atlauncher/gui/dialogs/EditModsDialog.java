@@ -247,6 +247,11 @@ public class EditModsDialog extends JDialog {
                             File copyTo = App.settings.enableAddedModsByDefault ? mod.getFile(instance)
                                     : mod.getDisabledFile(instance);
 
+                            if (copyTo.exists()) {
+                                LogManager.warn("The file " + file.getName() + " already exists. Not adding!");
+                                continue;
+                            }
+
                             if (!copyTo.getParentFile().exists()) {
                                 copyTo.getParentFile().mkdirs();
                             }

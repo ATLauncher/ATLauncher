@@ -17,13 +17,22 @@
  */
 package com.atlauncher.gui.tabs.news;
 
-import com.atlauncher.managers.NewsManager;
-
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-/**
- * 14 / 06 / 2022
- */
+import org.jetbrains.annotations.NotNull;
+
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy.FetchStrategy;
+import com.apollographql.apollo.exception.ApolloException;
+import com.atlauncher.graphql.GetNewsQuery;
+import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.NewsManager;
+import com.atlauncher.network.GraphqlClient;
+
 public class NewsViewModel implements INewsViewModel {
     private Consumer<String> _onReload;
 
@@ -34,6 +43,25 @@ public class NewsViewModel implements INewsViewModel {
 
     @Override
     public void reload() {
-        _onReload.accept(NewsManager.getNewsHTML());
+        if (ConfigManager.getConfigItem("useGraphql.news", false) == true) {
+            GraphqlClient.apolloClient.query(new GetNewsQuery(10))
+                    .toBuilder()
+                    .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, 30, TimeUnit.MINUTES, false))
+                    .build()
+                    .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
+                        @Override
+                        public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
+                            _onReload.accept(NewsManager.getNewsHTML(response.getData().generalNews()));
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull ApolloException e) {
+                            LogManager.logStackTrace("Error fetching news", e);
+                            _onReload.accept(NewsManager.getNewsHTML());
+                        }
+                    });
+        } else {
+            _onReload.accept(NewsManager.getNewsHTML());
+        }
     }
 }

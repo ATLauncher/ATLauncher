@@ -36,6 +36,7 @@ public final class FileSystem {
     public static final Path LOGS = BASE_DIR.resolve("logs");
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
     public static final Path CACHE = BASE_DIR.resolve("cache");
+    public static final Path APOLLO_CACHE = CACHE.resolve("apolloCache");
     public static final Path REMOTE_IMAGE_CACHE = CACHE.resolve("remote_image");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");

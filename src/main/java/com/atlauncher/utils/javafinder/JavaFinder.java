@@ -29,10 +29,12 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.atlauncher.App;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -56,13 +58,25 @@ public class JavaFinder {
 
                 PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java.exe");
 
-                String[] pathsToSearch = { "Java", "Amazon Corretto", "AdoptOpenJDK", "Eclipse Foundation" };
+                List<Path> pathsToSearch = new ArrayList<>(
+                        Arrays.asList(Paths.get(System.getenv("programfiles"), "Java"),
+                                Paths.get(System.getenv("programfiles"), "Amazon Corretto"),
+                                Paths.get(System.getenv("programfiles"), "AdoptOpenJDK"),
+                                Paths.get(System.getenv("programfiles"), "Zulu"),
+                                Paths.get(System.getenv("programfiles"), "Eclipse Adoptium"),
+                                Paths.get(System.getenv("programfiles"), "Eclipse Foundation")));
 
-                for (String searchPath : pathsToSearch) {
+                if (App.settings.baseJavaInstallFolder != null
+                        && Files.exists(Paths.get(App.settings.baseJavaInstallFolder))
+                        && Files.isDirectory(Paths.get(App.settings.baseJavaInstallFolder))) {
+                    pathsToSearch.add(Paths.get(App.settings.baseJavaInstallFolder));
+                }
+
+                for (Path searchPath : pathsToSearch) {
                     List<String> foundPaths = new ArrayList<>();
 
                     try {
-                        Files.walkFileTree(Paths.get(System.getenv("programfiles"), searchPath),
+                        Files.walkFileTree(searchPath,
                                 EnumSet.noneOf(FileVisitOption.class), 10, new SimpleFileVisitor<Path>() {
                                     @Override
                                     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
@@ -86,13 +100,21 @@ public class JavaFinder {
             if (OS.isLinux()) {
                 PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:**/bin/java");
 
-                String[] pathsToSearch = { "/usr/java", "/usr/lib/jvm", "/usr/lib32/jvm" };
+                List<Path> pathsToSearch = new ArrayList<>(
+                        Arrays.asList(Paths.get("/usr/java"), Paths.get("/usr/lib/jvm"),
+                                Paths.get("/usr/lib32/jvm")));
 
-                for (String searchPath : pathsToSearch) {
+                if (App.settings.baseJavaInstallFolder != null
+                        && Files.exists(Paths.get(App.settings.baseJavaInstallFolder))
+                        && Files.isDirectory(Paths.get(App.settings.baseJavaInstallFolder))) {
+                    pathsToSearch.add(Paths.get(App.settings.baseJavaInstallFolder));
+                }
+
+                for (Path searchPath : pathsToSearch) {
                     List<String> foundPaths = new ArrayList<>();
 
                     try {
-                        Files.walkFileTree(Paths.get(searchPath), EnumSet.noneOf(FileVisitOption.class), 10,
+                        Files.walkFileTree(searchPath, EnumSet.noneOf(FileVisitOption.class), 10,
                                 new SimpleFileVisitor<Path>() {
                                     @Override
                                     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)

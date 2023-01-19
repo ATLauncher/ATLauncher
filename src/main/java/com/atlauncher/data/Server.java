@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
@@ -37,10 +38,12 @@ import javax.swing.ImageIcon;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.JavaVersion;
 import com.atlauncher.exceptions.InvalidPack;
@@ -121,13 +124,18 @@ public class Server {
 
         String javaPath = null;
         if (!usesRunSh && javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
-            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
-                    .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+            Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
 
-            if (Files.isDirectory(runtimeDirectory)) {
-                javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                        javaVersion.component, javaVersion.majorVersion, javaPath));
+            if (runtimesForSystem.containsKey(javaVersion.component)
+                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
+                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                        .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+
+                if (Files.isDirectory(runtimeDirectory)) {
+                    javaPath = runtimeDirectory.toAbsolutePath().toString();
+                    LogManager.info(String.format("Using Java runtime %s (major version %d) at path %s",
+                            javaVersion.component, javaVersion.majorVersion, javaPath));
+                }
             }
         }
 

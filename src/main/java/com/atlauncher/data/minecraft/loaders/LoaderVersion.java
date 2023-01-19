@@ -50,6 +50,10 @@ public class LoaderVersion {
         return this.type.equalsIgnoreCase("Fabric");
     }
 
+    public boolean isLegacyFabric() {
+        return this.type.equalsIgnoreCase("LegacyFabric");
+    }
+
     public boolean isForge() {
         return this.type.equalsIgnoreCase("Forge");
     }
@@ -69,6 +73,10 @@ public class LoaderVersion {
     public LoaderType getLoaderType() {
         if (isFabric()) {
             return LoaderType.FABRIC;
+        }
+
+        if (isLegacyFabric()) {
+            return LoaderType.LEGACY_FABRIC;
         }
 
         if (isQuilt()) {
@@ -103,9 +111,10 @@ public class LoaderVersion {
     }
 
     public String getTypeForModrinthExport() {
-        if (this.isFabric()) {
+        if (this.isFabric() || this.isLegacyFabric()) {
             return "fabric-loader";
         }
+
         if (this.isQuilt()) {
             return "quilt-loader";
         }
@@ -123,9 +132,13 @@ public class LoaderVersion {
         }
 
         if (isQuilt()) {
+            return 3;
+        }
+
+        if (isLegacyFabric()) {
             return 4;
         }
 
-        return 3;
+        return 0;
     }
 }

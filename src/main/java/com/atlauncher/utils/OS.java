@@ -48,12 +48,12 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
-import com.atlauncher.Update;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.javafinder.JavaInfo;
+import com.google.common.hash.HashCode;
 
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
@@ -484,14 +484,7 @@ public enum OS {
      * @param args a List of arguments to pass when starting the launcher
      */
     public static void restartLauncher(List<String> args) {
-        File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-        String path = null;
-        try {
-            path = thisFile.getCanonicalPath();
-            path = URLDecoder.decode(path, "UTF-8");
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-        }
+        String path = getRunningProgramPath().toString();
 
         List<String> arguments = new ArrayList<>();
 
@@ -523,6 +516,39 @@ public enum OS {
             e.printStackTrace();
         }
         System.exit(0);
+    }
+
+    public static Path getRunningProgramPath() {
+        File thisFile = new File(OS.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        String path = null;
+        try {
+            path = thisFile.getCanonicalPath();
+            path = URLDecoder.decode(path, "UTF-8");
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
+        }
+
+        return Paths.get(path);
+    }
+
+    public static HashCode getRunningProgramHashCode() {
+        try {
+            Path path = getRunningProgramPath();
+
+            if (Files.isDirectory(path)) {
+                return HashCode.fromString(Utils.runProcess(path, "git", "rev-parse", "--short", "HEAD"));
+            }
+
+            if (!Files.isRegularFile(path)) {
+                return Hashing.EMPTY_HASH_CODE;
+            }
+
+            return Hashing.sha1(path);
+        } catch (Throwable t) {
+            LogManager.logStackTrace("Failed to get running program hash code", t);
+        }
+
+        return Hashing.EMPTY_HASH_CODE;
     }
 
     public static void restartLauncher() {

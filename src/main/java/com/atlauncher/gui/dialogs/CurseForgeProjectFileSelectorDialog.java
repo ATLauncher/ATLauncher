@@ -247,6 +247,14 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                                     return true;
                                 }
 
+                                // don't show CurseForge dependency when grabbed from Modrinth
+                                if (dependency.modId == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID
+                                        && installedMod.isFromModrinth()
+                                        && installedMod.modrinthProject.id
+                                                .equals(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)) {
+                                    return true;
+                                }
+
                                 return installedMod.isFromCurseForge()
                                         && installedMod.getCurseForgeModId() == dependency.modId;
                             }))
@@ -304,25 +312,34 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 }
             }
 
-            // filter out files not for our loader
-            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                if (cf.gameVersions.contains("Fabric") && loaderVersion != null
-                        && (loaderVersion.isFabric() || loaderVersion.isQuilt())) {
-                    return true;
-                }
+            // filter out files not for our loader (if browsing mods)
+            if (mod.getRootCategoryId() == Constants.CURSEFORGE_MODS_SECTION_ID) {
+                curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                    if (cf.gameVersions.contains("Fabric") && loaderVersion != null
+                            && (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()
+                                    || loaderVersion.isQuilt())) {
+                        return true;
+                    }
 
-                if (cf.gameVersions.contains("Forge") && loaderVersion != null
-                        && loaderVersion.isForge()) {
-                    return true;
-                }
+                    if (cf.gameVersions.contains("Forge") && loaderVersion != null
+                            && loaderVersion.isForge()) {
+                        return true;
+                    }
 
-                if (cf.gameVersions.contains("Quilt") && loaderVersion != null
-                        && loaderVersion.isQuilt()) {
-                    return true;
-                }
+                    if (cf.gameVersions.contains("Quilt") && loaderVersion != null
+                            && loaderVersion.isQuilt()) {
+                        return true;
+                    }
 
-                return false;
-            });
+                    // if there's no loaders, assume the mod is untagged so we should show it
+                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
+                            && !cf.gameVersions.contains("Quilt")) {
+                        return true;
+                    }
+
+                    return false;
+                });
+            }
 
             files.addAll(curseForgeFilesStream.collect(Collectors.toList()));
 
@@ -334,7 +351,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             filesDropdown.removeAllItems();
 
-            // try to filter out non compatable mods (Forge on Fabric and vice versa) if no
+            // try to filter out non compatible mods (Forge on Fabric and vice versa) if no
             // loader gameVersions are set
             if (App.settings.addModRestriction == AddModRestriction.NONE) {
                 files.forEach(version -> filesDropdown.addItem(version));

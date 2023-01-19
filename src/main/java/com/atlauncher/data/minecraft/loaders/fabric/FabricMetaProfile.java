@@ -15,20 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modrinth;
+package com.atlauncher.data.minecraft.loaders.fabric;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
-public enum ModrinthProjectType {
-    @SerializedName("mod")
-    MOD,
+import com.atlauncher.annot.Json;
+import com.atlauncher.data.minecraft.Arguments;
 
-    @SerializedName("modpack")
-    MODPACK,
-
-    @SerializedName("resourcepack")
-    RESOURCEPACK,
-
-    @SerializedName("shader")
-    SHADER,
+@Json
+public class FabricMetaProfile {
+    public String id;
+    public String time;
+    public String releaseTime;
+    public String type;
+    public String mainClass;
+    public String inheritsFrom;
+    public Arguments arguments;
+    public List<FabricLibrary> libraries;
 }

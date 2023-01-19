@@ -15,20 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modrinth;
+package com.atlauncher.data.minecraft.loaders.fabric;
 
-import com.google.gson.annotations.SerializedName;
+import java.lang.reflect.Type;
 
-public enum ModrinthProjectType {
-    @SerializedName("mod")
-    MOD,
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
-    @SerializedName("modpack")
-    MODPACK,
+public class FabricLibraryTypeAdapter implements JsonDeserializer<FabricLibrary> {
+    @Override
+    public FabricLibrary deserialize(JsonElement json, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
+        JsonObject object = json.getAsJsonObject();
 
-    @SerializedName("resourcepack")
-    RESOURCEPACK,
-
-    @SerializedName("shader")
-    SHADER,
+        return new FabricLibrary(object.get("name").getAsString(), object.get("url").getAsString());
+    }
 }

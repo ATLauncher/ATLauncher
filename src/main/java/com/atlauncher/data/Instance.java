@@ -107,10 +107,12 @@ import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.FMLLibrariesConstants;
 import com.atlauncher.data.minecraft.loaders.forge.FMLLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthSide;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
@@ -153,7 +155,9 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -606,7 +610,8 @@ public class Instance extends MinecraftVersion {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
             String runtimeSystemString = JavaRuntimes.getSystem();
 
-            if (runtimesForSystem.containsKey(javaVersion.component)) {
+            if (runtimesForSystem.containsKey(javaVersion.component)
+                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
                 // #. {0} is the version of Java were downloading
                 progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}", javaVersion.majorVersion));
 
@@ -1497,7 +1502,11 @@ public class Instance extends MinecraftVersion {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
-        Path finalLocation = this.getRoot().resolve("mods").resolve(fileToDownload.filename);
+        Path finalLocation = mod.projectType == ModrinthProjectType.MOD
+                ? this.getRoot().resolve("mods").resolve(fileToDownload.filename)
+                : (mod.projectType == ModrinthProjectType.SHADER
+                        ? this.getRoot().resolve("shaderpacks").resolve(fileToDownload.filename)
+                        : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename));
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
                 .downloadTo(downloadLocation).copyTo(finalLocation)
                 .withHttpClient(Network.createProgressClient(dialog));
@@ -1546,8 +1555,11 @@ public class Instance extends MinecraftVersion {
                         || !installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
                 .collect(Collectors.toList());
 
+        Type modType = mod.projectType == ModrinthProjectType.MOD ? Type.mods
+                : (mod.projectType == ModrinthProjectType.SHADER ? Type.shaderpack : Type.resourcepack);
+
         // add this mod
-        this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, Type.mods,
+        this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
                 null, mod.description, false, true, true, false, mod, version));
 
         this.save();
@@ -1681,7 +1693,7 @@ public class Instance extends MinecraftVersion {
         manifest.components.add(minecraftComponent);
 
         // fabric loader
-        if (launcher.loaderVersion.type.equals("Fabric")) {
+        if (launcher.loaderVersion.type.equals("Fabric") || launcher.loaderVersion.type.equals("LegacyFabric")) {
             // mappings
             MultiMCComponent fabricMappingsComponent = new MultiMCComponent();
             fabricMappingsComponent.cachedName = "Intermediary Mappings";
@@ -1779,6 +1791,36 @@ public class Instance extends MinecraftVersion {
             FileUtils.deleteDirectory(tempDir);
 
             return false;
+        }
+
+        // if Legacy Fabric, add patch in
+        if (launcher.loaderVersion.type.equals("LegacyFabric")) {
+            FileUtils.createDirectory(tempDir.resolve("patches"));
+
+            JsonObject patch = new JsonObject();
+            patch.addProperty("formatVersion", 1);
+            patch.addProperty("name", "Intermediary Mappings");
+            patch.addProperty("uid", "net.fabricmc.intermediary");
+            patch.addProperty("version", id);
+
+            JsonArray plusLibraries = new JsonArray();
+            JsonObject intermediary = new JsonObject();
+            intermediary.addProperty("name", String.format("net.fabricmc:intermediary:%s", id));
+            intermediary.addProperty("url", Constants.LEGACY_FABRIC_MAVEN);
+            plusLibraries.add(intermediary);
+            patch.add("+libraries", plusLibraries);
+
+            // create net.fabricmc.intermediary.json
+            try (FileWriter fileWriter = new FileWriter(tempDir.resolve("net.fabricmc.intermediary.json").toFile())) {
+                Gsons.MINECRAFT.toJson(patch, fileWriter);
+            } catch (JsonIOException | IOException e) {
+                LogManager.logStackTrace("Failed to save net.fabricmc.intermediary.json", e);
+
+                FileUtils.deleteDirectory(tempDir);
+
+                return false;
+            }
+
         }
 
         // create instance.cfg
@@ -2733,6 +2775,8 @@ public class Instance extends MinecraftVersion {
                 progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
             } else if (loaderType == LoaderType.FORGE) {
                 progressDialog.setReturnValue(ForgeLoader.getChoosableVersions(id));
+            } else if (loaderType == LoaderType.LEGACY_FABRIC) {
+                progressDialog.setReturnValue(LegacyFabricLoader.getChoosableVersions(id));
             } else if (loaderType == LoaderType.QUILT) {
                 progressDialog.setReturnValue(QuiltLoader.getChoosableVersions(id));
             }
@@ -2902,17 +2946,24 @@ public class Instance extends MinecraftVersion {
 
         // are we using Mojangs provided runtime?
         if (isUsingJavaRuntime()) {
-            Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
-                    .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+            Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
 
-            if (OS.isMac()) {
-                runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
-            }
+            // make sure the runtime is available in the data set (so it's not disabled
+            // remotely)
+            if (runtimesForSystem.containsKey(javaVersion.component)
+                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
+                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                        .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
 
-            if (Files.isDirectory(runtimeDirectory)) {
-                javaPath = runtimeDirectory.toAbsolutePath().toString();
-                LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                        javaVersion.component, javaVersion.majorVersion, javaPath));
+                if (OS.isMac()) {
+                    runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
+                }
+
+                if (Files.isDirectory(runtimeDirectory)) {
+                    javaPath = runtimeDirectory.toAbsolutePath().toString();
+                    LogManager.info(String.format("Using Java runtime %s (major version %d) at path %s",
+                            javaVersion.component, javaVersion.majorVersion, javaPath));
+                }
             }
         }
 
@@ -2954,12 +3005,18 @@ public class Instance extends MinecraftVersion {
         List<Path> files = new ArrayList<>();
 
         // find the mods that have been added by the user manually
-        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"))) {
+        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"),
+                ROOT.resolve("resourcepacks"), ROOT.resolve("jarmods"))) {
+            com.atlauncher.data.Type fileType = path.equals(ROOT.resolve("resourcepacks"))
+                    ? com.atlauncher.data.Type.resourcepack
+                    : (path.equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
+                            : com.atlauncher.data.Type.mods);
+
             try (Stream<Path> stream = Files.list(path)) {
                 files.addAll(stream
                         .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
                                 file -> launcher.mods.stream()
-                                        .noneMatch(mod -> mod.type == com.atlauncher.data.Type.mods
+                                        .noneMatch(mod -> mod.type == fileType
                                                 && mod.file.equals(file.getFileName().toString())))
                         .collect(Collectors.toList()));
             } catch (IOException e) {
@@ -2973,8 +3030,15 @@ public class Instance extends MinecraftVersion {
 
             progressDialog.addThread(new Thread(() -> {
                 List<DisableableMod> mods = files.parallelStream()
-                        .map(file -> DisableableMod.generateMod(file.toFile(), com.atlauncher.data.Type.mods,
-                                file.getParent().equals(ROOT.resolve("mods"))))
+                        .map(file -> {
+                            com.atlauncher.data.Type fileType = file.getParent().equals(ROOT.resolve("resourcepacks"))
+                                    ? com.atlauncher.data.Type.resourcepack
+                                    : (file.getParent().equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
+                                            : com.atlauncher.data.Type.mods);
+
+                            return DisableableMod.generateMod(file.toFile(), fileType,
+                                    !file.getParent().equals(ROOT.resolve("disabledmods")));
+                        })
                         .collect(Collectors.toList());
 
                 if (!App.settings.dontCheckModsOnCurseForge) {

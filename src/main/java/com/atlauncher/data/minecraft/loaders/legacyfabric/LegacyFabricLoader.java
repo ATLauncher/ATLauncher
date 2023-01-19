@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.minecraft.loaders.fabric;
+package com.atlauncher.data.minecraft.loaders.legacyfabric;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,10 +48,10 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.gson.reflect.TypeToken;
 
-public class FabricLoader implements Loader {
+public class LegacyFabricLoader implements Loader {
     protected String minecraft;
     protected String loaderVersion;
-    protected FabricMetaProfile version;
+    protected LegacyFabricMetaProfile version;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
     private final Pattern manifestPattern = Pattern.compile("META-INF/[^/]+\\.(SF|DSA|RSA|EC)");
@@ -69,31 +69,31 @@ public class FabricLoader implements Loader {
             this.loaderVersion = (String) metadata.get("loader");
         } else if ((boolean) metadata.get("latest")) {
             LogManager.debug("Downloading latest Legacy Fabric version");
-            FabricMetaVersion metaVersion = this.getLatestVersion();
+            LegacyFabricMetaVersion metaVersion = this.getLatestVersion();
             this.loaderVersion = metaVersion.loader.version;
         }
 
         this.version = this.getVersion(this.loaderVersion);
     }
 
-    public FabricMetaProfile getLoader(String version) {
+    public LegacyFabricMetaProfile getLoader(String version) {
         return Download.build()
-                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s/%s/json",
+                .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s/%s/%s/json",
                         this.minecraft,
                         version, instanceInstaller.isServer ? "server" : "profile"))
-                .asClass(FabricMetaProfile.class);
+                .asClass(LegacyFabricMetaProfile.class);
     }
 
-    public FabricMetaProfile getVersion(String version) {
+    public LegacyFabricMetaProfile getVersion(String version) {
         return this.getLoader(version);
     }
 
-    public FabricMetaVersion getLatestVersion() {
-        java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+    public LegacyFabricMetaVersion getLatestVersion() {
+        java.lang.reflect.Type type = new TypeToken<List<LegacyFabricMetaVersion>>() {
         }.getType();
 
-        List<FabricMetaVersion> loaders = Download.build()
-                .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft))
+        List<LegacyFabricMetaVersion> loaders = Download.build()
+                .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s?limit=1", this.minecraft))
                 .asType(type);
 
         if (loaders == null || loaders.size() == 0) {
@@ -227,7 +227,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public Arguments getArguments() {
-        return this.version.arguments;
+        return null;
     }
 
     @Override
@@ -241,19 +241,19 @@ public class FabricLoader implements Loader {
     }
 
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
-        java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
+        java.lang.reflect.Type type = new TypeToken<List<LegacyFabricMetaVersion>>() {
         }.getType();
 
         try {
-            List<FabricMetaVersion> versions = Download.build()
-                    .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s", minecraft))
+            List<LegacyFabricMetaVersion> versions = Download.build()
+                    .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s", minecraft))
                     .asTypeWithThrow(type);
 
-            List<String> disabledVersions = ConfigManager.getConfigItem("loaders.fabric.disabledVersions",
+            List<String> disabledVersions = ConfigManager.getConfigItem("loaders.legacyfabric.disabledVersions",
                     new ArrayList<String>());
 
             return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
-                    .map(version -> new LoaderVersion(version.loader.version, false, "Fabric"))
+                    .map(version -> new LoaderVersion(version.loader.version, false, "LegacyFabric"))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             return new ArrayList<>();
@@ -267,6 +267,6 @@ public class FabricLoader implements Loader {
 
     @Override
     public LoaderVersion getLoaderVersion() {
-        return new LoaderVersion(this.loaderVersion, false, "Fabric");
+        return new LoaderVersion(this.loaderVersion, false, "LegacyFabric");
     }
 }

@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,11 +52,17 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy.FetchStrategy;
+import com.apollographql.apollo.exception.ApolloException;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
@@ -66,14 +74,18 @@ import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.graphql.GetLoaderVersionsForMinecraftVersionQuery;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -101,6 +113,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
     private final JRadioButton loaderTypeNoneRadioButton = new JRadioButton(GetText.tr("None"));
     private final JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
     private final JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
+    private final JRadioButton loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
     private final JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
 
     private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
@@ -352,6 +365,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         loaderTypeButtonGroup.add(loaderTypeNoneRadioButton);
         loaderTypeButtonGroup.add(loaderTypeFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeForgeRadioButton);
+        loaderTypeButtonGroup.add(loaderTypeLegacyFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton);
 
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
@@ -363,6 +377,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true) {
             loaderTypePanel.add(loaderTypeForgeRadioButton);
+        }
+
+        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true) == true) {
+            loaderTypePanel.add(loaderTypeLegacyFabricRadioButton);
         }
 
         if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true) {
@@ -377,6 +395,9 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         });
         loaderTypeForgeRadioButton.addActionListener(e -> {
             selectedLoaderTypeChanged(LoaderType.FORGE);
+        });
+        loaderTypeLegacyFabricRadioButton.addActionListener(e -> {
+            selectedLoaderTypeChanged(LoaderType.LEGACY_FABRIC);
         });
         loaderTypeQuiltRadioButton.addActionListener(e -> {
             selectedLoaderTypeChanged(LoaderType.QUILT);
@@ -477,6 +498,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
             loaderTypeForgeRadioButton.setVisible(
                     !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
                             .contains(newSelectedMinecraftVersion));
+            loaderTypeLegacyFabricRadioButton.setVisible(
+                    !ConfigManager
+                            .getConfigItem("loaders.legacyfabric.disabledMinecraftVersions", new ArrayList<String>())
+                            .contains(newSelectedMinecraftVersion));
             loaderTypeQuiltRadioButton.setVisible(
                     !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
                             .contains(newSelectedMinecraftVersion));
@@ -496,6 +521,10 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
         if (loaderTypeForgeRadioButton.isSelected()) {
             return LoaderType.FORGE;
+        }
+
+        if (loaderTypeLegacyFabricRadioButton.isSelected()) {
+            return LoaderType.LEGACY_FABRIC;
         }
 
         if (loaderTypeQuiltRadioButton.isSelected()) {
@@ -578,6 +607,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         loaderTypeNoneRadioButton.setEnabled(false);
         loaderTypeFabricRadioButton.setEnabled(false);
         loaderTypeForgeRadioButton.setEnabled(false);
+        loaderTypeLegacyFabricRadioButton.setEnabled(false);
         loaderTypeQuiltRadioButton.setEnabled(false);
         loaderVersionsDropDown.setEnabled(false);
         createServerButton.setEnabled(false);
@@ -587,80 +617,252 @@ public final class VanillaPacksTab extends JPanel implements Tab {
         boolean enableCreateServers = selectedLoader != LoaderType.FORGE
                 || !Utils.matchVersion(selectedMinecraftVersion, "1.5", true, true);
 
-        Runnable r = () -> {
-            List<LoaderVersion> loaderVersions = new ArrayList<>();
+        if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false) == true) {
+            GraphqlClient.apolloClient.query(new GetLoaderVersionsForMinecraftVersionQuery(selectedMinecraftVersion))
+                    .toBuilder()
+                    .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false))
+                    .build()
+                    .enqueue(new ApolloCall.Callback<GetLoaderVersionsForMinecraftVersionQuery.Data>() {
+                        @Override
+                        public void onResponse(
+                                @NotNull Response<GetLoaderVersionsForMinecraftVersionQuery.Data> response) {
+                            List<LoaderVersion> loaderVersions = new ArrayList<>();
 
-            if (selectedLoader == LoaderType.FABRIC) {
-                loaderVersions.addAll(FabricLoader.getChoosableVersions(selectedMinecraftVersion));
-            } else if (selectedLoader == LoaderType.FORGE) {
-                loaderVersions.addAll(ForgeLoader.getChoosableVersions(selectedMinecraftVersion));
-            } else if (selectedLoader == LoaderType.QUILT) {
-                loaderVersions.addAll(QuiltLoader.getChoosableVersions(selectedMinecraftVersion));
-            }
+                            if (selectedLoader == LoaderType.FABRIC) {
+                                List<String> disabledVersions = ConfigManager.getConfigItem(
+                                        "loaders.fabric.disabledVersions",
+                                        new ArrayList<String>());
 
-            if (loaderVersions.size() == 0) {
+                                loaderVersions.addAll(response.getData().loaderVersions().fabric().stream()
+                                        .filter(fv -> !disabledVersions.contains(fv.version()))
+                                        .map(version -> new LoaderVersion(version.version(), false, "Fabric"))
+                                        .collect(Collectors.toList()));
+                            } else if (selectedLoader == LoaderType.FORGE) {
+                                List<String> disabledVersions = ConfigManager.getConfigItem(
+                                        "loaders.forge.disabledVersions",
+                                        new ArrayList<String>());
+
+                                loaderVersions.addAll(response.getData().loaderVersions().forge().stream()
+                                        .filter(fv -> !disabledVersions.contains(fv.version()))
+                                        .map(version -> {
+                                            LoaderVersion lv = new LoaderVersion(version.version(),
+                                                    version.rawVersion(),
+                                                    version.recommended(),
+                                                    "Forge");
+
+                                            if (version.installerSha1Hash() != null
+                                                    && version.installerSize() != null) {
+                                                lv.downloadables.put("installer",
+                                                        new Pair<String, Long>(version.installerSha1Hash(),
+                                                                version.installerSize().longValue()));
+                                            }
+
+                                            if (version.universalSha1Hash() != null
+                                                    && version.universalSize() != null) {
+                                                lv.downloadables.put("universal",
+                                                        new Pair<String, Long>(version.universalSha1Hash(),
+                                                                version.universalSize().longValue()));
+                                            }
+
+                                            if (version.clientSha1Hash() != null && version.clientSize() != null) {
+                                                lv.downloadables.put("client",
+                                                        new Pair<String, Long>(version.clientSha1Hash(),
+                                                                version.clientSize().longValue()));
+                                            }
+
+                                            if (version.serverSha1Hash() != null && version.serverSize() != null) {
+                                                lv.downloadables.put("server",
+                                                        new Pair<String, Long>(version.serverSha1Hash(),
+                                                                version.serverSize().longValue()));
+                                            }
+
+                                            return lv;
+                                        })
+                                        .collect(Collectors.toList()));
+                            } else if (selectedLoader == LoaderType.LEGACY_FABRIC) {
+                                List<String> disabledVersions = ConfigManager.getConfigItem(
+                                        "loaders.legacyfabric.disabledVersions",
+                                        new ArrayList<String>());
+
+                                loaderVersions.addAll(response.getData().loaderVersions().legacyfabric().stream()
+                                        .filter(fv -> !disabledVersions.contains(fv.version()))
+                                        .map(version -> new LoaderVersion(version.version(), false, "Legacy Fabric"))
+                                        .collect(Collectors.toList()));
+                            } else if (selectedLoader == LoaderType.QUILT) {
+                                List<String> disabledVersions = ConfigManager.getConfigItem(
+                                        "loaders.quilt.disabledVersions",
+                                        new ArrayList<String>());
+
+                                loaderVersions.addAll(response.getData().loaderVersions().quilt().stream()
+                                        .filter(fv -> !disabledVersions.contains(fv.version()))
+                                        .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
+                                        .collect(Collectors.toList()));
+                            }
+
+                            if (loaderVersions.size() == 0) {
+                                loaderVersionsDropDown.removeAllItems();
+                                loaderVersionsDropDown
+                                        .addItem(new ComboItem<LoaderVersion>(null, GetText.tr("No Versions Found")));
+                                loaderTypeNoneRadioButton.setEnabled(true);
+                                loaderTypeFabricRadioButton.setEnabled(true);
+                                loaderTypeForgeRadioButton.setEnabled(true);
+                                loaderTypeLegacyFabricRadioButton.setEnabled(true);
+                                loaderTypeQuiltRadioButton.setEnabled(true);
+                                createServerButton.setEnabled(enableCreateServers);
+                                createInstanceButton.setEnabled(true);
+                                return;
+                            }
+
+                            int loaderVersionLength = 0;
+
+                            // ensures that font width is taken into account
+                            for (LoaderVersion version : loaderVersions) {
+                                loaderVersionLength = Math.max(loaderVersionLength,
+                                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
+                            }
+
+                            loaderVersionsDropDown.removeAllItems();
+
+                            loaderVersions.forEach(version -> loaderVersionsDropDown
+                                    .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
+
+                            if (selectedLoader == LoaderType.FORGE) {
+                                Optional<LoaderVersion> recommendedVersion = loaderVersions.stream()
+                                        .filter(lv -> lv.recommended)
+                                        .findFirst();
+
+                                if (recommendedVersion.isPresent()) {
+                                    loaderVersionsDropDown
+                                            .setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
+                                }
+                            }
+
+                            // ensures that the dropdown is at least 200 px wide
+                            loaderVersionLength = Math.max(200, loaderVersionLength);
+
+                            // ensures that there is a maximum width of 400 px to prevent overflow
+                            loaderVersionLength = Math.min(400, loaderVersionLength);
+
+                            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
+
+                            loaderTypeNoneRadioButton.setEnabled(true);
+                            loaderTypeFabricRadioButton.setEnabled(true);
+                            loaderTypeForgeRadioButton.setEnabled(true);
+                            loaderTypeLegacyFabricRadioButton.setEnabled(true);
+                            loaderTypeQuiltRadioButton.setEnabled(true);
+                            loaderVersionsDropDown.setEnabled(true);
+                            createServerButton.setEnabled(enableCreateServers);
+                            createInstanceButton.setEnabled(true);
+
+                            // update the name and description fields if they're not dirty
+                            String defaultNameFieldValue = String.format("Minecraft %s with %s",
+                                    selectedMinecraftVersion,
+                                    selectedLoader.toString());
+                            if (!nameFieldDirty) {
+                                nameField.setText(defaultNameFieldValue);
+                            }
+
+                            if (!descriptionFieldDirty) {
+                                descriptionField.setText(defaultNameFieldValue);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull ApolloException e) {
+                            LogManager.logStackTrace("Error fetching loading versions", e);
+                            loaderVersionsDropDown.removeAllItems();
+                            loaderVersionsDropDown
+                                    .addItem(new ComboItem<LoaderVersion>(null, GetText.tr("Error Getting Versions")));
+                            loaderTypeNoneRadioButton.setEnabled(true);
+                            loaderTypeFabricRadioButton.setEnabled(true);
+                            loaderTypeForgeRadioButton.setEnabled(true);
+                            loaderTypeLegacyFabricRadioButton.setEnabled(true);
+                            loaderTypeQuiltRadioButton.setEnabled(true);
+                            createServerButton.setEnabled(enableCreateServers);
+                            createInstanceButton.setEnabled(true);
+                            return;
+                        }
+                    });
+        } else {
+            Runnable r = () -> {
+                List<LoaderVersion> loaderVersions = new ArrayList<>();
+
+                if (selectedLoader == LoaderType.FABRIC) {
+                    loaderVersions.addAll(FabricLoader.getChoosableVersions(selectedMinecraftVersion));
+                } else if (selectedLoader == LoaderType.FORGE) {
+                    loaderVersions.addAll(ForgeLoader.getChoosableVersions(selectedMinecraftVersion));
+                } else if (selectedLoader == LoaderType.LEGACY_FABRIC) {
+                    loaderVersions.addAll(LegacyFabricLoader.getChoosableVersions(selectedMinecraftVersion));
+                } else if (selectedLoader == LoaderType.QUILT) {
+                    loaderVersions.addAll(QuiltLoader.getChoosableVersions(selectedMinecraftVersion));
+                }
+
+                if (loaderVersions.size() == 0) {
+                    loaderVersionsDropDown.removeAllItems();
+                    loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("No Versions Found")));
+                    loaderTypeNoneRadioButton.setEnabled(true);
+                    loaderTypeFabricRadioButton.setEnabled(true);
+                    loaderTypeForgeRadioButton.setEnabled(true);
+                    loaderTypeLegacyFabricRadioButton.setEnabled(true);
+                    loaderTypeQuiltRadioButton.setEnabled(true);
+                    createServerButton.setEnabled(enableCreateServers);
+                    createInstanceButton.setEnabled(true);
+                    return;
+                }
+
+                int loaderVersionLength = 0;
+
+                // ensures that font width is taken into account
+                for (LoaderVersion version : loaderVersions) {
+                    loaderVersionLength = Math.max(loaderVersionLength,
+                            getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
+                }
+
                 loaderVersionsDropDown.removeAllItems();
-                loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("No Versions Found")));
+
+                loaderVersions.forEach(version -> loaderVersionsDropDown
+                        .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
+
+                if (selectedLoader == LoaderType.FORGE) {
+                    Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
+                            .findFirst();
+
+                    if (recommendedVersion.isPresent()) {
+                        loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
+                    }
+                }
+
+                // ensures that the dropdown is at least 200 px wide
+                loaderVersionLength = Math.max(200, loaderVersionLength);
+
+                // ensures that there is a maximum width of 400 px to prevent overflow
+                loaderVersionLength = Math.min(400, loaderVersionLength);
+
+                loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
+
                 loaderTypeNoneRadioButton.setEnabled(true);
                 loaderTypeFabricRadioButton.setEnabled(true);
                 loaderTypeForgeRadioButton.setEnabled(true);
+                loaderTypeLegacyFabricRadioButton.setEnabled(true);
                 loaderTypeQuiltRadioButton.setEnabled(true);
+                loaderVersionsDropDown.setEnabled(true);
                 createServerButton.setEnabled(enableCreateServers);
                 createInstanceButton.setEnabled(true);
-                return;
-            }
 
-            int loaderVersionLength = 0;
-
-            // ensures that font width is taken into account
-            for (LoaderVersion version : loaderVersions) {
-                loaderVersionLength = Math.max(loaderVersionLength,
-                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
-            }
-
-            loaderVersionsDropDown.removeAllItems();
-
-            loaderVersions.forEach(version -> loaderVersionsDropDown
-                    .addItem(new ComboItem<LoaderVersion>(version, version.toString())));
-
-            if (selectedLoader == LoaderType.FORGE) {
-                Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
-                        .findFirst();
-
-                if (recommendedVersion.isPresent()) {
-                    loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
+                // update the name and description fields if they're not dirty
+                String defaultNameFieldValue = String.format("Minecraft %s with %s", selectedMinecraftVersion,
+                        selectedLoader.toString());
+                if (!nameFieldDirty) {
+                    nameField.setText(defaultNameFieldValue);
                 }
-            }
 
-            // ensures that the dropdown is at least 200 px wide
-            loaderVersionLength = Math.max(200, loaderVersionLength);
+                if (!descriptionFieldDirty) {
+                    descriptionField.setText(defaultNameFieldValue);
+                }
+            };
 
-            // ensures that there is a maximum width of 400 px to prevent overflow
-            loaderVersionLength = Math.min(400, loaderVersionLength);
-
-            loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
-
-            loaderTypeNoneRadioButton.setEnabled(true);
-            loaderTypeFabricRadioButton.setEnabled(true);
-            loaderTypeForgeRadioButton.setEnabled(true);
-            loaderTypeQuiltRadioButton.setEnabled(true);
-            loaderVersionsDropDown.setEnabled(true);
-            createServerButton.setEnabled(enableCreateServers);
-            createInstanceButton.setEnabled(true);
-
-            // update the name and description fields if they're not dirty
-            String defaultNameFieldValue = String.format("Minecraft %s with %s", selectedMinecraftVersion,
-                    selectedLoader.toString());
-            if (!nameFieldDirty) {
-                nameField.setText(defaultNameFieldValue);
-            }
-
-            if (!descriptionFieldDirty) {
-                descriptionField.setText(defaultNameFieldValue);
-            }
-        };
-
-        new Thread(r).start();
+            new Thread(r).start();
+        }
     }
 
     private void setupBottomPanel() {
