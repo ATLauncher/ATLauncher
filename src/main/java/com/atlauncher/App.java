@@ -363,7 +363,7 @@ public class App {
         if (autoLaunch != null) {
             Optional<Instance> instance = InstanceManager.getInstances().stream().filter(
                     i -> i.getName().equalsIgnoreCase(autoLaunch) || i.getSafeName().equalsIgnoreCase(autoLaunch))
-                    .findFirst();
+                .findFirst();
             if (instance.isPresent()) {
                 LogManager.info("Opening Instance " + instance.get().launcher.name);
                 if (instance.get().launch()) {
@@ -420,13 +420,13 @@ public class App {
         LogManager.info(String.format("App Arguments: %s", Gsons.DEFAULT_SLIM.toJson(args)));
 
         LogManager.info(String.format("JVM Arguments: %s",
-                Gsons.DEFAULT_SLIM.toJson(ManagementFactory.getRuntimeMXBean().getInputArguments())));
+            Gsons.DEFAULT_SLIM.toJson(ManagementFactory.getRuntimeMXBean().getInputArguments())));
 
         SwingUtilities.invokeLater(
-                () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
+            () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
         LogManager.info("Java Version: "
-                + String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
+            + String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
 
         LogManager.info("Java Path: " + settings.javaPath);
 
@@ -457,13 +457,13 @@ public class App {
             if (cards.size() != 0) {
                 for (GraphicsCard card : cards) {
                     LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
-                            + " " + (card.getVRam() / 1048576) + "MB VRAM");
+                        + " " + (card.getVRam() / 1048576) + "MB VRAM");
                 }
             }
 
             CentralProcessor cpu = hal.getProcessor();
             LogManager.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
-                    cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
+                cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
 
             OperatingSystem os = systemInfo.getOperatingSystem();
 
@@ -474,11 +474,11 @@ public class App {
 
             if (OS.isWindows() && OS.isUsingAntivirus()) {
                 LogManager.warn(
-                        "A running antivirus process was found on your system. If you notice any issues running Minecraft or downloading files, please whitelist ATLauncher and its folder in your antivirus program/s listed below.");
+                    "A running antivirus process was found on your system. If you notice any issues running Minecraft or downloading files, please whitelist ATLauncher and its folder in your antivirus program/s listed below.");
 
                 for (OSProcess process : OS.getAntivirusProcesses()) {
                     LogManager.info(String.format("Process %s (running at %s)", process.getName(),
-                            process.getPath()));
+                        process.getPath()));
                 }
             }
         } catch (Throwable t) {
@@ -496,49 +496,48 @@ public class App {
 
         if (OS.isLinux() && GraphicsEnvironment.isHeadless()) {
             DialogManager.okDialog().setTitle("Using Headless Java").setContent(new HTMLBuilder().center().text(
-                    "You're running ATLauncher with a headless version of Java installed on your system.<br/><br/>ATLauncher cannot run with a headless version of Java. Please uninstall it and install a non headless version of Java to continue.<br/><br/>If you're unsure how, please Google for instructions for your specific distro.")
+                        "You're running ATLauncher with a headless version of Java installed on your system.<br/><br/>ATLauncher cannot run with a headless version of Java. Please uninstall it and install a non headless version of Java to continue.<br/><br/>If you're unsure how, please Google for instructions for your specific distro.")
                     .build())
-                    .setType(DialogManager.ERROR).show();
+                .setType(DialogManager.ERROR).show();
             System.exit(0);
         }
 
-        if (FileSystem.isPortablePopulated())
-        {
+        if (FileSystem.isPortablePopulated()) {
             matched = true;
 
             if (DialogManager.optionDialog().setTitle("Warning")
-                    .setContent(new HTMLBuilder().center().text("I've detected that you may "
-                            + "not have installed this in the right location.<br/><br/>The exe or jar file should "
-                            + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
-                            + "that's what you've done?").build())
-                    .addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
-                    .setType(DialogManager.ERROR).show() != 0) {
+                .setContent(new HTMLBuilder().center().text("I've detected that you may "
+                    + "not have installed this in the right location.<br/><br/>The exe or jar file should "
+                    + "be placed in it's own folder with nothing else in it.<br/><br/>Are you 100% sure "
+                    + "that's what you've done?").build())
+                .addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
+                .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
             }
         }
 
         if (!matched && (Files.notExists(FileSystem.CONFIGS) && Files.notExists(FileSystem.BASE_DIR.resolve("Configs")))
-                && FileSystem.BASE_DIR.equals(FileSystem.getUserDownloadsPath())) {
+            && FileSystem.BASE_DIR.equals(FileSystem.getUserDownloadsPath())) {
             matched = true;
 
             if (DialogManager.optionDialog().setTitle("Warning").setContent(new HTMLBuilder().center().text(
-                    "ATLauncher shouldn't be run from the Downloads folder.<br/><br/>Please put ATLauncher in it's own folder and run the launcher from there!")
+                        "ATLauncher shouldn't be run from the Downloads folder.<br/><br/>Please put ATLauncher in it's own folder and run the launcher from there!")
                     .build()).addOption("Yes It's fine", true).addOption("Whoops. I'll change that now")
-                    .setType(DialogManager.ERROR).show() != 0) {
+                .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
             }
         }
 
         if (matched) {
             if (DialogManager.optionDialog().setTitle("Warning")
-                    .setContent(new HTMLBuilder().center()
-                            .text("Are you absolutely sure you've put ATLauncher in it's own folder?<br/><br/>If you "
-                                    + "haven't and you click 'Yes, delete my files', this may delete "
-                                    + FileSystem.CONFIGS.getParent().toFile().listFiles().length
-                                    + " files and folders.<br/><br/>Are you 100% sure?")
-                            .build())
-                    .addOption("Yes, I understand", true).addOption("No, exit and I'll put it in a folder")
-                    .setType(DialogManager.ERROR).show() != 0) {
+                .setContent(new HTMLBuilder().center()
+                    .text("Are you absolutely sure you've put ATLauncher in it's own folder?<br/><br/>If you "
+                        + "haven't and you click 'Yes, delete my files', this may delete "
+                        + FileSystem.CONFIGS.getParent().toFile().listFiles().length
+                        + " files and folders.<br/><br/>Are you 100% sure?")
+                    .build())
+                .addOption("Yes, I understand", true).addOption("No, exit and I'll put it in a folder")
+                .setType(DialogManager.ERROR).show() != 0) {
                 System.exit(0);
             }
         }
@@ -555,11 +554,11 @@ public class App {
 
                 if (!settings.ignoreJavaOptionsWarning) {
                     int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
-                            .setTitle("Warning")
-                            .setContent(new HTMLBuilder().center().text(
-                                    "We've detected that you have a _JAVA_OPTIONS environment variable which may cause issues installing and playing Minecraft.<br/><br/>Do you want to fix this now so you don't have any issues in the future?")
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setTitle("Warning")
+                        .setContent(new HTMLBuilder().center().text(
+                                "We've detected that you have a _JAVA_OPTIONS environment variable which may cause issues installing and playing Minecraft.<br/><br/>Do you want to fix this now so you don't have any issues in the future?")
+                            .build())
+                        .setType(DialogManager.ERROR).show();
 
                     if (ret == 0) {
                         OS.openWebBrowser("https://atl.pw/javaoptionsfromlauncher");
@@ -580,11 +579,11 @@ public class App {
             LogManager.warn("ATLauncher installed within OneDrive!");
 
             int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
-                    .setTitle(GetText.tr("ATLauncher installed within OneDrive"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"))
-                            .build())
-                    .setType(DialogManager.WARNING).show();
+                .setTitle(GetText.tr("ATLauncher installed within OneDrive"))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"))
+                    .build())
+                .setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
                 OS.openFileExplorer(FileSystem.BASE_DIR, true);
@@ -596,15 +595,15 @@ public class App {
         }
 
         if (OS.isWindows() && !settings.ignoreProgramFilesWarning
-                && FileSystem.BASE_DIR.toString().contains("Program Files")) {
+            && FileSystem.BASE_DIR.toString().contains("Program Files")) {
             LogManager.warn("ATLauncher installed within Program Files!");
 
             int ret = DialogManager.yesNoDialog().addOption(GetText.tr("Don't remind me again"))
-                    .setTitle(GetText.tr("ATLauncher installed within Program Files"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We have detected that you're running ATLauncher from within Program Files.<br/><br/>This can cause serious issues and you should move the folder outside of Program Files.<br/><br/>Do you want to close the launcher and do this now?"))
-                            .build())
-                    .setType(DialogManager.WARNING).show();
+                .setTitle(GetText.tr("ATLauncher installed within Program Files"))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "We have detected that you're running ATLauncher from within Program Files.<br/><br/>This can cause serious issues and you should move the folder outside of Program Files.<br/><br/>Do you want to close the launcher and do this now?"))
+                    .build())
+                .setType(DialogManager.WARNING).show();
 
             if (ret == 0) {
                 OS.openFileExplorer(FileSystem.BASE_DIR, true);
@@ -619,14 +618,14 @@ public class App {
 
         try {
             if ((!testFile.exists() && !testFile.createNewFile())
-                    || !FileSystem.BASE_DIR.resolve(".test").toFile().canWrite()) {
+                || !FileSystem.BASE_DIR.resolve(".test").toFile().canWrite()) {
                 LogManager.error("ATLauncher cannot write files!");
 
                 DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
 
                 OS.openFileExplorer(FileSystem.BASE_DIR, true);
                 System.exit(0);
@@ -635,10 +634,10 @@ public class App {
             LogManager.error("ATLauncher cannot write files!");
 
             DialogManager.okDialog().setTitle(GetText.tr("ATLauncher cannot write files"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
 
             OS.openFileExplorer(FileSystem.BASE_DIR, true);
             System.exit(0);
@@ -652,7 +651,7 @@ public class App {
         if (OS.isMac() && !OS.isUsingMacApp()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.application.name", Constants.LAUNCHER_NAME); // setting the application name
-                                                                                       // in menu bar
+            // in menu bar
             try {
                 if (Java.isSystemJavaNewerThanJava8()) {
                     // if Java 9 or higher
@@ -799,32 +798,32 @@ public class App {
             textField.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
             textField.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
             textField.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.selectAllAction);
+                DefaultEditorKit.selectAllAction);
 
             InputMap passwordField = (InputMap) UIManager.get("PasswordField.focusInputMap");
             passwordField.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.copyAction);
+                DefaultEditorKit.copyAction);
             passwordField.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.pasteAction);
+                DefaultEditorKit.pasteAction);
             passwordField.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.cutAction);
+                DefaultEditorKit.cutAction);
             passwordField.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.selectAllAction);
+                DefaultEditorKit.selectAllAction);
 
             InputMap textArea = (InputMap) UIManager.get("TextArea.focusInputMap");
             textArea.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
             textArea.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK), DefaultEditorKit.pasteAction);
             textArea.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
             textArea.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.selectAllAction);
+                DefaultEditorKit.selectAllAction);
 
             InputMap editorPane = (InputMap) UIManager.get("EditorPane.focusInputMap");
             editorPane.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.META_DOWN_MASK), DefaultEditorKit.copyAction);
             editorPane.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.pasteAction);
+                DefaultEditorKit.pasteAction);
             editorPane.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.META_DOWN_MASK), DefaultEditorKit.cutAction);
             editorPane.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK),
-                    DefaultEditorKit.selectAllAction);
+                DefaultEditorKit.selectAllAction);
         }
     }
 
@@ -861,42 +860,42 @@ public class App {
         parser.accepts("updated", "If the launcher was just updated.").withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-setup-dialog",
                 "If the first time setup dialog should be skipped, using the defaults. Note that this will enable analytics by default.")
-                .withOptionalArg().ofType(Boolean.class);
+            .withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-tray-integration", "If the tray icon should not be enabled.").withOptionalArg()
-                .ofType(Boolean.class);
+            .ofType(Boolean.class);
         parser.accepts("disable-analytics", "If analytics should be disabled.").withOptionalArg().ofType(Boolean.class);
         parser.accepts("disable-error-reporting", "If error reporting should be disabled.").withOptionalArg()
                 .ofType(Boolean.class);
         parser.accepts("install-method", "The method used to install the launcher.").withRequiredArg()
                 .ofType(String.class);
         parser.accepts("working-dir", "This forces the working directory for the launcher.").withRequiredArg()
-                .ofType(String.class);
+            .ofType(String.class);
         parser.accepts("base-launcher-domain", "The base launcher domain.").withRequiredArg().ofType(String.class);
         parser.accepts("base-cdn-domain", "The base CDN domain.").withRequiredArg().ofType(String.class);
         parser.accepts("base-cdn-path", "The path on the CDN used for downloading files.").withRequiredArg()
-                .ofType(String.class);
+            .ofType(String.class);
         parser.accepts("allow-all-ssl-certs",
                 "This will tell the launcher to allow all SSL certs regardless of validity. This is insecure and only intended for development purposes.")
-                .withOptionalArg().ofType(Boolean.class);
+            .withOptionalArg().ofType(Boolean.class);
         parser.accepts("no-launcher-update",
                 "This forces the launcher to not check for a launcher update. It can be enabled with the below command line argument.")
-                .withOptionalArg().ofType(Boolean.class);
+            .withOptionalArg().ofType(Boolean.class);
         parser.accepts("no-console", "If the console shouldn't be shown.").withOptionalArg().ofType(Boolean.class);
         parser.accepts("close-launcher", "If the launcher should be closed after launching an instance.")
-                .withOptionalArg().ofType(Boolean.class);
+            .withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug", "If debug logging should be enabled.").withOptionalArg().ofType(Boolean.class);
         parser.accepts("debug-level", "The level of debug logging that should be logged.").withRequiredArg()
-                .ofType(Integer.class);
+            .ofType(Integer.class);
         parser.accepts("launch",
                 "The name of an instance to automatically launch. Can be the instances directory name in the file system or the full name of the instance.")
-                .withRequiredArg().ofType(String.class);
+            .withRequiredArg().ofType(String.class);
         parser.accepts("proxy-type", "The type of proxy to use. Can be \"SOCKS\", \"DIRECT\" or \"HTTP\".")
-                .withRequiredArg().ofType(String.class);
+            .withRequiredArg().ofType(String.class);
         parser.accepts("proxy-host", "The host of the proxy to use.").withRequiredArg().ofType(String.class);
         parser.accepts("proxy-port", "The port of the proxy to use.").withRequiredArg().ofType(Integer.class);
         parser.accepts("config-override", "A JSON string to override the launchers config.").withRequiredArg()
-                .ofType(String.class);
-        parser.accepts(OPTION_PORTABLE,"Use XDG base directories on linux")
+            .ofType(String.class);
+        parser.accepts(OPTION_PORTABLE, "Linux only, should run in legacy portable mode instead of using XDG directories")
             .withOptionalArg()
             .ofType(Boolean.class);
         parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
@@ -1005,7 +1004,7 @@ public class App {
             Integer proxyPort = (Integer) options.valueOf("proxy-port");
 
             Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.valueOf(proxyType),
-                    new InetSocketAddress(proxyHost, proxyPort));
+                new InetSocketAddress(proxyHost, proxyPort));
 
             LogManager.warn("Proxy set to " + proxy);
 
