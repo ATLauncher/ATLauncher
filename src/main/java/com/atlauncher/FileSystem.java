@@ -183,7 +183,7 @@ public final class FileSystem {
     private static void moveToXDG() throws IOException {
         if (useXdg()) {
             for (XDG xdg : XDG.values()) {
-                resolveDirectory(xdg, null, Path.of(xdg.defaultValue)).toFile().mkdirs();
+                resolveDirectory(xdg, null, new File(xdg.defaultValue).toPath()).toFile().mkdirs();
             }
             filesMove(B_LOGS, LOGS);
             filesMove(B_BACKUPS, BACKUPS);
