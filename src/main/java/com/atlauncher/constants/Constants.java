@@ -53,10 +53,10 @@ public class Constants {
             patchS = patchS.replace(".Beta", "");
             stream = "Beta";
         }
-        Integer reserved;
+        int reserved;
 
         if (reservedS == null) {
-            reserved = null;
+            reserved = 99;
         } else {
             reserved = Integer.parseInt(reservedS);
         }

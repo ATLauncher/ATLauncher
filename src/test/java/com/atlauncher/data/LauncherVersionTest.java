@@ -17,112 +17,78 @@
  */
 package com.atlauncher.data;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
 import com.atlauncher.utils.Hashing;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class LauncherVersionTest {
 
     private static final LauncherVersion testVersion = new LauncherVersion(1, 0, 0, 0, "Release",
         Hashing.EMPTY_HASH_CODE);
 
-    private static final LauncherVersion semanticVersion = new LauncherVersion(null, 0, 0, 0, "Release",
+    private static final LauncherVersion semanticTestVersion = new LauncherVersion(99, 0, 0, 0, "Release",
         Hashing.EMPTY_HASH_CODE);
 
     @Test
     public void test() {
-        LauncherVersion[] versions = {testVersion, semanticVersion};
-        for (LauncherVersion version : versions) {
-
+        LauncherVersion[] versions = {testVersion, semanticTestVersion};
+        for (LauncherVersion testVersion : versions) {
             // Test same version - no update
-            assertFalse(version.needsUpdate(new LauncherVersion(version.getReserved(), version.getMajor(),
-                version.getMinor(), version.getRevision(), version.getStream(),
+            assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
                 Hashing.EMPTY_HASH_CODE)));
 
             // Test older Reserved - launcher had a big update
-            if (version.getReserved() != null) {
-                assertTrue(
-                    version.needsUpdate(
-                        new LauncherVersion(
-                            version.getReserved() + 1,
-                            version.getMajor(),
-                            version.getMinor(),
-                            version.getRevision(),
-                            version.getStream(),
-                            Hashing.EMPTY_HASH_CODE
-                        )
-                    )
-                );
-            }
-
-            // Test old to new semver
-            if (version.getReserved() != null)
-                assertTrue(
-                    version.needsUpdate(
-                        new LauncherVersion(
-                            null,
-                            version.getMajor(),
-                            version.getMinor(),
-                            version.getRevision(),
-                            version.getStream(),
-                            Hashing.EMPTY_HASH_CODE
-                        )
-                    )
-                );
+            assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved() + 1, testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
             // Test older Major - launcher had major update
-            assertTrue(version.needsUpdate(new LauncherVersion(version.getReserved(), version.getMajor() + 1,
-                version.getMinor(), version.getRevision(), version.getStream(),
+            assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor() + 1,
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
                 Hashing.EMPTY_HASH_CODE)));
 
             // Test older Minor - launcher had minor update
-            assertTrue(version.needsUpdate(new LauncherVersion(version.getReserved(), version.getMajor(),
-                version.getMinor() + 1, version.getRevision(), version.getStream(),
+            assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor() + 1, testVersion.getRevision(), testVersion.getStream(),
                 Hashing.EMPTY_HASH_CODE)));
 
             // Test older Revision - launcher had a bug fix
-            assertTrue(version.needsUpdate(new LauncherVersion(version.getReserved(), version.getMajor(),
-                version.getMinor(), version.getRevision() + 1, version.getStream(),
+            assertTrue(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision() + 1, testVersion.getStream(),
                 Hashing.EMPTY_HASH_CODE)));
 
             // Test user has a beta stream but the real stream comes out
-            LauncherVersion betaBuild = new LauncherVersion(version.getReserved(), version.getMajor(),
-                version.getMinor(), version.getRevision(), "Beta", Hashing.EMPTY_HASH_CODE);
-            LauncherVersion releaseBuild = new LauncherVersion(version.getReserved(), version.getMajor(),
-                version.getMinor(), version.getRevision(), "Release", Hashing.EMPTY_HASH_CODE);
+            LauncherVersion betaBuild = new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), "Beta", Hashing.EMPTY_HASH_CODE);
+            LauncherVersion releaseBuild = new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), "Release", Hashing.EMPTY_HASH_CODE);
             assertTrue(betaBuild.needsUpdate(releaseBuild));
 
             // Test user has a release stream but a beta build comes out
             assertFalse(releaseBuild.needsUpdate(betaBuild));
 
-            if (version.getReserved() != null) {
-                // Test newer Reserved - launcher dev version
-                assertFalse(version.needsUpdate(new LauncherVersion(version.getReserved() - 1, version.getMajor(),
-                    version.getMinor(), version.getRevision(), version.getStream(),
-                    Hashing.EMPTY_HASH_CODE)));
-            } else {
-                // Test newer semver to current old versioning
-                assertFalse(version.needsUpdate(new LauncherVersion(1, version.getMajor(),
-                    version.getMinor(), version.getRevision(), version.getStream(),
-                    Hashing.EMPTY_HASH_CODE)));
-            }
-
+            // Test newer Reserved - launcher dev version
+            assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved() - 1, testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
+                Hashing.EMPTY_HASH_CODE)));
 
             // Test newer Major - launcher dev version
-            assertFalse(version.needsUpdate(new LauncherVersion(version.getReserved(), version.getMajor() - 1,
-                version.getMinor(), version.getRevision(), version.getStream(),
+            assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor() - 1,
+                testVersion.getMinor(), testVersion.getRevision(), testVersion.getStream(),
                 Hashing.EMPTY_HASH_CODE)));
 
             // Test newer Minor - launcher dev version
-            assertFalse(version.needsUpdate(new LauncherVersion(version.getReserved(), version.getMajor(),
-                version.getMinor() - 1, version.getRevision(), version.getStream(),
+            assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor() - 1, testVersion.getRevision(), testVersion.getStream(),
                 Hashing.EMPTY_HASH_CODE)));
 
             // Test newer Revision - launcher dev version
-            assertFalse(version.needsUpdate(new LauncherVersion(version.getReserved(), version.getMajor(),
-                version.getMinor(), version.getRevision() - 1, version.getStream(),
+            assertFalse(testVersion.needsUpdate(new LauncherVersion(testVersion.getReserved(), testVersion.getMajor(),
+                testVersion.getMinor(), testVersion.getRevision() - 1, testVersion.getStream(),
                 Hashing.EMPTY_HASH_CODE)));
         }
     }
