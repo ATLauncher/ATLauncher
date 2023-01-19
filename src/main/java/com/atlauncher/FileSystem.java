@@ -139,6 +139,7 @@ public final class FileSystem {
     public static final Path SERVERS =
         resolveDirectory(XDG.DATA, "servers", B_SERVERS);
 
+    public static final Path B_TEMP = BASE_DIR.resolve("temp");
     public static final Path TEMP = resolveTemp();
 
     private static final Path B_FAILEDDOWNLOADS = BASE_DIR.resolve("faileddownloads");
@@ -170,6 +171,12 @@ public final class FileSystem {
         copyResourcesOutJar();
     }
 
+    private static void filesMove(Path a, Path b) throws IOException {
+        System.out.println("Moving " + a + " -> " + b);
+        FileUtils.moveFile(a, b);
+        FileUtils.delete(a);
+    }
+
     /**
      * Move directories to XDG
      */
@@ -178,18 +185,19 @@ public final class FileSystem {
             for (XDG xdg : XDG.values()) {
                 resolveDirectory(xdg, null, Path.of(xdg.defaultValue)).toFile().mkdirs();
             }
-            Files.move(B_LOGS, LOGS);
-            Files.move(B_BACKUPS, BACKUPS);
-            Files.move(B_CACHE, CACHE);
-            Files.move(B_LOADERS, LOADERS);
-            Files.move(B_RUNTIMES, RUNTIMES);
-            Files.move(B_CONFIGS, CONFIGS);
-            Files.move(B_ASSETS, ASSETS);
-            Files.move(B_LIBRARIES, LIBRARIES);
-            Files.move(B_DOWNLOADS, DOWNLOADS);
-            Files.move(B_INSTANCES, INSTANCES);
-            Files.move(B_SERVERS, SERVERS);
-            Files.move(B_FAILEDDOWNLOADS, FAILED_DOWNLOADS);
+            filesMove(B_LOGS, LOGS);
+            filesMove(B_BACKUPS, BACKUPS);
+            filesMove(B_CACHE, CACHE);
+            filesMove(B_LOADERS, LOADERS);
+            filesMove(B_RUNTIMES, RUNTIMES);
+            filesMove(B_CONFIGS, CONFIGS);
+            filesMove(B_ASSETS, ASSETS);
+            filesMove(B_LIBRARIES, LIBRARIES);
+            filesMove(B_DOWNLOADS, DOWNLOADS);
+            filesMove(B_INSTANCES, INSTANCES);
+            filesMove(B_SERVERS, SERVERS);
+            filesMove(B_FAILEDDOWNLOADS, FAILED_DOWNLOADS);
+            Files.delete(B_TEMP);
         }
     }
 
@@ -448,7 +456,7 @@ public final class FileSystem {
         if (useXdg()) {
             return new File("/tmp", "ATLauncher").toPath();
         }
-        return BASE_DIR.resolve("temp");
+        return B_TEMP;
     }
 
 }
