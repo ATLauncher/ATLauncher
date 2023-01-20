@@ -12,5 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with Instance settings allow an invalid Java path to be saved
 - Issue with Quilt based modpacks not exporting to MultiMC format correctly [#710]
 - Issue with scanning missing mods throwing errors when folder doesn't exist
+- Add some error checking around modpacks.ch to prevent issues when api errors
 
 ### Misc

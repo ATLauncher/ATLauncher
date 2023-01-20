@@ -44,7 +44,7 @@ public class ModpacksChApi {
 
         ModpacksChPackList packList = Download.build().setUrl(url).asType(ModpacksChPackList.class);
 
-        if (packList.status != null && packList.status.equals("error")) {
+        if (packList == null || (packList.status != null && packList.status.equals("error"))) {
             return new ArrayList<>();
         }
 
@@ -66,7 +66,7 @@ public class ModpacksChApi {
                 .setUrl(String.format("%s/modpack/%s/50", Constants.MODPACKS_CH_API_URL, sort))
                 .asType(ModpacksChPackList.class);
 
-        if (packList.status != null && packList.status.equals("error")) {
+        if (packList == null || (packList.status != null && packList.status.equals("error"))) {
             return new ArrayList<>();
         }
 
@@ -92,7 +92,7 @@ public class ModpacksChApi {
                     .cached(new CacheControl.Builder().maxStale(5, TimeUnit.MINUTES).build())
                     .asClassWithThrow(ModpacksChPackVersionModsManifest.class);
 
-            if (modsManifest.status != null && modsManifest.status.equals("error")) {
+            if (modsManifest == null || (modsManifest.status != null && modsManifest.status.equals("error"))) {
                 return null;
             }
 
