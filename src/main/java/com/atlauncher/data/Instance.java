@@ -1664,32 +1664,38 @@ public class Instance extends MinecraftVersion {
 
         manifest.components = new ArrayList<>();
 
-        // lwjgl 3
-        MultiMCComponent lwjgl3Component = new MultiMCComponent();
-        lwjgl3Component.cachedName = "LWJGL 3";
-        lwjgl3Component.cachedVersion = "3.2.2";
-        lwjgl3Component.cachedVolatile = true;
-        lwjgl3Component.dependencyOnly = true;
-        lwjgl3Component.uid = "org.lwjgl3";
-        lwjgl3Component.version = "3.2.2";
-        manifest.components.add(lwjgl3Component);
+        Optional<Library> lwjgl3Version = libraries.stream().filter(l -> l.name.contains("org.lwjgl:lwjgl:"))
+                .findFirst();
 
         // minecraft
         MultiMCComponent minecraftComponent = new MultiMCComponent();
         minecraftComponent.cachedName = "Minecraft";
-
-        minecraftComponent.cachedRequires = new ArrayList<>();
-        MultiMCRequire lwjgl3Require = new MultiMCRequire();
-        lwjgl3Require.equals = "3.2.2";
-        lwjgl3Require.suggests = "3.2.2";
-        lwjgl3Require.uid = "org.lwjgl3";
-        minecraftComponent.cachedRequires.add(lwjgl3Require);
-
+        minecraftComponent.important = true;
         minecraftComponent.cachedVersion = id;
-        minecraftComponent.cachedVolatile = true;
-        minecraftComponent.dependencyOnly = true;
-        minecraftComponent.uid = "org.lwjgl3";
-        minecraftComponent.version = "3.2.2";
+        minecraftComponent.uid = "net.minecraft";
+        minecraftComponent.version = id;
+
+        if (lwjgl3Version.isPresent()) {
+            String lwjgl3VersionString = lwjgl3Version.get().name.replace("org.lwjgl:lwjgl:", "");
+
+            // lwjgl 3
+            MultiMCComponent lwjgl3Component = new MultiMCComponent();
+            lwjgl3Component.cachedName = "LWJGL 3";
+            lwjgl3Component.cachedVersion = lwjgl3VersionString;
+            lwjgl3Component.cachedVolatile = true;
+            lwjgl3Component.dependencyOnly = true;
+            lwjgl3Component.uid = "org.lwjgl3";
+            lwjgl3Component.version = lwjgl3VersionString;
+            manifest.components.add(lwjgl3Component);
+
+            minecraftComponent.cachedRequires = new ArrayList<>();
+            MultiMCRequire lwjgl3Require = new MultiMCRequire();
+            lwjgl3Require.equals = lwjgl3VersionString;
+            lwjgl3Require.suggests = lwjgl3VersionString;
+            lwjgl3Require.uid = "org.lwjgl3";
+            minecraftComponent.cachedRequires.add(lwjgl3Require);
+        }
+
         manifest.components.add(minecraftComponent);
 
         // fabric loader
@@ -1746,9 +1752,16 @@ public class Instance extends MinecraftVersion {
 
         // quilt loader
         if (launcher.loaderVersion.type.equals("Quilt")) {
+            String hashedName = "org.quiltmc.hashed";
+            String cachedName = "Hashed Mappings";
+            if (ConfigManager.getConfigItem("loaders.quilt.switchHashedForIntermediary", true) == false) {
+                hashedName = "net.fabricmc.intermediary";
+                cachedName = "Intermediary Mappings";
+            }
+
             // mappings
             MultiMCComponent quiltMappingsComponent = new MultiMCComponent();
-            quiltMappingsComponent.cachedName = "Hashed Mappings";
+            quiltMappingsComponent.cachedName = cachedName;
 
             quiltMappingsComponent.cachedRequires = new ArrayList<>();
             MultiMCRequire minecraftRequire = new MultiMCRequire();
@@ -1759,17 +1772,17 @@ public class Instance extends MinecraftVersion {
             quiltMappingsComponent.cachedVersion = id;
             quiltMappingsComponent.cachedVolatile = true;
             quiltMappingsComponent.dependencyOnly = true;
-            quiltMappingsComponent.uid = "org.quiltmc.hashed";
+            quiltMappingsComponent.uid = hashedName;
             quiltMappingsComponent.version = id;
             manifest.components.add(quiltMappingsComponent);
 
             // loader
             MultiMCComponent quiltLoaderComponent = new MultiMCComponent();
-            quiltLoaderComponent.cachedName = "Fabric Loader";
+            quiltLoaderComponent.cachedName = "Quilt Loader";
 
             quiltLoaderComponent.cachedRequires = new ArrayList<>();
             MultiMCRequire hashedRequire = new MultiMCRequire();
-            hashedRequire.uid = "org.quiltmc.hashed";
+            hashedRequire.uid = hashedName;
             quiltLoaderComponent.cachedRequires.add(hashedRequire);
 
             quiltLoaderComponent.cachedVersion = launcher.loaderVersion.version;

@@ -308,7 +308,7 @@ public class InstanceExportDialog extends JDialog {
                     } else {
                         OS.openFileExplorer(
                                 Paths.get(saveTo.getText())
-                                        .resolve(String.format("%s %s.%s", safePathName, version.getText(),
+                                        .resolve(String.format("%s.%s", safePathName,
                                                 (exportFormat == InstanceExportFormat.MODRINTH ? "mrpack" : "zip"))),
                                 true);
                     }
