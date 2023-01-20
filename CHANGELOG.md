@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with Instance settings allow an invalid Java path to be saved
 
 ### Misc
+- Update packaging scripts
