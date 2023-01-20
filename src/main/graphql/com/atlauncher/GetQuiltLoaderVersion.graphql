@@ -1,0 +1,13 @@
+query GetQuiltLoaderVersion(
+    $quiltVersion: String!
+    $minecraftVersion: String!
+    $includeClientJson: Boolean = false
+    $includeServerJson: Boolean = false
+) {
+    quiltLoaderVersion(version: $quiltVersion, minecraftVersion: $minecraftVersion) {
+        version
+        stable
+        clientJson @include(if: $includeClientJson)
+        serverJson @include(if: $includeServerJson)
+    }
+}

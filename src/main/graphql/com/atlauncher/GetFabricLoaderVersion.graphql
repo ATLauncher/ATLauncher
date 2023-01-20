@@ -1,0 +1,13 @@
+query GetFabricLoaderVersion(
+    $fabricVersion: String!
+    $minecraftVersion: String!
+    $includeClientJson: Boolean = false
+    $includeServerJson: Boolean = false
+) {
+    fabricLoaderVersion(version: $fabricVersion, minecraftVersion: $minecraftVersion) {
+        version
+        stable
+        clientJson @include(if: $includeClientJson)
+        serverJson @include(if: $includeServerJson)
+    }
+}

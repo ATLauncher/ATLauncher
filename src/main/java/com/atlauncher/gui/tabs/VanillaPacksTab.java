@@ -686,7 +686,7 @@ public final class VanillaPacksTab extends JPanel implements Tab {
 
                                 loaderVersions.addAll(response.getData().loaderVersions().legacyfabric().stream()
                                         .filter(fv -> !disabledVersions.contains(fv.version()))
-                                        .map(version -> new LoaderVersion(version.version(), false, "Legacy Fabric"))
+                                        .map(version -> new LoaderVersion(version.version(), false, "LegacyFabric"))
                                         .collect(Collectors.toList()));
                             } else if (selectedLoader == LoaderType.QUILT) {
                                 List<String> disabledVersions = ConfigManager.getConfigItem(

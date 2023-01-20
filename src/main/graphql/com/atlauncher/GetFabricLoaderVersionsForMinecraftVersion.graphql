@@ -1,0 +1,8 @@
+query GetFabricLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
+    loaderVersions(minecraftVersion: $minecraftVersion) {
+        fabric {
+            version
+            stable
+        }
+    }
+}

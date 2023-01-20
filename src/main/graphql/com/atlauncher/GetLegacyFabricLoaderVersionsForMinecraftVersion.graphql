@@ -1,0 +1,8 @@
+query GetLegacyFabricLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
+    loaderVersions(minecraftVersion: $minecraftVersion) {
+        legacyfabric {
+            version
+            stable
+        }
+    }
+}

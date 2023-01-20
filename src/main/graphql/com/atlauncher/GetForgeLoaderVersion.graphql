@@ -1,0 +1,19 @@
+query GetForgeLoaderVersion($forgeVersion: String!) {
+    forgeVersion(version: $forgeVersion) {
+        version
+        rawVersion
+        recommended
+
+        clientSha1Hash
+        clientSize
+
+        installerSha1Hash
+        installerSize
+
+        serverSha1Hash
+        serverSize
+
+        universalSha1Hash
+        universalSize
+    }
+}
