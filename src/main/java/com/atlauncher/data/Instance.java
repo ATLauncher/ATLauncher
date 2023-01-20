@@ -3020,6 +3020,10 @@ public class Instance extends MinecraftVersion {
         // find the mods that have been added by the user manually
         for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"),
                 ROOT.resolve("resourcepacks"), ROOT.resolve("jarmods"))) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+
             com.atlauncher.data.Type fileType = path.equals(ROOT.resolve("resourcepacks"))
                     ? com.atlauncher.data.Type.resourcepack
                     : (path.equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar

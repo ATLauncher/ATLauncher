@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Default Java icon in macOS Dock when using Java 9 or later [#655] (@WhiteBear60)
 - Issue with Instance settings allow an invalid Java path to be saved
 - Issue with Quilt based modpacks not exporting to MultiMC format correctly [#710]
+- Issue with scanning missing mods throwing errors when folder doesn't exist
 
 ### Misc
