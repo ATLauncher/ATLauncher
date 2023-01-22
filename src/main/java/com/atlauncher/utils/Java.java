@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +39,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -191,37 +189,8 @@ public class Java {
             javas.add(systemJava);
         }
 
-        if (Files.isDirectory(FileSystem.RUNTIMES)) {
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(FileSystem.RUNTIMES)) {
-                for (Path path : directoryStream) {
-                    if (Files.exists(path.resolve("release"))) {
-                        javas.add(new JavaInfo(Java.getPathToJavaExecutable(path)));
-                    }
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-
         PerformanceManager.end();
         return javas;
-    }
-
-    public static boolean hasInstalledRuntime() {
-        boolean found = false;
-
-        if (Files.isDirectory(FileSystem.RUNTIMES)) {
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(FileSystem.RUNTIMES)) {
-                for (Path path : directoryStream) {
-                    if (Files.exists(path.resolve("release"))) {
-                        found = true;
-                    }
-                }
-            } catch (IOException e) {
-            }
-        }
-
-        return found;
     }
 
     /**

@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add button to tray menu to close open dialog windows [#715]
 
 ### Fixes
+- Remove old runtime downloader as it's been succeeded by Mojang provided JREs
 
 ### Misc

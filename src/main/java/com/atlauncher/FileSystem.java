@@ -130,6 +130,10 @@ public final class FileSystem {
         if (Files.exists(JSON.resolve("additive_versions.json"))) {
             FileUtils.delete(JSON.resolve("additive_versions.json"));
         }
+
+        if (Files.exists(RUNTIMES.resolve("1.8.0_51"))) {
+            FileUtils.delete(RUNTIMES.resolve("1.8.0_51"));
+        }
     }
 
     public static Path getUserDownloadsPath(boolean useSetting) {
