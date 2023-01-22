@@ -381,6 +381,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 installable.instanceName = nameField.getText();
                 installable.isReinstall = isReinstall;
+                installable.isUpdate = isUpdate;
                 installable.isServer = isServer;
                 installable.saveMods = !isServer && isReinstall && saveModsCheckbox.isSelected();
 

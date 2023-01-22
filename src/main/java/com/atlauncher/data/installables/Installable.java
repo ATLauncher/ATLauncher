@@ -135,7 +135,9 @@ public abstract class Installable {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
         final JLabel doing = new JLabel(
-                (isReinstall) ? GetText.tr("Starting Reinstall Process") : GetText.tr("Starting Install Process"));
+                isUpdate ? GetText.tr("Starting Update Process")
+                        : ((isReinstall) ? GetText.tr("Starting Reinstall Process")
+                                : GetText.tr("Starting Install Process")));
         doing.setHorizontalAlignment(JLabel.CENTER);
         doing.setVerticalAlignment(JLabel.TOP);
         topPanel.add(doing);
@@ -172,7 +174,21 @@ public abstract class Installable {
                 if (isCancelled()) {
                     type = DialogManager.ERROR;
 
-                    if (isReinstall) {
+                    if (isUpdate) {
+                        // #. {0} is the pack name and {1} is the pack version
+                        title = GetText.tr("{0} {1} Not Updated", pack.getName(), version.version);
+
+                        // #. {0} is the pack name and {1} is the pack version
+                        text = GetText.tr("{0} {1} wasn't updated.<br/><br/>Check error logs for more information.",
+                                pack.getName(), version.version);
+
+                        if (instanceIsCorrupt && instance != null) {
+                            instance.launcher.isPlayable = false;
+                            instance.save();
+
+                            App.launcher.reloadInstancesPanel();
+                        }
+                    } else if (isReinstall) {
                         // #. {0} is the pack name and {1} is the pack version
                         title = GetText.tr("{0} {1} Not Reinstalled", pack.getName(), version.version);
 
@@ -216,7 +232,14 @@ public abstract class Installable {
                         // #. {0} is the pack name and {1} is the pack version
                         title = GetText.tr("{0} {1} Installed", pack.getName(), version.version);
 
-                        if (isReinstall) {
+                        if (isUpdate) {
+                            // #. {0} is the instance name
+                            title = GetText.tr("{0} Updated", instance.launcher.name);
+
+                            // #. {0} is the instance name and {1} is the pack version
+                            text = GetText.tr("Instance {0} has been updated to version {1}.", instance.launcher.name,
+                                    version.version);
+                        } else if (isReinstall) {
                             // #. {0} is the pack name and {1} is the pack version
                             text = GetText.tr("{0} {1} has been reinstalled.", pack.getName(), version.version);
                         } else if (isServer) {
@@ -252,6 +275,14 @@ public abstract class Installable {
                             // #. {0} is the pack name and {1} is the pack version
                             text = GetText.tr(
                                     "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information.",
+                                    pack.getName(), version.version);
+                        } else if (isUpdate) {
+                            // #. {0} is the pack name and {1} is the pack version
+                            title = GetText.tr("{0} {1} Not Updated", pack.getName(), version.version);
+
+                            // #. {0} is the pack name and {1} is the pack version
+                            text = GetText.tr(
+                                    "{0} {1} wasn't updated.<br/><br/>Check error logs for more information.",
                                     pack.getName(), version.version);
                         } else {
                             // #. {0} is the pack name and {1} is the pack version
@@ -386,6 +417,11 @@ public abstract class Installable {
         if (changingLoader) {
             // #. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
             return GetText.tr("Installing {0} {1}", getLoaderVersion().type, getLoaderVersion().version);
+        }
+
+        if (isUpdate) {
+            // #. {0} is the name of the instance
+            return GetText.tr("Updating {0}", instance.launcher.name);
         }
 
         if (isReinstall) {

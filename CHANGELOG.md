@@ -15,6 +15,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add some error checking around modpacks.ch to prevent issues when api errors
 - Use quilt meta profiles for client/server same as Fabric
 - Browsing mods not going back to first page when changing query [#714]
+- Updating stat not going through
 
 ### Misc
 - Move missing graphql usage for loader versions outside Vanilla Minecraft tab
