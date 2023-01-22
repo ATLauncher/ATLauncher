@@ -125,6 +125,11 @@ import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.graphql.AddPackActionMutation;
+import com.atlauncher.graphql.AddPackTimePlayedMutation;
+import com.atlauncher.graphql.type.AddPackActionInput;
+import com.atlauncher.graphql.type.AddPackTimePlayedInput;
+import com.atlauncher.graphql.type.PackLogAction;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
@@ -144,6 +149,7 @@ import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
@@ -1280,31 +1286,44 @@ public class Instance extends MinecraftVersion {
         }
     }
 
-    public String addPlay(String version) {
-        Map<String, Object> request = new HashMap<>();
+    public void addPlay(String version) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+            GraphqlClient
+                    .mutateAndWait(
+                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                    this.getPack().id))
+                                    .version(version).action(PackLogAction.PLAY).build()));
+        } else {
+            Map<String, Object> request = new HashMap<>();
 
-        request.put("version", version);
+            request.put("version", version);
 
-        try {
-            return Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/play", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            try {
+                Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/play", request);
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
         }
-        return "Play Not Added!";
     }
 
-    public String addTimePlayed(int time, String version) {
-        Map<String, Object> request = new HashMap<>();
+    public void addTimePlayed(int time, String version) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+            GraphqlClient
+                    .mutateAndWait(
+                            new AddPackTimePlayedMutation(AddPackTimePlayedInput.builder().packId(Integer.toString(
+                                    this.getPack().id)).version(version).time(time).build()));
+        } else {
+            Map<String, Object> request = new HashMap<>();
 
-        request.put("version", version);
-        request.put("time", time);
+            request.put("version", version);
+            request.put("time", time);
 
-        try {
-            return Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/timeplayed/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            try {
+                Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/timeplayed/", request);
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
         }
-        return "Leaderboard Time Not Added!";
     }
 
     public DisableableMod getDisableableModByCurseModId(int curseModId) {

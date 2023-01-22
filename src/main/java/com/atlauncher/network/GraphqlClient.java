@@ -32,6 +32,7 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.CustomTypeAdapter;
 import com.apollographql.apollo.api.CustomTypeValue;
 import com.apollographql.apollo.api.CustomTypeValue.GraphQLString;
+import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.Response;
@@ -110,6 +111,36 @@ public class GraphqlClient {
                 .toBuilder()
                 .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false))
                 .build()
+                .enqueue(new ApolloCall.Callback<T>() {
+                    @Override
+                    public void onResponse(@NotNull Response<T> response) {
+                        data.set(response.getData());
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        LogManager.logStackTrace("Error on GraphQL query", e);
+                        latch.countDown();
+                    }
+                });
+
+        try {
+            latch.await(App.settings.connectionTimeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LogManager.logStackTrace(e);
+            return null;
+        }
+
+        return data.get();
+    }
+
+    public static <D extends Operation.Data, T, V extends Operation.Variables> T mutateAndWait(
+            @NotNull Mutation<D, T, V> mutation) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<T> data = new AtomicReference<>(null);
+
+        apolloClient.mutate(mutation)
                 .enqueue(new ApolloCall.Callback<T>() {
                     @Override
                     public void onResponse(@NotNull Response<T> response) {
