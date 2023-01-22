@@ -508,6 +508,7 @@ public final class AddModsDialog extends JDialog {
 
         this.hostComboBox.addActionListener(e -> {
             updating = true;
+            page = 0;
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                     .getValue() == ModPlatform.CURSEFORGE;
 
@@ -559,6 +560,8 @@ public final class AddModsDialog extends JDialog {
 
         this.sectionComboBox.addActionListener(e -> {
             if (!updating) {
+                page = 0;
+
                 if (searchField.getText().isEmpty()) {
                     loadDefaultMods();
                 } else {
@@ -569,6 +572,8 @@ public final class AddModsDialog extends JDialog {
 
         this.sortComboBox.addActionListener(e -> {
             if (!updating) {
+                page = 0;
+
                 if (searchField.getText().isEmpty()) {
                     loadDefaultMods();
                 } else {
@@ -700,6 +705,8 @@ public final class AddModsDialog extends JDialog {
 
     private void searchForMods() {
         String query = searchField.getText();
+
+        page = 0;
 
         boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                 .getValue() == ModPlatform.CURSEFORGE;
