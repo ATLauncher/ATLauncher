@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use quilt meta profiles for client/server same as Fabric
 - Browsing mods not going back to first page when changing query [#714]
 - Updating stat not going through
+- Packs from Modrinth not having an image on the instance
 
 ### Misc
 - Move missing graphql usage for loader versions outside Vanilla Minecraft tab

@@ -3212,6 +3212,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 this.setTotalBytes(imageDownload.getFilesize());
                 imageDownload.downloadFile();
             }
+        } else if (this.pack.modrinthProject != null) {
+            fireTask(GetText.tr("Downloading Instance Image"));
+            if (this.pack.modrinthProject.iconUrl != null) {
+                com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build()
+                        .setUrl(this.pack.modrinthProject.iconUrl).downloadTo(root.resolve("instance.png"))
+                        .withInstanceInstaller(this).ignoreFailures()
+                        .withHttpClient(Network.createProgressClient(this));
+
+                this.setTotalBytes(imageDownload.getFilesize());
+                imageDownload.downloadFile();
+            }
         } else if (modpacksChPackManifest != null) {
             fireTask(GetText.tr("Downloading Instance Image"));
             ModpacksChPackArt art = this.modpacksChPackManifest.art.stream()
