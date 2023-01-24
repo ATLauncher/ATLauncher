@@ -22,6 +22,8 @@ import com.atlauncher.builders.HTMLBuilder
 import com.atlauncher.constants.UIConstants
 import com.atlauncher.data.minecraft.loaders.LoaderType
 import com.atlauncher.data.minecraft.loaders.LoaderVersion
+import com.atlauncher.evnt.listener.RelocalizationListener
+import com.atlauncher.evnt.manager.RelocalizationManager
 import com.atlauncher.managers.*
 import com.atlauncher.utils.ComboItem
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel
@@ -41,24 +43,41 @@ import javax.swing.table.DefaultTableModel
 import kotlin.math.max
 import kotlin.math.min
 
-class VanillaPacksTab : JPanel(BorderLayout()), Tab {
+class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
     private val nameField = JTextField(32)
     private val descriptionField = JTextArea(2, 40)
-    private val minecraftVersionReleasesFilterCheckbox = JCheckBox(GetText.tr("Releases"))
-    private val minecraftVersionExperimentsFilterCheckbox = JCheckBox(GetText.tr("Experiments"))
-    private val minecraftVersionSnapshotsFilterCheckbox = JCheckBox(GetText.tr("Snapshots"))
-    private val minecraftVersionBetasFilterCheckbox = JCheckBox(GetText.tr("Betas"))
-    private val minecraftVersionAlphasFilterCheckbox = JCheckBox(GetText.tr("Alphas"))
+
+    private fun getReleasesText() = GetText.tr("Releases")
+    private val minecraftVersionReleasesFilterCheckbox = JCheckBox(getReleasesText())
+
+    private fun getExperimentsText() = GetText.tr("Experiments")
+    private val minecraftVersionExperimentsFilterCheckbox = JCheckBox(getExperimentsText())
+
+    private fun getSnapshotsText() = GetText.tr("Snapshots")
+    private val minecraftVersionSnapshotsFilterCheckbox = JCheckBox(getSnapshotsText())
+
+    private fun getBetasText() = GetText.tr("Betas")
+    private val minecraftVersionBetasFilterCheckbox = JCheckBox(getBetasText())
+
+    private fun getAlphasText() = GetText.tr("Alphas")
+    private val minecraftVersionAlphasFilterCheckbox = JCheckBox(getAlphasText())
+
     private var minecraftVersionTable: JTable? = null
     private var minecraftVersionTableModel: DefaultTableModel? = null
     private val loaderTypeButtonGroup = ButtonGroup()
-    private val loaderTypeNoneRadioButton = JRadioButton(GetText.tr("None"))
+
+    private fun getNoneText() = GetText.tr("None")
+    private val loaderTypeNoneRadioButton = JRadioButton(getNoneText())
     private val loaderTypeFabricRadioButton = JRadioButton("Fabric")
     private val loaderTypeForgeRadioButton = JRadioButton("Forge")
     private val loaderTypeQuiltRadioButton = JRadioButton("Quilt")
     private val loaderVersionsDropDown = JComboBox<ComboItem<LoaderVersion?>>()
-    private val createServerButton = JButton(GetText.tr("Create Server"))
-    private val createInstanceButton = JButton(GetText.tr("Create Instance"))
+
+    private fun getCreateServerText() = GetText.tr("Create Server")
+    private val createServerButton = JButton(getCreateServerText())
+
+    private fun getCreateInstanceText() = GetText.tr("Create Instance")
+    private val createInstanceButton = JButton(getCreateInstanceText())
     private val viewModel: IVanillaPacksViewModel = VanillaPacksViewModel()
     private val scope = CoroutineScope(Dispatchers.Main)
 
@@ -66,6 +85,7 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab {
         name = "vanillaPacksPanel"
         setupMainPanel()
         setupBottomPanel()
+        RelocalizationManager.addListener(this)
     }
 
     private fun setupMainPanel() {
@@ -559,4 +579,16 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab {
     override fun getAnalyticsScreenViewName(): String {
         return "Vanilla Packs"
     }
+
+    override fun onRelocalization() {
+        minecraftVersionReleasesFilterCheckbox.text = getReleasesText()
+        minecraftVersionExperimentsFilterCheckbox.text = getExperimentsText()
+        minecraftVersionSnapshotsFilterCheckbox.text = getSnapshotsText()
+        minecraftVersionBetasFilterCheckbox.text = getBetasText()
+        minecraftVersionAlphasFilterCheckbox.text = getAlphasText()
+        loaderTypeNoneRadioButton.text = getNoneText()
+        createServerButton.text = getCreateServerText()
+        createInstanceButton.text = getCreateInstanceText()
+    }
+
 }
