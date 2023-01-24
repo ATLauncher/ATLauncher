@@ -70,7 +70,7 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
     private val loaderTypeNoneRadioButton = JRadioButton(getNoneText())
     private val loaderTypeFabricRadioButton = JRadioButton("Fabric")
     private val loaderTypeForgeRadioButton = JRadioButton("Forge")
-    private val loaderTypeLegacyFabricRadioButton = JRadioButton("LegacyFabric")
+    private val loaderTypeLegacyFabricRadioButton = JRadioButton("Legacy Fabric")
     private val loaderTypeQuiltRadioButton = JRadioButton("Quilt")
     private val loaderVersionsDropDown = JComboBox<ComboItem<LoaderVersion?>>()
 

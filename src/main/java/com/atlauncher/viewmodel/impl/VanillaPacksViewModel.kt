@@ -523,7 +523,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
                                 LoaderVersion(
                                     version.version(),
                                     false,
-                                    "Legacy Fabric"
+                                    "LegacyFabric"
                                 )
                             }
                             .collect(Collectors.toList())
