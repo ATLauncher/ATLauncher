@@ -128,6 +128,7 @@ interface IVanillaPacksViewModel {
     // Mod loader option
 
     val isFabricVisible: Flow<Boolean>
+    val isLegacyFabricVisible: Flow<Boolean>
     val isForgeVisible: Flow<Boolean>
     val isQuiltVisible: Flow<Boolean>
 
@@ -140,6 +141,11 @@ interface IVanillaPacksViewModel {
      * If forge is enabled in config or not
      */
     val showForgeOption: Boolean
+
+    /**
+     * If legacy forge should be enabled or not
+     */
+    val showLegacyFabricOption: Boolean
 
     /**
      * If quilt is enabled in config or not
@@ -170,11 +176,13 @@ interface IVanillaPacksViewModel {
      * Has forge been selected
      */
     val loaderTypeForgeSelected: Flow<Boolean>
+    val loaderTypeLegacyFabricSelected: Flow<Boolean>
 
     /**
      * Is the forge button enabled or not
      */
     val loaderTypeForgeEnabled: Flow<Boolean>
+    val loaderTypeLegacyFabricEnabled: Flow<Boolean>
 
     /**
      * Has quilt been selected

@@ -30,6 +30,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderType
 import com.atlauncher.data.minecraft.loaders.LoaderVersion
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader
+import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader
 import com.atlauncher.evnt.listener.SettingsListener
 import com.atlauncher.evnt.manager.SettingsManager
@@ -56,8 +57,7 @@ import java.awt.Font
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+
 
 /**
  * 25 / 06 / 2022
@@ -129,6 +129,10 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         selectedMinecraftVersionFlow.map { version -> !fabricDisabledMCVersions.contains(version) }
     }
 
+    override val isLegacyFabricVisible: Flow<Boolean> by lazy {
+        selectedMinecraftVersionFlow.map { version -> !legacyFabricDisabledMCVersions.contains(version) }
+    }
+
     override val isForgeVisible by lazy {
         selectedMinecraftVersionFlow.map { version -> !forgeDisabledMCVersions.contains(version) }
     }
@@ -142,7 +146,10 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     override val loaderTypeFabricEnabled = MutableStateFlow(true)
 
     override val loaderTypeForgeSelected: Flow<Boolean> = selectedLoaderType.map { it == LoaderType.FORGE }
+    override val loaderTypeLegacyFabricSelected: Flow<Boolean> =
+        selectedLoaderType.map { it == LoaderType.LEGACY_FABRIC }
     override val loaderTypeForgeEnabled = MutableStateFlow(true)
+    override val loaderTypeLegacyFabricEnabled = MutableStateFlow(true)
 
     override val loaderTypeNoneSelected: Flow<Boolean> = selectedLoaderType.map { it == null }
     override val loaderTypeNoneEnabled = MutableStateFlow(true)
@@ -306,6 +313,12 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     override val showFabricOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.fabric.enabled", true) }
 
     override val showForgeOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.forge.enabled", true) }
+    override val showLegacyFabricOption: Boolean by lazy {
+        ConfigManager.getConfigItem(
+            "loader.legacyfabric.enabled",
+            true
+        )
+    }
 
     override val showQuiltOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.quilt.enabled", false) }
 
@@ -329,6 +342,12 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     }
 
     private val fabricDisabledMCVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.fabric.disabledMinecraftVersions", emptyList()
+        )
+    }
+
+    private val legacyFabricDisabledMCVersions: List<String> by lazy {
         ConfigManager.getConfigItem(
             "loaders.fabric.disabledMinecraftVersions", emptyList()
         )
@@ -441,53 +460,75 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
                 response: Response<GetLoaderVersionsForMinecraftVersionQuery.Data>
             ) {
                 val loaderVersionsList: MutableList<LoaderVersion> = ArrayList()
-                if (selectedLoader === LoaderType.FABRIC) {
-                    loaderVersionsList.addAll(response.data!!.loaderVersions().fabric().stream()
-                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
-                            !disabledFabricVersions.contains(fv.version())
-                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
-                            LoaderVersion(version.version(), false, "Fabric")
-                        }.collect(Collectors.toList())
-                    )
-                } else if (selectedLoader === LoaderType.FORGE) {
-                    loaderVersionsList.addAll(response.data!!.loaderVersions().forge().stream()
-                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
-                            !disabledForgeVersions.contains(fv.version())
-                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
-                            val lv = LoaderVersion(
-                                version.version(), version.rawVersion(), version.recommended(), "Forge"
-                            )
-                            if (version.installerSha1Hash() != null && version.installerSize() != null) {
-                                lv.downloadables["installer"] = Pair(
-                                    version.installerSha1Hash(), version.installerSize()!!.toLong()
+                when (selectedLoader) {
+                    LoaderType.FABRIC -> {
+                        loaderVersionsList.addAll(response.data!!.loaderVersions().fabric().stream()
+                            .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
+                                !disabledFabricVersions.contains(fv.version())
+                            }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
+                                LoaderVersion(version.version(), false, "Fabric")
+                            }.collect(Collectors.toList())
+                        )
+                    }
+
+                    LoaderType.FORGE -> {
+                        loaderVersionsList.addAll(response.data!!.loaderVersions().forge().stream()
+                            .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
+                                !disabledForgeVersions.contains(fv.version())
+                            }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
+                                val lv = LoaderVersion(
+                                    version.version(), version.rawVersion(), version.recommended(), "Forge"
+                                )
+                                if (version.installerSha1Hash() != null && version.installerSize() != null) {
+                                    lv.downloadables["installer"] = Pair(
+                                        version.installerSha1Hash(), version.installerSize()!!.toLong()
+                                    )
+                                }
+                                if (version.universalSha1Hash() != null && version.universalSize() != null) {
+                                    lv.downloadables["universal"] = Pair(
+                                        version.universalSha1Hash(), version.universalSize()!!.toLong()
+                                    )
+                                }
+                                if (version.clientSha1Hash() != null && version.clientSize() != null) {
+                                    lv.downloadables["client"] = Pair(
+                                        version.clientSha1Hash(), version.clientSize()!!.toLong()
+                                    )
+                                }
+                                if (version.serverSha1Hash() != null && version.serverSize() != null) {
+                                    lv.downloadables["server"] = Pair(
+                                        version.serverSha1Hash(), version.serverSize()!!.toLong()
+                                    )
+                                }
+                                lv
+                            }.collect(Collectors.toList())
+                        )
+                    }
+
+                    LoaderType.QUILT -> {
+                        loaderVersionsList.addAll(response.data!!.loaderVersions().quilt().stream()
+                            .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
+                                !disabledQuiltVersions.contains(fv.version())
+                            }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
+                                LoaderVersion(version.version(), false, "Quilt")
+                            }.collect(Collectors.toList())
+                        )
+                    }
+
+                    LoaderType.LEGACY_FABRIC -> {
+
+                        loaderVersionsList.addAll(response.data!!.loaderVersions().legacyfabric()
+                            .stream()
+                            .filter { fv -> !disabledLegacyFabricVersions.contains(fv.version()) }
+                            .map { version ->
+                                LoaderVersion(
+                                    version.version(),
+                                    false,
+                                    "Legacy Fabric"
                                 )
                             }
-                            if (version.universalSha1Hash() != null && version.universalSize() != null) {
-                                lv.downloadables["universal"] = Pair(
-                                    version.universalSha1Hash(), version.universalSize()!!.toLong()
-                                )
-                            }
-                            if (version.clientSha1Hash() != null && version.clientSize() != null) {
-                                lv.downloadables["client"] = Pair(
-                                    version.clientSha1Hash(), version.clientSize()!!.toLong()
-                                )
-                            }
-                            if (version.serverSha1Hash() != null && version.serverSize() != null) {
-                                lv.downloadables["server"] = Pair(
-                                    version.serverSha1Hash(), version.serverSize()!!.toLong()
-                                )
-                            }
-                            lv
-                        }.collect(Collectors.toList())
-                    )
-                } else if (selectedLoader === LoaderType.QUILT) {
-                    loaderVersionsList.addAll(response.data!!.loaderVersions().quilt().stream()
-                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
-                            !disabledQuiltVersions.contains(fv.version())
-                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
-                            LoaderVersion(version.version(), false, "Quilt")
-                        }.collect(Collectors.toList())
-                    )
+                            .collect(Collectors.toList())
+                        )
+                    }
                 }
                 if (loaderVersionsList.size == 0) {
                     setLoaderGroupEnabled(true, enableCreateServers)
@@ -513,6 +554,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         loaderTypeNoneEnabled.value = enabled
         loaderTypeFabricEnabled.value = enabled
         loaderTypeForgeEnabled.value = enabled
+        loaderTypeLegacyFabricEnabled.value = enabled
         loaderTypeQuiltEnabled.value = enabled
         createServerEnabled.value = enableCreateServers
         createInstanceEnabled.value = enabled
@@ -528,6 +570,12 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     private val disabledFabricVersions: List<String> by lazy {
         ConfigManager.getConfigItem(
             "loaders.fabric.disabledVersions", emptyList()
+        )
+    }
+
+    private val disabledLegacyFabricVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.legacyfabric.disabledVersions", emptyList()
         )
     }
 
@@ -547,10 +595,9 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         loaderVersionsList.addAll(
             when (selectedLoader) {
                 LoaderType.FABRIC -> FabricLoader.getChoosableVersions(selectedMinecraftVersion)
-
                 LoaderType.FORGE -> ForgeLoader.getChoosableVersions(selectedMinecraftVersion)
-
                 LoaderType.QUILT -> QuiltLoader.getChoosableVersions(selectedMinecraftVersion)
+                LoaderType.LEGACY_FABRIC -> LegacyFabricLoader.getChoosableVersions(selectedMinecraftVersion)
             }
         )
         if (loaderVersionsList.size == 0) {

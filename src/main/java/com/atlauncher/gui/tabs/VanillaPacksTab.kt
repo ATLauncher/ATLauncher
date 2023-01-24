@@ -70,6 +70,7 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
     private val loaderTypeNoneRadioButton = JRadioButton(getNoneText())
     private val loaderTypeFabricRadioButton = JRadioButton("Fabric")
     private val loaderTypeForgeRadioButton = JRadioButton("Forge")
+    private val loaderTypeLegacyFabricRadioButton = JRadioButton("LegacyFabric")
     private val loaderTypeQuiltRadioButton = JRadioButton("Quilt")
     private val loaderVersionsDropDown = JComboBox<ComboItem<LoaderVersion?>>()
 
@@ -203,12 +204,14 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
         loaderTypeButtonGroup.add(loaderTypeNoneRadioButton)
         loaderTypeButtonGroup.add(loaderTypeFabricRadioButton)
         loaderTypeButtonGroup.add(loaderTypeForgeRadioButton)
+        loaderTypeButtonGroup.add(loaderTypeLegacyFabricRadioButton)
         loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton)
         val loaderTypePanel = JPanel(FlowLayout())
 
         setupLoaderNoneButton(loaderTypePanel)
 
         setupLoaderFabricButton(loaderTypePanel)
+        setupLoaderLegacyFabricButton(loaderTypePanel)
 
         setupLoaderForgeButton(loaderTypePanel)
 
@@ -332,6 +335,27 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
         }
         if (viewModel.showForgeOption) {
             loaderTypePanel.add(loaderTypeForgeRadioButton)
+        }
+    }
+
+    private fun setupLoaderLegacyFabricButton(loaderTypePanel: JPanel) {
+        scope.launch {
+            viewModel.loaderTypeLegacyFabricSelected.collect {
+                loaderTypeLegacyFabricRadioButton.isSelected = it
+            }
+        }
+        scope.launch {
+            viewModel.loaderTypeLegacyFabricEnabled.collect {
+                loaderTypeLegacyFabricRadioButton.isEnabled = it
+            }
+        }
+        loaderTypeLegacyFabricRadioButton.addActionListener { e: ActionEvent? ->
+            viewModel.setLoaderType(
+                LoaderType.FORGE
+            )
+        }
+        if (viewModel.showLegacyFabricOption) {
+            loaderTypePanel.add(loaderTypeLegacyFabricRadioButton)
         }
     }
 
