@@ -351,7 +351,7 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
         }
         loaderTypeLegacyFabricRadioButton.addActionListener { e: ActionEvent? ->
             viewModel.setLoaderType(
-                LoaderType.FORGE
+                LoaderType.LEGACY_FABRIC
             )
         }
         if (viewModel.showLegacyFabricOption) {
