@@ -17,6 +17,10 @@
  */
 package com.atlauncher.viewmodel.impl
 
+import com.apollographql.apollo.ApolloCall
+import com.apollographql.apollo.api.Response
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy
+import com.apollographql.apollo.exception.ApolloException
 import com.atlauncher.App
 import com.atlauncher.data.installables.Installable
 import com.atlauncher.data.installables.VanillaInstallable
@@ -30,19 +34,29 @@ import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader
 import com.atlauncher.evnt.listener.SettingsListener
 import com.atlauncher.evnt.manager.SettingsManager
 import com.atlauncher.exceptions.InvalidMinecraftVersion
+import com.atlauncher.graphql.GetLoaderVersionsForMinecraftVersionQuery
 import com.atlauncher.gui.tabs.VanillaPacksTab
 import com.atlauncher.managers.ConfigManager
+import com.atlauncher.managers.InstanceManager
+import com.atlauncher.managers.LogManager
 import com.atlauncher.managers.MinecraftManager
+import com.atlauncher.network.GraphqlClient
+import com.atlauncher.utils.Pair
+import com.atlauncher.utils.Utils
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel.MCVersionRow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.apache.logging.log4j.LogManager
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.ISODateTimeFormat
+import org.mini2Dx.gettext.GetText
 import java.awt.Font
 import java.util.*
-import java.util.function.Consumer
+import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 /**
@@ -52,19 +66,9 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     private val scope = CoroutineScope(Dispatchers.IO)
 
     /**
-     * Contains a cache of loader versions
-     */
-    private val loaderVersionsMap = HashMap<LoaderType, List<LoaderVersion>?>()
-
-    /**
      * Filters applied to the version table
      */
-    private val minecraftVersionTypeFiltersFlow =
-        MutableStateFlow(
-            mapOf(
-                VersionManifestVersionType.RELEASE to true
-            )
-        )
+    private val minecraftVersionTypeFiltersFlow = MutableStateFlow(mapOf(VersionManifestVersionType.RELEASE to true))
 
     /**
      * Name is dirty, as the user has inputted something
@@ -74,7 +78,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     /**
      * Name to display
      */
-    private val nameFlow = MutableStateFlow<String?>(null)
+    override val name = MutableStateFlow<String?>(null)
 
     /**
      * Description is dirty, as the user has inputted something
@@ -84,115 +88,67 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     /**
      * Description to display
      */
-    private val descriptionFlow = MutableStateFlow<String?>(null)
+    override val description = MutableStateFlow<String?>(null)
 
     private val selectedMinecraftVersionFlow = MutableStateFlow<String?>(null)
-    private val selectedLoaderTypeFlow = MutableStateFlow<LoaderType?>(null)
+    override val selectedLoaderType = MutableStateFlow<LoaderType?>(null)
     private val selectedLoaderVersionFlow = MutableStateFlow<LoaderVersion?>(null)
 
-    /**
-     * If the loader group is enabled or not to be modified
-     */
-    private val loaderGroupEnabledFlow = MutableStateFlow(false)
-    private val loaderVersionsLoadingFlow = MutableStateFlow(false)
+    override val loaderLoading = MutableStateFlow(false)
 
-    private val fontFlow = MutableStateFlow<Font>(App.THEME.boldFont)
+    override val font = MutableStateFlow<Font>(App.THEME.boldFont)
 
     // Consumers
     /**
      * Represents the version list
      */
-    private val versionsFlow by lazy {
+    override val minecraftVersions: Flow<Array<MCVersionRow>> by lazy {
         minecraftVersionTypeFiltersFlow.map { versionFilter: Map<VersionManifestVersionType, Boolean> ->
             val filtered = versionFilter.filter { it.value }.map { it.key }.toList()
+            val fmt = DateTimeFormat.forPattern(App.settings.dateFormat)
 
-            MinecraftManager
-                .getFilteredMinecraftVersions(filtered)
-                .map { it: VersionManifestVersion -> MCVersionRow(it.id, it.releaseTime, it.id) }
-                .toTypedArray()
+            MinecraftManager.getFilteredMinecraftVersions(filtered).map { it: VersionManifestVersion ->
+                MCVersionRow(
+                    it.id, fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(it.releaseTime)), it.id
+                )
+            }.toTypedArray()
         }
     }
 
+    override val loaderVersionsDropDownEnabled = MutableStateFlow(false)
 
     /**
      * Presents the loader versions for the user to select
      */
-    private val loaderVersions: Flow<Array<LoaderVersion>?> by lazy {
-        selectedLoaderTypeFlow.combine(selectedMinecraftVersionFlow) { loaderType, version ->
-            LOG.debug("loaderVersions map")
-            if (loaderType == null) return@combine null
-            if (version == null) return@combine null
-            loaderGroupEnabledFlow.value = false
-            loaderVersionsLoadingFlow.value = true
-            var loaderVersions: List<LoaderVersion>? = loaderVersionsMap[loaderType]
-            if (loaderVersions == null) {
-                loaderVersions =
-                    when (loaderType) {
-                        LoaderType.FABRIC -> FabricLoader.getChoosableVersions(version)
-                        LoaderType.FORGE -> ForgeLoader.getChoosableVersions(version)
-                        LoaderType.QUILT -> QuiltLoader.getChoosableVersions(version)
-                    }
-                loaderVersionsMap[loaderType] = loaderVersions
-            }
-            loaderVersionsLoadingFlow.value = false
-            loaderGroupEnabledFlow.value = true
-            if (loaderVersions!!.isEmpty()) return@combine null
-            loaderVersions.toTypedArray()
-        }
+    override val loaderVersions = MutableStateFlow<Array<LoaderVersion>?>(null)
+
+    override val createServerEnabled = MutableStateFlow(false)
+    override val createInstanceEnabled = MutableStateFlow(false)
+
+    override val isFabricVisible by lazy {
+        selectedMinecraftVersionFlow.map { version -> !fabricDisabledMCVersions.contains(version) }
     }
 
-    private val createServerVisibleObservable by lazy {
-        selectedMinecraftVersionFlow
-            .map { selectedVersion ->
-                if (selectedVersion != null) try {
-                    val version =
-                        MinecraftManager.getMinecraftVersion(selectedVersion)
-                    return@map version.hasServer()
-                } catch (ignored: InvalidMinecraftVersion) {
-                }
-                false
-            }
+    override val isForgeVisible by lazy {
+        selectedMinecraftVersionFlow.map { version -> !forgeDisabledMCVersions.contains(version) }
     }
 
-    private val fabricVisibleFlow by lazy {
-        selectedMinecraftVersionFlow
-            .map { version -> !fabricDisabledMCVersions.contains(version) }
+    override val isQuiltVisible by lazy {
+        selectedMinecraftVersionFlow.map { version -> !quiltDisabledMCVersions.contains(version) }
     }
 
-    private val forgeVisibleFlow by lazy {
-        selectedMinecraftVersionFlow
-            .map { version -> !forgeDisabledMCVersions.contains(version) }
-    }
 
-    private val quiltVisibleFlow by lazy {
-        selectedMinecraftVersionFlow
-            .map { version -> !quiltDisabledMCVersions.contains(version) }
-    }
+    override val loaderTypeFabricSelected: Flow<Boolean> = selectedLoaderType.map { it == LoaderType.FABRIC }
+    override val loaderTypeFabricEnabled = MutableStateFlow(true)
 
-    init {
-        SettingsManager.addListener(this)
-        scope.launch {
-            selectedMinecraftVersionFlow.collect { version ->
-                if (version != null) {
-                    loaderGroupEnabledFlow.value = true
-                    val defaultNameFieldValue = String.format(
-                        "Minecraft %s",
-                        version
-                    )
-                    if (nameFlow.value == null || nameFlow.value!!.isEmpty() || !nameDirty) {
-                        nameDirty = false
-                        nameFlow.value = (defaultNameFieldValue)
-                    }
-                    if (descriptionFlow.value == null || descriptionFlow.value!!.isEmpty() || !descriptionDirty) {
-                        descriptionDirty = false
-                        descriptionFlow.value = (defaultNameFieldValue)
-                    }
-                } else {
-                    loaderGroupEnabledFlow.value = false
-                }
-            }
-        }
-    }
+    override val loaderTypeForgeSelected: Flow<Boolean> = selectedLoaderType.map { it == LoaderType.FORGE }
+    override val loaderTypeForgeEnabled = MutableStateFlow(true)
+
+    override val loaderTypeNoneSelected: Flow<Boolean> = selectedLoaderType.map { it == null }
+    override val loaderTypeNoneEnabled = MutableStateFlow(true)
+
+    override val loaderTypeQuiltSelected: Flow<Boolean> = selectedLoaderType.map { it == LoaderType.QUILT }
+    override val loaderTypeQuiltEnabled = MutableStateFlow(true)
 
     private fun <K, V> Map<K, V>.copy(): Map<K, V> {
         val map = HashMap<K, V>()
@@ -206,75 +162,71 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         val installable: Installable
         try {
             val selectedLoaderVersion = selectedLoaderVersionFlow.value
-            val selectedMinecraftVersion = selectedMinecraftVersionFlow.value
-            val description = descriptionFlow.value
-            val name = nameFlow.value
+            val selectedMinecraftVersion = selectedMinecraftVersionFlow.value ?: return
+            val description = description.value
+            val name = name.value
+
             installable = VanillaInstallable(
-                MinecraftManager.getMinecraftVersion(selectedMinecraftVersion),
-                selectedLoaderVersion, description
+                MinecraftManager.getMinecraftVersion(selectedMinecraftVersion), selectedLoaderVersion, description
             )
             installable.instanceName = name
             installable.isReinstall = false
             installable.isServer = isServer
             val success = installable.startInstall()
             if (success) {
-                //loaderTypeNoneRadioButton.setSelected(true);
-                //selectedLoaderTypeChanged(null);
-
-                //minecraftVersionTable.setRowSelectionInterval(0, 0);
+                // TODO Reset server
+                //nameFieldDirty = false
+                //descriptionFieldDirty = false
+                //loaderTypeNoneRadioButton.isSelected = true
+                //selectedLoaderTypeChanged(null)
+                //minecraftVersionTable!!.setRowSelectionInterval(0, 0)
             }
         } catch (e: InvalidMinecraftVersion) {
-            LOG.error("error", e)
+            LogManager.logStackTrace(e)
         }
     }
 
-    override fun addOnFontChanged(consumer: Consumer<Font>) {
-        scope.launch {
-            fontFlow.collect { t: Font -> consumer.accept(t) }
-        }
-    }
+    private fun isNameDirty() = !(name.value == String.format(
+        "Minecraft %s", selectedMinecraftVersionFlow.value
+    ) || selectedLoaderType.value != null && name.value == String.format(
+        "Minecraft %s with %s", selectedMinecraftVersionFlow.value, selectedLoaderType.value
+    ))
 
     override fun setName(name: String) {
-        nameDirty = true
-        nameFlow.value = (name)
+        this.name.value = (name)
+        nameDirty = isNameDirty()
     }
 
-    override fun addOnNameChanged(name: Consumer<String?>) {
-        scope.launch {
-            nameFlow.collect { t: String? -> name.accept(t) }
-        }
-    }
+    private fun isDescriptionDirty() = !(description.value == String.format(
+        "Minecraft %s", selectedMinecraftVersionFlow.value
+    ) || selectedLoaderType.value != null && description.value == String.format(
+        "Minecraft %s with %s", selectedMinecraftVersionFlow.value, selectedLoaderType.value
+    ))
 
     override fun setDescription(description: String) {
-        descriptionDirty = true
-        descriptionFlow.value = (description)
+        descriptionDirty = isDescriptionDirty()
+        this.description.value = (description)
     }
 
-    override fun addOnDescriptionChanged(name: Consumer<String?>) {
-        scope.launch {
-            descriptionFlow.collect { t -> name.accept(t) }
-        }
+    override val showReleaseOption: Boolean by lazy { ConfigManager.getConfigItem("minecraft.release.enabled", true) }
+
+    override val showExperimentOption: Boolean by lazy {
+        ConfigManager.getConfigItem(
+            "minecraft.experiment.enabled",
+            true
+        )
     }
 
-    override fun showReleaseOption(): Boolean {
-        return ConfigManager.getConfigItem("minecraft.release.enabled", true)
+    override val showSnapshotOption: Boolean by lazy { ConfigManager.getConfigItem("minecraft.snapshot.enabled", true) }
+
+    override val showOldAlphaOption: Boolean by lazy {
+        ConfigManager.getConfigItem(
+            "minecraft.old_alpha.enabled",
+            true
+        )
     }
 
-    override fun showExperimentOption(): Boolean {
-        return ConfigManager.getConfigItem("minecraft.experiment.enabled", true)
-    }
-
-    override fun showSnapshotOption(): Boolean {
-        return ConfigManager.getConfigItem("minecraft.snapshot.enabled", true)
-    }
-
-    override fun showOldAlphaOption(): Boolean {
-        return ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true)
-    }
-
-    override fun showOldBetaOption(): Boolean {
-        return ConfigManager.getConfigItem("minecraft.old_beta.enabled", true)
-    }
+    override val showOldBetaOption: Boolean by lazy { ConfigManager.getConfigItem("minecraft.old_beta.enabled", true) }
 
     override fun setReleaseSelected(b: Boolean) {
         val map = HashMap(minecraftVersionTypeFiltersFlow.value)
@@ -282,14 +234,12 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
-    override fun addOnReleaseEnabledChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            minecraftVersionTypeFiltersFlow.collect { it: Map<VersionManifestVersionType, Boolean> ->
-                onChanged.accept(
-                    it[VersionManifestVersionType.RELEASE] ?: false
-                )
-            }
-        }
+    override val releaseSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
+        it[VersionManifestVersionType.RELEASE] ?: false
+    }
+
+    override val releaseEnabled: Flow<Boolean> = releaseSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
+        a && (b.size == 1)
     }
 
     override fun setExperimentSelected(b: Boolean) {
@@ -298,15 +248,14 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
-    override fun addOnExperimentEnabledChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            minecraftVersionTypeFiltersFlow.collect { it: Map<VersionManifestVersionType, Boolean> ->
-                onChanged.accept(
-                    it[VersionManifestVersionType.EXPERIMENT] ?: false
-                )
-            }
-        }
+    override val experimentSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
+        it[VersionManifestVersionType.EXPERIMENT] ?: false
     }
+
+    override val experimentEnabled: Flow<Boolean> =
+        experimentSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
+            a && (b.size == 1)
+        }
 
     override fun setSnapshotSelected(b: Boolean) {
         val map = HashMap(minecraftVersionTypeFiltersFlow.value)
@@ -314,14 +263,12 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
-    override fun addOnSnapshotEnabledChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            minecraftVersionTypeFiltersFlow.collect { it: Map<VersionManifestVersionType, Boolean> ->
-                onChanged.accept(
-                    it[VersionManifestVersionType.SNAPSHOT] ?: false
-                )
-            }
-        }
+    override val snapshotSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
+        it[VersionManifestVersionType.SNAPSHOT] ?: false
+    }
+
+    override val snapshotEnabled: Flow<Boolean> = snapshotSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
+        a && (b.size == 1)
     }
 
     override fun setOldAlphaSelected(b: Boolean) {
@@ -330,14 +277,12 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
-    override fun addOnOldAlphaEnabledChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            minecraftVersionTypeFiltersFlow.collect { it: Map<VersionManifestVersionType, Boolean> ->
-                onChanged.accept(
-                    it[VersionManifestVersionType.OLD_ALPHA] ?: false
-                )
-            }
-        }
+    override val oldAlphaSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
+        it[VersionManifestVersionType.OLD_ALPHA] ?: false
+    }
+
+    override val oldAlphaEnabled: Flow<Boolean> = oldAlphaSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
+        a && (b.size == 1)
     }
 
     override fun setOldBetaSelected(b: Boolean) {
@@ -346,116 +291,59 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
-    override fun addOnOldBetaEnabledChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            minecraftVersionTypeFiltersFlow.collect { it: Map<VersionManifestVersionType, Boolean> ->
-                onChanged.accept(
-                    it[VersionManifestVersionType.OLD_BETA] ?: false
-                )
-            }
-        }
+    override val oldBetaSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
+        it[VersionManifestVersionType.OLD_BETA] ?: false
     }
 
-    override fun setMinecraftVersion(newVersion: String?) {
+    override val oldBetaEnabled: Flow<Boolean> = oldBetaSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
+        a && (b.size == 1)
+    }
+
+    override fun setSelectedMinecraftVersion(newVersion: String?) {
         selectedMinecraftVersionFlow.value = newVersion
     }
 
-    override fun addOnMinecraftVersionsChanged(onChanged: Consumer<Array<MCVersionRow>>) {
-        scope.launch {
-            versionsFlow.collect { t: Array<MCVersionRow> ->
-                onChanged.accept(t)
-            }
-        }
-    }
+    override val showFabricOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.fabric.enabled", true) }
 
-    override fun showFabricOption(): Boolean {
-        return ConfigManager.getConfigItem("loaders.fabric.enabled", true)
-    }
+    override val showForgeOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.forge.enabled", true) }
 
-    override fun addOnFabricVisibleChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            fabricVisibleFlow.collect { t: Boolean -> onChanged.accept(t) }
-        }
-    }
-
-    override fun showForgeOption(): Boolean {
-        return ConfigManager.getConfigItem("loaders.forge.enabled", true)
-    }
-
-    override fun addOnForgeVisibleChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            forgeVisibleFlow.collect { t: Boolean -> onChanged.accept(t) }
-        }
-    }
-
-    override fun showQuiltOption(): Boolean {
-        return ConfigManager.getConfigItem("loaders.quilt.enabled", false)
-    }
-
-    override fun addOnQuiltVisibleChanged(onChanged: Consumer<Boolean>) {
-        scope.launch {
-            quiltVisibleFlow.collect { t: Boolean -> onChanged.accept(t) }
-        }
-    }
+    override val showQuiltOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.quilt.enabled", false) }
 
     override fun setLoaderType(loader: LoaderType?) {
-        selectedLoaderTypeFlow.value = loader
+        selectedLoaderType.value = loader
     }
 
     override fun setLoaderVersion(loaderVersion: String) {
         scope.launch {
-            loaderVersions.first()
-                .let { versions ->
-                    if (versions != null) {
-                        for (version in versions) {
-                            if (version.version == loaderVersion) {
-                                selectedLoaderVersionFlow.value = version
-                                break
-                            }
+            loaderVersions.first().let { versions ->
+                if (versions != null) {
+                    for (version in versions) {
+                        if (version.version == loaderVersion) {
+                            selectedLoaderVersionFlow.value = version
+                            break
                         }
                     }
                 }
-        }
-    }
-
-    override fun addOnLoaderVersionsChanged(consumer: Consumer<Array<String>?>) {
-        scope.launch {
-            loaderVersions.map { versions: Array<LoaderVersion>? ->
-                versions?.map { it.version }?.toTypedArray()
-            }.collect {
-                consumer.accept(it)
             }
         }
     }
 
-    override fun addOnLoaderLoadingListener(consumer: Consumer<Boolean>) {
-        scope.launch {
-            loaderVersionsLoadingFlow.collect { t: Boolean -> consumer.accept(t) }
-        }
+    private val fabricDisabledMCVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.fabric.disabledMinecraftVersions", emptyList()
+        )
     }
 
-    override fun addOnLoaderGroupEnabledListener(consumer: Consumer<Boolean>) {
-        scope.launch {
-            loaderGroupEnabledFlow.collect { t: Boolean -> consumer.accept(t) }
-        }
+    private val forgeDisabledMCVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.forge.disabledMinecraftVersions", emptyList()
+        )
     }
 
-    override fun getFabricDisabledMCVersions(): List<String> {
-        return ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", ArrayList())
-    }
-
-    override fun getForgeDisabledMCVersions(): List<String> {
-        return ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", ArrayList())
-    }
-
-    override fun getQuiltDisabledMCVersions(): List<String> {
-        return ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", ArrayList())
-    }
-
-    override fun addOnCreateServerVisibleChanged(consumer: Consumer<Boolean>) {
-        scope.launch {
-            createServerVisibleObservable.collect { t: Boolean -> consumer.accept(t) }
-        }
+    private val quiltDisabledMCVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.quilt.disabledMinecraftVersions", emptyList()
+        )
     }
 
     override fun createServer() {
@@ -467,11 +355,236 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     }
 
     override fun onSettingsSaved() {
-        fontFlow.value = (App.THEME.boldFont)
+        font.value = (App.THEME.boldFont)
+    }
+
+    override val warnUserAboutServer: Boolean
+        get() = InstanceManager.getInstances().size == 0
+
+    init {
+        SettingsManager.addListener(this)
+        scope.launch {
+            selectedMinecraftVersionFlow.collect { selectedVersion ->
+                if (selectedVersion != null) {
+                    try {
+                        val version = MinecraftManager.getMinecraftVersion(selectedVersion)
+                        createServerEnabled.value = version.hasServer()
+                    } catch (ignored: InvalidMinecraftVersion) {
+                        createServerEnabled.value = false
+                    }
+                } else {
+                    createServerEnabled.value = false
+                }
+
+                val defaultNameFieldValue = String.format(
+                    "Minecraft %s", selectedVersion
+                )
+                if (name.value == null || name.value!!.isEmpty() || !nameDirty) {
+                    nameDirty = false
+                    name.value = (defaultNameFieldValue)
+                }
+                if (description.value == null || description.value!!.isEmpty() || !descriptionDirty) {
+                    descriptionDirty = false
+                    description.value = (defaultNameFieldValue)
+                }
+            }
+        }
+
+        scope.launch {
+            selectedLoaderType.combine(selectedMinecraftVersionFlow) { a, b ->
+                a to b
+            }.collect { (selectedLoader, selectedMinecraftVersion) ->
+                if (selectedMinecraftVersion == null) return@collect
+                loaderVersionsDropDownEnabled.value = false
+                if (selectedLoader == null) {
+                    // update the name and description fields if they're not dirty
+                    val defaultNameFieldValue = String.format("Minecraft %s", selectedMinecraftVersion)
+                    if (!nameDirty) {
+                        name.value = defaultNameFieldValue
+                    }
+                    if (!descriptionDirty) {
+                        description.value = defaultNameFieldValue
+                    }
+                    loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("Select Loader First")))
+                    return@collect
+                }
+                loaderLoading.value = true
+
+                setLoaderGroupEnabled(false)
+
+                // Legacy Forge doesn't support servers easily
+                val enableCreateServers = (selectedLoader !== LoaderType.FORGE || !Utils.matchVersion(
+                    selectedMinecraftVersion, "1.5", true, true
+                ))
+                if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false) == true) {
+                    apolloLoad(selectedLoader, selectedMinecraftVersion, enableCreateServers)
+                } else {
+                    legacyLoad(selectedLoader, selectedMinecraftVersion, enableCreateServers)
+                }
+            }
+        }
+    }
+
+    suspend fun apolloLoad(
+        selectedLoader: LoaderType, selectedMinecraftVersion: String?, enableCreateServers: Boolean
+    ) {
+        GraphqlClient.apolloClient.query(
+            GetLoaderVersionsForMinecraftVersionQuery(
+                selectedMinecraftVersion!!
+            )
+        ).toBuilder().httpCachePolicy(
+            HttpCachePolicy.Policy(
+                HttpCachePolicy.FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false
+            )
+        ).build().enqueue(object : ApolloCall.Callback<GetLoaderVersionsForMinecraftVersionQuery.Data>() {
+            override fun onResponse(
+                response: Response<GetLoaderVersionsForMinecraftVersionQuery.Data>
+            ) {
+                val loaderVersionsList: MutableList<LoaderVersion> = ArrayList()
+                if (selectedLoader === LoaderType.FABRIC) {
+                    loaderVersionsList.addAll(response.data!!.loaderVersions().fabric().stream()
+                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
+                            !disabledFabricVersions.contains(fv.version())
+                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
+                            LoaderVersion(version.version(), false, "Fabric")
+                        }.collect(Collectors.toList())
+                    )
+                } else if (selectedLoader === LoaderType.FORGE) {
+                    loaderVersionsList.addAll(response.data!!.loaderVersions().forge().stream()
+                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
+                            !disabledForgeVersions.contains(fv.version())
+                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
+                            val lv = LoaderVersion(
+                                version.version(), version.rawVersion(), version.recommended(), "Forge"
+                            )
+                            if (version.installerSha1Hash() != null && version.installerSize() != null) {
+                                lv.downloadables["installer"] = Pair(
+                                    version.installerSha1Hash(), version.installerSize()!!.toLong()
+                                )
+                            }
+                            if (version.universalSha1Hash() != null && version.universalSize() != null) {
+                                lv.downloadables["universal"] = Pair(
+                                    version.universalSha1Hash(), version.universalSize()!!.toLong()
+                                )
+                            }
+                            if (version.clientSha1Hash() != null && version.clientSize() != null) {
+                                lv.downloadables["client"] = Pair(
+                                    version.clientSha1Hash(), version.clientSize()!!.toLong()
+                                )
+                            }
+                            if (version.serverSha1Hash() != null && version.serverSize() != null) {
+                                lv.downloadables["server"] = Pair(
+                                    version.serverSha1Hash(), version.serverSize()!!.toLong()
+                                )
+                            }
+                            lv
+                        }.collect(Collectors.toList())
+                    )
+                } else if (selectedLoader === LoaderType.QUILT) {
+                    loaderVersionsList.addAll(response.data!!.loaderVersions().quilt().stream()
+                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
+                            !disabledQuiltVersions.contains(fv.version())
+                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
+                            LoaderVersion(version.version(), false, "Quilt")
+                        }.collect(Collectors.toList())
+                    )
+                }
+                if (loaderVersionsList.size == 0) {
+                    setLoaderGroupEnabled(true, enableCreateServers)
+                    loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("No Versions Found")))
+                    return
+                }
+                loaderVersions.value = loaderVersionsList.toTypedArray()
+
+                setLoaderGroupEnabled(true, enableCreateServers)
+
+                updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
+            }
+
+            override fun onFailure(e: ApolloException) {
+                LogManager.logStackTrace("Error fetching loading versions", e)
+                setLoaderGroupEnabled(true, enableCreateServers)
+                loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("Error Getting Versions")))
+            }
+        })
+    }
+
+    private fun setLoaderGroupEnabled(enabled: Boolean, enableCreateServers: Boolean = enabled) {
+        loaderTypeNoneEnabled.value = enabled
+        loaderTypeFabricEnabled.value = enabled
+        loaderTypeForgeEnabled.value = enabled
+        loaderTypeQuiltEnabled.value = enabled
+        createServerEnabled.value = enableCreateServers
+        createInstanceEnabled.value = enabled
+        loaderVersionsDropDownEnabled.value = enabled
+    }
+
+    private val disabledQuiltVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.quilt.disabledVersions", emptyList()
+        )
+    }
+
+    private val disabledFabricVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.fabric.disabledVersions", emptyList()
+        )
+    }
+
+    private val disabledForgeVersions: List<String> by lazy {
+        ConfigManager.getConfigItem(
+            "loaders.forge.disabledVersions", emptyList()
+        )
+    }
+
+    /**
+     * Use legacy loading mechanic
+     */
+    suspend fun legacyLoad(
+        selectedLoader: LoaderType, selectedMinecraftVersion: String, enableCreateServers: Boolean
+    ) {
+        val loaderVersionsList: MutableList<LoaderVersion> = ArrayList()
+        loaderVersionsList.addAll(
+            when (selectedLoader) {
+                LoaderType.FABRIC -> FabricLoader.getChoosableVersions(selectedMinecraftVersion)
+
+                LoaderType.FORGE -> ForgeLoader.getChoosableVersions(selectedMinecraftVersion)
+
+                LoaderType.QUILT -> QuiltLoader.getChoosableVersions(selectedMinecraftVersion)
+            }
+        )
+        if (loaderVersionsList.size == 0) {
+            setLoaderGroupEnabled(true, enableCreateServers)
+            loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("No Versions Found")))
+            return
+        }
+
+        loaderVersions.value = loaderVersionsList.toTypedArray()
+
+        setLoaderGroupEnabled(true, enableCreateServers)
+
+        updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
+    }
+
+    /**
+     * Update the name and description fields if they're not dirty with loader type information
+     */
+    private fun updateNameAndDescription(
+        selectedMinecraftVersion: String, selectedLoader: LoaderType
+    ) {
+        val defaultNameFieldValue = String.format(
+            "Minecraft %s with %s", selectedMinecraftVersion, selectedLoader.toString()
+        )
+        if (!nameDirty) {
+            name.value = defaultNameFieldValue
+        }
+        if (!descriptionDirty) {
+            description.value = defaultNameFieldValue
+        }
     }
 
     companion object {
-        private val LOG = LogManager.getLogger(
+        private val LOG = org.apache.logging.log4j.LogManager.getLogger(
             VanillaPacksTab::class.java
         )
     }
