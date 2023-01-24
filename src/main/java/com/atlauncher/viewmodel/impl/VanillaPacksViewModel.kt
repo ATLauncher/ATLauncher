@@ -287,7 +287,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
 
     override val releaseEnabled: Flow<Boolean> = releaseSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
         LogManager.debug("Checking if release is enabled")
-        a && (b.size == 1)
+        !(a && (b.count { it.value }  == 1))
     }
 
     override fun setExperimentSelected(b: Boolean) {
@@ -305,7 +305,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     override val experimentEnabled: Flow<Boolean> =
         experimentSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
             LogManager.debug("Checking if experiment is enabled")
-            a && (b.size == 1)
+            !(a && (b.count { it.value }  == 1))
         }
 
     override fun setSnapshotSelected(b: Boolean) {
@@ -322,7 +322,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
 
     override val snapshotEnabled: Flow<Boolean> = snapshotSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
         LogManager.debug("Checking if snapshot is enabled")
-        a && (b.size == 1)
+        !(a && (b.count { it.value }  == 1))
     }
 
     override fun setOldAlphaSelected(b: Boolean) {
@@ -339,7 +339,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
 
     override val oldAlphaEnabled: Flow<Boolean> = oldAlphaSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
         LogManager.debug("Checking if alpha is enabled")
-        a && (b.size == 1)
+        !(a && (b.count { it.value }  == 1))
     }
 
     override fun setOldBetaSelected(b: Boolean) {
@@ -356,7 +356,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
 
     override val oldBetaEnabled: Flow<Boolean> = oldBetaSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
         LogManager.debug("Checking if beta is enabled")
-        a && (b.size == 1)
+        !(a && (b.count { it.value } == 1))
     }
 
     override fun setSelectedMinecraftVersion(newVersion: String?) {
