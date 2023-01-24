@@ -510,9 +510,10 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
                 return@ListSelectionListener
             }
             val lsm = e.source as ListSelectionModel
-            val minIndex = lsm.minSelectionIndex
-            val maxIndex = lsm.maxSelectionIndex
-            for (i in minIndex until maxIndex) {
+
+            val minIndex = e.firstIndex
+            val maxIndex = e.lastIndex
+            for (i in minIndex .. maxIndex) {
                 if (lsm.isSelectedIndex(i)) {
                     viewModel.setSelectedMinecraftVersion(
                         minecraftVersionTableModel!!.getValueAt(
