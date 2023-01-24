@@ -20,6 +20,7 @@ package com.atlauncher.viewmodel.impl
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
+import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.exception.ApolloException
 import com.atlauncher.App
 import com.atlauncher.data.installables.Installable
@@ -447,107 +448,103 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     suspend fun apolloLoad(
         selectedLoader: LoaderType, selectedMinecraftVersion: String?, enableCreateServers: Boolean
     ) {
-        GraphqlClient.apolloClient.query(
-            GetLoaderVersionsForMinecraftVersionQuery(
-                selectedMinecraftVersion!!
-            )
-        ).toBuilder().httpCachePolicy(
-            HttpCachePolicy.Policy(
-                HttpCachePolicy.FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false
-            )
-        ).build().enqueue(object : ApolloCall.Callback<GetLoaderVersionsForMinecraftVersionQuery.Data>() {
-            override fun onResponse(
-                response: Response<GetLoaderVersionsForMinecraftVersionQuery.Data>
-            ) {
-                val loaderVersionsList: MutableList<LoaderVersion> = ArrayList()
-                when (selectedLoader) {
-                    LoaderType.FABRIC -> {
-                        loaderVersionsList.addAll(response.data!!.loaderVersions().fabric().stream()
-                            .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
-                                !disabledFabricVersions.contains(fv.version())
-                            }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
-                                LoaderVersion(version.version(), false, "Fabric")
-                            }.collect(Collectors.toList())
-                        )
-                    }
+        try {
+            val response = GraphqlClient.apolloClient.query(
+                GetLoaderVersionsForMinecraftVersionQuery(
+                    selectedMinecraftVersion!!
+                )
+            ).toBuilder().httpCachePolicy(
+                HttpCachePolicy.Policy(
+                    HttpCachePolicy.FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false
+                )
+            ).build().await()
 
-                    LoaderType.FORGE -> {
-                        loaderVersionsList.addAll(response.data!!.loaderVersions().forge().stream()
-                            .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
-                                !disabledForgeVersions.contains(fv.version())
-                            }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
-                                val lv = LoaderVersion(
-                                    version.version(), version.rawVersion(), version.recommended(), "Forge"
-                                )
-                                if (version.installerSha1Hash() != null && version.installerSize() != null) {
-                                    lv.downloadables["installer"] = Pair(
-                                        version.installerSha1Hash(), version.installerSize()!!.toLong()
-                                    )
-                                }
-                                if (version.universalSha1Hash() != null && version.universalSize() != null) {
-                                    lv.downloadables["universal"] = Pair(
-                                        version.universalSha1Hash(), version.universalSize()!!.toLong()
-                                    )
-                                }
-                                if (version.clientSha1Hash() != null && version.clientSize() != null) {
-                                    lv.downloadables["client"] = Pair(
-                                        version.clientSha1Hash(), version.clientSize()!!.toLong()
-                                    )
-                                }
-                                if (version.serverSha1Hash() != null && version.serverSize() != null) {
-                                    lv.downloadables["server"] = Pair(
-                                        version.serverSha1Hash(), version.serverSize()!!.toLong()
-                                    )
-                                }
-                                lv
-                            }.collect(Collectors.toList())
-                        )
-                    }
+            val loaderVersionsList: MutableList<LoaderVersion> = ArrayList()
+            when (selectedLoader) {
+                LoaderType.FABRIC -> {
+                    loaderVersionsList.addAll(response.data!!.loaderVersions().fabric().stream()
+                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
+                            !disabledFabricVersions.contains(fv.version())
+                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Fabric ->
+                            LoaderVersion(version.version(), false, "Fabric")
+                        }.collect(Collectors.toList())
+                    )
+                }
 
-                    LoaderType.QUILT -> {
-                        loaderVersionsList.addAll(response.data!!.loaderVersions().quilt().stream()
-                            .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
-                                !disabledQuiltVersions.contains(fv.version())
-                            }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
-                                LoaderVersion(version.version(), false, "Quilt")
-                            }.collect(Collectors.toList())
-                        )
-                    }
-
-                    LoaderType.LEGACY_FABRIC -> {
-
-                        loaderVersionsList.addAll(response.data!!.loaderVersions().legacyfabric()
-                            .stream()
-                            .filter { fv -> !disabledLegacyFabricVersions.contains(fv.version()) }
-                            .map { version ->
-                                LoaderVersion(
-                                    version.version(),
-                                    false,
-                                    "LegacyFabric"
+                LoaderType.FORGE -> {
+                    loaderVersionsList.addAll(response.data!!.loaderVersions().forge().stream()
+                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
+                            !disabledForgeVersions.contains(fv.version())
+                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Forge ->
+                            val lv = LoaderVersion(
+                                version.version(), version.rawVersion(), version.recommended(), "Forge"
+                            )
+                            if (version.installerSha1Hash() != null && version.installerSize() != null) {
+                                lv.downloadables["installer"] = Pair(
+                                    version.installerSha1Hash(), version.installerSize()!!.toLong()
                                 )
                             }
-                            .collect(Collectors.toList())
-                        )
-                    }
+                            if (version.universalSha1Hash() != null && version.universalSize() != null) {
+                                lv.downloadables["universal"] = Pair(
+                                    version.universalSha1Hash(), version.universalSize()!!.toLong()
+                                )
+                            }
+                            if (version.clientSha1Hash() != null && version.clientSize() != null) {
+                                lv.downloadables["client"] = Pair(
+                                    version.clientSha1Hash(), version.clientSize()!!.toLong()
+                                )
+                            }
+                            if (version.serverSha1Hash() != null && version.serverSize() != null) {
+                                lv.downloadables["server"] = Pair(
+                                    version.serverSha1Hash(), version.serverSize()!!.toLong()
+                                )
+                            }
+                            lv
+                        }.collect(Collectors.toList())
+                    )
                 }
-                if (loaderVersionsList.size == 0) {
-                    setLoaderGroupEnabled(true, enableCreateServers)
-                    loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("No Versions Found")))
-                    return
+
+                LoaderType.QUILT -> {
+                    loaderVersionsList.addAll(response.data!!.loaderVersions().quilt().stream()
+                        .filter { fv: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
+                            !disabledQuiltVersions.contains(fv.version())
+                        }.map { version: GetLoaderVersionsForMinecraftVersionQuery.Quilt ->
+                            LoaderVersion(version.version(), false, "Quilt")
+                        }.collect(Collectors.toList())
+                    )
                 }
-                loaderVersions.value = loaderVersionsList.toTypedArray()
 
-                setLoaderGroupEnabled(true, enableCreateServers)
+                LoaderType.LEGACY_FABRIC -> {
 
-                updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
+                    loaderVersionsList.addAll(response.data!!.loaderVersions().legacyfabric()
+                        .stream()
+                        .filter { fv -> !disabledLegacyFabricVersions.contains(fv.version()) }
+                        .map { version ->
+                            LoaderVersion(
+                                version.version(),
+                                false,
+                                "LegacyFabric"
+                            )
+                        }
+                        .collect(Collectors.toList())
+                    )
+                }
             }
-
-            override fun onFailure(e: ApolloException) {
-                LogManager.logStackTrace("Error fetching loading versions", e)
+            if (loaderVersionsList.size == 0) {
                 setLoaderGroupEnabled(true, enableCreateServers)
-                loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("Error Getting Versions")))
+                loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("No Versions Found")))
+                return
             }
-        })
+            loaderVersions.value = loaderVersionsList.toTypedArray()
+
+            setLoaderGroupEnabled(true, enableCreateServers)
+
+            updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
+        } catch (e: ApolloException) {
+            LogManager.logStackTrace("Error fetching loading versions", e)
+            setLoaderGroupEnabled(true, enableCreateServers)
+            loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("Error Getting Versions")))
+        }
     }
 
     private fun setLoaderGroupEnabled(enabled: Boolean, enableCreateServers: Boolean = enabled) {

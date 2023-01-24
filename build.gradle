@@ -85,6 +85,7 @@ dependencies {
     implementation 'com.github.hypfvieh:dbus-java:3.3.1'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
+    implementation 'com.apollographql.apollo:apollo-coroutines-support:2.5.14'
 
     // Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
