@@ -24,12 +24,13 @@ import com.atlauncher.data.minecraft.loaders.LoaderType
 import com.atlauncher.data.minecraft.loaders.LoaderVersion
 import com.atlauncher.evnt.listener.RelocalizationListener
 import com.atlauncher.evnt.manager.RelocalizationManager
-import com.atlauncher.managers.*
+import com.atlauncher.managers.DialogManager
 import com.atlauncher.utils.ComboItem
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel
 import com.atlauncher.viewmodel.impl.VanillaPacksViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.mini2Dx.gettext.GetText
 import java.awt.*
@@ -524,18 +525,18 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
             }
         })
         scope.launch {
-            viewModel.minecraftVersions.collect { minecraftVersions ->
+            viewModel.minecraftVersions.collectLatest { minecraftVersions ->
 
                 // remove all rows
-                val rowCount = minecraftVersionTableModel!!.rowCount
+                val rowCount = minecraftVersionTableModel?.rowCount ?: 0
                 if (rowCount > 0) {
                     for (i in rowCount - 1 downTo 0) {
-                        minecraftVersionTableModel!!.removeRow(i)
+                        minecraftVersionTableModel?.removeRow(i)
                     }
                 }
 
                 minecraftVersions.forEach { row: IVanillaPacksViewModel.MCVersionRow ->
-                    minecraftVersionTableModel!!.addRow(
+                    minecraftVersionTableModel?.addRow(
                         arrayOf(
                             row.id,
                             row.date,
@@ -543,23 +544,17 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
                         )
                     )
                 }
-                /*
-                if (minecraftVersionTable!!.rowCount >= 1) {
-                    // figure out which row to select
-                    var newSelectedRow = 0
-                    if (selectedMinecraftVersion != null) {
-                        val versionToSelect = minecraftVersions.stream()
-                            .filter { mv: VersionManifestVersion -> mv.id == selectedMinecraftVersion }.findFirst()
-                        if (versionToSelect.isPresent) {
-                            newSelectedRow = minecraftVersions.indexOf(versionToSelect.get())
-                        }
-                    }
-                    minecraftVersionTable!!.setRowSelectionInterval(newSelectedRow, newSelectedRow)
-                }
-                 */
 
                 // refresh the table
-                minecraftVersionTable!!.revalidate()
+                minecraftVersionTable?.revalidate()
+            }
+        }
+        scope.launch {
+            viewModel.selectedMinecraftVersionIndex.collect {
+                if (it < (minecraftVersionTable?.rowCount ?: 0)) {
+                    minecraftVersionTable?.setRowSelectionInterval(it, it)
+                    minecraftVersionTable?.revalidate()
+                }
             }
         }
 

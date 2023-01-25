@@ -92,6 +92,13 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     override val description = MutableStateFlow<String?>(null)
 
     private val selectedMinecraftVersionFlow = MutableStateFlow<String?>(null)
+    override val selectedMinecraftVersionIndex: Flow<Int> by lazy {
+        minecraftVersions.combine(selectedMinecraftVersionFlow) { versions, version ->
+            val index = versions.indexOfFirst { it.id == version }
+            if (index == -1) return@combine 0
+            return@combine index
+        }
+    }
     override val selectedLoaderType = MutableStateFlow<LoaderType?>(null)
     private val selectedLoaderVersionFlow = MutableStateFlow<LoaderVersion?>(null)
 

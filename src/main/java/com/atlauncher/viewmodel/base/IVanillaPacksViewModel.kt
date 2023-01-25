@@ -120,6 +120,8 @@ interface IVanillaPacksViewModel {
      */
     val minecraftVersions: Flow<Array<MCVersionRow>>
 
+    val selectedMinecraftVersionIndex: Flow<Int>
+
     /**
      * Set the selected minecraft version
      */
