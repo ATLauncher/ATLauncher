@@ -17,8 +17,6 @@
  */
 package com.atlauncher.viewmodel.impl
 
-import com.apollographql.apollo.ApolloCall
-import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy
 import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.exception.ApolloException
@@ -37,7 +35,6 @@ import com.atlauncher.evnt.listener.SettingsListener
 import com.atlauncher.evnt.manager.SettingsManager
 import com.atlauncher.exceptions.InvalidMinecraftVersion
 import com.atlauncher.graphql.GetLoaderVersionsForMinecraftVersionQuery
-import com.atlauncher.gui.tabs.VanillaPacksTab
 import com.atlauncher.managers.ConfigManager
 import com.atlauncher.managers.InstanceManager
 import com.atlauncher.managers.LogManager
@@ -55,7 +52,6 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.ISODateTimeFormat
 import org.mini2Dx.gettext.GetText
 import java.awt.Font
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
@@ -112,7 +108,6 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
      */
     override val minecraftVersions: Flow<Array<MCVersionRow>> by lazy {
         minecraftVersionTypeFiltersFlow.map { versionFilter: Map<VersionManifestVersionType, Boolean> ->
-            LogManager.debug("Creating minecraft versions list")
             val filtered = versionFilter.filter { it.value }.map { it.key }.toList()
             val fmt = DateTimeFormat.forPattern(App.settings.dateFormat)
 
@@ -136,59 +131,50 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
 
     override val isFabricVisible by lazy {
         selectedMinecraftVersionFlow.map { version ->
-            LogManager.debug("Checking if fabric is visible")
             !fabricDisabledMCVersions.contains(version)
         }
     }
 
     override val isLegacyFabricVisible: Flow<Boolean> by lazy {
         selectedMinecraftVersionFlow.map { version ->
-            LogManager.debug("Checking if legacy fabric is visible")
             !legacyFabricDisabledMCVersions.contains(version)
         }
     }
 
     override val isForgeVisible by lazy {
         selectedMinecraftVersionFlow.map { version ->
-            LogManager.debug("Checking if forge is visible")
             !forgeDisabledMCVersions.contains(version)
         }
     }
 
     override val isQuiltVisible by lazy {
         selectedMinecraftVersionFlow.map { version ->
-            LogManager.debug("Checking if quilt is visible")
             !quiltDisabledMCVersions.contains(version)
         }
     }
 
 
     override val loaderTypeFabricSelected: Flow<Boolean> = selectedLoaderType.map {
-        LogManager.debug("Checking if fabric is selected")
         it == LoaderType.FABRIC
     }
     override val loaderTypeFabricEnabled = MutableStateFlow(true)
 
     override val loaderTypeForgeSelected: Flow<Boolean> = selectedLoaderType.map {
-        LogManager.debug("Checking if forge is selected")
         it == LoaderType.FORGE
     }
     override val loaderTypeLegacyFabricSelected: Flow<Boolean> =
         selectedLoaderType.map {
-            LogManager.debug("Checking if legacy fabric is selected")
             it == LoaderType.LEGACY_FABRIC
         }
     override val loaderTypeForgeEnabled = MutableStateFlow(true)
     override val loaderTypeLegacyFabricEnabled = MutableStateFlow(true)
 
     override val loaderTypeNoneSelected: Flow<Boolean> = selectedLoaderType.map {
-        LogManager.debug("Checking if no loader is selected")
         it == null
     }
     override val loaderTypeNoneEnabled = MutableStateFlow(true)
 
     override val loaderTypeQuiltSelected: Flow<Boolean> = selectedLoaderType.map {
-        LogManager.debug("Checking if quilt is selected")
         it == LoaderType.QUILT
     }
     override val loaderTypeQuiltEnabled = MutableStateFlow(true)
@@ -208,7 +194,6 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     }
 
     private fun install(isServer: Boolean) {
-        LogManager.debug("Installing " + if (isServer) "server" else "instance")
         val installable: Installable
         try {
             val selectedLoaderVersion = selectedLoaderVersionFlow.value
@@ -217,7 +202,9 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
             val name = name.value
 
             installable = VanillaInstallable(
-                MinecraftManager.getMinecraftVersion(selectedMinecraftVersion), selectedLoaderVersion, description
+                MinecraftManager.getMinecraftVersion(selectedMinecraftVersion),
+                selectedLoaderVersion,
+                description
             )
             installable.instanceName = name
             installable.isReinstall = false
@@ -255,7 +242,6 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     ))
 
     override fun setDescription(description: String) {
-        LogManager.debug("setDescription $description")
         descriptionDirty = isDescriptionDirty()
         this.description.value = (description)
     }
@@ -281,93 +267,77 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     override val showOldBetaOption: Boolean by lazy { ConfigManager.getConfigItem("minecraft.old_beta.enabled", true) }
 
     override fun setReleaseSelected(b: Boolean) {
-        LogManager.debug("setReleaseSelected $b")
         val map = HashMap(minecraftVersionTypeFiltersFlow.value)
         map[VersionManifestVersionType.RELEASE] = b
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
     override val releaseSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
-        LogManager.debug("Checking if release is selected")
         it[VersionManifestVersionType.RELEASE] ?: false
     }
 
     override val releaseEnabled: Flow<Boolean> = releaseSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
-        LogManager.debug("Checking if release is enabled")
         !(a && (b.count { it.value } == 1))
     }
 
     override fun setExperimentSelected(b: Boolean) {
-        LogManager.debug("setExperimentSelected $b")
         val map = HashMap(minecraftVersionTypeFiltersFlow.value)
         map[VersionManifestVersionType.EXPERIMENT] = b
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
     override val experimentSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
-        LogManager.debug("Checking if experiment is selected")
         it[VersionManifestVersionType.EXPERIMENT] ?: false
     }
 
     override val experimentEnabled: Flow<Boolean> =
         experimentSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
-            LogManager.debug("Checking if experiment is enabled")
             !(a && (b.count { it.value } == 1))
         }
 
     override fun setSnapshotSelected(b: Boolean) {
-        LogManager.debug("setSnapshotSelected $b")
         val map = HashMap(minecraftVersionTypeFiltersFlow.value)
         map[VersionManifestVersionType.SNAPSHOT] = b
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
     override val snapshotSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
-        LogManager.debug("Checking if snapshot is selected")
         it[VersionManifestVersionType.SNAPSHOT] ?: false
     }
 
     override val snapshotEnabled: Flow<Boolean> = snapshotSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
-        LogManager.debug("Checking if snapshot is enabled")
         !(a && (b.count { it.value } == 1))
     }
 
     override fun setOldAlphaSelected(b: Boolean) {
-        LogManager.debug("setOldAlphaSelected $b")
         val map = HashMap(minecraftVersionTypeFiltersFlow.value)
         map[VersionManifestVersionType.OLD_ALPHA] = b
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
     override val oldAlphaSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
-        LogManager.debug("Checking if alpha is selected")
         it[VersionManifestVersionType.OLD_ALPHA] ?: false
     }
 
     override val oldAlphaEnabled: Flow<Boolean> = oldAlphaSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
-        LogManager.debug("Checking if alpha is enabled")
         !(a && (b.count { it.value } == 1))
     }
 
     override fun setOldBetaSelected(b: Boolean) {
-        LogManager.debug("setOldBetaSelected $b")
         val map = HashMap(minecraftVersionTypeFiltersFlow.value)
         map[VersionManifestVersionType.OLD_BETA] = b
         minecraftVersionTypeFiltersFlow.value = map.copy()
     }
 
     override val oldBetaSelected: Flow<Boolean> = minecraftVersionTypeFiltersFlow.map {
-        LogManager.debug("Checking if beta is selected")
         it[VersionManifestVersionType.OLD_BETA] ?: false
     }
 
     override val oldBetaEnabled: Flow<Boolean> = oldBetaSelected.combine(minecraftVersionTypeFiltersFlow) { a, b ->
-        LogManager.debug("Checking if beta is enabled")
         !(a && (b.count { it.value } == 1))
     }
 
     override fun setSelectedMinecraftVersion(newVersion: String?) {
-        LogManager.debug("setSelectedMinecraftVersion $newVersion")
         selectedMinecraftVersionFlow.value = newVersion
     }
 
@@ -384,12 +354,10 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     override val showQuiltOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.quilt.enabled", false) }
 
     override fun setLoaderType(loader: LoaderType?) {
-        LogManager.debug("setLoaderType $loader")
         selectedLoaderType.value = loader
     }
 
     override fun setLoaderVersion(loaderVersion: String) {
-        LogManager.debug("setLoaderVersion $loaderVersion")
         scope.launch {
             loaderVersions.first().let { versions ->
                 if (versions != null) {
@@ -429,23 +397,19 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     }
 
     override fun createServer() {
-        LogManager.debug("createServer")
         install(true)
     }
 
     override fun createInstance() {
-        LogManager.debug("createInstance")
         install(false)
     }
 
     override fun onSettingsSaved() {
-        LogManager.debug("onSettingsSaved")
         font.value = (App.THEME.boldFont)
     }
 
     override val warnUserAboutServer: Boolean
         get() {
-            LogManager.debug("warnUserAboutServer")
             return InstanceManager.getInstances().size == 0
         }
 
@@ -453,7 +417,6 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         SettingsManager.addListener(this)
         scope.launch {
             selectedMinecraftVersionFlow.collect { selectedVersion ->
-                LogManager.debug("Selected minecraft version changed, updating name field")
                 if (selectedVersion != null) {
                     try {
                         val version = MinecraftManager.getMinecraftVersion(selectedVersion)
@@ -483,7 +446,6 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
             selectedLoaderType.combine(selectedMinecraftVersionFlow) { a, b ->
                 a to b
             }.collect { (selectedLoader, selectedMinecraftVersion) ->
-                LogManager.debug("Selected minecraft version & selected loader changed, updating loader versions")
                 if (selectedMinecraftVersion == null) return@collect
                 loaderVersionsDropDownEnabled.value = false
                 if (selectedLoader == null) {
@@ -506,19 +468,25 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
                 val enableCreateServers = (selectedLoader !== LoaderType.FORGE || !Utils.matchVersion(
                     selectedMinecraftVersion, "1.5", true, true
                 ))
-                if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false) == true) {
+                val loaders = if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false) == true) {
                     apolloLoad(selectedLoader, selectedMinecraftVersion, enableCreateServers)
                 } else {
                     legacyLoad(selectedLoader, selectedMinecraftVersion, enableCreateServers)
                 }
+
+                loaderVersions.value = loaders
+
+
+                setLoaderGroupEnabled(true, enableCreateServers)
+
+                updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
             }
         }
     }
 
     suspend fun apolloLoad(
         selectedLoader: LoaderType, selectedMinecraftVersion: String?, enableCreateServers: Boolean
-    ) {
-        LogManager.debug("apolloLoad $selectedLoader, $selectedMinecraftVersion, $enableCreateServers")
+    ): Array<LoaderVersion> {
         try {
             val response = GraphqlClient.apolloClient.query(
                 GetLoaderVersionsForMinecraftVersionQuery(
@@ -603,23 +571,17 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
             }
             if (loaderVersionsList.size == 0) {
                 setLoaderGroupEnabled(true, enableCreateServers)
-                loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("No Versions Found")))
-                return
+                return arrayOf(noLoaderVersions)
             }
-            loaderVersions.value = loaderVersionsList.toTypedArray()
-
-            setLoaderGroupEnabled(true, enableCreateServers)
-
-            updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
+            return loaderVersionsList.toTypedArray()
         } catch (e: ApolloException) {
             LogManager.logStackTrace("Error fetching loading versions", e)
             setLoaderGroupEnabled(true, enableCreateServers)
-            loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("Error Getting Versions")))
+            return arrayOf(errorLoadingVersions)
         }
     }
 
     private fun setLoaderGroupEnabled(enabled: Boolean, enableCreateServers: Boolean = enabled) {
-        LogManager.debug("setLoaderGroupEnabled $enabled, $enableCreateServers")
         loaderTypeNoneEnabled.value = enabled
         loaderTypeFabricEnabled.value = enabled
         loaderTypeForgeEnabled.value = enabled
@@ -657,10 +619,9 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     /**
      * Use legacy loading mechanic
      */
-    suspend fun legacyLoad(
+    fun legacyLoad(
         selectedLoader: LoaderType, selectedMinecraftVersion: String, enableCreateServers: Boolean
-    ) {
-        LogManager.debug("legacyLoad $selectedLoader, $selectedMinecraftVersion, $enableCreateServers")
+    ): Array<LoaderVersion> {
         val loaderVersionsList: MutableList<LoaderVersion> = ArrayList()
         loaderVersionsList.addAll(
             when (selectedLoader) {
@@ -672,15 +633,10 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         )
         if (loaderVersionsList.size == 0) {
             setLoaderGroupEnabled(true, enableCreateServers)
-            loaderVersions.value = arrayOf(LoaderVersion(GetText.tr("No Versions Found")))
-            return
+            return arrayOf(noLoaderVersions)
         }
 
-        loaderVersions.value = loaderVersionsList.toTypedArray()
-
-        setLoaderGroupEnabled(true, enableCreateServers)
-
-        updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
+        return loaderVersionsList.toTypedArray()
     }
 
     /**
@@ -689,7 +645,6 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     private fun updateNameAndDescription(
         selectedMinecraftVersion: String, selectedLoader: LoaderType
     ) {
-        LogManager.debug("updateNameAndDescription $selectedMinecraftVersion $selectedLoader")
         val defaultNameFieldValue = String.format(
             "Minecraft %s with %s", selectedMinecraftVersion, selectedLoader.toString()
         )
@@ -699,5 +654,10 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         if (!descriptionDirty) {
             description.value = defaultNameFieldValue
         }
+    }
+
+    companion object {
+        private val noLoaderVersions = LoaderVersion(GetText.tr("No Versions Found"))
+        private val errorLoadingVersions = LoaderVersion(GetText.tr("Error Getting Versions"))
     }
 }
