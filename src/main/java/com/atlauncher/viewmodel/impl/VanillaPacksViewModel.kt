@@ -95,8 +95,9 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
             return@combine index
         }
     }
-    override val selectedLoaderType = MutableStateFlow<LoaderType?>(null)
-    private val selectedLoaderVersionFlow = MutableStateFlow<LoaderVersion?>(null)
+    private val selectedLoaderType = MutableStateFlow<LoaderType?>(null)
+
+    override val selectedLoaderVersion = MutableStateFlow<LoaderVersion?>(null)
 
     override val loaderLoading = MutableStateFlow(false)
 
@@ -196,7 +197,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     private fun install(isServer: Boolean) {
         val installable: Installable
         try {
-            val selectedLoaderVersion = selectedLoaderVersionFlow.value
+            val selectedLoaderVersion = selectedLoaderVersion.value
             val selectedMinecraftVersion = selectedMinecraftVersionFlow.value ?: return
             val description = description.value
             val name = name.value
@@ -363,7 +364,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
                 if (versions != null) {
                     for (version in versions) {
                         if (version.version == loaderVersion) {
-                            selectedLoaderVersionFlow.value = version
+                            selectedLoaderVersion.value = version
                             break
                         }
                     }
@@ -445,10 +446,10 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
         scope.launch {
             selectedLoaderType.combine(selectedMinecraftVersionFlow) { a, b ->
                 a to b
-            }.collect { (selectedLoader, selectedMinecraftVersion) ->
+            }.collect { (loaderType, selectedMinecraftVersion) ->
                 if (selectedMinecraftVersion == null) return@collect
                 loaderVersionsDropDownEnabled.value = false
-                if (selectedLoader == null) {
+                if (loaderType == null) {
                     // update the name and description fields if they're not dirty
                     val defaultNameFieldValue = String.format("Minecraft %s", selectedMinecraftVersion)
                     if (!nameDirty) {
@@ -465,21 +466,33 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
                 setLoaderGroupEnabled(false)
 
                 // Legacy Forge doesn't support servers easily
-                val enableCreateServers = (selectedLoader !== LoaderType.FORGE || !Utils.matchVersion(
+                val enableCreateServers = (loaderType !== LoaderType.FORGE || !Utils.matchVersion(
                     selectedMinecraftVersion, "1.5", true, true
                 ))
                 val loaders = if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false) == true) {
-                    apolloLoad(selectedLoader, selectedMinecraftVersion, enableCreateServers)
+                    apolloLoad(loaderType, selectedMinecraftVersion, enableCreateServers)
                 } else {
-                    legacyLoad(selectedLoader, selectedMinecraftVersion, enableCreateServers)
+                    legacyLoad(loaderType, selectedMinecraftVersion, enableCreateServers)
                 }
 
                 loaderVersions.value = loaders
 
+                if (loaders.isNotEmpty()) {
+                    selectedLoaderVersion.value =
+                        when (loaderType) {
+                            LoaderType.FORGE -> {
+                                loaders.firstOrNull { it.recommended } ?: loaders.first()
+                            }
+                            else -> {
+                                loaders.first()
+                            }
+                        }
+                }
+
 
                 setLoaderGroupEnabled(true, enableCreateServers)
 
-                updateNameAndDescription(selectedMinecraftVersion, selectedLoader)
+                updateNameAndDescription(selectedMinecraftVersion, loaderType)
             }
         }
     }

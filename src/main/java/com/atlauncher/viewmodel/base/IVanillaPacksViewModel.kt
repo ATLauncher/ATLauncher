@@ -28,8 +28,6 @@ import java.awt.Font
  */
 interface IVanillaPacksViewModel {
     // UI settings
-
-    val selectedLoaderType: StateFlow<LoaderType?>
     val font: Flow<Font>
 
     // Pack Options
@@ -214,6 +212,12 @@ interface IVanillaPacksViewModel {
      * Loader versions that the user can select for the loaderType
      */
     val loaderVersions: Flow<Array<LoaderVersion>?>
+
+
+    /**
+     * The selected mod loader version
+     */
+    val selectedLoaderVersion: Flow<LoaderVersion?>
 
     /**
      * Is the loader loading.

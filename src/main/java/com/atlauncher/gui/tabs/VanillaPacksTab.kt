@@ -236,7 +236,7 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
             }
         }
         scope.launch {
-            viewModel.loaderVersions.collect { loaderVersions ->
+            viewModel.loaderVersions.collectLatest { loaderVersions ->
                 loaderVersionsDropDown.removeAllItems()
                 if (loaderVersions == null) {
                     setEmpty()
@@ -259,15 +259,6 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
                         )
                     }
 
-                    if (viewModel.selectedLoaderType.value == LoaderType.FORGE) {
-                        val recommendedVersion =
-                            loaderVersions.firstOrNull { lv: LoaderVersion -> lv.recommended }
-                        if (recommendedVersion != null) {
-                            loaderVersionsDropDown.selectedIndex =
-                                loaderVersions.indexOf(recommendedVersion)
-                        }
-                    }
-
                     // ensures that the dropdown is at least 200 px wide
                     loaderVersionLength = max(200, loaderVersionLength)
 
@@ -275,6 +266,11 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
                     loaderVersionLength = min(400, loaderVersionLength)
                     loaderVersionsDropDown.preferredSize = Dimension(loaderVersionLength, 23)
 
+                    viewModel.selectedLoaderVersion.collect {
+                        if (it != null)
+                            loaderVersionsDropDown.selectedIndex =
+                                loaderVersions.indexOf(it)
+                    }
                 }
             }
         }
