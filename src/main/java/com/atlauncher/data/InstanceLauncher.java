@@ -97,6 +97,7 @@ public class InstanceLauncher {
 
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
+    public boolean ignoreAllUpdates = false;
     public boolean vanillaInstance = false;
 
     public Instant lastPlayed = null;

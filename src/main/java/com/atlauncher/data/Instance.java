@@ -412,6 +412,11 @@ public class Instance extends MinecraftVersion {
         }
     }
 
+    public void ignoreAllUpdates() {
+        this.launcher.ignoreAllUpdates = true;
+        this.save();
+    }
+
     public boolean hasLatestUpdateBeenIgnored() {
         if (launcher.vanillaInstance) {
             return false;
@@ -447,6 +452,10 @@ public class Instance extends MinecraftVersion {
     }
 
     private boolean hasUpdateBeenIgnored(String version) {
+        if (this.launcher.ignoreAllUpdates) {
+            return true;
+        }
+
         if (version == null || this.launcher.ignoredUpdates.size() == 0) {
             return false;
         }
