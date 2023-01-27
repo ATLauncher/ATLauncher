@@ -20,6 +20,7 @@ package com.atlauncher.network;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -551,6 +552,10 @@ public final class Download {
     }
 
     public void downloadFile() throws IOException {
+        downloadFile(0);
+    }
+
+    public void downloadFile(int tries) throws IOException {
         if (this.instanceInstaller != null && this.instanceInstaller.isCancelled()) {
             return;
         }
@@ -591,6 +596,14 @@ public final class Download {
             try {
                 this.execute();
             } catch (IOException e) {
+                // if timeout, attempt to download again
+                if (e instanceof SocketTimeoutException && tries < 3) {
+                    LogManager.warn(String.format("Failed to download %s from %s due to timeout. Attempting again.",
+                            this.to.getFileName().toString(), this.url));
+                    downloadFile(tries++);
+                    return;
+                }
+
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);
                 }
