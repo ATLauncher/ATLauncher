@@ -10,4 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
-- Implement view model for VanillaPacksTab [#659]
+- Implement view model for VanillaPacksTab [#717]
