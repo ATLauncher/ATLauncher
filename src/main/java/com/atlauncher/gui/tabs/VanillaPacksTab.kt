@@ -305,6 +305,11 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
                 loaderTypeQuiltRadioButton.isEnabled = it
             }
         }
+        scope.launch {
+            viewModel.isQuiltVisible.collect {
+                loaderTypeQuiltRadioButton.isVisible = it
+            }
+        }
         loaderTypeQuiltRadioButton.addActionListener { e: ActionEvent? ->
             viewModel.setLoaderType(
                 LoaderType.QUILT
@@ -324,6 +329,11 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
         scope.launch {
             viewModel.loaderTypeForgeEnabled.collect {
                 loaderTypeForgeRadioButton.isEnabled = it
+            }
+        }
+        scope.launch {
+            viewModel.isForgeVisible.collect {
+                loaderTypeForgeRadioButton.isVisible = it
             }
         }
         loaderTypeForgeRadioButton.addActionListener { e: ActionEvent? ->
@@ -347,6 +357,11 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
                 loaderTypeLegacyFabricRadioButton.isEnabled = it
             }
         }
+        scope.launch {
+            viewModel.isLegacyFabricVisible.collect {
+                loaderTypeLegacyFabricRadioButton.isVisible = it
+            }
+        }
         loaderTypeLegacyFabricRadioButton.addActionListener { e: ActionEvent? ->
             viewModel.setLoaderType(
                 LoaderType.LEGACY_FABRIC
@@ -366,6 +381,11 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
         scope.launch {
             viewModel.loaderTypeFabricEnabled.collect {
                 loaderTypeFabricRadioButton.isEnabled = it
+            }
+        }
+        scope.launch {
+            viewModel.isFabricVisible.collect {
+                loaderTypeFabricRadioButton.isVisible = it
             }
         }
         loaderTypeFabricRadioButton.addActionListener { e: ActionEvent? ->
@@ -511,7 +531,7 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
 
             val minIndex = e.firstIndex
             val maxIndex = e.lastIndex
-            for (i in minIndex .. maxIndex) {
+            for (i in minIndex..maxIndex) {
                 if (lsm.isSelectedIndex(i)) {
                     viewModel.setSelectedMinecraftVersion(
                         minecraftVersionTableModel!!.getValueAt(
