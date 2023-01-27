@@ -10,7 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
-- Implement view model for InstancesTab [#675]
-- Implement view model for ServersTab [#674]
 - Implement view model for VanillaPacksTab [#659]
-- Switch a couple data calls to use Graphql if configured
