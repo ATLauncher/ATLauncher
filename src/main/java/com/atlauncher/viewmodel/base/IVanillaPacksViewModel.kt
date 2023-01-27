@@ -21,7 +21,6 @@ import com.atlauncher.data.MCVersionRow
 import com.atlauncher.data.minecraft.loaders.LoaderType
 import com.atlauncher.data.minecraft.loaders.LoaderVersion
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import java.awt.Font
 
 /**
@@ -29,6 +28,9 @@ import java.awt.Font
  */
 interface IVanillaPacksViewModel {
     // UI settings
+    /**
+     * Controls what font to use
+     */
     val font: Flow<Font>
 
     // Pack Options
@@ -55,25 +57,79 @@ interface IVanillaPacksViewModel {
 
     // Release Options
 
+    /**
+     * If the release checkbox should be visible
+     */
     val showReleaseOption: Boolean
+
+    /**
+     * If the experiment checkbox should be visible
+     */
     val showExperimentOption: Boolean
+
+    /**
+     * If the snapshot checkbox should be visible
+     */
     val showSnapshotOption: Boolean
+
+    /**
+     * If the old alpha option should be visible
+     */
     val showOldAlphaOption: Boolean
+
+    /**
+     * If the old beta option should be visible
+     */
     val showOldBetaOption: Boolean
 
+    /**
+     * Is the release checkbox selected
+     */
     val releaseSelected: Flow<Boolean>
+
+    /**
+     * Is the release checkbox enabled
+     */
     val releaseEnabled: Flow<Boolean>
 
+    /**
+     * Is the experiment checkbox selected
+     */
     val experimentSelected: Flow<Boolean>
+
+    /**
+     * Is the experiment checkbox enabled
+     */
     val experimentEnabled: Flow<Boolean>
 
+    /**
+     * Is the snapshot checkbox selected
+     */
     val snapshotSelected: Flow<Boolean>
+
+    /**
+     * Is the snapshot checkbox enabled
+     */
     val snapshotEnabled: Flow<Boolean>
 
+    /**
+     * Is the alpha checkbox selected
+     */
     val oldAlphaSelected: Flow<Boolean>
+
+    /**
+     * Is the alpha checkbox enabled
+     */
     val oldAlphaEnabled: Flow<Boolean>
 
+    /**
+     * Is the beta checkbox selected
+     */
     val oldBetaSelected: Flow<Boolean>
+
+    /**
+     * Is the beta checkbox enabled
+     */
     val oldBetaEnabled: Flow<Boolean>
 
     /**
@@ -116,6 +172,9 @@ interface IVanillaPacksViewModel {
      */
     val minecraftVersions: Flow<Array<MCVersionRow>>
 
+    /**
+     * Which index is currently selected
+     */
     val selectedMinecraftVersionIndex: Flow<Int>
 
     /**
@@ -125,9 +184,24 @@ interface IVanillaPacksViewModel {
 
     // Mod loader option
 
+    /**
+     * Is fabric an option currently
+     */
     val isFabricVisible: Flow<Boolean>
+
+    /**
+     * Is legacy fabric an option currently
+     */
     val isLegacyFabricVisible: Flow<Boolean>
+
+    /**
+     * Is forge an option currently
+     */
     val isForgeVisible: Flow<Boolean>
+
+    /**
+     * Is quilt an option currently
+     */
     val isQuiltVisible: Flow<Boolean>
 
     /**
@@ -174,12 +248,20 @@ interface IVanillaPacksViewModel {
      * Has forge been selected
      */
     val loaderTypeForgeSelected: Flow<Boolean>
+
+    /**
+     * Is legacy fabric selected
+     */
     val loaderTypeLegacyFabricSelected: Flow<Boolean>
 
     /**
      * Is the forge button enabled or not
      */
     val loaderTypeForgeEnabled: Flow<Boolean>
+
+    /**
+     * Is legacy fabric enabled
+     */
     val loaderTypeLegacyFabricEnabled: Flow<Boolean>
 
     /**
@@ -204,6 +286,9 @@ interface IVanillaPacksViewModel {
      */
     fun setLoaderVersion(loaderVersion: String)
 
+    /**
+     * Is the loader versions drop down enabled
+     */
     val loaderVersionsDropDownEnabled: Flow<Boolean>
 
     /**
