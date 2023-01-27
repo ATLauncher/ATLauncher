@@ -43,7 +43,7 @@ import com.atlauncher.network.GraphqlClient
 import com.atlauncher.utils.Pair
 import com.atlauncher.utils.Utils
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel
-import com.atlauncher.viewmodel.base.IVanillaPacksViewModel.MCVersionRow
+import com.atlauncher.data.MCVersionRow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

@@ -17,6 +17,7 @@
  */
 package com.atlauncher.viewmodel.base
 
+import com.atlauncher.data.MCVersionRow
 import com.atlauncher.data.minecraft.loaders.LoaderType
 import com.atlauncher.data.minecraft.loaders.LoaderVersion
 import kotlinx.coroutines.flow.Flow
@@ -109,9 +110,6 @@ interface IVanillaPacksViewModel {
      * Should reload [minecraftVersions]
      */
     fun setOldBetaSelected(b: Boolean)
-
-    // Version option
-    class MCVersionRow(val id: String, val date: String, val type: String)
 
     /**
      * Minecraft versions to display in the version table

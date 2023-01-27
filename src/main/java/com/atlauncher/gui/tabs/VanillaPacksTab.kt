@@ -20,6 +20,7 @@ package com.atlauncher.gui.tabs
 import com.atlauncher.App
 import com.atlauncher.builders.HTMLBuilder
 import com.atlauncher.constants.UIConstants
+import com.atlauncher.data.MCVersionRow
 import com.atlauncher.data.minecraft.loaders.LoaderType
 import com.atlauncher.data.minecraft.loaders.LoaderVersion
 import com.atlauncher.evnt.listener.RelocalizationListener
@@ -531,7 +532,7 @@ class VanillaPacksTab : JPanel(BorderLayout()), Tab, RelocalizationListener {
                     }
                 }
 
-                minecraftVersions.forEach { row: IVanillaPacksViewModel.MCVersionRow ->
+                minecraftVersions.forEach { row: MCVersionRow ->
                     minecraftVersionTableModel?.addRow(
                         arrayOf(
                             row.id,
