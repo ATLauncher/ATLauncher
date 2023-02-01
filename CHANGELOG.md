@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add in ability to ignore all updates for an instance
+- Add ability to create Minecraft profile when Microsoft login fails to get profile
 
 ### Fixes
 
