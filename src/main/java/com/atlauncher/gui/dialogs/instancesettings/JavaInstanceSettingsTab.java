@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.swing.BorderFactory;
@@ -48,9 +49,11 @@ import javax.swing.event.ChangeListener;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
@@ -68,6 +71,7 @@ public class JavaInstanceSettingsTab extends JPanel {
     private JSpinner permGen;
     private JTextField javaPath;
     private JTextArea javaParameters;
+    private JComboBox<ComboItem<String>> javaRuntimeOverride;
     private JComboBox<ComboItem<Boolean>> useJavaProvidedByMinecraft;
     private JComboBox<ComboItem<Boolean>> disableLegacyLaunching;
     private JComboBox<ComboItem<Boolean>> useSystemGlfw;
@@ -413,6 +417,42 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         add(javaParametersPanel, gbc);
 
+        // Runtime Override
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover javaRuntimeOverrideLabel = new JLabelWithHover(GetText.tr("Runtime Override") + ":",
+                HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr(
+                        "This allows you to override which runtime is used to launch this instance.<br/><br/>Runtimes are provided by Mojang and used to launch the game and generally correspond to a particular Java version.<br/><br/>Changing this is usually not required or recommended."))
+                        .build());
+        add(javaRuntimeOverrideLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        javaRuntimeOverride = new JComboBox<>();
+        javaRuntimeOverride.addItem(new ComboItem<>(null, GetText.tr("Use Default (Recommended)")));
+
+        int selectedIndexRuntime = 0;
+        Map<String, List<JavaRuntime>> runtimes = Data.JAVA_RUNTIMES.getForSystem();
+        for (String runtime : runtimes.keySet()) {
+            javaRuntimeOverride.addItem(
+                    new ComboItem<>(runtime,
+                            String.format("%s (Java %s)", runtime, runtimes.get(runtime).get(0).version.name)));
+
+            if (this.instance.launcher.javaRuntimeOverride != null
+                    && this.instance.launcher.javaRuntimeOverride.equals(runtime)) {
+                selectedIndexRuntime = javaRuntimeOverride.getItemCount() - 1;
+            }
+        }
+
+        javaRuntimeOverride.setSelectedIndex(selectedIndexRuntime);
+
+        add(javaRuntimeOverride, gbc);
+
         // Use Java Provided By Minecraft
         gbc.gridx = 0;
         gbc.gridy++;
@@ -614,6 +654,8 @@ public class JavaInstanceSettingsTab extends JPanel {
         Integer permGen = (Integer) this.permGen.getValue();
         String javaPath = this.javaPath.getText();
         String javaParameters = this.javaParameters.getText();
+        String javaRuntimeOverrideVal = ((ComboItem<String>) javaRuntimeOverride.getSelectedItem())
+                .getValue();
         Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem())
                 .getValue();
         Boolean disableLegacyLaunchingVal = ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
@@ -636,6 +678,7 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         this.instance.launcher.useJavaProvidedByMinecraft = useJavaProvidedByMinecraftVal;
         this.instance.launcher.disableLegacyLaunching = disableLegacyLaunchingVal;
+        this.instance.launcher.javaRuntimeOverride = javaRuntimeOverrideVal;
         this.instance.launcher.useSystemGlfw = useSystemGlfwVal;
         this.instance.launcher.useSystemOpenAl = useSystemOpenAlVal;
     }

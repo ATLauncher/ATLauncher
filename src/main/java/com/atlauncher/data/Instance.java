@@ -625,26 +625,29 @@ public class Instance extends MinecraftVersion {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
             String runtimeSystemString = JavaRuntimes.getSystem();
 
-            if (runtimesForSystem.containsKey(javaVersion.component)
-                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
-                // #. {0} is the version of Java were downloading
-                progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}", javaVersion.majorVersion));
+            String runtimeToUse = Optional.ofNullable(launcher.javaRuntimeOverride).orElse(javaVersion.component);
 
-                JavaRuntime runtimeToDownload = runtimesForSystem.get(javaVersion.component).get(0);
+            if (runtimesForSystem.containsKey(runtimeToUse)
+                    && runtimesForSystem.get(runtimeToUse).size() != 0) {
+                // #. {0} is the version of Java were downloading
+                progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}",
+                        runtimesForSystem.get(runtimeToUse).get(0).version.name));
+
+                JavaRuntime runtimeToDownload = runtimesForSystem.get(runtimeToUse).get(0);
 
                 try {
                     JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build()
                             .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
                             .hash(runtimeToDownload.manifest.sha1).downloadTo(FileSystem.MINECRAFT_RUNTIMES
-                                    .resolve(javaVersion.component).resolve("manifest.json"))
+                                    .resolve(runtimeToUse).resolve("manifest.json"))
                             .asClassWithThrow(JavaRuntimeManifest.class);
 
                     DownloadPool pool = new DownloadPool();
 
                     // create root directory
-                    Path runtimeSystemDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
+                    Path runtimeSystemDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(runtimeToUse)
                             .resolve(runtimeSystemString);
-                    Path runtimeDirectory = runtimeSystemDirectory.resolve(javaVersion.component);
+                    Path runtimeDirectory = runtimeSystemDirectory.resolve(runtimeToUse);
                     FileUtils.createDirectory(runtimeDirectory);
 
                     // create all the directories
@@ -676,7 +679,7 @@ public class Instance extends MinecraftVersion {
                     // doing that)
                     Files.write(runtimeSystemDirectory.resolve(".version"),
                             runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
-                    // Files.write(runtimeSystemDirectory.resolve(javaVersion.component
+                    // Files.write(runtimeSystemDirectory.resolve(runtimeToUse
                     // + ".sha1"), runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     LogManager.logStackTrace("Failed to download Java runtime", e);
@@ -2988,13 +2991,14 @@ public class Instance extends MinecraftVersion {
         // are we using Mojangs provided runtime?
         if (isUsingJavaRuntime()) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
+            String runtimeToUse = Optional.ofNullable(launcher.javaRuntimeOverride).orElse(javaVersion.component);
 
             // make sure the runtime is available in the data set (so it's not disabled
             // remotely)
-            if (runtimesForSystem.containsKey(javaVersion.component)
-                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
-                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
-                        .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
+            if (runtimesForSystem.containsKey(runtimeToUse)
+                    && runtimesForSystem.get(runtimeToUse).size() != 0) {
+                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(runtimeToUse)
+                        .resolve(JavaRuntimes.getSystem()).resolve(runtimeToUse);
 
                 if (OS.isMac()) {
                     runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
@@ -3002,8 +3006,13 @@ public class Instance extends MinecraftVersion {
 
                 if (Files.isDirectory(runtimeDirectory)) {
                     javaPath = runtimeDirectory.toAbsolutePath().toString();
-                    LogManager.info(String.format("Using Java runtime %s (major version %d) at path %s",
-                            javaVersion.component, javaVersion.majorVersion, javaPath));
+                    if (launcher.javaRuntimeOverride != null) {
+                        LogManager.info(String.format("Using overriden Java runtime %s (Java %s) at path %s",
+                                runtimeToUse, runtimesForSystem.get(runtimeToUse).get(0).version.name, javaPath));
+                    } else {
+                        LogManager.info(String.format("Using Java runtime %s (Java %s) at path %s",
+                                runtimeToUse, runtimesForSystem.get(runtimeToUse).get(0).version.name, javaPath));
+                    }
                 }
             }
         }

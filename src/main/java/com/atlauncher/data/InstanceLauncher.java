@@ -65,6 +65,7 @@ public class InstanceLauncher {
     public Integer permGen;
     public String javaPath;
     public String javaArguments;
+    public String javaRuntimeOverride = null;
     public String account;
     public Boolean enableDiscordIntegration = null;
     public Boolean useJavaProvidedByMinecraft = null;
