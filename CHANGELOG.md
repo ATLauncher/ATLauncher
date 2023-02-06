@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add ability to override the runtime version per instance
+- Add in a unified modpack search to search across multiple platforms at once [#720]
 
 ### Fixes
 - Remove old OmitStackTraceInFastThrow JVM arg

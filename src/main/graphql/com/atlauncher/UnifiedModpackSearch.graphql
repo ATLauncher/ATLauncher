@@ -1,0 +1,10 @@
+query UnifiedModPackSearch($query: String!) {
+    unifiedModPackSearch(query: $query) {
+        id
+        name
+        platform
+        summary
+        url
+        iconUrl
+    }
+}

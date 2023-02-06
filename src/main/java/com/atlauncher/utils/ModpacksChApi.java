@@ -78,7 +78,7 @@ public class ModpacksChApi {
                         .setUrl(String.format("%s/modpack/%s", Constants.MODPACKS_CH_API_URL, packId))
                         .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
                         .asClass(ModpacksChPackManifest.class))
-                .filter(p -> p.versions != null).collect(Collectors.toList());
+                .filter(p -> p != null && p.versions != null).collect(Collectors.toList());
 
         return packs;
     }
