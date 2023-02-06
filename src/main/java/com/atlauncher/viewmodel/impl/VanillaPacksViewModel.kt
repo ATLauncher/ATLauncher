@@ -212,7 +212,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
             installable.isServer = isServer
             val success = installable.startInstall()
             if (success) {
-                // TODO Reset server
+                // - Reset the view, currently disabled
                 //nameFieldDirty = false
                 //descriptionFieldDirty = false
                 //loaderTypeNoneRadioButton.isSelected = true
