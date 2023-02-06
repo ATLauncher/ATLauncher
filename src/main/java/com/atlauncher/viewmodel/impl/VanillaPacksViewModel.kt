@@ -347,7 +347,7 @@ class VanillaPacksViewModel : IVanillaPacksViewModel, SettingsListener {
     override val showForgeOption: Boolean by lazy { ConfigManager.getConfigItem("loaders.forge.enabled", true) }
     override val showLegacyFabricOption: Boolean by lazy {
         ConfigManager.getConfigItem(
-            "loader.legacyfabric.enabled",
+            "loaders.legacyfabric.enabled",
             true
         )
     }
