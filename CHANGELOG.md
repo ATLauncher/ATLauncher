@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add ability to override the runtime version per instance
 
 ### Fixes
+- Remove old OmitStackTraceInFastThrow JVM arg
 
 ### Misc
