@@ -37,7 +37,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.graphql.UnifiedModPackSearchQuery.UnifiedModPackSearch;
+import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 import com.atlauncher.graphql.type.ModPackPlatformType;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.components.PackImagePanel;
@@ -51,15 +51,15 @@ import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
-public class UnifiedPackSearchCard extends JPanel implements RelocalizationListener {
+public class UnifiedPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
-    public UnifiedPackSearchCard(final UnifiedModPackSearch searchResult) {
+    public UnifiedPackCard(final UnifiedModPackResultsFragment result) {
         super();
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder(null, searchResult.name(), TitledBorder.LEADING,
+        setBorder(BorderFactory.createTitledBorder(null, result.name(), TitledBorder.LEADING,
                 TitledBorder.DEFAULT_POSITION,
                 App.THEME.getBoldFont().deriveFont(15f)));
 
@@ -67,16 +67,16 @@ public class UnifiedPackSearchCard extends JPanel implements RelocalizationListe
 
         JSplitPane splitter = new JSplitPane();
 
-        if (searchResult.platform() == ModPackPlatformType.ATLAUNCHER) {
+        if (result.platform() == ModPackPlatformType.ATLAUNCHER) {
             try {
                 splitter.setLeftComponent(
-                        new PackImagePanel(PackManager.getPackByID(Integer.parseInt(searchResult.id()))));
+                        new PackImagePanel(PackManager.getPackByID(Integer.parseInt(result.id()))));
             } catch (Exception e) {
             }
         } else {
             String imageUrl = null;
-            if (searchResult.iconUrl() != null) {
-                imageUrl = searchResult.iconUrl();
+            if (result.iconUrl() != null) {
+                imageUrl = result.iconUrl();
             }
 
             BackgroundImageLabel imageLabel = new BackgroundImageLabel(imageUrl, 150, 150);
@@ -97,8 +97,8 @@ public class UnifiedPackSearchCard extends JPanel implements RelocalizationListe
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(searchResult.name(), "Install", "UnifiedModPackSearch");
-                new InstanceInstallerDialog(searchResult);
+                Analytics.sendEvent(result.name(), "Install", "UnifiedModPackSearch");
+                new InstanceInstallerDialog(result);
             }
         });
         buttonsPanel.add(newInstanceButton);
@@ -122,26 +122,26 @@ public class UnifiedPackSearchCard extends JPanel implements RelocalizationListe
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(searchResult.name(), "ServerInstall", "UnifiedModPackSearch");
-                new InstanceInstallerDialog(searchResult, true);
+                Analytics.sendEvent(result.name(), "ServerInstall", "UnifiedModPackSearch");
+                new InstanceInstallerDialog(result, true);
             }
         });
         buttonsPanel.add(createServerButton);
 
-        boolean showCreateServerButton = searchResult.platform() == ModPackPlatformType.MODRINTH;
-        if (searchResult.platform() == ModPackPlatformType.ATLAUNCHER) {
+        boolean showCreateServerButton = result.platform() == ModPackPlatformType.MODRINTH;
+        if (result.platform() == ModPackPlatformType.ATLAUNCHER) {
             try {
-                showCreateServerButton = PackManager.getPackByID(Integer.parseInt(searchResult.id())).createServer;
+                showCreateServerButton = PackManager.getPackByID(Integer.parseInt(result.id())).createServer;
             } catch (Exception e) {
             }
         }
         createServerButton.setVisible(showCreateServerButton);
 
-        websiteButton.addActionListener(e -> OS.openWebBrowser(searchResult.url()));
+        websiteButton.addActionListener(e -> OS.openWebBrowser(result.url()));
         buttonsPanel.add(websiteButton);
 
         JEditorPane descArea = new JEditorPane("text/html",
-                String.format("<html>%s</html>", Markdown.render(searchResult.summary())));
+                String.format("<html>%s</html>", Markdown.render(result.summary())));
         descArea.setEditable(false);
         descArea.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

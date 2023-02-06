@@ -32,32 +32,52 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
+import com.atlauncher.graphql.UnifiedModPackHomeQuery;
 import com.atlauncher.graphql.UnifiedModPackSearchQuery;
+import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 import com.atlauncher.gui.card.NilCard;
-import com.atlauncher.gui.card.packbrowser.UnifiedPackSearchCard;
+import com.atlauncher.gui.card.packbrowser.UnifiedPackCard;
 import com.atlauncher.network.GraphqlClient;
 
-public class UnifiedPacksSearchPanel extends PackBrowserPlatformPanel {
+public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
 
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
             boolean sortDescending, String search, int page) {
-        if (search.isEmpty() || search.length() <= 1) {
+        if (search.length() == 1) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(new HTMLBuilder().text(GetText
-                            .tr("To find a pack, search for one at the top<br/><br/>Alternatively choose a modpack platform on the left hand side."))
+                            .tr("To find a pack, search for one at the top.<br/><br/>Alternatively choose a modpack platform on the left hand side."))
                             .build()),
                     gbc);
             return;
         }
 
-        UnifiedModPackSearchQuery.Data response = GraphqlClient
-                .callAndWait(new UnifiedModPackSearchQuery(search));
+        List<UnifiedModPackResultsFragment> items = new ArrayList<>();
+        if (search.isEmpty() || search.length() == 0) {
+            UnifiedModPackHomeQuery.Data response = GraphqlClient
+                    .callAndWait(new UnifiedModPackHomeQuery());
 
-        if (response == null || response.unifiedModPackSearch() == null
-                || response.unifiedModPackSearch().size() == 0) {
+            if (response != null && response.unifiedModPackHome() != null) {
+                items.addAll(
+                        response.unifiedModPackHome().stream().map(i -> i.fragments().unifiedModPackResultsFragment())
+                                .collect(Collectors.toList()));
+            }
+
+        } else {
+            UnifiedModPackSearchQuery.Data response = GraphqlClient
+                    .callAndWait(new UnifiedModPackSearchQuery(search));
+
+            if (response != null && response.unifiedModPackSearch() != null) {
+                items.addAll(
+                        response.unifiedModPackSearch().stream().map(i -> i.fragments().unifiedModPackResultsFragment())
+                                .collect(Collectors.toList()));
+            }
+        }
+
+        if (items.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(new HTMLBuilder().text(GetText
@@ -73,13 +93,13 @@ public class UnifiedPacksSearchPanel extends PackBrowserPlatformPanel {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<UnifiedPackSearchCard> cards = response.unifiedModPackSearch().stream()
-                .map(p -> new UnifiedPackSearchCard(p))
+        List<UnifiedPackCard> cards = items.stream()
+                .map(p -> new UnifiedPackCard(p))
                 .collect(Collectors.toList());
 
         contentPanel.removeAll();
 
-        for (UnifiedPackSearchCard card : cards) {
+        for (UnifiedPackCard card : cards) {
             contentPanel.add(card, gbc);
             gbc.gridy++;
         }
