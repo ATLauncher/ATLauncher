@@ -98,7 +98,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                         .setType(DialogManager.ERROR).show();
             } else {
                 Analytics.sendEvent(result.name(), "Install", "UnifiedModPackSearch");
-                new InstanceInstallerDialog(result);
+                new InstanceInstallerDialog(result, false);
             }
         });
         buttonsPanel.add(newInstanceButton);

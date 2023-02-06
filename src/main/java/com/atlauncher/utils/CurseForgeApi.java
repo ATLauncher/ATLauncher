@@ -172,7 +172,11 @@ public class CurseForgeApi {
     }
 
     public static CurseForgeProject getProjectById(int projectId) {
-        String url = String.format("%s/mods/%d", Constants.CURSEFORGE_CORE_API_URL, projectId);
+        return getProjectById(Integer.toString(projectId));
+    }
+
+    public static CurseForgeProject getProjectById(String projectId) {
+        String url = String.format("%s/mods/%s", Constants.CURSEFORGE_CORE_API_URL, projectId);
 
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
