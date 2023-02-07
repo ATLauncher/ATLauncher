@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -39,6 +41,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 
+import org.apache.commons.text.WordUtils;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -47,8 +50,10 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
+import com.atlauncher.data.curseforge.CurseForgeCategoryForGame;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.modrinth.ModrinthCategory;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
@@ -82,6 +87,7 @@ public final class AddModsDialog extends JDialog {
     private final JComboBox<ComboItem<ModPlatform>> hostComboBox = new JComboBox<ComboItem<ModPlatform>>();
     private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
     private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
+    private final JComboBox<ComboItem<String>> categoriesComboBox = new JComboBox<ComboItem<String>>();
 
     // #. {0} is the loader api (Fabric API/QSL)
     private final JButton installFabricApiButton = new JButton(GetText.tr("Install {0}", "Fabric API"));
@@ -141,8 +147,8 @@ public final class AddModsDialog extends JDialog {
         super(parent, GetText.tr("Adding Mods For {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
 
-        this.setPreferredSize(new Dimension(680, 500));
-        this.setMinimumSize(new Dimension(680, 500));
+        this.setPreferredSize(new Dimension(800, 500));
+        this.setMinimumSize(new Dimension(800, 500));
         this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
@@ -178,16 +184,20 @@ public final class AddModsDialog extends JDialog {
 
         if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
             sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
+
             sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
             sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
             sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
         } else {
             sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
+
             sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
             sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
             sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
             sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
         }
+
+        addCategories();
 
         setupComponents();
 
@@ -203,12 +213,18 @@ public final class AddModsDialog extends JDialog {
 
         this.topPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
-        JPanel searchButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel searchButtonsPanel = new JPanel();
 
+        searchButtonsPanel.setLayout(new BoxLayout(searchButtonsPanel, BoxLayout.X_AXIS));
         searchButtonsPanel.add(this.hostComboBox);
-        searchButtonsPanel.add(this.searchField);
+        searchButtonsPanel.add(Box.createHorizontalStrut(5));
         searchButtonsPanel.add(this.sectionComboBox);
+        searchButtonsPanel.add(Box.createHorizontalStrut(5));
         searchButtonsPanel.add(this.sortComboBox);
+        searchButtonsPanel.add(Box.createHorizontalStrut(5));
+        searchButtonsPanel.add(this.categoriesComboBox);
+        searchButtonsPanel.add(Box.createHorizontalStrut(20));
+        searchButtonsPanel.add(this.searchField);
 
         this.installFabricApiButton.addActionListener(e -> {
             boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
@@ -543,6 +559,8 @@ public final class AddModsDialog extends JDialog {
                 sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
             }
 
+            addCategories();
+
             if (platformMessage != null) {
                 platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
             }
@@ -562,6 +580,8 @@ public final class AddModsDialog extends JDialog {
             if (!updating) {
                 page = 0;
 
+                addCategories();
+
                 if (searchField.getText().isEmpty()) {
                     loadDefaultMods();
                 } else {
@@ -571,6 +591,18 @@ public final class AddModsDialog extends JDialog {
         });
 
         this.sortComboBox.addActionListener(e -> {
+            if (!updating) {
+                page = 0;
+
+                if (searchField.getText().isEmpty()) {
+                    loadDefaultMods();
+                } else {
+                    searchForMods();
+                }
+            }
+        });
+
+        this.categoriesComboBox.addActionListener(e -> {
             if (!updating) {
                 page = 0;
 
@@ -638,23 +670,33 @@ public final class AddModsDialog extends JDialog {
 
                 if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                     setCurseForgeMods(CurseForgeApi.searchResourcePacks(query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                            ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                    : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                     setCurseForgeMods(CurseForgeApi.searchWorlds(versionToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                            ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                    : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else {
                     if (this.instance.launcher.loaderVersion.isFabric()
                             || this.instance.launcher.loaderVersion.isLegacyFabric()
                             || this.instance.launcher.loaderVersion
                                     .isQuilt()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     } else if (this.instance.launcher.loaderVersion.isForge()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForForge(versionToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     } else {
                         setCurseForgeMods(CurseForgeApi.searchMods(versionToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     }
                 }
             } else {
@@ -676,21 +718,31 @@ public final class AddModsDialog extends JDialog {
 
                 if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                     setModrinthMods(ModrinthApi.searchResourcePacks(versionsToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                            ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                    : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
                     setModrinthMods(ModrinthApi.searchShaders(versionsToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                            ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                    : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else {
                     if (this.instance.launcher.loaderVersion.isFabric()
                             || this.instance.launcher.loaderVersion.isLegacyFabric()) {
                         setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     } else if (this.instance.launcher.loaderVersion.isQuilt()) {
                         setModrinthMods(ModrinthApi.searchModsForQuiltOrFabric(versionsToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     } else if (this.instance.launcher.loaderVersion.isForge()) {
                         setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
-                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     }
                 }
             }
@@ -810,5 +862,44 @@ public final class AddModsDialog extends JDialog {
 
         revalidate();
         repaint();
+    }
+
+    private void addCategories() {
+        updating = true;
+        categoriesComboBox.removeAllItems();
+
+        categoriesComboBox.addItem(new ComboItem<>(null, GetText.tr("All Categories")));
+
+        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                .getValue() == ModPlatform.CURSEFORGE;
+
+        if (isCurseForge) {
+            List<CurseForgeCategoryForGame> categories = new ArrayList<>();
+
+            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+                categories.addAll(CurseForgeApi.getCategoriesForResourcePacks());
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
+                categories.addAll(CurseForgeApi.getCategoriesForWorlds());
+            } else {
+                categories.addAll(CurseForgeApi.getCategoriesForMods());
+            }
+
+            categories.forEach(
+                    c -> categoriesComboBox.addItem(new ComboItem<>(String.valueOf(c.id), c.name)));
+        } else {
+            List<ModrinthCategory> categories = new ArrayList<>();
+
+            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+                categories.addAll(ModrinthApi.getCategoriesForResourcePacks());
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
+                categories.addAll(ModrinthApi.getCategoriesForShaders());
+            } else {
+                categories.addAll(ModrinthApi.getCategoriesForMods());
+            }
+
+            categories.forEach(
+                    c -> categoriesComboBox.addItem(new ComboItem<>(c.name, WordUtils.capitalizeFully(c.name))));
+        }
+        updating = false;
     }
 }
