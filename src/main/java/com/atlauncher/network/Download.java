@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -654,14 +655,16 @@ public final class Download {
                             + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got "
                             + Hashing.murmur(this.to) + " (with size of "
                             + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                            + ") instead. Copied to FailedDownloads folder & cancelling install! ("
+                            + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
                             + " hash of " + expected.toString() + " (with size of " + this.size + ") but got "
                             + (this.md5() ? Hashing.md5(this.to)
                                     : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to)))
                             + " (with size of " + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                            + ") instead. Copied to FailedDownloads folder & cancelling install! ("
+                            + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);
