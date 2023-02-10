@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Remove old OmitStackTraceInFastThrow JVM arg
+- Don't allow installing non modpacks by ID in pack browser tabs
 
 ### Misc

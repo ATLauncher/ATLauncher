@@ -36,6 +36,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.gui.card.NilCard;
@@ -232,7 +233,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
         ModrinthProject project = progressDialog.getReturnValue();
 
-        if (project == null) {
+        if (project == null || project.projectType != ModrinthProjectType.MODPACK) {
             DialogManager.okDialog().setType(DialogManager.ERROR).setTitle(GetText.tr("Pack Not Found"))
                     .setContent(
                             GetText.tr(
