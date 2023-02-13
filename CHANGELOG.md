@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Remove old OmitStackTraceInFastThrow JVM arg
 - Don't allow installing non modpacks by ID in pack browser tabs
+- Always show Java path in main settings tab and when instance doesn't use a runtime
 
 ### Misc
 - Add `xrandr` as a dependency for RPM [#691]

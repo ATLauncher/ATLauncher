@@ -376,11 +376,11 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         boolean isUsingMinecraftProvidedJava = Optional.ofNullable(instance.launcher.useJavaProvidedByMinecraft)
                 .orElse(App.settings.useJavaProvidedByMinecraft);
-        javaMinecraftProvidedLabel.setVisible(isUsingMinecraftProvidedJava);
-        javaPathDummy.setVisible(isUsingMinecraftProvidedJava);
+        javaMinecraftProvidedLabel.setVisible(instance.javaVersion != null && isUsingMinecraftProvidedJava);
+        javaPathDummy.setVisible(instance.javaVersion != null && isUsingMinecraftProvidedJava);
 
-        javaPathLabel.setVisible(!isUsingMinecraftProvidedJava);
-        javaPathPanel.setVisible(!isUsingMinecraftProvidedJava);
+        javaPathLabel.setVisible(instance.javaVersion == null || !isUsingMinecraftProvidedJava);
+        javaPathPanel.setVisible(instance.javaVersion == null || !isUsingMinecraftProvidedJava);
 
         // Java Paramaters
 
@@ -450,6 +450,8 @@ public class JavaInstanceSettingsTab extends JPanel {
         }
 
         javaRuntimeOverride.setSelectedIndex(selectedIndexRuntime);
+        javaRuntimeOverrideLabel.setVisible(instance.javaVersion != null && isUsingMinecraftProvidedJava);
+        javaRuntimeOverride.setVisible(instance.javaVersion != null && isUsingMinecraftProvidedJava);
 
         add(javaRuntimeOverride, gbc);
 
@@ -498,6 +500,8 @@ public class JavaInstanceSettingsTab extends JPanel {
                             } else {
                                 javaMinecraftProvidedLabel.setVisible(false);
                                 javaPathDummy.setVisible(false);
+                                javaRuntimeOverrideLabel.setVisible(false);
+                                javaRuntimeOverride.setVisible(false);
 
                                 javaPathLabel.setVisible(true);
                                 javaPathPanel.setVisible(true);
@@ -505,12 +509,16 @@ public class JavaInstanceSettingsTab extends JPanel {
                         } else if (useJavaProvidedByMinecraft.getSelectedIndex() == 1) {
                             javaMinecraftProvidedLabel.setVisible(true);
                             javaPathDummy.setVisible(true);
+                            javaRuntimeOverrideLabel.setVisible(true);
+                            javaRuntimeOverride.setVisible(true);
 
                             javaPathLabel.setVisible(false);
                             javaPathPanel.setVisible(false);
                         } else {
                             javaMinecraftProvidedLabel.setVisible(App.settings.useJavaProvidedByMinecraft);
                             javaPathDummy.setVisible(App.settings.useJavaProvidedByMinecraft);
+                            javaRuntimeOverrideLabel.setVisible(App.settings.useJavaProvidedByMinecraft);
+                            javaRuntimeOverride.setVisible(App.settings.useJavaProvidedByMinecraft);
 
                             javaPathLabel.setVisible(!App.settings.useJavaProvidedByMinecraft);
                             javaPathPanel.setVisible(!App.settings.useJavaProvidedByMinecraft);
@@ -519,6 +527,9 @@ public class JavaInstanceSettingsTab extends JPanel {
                 }
             }
         });
+
+        useJavaProvidedByMinecraftLabel.setVisible(instance.javaVersion != null);
+        useJavaProvidedByMinecraft.setVisible(instance.javaVersion != null);
 
         add(useJavaProvidedByMinecraft, gbc);
 

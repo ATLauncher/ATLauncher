@@ -336,27 +336,9 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.gridwidth = 1;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover javaMinecraftProvidedLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
-                new HTMLBuilder().center().text(GetText.tr(
-                        "This version of Minecraft provides a specific version of Java to be used with it, so you cannot set a custom Java path.<br/><br/>In order to manually set a path, you must disable this option (highly not recommended)."))
-                        .build());
-        add(javaMinecraftProvidedLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        final JLabel javaPathDummy = new JLabel("Uses Java provided by Minecraft");
-        javaPathDummy.setEnabled(false);
-        add(javaPathDummy, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 1;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what you're doing, just set this to the path where the bin folder is for the version of Java you want to use. If you mess up, click the Reset button to go back to the default"))
+                        "This setting allows you to specify where your Java Path is. Where possible the launcher will use a version of Java provided by Minecraft to launch the instance, but in cases where one isn't available, this path will be used."))
                         .build());
         add(javaPathLabel, gbc);
 
@@ -435,12 +417,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         javaPathPanel.add(javaPathPanelTop);
         javaPathPanel.add(Box.createVerticalStrut(5));
         javaPathPanel.add(javaPathPanelBottom);
-
-        boolean isUsingMinecraftProvidedJava = App.settings.useJavaProvidedByMinecraft;
-        javaMinecraftProvidedLabel.setVisible(isUsingMinecraftProvidedJava);
-        javaPathDummy.setVisible(isUsingMinecraftProvidedJava);
-        javaPathLabel.setVisible(!isUsingMinecraftProvidedJava);
-        javaPathPanel.setVisible(!isUsingMinecraftProvidedJava);
 
         add(javaPathPanel, gbc);
 
@@ -601,12 +577,6 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                             useJavaProvidedByMinecraft.setSelected(true);
                         }
                     }
-
-                    javaMinecraftProvidedLabel.setVisible(useJavaProvidedByMinecraft.isSelected());
-                    javaPathDummy.setVisible(useJavaProvidedByMinecraft.isSelected());
-
-                    javaPathLabel.setVisible(!useJavaProvidedByMinecraft.isSelected());
-                    javaPathPanel.setVisible(!useJavaProvidedByMinecraft.isSelected());
                 });
             }
         });
