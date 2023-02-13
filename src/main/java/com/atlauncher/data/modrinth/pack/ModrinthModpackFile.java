@@ -58,6 +58,11 @@ public class ModrinthModpackFile {
         mod.version = "";
         mod.optional = isServer ? serverEnv.equals("optional") : clientEnv.equals("optional");
 
+        if (mod.path.startsWith("\\") || mod.path.startsWith("/") || mod.path.contains("..")
+                || mod.path.matches("/^[A-Za-z]:/")) {
+            mod.path = "mods/";
+        }
+
         if (fileSize != null) {
             mod.filesize = Math.toIntExact(fileSize);
         }

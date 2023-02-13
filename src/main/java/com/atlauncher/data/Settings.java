@@ -105,7 +105,7 @@ public class Settings {
 
     // Network
     public int concurrentConnections = 8;
-    public int connectionTimeout = 30;
+    public int connectionTimeout = 60;
     public boolean dontUseHttp2 = false;
     public boolean enableProxy = false;
     public String proxyHost = "";
@@ -488,8 +488,8 @@ public class Settings {
     private void validateConnectionTimeout() {
         if (connectionTimeout < 1 || connectionTimeout > 600) {
             LogManager.warn("Tried to set the number of connection timeout to " + connectionTimeout
-                    + " which is not valid! Must be between 1 and 600. Setting back to default of 30!");
-            connectionTimeout = 30;
+                    + " which is not valid! Must be between 1 and 600. Setting back to default of 60!");
+            connectionTimeout = 60;
         }
     }
 

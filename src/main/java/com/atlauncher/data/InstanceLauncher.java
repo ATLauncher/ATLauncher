@@ -65,6 +65,7 @@ public class InstanceLauncher {
     public Integer permGen;
     public String javaPath;
     public String javaArguments;
+    public String javaRuntimeOverride = null;
     public String account;
     public Boolean enableDiscordIntegration = null;
     public Boolean useJavaProvidedByMinecraft = null;
@@ -97,6 +98,7 @@ public class InstanceLauncher {
 
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
+    public boolean ignoreAllUpdates = false;
     public boolean vanillaInstance = false;
 
     public Instant lastPlayed = null;

@@ -1,0 +1,20 @@
+fragment unifiedModPackResultsFragment on LauncherModPackResult {
+    id
+    name
+    platform
+    summary
+    url
+    iconUrl
+}
+
+query unifiedModPackHome {
+    unifiedModPackHome {
+        ...unifiedModPackResultsFragment
+    }
+}
+
+query UnifiedModPackSearch($query: String!) {
+    unifiedModPackSearch(query: $query) {
+        ...unifiedModPackResultsFragment
+    }
+}

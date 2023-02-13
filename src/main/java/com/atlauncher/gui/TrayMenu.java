@@ -17,7 +17,9 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.Frame;
 import java.awt.SystemTray;
+import java.awt.Window;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -40,6 +42,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
 
     private final JMenuItem killMinecraftButton = new JMenuItem(GetText.tr("Kill Minecraft"));
     private final JMenuItem toggleConsoleButton = new JMenuItem(GetText.tr("Toggle Console"));
+    private final JMenuItem killOpenDialogsButton = new JMenuItem(GetText.tr("Kill Open Dialogs"));
     private final JMenuItem openLauncherFolderButton = new JMenuItem(GetText.tr("Open Launcher Folder"));
     private final JMenuItem quitButton = new JMenuItem(GetText.tr("Quit"));
 
@@ -51,6 +54,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
         this.add(this.killMinecraftButton);
         this.add(this.toggleConsoleButton);
         this.addSeparator();
+        this.add(this.killOpenDialogsButton);
         this.add(this.openLauncherFolderButton);
         this.addSeparator();
         this.add(this.quitButton);
@@ -76,6 +80,16 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
             }
         }));
         this.toggleConsoleButton.addActionListener(e -> App.console.setVisible(!App.console.isVisible()));
+        this.killOpenDialogsButton.addActionListener(e -> {
+            for (Frame frame : Frame.getFrames()) {
+                for (Window window : frame.getOwnedWindows()) {
+                    if (window.getName().startsWith("dialog")) {
+                        window.setVisible(false);
+                        window.dispose();
+                    }
+                }
+            }
+        });
         this.openLauncherFolderButton.addActionListener(e -> {
             OS.openFileExplorer(FileSystem.BASE_DIR);
         });

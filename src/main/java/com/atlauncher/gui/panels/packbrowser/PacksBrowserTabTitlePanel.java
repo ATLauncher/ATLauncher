@@ -31,15 +31,17 @@ import com.atlauncher.utils.Utils;
 
 public class PacksBrowserTabTitlePanel extends JPanel implements ThemeListener {
     private final JLabel label = new JLabel(null, null, SwingConstants.CENTER);
+    private final String platform;
     private final String icon;
 
     public PacksBrowserTabTitlePanel(String platform, String icon) {
+        this.platform = platform;
         this.icon = icon;
 
         setLayout(new BorderLayout());
         setBackground(new Color(0, 0, 0, 1));
 
-        label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform", icon)));
+        setIcon();
 
         add(label, BorderLayout.CENTER);
 
@@ -54,8 +56,16 @@ public class PacksBrowserTabTitlePanel extends JPanel implements ThemeListener {
         this(platform, platform.toLowerCase());
     }
 
+    public void setIcon() {
+        if (platform.equals("Search")) {
+            label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image", "search")));
+        } else {
+            label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform", icon)));
+        }
+    }
+
     @Override
     public void onThemeChange() {
-        label.setIcon(Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform", icon)));
+        setIcon();
     }
 }

@@ -1,0 +1,21 @@
+query GetForgeLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
+    loaderVersions(minecraftVersion: $minecraftVersion) {
+        forge {
+            version
+            rawVersion
+            recommended
+
+            clientSha1Hash
+            clientSize
+
+            installerSha1Hash
+            installerSize
+
+            serverSha1Hash
+            serverSize
+
+            universalSha1Hash
+            universalSize
+        }
+    }
+}

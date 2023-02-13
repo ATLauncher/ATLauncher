@@ -1,0 +1,6 @@
+query GetLatestFabricLoaderVersion {
+    fabricLoaderVersions(first: 1, orderBy: { direction: DESC, field: CREATED_AT }) {
+        version
+        stable
+    }
+}

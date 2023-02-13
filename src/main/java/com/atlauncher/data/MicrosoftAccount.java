@@ -17,18 +17,19 @@
  */
 package com.atlauncher.data;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
+import com.atlauncher.gui.dialogs.CreateMinecraftProfileDialog;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
@@ -251,13 +252,16 @@ public class MicrosoftAccount extends AbstractAccount {
         try {
             profile = MicrosoftAuthAPI.getMcProfile(accessToken);
         } catch (DownloadException e) {
-            LogManager.error("Minecraft Profile not found");
-            DialogManager.okDialog().setTitle(GetText.tr("Minecraft Profile Not Found"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "No Minecraft profiles were found for this account. Have you purchased Minecraft?<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you're an Xbox Game Pass subscriber, make sure to login and play through the Minecraft<br/>Launcher once in order to create your Minecraft profile, then try logging in again."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
-            return false;
+            LogManager.error("Minecraft profile not found");
+
+            new CreateMinecraftProfileDialog(accessToken);
+
+            try {
+                profile = MicrosoftAuthAPI.getMcProfile(accessToken);
+            } catch (IOException e1) {
+                LogManager.logStackTrace("Failed to get Minecraft profile", e);
+                return false;
+            }
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to get Minecraft profile", e);
             return false;

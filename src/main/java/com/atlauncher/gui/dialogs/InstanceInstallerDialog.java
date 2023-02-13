@@ -94,13 +94,17 @@ import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicModpackSlim;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
+import com.atlauncher.exceptions.InvalidPack;
+import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.ModpacksChApi;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
@@ -124,6 +128,7 @@ public class InstanceInstallerDialog extends JDialog {
     private ModpacksChPackManifest modpacksChPackManifest = null;
     private MultiMCManifest multiMCManifest = null;
     private TechnicModpack technicModpack = null;
+    private UnifiedModPackResultsFragment unifiedModpackResult = null;
 
     private final JPanel middle;
     private final JButton install;
@@ -167,6 +172,10 @@ public class InstanceInstallerDialog extends JDialog {
         this(object, false, isServer, null, null, true, null, App.launcher.getParent(), null);
     }
 
+    public InstanceInstallerDialog(UnifiedModPackResultsFragment resultsFragment, boolean isServer) {
+        this(resultsFragment, false, isServer, null, null, true, null, App.launcher.getParent(), null);
+    }
+
     public InstanceInstallerDialog(Window parent, Object object) {
         this(object, false, false, null, null, true, null, parent, null);
     }
@@ -206,7 +215,7 @@ public class InstanceInstallerDialog extends JDialog {
             handleModpacksChInstall(object);
         } else if (object instanceof ModrinthSearchHit || object instanceof ModrinthProject) {
             handleModrinthInstall(object);
-        } else if (object instanceof TechnicModpackSlim) {
+        } else if (object instanceof TechnicModpackSlim || object instanceof TechnicModpack) {
             handleTechnicInstall(object);
         } else if (object instanceof CurseForgeManifest) {
             handleCurseForgeImport(object);
@@ -214,6 +223,8 @@ public class InstanceInstallerDialog extends JDialog {
             handleModrinthImport(object);
         } else if (object instanceof MultiMCManifest) {
             handleMultiMcImport(object);
+        } else if (object instanceof UnifiedModPackResultsFragment) {
+            handleUnifiedModPackInstall(object);
         } else {
             handleInstanceInstall(object);
         }
@@ -381,6 +392,7 @@ public class InstanceInstallerDialog extends JDialog {
 
                 installable.instanceName = nameField.getText();
                 installable.isReinstall = isReinstall;
+                installable.isUpdate = isUpdate;
                 installable.isServer = isServer;
                 installable.saveMods = !isServer && isReinstall && saveModsCheckbox.isSelected();
 
@@ -618,26 +630,24 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     private void handleTechnicInstall(Object object) {
-        String slug;
-
         if (object instanceof TechnicModpack) {
-            slug = ((TechnicModpack) object).name;
+            technicModpack = (TechnicModpack) object;
         } else {
-            slug = ((TechnicModpackSlim) object).slug;
+            String slug = ((TechnicModpackSlim) object).slug;
+
+            final ProgressDialog<TechnicModpack> technicModpackDialog = new ProgressDialog<>(
+                    GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                    "Aborting Getting Modpack Details");
+
+            technicModpackDialog.addThread(new Thread(() -> {
+                technicModpackDialog.setReturnValue(TechnicApi.getModpackBySlug(slug));
+
+                technicModpackDialog.close();
+            }));
+
+            technicModpackDialog.start();
+            technicModpack = technicModpackDialog.getReturnValue();
         }
-
-        final ProgressDialog<TechnicModpack> technicModpackDialog = new ProgressDialog<>(
-                GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
-                "Aborting Getting Modpack Details");
-
-        technicModpackDialog.addThread(new Thread(() -> {
-            technicModpackDialog.setReturnValue(TechnicApi.getModpackBySlug(slug));
-
-            technicModpackDialog.close();
-        }));
-
-        technicModpackDialog.start();
-        technicModpack = technicModpackDialog.getReturnValue();
 
         pack = new Pack();
         pack.externalId = technicModpack.id;
@@ -784,6 +794,115 @@ public class InstanceInstallerDialog extends JDialog {
 
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", multiMCManifest.config.name));
+    }
+
+    private void handleUnifiedModPackInstall(Object object) {
+        unifiedModpackResult = (UnifiedModPackResultsFragment) object;
+
+        switch (unifiedModpackResult.platform()) {
+            case ATLAUNCHER: {
+                try {
+                    Pack pack = PackManager.getPackByID(Integer.parseInt(unifiedModpackResult.id()));
+
+                    handlePackInstall(pack, isServer);
+                    return;
+                } catch (NumberFormatException | InvalidPack e) {
+                    LogManager.logStackTrace("Failed to get ATLauncher pack", e);
+                    return;
+                }
+            }
+            case MODRINTH: {
+                final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
+                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                        "Aborting Getting Modpack Details");
+
+                modrinthProjectLookupDialog.addThread(new Thread(() -> {
+                    modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getProject(unifiedModpackResult.id()));
+
+                    modrinthProjectLookupDialog.close();
+                }));
+
+                modrinthProjectLookupDialog.start();
+                ModrinthProject modrinthProject = modrinthProjectLookupDialog.getReturnValue();
+
+                if (modrinthProject == null) {
+                    LogManager.error("Failed to get Modrinth project");
+                    return;
+                }
+
+                handleModrinthInstall(modrinthProject);
+                return;
+            }
+            case CURSEFORGE: {
+                final ProgressDialog<CurseForgeProject> curseForgeProjectLookupDialog = new ProgressDialog<>(
+                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                        "Aborting Getting Modpack Details");
+
+                curseForgeProjectLookupDialog.addThread(new Thread(() -> {
+                    curseForgeProjectLookupDialog
+                            .setReturnValue(CurseForgeApi.getProjectById(unifiedModpackResult.id()));
+
+                    curseForgeProjectLookupDialog.close();
+                }));
+
+                curseForgeProjectLookupDialog.start();
+                CurseForgeProject curseForgeProject = curseForgeProjectLookupDialog.getReturnValue();
+
+                if (curseForgeProject == null) {
+                    LogManager.error("Failed to get CurseForge project");
+                    return;
+                }
+
+                handleCurseForgeInstall(curseForgeProject);
+                return;
+            }
+            case MODPACKSCH: {
+                final ProgressDialog<ModpacksChPackManifest> modpacksChPackManifestLookupDialog = new ProgressDialog<>(
+                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                        "Aborting Getting Modpack Details");
+
+                modpacksChPackManifestLookupDialog.addThread(new Thread(() -> {
+                    modpacksChPackManifestLookupDialog
+                            .setReturnValue(ModpacksChApi.getModpackManifest(unifiedModpackResult.id()));
+
+                    modpacksChPackManifestLookupDialog.close();
+                }));
+
+                modpacksChPackManifestLookupDialog.start();
+                ModpacksChPackManifest modpacksChPackManifest = modpacksChPackManifestLookupDialog.getReturnValue();
+
+                if (modpacksChPackManifest == null) {
+                    LogManager.error("Failed to get Modpacks.ch manifest");
+                    return;
+                }
+
+                handleModpacksChInstall(modpacksChPackManifest);
+                return;
+            }
+            case TECHNIC: {
+                final ProgressDialog<TechnicModpack> technicModpackLookupDialog = new ProgressDialog<>(
+                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                        "Aborting Getting Modpack Details");
+
+                technicModpackLookupDialog.addThread(new Thread(() -> {
+                    technicModpackLookupDialog
+                            .setReturnValue(TechnicApi.getModpackBySlug(unifiedModpackResult.id()));
+
+                    technicModpackLookupDialog.close();
+                }));
+
+                technicModpackLookupDialog.start();
+                TechnicModpack technicModpack = technicModpackLookupDialog.getReturnValue();
+
+                if (technicModpack == null) {
+                    LogManager.error("Failed to get Technic modpack");
+                    return;
+                }
+
+                handleTechnicInstall(technicModpack);
+                return;
+            }
+        }
     }
 
     private void handleInstanceInstall(Object object) {

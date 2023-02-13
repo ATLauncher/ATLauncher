@@ -34,9 +34,14 @@ import com.atlauncher.data.json.Version;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.technic.TechnicModpack;
+import com.atlauncher.graphql.AddPackActionMutation;
+import com.atlauncher.graphql.type.AddPackActionInput;
+import com.atlauncher.graphql.type.PackLogAction;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Utils;
 
 public class Pack {
@@ -308,42 +313,60 @@ public class Pack {
                 version);
     }
 
-    public String addInstall(String version) {
-        Map<String, Object> request = new HashMap<>();
+    public void addInstall(String version) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+            GraphqlClient
+                    .mutateAndWait(
+                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                    id)).version(version).action(PackLogAction.INSTALL).build()));
+        } else {
+            Map<String, Object> request = new HashMap<>();
 
-        request.put("version", version);
+            request.put("version", version);
 
-        try {
-            return Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            try {
+                Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
         }
-        return "Install Not Added!";
     }
 
-    public String addServerInstall(String version) {
-        Map<String, Object> request = new HashMap<>();
+    public void addServerInstall(String version) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+            GraphqlClient
+                    .mutateAndWait(
+                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                    id)).version(version).action(PackLogAction.SERVER).build()));
+        } else {
+            Map<String, Object> request = new HashMap<>();
 
-        request.put("version", version);
+            request.put("version", version);
 
-        try {
-            return Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            try {
+                Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
         }
-        return "Install Not Added!";
     }
 
-    public String addUpdate(String version) {
-        Map<String, Object> request = new HashMap<>();
+    public void addUpdate(String version) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+            GraphqlClient
+                    .mutateAndWait(
+                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                    id)).version(version).action(PackLogAction.UPDATE).build()));
+        } else {
+            Map<String, Object> request = new HashMap<>();
 
-        request.put("version", version);
+            request.put("version", version);
 
-        try {
-            return Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
+            try {
+                Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
         }
-        return "Install Not Added!";
     }
 }
