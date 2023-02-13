@@ -13,6 +13,7 @@ BuildRequires:  desktop-file-utils
 
 Requires:       wget
 Requires:       java >= 1:1.8.0
+Requires:       xrandr
 Provides:       atlauncher
 
 %description
