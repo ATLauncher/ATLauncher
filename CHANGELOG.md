@@ -16,4 +16,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't allow installing non modpacks by ID in pack browser tabs
 
 ### Misc
+- Update packaging scripts
 - Implement view model for VanillaPacksTab [#717]
