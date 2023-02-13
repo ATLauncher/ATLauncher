@@ -118,7 +118,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public String getAnalyticsCategory() {
-        return "Pack";
+        return "UnifiedPack";
     }
 
     @Override
