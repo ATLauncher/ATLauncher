@@ -175,11 +175,13 @@ public class CommandExecutor {
         // are we using Mojangs provided runtime?
         if (instance.javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
+            String runtimeToUse = Optional.ofNullable(instance.launcher.javaRuntimeOverride)
+                    .orElse(instance.javaVersion.component);
 
-            if (runtimesForSystem.containsKey(instance.javaVersion.component)
-                    && runtimesForSystem.get(instance.javaVersion.component).size() != 0) {
-                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(instance.javaVersion.component)
-                        .resolve(JavaRuntimes.getSystem()).resolve(instance.javaVersion.component);
+            if (runtimesForSystem.containsKey(runtimeToUse)
+                    && runtimesForSystem.get(runtimeToUse).size() != 0) {
+                Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(runtimeToUse)
+                        .resolve(JavaRuntimes.getSystem()).resolve(runtimeToUse);
 
                 if (OS.isMac()) {
                     runtimeDirectory = runtimeDirectory.resolve("jre.bundle/Contents/Home");
@@ -187,8 +189,13 @@ public class CommandExecutor {
 
                 if (Files.isDirectory(runtimeDirectory)) {
                     javaPath = runtimeDirectory.toAbsolutePath().toString();
-                    LogManager.debug(String.format("Using Java runtime %s (major version %d) at path %s",
-                            instance.javaVersion.component, instance.javaVersion.majorVersion, javaPath));
+                    if (instance.launcher.javaRuntimeOverride != null) {
+                        LogManager.info(String.format("Using overriden Java runtime %s (Java %s) at path %s",
+                                runtimeToUse, runtimesForSystem.get(runtimeToUse).get(0).version.name, javaPath));
+                    } else {
+                        LogManager.info(String.format("Using Java runtime %s (Java %s) at path %s",
+                                runtimeToUse, runtimesForSystem.get(runtimeToUse).get(0).version.name, javaPath));
+                    }
                 }
             }
         }

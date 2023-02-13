@@ -1,0 +1,3 @@
+mutation AddPackAction($input: AddPackActionInput!) {
+    addPackAction(input: $input)
+}

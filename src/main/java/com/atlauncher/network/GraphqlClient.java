@@ -21,17 +21,28 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.jetbrains.annotations.NotNull;
+
+import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.CustomTypeAdapter;
 import com.apollographql.apollo.api.CustomTypeValue;
 import com.apollographql.apollo.api.CustomTypeValue.GraphQLString;
+import com.apollographql.apollo.api.Mutation;
+import com.apollographql.apollo.api.Operation;
+import com.apollographql.apollo.api.Query;
+import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy.FetchStrategy;
 import com.apollographql.apollo.cache.http.ApolloHttpCache;
 import com.apollographql.apollo.cache.http.DiskLruHttpCacheStore;
+import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.internal.batch.BatchConfig;
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
@@ -90,4 +101,67 @@ public class GraphqlClient {
     }
 
     public final static ApolloClient apolloClient;
+
+    public static <D extends Operation.Data, T, V extends Operation.Variables> T callAndWait(
+            @NotNull Query<D, T, V> query) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<T> data = new AtomicReference<>(null);
+
+        apolloClient.query(query)
+                .toBuilder()
+                .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false))
+                .build()
+                .enqueue(new ApolloCall.Callback<T>() {
+                    @Override
+                    public void onResponse(@NotNull Response<T> response) {
+                        data.set(response.getData());
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        LogManager.logStackTrace("Error on GraphQL query", e);
+                        latch.countDown();
+                    }
+                });
+
+        try {
+            latch.await(App.settings.connectionTimeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LogManager.logStackTrace(e);
+            return null;
+        }
+
+        return data.get();
+    }
+
+    public static <D extends Operation.Data, T, V extends Operation.Variables> T mutateAndWait(
+            @NotNull Mutation<D, T, V> mutation) {
+        final CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<T> data = new AtomicReference<>(null);
+
+        apolloClient.mutate(mutation)
+                .enqueue(new ApolloCall.Callback<T>() {
+                    @Override
+                    public void onResponse(@NotNull Response<T> response) {
+                        data.set(response.getData());
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        LogManager.logStackTrace("Error on GraphQL query", e);
+                        latch.countDown();
+                    }
+                });
+
+        try {
+            latch.await(App.settings.connectionTimeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LogManager.logStackTrace(e);
+            return null;
+        }
+
+        return data.get();
+    }
 }

@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import com.atlauncher.Gsons;
+import com.atlauncher.Network;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
@@ -32,7 +34,9 @@ import com.google.gson.reflect.TypeToken;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Various utility methods for interacting with the Mojang API.
@@ -114,5 +118,55 @@ public class MojangAPIUtils {
         }
 
         return username;
+    }
+
+    public static boolean checkUsernameAvailable(String accessToken, String username) {
+        Request request = new Request.Builder()
+                .url("https://api.minecraftservices.com/minecraft/profile/name/" + username + "/available")
+                .get()
+                .header("Authorization", "Bearer " + accessToken)
+                .build();
+
+        try (Response response = Network.CLIENT.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                String responseBody = response.body().string();
+                JsonObject jsonResponse = Gsons.DEFAULT.fromJson(responseBody, JsonObject.class);
+
+                if (jsonResponse.get("status").getAsString().equals("AVAILABLE")) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Failed to check username availability", e);
+        }
+
+        return false;
+    }
+
+    public static boolean createMcProfile(String accessToken, String username) {
+        JsonObject jsonBody = new JsonObject();
+        jsonBody.addProperty("profileName", username);
+
+        RequestBody body = RequestBody.create(Gsons.DEFAULT.toJson(jsonBody),
+                MediaType.get("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url("https://api.minecraftservices.com/minecraft/profile")
+                .post(body)
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .build();
+
+        try (Response response = Network.CLIENT.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                LogManager.error(response.body().string());
+            }
+
+            return response.isSuccessful();
+        } catch (Exception e) {
+            LogManager.logStackTrace("Failed to create profile", e);
+        }
+
+        return false;
     }
 }

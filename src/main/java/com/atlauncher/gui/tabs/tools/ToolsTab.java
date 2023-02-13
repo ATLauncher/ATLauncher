@@ -36,13 +36,12 @@ public class ToolsTab extends JPanel implements Tab {
 
         JPanel mainPanel = new JPanel();
 
-        mainPanel.setLayout(new GridLayout(4, 2, 10, 10));
+        mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
         final IToolsViewModel viewModel = new ToolsViewModel();
         mainPanel.add(new NetworkCheckerToolPanel(viewModel));
         mainPanel.add(new LogClearerToolPanel(viewModel));
         mainPanel.add(new DebugModePanel(viewModel));
-        mainPanel.add(new RuntimeDownloaderToolPanel(viewModel));
         mainPanel.add(new DownloadClearerToolPanel(viewModel));
         mainPanel.add(new SkinUpdaterToolPanel(viewModel));
         mainPanel.add(new LibrariesDeleterToolPanel(viewModel));

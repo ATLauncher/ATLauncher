@@ -20,6 +20,7 @@ package com.atlauncher.network;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -551,6 +553,10 @@ public final class Download {
     }
 
     public void downloadFile() throws IOException {
+        downloadFile(0);
+    }
+
+    public void downloadFile(int tries) throws IOException {
         if (this.instanceInstaller != null && this.instanceInstaller.isCancelled()) {
             return;
         }
@@ -591,6 +597,14 @@ public final class Download {
             try {
                 this.execute();
             } catch (IOException e) {
+                // if timeout, attempt to download again
+                if (e instanceof SocketTimeoutException && tries < 3) {
+                    LogManager.warn(String.format("Failed to download %s from %s due to timeout. Attempting again.",
+                            this.to.getFileName().toString(), this.url));
+                    downloadFile(tries++);
+                    return;
+                }
+
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);
                 }
@@ -641,14 +655,16 @@ public final class Download {
                             + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got "
                             + Hashing.murmur(this.to) + " (with size of "
                             + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                            + ") instead. Copied to FailedDownloads folder & cancelling install! ("
+                            + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
                             + " hash of " + expected.toString() + " (with size of " + this.size + ") but got "
                             + (this.md5() ? Hashing.md5(this.to)
                                     : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to)))
                             + " (with size of " + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install!");
+                            + ") instead. Copied to FailedDownloads folder & cancelling install! ("
+                            + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);

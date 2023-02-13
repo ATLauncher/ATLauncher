@@ -87,45 +87,6 @@ public interface IToolsViewModel {
      */
     void runNetworkChecker(Consumer<Void> onTaskComplete, Consumer<Void> onFail, Consumer<Void> onSuccess);
 
-    // RuntimeDownloaderToolPanel
-
-    /**
-     * Listen to if the runtime can be downloaded
-     * @param onChanged Function to call on ability to download has changed
-     */
-    void onCanDownloadRuntimeChanged(Consumer<Boolean> onChanged);
-
-    /**
-     * Listen to if the runtime can be removed
-     * @param onChanged Function to call on ability to remove has changed
-     */
-    void onCanRemoveDownloadChanged(Consumer<Boolean> onChanged);
-
-    /**
-     * Remove the java(?) runtime
-     * @param onFail failed to remove
-     * @param onSuccess removed successfully
-     */
-    void removeRuntime(
-        Consumer<Void> onFail,
-        Consumer<Void> onSuccess
-    );
-
-    /**
-     *
-     * @param progressbar The progress bar to be informed of changes
-     * @param onTaskComplete A task has been completed
-     * @param newLabel A new label for the network checker
-     * @param clearDownloadedBytes Clear out downloaded bytes
-     * @return if the download was successfull
-     */
-    boolean downloadRuntime(
-        NetworkProgressable progressbar,
-        Consumer<Void> onTaskComplete,
-        Consumer<String> newLabel,
-        Consumer<Void> clearDownloadedBytes
-    );
-
     // SkinUpdaterToolPanel
 
     /**

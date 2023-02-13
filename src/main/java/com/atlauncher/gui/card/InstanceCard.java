@@ -518,7 +518,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             .text(GetText.tr(
                                     "An update is available for this instance.<br/><br/>Do you want to update now?"))
                             .build())
-                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO).show();
+                    .addOption(GetText.tr("Ignore This Update"))
+                    .addOption(GetText.tr("Don't Remind Me Again")).setType(DialogManager.INFO)
+                    .show();
 
             if (ret == 0) {
                 if (AccountManager.getSelectedAccount() == null) {
@@ -530,9 +532,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             instance.getAnalyticsCategory());
                     instance.update();
                 }
-            } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2) {
+            } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2 || ret == 3) {
                 if (ret == 2) {
                     instance.ignoreUpdate();
+                } else if (ret == 3) {
+                    instance.ignoreAllUpdates();
                 }
 
                 if (!App.launcher.minecraftLaunched) {
