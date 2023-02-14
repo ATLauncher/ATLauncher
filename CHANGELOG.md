@@ -20,3 +20,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add `xrandr` as a dependency for RPM [#691]
 - Update packaging scripts
 - Implement view model for VanillaPacksTab [#717]
+- Convert Gradle Groovy scripts to Kotlin scripts [#724]
