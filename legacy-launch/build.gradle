@@ -1,6 +1,6 @@
 plugins {
-    id "java"
-    id "application"
+    id( "java")
+    id("application")
 }
 
 sourceCompatibility = "1.8"
@@ -10,5 +10,5 @@ group = "com.atlauncher"
 version = rootProject.file("src/main/resources/version").text.trim().replace(".Beta", "")
 
 application {
-    mainClass = "com.atlauncher.mclauncher.legacy.LegacyMCLauncher"
+    mainClass.set("com.atlauncher.mclauncher.legacy.LegacyMCLauncher")
 }

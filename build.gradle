@@ -16,21 +16,21 @@ buildscript {
 }
 
 plugins {
-    id "java"
-    id "application"
+    id("java")
+    id("application")
 
-    id "org.cadixdev.licenser" version "0.6.1"
-    id "com.adarshr.test-logger" version "3.2.0"
-    id "edu.sc.seis.macAppBundle" version "2.3.0"
-    id "edu.sc.seis.launch4j" version "2.5.3"
-    id "de.undercouch.download" version "5.1.0"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "com.github.ben-manes.versions" version "0.42.0"
-    id "org.jetbrains.kotlin.jvm" version "1.8.0"
-    id "com.apollographql.apollo" version "2.5.14"
+    id("org.cadixdev.licenser") version "0.6.1"
+    id("com.adarshr.test-logger") version "3.2.0"
+    id("edu.sc.seis.macAppBundle") version "2.3.0"
+    id("edu.sc.seis.launch4j") version "2.5.3"
+    id("de.undercouch.download") version "5.1.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.ben-manes.versions") version "0.42.0"
+    id("org.jetbrains.kotlin.jvm") version "1.8.0"
+    id("com.apollographql.apollo") version "2.5.14"
 }
 
-apply plugin: "org.mini2Dx.gettext"
+apply(plugin: "org.mini2Dx.gettext")
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -54,50 +54,50 @@ repositories {
 }
 
 dependencies {
-    implementation "net.java.dev.jna:jna:5.11.0"
-    implementation "net.java.dev.jna:jna-platform:5.11.0"
-    implementation "com.google.code.gson:gson:2.9.0"
-    implementation "com.google.guava:guava:31.1-jre"
-    implementation "org.tukaani:xz:1.9"
-    implementation "com.mojang:authlib:1.5.21"
-    implementation "net.iharder:base64:2.3.9"
-    implementation "com.github.Vatuu:discord-rpc:1.6.2"
-    implementation "net.sf.jopt-simple:jopt-simple:5.0.4"
-    implementation "org.zeroturnaround:zt-zip:1.15"
-    implementation "com.squareup.okhttp3:okhttp:4.9.3"
-    implementation "com.squareup.okhttp3:okhttp-tls:4.9.3"
-    implementation "net.mikehardy:google-analytics-java:2.0.11"
-    implementation "io.sentry:sentry:6.1.4"
-    implementation "com.github.RyanTheAllmighty.gettext:gettext-lib:88ae68d897"
-    implementation "org.apache.logging.log4j:log4j-api:2.17.2"
-    implementation "org.apache.logging.log4j:log4j-core:2.17.2"
-    implementation "com.sangupta:murmur:1.0.0"
-    implementation "org.apache.commons:commons-lang3:3.12.0"
-    implementation "org.apache.commons:commons-text:1.10.0"
-    implementation "com.formdev:flatlaf:2.3"
-    implementation "com.formdev:flatlaf-extras:2.3"
-    implementation "com.github.oshi:oshi-core:6.1.6"
-    implementation "net.freeutils:jlhttp:2.6"
-    implementation "joda-time:joda-time:2.10.14"
-    implementation "org.apache.commons:commons-compress:1.21"
-    implementation "org.commonmark:commonmark:0.19.0"
-    implementation "com.github.hypfvieh:dbus-java:3.3.1"
-    implementation "com.apollographql.apollo:apollo-runtime:2.5.14"
-    implementation "com.apollographql.apollo:apollo-http-cache:2.5.14"
-    implementation "com.apollographql.apollo:apollo-coroutines-support:2.5.14"
+    implementation("net.java.dev.jna:jna:5.11.0")
+    implementation("net.java.dev.jna:jna-platform:5.11.0")
+    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.google.guava:guava:31.1-jre")
+    implementation("org.tukaani:xz:1.9")
+    implementation("com.mojang:authlib:1.5.21")
+    implementation("net.iharder:base64:2.3.9")
+    implementation("com.github.Vatuu:discord-rpc:1.6.2")
+    implementation("net.sf.jopt-simple:jopt-simple:5.0.4")
+    implementation("org.zeroturnaround:zt-zip:1.15")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:okhttp-tls:4.9.3")
+    implementation("net.mikehardy:google-analytics-java:2.0.11")
+    implementation("io.sentry:sentry:6.1.4")
+    implementation("com.github.RyanTheAllmighty.gettext:gettext-lib:88ae68d897")
+    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
+    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
+    implementation("com.sangupta:murmur:1.0.0")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.apache.commons:commons-text:1.10.0")
+    implementation("com.formdev:flatlaf:2.3")
+    implementation("com.formdev:flatlaf-extras:2.3")
+    implementation("com.github.oshi:oshi-core:6.1.6")
+    implementation("net.freeutils:jlhttp:2.6")
+    implementation("joda-time:joda-time:2.10.14")
+    implementation("org.apache.commons:commons-compress:1.21")
+    implementation("org.commonmark:commonmark:0.19.0")
+    implementation("com.github.hypfvieh:dbus-java:3.3.1")
+    implementation("com.apollographql.apollo:apollo-runtime:2.5.14")
+    implementation("com.apollographql.apollo:apollo-http-cache:2.5.14")
+    implementation("com.apollographql.apollo:apollo-coroutines-support:2.5.14")
 
     // Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
 
-    testImplementation "junit:junit:4.13.2"
-    testImplementation "org.mockito:mockito-core:4.6.1"
-    testImplementation "org.mockito:mockito-inline:4.6.1"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
-    testImplementation "org.assertj:assertj-swing-junit:3.17.1"
-    testImplementation "org.mock-server:mockserver-netty:5.13.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.8.2"
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:4.6.1")
+    testImplementation("org.mockito:mockito-inline:4.6.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("org.assertj:assertj-swing-junit:3.17.1")
+    testImplementation("org.mock-server:mockserver-netty:5.13.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
 }
 
 application {
@@ -161,12 +161,12 @@ gettext {
 
 license {
     header = project.file("LICENSEHEADER")
-    include "**/*.java"
-    exclude "io/github/**/*.java"
-    exclude "net/minecraft/**/*.java"
-    exclude "com/atlauncher/graphql/**/*.java"
-    exclude "com/atlauncher/gui/layouts/WrapLayout.java"
-    newLine = false
+    include("**/*.java")
+    exclude("io/github/**/*.java")
+    exclude("net/minecraft/**/*.java")
+    exclude("com/atlauncher/graphql/**/*.java")
+    exclude("com/atlauncher/gui/layouts/WrapLayout.java")
+    newLine.set(false)
     properties {
         year = currentYear()
     }
@@ -243,30 +243,30 @@ launch4j {
 }
 
 artifacts {
-    archives shadowJar
-    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j"))
-    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
+    archives(shadowJar)
+    archives(file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j")))
+    archives(file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions")))
 }
 
 test {
     if (JavaVersion.current().isJava9Compatible()) {
-        jvmArgs "--add-opens=java.base/sun.security.x509=ALL-UNNAMED"
+        jvmArgs("--add-opens=java.base/sun.security.x509=ALL-UNNAMED")
     }
 }
 
 tasks.register("copyArtifacts", Copy) {
-    dependsOn build
-    from shadowJar
-    from file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j"))
-    from file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
-    into "${projectDir}/dist"
+    dependsOn(build)
+    from(shadowJar)
+    from(file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j")))
+    from(file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions")))
+    into("${projectDir}/dist")
 }
 
 tasks.register("downloadNewerUniversalJavaApplicationStub", Download) {
     description "Downloads newer universalJavaApplicationStub"
-    src "https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub"
-    dest file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub")
-    overwrite true
+    src("https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub")
+    dest(file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub"))
+    overwrite(true)
 }
 
 tasks.register("createTestLauncherDir") {
@@ -274,24 +274,24 @@ tasks.register("createTestLauncherDir") {
 }
 
 tasks.register("createMacApp", Zip) {
-    dependsOn createApp, shadowJar
+    dependsOn(createApp, shadowJar)
     from("$buildDir/macApp") {
-        include "${project.name}.app/**"
-        exclude "${project.name}.app/Contents/MacOS"
+        include("${project.name}.app/**")
+        exclude("${project.name}.app/Contents/MacOS")
     }
     from("$buildDir/macApp") {
-        include "${project.name}.app/Contents/MacOS/**"
-        fileMode 0777
+        include("${project.name}.app/Contents/MacOS/**")
+        fileMode(0777)
     }
     archiveName = "${project.name}-${project.version}.zip"
 }
 
 copyArtifacts.finalizedBy {
-    println "ATLauncher has been built. Distribution files are located in the dist directory."
+    println("ATLauncher has been built. Distribution files are located in the dist directory.")
 }
 
 clean.doFirst {
-    delete "${projectDir}/dist"
+    delete("${projectDir}/dist")
 }
 
 project.afterEvaluate {
@@ -309,7 +309,7 @@ tasks.named("dependencyUpdates").configure {
     }
 }
 
-build.finalizedBy copyArtifacts
-shadowJar.dependsOn jar
-build.dependsOn createExe, createMacApp
-createApp.finalizedBy downloadNewerUniversalJavaApplicationStub
+build.finalizedBy(copyArtifacts)
+shadowJar.dependsOn(jar)
+build.dependsOn(createExe, createMacApp)
+createApp.finalizedBy(downloadNewerUniversalJavaApplicationStub)
