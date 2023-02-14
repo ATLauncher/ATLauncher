@@ -254,7 +254,7 @@ test {
     }
 }
 
-task copyArtifacts(type: Copy) {
+tasks.register("copyArtifacts", Copy) {
     dependsOn build
     from shadowJar
     from file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j"))
@@ -262,18 +262,18 @@ task copyArtifacts(type: Copy) {
     into "${projectDir}/dist"
 }
 
-task downloadNewerUniversalJavaApplicationStub(type: Download) {
+tasks.register("downloadNewerUniversalJavaApplicationStub", Download) {
     description "Downloads newer universalJavaApplicationStub"
     src "https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub"
     dest file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub")
     overwrite true
 }
 
-task createTestLauncherDir {
+tasks.register("createTestLauncherDir") {
     project.file("testLauncher/dev").mkdirs()
 }
 
-task createMacApp(type: Zip) {
+tasks.register("createMacApp", Zip) {
     dependsOn createApp, shadowJar
     from("$buildDir/macApp") {
         include "${project.name}.app/**"
