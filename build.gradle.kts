@@ -106,28 +106,6 @@ application {
     )
 }
 
-tasks.test {
-    // Use JUnit Platform for unit tests.
-    useJUnitPlatform()
-
-    testlogger {
-        setTheme("mocha")
-    }
-}
-
-tasks.jar {
-    manifest {
-        attributes(
-            "SplashScreen-Image" to "/assets/image/splash-screen.png",
-            "Implementation-Title" to project.name,
-            "Implementation-Version" to archiveVersion,
-            "Implementation-Vender" to "ATLauncher",
-            "Main-Class" to "com.atlauncher.App",
-            "Multi-Release" to "true"
-        )
-    }
-}
-
 apollo {
     customTypeMapping.set(
         mapOf(
@@ -171,33 +149,6 @@ license {
     }
 }
 
-
-tasks.shadowJar {
-    archiveClassifier.set(null as String?) // type problem shenanigans
-    minimize {
-        exclude(dependency("org.apache.logging.log4j:.*:.*"))
-        exclude(dependency("com.formdev:.*:.*"))
-        exclude(dependency("com.github.jnr:.*:.*"))
-        exclude(dependency("com.github.hypfvieh:.*:.*"))
-        exclude(dependency("org.apache.commons:commons-compress:.*"))
-    }
-
-    // these are included by dbus-java which is only used on Linux
-    exclude("jni/x86_64-Windows/")
-    exclude("jni/x86_64-SunOS/")
-    exclude("jni/x86_64-OpenBSD/")
-    exclude("jni/x86_64-FreeBSD/")
-    exclude("jni/x86_64-DragonFlyBSD/")
-    exclude("jni/sparcv9-SunOS/")
-    exclude("jni/ppc-AIX/")
-    exclude("jni/ppc64-AIX/")
-    exclude("jni/i386-Windows/")
-    exclude("jni/i386-SunOS/")
-    exclude("jni/Darwin/")
-
-    archiveClassifier.set("")
-}
-
 macAppBundle {
     mainClassName = "com.atlauncher.App"
     appName = "ATLauncher"
@@ -212,10 +163,6 @@ macAppBundle {
     javaExtras["-Dawt.useSystemAAFontSettings"] = "on"
     javaExtras["-Dswing.aatext"] = "true"
     bundleExtras["JVMVersion"] = project.java.targetCompatibility.toString() + "+"
-}
-
-tasks.copyToResourcesJava {
-    rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
 }
 
 fun currentYear(): String {
@@ -253,57 +200,125 @@ artifacts {
     archives(getCopyPath(".zip", "distributions"))
 }
 
-tasks.test {
-    if (JavaVersion.current().isJava9Compatible) {
-        jvmArgs("--add-opens=java.base/sun.security.x509=ALL-UNNAMED")
+fun getShouldIgnoreUpdate(version: String): Boolean {
+    return arrayOf("ALPHA", "BETA", "RC", "-M").any { version.toUpperCase() == (it) }
+}
+
+tasks {
+    test {
+        // Use JUnit Platform for unit tests.
+        useJUnitPlatform()
+
+        testlogger {
+            setTheme("mocha")
+        }
+        if (JavaVersion.current().isJava9Compatible) {
+            jvmArgs("--add-opens=java.base/sun.security.x509=ALL-UNNAMED")
+        }
     }
-}
 
-tasks.register<Copy>("copyArtifacts") {
-    dependsOn(tasks.build)
-    from(tasks.shadowJar)
-    from(getCopyPath(".exe", "launch4j"))
-    from(getCopyPath(".zip", "distributions"))
-    into("${projectDir}/dist")
-}
-
-tasks.register<Download>("downloadNewerUniversalJavaApplicationStub") {
-    description = "Downloads newer universalJavaApplicationStub"
-    src("https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub")
-    dest(file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub"))
-    overwrite(true)
-}
-
-tasks.register("createTestLauncherDir") {
-    project.file("testLauncher/dev").mkdirs()
-}
-
-tasks.register<Zip>("createMacApp") {
-    dependsOn(tasks.named("createApp"), tasks.shadowJar)
-    from("$buildDir/macApp") {
-        include("${project.name}.app/**")
-        exclude("${project.name}.app/Contents/MacOS")
+    jar {
+        manifest {
+            attributes(
+                "SplashScreen-Image" to "/assets/image/splash-screen.png",
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to archiveVersion,
+                "Implementation-Vender" to "ATLauncher",
+                "Main-Class" to "com.atlauncher.App",
+                "Multi-Release" to "true"
+            )
+        }
     }
-    from("$buildDir/macApp") {
-        include("${project.name}.app/Contents/MacOS/**")
-        fileMode = 0x777
+
+    shadowJar {
+        archiveClassifier.set(null as String?) // type problem shenanigans
+        minimize {
+            exclude(dependency("org.apache.logging.log4j:.*:.*"))
+            exclude(dependency("com.formdev:.*:.*"))
+            exclude(dependency("com.github.jnr:.*:.*"))
+            exclude(dependency("com.github.hypfvieh:.*:.*"))
+            exclude(dependency("org.apache.commons:commons-compress:.*"))
+        }
+
+        // these are included by dbus-java which is only used on Linux
+        exclude("jni/x86_64-Windows/")
+        exclude("jni/x86_64-SunOS/")
+        exclude("jni/x86_64-OpenBSD/")
+        exclude("jni/x86_64-FreeBSD/")
+        exclude("jni/x86_64-DragonFlyBSD/")
+        exclude("jni/sparcv9-SunOS/")
+        exclude("jni/ppc-AIX/")
+        exclude("jni/ppc64-AIX/")
+        exclude("jni/i386-Windows/")
+        exclude("jni/i386-SunOS/")
+        exclude("jni/Darwin/")
+
+        archiveClassifier.set("")
+        dependsOn(jar)
     }
-    archiveFileName.set("${project.name}-${project.version}.zip")
-}
 
-tasks.create("copyArtifactsFinal") {
-    doFirst {
-        println("ATLauncher has been built. Distribution files are located in the dist directory.")
+    copyToResourcesJava {
+        rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
     }
-}
 
-tasks.named("copyArtifacts") {
-    finalizedBy("copyArtifactsFinal")
-}
+    val copyArtifactsFinal = create("copyArtifactsFinal") {
+        doFirst {
+            println("ATLauncher has been built. Distribution files are located in the dist directory.")
+        }
+    }
 
-tasks.clean {
-    doFirst {
-        delete("${projectDir}/dist")
+    val copyArtifacts = create<Copy>("copyArtifacts") {
+        dependsOn(build)
+        from(shadowJar)
+        from(getCopyPath(".exe", "launch4j"))
+        from(getCopyPath(".zip", "distributions"))
+        into("${projectDir}/dist")
+        finalizedBy(copyArtifactsFinal)
+    }
+
+    val downloadNewerUniversalJavaApplicationStub = create<Download>("downloadNewerUniversalJavaApplicationStub") {
+        description = "Downloads newer universalJavaApplicationStub"
+        src("https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub")
+        dest(file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub"))
+        overwrite(true)
+    }
+
+    register("createTestLauncherDir") {
+        project.file("testLauncher/dev").mkdirs()
+    }
+
+    val createMacApp = create<Zip>("createMacApp") {
+        dependsOn(named("createApp"), shadowJar)
+        from("$buildDir/macApp") {
+            include("${project.name}.app/**")
+            exclude("${project.name}.app/Contents/MacOS")
+        }
+        from("$buildDir/macApp") {
+            include("${project.name}.app/Contents/MacOS/**")
+            fileMode = 0x777
+        }
+        archiveFileName.set("${project.name}-${project.version}.zip")
+    }
+
+    clean {
+        doFirst {
+            delete("${projectDir}/dist")
+        }
+    }
+
+    dependencyUpdates {
+        rejectVersionIf {
+            getShouldIgnoreUpdate(candidate.version)
+        }
+    }
+
+    build {
+        setFinalizedBy(listOf(copyArtifacts))
+        dependsOn(createExe, createMacApp)
+    }
+
+    createApp {
+        finalizedBy(downloadNewerUniversalJavaApplicationStub)
     }
 }
 
@@ -319,28 +334,5 @@ project.afterEvaluate {
                 (it as? Task)?.name == "checkLicenses"
             }
         )
-    }
-}
-
-fun getShouldIgnoreUpdate(version: String): Boolean {
-    return arrayOf("ALPHA", "BETA", "RC", "-M").any { version.toUpperCase() == (it) }
-}
-
-tasks.dependencyUpdates {
-    rejectVersionIf {
-        getShouldIgnoreUpdate(candidate.version)
-    }
-}
-
-tasks {
-    build {
-        finalizedBy("copyArtifacts")
-        dependsOn(createExe, project.tasks.named("createMacApp"))
-    }
-    shadowJar {
-        dependsOn(project.tasks.jar)
-    }
-    createApp {
-        finalizedBy("downloadNewerUniversalJavaApplicationStub")
     }
 }
