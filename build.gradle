@@ -1,52 +1,51 @@
 import java.text.SimpleDateFormat
-import java.util.stream.Collectors
 
 buildscript {
     repositories {
         mavenCentral()
         maven {
-            url 'https://jitpack.io'
+            url "https://jitpack.io"
             content {
                 includeGroup "com.github.RyanTheAllmighty.gettext"
             }
         }
     }
     dependencies {
-        classpath 'com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:aab5c30bf8'
+        classpath "com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:aab5c30bf8"
     }
 }
 
 plugins {
-    id 'java'
-    id 'application'
+    id "java"
+    id "application"
 
-    id 'org.cadixdev.licenser' version '0.6.1'
-    id 'com.adarshr.test-logger' version '3.2.0'
-    id 'edu.sc.seis.macAppBundle' version '2.3.0'
-    id 'edu.sc.seis.launch4j' version '2.5.3'
-    id 'de.undercouch.download' version '5.1.0'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'com.github.ben-manes.versions' version '0.42.0'
+    id "org.cadixdev.licenser" version "0.6.1"
+    id "com.adarshr.test-logger" version "3.2.0"
+    id "edu.sc.seis.macAppBundle" version "2.3.0"
+    id "edu.sc.seis.launch4j" version "2.5.3"
+    id "de.undercouch.download" version "5.1.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.ben-manes.versions" version "0.42.0"
     id "org.jetbrains.kotlin.jvm" version "1.8.0"
-    id 'com.apollographql.apollo' version '2.5.14'
+    id "com.apollographql.apollo" version "2.5.14"
 }
 
-apply plugin: 'org.mini2Dx.gettext'
+apply plugin: "org.mini2Dx.gettext"
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
-group = 'com.atlauncher'
-version = rootProject.file('src/main/resources/version').text.trim().replace('.Beta', '')
+group = "com.atlauncher"
+version = rootProject.file("src/main/resources/version").text.trim().replace(".Beta", "")
 
 repositories {
     mavenCentral()
     gradlePluginPortal()
     maven {
-        url 'https://libraries.minecraft.net'
+        url "https://libraries.minecraft.net"
     }
     maven {
-        url 'https://jitpack.io'
+        url "https://jitpack.io"
         content {
             includeGroup "com.github.RyanTheAllmighty.gettext"
             includeGroup "com.github.Vatuu"
@@ -55,54 +54,54 @@ repositories {
 }
 
 dependencies {
-    implementation 'net.java.dev.jna:jna:5.11.0'
-    implementation 'net.java.dev.jna:jna-platform:5.11.0'
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'org.tukaani:xz:1.9'
-    implementation 'com.mojang:authlib:1.5.21'
-    implementation 'net.iharder:base64:2.3.9'
-    implementation 'com.github.Vatuu:discord-rpc:1.6.2'
-    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    implementation 'org.zeroturnaround:zt-zip:1.15'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.squareup.okhttp3:okhttp-tls:4.9.3'
-    implementation 'net.mikehardy:google-analytics-java:2.0.11'
-    implementation 'io.sentry:sentry:6.1.4'
-    implementation 'com.github.RyanTheAllmighty.gettext:gettext-lib:88ae68d897'
-    implementation 'org.apache.logging.log4j:log4j-api:2.17.2'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
-    implementation 'com.sangupta:murmur:1.0.0'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'org.apache.commons:commons-text:1.10.0'
-    implementation 'com.formdev:flatlaf:2.3'
-    implementation 'com.formdev:flatlaf-extras:2.3'
-    implementation 'com.github.oshi:oshi-core:6.1.6'
-    implementation 'net.freeutils:jlhttp:2.6'
-    implementation 'joda-time:joda-time:2.10.14'
-    implementation 'org.apache.commons:commons-compress:1.21'
-    implementation 'org.commonmark:commonmark:0.19.0'
-    implementation 'com.github.hypfvieh:dbus-java:3.3.1'
-    implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
-    implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
-    implementation 'com.apollographql.apollo:apollo-coroutines-support:2.5.14'
+    implementation "net.java.dev.jna:jna:5.11.0"
+    implementation "net.java.dev.jna:jna-platform:5.11.0"
+    implementation "com.google.code.gson:gson:2.9.0"
+    implementation "com.google.guava:guava:31.1-jre"
+    implementation "org.tukaani:xz:1.9"
+    implementation "com.mojang:authlib:1.5.21"
+    implementation "net.iharder:base64:2.3.9"
+    implementation "com.github.Vatuu:discord-rpc:1.6.2"
+    implementation "net.sf.jopt-simple:jopt-simple:5.0.4"
+    implementation "org.zeroturnaround:zt-zip:1.15"
+    implementation "com.squareup.okhttp3:okhttp:4.9.3"
+    implementation "com.squareup.okhttp3:okhttp-tls:4.9.3"
+    implementation "net.mikehardy:google-analytics-java:2.0.11"
+    implementation "io.sentry:sentry:6.1.4"
+    implementation "com.github.RyanTheAllmighty.gettext:gettext-lib:88ae68d897"
+    implementation "org.apache.logging.log4j:log4j-api:2.17.2"
+    implementation "org.apache.logging.log4j:log4j-core:2.17.2"
+    implementation "com.sangupta:murmur:1.0.0"
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+    implementation "org.apache.commons:commons-text:1.10.0"
+    implementation "com.formdev:flatlaf:2.3"
+    implementation "com.formdev:flatlaf-extras:2.3"
+    implementation "com.github.oshi:oshi-core:6.1.6"
+    implementation "net.freeutils:jlhttp:2.6"
+    implementation "joda-time:joda-time:2.10.14"
+    implementation "org.apache.commons:commons-compress:1.21"
+    implementation "org.commonmark:commonmark:0.19.0"
+    implementation "com.github.hypfvieh:dbus-java:3.3.1"
+    implementation "com.apollographql.apollo:apollo-runtime:2.5.14"
+    implementation "com.apollographql.apollo:apollo-http-cache:2.5.14"
+    implementation "com.apollographql.apollo:apollo-coroutines-support:2.5.14"
 
     // Kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
 
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:4.6.1'
-    testImplementation 'org.mockito:mockito-inline:4.6.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testImplementation 'org.assertj:assertj-swing-junit:3.17.1'
-    testImplementation 'org.mock-server:mockserver-netty:5.13.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.mockito:mockito-core:4.6.1"
+    testImplementation "org.mockito:mockito-inline:4.6.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
+    testImplementation "org.assertj:assertj-swing-junit:3.17.1"
+    testImplementation "org.mock-server:mockserver-netty:5.13.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.8.2"
 }
 
 application {
-    mainClass = 'com.atlauncher.App'
+    mainClass = "com.atlauncher.App"
     applicationDefaultJvmArgs = [
         "-Djna.nosys=true",
         "-Djava.net.preferIPv4Stack=true",
@@ -111,62 +110,62 @@ application {
     ]
 }
 
-tasks.named('test') {
+tasks.named("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 
     testlogger {
-        theme 'mocha'
+        theme "mocha"
     }
 }
 
 jar {
     manifest {
         attributes(
-                'SplashScreen-Image': '/assets/image/splash-screen.png',
-                'Implementation-Title': project.name,
-                'Implementation-Version': archiveVersion,
-                'Implementation-Vender': 'ATLauncher',
-                'Main-Class': 'com.atlauncher.App',
-                'Multi-Release': 'true'
+            "SplashScreen-Image": "/assets/image/splash-screen.png",
+            "Implementation-Title": project.name,
+            "Implementation-Version": archiveVersion,
+            "Implementation-Vender": "ATLauncher",
+            "Main-Class": "com.atlauncher.App",
+            "Multi-Release": "true"
         )
     }
 }
 
 apollo {
     customTypeMapping = [
-        "ID" : "java.lang.String",
-        "DateTime" : "java.util.Date"
+        "ID"      : "java.lang.String",
+        "DateTime": "java.util.Date"
     ]
     packageName = "com.atlauncher.graphql"
 }
 
 gettext {
     translations {
-        srcDir = 'src'
-        include = 'main/java/com/atlauncher/**/*.java'
+        srcDir = "src"
+        include = "main/java/com/atlauncher/**/*.java"
         excludes = [
-            'main/java/com/atlauncher/adapter/**/*.java',
-            'main/java/com/atlauncher/annot/**/*.java',
-            'main/java/com/atlauncher/collection/**/*.java',
-            'main/java/com/atlauncher/evnt/**/*.java',
-            'main/java/com/atlauncher/exceptions/**/*.java',
-            'main/java/com/atlauncher/interfaces/**/*.java',
-            'main/java/com/atlauncher/listener/**/*.java',
-            'main/java/com/atlauncher/utils/**/*.java'
+            "main/java/com/atlauncher/adapter/**/*.java",
+            "main/java/com/atlauncher/annot/**/*.java",
+            "main/java/com/atlauncher/collection/**/*.java",
+            "main/java/com/atlauncher/evnt/**/*.java",
+            "main/java/com/atlauncher/exceptions/**/*.java",
+            "main/java/com/atlauncher/interfaces/**/*.java",
+            "main/java/com/atlauncher/listener/**/*.java",
+            "main/java/com/atlauncher/utils/**/*.java"
         ]
-        commentFormat = ' #. '
-        outputFilename = 'translations.pot'
+        commentFormat = " #. "
+        outputFilename = "translations.pot"
     }
 }
 
 license {
-    header = project.file('LICENSEHEADER')
-    include '**/*.java'
-    exclude 'io/github/**/*.java'
-    exclude 'net/minecraft/**/*.java'
-    exclude 'com/atlauncher/graphql/**/*.java'
-    exclude 'com/atlauncher/gui/layouts/WrapLayout.java'
+    header = project.file("LICENSEHEADER")
+    include "**/*.java"
+    exclude "io/github/**/*.java"
+    exclude "net/minecraft/**/*.java"
+    exclude "com/atlauncher/graphql/**/*.java"
+    exclude "com/atlauncher/gui/layouts/WrapLayout.java"
     newLine = false
     properties {
         year = currentYear()
@@ -176,11 +175,11 @@ license {
 shadowJar {
     classifier = null
     minimize {
-        exclude(dependency('org.apache.logging.log4j:.*:.*'))
-        exclude(dependency('com.formdev:.*:.*'))
-        exclude(dependency('com.github.jnr:.*:.*'))
-        exclude(dependency('com.github.hypfvieh:.*:.*'))
-        exclude(dependency('org.apache.commons:commons-compress:.*'))
+        exclude(dependency("org.apache.logging.log4j:.*:.*"))
+        exclude(dependency("com.formdev:.*:.*"))
+        exclude(dependency("com.github.jnr:.*:.*"))
+        exclude(dependency("com.github.hypfvieh:.*:.*"))
+        exclude(dependency("org.apache.commons:commons-compress:.*"))
     }
 
     // these are included by dbus-java which is only used on Linux
@@ -196,18 +195,18 @@ shadowJar {
     exclude("jni/i386-SunOS/")
     exclude("jni/Darwin/")
 
-    classifier = ''
+    classifier = ""
 }
 
 macAppBundle {
-    mainClassName = 'com.atlauncher.App'
-    appName = 'ATLauncher'
-    appStyle = 'universalJavaApplicationStub'
-    runtimeConfigurationName = 'shadow'
-    jarTask = 'shadowJar'
-    icon = 'src/main/resources/assets/image/icon.icns'
-    javaProperties.put('user.dir', '$APP_ROOT/Contents/Java')
-    javaProperties.put('apple.laf.useScreenMenuBar', 'true')
+    mainClassName = "com.atlauncher.App"
+    appName = "ATLauncher"
+    appStyle = "universalJavaApplicationStub"
+    runtimeConfigurationName = "shadow"
+    jarTask = "shadowJar"
+    icon = "src/main/resources/assets/image/icon.icns"
+    javaProperties.put("user.dir", "\$APP_ROOT/Contents/Java")
+    javaProperties.put("apple.laf.useScreenMenuBar", "true")
     javaExtras.put("-Djna.nosys", "true")
     javaExtras.put("-Djava.net.preferIPv4Stack", "true")
     javaExtras.put("-Dawt.useSystemAAFontSettings", "on")
@@ -228,7 +227,7 @@ def currentYear() {
 launch4j {
     outfile = "ATLauncher-${project.version}.exe"
     jreMinVersion = "${project.targetCompatibility.toString()}"
-    mainClassName = 'com.atlauncher.App'
+    mainClassName = "com.atlauncher.App"
     icon = "${projectDir}/src/main/resources/assets/image/icon.ico"
     version = "${project.version}"
     textVersion = "${project.version}"
@@ -245,33 +244,33 @@ launch4j {
 
 artifacts {
     archives shadowJar
-    archives file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.exe').replace('libs', 'launch4j'))
-    archives file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.zip').replace('libs', 'distributions'))
+    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j"))
+    archives file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
 }
 
 test {
     if (JavaVersion.current().isJava9Compatible()) {
-        jvmArgs '--add-opens=java.base/sun.security.x509=ALL-UNNAMED'
+        jvmArgs "--add-opens=java.base/sun.security.x509=ALL-UNNAMED"
     }
 }
 
 task copyArtifacts(type: Copy) {
     dependsOn build
     from shadowJar
-    from file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.exe').replace('libs', 'launch4j'))
-    from file(project.tasks.jar.getArchivePath().getPath().replace('.jar', '.zip').replace('libs', 'distributions'))
+    from file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".exe").replace("libs", "launch4j"))
+    from file(project.tasks.jar.getArchivePath().getPath().replace(".jar", ".zip").replace("libs", "distributions"))
     into "${projectDir}/dist"
 }
 
 task downloadNewerUniversalJavaApplicationStub(type: Download) {
-    description 'Downloads newer universalJavaApplicationStub'
-    src 'https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub'
+    description "Downloads newer universalJavaApplicationStub"
+    src "https://raw.githubusercontent.com/tofi86/universalJavaApplicationStub/2dbbf92b35e61194266c985c8bc6b411053a1b4a/src/universalJavaApplicationStub"
     dest file("$buildDir/macApp/${project.name}.app/Contents/MacOS/universalJavaApplicationStub")
     overwrite true
 }
 
 task createTestLauncherDir {
-    project.file('testLauncher/dev').mkdirs()
+    project.file("testLauncher/dev").mkdirs()
 }
 
 task createMacApp(type: Zip) {
@@ -288,7 +287,7 @@ task createMacApp(type: Zip) {
 }
 
 copyArtifacts.finalizedBy {
-    println 'ATLauncher has been built. Distribution files are located in the dist directory.'
+    println "ATLauncher has been built. Distribution files are located in the dist directory."
 }
 
 clean.doFirst {
@@ -303,7 +302,7 @@ project.afterEvaluate {
     }
 }
 
-def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC', '-M'].any { it -> version.toUpperCase().contains(it) }}
+def shouldIgnoreUpdate = { String version -> return ["ALPHA", "BETA", "RC", "-M"].any { it -> version.toUpperCase().contains(it) } }
 tasks.named("dependencyUpdates").configure {
     rejectVersionIf {
         shouldIgnoreUpdate(it.candidate.version)

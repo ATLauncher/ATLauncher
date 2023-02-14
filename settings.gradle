@@ -5,5 +5,5 @@
  * in the user manual at https://docs.gradle.org/7.1.1/userguide/multi_project_builds.html
  */
 rootProject.name = name
-include('app')
-include('legacy-launch')
+include("app")
+include("legacy-launch")
