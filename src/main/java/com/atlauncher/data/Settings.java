@@ -35,6 +35,7 @@ import java.util.UUID;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
@@ -391,16 +392,18 @@ public class Settings {
         boolean needToSave = false;
         int systemMemory = OS.getMaximumRam();
 
-        if (systemMemory != 0 && initialMemory > systemMemory) {
-            LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
-                    + "MB is available to use!");
-            initialMemory = 512;
-            needToSave = true;
-        } else if (initialMemory > maximumMemory) {
-            LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory which is more than "
-                    + maximumMemory + "MB set for the maximum memory!");
-            initialMemory = 512;
-            needToSave = true;
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+            if (systemMemory != 0 && initialMemory > systemMemory) {
+                LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
+                        + "MB is available to use!");
+                initialMemory = 512;
+                needToSave = true;
+            } else if (initialMemory > maximumMemory) {
+                LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory which is more than "
+                        + maximumMemory + "MB set for the maximum memory!");
+                initialMemory = 512;
+                needToSave = true;
+            }
         }
 
         if (systemMemory != 0 && maximumMemory > systemMemory) {

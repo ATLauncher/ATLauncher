@@ -55,6 +55,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Java;
@@ -100,65 +101,67 @@ public class JavaInstanceSettingsTab extends JPanel {
         int systemRam = OS.getSystemRam();
         setLayout(new GridBagLayout());
 
-        // Initial Memory Settings
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+            // Initial Memory Settings
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        JLabelWithHover initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
-                "<html>" + Utils.splitMultilinedString(GetText.tr(
-                        "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
-                        80, "<br/>") + "</html>",
-                RESTART_BORDER);
+            JLabelWithHover initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
+                    "<html>" + Utils.splitMultilinedString(GetText.tr(
+                            "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."),
+                            80, "<br/>") + "</html>",
+                    RESTART_BORDER);
 
-        JLabelWithHover initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
-                "<html>" + Utils.splitMultilinedString(GetText.tr(
-                        "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
-                        80, "<br/>") + "</html>");
+            JLabelWithHover initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
+                    "<html>" + Utils.splitMultilinedString(GetText.tr(
+                            "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."),
+                            80, "<br/>") + "</html>");
 
-        JPanel initialMemoryPanel = new JPanel();
-        initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (!Java.is64Bit()) {
-            initialMemoryPanel.add(initialMemoryLabelWarning);
-        }
-        initialMemoryPanel.add(initialMemoryLabel);
+            JPanel initialMemoryPanel = new JPanel();
+            initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+            if (!Java.is64Bit()) {
+                initialMemoryPanel.add(initialMemoryLabelWarning);
+            }
+            initialMemoryPanel.add(initialMemoryLabel);
 
-        add(initialMemoryPanel, gbc);
+            add(initialMemoryPanel, gbc);
 
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(
-                getIfNotNull(this.instance.launcher.initialMemory, App.settings.initialMemory), null, null, 128);
-        initialMemoryModel.setMinimum(128);
-        initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
-        initialMemory = new JSpinner(initialMemoryModel);
-        ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
-        initialMemory.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                // if initial memory is larger than maximum memory, make maximum memory match
-                if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
-                    maximumMemory.setValue((Integer) s.getValue());
-                }
+            gbc.gridx++;
+            gbc.insets = UIConstants.FIELD_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(
+                    getIfNotNull(this.instance.launcher.initialMemory, App.settings.initialMemory), null, null, 128);
+            initialMemoryModel.setMinimum(128);
+            initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
+            initialMemory = new JSpinner(initialMemoryModel);
+            ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
+            initialMemory.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    JSpinner s = (JSpinner) e.getSource();
+                    // if initial memory is larger than maximum memory, make maximum memory match
+                    if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
+                        maximumMemory.setValue((Integer) s.getValue());
+                    }
 
-                if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
-                    initialMemoryWarningShown = true;
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
-                            .show();
+                    if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
+                        initialMemoryWarningShown = true;
+                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                                .setType(DialogManager.WARNING)
+                                .setContent(GetText.tr(
+                                        "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
+                                .show();
 
-                    if (ret != 0) {
-                        initialMemory.setValue(512);
+                        if (ret != 0) {
+                            initialMemory.setValue(512);
+                        }
                     }
                 }
-            }
-        });
-        add(initialMemory, gbc);
+            });
+            add(initialMemory, gbc);
+        }
 
         // Maximum Memory Settings
         gbc.gridx = 0;
@@ -190,9 +193,11 @@ public class JavaInstanceSettingsTab extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSpinner s = (JSpinner) e.getSource();
-                // if initial memory is larger than maximum memory, make initial memory match
-                if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
-                    initialMemory.setValue(s.getValue());
+                if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+                    // if initial memory is larger than maximum memory, make initial memory match
+                    if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
+                        initialMemory.setValue(s.getValue());
+                    }
                 }
 
                 if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
@@ -648,7 +653,8 @@ public class JavaInstanceSettingsTab extends JPanel {
     }
 
     public boolean isValidJavaParamaters() {
-        if (javaParameters.getText().contains("-Xms") || javaParameters.getText().contains("-Xmx")
+        if ((ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false
+                && javaParameters.getText().contains("-Xms")) || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
             DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -660,7 +666,12 @@ public class JavaInstanceSettingsTab extends JPanel {
     }
 
     public void saveSettings() {
-        Integer initialMemory = (Integer) this.initialMemory.getValue();
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+            Integer initialMemory = (Integer) this.initialMemory.getValue();
+
+            this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);
+        }
+
         Integer maximumMemory = (Integer) this.maximumMemory.getValue();
         Integer permGen = (Integer) this.permGen.getValue();
         String javaPath = this.javaPath.getText();
@@ -673,7 +684,6 @@ public class JavaInstanceSettingsTab extends JPanel {
         Boolean useSystemGlfwVal = ((ComboItem<Boolean>) useSystemGlfw.getSelectedItem()).getValue();
         Boolean useSystemOpenAlVal = ((ComboItem<Boolean>) useSystemOpenAl.getSelectedItem()).getValue();
 
-        this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);
         this.instance.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
         this.instance.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
 

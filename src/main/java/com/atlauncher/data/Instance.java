@@ -1895,8 +1895,12 @@ public class Instance extends MinecraftVersion {
         instanceCfg.setProperty("MCLaunchMethod", "LauncherPart");
         instanceCfg.setProperty("MaxMemAlloc",
                 Optional.ofNullable(launcher.maximumMemory).orElse(App.settings.maximumMemory) + "");
-        instanceCfg.setProperty("MinMemAlloc",
-                Optional.ofNullable(launcher.initialMemory).orElse(App.settings.initialMemory) + "");
+
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+            instanceCfg.setProperty("MinMemAlloc",
+                    Optional.ofNullable(launcher.initialMemory).orElse(App.settings.initialMemory) + "");
+        }
+
         instanceCfg.setProperty("MinecraftWinHeight", App.settings.windowHeight + "");
         instanceCfg.setProperty("MinecraftWinWidth", App.settings.windowWidth + "");
         instanceCfg.setProperty("OverrideCommands",
