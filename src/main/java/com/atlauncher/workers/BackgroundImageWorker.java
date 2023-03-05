@@ -17,7 +17,7 @@
  */
 package com.atlauncher.workers;
 
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
