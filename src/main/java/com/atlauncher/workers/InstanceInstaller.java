@@ -576,6 +576,14 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 } else {
                     packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
                 }
+            } else if (loaderVersion.id.startsWith("quilt-")) {
+                String quiltVersionString = loaderVersion.id.replace("quilt-", "");
+
+                Map<String, Object> loaderMeta = new HashMap<>();
+                loaderMeta.put("minecraft", packVersion.minecraft);
+                loaderMeta.put("loader", quiltVersionString);
+                packVersion.loader.metadata = loaderMeta;
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader";
             } else {
                 throw new Exception("Loader of id " + loaderVersion.id + " is unknown.");
             }
