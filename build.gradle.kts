@@ -7,9 +7,14 @@ import java.util.*
 buildscript {
     repositories {
         mavenCentral()
+        maven("https://jitpack.io") {
+            content {
+                includeGroup("com.github.RyanTheAllmighty.gettext")
+            }
+        }
     }
     dependencies {
-        classpath("org.mini2Dx:gettext-gradle-plugin:1.11.0")
+        classpath("com.github.RyanTheAllmighty.gettext:gettext-gradle-plugin:aab5c30bf8")
     }
 }
 
@@ -44,6 +49,7 @@ repositories {
     maven("https://libraries.minecraft.net")
     maven("https://jitpack.io") {
         content {
+            includeGroup("com.github.RyanTheAllmighty.gettext")
             includeGroup("com.github.Vatuu")
         }
     }
@@ -64,7 +70,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp-tls:4.9.3")
     implementation("net.mikehardy:google-analytics-java:2.0.11")
     implementation("io.sentry:sentry:6.1.4")
-    implementation("org.mini2Dx:gettext-lib:1.11.0")
+    implementation("com.github.RyanTheAllmighty.gettext:gettext-lib:88ae68d897")
     implementation("org.apache.logging.log4j:log4j-api:2.17.2")
     implementation("org.apache.logging.log4j:log4j-core:2.17.2")
     implementation("com.sangupta:murmur:1.0.0")
