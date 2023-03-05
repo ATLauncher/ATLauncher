@@ -17,6 +17,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't allow installing non modpacks by ID in pack browser tabs
 - Always show Java path in main settings tab and when instance doesn't use a runtime
 - Issue with Quilt exported CurseForge packs not importing
+- Issue with mod images not being scaled smoothly [#731]
 
 ### Misc
 - Add `xrandr` as a dependency for RPM [#691]
