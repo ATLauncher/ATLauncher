@@ -1,6 +1,5 @@
 plugins {
     java
-    application
 }
 
 java {
@@ -10,7 +9,3 @@ java {
 
 group = "com.atlauncher"
 version = rootProject.file("src/main/resources/version").readText().trim().replace(".Beta", "")
-
-application {
-    mainClass.set("com.atlauncher.mclauncher.legacy.LegacyMCLauncher")
-}
