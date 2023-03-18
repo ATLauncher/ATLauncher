@@ -238,13 +238,6 @@ tasks {
 
     shadowJar {
         archiveClassifier.set(null as String?) // type problem shenanigans
-        minimize {
-            exclude(dependency("org.apache.logging.log4j:.*:.*"))
-            exclude(dependency("com.formdev:.*:.*"))
-            exclude(dependency("com.github.jnr:.*:.*"))
-            exclude(dependency("com.github.hypfvieh:.*:.*"))
-            exclude(dependency("org.apache.commons:commons-compress:.*"))
-        }
 
         // these are included by dbus-java which is only used on Linux
         exclude("jni/x86_64-Windows/")
