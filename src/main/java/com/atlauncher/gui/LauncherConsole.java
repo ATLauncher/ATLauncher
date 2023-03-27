@@ -27,6 +27,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -138,13 +139,14 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         });
     }
 
+
     /**
      * Returns a string with the text currently in the console
      *
      * @return String Console Text
      */
     public String getLog() {
-        return console.getText();
+        return new String(console.getText().getBytes(),StandardCharsets.UTF_8);
     }
 
     public void showKillMinecraft() {
