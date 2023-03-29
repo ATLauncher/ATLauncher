@@ -50,6 +50,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
@@ -230,7 +231,15 @@ public final class BrowserDownloadDialog extends JDialog {
         });
 
         skipRemainingButton.addActionListener(l -> {
-            close();
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are You Sure?"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Skipping the remaining downloads may cause issues launching the modpack.<br/><br/>Are you sure you want to do this?"))
+                            .build())
+                    .setType(DialogManager.WARNING).show();
+
+            if (ret == 0) {
+                close();
+            }
         });
 
         cancelInstallButton.addActionListener(l -> {
