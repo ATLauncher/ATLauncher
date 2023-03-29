@@ -957,8 +957,8 @@ public class Instance extends MinecraftVersion {
                     App.launcher.getParent().setVisible(false);
                 }
 
-                LogManager.info("Launching pack " + this.launcher.pack + " " + this.launcher.version + " for "
-                        + "Minecraft " + this.id);
+                LogManager.info(String.format("Launching pack %s %s (%s) for Minecraft %s", this.launcher.pack,
+                        this.launcher.version, getPlatformNameForLogging(), this.id));
 
                 Process process = null;
 
@@ -2464,6 +2464,42 @@ public class Instance extends MinecraftVersion {
                 || (isTechnicPack() && ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true)
                 || (isModrinthPack()
                         && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
+    }
+
+    public String getPlatformNameForLogging() {
+        if (isCurseForgePack()) {
+            return "CurseForge";
+        }
+
+        if (isModpacksChPack()) {
+            return "ModpacksCh";
+        }
+
+        if (isTechnicSolderPack()) {
+            return "TechnicSolder";
+        }
+
+        if (isTechnicPack()) {
+            return "Technic";
+        }
+
+        if (isModrinthPack()) {
+            return "Modrinth";
+        }
+
+        if (isModrinthImport()) {
+            return "ModrinthImport";
+        }
+
+        if (isMultiMcImport()) {
+            return "MultiMcImport";
+        }
+
+        if (isVanillaInstance()) {
+            return "Vanilla";
+        }
+
+        return "ATLauncher";
     }
 
     public String getAnalyticsCategory() {
