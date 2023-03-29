@@ -95,6 +95,22 @@ public class CurseForgeProject {
         return links.containsKey("websiteUrl");
     }
 
+    public String getIssuesUrl() {
+        return links.get("issuesUrl");
+    }
+
+    public boolean hasIssuesUrl() {
+        return links.containsKey("issuesUrl") && !links.get("issuesUrl").isEmpty();
+    }
+
+    public String getWikiUrl() {
+        return links.get("wikiUrl");
+    }
+
+    public boolean hasWikiUrl() {
+        return links.containsKey("wikiUrl") && !links.get("wikiUrl").isEmpty();
+    }
+
     public String getClassUrlSlug() {
         if (classId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return "texture-packs";

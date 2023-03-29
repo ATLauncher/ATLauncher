@@ -108,6 +108,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
     private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
     private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
+    private final JMenuItem wikiLinkMenuItem = new JMenuItem(GetText.tr("Wiki"));
+    private final JMenuItem sourceLinkMenuItem = new JMenuItem(GetText.tr("Source"));
     private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
 
     private final JPopupMenu editInstancePopupMenu = new JPopupMenu();
@@ -199,12 +201,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         // check it can be exported
         this.exportButton.setVisible(instance.canBeExported());
 
-        // if not an ATLauncher pack, a system pack or has no urls, don't show the links
-        // button
-        if (instance.getPack() == null || instance.getPack().system || (instance.getPack().discordInviteURL == null
-                && instance.getPack().supportURL == null && instance.getPack().websiteURL == null)) {
-            this.getHelpButton.setVisible(false);
-        }
+        this.getHelpButton.setVisible(instance.showGetHelpButton());
 
         if (!instance.isUpdatable()) {
             this.updateButton.setVisible(instance.isUpdatable());
@@ -267,20 +264,30 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setupButtonPopupMenus() {
-        if (instance.getPack() != null) {
-            if (instance.getPack().discordInviteURL != null) {
-                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().discordInviteURL));
+        if (instance.showGetHelpButton()) {
+            if (instance.getDiscordInviteUrl() != null) {
+                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getDiscordInviteUrl()));
                 getHelpPopupMenu.add(discordLinkMenuItem);
             }
 
-            if (instance.getPack().supportURL != null) {
-                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().supportURL));
+            if (instance.getSupportUrl() != null) {
+                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSupportUrl()));
                 getHelpPopupMenu.add(supportLinkMenuItem);
             }
 
-            if (instance.getPack().websiteURL != null) {
-                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getPack().websiteURL));
+            if (instance.getWebsiteUrl() != null) {
+                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
                 getHelpPopupMenu.add(websiteLinkMenuItem);
+            }
+
+            if (instance.getWikiUrl() != null) {
+                wikiLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWikiUrl()));
+                getHelpPopupMenu.add(wikiLinkMenuItem);
+            }
+
+            if (instance.getSourceUrl() != null) {
+                sourceLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSourceUrl()));
+                getHelpPopupMenu.add(sourceLinkMenuItem);
             }
         }
 
@@ -692,6 +699,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.discordLinkMenuItem.setText(GetText.tr("Discord"));
         this.supportLinkMenuItem.setText(GetText.tr("Support"));
         this.websiteLinkMenuItem.setText(GetText.tr("Website"));
+        this.wikiLinkMenuItem.setText(GetText.tr("Wiki"));
+        this.sourceLinkMenuItem.setText(GetText.tr("Source"));
         this.getHelpButton.setText(GetText.tr("Get Help"));
     }
 }

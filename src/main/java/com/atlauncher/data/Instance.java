@@ -2538,38 +2538,6 @@ public class Instance extends MinecraftVersion {
         return "Instance";
     }
 
-    public boolean hasWebsite() {
-        if (isCurseForgePack()) {
-            return launcher.curseForgeProject.hasWebsiteUrl();
-        }
-
-        if (isModpacksChPack()) {
-            return launcher.modpacksChPackManifest.hasTag("FTB");
-        }
-
-        return isModrinthPack() || isTechnicPack();
-    }
-
-    public String getWebsiteUrl() {
-        if (isCurseForgePack() && launcher.curseForgeProject.hasWebsiteUrl()) {
-            return launcher.curseForgeProject.getWebsiteUrl();
-        }
-
-        if (isModpacksChPack() && launcher.modpacksChPackManifest.hasTag("FTB")) {
-            return launcher.modpacksChPackManifest.getWebsiteUrl();
-        }
-
-        if (isModrinthPack()) {
-            return String.format("https://modrinth.com/modpack/%s", launcher.modrinthProject.slug);
-        }
-
-        if (isTechnicPack()) {
-            return launcher.technicModpack.platformUrl;
-        }
-
-        return null;
-    }
-
     public void update() {
         new InstanceInstallerDialog(this, true, false, null, null, true, null, App.launcher.getParent(), null);
     }
@@ -3284,5 +3252,94 @@ public class Instance extends MinecraftVersion {
             save();
         }
         PerformanceManager.end("Instance::scanMissingMods - CheckForRemovedMods");
+    }
+
+    public boolean showGetHelpButton() {
+        if (getPack() != null || isModrinthPack() || isCurseForgePack()) {
+            return getDiscordInviteUrl() != null || getSupportUrl() != null || getWikiUrl() != null
+                    || getSourceUrl() != null;
+        }
+
+        return false;
+    }
+
+    public String getDiscordInviteUrl() {
+        if (getPack() != null) {
+            return getPack().discordInviteURL;
+        }
+
+        if (isModrinthPack()) {
+            return launcher.modrinthProject.discordUrl;
+        }
+
+        return null;
+    }
+
+    public String getSupportUrl() {
+        if (getPack() != null) {
+            return getPack().supportURL;
+        }
+
+        if (isModrinthPack()) {
+            return launcher.modrinthProject.issuesUrl;
+        }
+
+        if (isCurseForgePack() && launcher.curseForgeProject.hasIssuesUrl()) {
+            return launcher.curseForgeProject.getIssuesUrl();
+        }
+
+        return null;
+    }
+
+    public boolean hasWebsite() {
+        if (isCurseForgePack()) {
+            return launcher.curseForgeProject.hasWebsiteUrl();
+        }
+
+        if (isModpacksChPack()) {
+            return launcher.modpacksChPackManifest.hasTag("FTB");
+        }
+
+        return isModrinthPack() || isTechnicPack();
+    }
+
+    public String getWebsiteUrl() {
+        if (isCurseForgePack() && launcher.curseForgeProject.hasWebsiteUrl()) {
+            return launcher.curseForgeProject.getWebsiteUrl();
+        }
+
+        if (isModpacksChPack() && launcher.modpacksChPackManifest.hasTag("FTB")) {
+            return launcher.modpacksChPackManifest.getWebsiteUrl();
+        }
+
+        if (isModrinthPack()) {
+            return String.format("https://modrinth.com/modpack/%s", launcher.modrinthProject.slug);
+        }
+
+        if (isTechnicPack()) {
+            return launcher.technicModpack.platformUrl;
+        }
+
+        return null;
+    }
+
+    public String getWikiUrl() {
+        if (isModrinthPack()) {
+            return launcher.modrinthProject.wikiUrl;
+        }
+
+        if (isCurseForgePack() && launcher.curseForgeProject.hasWikiUrl()) {
+            return launcher.curseForgeProject.getWikiUrl();
+        }
+
+        return null;
+    }
+
+    public String getSourceUrl() {
+        if (isModrinthPack()) {
+            return launcher.modrinthProject.sourceUrl;
+        }
+
+        return null;
     }
 }

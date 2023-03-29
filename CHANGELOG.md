@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - List the timeout and concurrent connection settings when downloads fail
 - Remove initial memory argument [#727]
 - Add name of platform an instance is from when launching [#740]
+- Add in Get Help button to more instances when available [#734]
 
 ### Fixes
 - Remove old OmitStackTraceInFastThrow JVM arg
