@@ -2007,6 +2007,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
         }
 
+        if (this.modrinthManifest != null) {
+            if (Files.exists(modrinthExtractedPath.resolve("overrides/mods"))) {
+                try (Stream<Path> list = Files.list(modrinthExtractedPath.resolve("overrides/mods"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
+                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            if (Files.exists(modrinthExtractedPath.resolve("overrides/mods/" + packVersion.minecraft))) {
+                try (Stream<Path> list = Files
+                        .list(modrinthExtractedPath.resolve("overrides/mods/" + packVersion.minecraft))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
+                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+        }
+
         if (this.technicModpack != null && this.technicModpack.solder == null) {
             if (Files.exists(technicModpackExtractedPath.resolve("mods"))) {
                 try (Stream<Path> list = Files.list(technicModpackExtractedPath.resolve("mods"))) {
