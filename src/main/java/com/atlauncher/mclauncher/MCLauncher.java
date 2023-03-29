@@ -224,7 +224,8 @@ public class MCLauncher {
         if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
             for (File file : libraryFiles) {
                 if (!file.getName().equalsIgnoreCase("minecraft.jar")
-                        && !file.getName().equalsIgnoreCase("modpack.jar")) {
+                        && !file.getName().equalsIgnoreCase("modpack.jar")
+                        && (file.getName().endsWith(".jar") || file.getName().endsWith(".zip"))) {
                     LogManager.info("Added in custom library " + file.getName());
 
                     cpb.append(file);
