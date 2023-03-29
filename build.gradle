@@ -27,7 +27,6 @@ plugins {
     id 'de.undercouch.download' version '5.1.0'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'com.github.ben-manes.versions' version '0.42.0'
-    id "org.jetbrains.kotlin.jvm" version "1.8.0"
     id 'com.apollographql.apollo' version '2.5.14'
 }
 
@@ -85,11 +84,6 @@ dependencies {
     implementation 'com.github.hypfvieh:dbus-java:3.3.1'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
-    implementation 'com.apollographql.apollo:apollo-coroutines-support:2.5.14'
-
-    // Kotlin
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:4.6.1'

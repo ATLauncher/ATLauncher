@@ -20,6 +20,3 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with mod images not being scaled smoothly [#731]
 
 ### Misc
-- Add `xrandr` as a dependency for RPM [#691]
-- Update packaging scripts
-- Implement view model for VanillaPacksTab [#717]
