@@ -1,5 +1,4 @@
 import java.text.SimpleDateFormat
-import java.util.stream.Collectors
 
 buildscript {
     repositories {
@@ -84,6 +83,10 @@ dependencies {
     implementation 'com.github.hypfvieh:dbus-java:3.3.1'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
+    implementation 'com.apollographql.apollo:apollo-rx3-support:2.5.14'
+
+    // RxJava
+    implementation("io.reactivex.rxjava3:rxjava:3.1.6")
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:4.6.1'
