@@ -363,11 +363,11 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         createServerEnabled.onNext(false);
         createInstanceEnabled.onNext(false);
 
+        loaderTypeNoneEnabled.onNext(false);
+        loaderTypeQuiltEnabled.onNext(true);
         loaderTypeFabricEnabled.onNext(true);
         loaderTypeForgeEnabled.onNext(true);
         loaderTypeLegacyFabricEnabled.onNext(true);
-        loaderTypeNoneEnabled.onNext(false);
-        loaderTypeQuiltEnabled.onNext(false);
 
         selectedMinecraftVersionFlow.onNext(Optional.empty());
 
