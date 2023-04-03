@@ -470,7 +470,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
                 rowCount = minecraftVersionTableModel.getRowCount();
 
             if (rowCount > 0) {
-                for (int i = rowCount; i >= 0; i++) {
+                for (int i = rowCount - 1; i >= 0; i--) {
                     if (minecraftVersionTableModel != null)
                         minecraftVersionTableModel.removeRow(i);
                 }
