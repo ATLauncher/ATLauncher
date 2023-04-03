@@ -455,7 +455,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
 
             int minIndex = e.getFirstIndex();
             int maxIndex = e.getLastIndex();
-            for (int i = minIndex; i < maxIndex; i++) {
+            for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
                     viewModel.setSelectedMinecraftVersion(
                         (String) minecraftVersionTableModel.getValueAt(i, 0)
