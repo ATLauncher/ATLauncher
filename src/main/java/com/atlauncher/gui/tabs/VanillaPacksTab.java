@@ -230,20 +230,19 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         loaderTypeButtonGroup.add(loaderTypeNoneRadioButton);
+        loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton);
         loaderTypeButtonGroup.add(loaderTypeFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeForgeRadioButton);
         loaderTypeButtonGroup.add(loaderTypeLegacyFabricRadioButton);
-        loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton);
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
 
         setupLoaderNoneButton(loaderTypePanel);
 
+        setupLoaderQuiltButton(loaderTypePanel);
         setupLoaderFabricButton(loaderTypePanel);
-        setupLoaderLegacyFabricButton(loaderTypePanel);
 
         setupLoaderForgeButton(loaderTypePanel);
-
-        setupLoaderQuiltButton(loaderTypePanel);
+        setupLoaderLegacyFabricButton(loaderTypePanel);
 
         mainPanel.add(loaderTypePanel, gbc);
 
