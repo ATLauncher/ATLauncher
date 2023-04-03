@@ -48,6 +48,7 @@ repositories {
         content {
             includeGroup "com.github.RyanTheAllmighty.gettext"
             includeGroup "com.github.Vatuu"
+            includeGroup "com.gitlab.doomsdayrs"
         }
     }
 }
@@ -87,6 +88,7 @@ dependencies {
 
     // RxJava
     implementation("io.reactivex.rxjava3:rxjava:3.1.6")
+    implementation("com.gitlab.doomsdayrs:rxswing:a5749ad421") // TODO tag
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:4.6.1'

@@ -68,8 +68,10 @@ import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 
@@ -145,6 +147,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
      */
     private final BehaviorSubject<Map<VersionManifestVersionType, Boolean>> minecraftVersionTypeFiltersPublisher =
         BehaviorSubject.create();
+
     /**
      * Represents the version list
      */
@@ -164,44 +167,69 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                     it.id, fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(it.releaseTime)), it.id
                 )
             ).collect(Collectors.toList());
-        });
-    public final Observable<Boolean> releaseSelected = minecraftVersionTypeFiltersPublisher.map(it -> it.getOrDefault(VersionManifestVersionType.RELEASE, false));
+        }).subscribeOn(Schedulers.io());
+
+    public final Observable<Boolean> releaseSelected =
+        minecraftVersionTypeFiltersPublisher
+            .map(it -> it.getOrDefault(VersionManifestVersionType.RELEASE, false))
+            .subscribeOn(Schedulers.computation());
+
     public final Observable<Boolean> releaseEnabled =
         combineLatest(
             releaseSelected, minecraftVersionTypeFiltersPublisher,
-            (a, b) -> !(a && (b.values().stream().filter(it -> it).toArray().length == 1)));
-    public final Observable<Boolean> experimentSelected = minecraftVersionTypeFiltersPublisher.map(it -> it.getOrDefault(VersionManifestVersionType.EXPERIMENT, false));
+            (a, b) -> !(a && (b.values().stream().filter(it -> it).toArray().length == 1))
+        ).subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> experimentSelected =
+        minecraftVersionTypeFiltersPublisher
+            .map(it -> it.getOrDefault(VersionManifestVersionType.EXPERIMENT, false))
+            .subscribeOn(Schedulers.computation());
+
     public final Observable<Boolean> experimentEnabled =
-        combineLatest(experimentSelected, minecraftVersionTypeFiltersPublisher, (a, b) ->
-            !(a && (count(b, Map.Entry::getValue) == 1))
-        );
-    public final Observable<Boolean> snapshotSelected = minecraftVersionTypeFiltersPublisher.map(it -> it.getOrDefault(VersionManifestVersionType.SNAPSHOT, false));
+        combineLatest(experimentSelected,
+            minecraftVersionTypeFiltersPublisher, (a, b) ->
+                !(a && (count(b, Map.Entry::getValue) == 1))
+        ).subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> snapshotSelected =
+        minecraftVersionTypeFiltersPublisher
+            .map(it -> it.getOrDefault(VersionManifestVersionType.SNAPSHOT, false))
+            .subscribeOn(Schedulers.computation());
+
     public final Observable<Boolean> snapshotEnabled =
         combineLatest(
             snapshotSelected,
             minecraftVersionTypeFiltersPublisher,
             (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))
-        );
-    public final Observable<Boolean> oldAlphaSelected = minecraftVersionTypeFiltersPublisher.map(it ->
-        it.getOrDefault(VersionManifestVersionType.OLD_ALPHA, false)
-    );
+        ).subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> oldAlphaSelected =
+        minecraftVersionTypeFiltersPublisher
+            .map(it -> it.getOrDefault(VersionManifestVersionType.OLD_ALPHA, false))
+            .subscribeOn(Schedulers.computation());
+
     public final Observable<Boolean> oldAlphaEnabled =
         combineLatest(
             oldAlphaSelected,
             minecraftVersionTypeFiltersPublisher,
             (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))
-        );
-    public final Observable<Boolean> oldBetaSelected = minecraftVersionTypeFiltersPublisher.map(it ->
-        it.getOrDefault(VersionManifestVersionType.OLD_BETA, false)
-    );
+        ).subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> oldBetaSelected =
+        minecraftVersionTypeFiltersPublisher
+            .map(it -> it.getOrDefault(VersionManifestVersionType.OLD_BETA, false))
+            .subscribeOn(Schedulers.computation());
+
     public final Observable<Boolean> oldBetaEnabled =
         combineLatest(
             oldBetaSelected,
             minecraftVersionTypeFiltersPublisher,
             (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))
-        );
+        ).subscribeOn(Schedulers.computation());
+
     // was null
     private final BehaviorSubject<Optional<String>> selectedMinecraftVersionFlow = BehaviorSubject.create();
+
     public final Observable<Integer> selectedMinecraftVersionIndex =
         combineLatest(
             minecraftVersions,
@@ -220,61 +248,94 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                 if (index == -1) return 0;
                 return index;
             }
-        );
+        ).subscribeOn(Schedulers.computation());
 
     private final BehaviorSubject<Optional<LoaderType>> selectedLoaderType = BehaviorSubject.create();
-    public final Observable<Boolean> loaderTypeFabricSelected = selectedLoaderType.map(it -> it.orElse(null) == LoaderType.FABRIC);
-    public final Observable<Boolean> loaderTypeForgeSelected = selectedLoaderType.map(it -> it.orElse(null) == LoaderType.FORGE);
-    public final Observable<Boolean> loaderTypeLegacyFabricSelected = selectedLoaderType.map(it -> it.orElse(null) == LoaderType.LEGACY_FABRIC);
-    public final Observable<Boolean> loaderTypeNoneSelected = selectedLoaderType.map(it -> it.orElse(null) == null);
-    public final Observable<Boolean> loaderTypeQuiltSelected = selectedLoaderType.map(it -> it.orElse(null) == LoaderType.QUILT);
+
+    public final Observable<Boolean> loaderTypeFabricSelected =
+        selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.FABRIC)
+            .subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> loaderTypeForgeSelected =
+        selectedLoaderType.map(it -> it.orElse(null) == LoaderType.FORGE)
+            .subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> loaderTypeLegacyFabricSelected =
+        selectedLoaderType.map(it -> it.orElse(null) == LoaderType.LEGACY_FABRIC)
+            .subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> loaderTypeNoneSelected =
+        selectedLoaderType.map(it -> it.orElse(null) == null)
+            .subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> loaderTypeQuiltSelected =
+        selectedLoaderType.map(it -> it.orElse(null) == LoaderType.QUILT)
+            .subscribeOn(Schedulers.computation());
 
     // was lazy
     private final List<String> fabricDisabledMCVersions =
         ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", emptyList());
+
     public final Observable<Boolean> isFabricVisible =
-        selectedMinecraftVersionFlow.map(version -> !fabricDisabledMCVersions.contains(version.orElse(null)));
+        selectedMinecraftVersionFlow
+            .map(version -> !fabricDisabledMCVersions.contains(version.orElse(null)))
+            .subscribeOn(Schedulers.computation());
+
     // was lazy
     private final List<String> legacyFabricDisabledMCVersions =
         ConfigManager.getConfigItem(
             "loaders.fabric.disabledMinecraftVersions", emptyList()
         );
+
     public final Observable<Boolean> isLegacyFabricVisible =
-        selectedMinecraftVersionFlow.map(version -> !legacyFabricDisabledMCVersions.contains(version.orElse(null)));
+        selectedMinecraftVersionFlow.map(version -> !legacyFabricDisabledMCVersions.contains(version.orElse(null)))
+            .subscribeOn(Schedulers.computation());
+
     // was lazy
     private final List<String> forgeDisabledMCVersions =
         ConfigManager.getConfigItem(
             "loaders.forge.disabledMinecraftVersions", emptyList()
         );
+
     public final Observable<Boolean> isForgeVisible =
-        selectedMinecraftVersionFlow.map(version -> !forgeDisabledMCVersions.contains(version.orElse(null)));
+        selectedMinecraftVersionFlow.map(version -> !forgeDisabledMCVersions.contains(version.orElse(null)))
+            .subscribeOn(Schedulers.computation());
+
     // was lazy
     private final List<String> quiltDisabledMCVersions =
         ConfigManager.getConfigItem(
             "loaders.quilt.disabledMinecraftVersions", emptyList()
         );
+
     public final Observable<Boolean> isQuiltVisible =
-        selectedMinecraftVersionFlow.map(version -> !quiltDisabledMCVersions.contains(version.orElse(null)));
+        selectedMinecraftVersionFlow.map(version -> !quiltDisabledMCVersions.contains(version.orElse(null)))
+            .subscribeOn(Schedulers.computation());
+
     // was lazy
     private final List<String> disabledQuiltVersions =
         ConfigManager.getConfigItem(
             "loaders.quilt.disabledVersions", emptyList()
         );
+
     // was lazy
     private final List<String> disabledFabricVersions =
         ConfigManager.getConfigItem(
             "loaders.fabric.disabledVersions", emptyList()
         );
+
     // was lazy
     private final List<String> disabledLegacyFabricVersions =
         ConfigManager.getConfigItem(
             "loaders.legacyfabric.disabledVersions", emptyList()
         );
+
     // was lazy
     private final List<String> disabledForgeVersions =
         ConfigManager.getConfigItem(
             "loaders.forge.disabledVersions", emptyList()
         );
+
     private final LoaderVersion noLoaderVersions = new LoaderVersion(GetText.tr("No Versions Found"));
     private final LoaderVersion errorLoadingVersions = new LoaderVersion(GetText.tr("Error Getting Versions"));
     /**
@@ -310,90 +371,92 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
         selectedMinecraftVersionFlow.onNext(Optional.empty());
 
-
-        selectedMinecraftVersionFlow.subscribe(selectedVersion -> {
-            if (selectedVersion.isPresent()) {
-                try {
-                    final VersionManifestVersion version = MinecraftManager.getMinecraftVersion(selectedVersion.get());
-                    createServerEnabled.onNext(version.hasServer());
-                } catch (InvalidMinecraftVersion ignored) {
+        selectedMinecraftVersionFlow
+            .observeOn(Schedulers.computation())
+            .subscribe(selectedVersion -> {
+                if (selectedVersion.isPresent()) {
+                    try {
+                        final VersionManifestVersion version = MinecraftManager.getMinecraftVersion(selectedVersion.get());
+                        createServerEnabled.onNext(version.hasServer());
+                    } catch (InvalidMinecraftVersion ignored) {
+                        createServerEnabled.onNext(false);
+                    }
+                } else {
                     createServerEnabled.onNext(false);
                 }
-            } else {
-                createServerEnabled.onNext(false);
-            }
 
-            final String defaultNameFieldValue = String.format(
-                "Minecraft %s", selectedVersion.orElse(null)
-            );
-            if (!name.getValue().isPresent() || name.getValue().get().isEmpty() || !nameDirty) {
-                nameDirty = false;
-                name.onNext(Optional.of(defaultNameFieldValue));
-            }
-            if (!description.getValue().isPresent() || description.getValue().get().isEmpty() || !descriptionDirty) {
-                descriptionDirty = false;
-                description.onNext(Optional.of(defaultNameFieldValue));
-            }
-        });
-
-        combineLatest(selectedLoaderType, selectedMinecraftVersionFlow, Pair::new
-        ).subscribe(optionalOptionalPair -> {
-            Optional<LoaderType> loaderTypeOptional = optionalOptionalPair.left();
-            Optional<String> selectedMinecraftVersionOptional = optionalOptionalPair.right();
-
-            if (!selectedMinecraftVersionOptional.isPresent()) return;
-
-            loaderVersionsDropDownEnabled.onNext(false);
-
-            if (!loaderTypeOptional.isPresent()) {
-                // update the name and description fields if they're not dirty
-                final String defaultNameFieldValue = String.format("Minecraft %s", selectedMinecraftVersionOptional.get());
-                if (!nameDirty) {
+                final String defaultNameFieldValue = String.format(
+                    "Minecraft %s", selectedVersion.orElse(null)
+                );
+                if (!name.getValue().isPresent() || name.getValue().get().isEmpty() || !nameDirty) {
+                    nameDirty = false;
                     name.onNext(Optional.of(defaultNameFieldValue));
                 }
-                if (!descriptionDirty) {
+                if (!description.getValue().isPresent() || description.getValue().get().isEmpty() || !descriptionDirty) {
+                    descriptionDirty = false;
                     description.onNext(Optional.of(defaultNameFieldValue));
                 }
-                loaderVersions.onNext(Optional.of(singletonList(new LoaderVersion(GetText.tr("Select Loader First")))));
-                return;
-            }
-            LoaderType loaderType = loaderTypeOptional.get();
-            String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
+            });
 
-            loaderLoading.onNext(true);
+        combineLatest(selectedLoaderType, selectedMinecraftVersionFlow, Pair::new)
+            .observeOn(Schedulers.io())
+            .subscribe(optionalOptionalPair -> {
+                Optional<LoaderType> loaderTypeOptional = optionalOptionalPair.left();
+                Optional<String> selectedMinecraftVersionOptional = optionalOptionalPair.right();
 
-            setLoaderGroupEnabled(false);
+                if (!selectedMinecraftVersionOptional.isPresent()) return;
 
-            // Legacy Forge doesn't support servers easily
-            final boolean enableCreateServers = (loaderType == LoaderType.FORGE || !Utils.matchVersion(
-                selectedMinecraftVersion, "1.5", true, true
-            ));
-            final List<LoaderVersion> loaders;
-            if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false)) {
-                loaders = apolloLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
-            } else {
-                loaders = legacyLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
-            }
+                loaderVersionsDropDownEnabled.onNext(false);
 
-            loaderVersions.onNext(Optional.of(loaders));
-
-            if (!loaders.isEmpty()) {
-                if (loaderType == LoaderType.FORGE) {
-                    Optional<LoaderVersion> optionalLoaderType = first(loaders, it -> it.recommended);
-                    if (optionalLoaderType.isPresent())
-                        selectedLoaderVersion.onNext(optionalLoaderType);
-                    else selectedLoaderVersion.onNext(loaders.stream().findFirst());
-                } else {
-                    selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                if (!loaderTypeOptional.isPresent()) {
+                    // update the name and description fields if they're not dirty
+                    final String defaultNameFieldValue = String.format("Minecraft %s", selectedMinecraftVersionOptional.get());
+                    if (!nameDirty) {
+                        name.onNext(Optional.of(defaultNameFieldValue));
+                    }
+                    if (!descriptionDirty) {
+                        description.onNext(Optional.of(defaultNameFieldValue));
+                    }
+                    loaderVersions.onNext(Optional.of(singletonList(new LoaderVersion(GetText.tr("Select Loader First")))));
+                    return;
                 }
-            }
+                LoaderType loaderType = loaderTypeOptional.get();
+                String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
+
+                loaderLoading.onNext(true);
+
+                setLoaderGroupEnabled(false);
+
+                // Legacy Forge doesn't support servers easily
+                final boolean enableCreateServers = (loaderType == LoaderType.FORGE || !Utils.matchVersion(
+                    selectedMinecraftVersion, "1.5", true, true
+                ));
+                final List<LoaderVersion> loaders;
+                if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false)) {
+                    loaders = apolloLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
+                } else {
+                    loaders = legacyLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
+                }
+
+                loaderVersions.onNext(Optional.of(loaders));
+
+                if (!loaders.isEmpty()) {
+                    if (loaderType == LoaderType.FORGE) {
+                        Optional<LoaderVersion> optionalLoaderType = first(loaders, it -> it.recommended);
+                        if (optionalLoaderType.isPresent())
+                            selectedLoaderVersion.onNext(optionalLoaderType);
+                        else selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                    } else {
+                        selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                    }
+                }
 
 
-            setLoaderGroupEnabled(true, enableCreateServers);
+                setLoaderGroupEnabled(true, enableCreateServers);
 
-            updateNameAndDescription(selectedMinecraftVersion, loaderType);
+                updateNameAndDescription(selectedMinecraftVersion, loaderType);
 
-        });
+            });
     }
 
     private static <K, V> long count(Map<K, V> map, Predicate<Map.Entry<K, V>> predicate) {
@@ -416,72 +479,72 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
     @Override
     public Observable<Optional<String>> name() {
-        return name;
+        return name.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Optional<String>> description() {
-        return description;
+        return description.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Optional<LoaderVersion>> selectedLoaderVersion() {
-        return selectedLoaderVersion;
+        return selectedLoaderVersion.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderLoading() {
-        return loaderLoading;
+        return loaderLoading.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Font> font() {
-        return font;
+        return font.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderVersionsDropDownEnabled() {
-        return loaderVersionsDropDownEnabled;
+        return loaderVersionsDropDownEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Optional<List<LoaderVersion>>> loaderVersions() {
-        return loaderVersions;
+        return loaderVersions.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> createServerEnabled() {
-        return createServerEnabled;
+        return createServerEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> createInstanceEnabled() {
-        return createInstanceEnabled;
+        return createInstanceEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeFabricEnabled() {
-        return loaderTypeFabricEnabled;
+        return loaderTypeFabricEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeForgeEnabled() {
-        return loaderTypeForgeEnabled;
+        return loaderTypeForgeEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeLegacyFabricEnabled() {
-        return loaderTypeLegacyFabricEnabled;
+        return loaderTypeLegacyFabricEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeNoneEnabled() {
-        return loaderTypeNoneEnabled;
+        return loaderTypeNoneEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeQuiltEnabled() {
-        return loaderTypeQuiltEnabled;
+        return loaderTypeQuiltEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -531,107 +594,107 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
     @Override
     public Observable<List<MCVersionRow>> minecraftVersions() {
-        return minecraftVersions;
+        return minecraftVersions.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> releaseSelected() {
-        return releaseSelected;
+        return releaseSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> releaseEnabled() {
-        return releaseEnabled;
+        return releaseEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> experimentSelected() {
-        return experimentSelected;
+        return experimentSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> experimentEnabled() {
-        return experimentEnabled;
+        return experimentEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> snapshotSelected() {
-        return snapshotSelected;
+        return snapshotSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> snapshotEnabled() {
-        return snapshotEnabled;
+        return snapshotEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> oldAlphaSelected() {
-        return oldAlphaSelected;
+        return oldAlphaSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> oldAlphaEnabled() {
-        return oldAlphaEnabled;
+        return oldAlphaEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> oldBetaSelected() {
-        return oldBetaSelected;
+        return oldBetaSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> oldBetaEnabled() {
-        return oldBetaEnabled;
+        return oldBetaEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Integer> selectedMinecraftVersionIndex() {
-        return selectedMinecraftVersionIndex;
+        return selectedMinecraftVersionIndex.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeFabricSelected() {
-        return loaderTypeFabricSelected;
+        return loaderTypeFabricSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeForgeSelected() {
-        return loaderTypeForgeSelected;
+        return loaderTypeForgeSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeLegacyFabricSelected() {
-        return loaderTypeLegacyFabricSelected;
+        return loaderTypeLegacyFabricSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeNoneSelected() {
-        return loaderTypeNoneSelected;
+        return loaderTypeNoneSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> loaderTypeQuiltSelected() {
-        return loaderTypeQuiltSelected;
+        return loaderTypeQuiltSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> isFabricVisible() {
-        return isFabricVisible;
+        return isFabricVisible.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> isLegacyFabricVisible() {
-        return isLegacyFabricVisible;
+        return isLegacyFabricVisible.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> isForgeVisible() {
-        return isForgeVisible;
+        return isForgeVisible.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public Observable<Boolean> isQuiltVisible() {
-        return isQuiltVisible;
+        return isQuiltVisible.observeOn(SwingSchedulers.edt());
     }
 
     private void install(Boolean isServer) {
