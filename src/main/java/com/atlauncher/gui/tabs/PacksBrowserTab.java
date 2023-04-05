@@ -306,7 +306,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
                     .getSelectedComponent();
 
             // send analytics page view
-            if (selectedPanel.getPlatformName().equals("Search")) {
+            if (selectedPanel.getPlatformName().equals("UnifiedModPackSearch")) {
                 Analytics.sendScreenView("Unified ModPack Search");
             } else {
                 Analytics.sendScreenView(selectedPanel.getPlatformName() + " Platform Packs");

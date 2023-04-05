@@ -83,7 +83,7 @@ public abstract class PackBrowserPlatformPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
 
-        if (getPlatformName().equals("Search")) {
+        if (getPlatformName().equals("UnifiedModPackSearch")) {
             contentPanel.add(new LoadingPanel(GetText.tr("Searching For Packs...")), gbc);
         } else {
             // #. {0} is the platform name (ATLauncher, CurseForge, Technic, etc)

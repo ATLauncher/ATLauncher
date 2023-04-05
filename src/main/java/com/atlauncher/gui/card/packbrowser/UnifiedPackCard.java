@@ -21,14 +21,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.HyperlinkEvent;
 
 import org.mini2Dx.gettext.GetText;
@@ -39,6 +37,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 import com.atlauncher.graphql.type.ModPackPlatformType;
+import com.atlauncher.gui.borders.IconTitledBorder;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -49,6 +48,7 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class UnifiedPackCard extends JPanel implements RelocalizationListener {
@@ -59,9 +59,9 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
     public UnifiedPackCard(final UnifiedModPackResultsFragment result) {
         super();
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder(null, result.name(), TitledBorder.LEADING,
-                TitledBorder.DEFAULT_POSITION,
-                App.THEME.getBoldFont().deriveFont(15f)));
+        setBorder(new IconTitledBorder(result.name(), App.THEME.getBoldFont().deriveFont(15f),
+                Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform",
+                        result.platform().toString().toLowerCase().replace("modpacksch", "ftb")))));
 
         RelocalizationManager.addListener(this);
 
