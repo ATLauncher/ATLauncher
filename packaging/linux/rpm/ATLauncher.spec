@@ -12,7 +12,7 @@ BuildRequires:  libappstream-glib
 BuildRequires:  desktop-file-utils
 
 Requires:       wget
-Requires:       java >= 1:1.8.0
+Requires:       java >= 1:17
 Requires:       xrandr
 Provides:       atlauncher
 

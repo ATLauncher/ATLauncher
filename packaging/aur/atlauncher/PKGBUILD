@@ -12,7 +12,7 @@ modpacks easily and quickly."
 arch=('any')
 url="https://github.com/ATLauncher/ATLauncher"
 license=('GPL3')
-depends=('java-runtime>=8' 'openal')
+depends=('java-runtime>=17' 'openal')
 makedepends=('java-environment>=8')
 provides=('atlauncher')
 conflicts=('atlauncher-bin')
