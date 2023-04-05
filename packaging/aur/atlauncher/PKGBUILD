@@ -13,7 +13,7 @@ arch=('any')
 url="https://github.com/ATLauncher/ATLauncher"
 license=('GPL3')
 depends=('java-runtime>=17' 'openal')
-makedepends=('java-environment>=8')
+makedepends=('java-environment>=17')
 provides=('atlauncher')
 conflicts=('atlauncher-bin')
 
