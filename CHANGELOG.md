@@ -24,5 +24,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with mod images not being scaled smoothly [#731]
 - Non jar/zip files in bin folder being added to classpath on launch [#737]
 - Issue with Modrinth packs showing override mods as added by the user [#735]
+- Issue with importing some mrpack files
 
 ### Misc

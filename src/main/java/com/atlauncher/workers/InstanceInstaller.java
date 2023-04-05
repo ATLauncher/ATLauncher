@@ -835,12 +835,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();
 
-        modrinthManifest = Gsons.MINECRAFT.fromJson(
-                new String(ArchiveUtils.getFile(manifestFile, "modrinth.index.json")),
-                ModrinthModpackManifest.class);
         modrinthExtractedPath = this.temp.resolve("modrinthimport");
-
         ArchiveUtils.extract(manifestFile, modrinthExtractedPath);
+
+        try (FileReader fileReader = new FileReader(modrinthExtractedPath.resolve("modrinth.index.json").toFile())) {
+            modrinthManifest = Gsons.MINECRAFT.fromJson(fileReader, ModrinthModpackManifest.class);
+        } catch (Exception e) {
+            LogManager.logStackTrace("Failed to read modrinth.index.json file", e);
+            Files.delete(manifestFile);
+            Files.delete(modrinthExtractedPath);
+            throw e;
+        }
+
         Files.delete(manifestFile);
 
         generatePackVersionFromModrinthManifest();
