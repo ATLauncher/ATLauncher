@@ -6,7 +6,10 @@
     "loaderVersionsNonForge": false,
     "packActions": false,
     "news": false,
-    "unifiedModPacks": false
+    "unifiedModPacks": false,
+    "minecraftVersions": false,
+    "javaRuntimes": false,
+    "launcherLaunch": false
   },
   "minecraft": {
     "experiment": {
