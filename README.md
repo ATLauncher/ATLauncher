@@ -75,6 +75,17 @@ To check for dependency updates with gradle, simply run:
 
 This will print a report to the console about any dependencies which have updates.
 
+## Updating new GraphQL queries/mutations
+
+When new GraphQL queries/mutations are added into the `src/main/graphql` directory, you must run the below 2 commands:
+
+```sh
+./gradlew downloadApolloSchema --endpoint="https://api.atlauncher.com/v2/graphql" --schema="src/main/graphql/com/atlauncher/schema.json"
+./gradlew generateApolloSources
+```
+
+This will fetch the latest schema and then codegen the java files so you can use the query/mutation.
+
 ## Updating license headers in all files
 
 If you add new files, or update the `LICENSEHEADER` file, you can add that to all source files by running:

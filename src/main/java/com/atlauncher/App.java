@@ -160,6 +160,14 @@ public class App {
     public static boolean disableErrorReporting = false;
 
     /**
+     * This is passed in by launch scripts on Linux to help the launcher know which
+     * method was used to install the launcher (deb, rpm, aur or aur-bin)
+     * <p/>
+     * --install-method=deb
+     */
+    public static String installMethod = null;
+
+    /**
      * This forces the working directory for the launcher. It can be changed with
      * the below command line argument.
      * <p/>
@@ -478,8 +486,7 @@ public class App {
         boolean matched = false;
 
         // user used the installer
-        if (Files.exists(FileSystem.BASE_DIR.resolve("unins000.dat"))
-                && Files.exists(FileSystem.BASE_DIR.resolve("unins000.exe"))) {
+        if (OS.isWindows() && OS.usedInstaller()) {
             return;
         }
 
@@ -856,6 +863,8 @@ public class App {
         parser.accepts("disable-analytics", "If analytics should be disabled.").withOptionalArg().ofType(Boolean.class);
         parser.accepts("disable-error-reporting", "If error reporting should be disabled.").withOptionalArg()
                 .ofType(Boolean.class);
+        parser.accepts("install-method", "The method used to install the launcher.").withRequiredArg()
+                .ofType(String.class);
         parser.accepts("working-dir", "This forces the working directory for the launcher.").withRequiredArg()
                 .ofType(String.class);
         parser.accepts("base-launcher-domain", "The base launcher domain.").withRequiredArg().ofType(String.class);
@@ -931,6 +940,10 @@ public class App {
         disableErrorReporting = options.has("disable-error-reporting");
         if (disableErrorReporting) {
             LogManager.debug("Disabling error reporting!");
+        }
+
+        if (options.has("install-method")) {
+            installMethod = (String) options.valueOf("install-method");
         }
 
         if (options.has("working-dir")) {

@@ -8,7 +8,7 @@ RUN dnf install -y rpmdevtools libappstream-glib desktop-file-utils \
 
 # add in all the files
 ADD rpm/atlauncher.spec /work/atlauncher.spec
-ADD _common/atlauncher /work/atlauncher
+ADD rpm/atlauncher /work/atlauncher
 ADD _common/atlauncher.desktop /work/atlauncher.desktop
 ADD _common/atlauncher.metainfo.xml /work/atlauncher.metainfo.xml
 ADD _common/atlauncher.png /work/atlauncher.png

@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail
+
+INSTDIR="${XDG_DATA_HOME-$HOME/.local/share}/atlauncher"
+
+if [[ ! -d ${INSTDIR} ]]; then
+    mkdir -p $INSTDIR
+fi
+
+cd $INSTDIR
+
+if [[ ! -f ${INSTDIR}/ATLauncher.jar ]]; then
+    wget "https://download.nodecdn.net/containers/atl/ATLauncher.jar" 2>&1
+fi
+
+exec java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -jar ATLauncher.jar --install-method=deb "$@"

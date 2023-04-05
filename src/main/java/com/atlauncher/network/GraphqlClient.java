@@ -164,4 +164,19 @@ public class GraphqlClient {
 
         return data.get();
     }
+
+    public static <D extends Operation.Data, T, V extends Operation.Variables> void mutate(
+            @NotNull Mutation<D, T, V> mutation) {
+        apolloClient.mutate(mutation)
+                .enqueue(new ApolloCall.Callback<T>() {
+                    @Override
+                    public void onResponse(@NotNull Response<T> response) {
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        LogManager.logStackTrace("Error on GraphQL query", e);
+                    }
+                });
+    }
 }

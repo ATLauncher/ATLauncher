@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add name of platform an instance is from when launching [#740]
 - Add in Get Help button to more instances when available [#734]
 - Add dialog warning user when trying to skip external download mods from CurseForge
+- Add logging for Java version and install method on launch if analytics enabled
 
 ### Fixes
 - Remove old OmitStackTraceInFastThrow JVM arg

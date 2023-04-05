@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,9 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.LauncherVersion;
+import com.atlauncher.graphql.AddLauncherLaunchMutation;
+import com.atlauncher.graphql.type.AddLauncherLaunchInput;
+import com.atlauncher.graphql.type.LauncherJavaVersionInput;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
@@ -62,6 +66,7 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.google.gson.JsonIOException;
@@ -101,6 +106,22 @@ public class Launcher {
         ConfigManager.loadConfig(); // Load the config
 
         NewsManager.loadNews(); // Load the news
+
+        if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphql.launcherLaunch", false) == true) {
+            App.TASKPOOL.execute(() -> {
+                GraphqlClient.mutate(new AddLauncherLaunchMutation(
+                        AddLauncherLaunchInput.builder().version(Constants.VERSION.toStringForLogging())
+                                .hash(Constants.VERSION.getSha1Revision().toString())
+                                .installMethod(OS.getInstallMethod())
+                                .javaVersion(LauncherJavaVersionInput.builder().raw(Java.getLauncherJavaVersion())
+                                        .majorVersion(Integer.toString(Java.getLauncherJavaVersionNumber()))
+                                        .bitness(Java.is64Bit() ? 64 : 32)
+                                        .usingJreDir(OS.isWindows() && OS.usingExe()
+                                                && Files.exists(FileSystem.BASE_DIR.resolve("jre")))
+                                        .build())
+                                .build()));
+            });
+        }
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
         MinecraftManager.loadJavaRuntimes(); // Load info about the different java runtimes

@@ -1,0 +1,3 @@
+mutation AddLauncherLaunch($input: AddLauncherLaunchInput!) {
+    addLauncherLaunch(input: $input)
+}

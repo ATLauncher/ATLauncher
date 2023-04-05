@@ -65,6 +65,10 @@ public class LauncherVersion {
         return this.stream;
     }
 
+    public HashCode getSha1Revision() {
+        return this.sha1Revision;
+    }
+
     public boolean isReleaseStream() {
         return this.stream.equals("Release");
     }
