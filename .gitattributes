@@ -43,11 +43,15 @@
 
 # These are explicitly linux files and should use lf
 *.sh   text eol=lf
-packaging\aur\atlauncher   text eol=lf
-packaging\aur\atlauncher-bin   text eol=lf
-packaging\linux\deb\control   text eol=lf
-packaging\linux\deb\postrm   text eol=lf
-packaging\linux\rpm\ATLauncher.spec   text eol=lf
-packaging\linux\_common\atlauncher   text eol=lf
-packaging\linux\_common\atlauncher.metainfo.xml   text eol=lf
-packaging\linux\_common\atlauncher.desktop   text eol=lf
+packaging/aur/atlauncher/atlauncher   text eol=lf
+packaging/aur/atlauncher/atlauncher.desktop   text eol=lf
+packaging/aur/atlauncher/atlauncher.install   text eol=lf
+packaging/aur/atlauncher/PKGBUILD   text eol=lf
+packaging/aur/atlauncher-bin/atlauncher   text eol=lf
+packaging/aur/atlauncher-bin/atlauncher.desktop   text eol=lf
+packaging/aur/atlauncher-bin/atlauncher.install   text eol=lf
+packaging/aur/atlauncher-bin/PKGBUILD   text eol=lf
+packaging/linux/deb/**   text eol=lf
+packaging/linux/rpm/**   text eol=lf
+packaging/linux/_common/atlauncher.metainfo.xml   text eol=lf
+packaging/linux/_common/atlauncher.desktop   text eol=lf
