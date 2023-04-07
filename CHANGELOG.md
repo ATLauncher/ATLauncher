@@ -27,3 +27,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with importing some mrpack files
 
 ### Misc
+- Remove ATLauncher Featured tab from Packs tab

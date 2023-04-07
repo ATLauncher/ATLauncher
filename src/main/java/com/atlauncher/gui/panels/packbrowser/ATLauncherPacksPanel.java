@@ -85,7 +85,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
             boolean sortDescending, String search,
             int page) {
         this.packs.stream().skip(this.cards.size()).limit(10)
-                .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack, false)));
+                .forEach(pack -> this.cards.add(new ATLauncherPackCard(pack)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
