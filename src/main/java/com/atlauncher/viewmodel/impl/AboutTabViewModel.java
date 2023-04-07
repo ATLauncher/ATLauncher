@@ -15,11 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.about;
+package com.atlauncher.viewmodel.impl;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.viewmodel.base.IAboutTabViewModel;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
