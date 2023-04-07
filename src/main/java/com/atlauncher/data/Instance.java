@@ -755,8 +755,13 @@ public class Instance extends MinecraftVersion {
                         : l)
                 .forEach(library -> {
                     if (library.hasNativeForOS()) {
-                        if ((library.name.contains("glfw") && useSystemGlfw)
-                                || (library.name.contains("openal") && useSystemOpenAl)) {
+                        if (library.name.contains("glfw") && useSystemGlfw) {
+                            LogManager.warn("useSystemGlfw was enabled, not using glfw natives from Minecraft");
+                            return;
+                        }
+
+                        if (library.name.contains("openal") && useSystemOpenAl) {
+                            LogManager.warn("useSystemOpenAl was enabled, not using openal natives from Minecraft");
                             return;
                         }
 
