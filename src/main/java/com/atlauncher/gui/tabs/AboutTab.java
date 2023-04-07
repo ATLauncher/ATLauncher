@@ -15,15 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.about;
+package com.atlauncher.gui.tabs;
 
-import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.utils.Java;
+import com.atlauncher.viewmodel.impl.AboutTabViewModel;
+import com.atlauncher.viewmodel.base.IAboutTabViewModel;
 import com.atlauncher.utils.OS;
-import org.jetbrains.annotations.NotNull;
+
 import org.mini2Dx.gettext.GetText;
 
 import javax.swing.*;
