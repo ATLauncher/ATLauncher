@@ -25,6 +25,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Non jar/zip files in bin folder being added to classpath on launch [#737]
 - Issue with Modrinth packs showing override mods as added by the user [#735]
 - Issue with importing some mrpack files
+- Slow down the scroll speed on the News tab
 
 ### Misc
 - Remove ATLauncher Featured tab from Packs tab
