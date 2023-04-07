@@ -45,9 +45,7 @@ import com.atlauncher.graphql.AddLauncherLaunchMutation;
 import com.atlauncher.graphql.type.AddLauncherLaunchInput;
 import com.atlauncher.graphql.type.LauncherJavaVersionInput;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
-import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.news.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
@@ -83,8 +81,6 @@ public class Launcher {
 
     // UI things
     private JFrame parent; // Parent JFrame of the actual Launcher
-    private InstancesTab instancesPanel; // The instances panel
-    private ServersTab serversPanel; // The instances panel
     private NewsTab newsPanel; // The news panel
     private PacksBrowserTab packsBrowserPanel; // The packs browser panel
 
@@ -453,23 +449,10 @@ public class Launcher {
     }
 
     /**
-     * Sets the panel used for Instances
-     *
-     * @param instancesPanel Instances Panel
-     */
-    public void setInstancesPanel(InstancesTab instancesPanel) {
-        this.instancesPanel = instancesPanel;
-    }
-
-    /**
      * Reloads the panel used for Instances
      */
     public void reloadInstancesPanel() {
         InstanceManager.post();
-    }
-
-    public void setServersPanel(ServersTab serversPanel) {
-        this.serversPanel = serversPanel;
     }
 
     public void reloadServersPanel() {

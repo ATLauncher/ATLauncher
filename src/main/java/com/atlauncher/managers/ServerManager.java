@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.LinkedList;
+
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
@@ -31,8 +33,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.data.Server;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
-
-import javax.swing.SwingUtilities;
 
 public class ServerManager {
     private static final List<Listener> listeners = new LinkedList<>();
@@ -112,7 +112,6 @@ public class ServerManager {
         return servers;
     }
 
-
     /**
      * Note, this method ignores ConstantConditions warning, as it always has.
      *
@@ -122,7 +121,8 @@ public class ServerManager {
     @SuppressWarnings("ConstantConditions")
     public static boolean addServer(Server server) {
         boolean added = Data.SERVERS.add(server);
-        if (added) post();
+        if (added)
+            post();
         return added;
     }
 

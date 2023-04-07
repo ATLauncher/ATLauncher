@@ -18,5 +18,5 @@
 package com.atlauncher.evnt.listener;
 
 public interface TabChangeListener {
-    void on();
+    void onTabChange(int tabIndex);
 }

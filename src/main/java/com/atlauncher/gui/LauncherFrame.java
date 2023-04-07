@@ -208,12 +208,10 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         PerformanceManager.start("instancesTab");
         InstancesTab instancesTab = new InstancesTab();
-        App.launcher.setInstancesPanel(instancesTab);
         PerformanceManager.end("instancesTab");
 
         PerformanceManager.start("serversTab");
         ServersTab serversTab = new ServersTab();
-        App.launcher.setServersPanel(serversTab);
         PerformanceManager.end("serversTab");
 
         PerformanceManager.start("accountsTab");
@@ -237,10 +235,11 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         }
         tabbedPane.setOpaque(true);
         tabbedPane.setSelectedIndex(App.settings.selectedTabOnStartup);
+        TabChangeManager.post(tabbedPane.getSelectedIndex());
 
         tabbedPane.addChangeListener(e -> {
             Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
-            TabChangeManager.post();
+            TabChangeManager.post(tabbedPane.getSelectedIndex());
         });
 
         Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());

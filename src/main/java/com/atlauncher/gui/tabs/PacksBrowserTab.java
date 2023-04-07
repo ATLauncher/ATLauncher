@@ -47,8 +47,10 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.listener.TabChangeListener;
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherFeaturedPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
@@ -68,7 +70,8 @@ import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 @SuppressWarnings("serial")
-public final class PacksBrowserTab extends JPanel implements Tab, RelocalizationListener, ThemeListener {
+public final class PacksBrowserTab extends JPanel
+        implements Tab, RelocalizationListener, ThemeListener, TabChangeListener {
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
@@ -105,6 +108,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     private JScrollPane scrollPane;
     private final JPanel contentPanel = new JPanel();
 
+    private boolean loaded = false;
     private boolean loading = false;
     private int page = 1;
 
@@ -315,8 +319,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
             afterTabChange();
         });
 
-        // add default state
-        afterTabChange();
+        TabChangeManager.addListener(this);
 
         add(platformTabbedPane, BorderLayout.CENTER);
     }
@@ -471,6 +474,7 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     }
 
     private void load(boolean scrollToTop) {
+        loaded = true;
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
 
         new Thread(() -> {
@@ -544,5 +548,12 @@ public final class PacksBrowserTab extends JPanel implements Tab, Relocalization
     public void onThemeChange() {
         ascendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("ascending")));
         descendingSortButton.setIcon(Utils.getIconImage(App.THEME.getIconPath("descending")));
+    }
+
+    @Override
+    public void onTabChange(int tabIndex) {
+        if (tabIndex == 2 && !loaded) {
+            afterTabChange();
+        }
     }
 }
