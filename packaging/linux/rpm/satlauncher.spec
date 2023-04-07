@@ -1,5 +1,5 @@
 Name:           atlauncher
-Version:        1.2
+Version:        1.3
 Release:        1%{?dist}
 Summary:        A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
 
