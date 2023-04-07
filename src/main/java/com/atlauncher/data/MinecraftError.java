@@ -28,6 +28,7 @@ public class MinecraftError {
     static final int CONCURRENT_MODIFICATION_ERROR_1_6 = 2;
     static final int USING_NEWER_JAVA_THAN_8 = 3;
     static final int NEED_TO_USE_JAVA_16_OR_NEWER = 4;
+    static final int NEED_TO_USE_JAVA_17_OR_NEWER = 5;
 
     static void showInformationPopup(int error) {
         switch (error) {
@@ -42,6 +43,9 @@ public class MinecraftError {
                 return;
             case MinecraftError.NEED_TO_USE_JAVA_16_OR_NEWER:
                 MinecraftError.showNeedToUseJava16OrNewerPopup();
+                return;
+            case MinecraftError.NEED_TO_USE_JAVA_17_OR_NEWER:
+                MinecraftError.showNeedToUseJava17OrNewerPopup();
                 return;
         }
     }
@@ -77,7 +81,17 @@ public class MinecraftError {
     static void showNeedToUseJava16OrNewerPopup() {
         DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
                 .setContent(new HTMLBuilder().center().text(GetText.tr(
-                        "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>This version of Minecraft requires Java 16 or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting.<br/><br/>If it's still not working, you may be using a mod that requires Java 16,<br/>but Minecraft only requires Java 8, so you'll need to uncheck the<br/>\"Use Java Provided By Minecraft\" setting for the instance and<br/>manually provide a path to a Java 16 (or newer) install."))
+                        "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>This version of Minecraft requires Java {0} or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting.<br/><br/>If it's still not working, you may be using a mod that requires Java {0},<br/>but Minecraft only requires Java 8, so you can go into the instances<br/>settings and in the \"Java\" tab, change the \"Runtime Overide\"<br/>option to one that is Java {0} or newer.",
+                        "16"))
+                        .build())
+                .setType(DialogManager.INFO).show();
+    }
+
+    static void showNeedToUseJava17OrNewerPopup() {
+        DialogManager.okDialog().setTitle(GetText.tr("About Your Crash"))
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>This version of Minecraft requires Java {0} or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting.<br/><br/>If it's still not working, you may be using a mod that requires Java {0},<br/>but Minecraft only requires Java 8, so you can go into the instances<br/>settings and in the \"Java\" tab, change the \"Runtime Overide\"<br/>option to one that is Java {0} or newer.",
+                        "17"))
                         .build())
                 .setType(DialogManager.INFO).show();
     }
