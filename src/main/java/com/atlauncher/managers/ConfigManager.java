@@ -48,7 +48,11 @@ public class ConfigManager {
             return getConfigItem(key, defaultValue, Data.CONFIG_OVERRIDES);
         }
 
-        return getConfigItem(key, defaultValue, Data.CONFIG);
+        if (hasConfigItem(key, Data.CONFIG)) {
+            return getConfigItem(key, defaultValue, Data.CONFIG);
+        }
+
+        return defaultValue;
     }
 
     private static boolean hasConfigItem(String key, Map<String, Object> source) {
@@ -114,12 +118,20 @@ public class ConfigManager {
             }
 
             if (keyParts.length == 2) {
+                if (!secondLevel.containsKey(keyParts[1])) {
+                    return defaultValue;
+                }
+
                 return (T) secondLevel.get(keyParts[1]);
             }
 
             Map<String, Object> thirdLevel = (Map<String, Object>) secondLevel.get(keyParts[1]);
 
             if (thirdLevel == null) {
+                return defaultValue;
+            }
+
+            if (!thirdLevel.containsKey(keyParts[2])) {
                 return defaultValue;
             }
 
