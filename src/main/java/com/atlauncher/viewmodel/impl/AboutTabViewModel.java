@@ -17,56 +17,19 @@
  */
 package com.atlauncher.viewmodel.impl;
 
+import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.IAboutTabViewModel;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * 13 / 06 / 2022
  */
 public class AboutTabViewModel implements IAboutTabViewModel {
-    private String info = null;
-
-    @NotNull
-    @Override
-    public String[] getAuthors() {
-        return AUTHORS_ARRAY;
-    }
-
-    /**
-     * Optimization method to ensure about tab opens with information as fast
-     * as possible.
-     *
-     * @return information on this launcher
-     */
-    @NotNull
-    @Override
-    public String getInfo() {
-        if (info == null) {
-            StringBuilder builder = new StringBuilder()
-                .append(Constants.LAUNCHER_NAME)
-                .append("\n")
-                .append("Version:\t").append(Constants.VERSION)
-                .append("\n")
-                .append("OS:\t").append(System.getProperty("os.name"));
-
-            if (OS.isUsingFlatpak())
-                builder.append(" (Flatpak)");
-
-            builder.append("\n").append("Java:\t")
-                .append(String.format("Java %d (%s)",
-                    Java.getLauncherJavaVersionNumber(),
-                    Java.getLauncherJavaVersion()
-                ));
-            info = builder.toString();
-        }
-
-        return info;
-    }
-
     /**
      * Produced via "git shortlog -s -n --all --no-merges" then some edits
      * <p>
@@ -117,4 +80,47 @@ public class AboutTabViewModel implements IAboutTabViewModel {
         "Trejkaz",
         "mac",
     };
+
+    private String info = null;
+
+    @Nonnull
+    @Override
+    public String[] getAuthors() {
+        return AUTHORS_ARRAY;
+    }
+
+    /**
+     * Optimization via stored string to ensure about tab opens with information as fast
+     * as possible.
+     *
+     * @return information on this launcher
+     */
+    @Nonnull
+    @Override
+    public String getInfo() {
+        if (info == null) {
+            StringBuilder builder = new StringBuilder()
+                .append("Version:\t").append(Constants.VERSION)
+                .append("\n")
+                .append("OS:\t").append(System.getProperty("os.name"));
+
+            if (OS.isUsingFlatpak())
+                builder.append(" (Flatpak)");
+
+            builder.append("\n").append("Java:\t")
+                .append(String.format("Java %d (%s)",
+                    Java.getLauncherJavaVersionNumber(),
+                    Java.getLauncherJavaVersion()
+                ));
+            info = builder.toString();
+        }
+
+        return info;
+    }
+
+    @Nonnull
+    @Override
+    public String getCopyInfo() {
+        return getInfo();
+    }
 }
