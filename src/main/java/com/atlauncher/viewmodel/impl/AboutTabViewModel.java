@@ -44,7 +44,6 @@ public class AboutTabViewModel implements IAboutTabViewModel {
         "Asyncronous",
         "PORTB",
         "JakeJMattson",
-        "Doomsdayrs",
         "Jamie (Lexteam)",
         "Ryan",
         "s0cks",

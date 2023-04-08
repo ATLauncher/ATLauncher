@@ -18,7 +18,6 @@
 package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -28,12 +27,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.IAboutTabViewModel;
@@ -122,19 +123,28 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         {
             // Create list
             JPanel authorsList = new JPanel();
-            authorsList.setLayout(new GridLayout(20, 3));
+            authorsList.setLayout(new BoxLayout(authorsList, BoxLayout.Y_AXIS));
 
             // Populate list
             for (String author : viewModel.getAuthors()) {
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
+                BackgroundImageLabel icon = new BackgroundImageLabel("https://avatars.githubusercontent.com/" + author, 64, 64);
+                panel.add(icon);
+
                 JTextPane pane = new JTextPane();
                 pane.setEditable(false);
                 pane.setText(author);
-                authorsList.add(pane);
+                panel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
+                panel.add(pane);
+                authorsList.add(panel);
             }
 
             // Create scroll panel
             authors = new JScrollPane(authorsList);
-            authors.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            authors.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            SwingUtilities.invokeLater(() -> authors.getVerticalScrollBar().setValue(0));
 
             // Add to layout
             {
