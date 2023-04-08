@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.36.5
 
 ### New Features
+- Add AboutTab [#568]
 
 - Add the option to join a minecraft server, world, and realm when launching an instance [#748]
 
