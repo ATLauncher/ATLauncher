@@ -18,6 +18,8 @@
 package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import org.mini2Dx.gettext.GetText;
@@ -123,20 +126,22 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         {
             // Create list
             JPanel authorsList = new JPanel();
-            authorsList.setLayout(new BoxLayout(authorsList, BoxLayout.Y_AXIS));
+            authorsList.setLayout(new GridLayout(0,4));
 
             // Populate list
             for (String author : viewModel.getAuthors()) {
                 JPanel panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                panel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
 
                 BackgroundImageLabel icon = new BackgroundImageLabel("https://avatars.githubusercontent.com/" + author, 64, 64);
+                icon.setAlignmentX(Component.CENTER_ALIGNMENT);
                 panel.add(icon);
 
-                JTextPane pane = new JTextPane();
-                pane.setEditable(false);
+                JLabel pane = new JLabel();
                 pane.setText(author);
-                panel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
+                pane.setHorizontalAlignment(SwingConstants.CENTER);
+                pane.setAlignmentX(Component.CENTER_ALIGNMENT);
                 panel.add(pane);
                 authorsList.add(panel);
             }
