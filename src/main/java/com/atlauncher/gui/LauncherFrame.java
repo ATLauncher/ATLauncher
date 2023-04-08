@@ -58,28 +58,25 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.utils.Utils;
+import javafx.embed.swing.SwingNode;
 
 @SuppressWarnings("serial")
-public final class LauncherFrame extends JFrame implements RelocalizationListener {
+public final class LauncherFrame extends JPanel implements RelocalizationListener {
     public JTabbedPane tabbedPane;
 
     private Map<Integer, Tab> tabs = new HashMap<>();
 
-    public LauncherFrame(boolean show) {
+    public LauncherFrame(final SwingNode swingNode, boolean show) {
         LogManager.info("Launcher opening");
         LogManager.info("Made By Bob*");
         LogManager.info("*(Not Actually)");
 
-        App.launcher.setParentFrame(this);
-        setTitle(Constants.LAUNCHER_NAME);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setResizable(true);
+//        App.launcher.setParentFrame(this);
+//        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        setIconImage(Utils.getImage("/assets/image/icon.png"));
 
         setMinimumSize(new Dimension(1200, 700));
-        setLocationRelativeTo(null);
+  //      setLocationRelativeTo(null);
 
         try {
             if (App.settings.rememberWindowSizePosition && App.settings.launcherSize != null) {
@@ -106,19 +103,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         if (show) {
             LogManager.info("Showing Launcher");
-            setVisible(true);
-
-            addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent windowEvent) {
-                    try {
-                        if (SystemTray.isSupported()) {
-                            SystemTray.getSystemTray().remove(App.trayIcon);
-                        }
-                    } catch (Exception ignored) {
-                    }
-                }
-            });
+            swingNode.setContent(this);
         }
 
         RelocalizationManager.addListener(this);

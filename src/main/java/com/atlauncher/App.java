@@ -86,6 +86,11 @@ import com.formdev.flatlaf.extras.FlatInspector;
 import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 
 import io.github.asyncronous.toast.Toaster;
+import javafx.application.Application;
+import javafx.embed.swing.SwingNode;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.arikia.dev.drpc.DiscordEventHandlers;
@@ -101,7 +106,7 @@ import oshi.software.os.OperatingSystem;
  * Main entry point for the application, Java runs the main method here when the
  * application is launched.
  */
-public class App {
+public class App extends Application {
     public static String[] PASSED_ARGS;
 
     /**
@@ -411,12 +416,50 @@ public class App {
             }
         }
 
-        // Open the Launcher
-        final boolean openLauncher = open;
-        SwingUtilities.invokeLater(() -> {
-            launcherFrame = new LauncherFrame(openLauncher);
-            ss.close();
+        SwingUtilities.invokeLater(ss::close);
+        try {
+            openLauncher = open;
+            launch();
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static boolean openLauncher;
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle(Constants.LAUNCHER_NAME);
+        primaryStage.setResizable(true);
+        primaryStage.getIcons().add(new javafx.scene.image.Image(Utils.getImageStream("/assets/image/icon.png")));
+        primaryStage.iconifiedProperty().addListener((ov,t,t1)->{
+            try {
+                if (SystemTray.isSupported()) {
+                    SystemTray.getSystemTray().remove(App.trayIcon);
+                }
+            } catch (Exception ignored) {
+            }
         });
+
+        // Replaces EXIT_ON_CLOSE
+        primaryStage.setOnCloseRequest(event -> {
+            event.consume();
+            System.exit(0);
+        });
+
+        final int minHeight = 730;
+        final int minWidth = 1200;
+
+        primaryStage.setMinHeight(minHeight);
+        primaryStage.setMinWidth(minWidth);
+
+        final SwingNode swingNode = new SwingNode();
+        // Open the Launcher
+        SwingUtilities.invokeLater(() -> launcherFrame = new LauncherFrame(swingNode, openLauncher));
+
+        StackPane pane = new StackPane();
+        pane.getChildren().add(swingNode);
+        primaryStage.setScene(new Scene(pane,minWidth,minHeight));
+        primaryStage.show();
     }
 
     private static void checkIfNeedToUpdateBundledJre() {

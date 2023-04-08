@@ -82,6 +82,7 @@ public class Launcher {
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
 
     // UI things
+    @Deprecated
     private JFrame parent; // Parent JFrame of the actual Launcher
     private NewsTab newsPanel; // The news panel
     private PacksBrowserTab packsBrowserPanel; // The packs browser panel
@@ -361,7 +362,7 @@ public class Launcher {
     }
 
     public void reloadLauncherData() {
-        final JDialog dialog = new JDialog(this.parent, ModalityType.DOCUMENT_MODAL);
+        final JDialog dialog = new JDialog();
         dialog.setSize(300, 100);
         dialog.setTitle("Updating Launcher");
         dialog.setLocationRelativeTo(App.launcher.getParent());
@@ -431,6 +432,7 @@ public class Launcher {
      *
      * @param parent The Launcher main JFrame
      */
+    @Deprecated
     public void setParentFrame(JFrame parent) {
         this.parent = parent;
     }

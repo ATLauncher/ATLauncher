@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.35.5
 
 ### New Features
+- Basic migration to JavaFX application
 
 ### Fixes
 
