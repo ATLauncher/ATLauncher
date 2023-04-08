@@ -17,21 +17,30 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * 13 / 06 / 2022
+ * <p>
+ * View model for the about tab.
  */
 public interface IAboutTabViewModel {
+
     /**
-     * @return List of authors
+     * @return Array of authors
      */
-    @NotNull
+    @Nonnull
     String[] getAuthors();
 
     /**
      * @return Info about the launcher and its environment
      */
-    @NotNull
+    @Nonnull
     String getInfo();
+
+    /**
+     * @return Info to be copied to users clipboard
+     */
+    @Nonnull
+    String getCopyInfo();
 }

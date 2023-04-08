@@ -17,16 +17,27 @@
  */
 package com.atlauncher.gui.tabs;
 
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.viewmodel.impl.AboutTabViewModel;
-import com.atlauncher.viewmodel.base.IAboutTabViewModel;
-import com.atlauncher.utils.OS;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextPane;
 
 import org.mini2Dx.gettext.GetText;
 
-import javax.swing.*;
-import java.awt.*;
+import com.atlauncher.constants.Constants;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.themes.ATLauncherLaf;
+import com.atlauncher.utils.OS;
+import com.atlauncher.viewmodel.base.IAboutTabViewModel;
+import com.atlauncher.viewmodel.impl.AboutTabViewModel;
 
 /**
  * 14 / 04 / 2022
@@ -39,6 +50,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
     /**
      * Info of the current instance of ATLauncher
      */
+    private final JLabel infoTitle;
     private final JPanel info;
 
     /**
@@ -51,6 +63,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
      */
     private final JButton copyButton;
 
+    private final JLabel authorsLabel;
     private final JScrollPane authors;
 
     private IAboutTabViewModel viewModel;
@@ -58,18 +71,35 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
     public AboutTab() {
         viewModel = new AboutTabViewModel();
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
         // Top info panel
         {
             info = new JPanel();
             info.setLayout(new BorderLayout());
 
+            // Add header
+            {
+                JPanel infoPanel = new JPanel();
+                infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+
+                infoTitle = new JLabel();
+                infoTitle.setText(Constants.LAUNCHER_NAME);
+                infoTitle.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                infoTitle.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                infoPanel.add(infoTitle);
+
+                infoPanel.add(new JSeparator());
+
+                info.add(infoPanel, BorderLayout.PAGE_START);
+            }
+
             // Add text info
             {
                 textInfo = new JTextPane();
                 textInfo.setText(viewModel.getInfo());
                 textInfo.setEditable(false);
-                info.add(textInfo, BorderLayout.WEST);
+                info.add(textInfo, BorderLayout.LINE_START);
             }
 
             // Add copy button
@@ -77,9 +107,9 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 copyButton = new JButton();
                 copyButton.setText(GetText.tr("Copy"));
                 copyButton.addActionListener(e -> {
-                    OS.copyToClipboard(viewModel.getInfo());
+                    OS.copyToClipboard(viewModel.getCopyInfo());
                 });
-                info.add(copyButton, BorderLayout.EAST);
+                info.add(copyButton, BorderLayout.LINE_END);
             }
 
             // Add to layout
@@ -89,11 +119,10 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         }
 
         // Contributors panel
-        // TODO Add label "Authors" or something
         {
             // Create list
             JPanel authorsList = new JPanel();
-            authorsList.setLayout(new FlowLayout());
+            authorsList.setLayout(new GridLayout(20, 3));
 
             // Populate list
             for (String author : viewModel.getAuthors()) {
@@ -111,7 +140,20 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BorderLayout());
-                panel.add(authors, BorderLayout.NORTH);
+                panel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
+
+                JPanel authorsLabelPanel = new JPanel();
+                authorsLabelPanel.setLayout(new BoxLayout(authorsLabelPanel, BoxLayout.Y_AXIS));
+
+                authorsLabel = new JLabel();
+                authorsLabel.setText("Authors:");
+                authorsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                authorsLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                authorsLabelPanel.add(authorsLabel);
+                authorsLabelPanel.add(new JSeparator());
+
+                panel.add(authorsLabelPanel, BorderLayout.NORTH);
+                panel.add(authors, BorderLayout.CENTER);
                 this.add(panel, BorderLayout.CENTER);
             }
         }
