@@ -118,7 +118,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
             // Add to layout
             {
-                this.add(info, BorderLayout.NORTH);
+                this.add(info, BorderLayout.PAGE_START);
             }
         }
 
@@ -126,13 +126,13 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         {
             // Create list
             JPanel authorsList = new JPanel();
-            authorsList.setLayout(new GridLayout(0,4));
+            authorsList.setLayout(new GridLayout(0, 4));
 
             // Populate list
             for (String author : viewModel.getAuthors()) {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                panel.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
+                panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
                 BackgroundImageLabel icon = new BackgroundImageLabel("https://avatars.githubusercontent.com/" + author, 64, 64);
                 icon.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -167,10 +167,27 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 authorsLabelPanel.add(authorsLabel);
                 authorsLabelPanel.add(new JSeparator());
 
-                panel.add(authorsLabelPanel, BorderLayout.NORTH);
+                panel.add(authorsLabelPanel, BorderLayout.PAGE_START);
                 panel.add(authors, BorderLayout.CENTER);
                 this.add(panel, BorderLayout.CENTER);
             }
+        }
+
+        // Acknowledgements
+        {
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+            panel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
+
+            BackgroundImageLabel gpl = new BackgroundImageLabel("https://www.gnu.org/graphics/gplv3-88x31.png", 88, 33);
+            gpl.setToolTipText("GPLv3");
+            panel.add(gpl);
+
+            BackgroundImageLabel nodecraft = new BackgroundImageLabel("https://nodecraft.com/assets/images/community/banner/ncsupportlogo.jpg",32,32);
+            nodecraft.setToolTipText("Nodecraft");
+            panel.add(nodecraft);
+
+            add(panel, BorderLayout.PAGE_END);
         }
 
         RelocalizationManager.addListener(this);
