@@ -369,11 +369,11 @@ public class App {
             String dialogTitle;
             String dialogText;
             if (Files.exists(FileSystem.JRE) && Java.getLauncherJavaVersionNumber() < 17) {
-                dialogTitle = GetText.tr("Using Out Of Data Java");
+                dialogTitle = GetText.tr("Using Out Of Date Java");
                 dialogText = GetText.tr(
                         "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
             } else if (Java.getLauncherJavaVersionNumber() < 17) {
-                dialogTitle = GetText.tr("Using Out Of Data Java");
+                dialogTitle = GetText.tr("Using Out Of Date Java");
                 dialogText = GetText.tr(
                         "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
             } else {
