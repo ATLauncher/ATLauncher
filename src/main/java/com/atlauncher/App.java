@@ -68,6 +68,7 @@ import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.SetupDialog;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
@@ -363,90 +364,7 @@ public class App {
             }
         }
 
-        if (OS.isWindows() && OS.usingExe() && settings.seenBundledJrePromptVersion < 1
-                && ((Files.exists(FileSystem.JRE) && Java.getLauncherJavaVersionNumber() < 17)
-                        || Java.getLauncherJavaVersionNumber() < 17 || !Files.exists(FileSystem.JRE))) {
-            String dialogTitle;
-            String dialogText;
-            if (Files.exists(FileSystem.JRE) && Java.getLauncherJavaVersionNumber() < 17) {
-                dialogTitle = GetText.tr("Using Out Of Date Java");
-                dialogText = GetText.tr(
-                        "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
-            } else if (Java.getLauncherJavaVersionNumber() < 17) {
-                dialogTitle = GetText.tr("Using Out Of Date Java");
-                dialogText = GetText.tr(
-                        "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
-            } else {
-                dialogTitle = GetText.tr("Let Launcher Manage Java");
-                dialogText = GetText.tr(
-                        "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?");
-            }
-
-            int ret = DialogManager
-                    .yesNoDialog().setTitle(dialogTitle).setContent(new HTMLBuilder()
-                            .center().text(dialogText)
-                            .build())
-                    .setType(DialogManager.WARNING).show();
-
-            // mark as seeing this version of the prompt to avoid repetition (for now)
-            App.settings.seenBundledJrePromptVersion = 1;
-            App.settings.save();
-
-            if (ret == 0) {
-                Path newJreBundlePath = FileSystem.TEMP.resolve("updatedbundledjre");
-
-                ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(
-                        GetText.tr("Downloading Java Update"), 1,
-                        GetText.tr("Downloading Java Update"));
-                progressDialog.addThread(new Thread(() -> {
-                    Download jreDownload = new Download()
-                            .withHttpClient(Network.createProgressClient(progressDialog))
-                            .downloadTo(FileSystem.TEMP.resolve("updatedbundledjre.zip"))
-                            .unzipTo(newJreBundlePath).deleteAfterExtract();
-                    if (OS.is64Bit()) {
-                        jreDownload.setUrl(
-                                "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip")
-                                .hash("d77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97")
-                                .size(43147881);
-                        progressDialog.setTotalBytes(43147881);
-                    } else {
-                        jreDownload.setUrl(
-                                "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip")
-                                .hash("e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221")
-                                .size(38080441);
-                        progressDialog.setTotalBytes(38080441);
-                    }
-
-                    try {
-                        jreDownload.downloadFile();
-                    } catch (IOException e) {
-                        LogManager.logStackTrace("Failed to download updated bundled JRE", e);
-                        progressDialog.setReturnValue(false);
-                        progressDialog.close();
-                        return;
-                    }
-
-                    progressDialog.setReturnValue(true);
-                    progressDialog.doneTask();
-                    progressDialog.close();
-                }));
-                progressDialog.start();
-
-                if (progressDialog.getReturnValue()) {
-                    OS.restartToUpdateBundledJre(newJreBundlePath.resolve("jdk-17.0.3+7-jre"));
-                    System.exit(0);
-                } else {
-                    DialogManager
-                            .okDialog().setTitle(GetText.tr("Failed To Update Bundled JRE"))
-                            .setContent(new HTMLBuilder()
-                                    .center().split(100).text(
-                                            GetText.tr(
-                                                    "There was an issue updating the bundled JRE. Please try again later and if the issue persists, please contact ATLauncher support via Discord."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
-                }
-            }
-        }
+        checkIfNeedToUpdateBundledJre();
 
         boolean open = true;
 
@@ -485,6 +403,87 @@ public class App {
             new LauncherFrame(openLauncher);
             ss.close();
         });
+    }
+
+    private static void checkIfNeedToUpdateBundledJre() {
+        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false) == true
+                && Java.shouldPromptToUpdateBundledJre()) {
+            String dialogTitle;
+            String dialogText;
+            if (Files.exists(FileSystem.JRE) && Java.getLauncherJavaVersionNumber() < 17) {
+                dialogTitle = GetText.tr("Using Out Of Date Java");
+                dialogText = GetText.tr(
+                        "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
+            } else if (Java.getLauncherJavaVersionNumber() < 17) {
+                dialogTitle = GetText.tr("Using Out Of Date Java");
+                dialogText = GetText.tr(
+                        "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
+            } else {
+                dialogTitle = GetText.tr("Let Launcher Manage Java");
+                dialogText = GetText.tr(
+                        "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?");
+            }
+
+            int ret = DialogManager
+                    .yesNoDialog().setTitle(dialogTitle).setContent(new HTMLBuilder()
+                            .center().text(dialogText)
+                            .build())
+                    .setType(DialogManager.WARNING).show();
+
+            // mark as seeing this version of the prompt to avoid repetition (for now)
+            App.settings.seenBundledJrePromptVersion = 1;
+            App.settings.save();
+
+            if (ret == 0) {
+                Path newJreBundlePath = FileSystem.TEMP.resolve("updatedbundledjre");
+
+                ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(
+                        GetText.tr("Downloading Java Update"), 1,
+                        GetText.tr("Downloading Java Update"));
+                progressDialog.addThread(new Thread(() -> {
+                    String bundledJreConfigNamespace = OS.is64Bit() ? "bundledJre.windowsx64" : "bundledJre.windowsx86";
+
+                    Download jreDownload = new Download()
+                            .withHttpClient(Network.createProgressClient(progressDialog))
+                            .setUrl(
+                                    ConfigManager.getConfigItem(bundledJreConfigNamespace + ".url", ""))
+                            .hash(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".hash", ""))
+                            .size(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0))
+                            .downloadTo(FileSystem.TEMP.resolve("updatedbundledjre.zip"))
+                            .unzipTo(newJreBundlePath).deleteAfterExtract();
+
+                    progressDialog.setTotalBytes(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0));
+
+                    try {
+                        jreDownload.downloadFile();
+                    } catch (IOException e) {
+                        LogManager.logStackTrace("Failed to download updated bundled JRE", e);
+                        progressDialog.setReturnValue(false);
+                        progressDialog.close();
+                        return;
+                    }
+
+                    progressDialog.setReturnValue(true);
+                    progressDialog.doneTask();
+                    progressDialog.close();
+                }));
+                progressDialog.start();
+
+                if (progressDialog.getReturnValue()) {
+                    OS.restartToUpdateBundledJre(newJreBundlePath.resolve("jdk-17.0.3+7-jre"));
+                    System.exit(0);
+                } else {
+                    DialogManager
+                            .okDialog().setTitle(GetText.tr("Failed To Update Bundled JRE"))
+                            .setContent(new HTMLBuilder()
+                                    .center().split(100).text(
+                                            GetText.tr(
+                                                    "There was an issue updating the bundled JRE. Please try again later and if the issue persists, please contact ATLauncher support via Discord."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                }
+            }
+        }
     }
 
     public static void ensureDiscordIsInitialized() {

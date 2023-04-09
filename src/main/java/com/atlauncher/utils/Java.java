@@ -39,6 +39,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -317,5 +318,12 @@ public class Java {
                 + "pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl\n"
                 + "MrY=\n"
                 + "-----END CERTIFICATE-----"));
+    }
+
+    public static boolean shouldPromptToUpdateBundledJre() {
+        return OS.isWindows() && OS.usingExe()
+                && settings.seenBundledJrePromptVersion < 1
+                && ((Files.exists(FileSystem.JRE) && Java.getLauncherJavaVersionNumber() < 17)
+                        || Java.getLauncherJavaVersionNumber() < 17 || !Files.exists(FileSystem.JRE));
     }
 }
