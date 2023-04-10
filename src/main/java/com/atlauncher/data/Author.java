@@ -15,36 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.viewmodel.base;
-
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import com.atlauncher.data.Author;
+package com.atlauncher.data;
 
 /**
- * 13 / 06 / 2022
- * <p>
- * View model for the about tab.
+ * Represents an author in AboutTab.
  */
-public interface IAboutTabViewModel {
+public class Author {
+    /**
+     * Name of the author.
+     */
+    public final String name;
 
     /**
-     * @return List of authors
+     * URL to the profile picture of the author.
      */
-    @Nonnull
-    List<Author> getAuthors();
+    public final String imageURL;
 
     /**
-     * @return Info about the launcher and its environment
+     * @param name     of the author
+     * @param imageURL of the authors profile picture
      */
-    @Nonnull
-    String getInfo();
-
-    /**
-     * @return Info to be copied to users clipboard
-     */
-    @Nonnull
-    String getCopyInfo();
+    public Author(String name, String imageURL) {
+        this.name = name;
+        this.imageURL = imageURL;
+    }
 }
