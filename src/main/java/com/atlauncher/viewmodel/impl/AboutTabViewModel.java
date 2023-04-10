@@ -17,11 +17,14 @@
  */
 package com.atlauncher.viewmodel.impl;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.Nonnull;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.Author;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.IAboutTabViewModel;
@@ -84,8 +87,12 @@ public class AboutTabViewModel implements IAboutTabViewModel {
 
     @Nonnull
     @Override
-    public String[] getAuthors() {
-        return AUTHORS_ARRAY;
+    public List<Author> getAuthors() {
+        // Since the source is git, we can just map it
+        return Arrays
+            .stream(AUTHORS_ARRAY)
+            .map(author -> new Author(author, "https://avatars.githubusercontent.com/" + author))
+            .collect(Collectors.toList());
     }
 
     /**
