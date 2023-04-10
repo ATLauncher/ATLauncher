@@ -410,11 +410,12 @@ public class App {
                 && Java.shouldPromptToUpdateBundledJre()) {
             String dialogTitle;
             String dialogText;
-            if (Files.exists(FileSystem.JRE) && Java.getLauncherJavaVersionNumber() < 17) {
+            if (Files.exists(FileSystem.JRE) && Java.bundledJreOutOfDate()) {
                 dialogTitle = GetText.tr("Using Out Of Date Java");
                 dialogText = GetText.tr(
                         "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
-            } else if (Java.getLauncherJavaVersionNumber() < 17) {
+            } else if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion",
+                    17).intValue()) {
                 dialogTitle = GetText.tr("Using Out Of Date Java");
                 dialogText = GetText.tr(
                         "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
