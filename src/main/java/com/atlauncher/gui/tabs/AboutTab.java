@@ -74,8 +74,9 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
     public AboutTab() {
         viewModel = new AboutTabViewModel();
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Top info panel
         {
@@ -117,9 +118,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             }
 
             // Add to layout
-            {
-                this.add(info, BorderLayout.PAGE_START);
-            }
+                this.add(info);
         }
 
         // Contributors panel
@@ -169,7 +168,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
                 panel.add(authorsLabelPanel, BorderLayout.PAGE_START);
                 panel.add(authors, BorderLayout.CENTER);
-                this.add(panel, BorderLayout.CENTER);
+                add(panel);
             }
         }
 
@@ -179,7 +178,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
             panel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
 
-            BackgroundImageLabel gpl = new BackgroundImageLabel("https://www.gnu.org/graphics/gplv3-88x31.png", 88, 33);
+            BackgroundImageLabel gpl = new BackgroundImageLabel("https://www.gnu.org/graphics/gplv3-88x31.png", 88, 31);
             gpl.setToolTipText("GPLv3");
             panel.add(gpl);
 
@@ -187,7 +186,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             nodecraft.setToolTipText("Nodecraft");
             panel.add(nodecraft);
 
-            add(panel, BorderLayout.PAGE_END);
+            add(panel);
         }
 
         RelocalizationManager.addListener(this);
