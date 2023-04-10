@@ -29,7 +29,7 @@ public class CurseForgeFileDependency {
     public int relationType;
 
     public boolean isRequired() {
-        return this.relationType == 1 || this.relationType == 3;
+        return this.relationType == 3;
     }
 
     public boolean isOptional() {

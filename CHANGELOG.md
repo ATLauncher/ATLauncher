@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add dialog to prompt exe users to download bundled JRE or update it if out of date [#601]
 
 ### Fixes
+- Embedded relationship mods showing as required by the launcher
 
 ### Misc
