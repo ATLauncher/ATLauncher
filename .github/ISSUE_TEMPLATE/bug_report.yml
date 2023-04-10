@@ -52,8 +52,7 @@ body:
       description: GitHub issues is not the place for issues with your game or for issues with the launcher (such as failing to install or download mods/modpacks). For those please visit [our Discord](https://atl.pw/discord).
       options:
         - label: I am sure this is a bug with the launcher and not an issue with running Minecraft
-    validations:
-      required: true
+          required: true
 
   - type: checkboxes
     id: terms
