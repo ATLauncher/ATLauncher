@@ -1,0 +1,51 @@
+name: Feature Request
+description: File a bug report
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to create this feature request!
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The Problem
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: The Solution
+      description: Describe the solution you'd like.
+      placeholder: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional Information
+      description: Any additional information including images or video can be left here.
+
+  - type: checkboxes
+    id: already-exists-check
+    attributes:
+      label: Have you checked this issue doesn't already exist?
+      description: Please make sure you've checked the issues already in this repository to see if this feature request (or something similar) already exists, if so, comment on the existing issue instead.
+      options:
+        - label: I am sure this issue doesn't exist already
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](../blob/master/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
