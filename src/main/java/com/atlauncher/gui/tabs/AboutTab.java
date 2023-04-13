@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -62,7 +63,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
      */
     private final JButton copyButton;
 
-    private final JLabel contributorLabel, acknowledgementsLabel, librariesLabel;
+    private final JLabel contributorLabel, acknowledgementsLabel, librariesLabel, licenseLabel;
 
     private final IAboutTabViewModel viewModel;
 
@@ -175,7 +176,6 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 JPanel acknowledgementsContent = new JPanel();
                 JScrollPane acknowledgementsScrollPane = new JScrollPane(acknowledgementsContent);
                 acknowledgementsContent.setLayout(new BoxLayout(acknowledgementsContent, BoxLayout.PAGE_AXIS));
-                acknowledgementsContent.setAlignmentX(Component.LEFT_ALIGNMENT);
 
                 // Libraries
                 {
@@ -204,6 +204,32 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 // Image sources
                 {
 
+                }
+
+                // License
+                {
+                    licenseLabel = new JLabel();
+                    licenseLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                    acknowledgementsContent.add(licenseLabel);
+                    acknowledgementsContent.add(new JSeparator());
+                    JTextField license = new JTextField();
+                    license.setEditable(false);
+                    license.setText("ATLauncher - https://github.com/ATLauncher/ATLauncher\n" +
+                        "Copyright (C) 2013-2023 ATLauncher\n" +
+                        "\n" +
+                        "This program is free software: you can redistribute it and/or modify\n" +
+                        "it under the terms of the GNU General Public License as published by\n" +
+                        "the Free Software Foundation, either version 3 of the License, or\n" +
+                        "(at your option) any later version.\n" +
+                        "\n" +
+                        "This program is distributed in the hope that it will be useful,\n" +
+                        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+                        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n" +
+                        "GNU General Public License for more details.\n" +
+                        "\n" +
+                        "You should have received a copy of the GNU General Public License\n" +
+                        "along with this program. If not, see <http://www.gnu.org/licenses/>.\n");
+                    acknowledgementsContent.add(license);
                 }
 
                 add(acknowledgementsScrollPane);
@@ -237,6 +263,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         copyButton.setText(GetText.tr("Copy"));
         contributorLabel.setText(GetText.tr("Contributors:"));
         librariesLabel.setText(GetText.tr("Libraries:"));
+        licenseLabel.setText(GetText.tr("License:"));
     }
 
     @Override
