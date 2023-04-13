@@ -1208,6 +1208,9 @@ public class Instance extends MinecraftVersion {
                     App.console.setVisible(false); // Hide the console to pretend we've closed
                 }
 
+                this.addPlayTime(end - start);
+                this.save();
+
                 if (exitValue != 0) {
                     LogManager.error(
                             "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
@@ -1252,6 +1255,7 @@ public class Instance extends MinecraftVersion {
                         });
                     }
                 }
+
                 if (App.settings.enableAutomaticBackupAfterLaunch) {
                     backup();
                 }
@@ -1286,6 +1290,10 @@ public class Instance extends MinecraftVersion {
 
         launcher.start();
         return true;
+    }
+
+    private void addPlayTime(long timePlayed) {
+        this.launcher.totalPlayTime = this.launcher.totalPlayTime.plusMillis(timePlayed);
     }
 
     private boolean executeCommand(String command) {

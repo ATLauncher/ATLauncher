@@ -19,6 +19,9 @@ package com.atlauncher.managers;
 
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -77,11 +80,12 @@ public class InstanceManager {
         for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
                 .orElse(new String[0])) {
             File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
+            File instanceJsonFile = new File(instanceDir, "instance.json");
 
             Instance instance = null;
 
             try {
-                try (FileReader fileReader = new FileReader(new File(instanceDir, "instance.json"))) {
+                try (FileReader fileReader = new FileReader(instanceJsonFile)) {
                     instance = Gsons.MINECRAFT.fromJson(fileReader, Instance.class);
                     instance.ROOT = instanceDir.toPath();
                     LogManager.debug("Loaded instance from " + instanceDir);
@@ -115,6 +119,16 @@ public class InstanceManager {
                             instance.launcher.name));
                     instance.launcher.numPlays = instance.numPlays;
                     instance.launcher.lastPlayed = instance.lastPlayed;
+
+                    instance.save();
+                }
+
+                if (instance.launcher.createdAt == Instant.EPOCH) {
+                    LogManager.info(String.format("Filling in instance \"%s\" createdAt field",
+                            instance.launcher.name));
+                    BasicFileAttributes attrs = Files.readAttributes(instanceJsonFile.toPath(),
+                            BasicFileAttributes.class);
+                    instance.launcher.createdAt = attrs.creationTime().toInstant();
 
                     instance.save();
                 }
@@ -228,6 +242,9 @@ public class InstanceManager {
             LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.launcher.name = clonedName;
+            clonedInstance.launcher.createdAt = Instant.now();
+            clonedInstance.launcher.updatedAt = Instant.EPOCH;
+            clonedInstance.launcher.lastPlayed = Instant.EPOCH;
             clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());
             FileUtils.createDirectory(clonedInstance.getRoot());
             Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());

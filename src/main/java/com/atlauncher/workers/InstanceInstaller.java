@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -2290,6 +2292,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 instanceLauncher.hash = this.version.hash;
             }
         }
+
+        instanceLauncher.createdAt = Instant.now();
+        instanceLauncher.totalPlayTime = Duration.ZERO;
+        instanceLauncher.updatedAt = Instant.EPOCH;
+        instanceLauncher.lastPlayed = Instant.EPOCH;
 
         instance.launcher = instanceLauncher;
 
