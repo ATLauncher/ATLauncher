@@ -17,9 +17,11 @@
  */
 package com.atlauncher.gui.tabs;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -36,9 +38,11 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Author;
+import com.atlauncher.data.LauncherLibrary;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BackgroundImageLabel;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.IAboutTabViewModel;
@@ -52,128 +56,161 @@ import com.atlauncher.viewmodel.impl.AboutTabViewModel;
  * to let users more easily report errors.
  */
 public class AboutTab extends JPanel implements Tab, RelocalizationListener {
-    /**
-     * Info of the current instance of ATLauncher
-     */
-    private final JLabel infoTitle;
-    private final JPanel info;
-
-    /**
-     * Contained in [info], Displays to user various information on ATLauncher
-     */
-    private final JTextPane textInfo;
 
     /**
      * Copies [textInfo] to the users clipboard
      */
     private final JButton copyButton;
 
-    private final JLabel authorsLabel;
-    private final JScrollPane authors;
+    private final JLabel contributorLabel, acknowledgementsLabel, librariesLabel;
 
-    private IAboutTabViewModel viewModel;
+    private final IAboutTabViewModel viewModel;
 
     public AboutTab() {
         viewModel = new AboutTabViewModel();
-        setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
-        setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Top info panel
         {
-            info = new JPanel();
-            info.setLayout(new BorderLayout());
-
             // Add header
             {
-                JPanel infoPanel = new JPanel();
-                infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+                /**
+                 * Info of the current instance of ATLauncher
+                 */
+                JLabel infoLabel = new JLabel();
+                infoLabel.setText(Constants.LAUNCHER_NAME);
+                infoLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                infoLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                add(infoLabel);
 
-                infoTitle = new JLabel();
-                infoTitle.setText(Constants.LAUNCHER_NAME);
-                infoTitle.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                infoTitle.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-                infoPanel.add(infoTitle);
-
-                infoPanel.add(new JSeparator());
-
-                info.add(infoPanel, BorderLayout.PAGE_START);
+                add(new JSeparator());
             }
+
+            JPanel info = new JPanel();
+            info.setLayout(new BoxLayout(info, BoxLayout.LINE_AXIS));
+            info.setAlignmentY(Component.TOP_ALIGNMENT);
+            info.setMaximumSize(new Dimension(Integer.MAX_VALUE, 128));
 
             // Add text info
             {
-                textInfo = new JTextPane();
+                /**
+                 * Contained in [info], Displays to user various information on ATLauncher
+                 */
+                JTextPane textInfo = new JTextPane();
                 textInfo.setText(viewModel.getInfo());
                 textInfo.setEditable(false);
-                info.add(textInfo, BorderLayout.LINE_START);
+                info.add(textInfo);
             }
 
             // Add copy button
             {
                 copyButton = new JButton();
-                copyButton.setText(GetText.tr("Copy"));
                 copyButton.addActionListener(e -> {
                     OS.copyToClipboard(viewModel.getCopyInfo());
                 });
-                info.add(copyButton, BorderLayout.LINE_END);
+                info.add(copyButton);
             }
 
             // Add to layout
-                this.add(info);
+            add(info);
         }
 
         // Contributors panel
         {
-            // Create list
-            JPanel authorsList = new JPanel();
-            authorsList.setLayout(new GridLayout(0, 4));
-
-            // Populate list
-            for (Author author : viewModel.getAuthors()) {
-                JPanel panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-
-                BackgroundImageLabel icon = new BackgroundImageLabel(author.imageURL, 64, 64);
-                icon.setAlignmentX(Component.CENTER_ALIGNMENT);
-                panel.add(icon);
-
-                JLabel pane = new JLabel();
-                pane.setText(author.name);
-                pane.setHorizontalAlignment(SwingConstants.CENTER);
-                pane.setAlignmentX(Component.CENTER_ALIGNMENT);
-                panel.add(pane);
-                authorsList.add(panel);
-            }
-
-            // Create scroll panel
-            authors = new JScrollPane(authorsList);
-            authors.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-            SwingUtilities.invokeLater(() -> authors.getVerticalScrollBar().setValue(0));
-
-            // Add to layout
+            // Header
             {
-                JPanel panel = new JPanel();
-                panel.setLayout(new BorderLayout());
-                panel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
+                contributorLabel = new JLabel();
+                contributorLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                contributorLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                add(contributorLabel);
+                add(new JSeparator());
+            }
+            // Content
+            {
+                // Create list
+                JPanel authorsList = new JPanel();
+                authorsList.setLayout(new GridLayout(2, 0));
 
-                JPanel authorsLabelPanel = new JPanel();
-                authorsLabelPanel.setLayout(new BoxLayout(authorsLabelPanel, BoxLayout.Y_AXIS));
+                // Populate list
+                for (Author author : viewModel.getAuthors()) {
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                    panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-                authorsLabel = new JLabel();
-                authorsLabel.setText("Authors:");
-                authorsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                authorsLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-                authorsLabelPanel.add(authorsLabel);
-                authorsLabelPanel.add(new JSeparator());
+                    BackgroundImageLabel icon = new BackgroundImageLabel(author.imageURL, 64, 64);
+                    icon.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    panel.add(icon);
 
-                panel.add(authorsLabelPanel, BorderLayout.PAGE_START);
-                panel.add(authors, BorderLayout.CENTER);
-                add(panel);
+                    JLabel pane = new JLabel();
+                    pane.setText(author.name);
+                    pane.setHorizontalAlignment(SwingConstants.CENTER);
+                    pane.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    panel.add(pane);
+                    authorsList.add(panel);
+                }
+
+                // Create scroll panel
+                JScrollPane contributorsScrollPane = new JScrollPane(authorsList);
+                contributorsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                SwingUtilities.invokeLater(() -> contributorsScrollPane.getHorizontalScrollBar().setValue(0));
+                add(contributorsScrollPane);
             }
         }
 
         // Acknowledgements
+        {
+            // Label
+            {
+                acknowledgementsLabel = new JLabel();
+                acknowledgementsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                acknowledgementsLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                acknowledgementsLabel.setHorizontalAlignment(SwingConstants.LEADING);
+                add(acknowledgementsLabel);
+                add(new JSeparator());
+            }
+
+            // Content
+            {
+                JPanel acknowledgementsContent = new JPanel();
+                JScrollPane acknowledgementsScrollPane = new JScrollPane(acknowledgementsContent);
+                acknowledgementsContent.setLayout(new BoxLayout(acknowledgementsContent, BoxLayout.PAGE_AXIS));
+                acknowledgementsContent.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                // Libraries
+                {
+                    librariesLabel = new JLabel();
+                    librariesLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                    acknowledgementsContent.add(librariesLabel);
+                    acknowledgementsContent.add(new JSeparator());
+
+                    JPanel librariesPanel = new JPanel();
+                    librariesPanel.setLayout(new BoxLayout(librariesPanel, BoxLayout.PAGE_AXIS));
+                    for (LauncherLibrary library : viewModel.getLibraries()) {
+                        JButton button = new JButton();
+                        button.setText(library.name);
+                        button.addActionListener(event -> {
+                            try {
+                                Desktop.getDesktop().browse(library.link);
+                            } catch (IOException e) {
+                                LogManager.logStackTrace(e);
+                            }
+                        });
+                        librariesPanel.add(button);
+                    }
+                    acknowledgementsContent.add(librariesPanel);
+                }
+
+                // Image sources
+                {
+
+                }
+
+                add(acknowledgementsScrollPane);
+            }
+        }
+
+        // Stickers
         {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -183,7 +220,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
             gpl.setToolTipText("GPLv3");
             panel.add(gpl);
 
-            BackgroundImageLabel nodecraft = new BackgroundImageLabel("https://nodecraft.com/assets/images/community/banner/ncsupportlogo.jpg",32,32);
+            BackgroundImageLabel nodecraft = new BackgroundImageLabel("https://nodecraft.com/assets/images/community/banner/ncsupportlogo.jpg", 32, 32);
             nodecraft.setToolTipText("Nodecraft");
             panel.add(nodecraft);
 
@@ -191,11 +228,15 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
         }
 
         RelocalizationManager.addListener(this);
+        onRelocalization();
     }
 
     @Override
     public void onRelocalization() {
-        // TODO Request Ryan explain this to me
+        acknowledgementsLabel.setText(GetText.tr("Acknowledgements:"));
+        copyButton.setText(GetText.tr("Copy"));
+        contributorLabel.setText(GetText.tr("Contributors:"));
+        librariesLabel.setText(GetText.tr("Libraries:"));
     }
 
     @Override

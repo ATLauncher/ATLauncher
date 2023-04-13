@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.atlauncher.data.Author;
+import com.atlauncher.data.LauncherLibrary;
 
 /**
  * 13 / 06 / 2022
@@ -47,4 +48,7 @@ public interface IAboutTabViewModel {
      */
     @Nonnull
     String getCopyInfo();
+
+    @Nonnull
+    List<LauncherLibrary> getLibraries();
 }
