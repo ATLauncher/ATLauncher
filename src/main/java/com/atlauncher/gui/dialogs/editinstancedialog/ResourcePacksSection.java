@@ -44,11 +44,11 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.data.Instance;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
-public class ModsSection extends SectionPanel {
+public class ResourcePacksSection extends SectionPanel {
     private JTextField searchField = new JTextField(16);
     private TableModel tableModel;
 
-    public ModsSection(Instance instance) {
+    public ResourcePacksSection(Instance instance) {
         super(instance);
 
         setupComponents();
@@ -149,7 +149,7 @@ public class ModsSection extends SectionPanel {
         JToolBar sideBar = new JToolBar();
         sideBar.setOrientation(SwingConstants.VERTICAL);
         sideBar.addSeparator();
-        sideBar.add(new JButton(GetText.tr("Download Mods")));
+        sideBar.add(new JButton(GetText.tr("Download Resource Packs")));
         sideBar.add(new JButton(GetText.tr("Add File")));
         sideBar.addSeparator();
         sideBar.add(new JButton(GetText.tr("Check For Updates")));

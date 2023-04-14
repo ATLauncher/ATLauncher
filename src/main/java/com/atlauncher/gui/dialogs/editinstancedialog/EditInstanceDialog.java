@@ -43,7 +43,6 @@ public class EditInstanceDialog extends JDialog {
     private Instance instance;
 
     private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
-    private JPanel currentSection = null;
 
     public EditInstanceDialog(Instance instance) {
         this(App.launcher.getParent(), instance);
@@ -58,7 +57,7 @@ public class EditInstanceDialog extends JDialog {
 
         setLayout(new BorderLayout());
         setResizable(true);
-        setMinimumSize(new Dimension(600, 500));
+        setMinimumSize(new Dimension(950, 600));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -70,19 +69,18 @@ public class EditInstanceDialog extends JDialog {
         setupTabbedPane();
         setupBottomPanel();
 
-        pack();
         setLocationRelativeTo(parent);
         setVisible(true);
     }
 
     private void setupTabbedPane() {
         tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(14.0F));
-        tabbedPane.addTab(GetText.tr("Information"), new ModsSection(instance));
+        tabbedPane.addTab(GetText.tr("Information"), new InformationSection(instance));
         tabbedPane.addTab(GetText.tr("Mods"), new ModsSection(instance));
-        tabbedPane.addTab(GetText.tr("Resource Packs"), new ModsSection(instance));
-        tabbedPane.addTab(GetText.tr("Shader Packs"), new ModsSection(instance));
-        tabbedPane.addTab(GetText.tr("Logs"), new ModsSection(instance));
-        tabbedPane.addTab(GetText.tr("Settings"), new ModsSection(instance));
+        tabbedPane.addTab(GetText.tr("Resource Packs"), new ResourcePacksSection(instance));
+        tabbedPane.addTab(GetText.tr("Shader Packs"), new ShaderPacksSection(instance));
+        tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(instance));
+        tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(instance));
         tabbedPane.setOpaque(true);
 
         tabbedPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));

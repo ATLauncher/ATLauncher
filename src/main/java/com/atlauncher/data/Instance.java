@@ -963,7 +963,7 @@ public class Instance extends MinecraftVersion {
                 }
 
                 LogManager.info(String.format("Launching pack %s %s (%s) for Minecraft %s", this.launcher.pack,
-                        this.launcher.version, getPlatformNameForLogging(), this.id));
+                        this.launcher.version, getPlatformName(), this.id));
 
                 Process process = null;
 
@@ -2484,7 +2484,7 @@ public class Instance extends MinecraftVersion {
                         && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
     }
 
-    public String getPlatformNameForLogging() {
+    public String getPlatformName() {
         if (isCurseForgePack()) {
             return "CurseForge";
         }

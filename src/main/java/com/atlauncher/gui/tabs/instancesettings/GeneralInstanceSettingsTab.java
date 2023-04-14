@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.dialogs.instancesettings;
+package com.atlauncher.gui.tabs.instancesettings;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

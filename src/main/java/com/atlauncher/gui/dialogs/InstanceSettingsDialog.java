@@ -29,28 +29,20 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.gui.dialogs.instancesettings.CommandsInstanceSettingsTab;
-import com.atlauncher.gui.dialogs.instancesettings.GeneralInstanceSettingsTab;
-import com.atlauncher.gui.dialogs.instancesettings.JavaInstanceSettingsTab;
+import com.atlauncher.gui.tabs.InstanceSettingsTabbedPane;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class InstanceSettingsDialog extends JDialog {
-    private final Instance instance;
+    private final InstanceSettingsTabbedPane tabbedPane;
 
-    private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
     private final JPanel bottomPanel = new JPanel();
-
-    private final GeneralInstanceSettingsTab generalInstanceSettingsTab;
-    private final JavaInstanceSettingsTab javaInstanceSettingsTab;
-    private final CommandsInstanceSettingsTab commandsInstanceSettingsTab;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
@@ -64,11 +56,8 @@ public class InstanceSettingsDialog extends JDialog {
         // #. {0} is the name of the instance
         super(App.launcher.getParent(), GetText.tr("{0} Settings", instance.launcher.name),
                 ModalityType.DOCUMENT_MODAL);
-        this.instance = instance;
 
-        this.generalInstanceSettingsTab = new GeneralInstanceSettingsTab(instance);
-        this.javaInstanceSettingsTab = new JavaInstanceSettingsTab(instance);
-        this.commandsInstanceSettingsTab = new CommandsInstanceSettingsTab(instance);
+        this.tabbedPane = new InstanceSettingsTabbedPane(instance);
 
         setupComponents();
 
@@ -89,14 +78,6 @@ public class InstanceSettingsDialog extends JDialog {
         setResizable(false);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        // Tabbed Pane
-
-        tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(17.0F));
-        tabbedPane.addTab(GetText.tr("General"), generalInstanceSettingsTab);
-        tabbedPane.addTab(GetText.tr("Java/Minecraft"), javaInstanceSettingsTab);
-        tabbedPane.addTab(GetText.tr("Commands"), commandsInstanceSettingsTab);
-        tabbedPane.setOpaque(true);
-
         add(tabbedPane, BorderLayout.CENTER);
 
         // Bottom Panel
@@ -105,8 +86,7 @@ public class InstanceSettingsDialog extends JDialog {
 
         JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
-            if (javaInstanceSettingsTab.isValidJavaPath() && javaInstanceSettingsTab.isValidJavaParamaters()) {
-                saveSettings();
+            if (tabbedPane.saveSettings()) {
                 App.TOASTER.pop("Instance Settings Saved");
                 close();
             }
@@ -126,13 +106,4 @@ public class InstanceSettingsDialog extends JDialog {
         setVisible(false);
         dispose();
     }
-
-    private void saveSettings() {
-        generalInstanceSettingsTab.saveSettings();
-        javaInstanceSettingsTab.saveSettings();
-        commandsInstanceSettingsTab.saveSettings();
-
-        this.instance.save();
-    }
-
 }
