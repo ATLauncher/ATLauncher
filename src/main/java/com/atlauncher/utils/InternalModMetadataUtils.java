@@ -18,7 +18,9 @@
 package com.atlauncher.utils;
 
 import java.io.File;
+import java.io.StringReader;
 import java.util.List;
+import java.util.Properties;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.metadata.FabricMod;
@@ -108,6 +110,18 @@ public class InternalModMetadataUtils {
     public static Toml parseModsTomlFile(String data) {
         try {
             return new Toml().read(data);
+        } catch (Exception ignored) {
+
+        }
+
+        return null;
+    }
+
+    public static Properties parseManifestMfFile(String data) {
+        try {
+            Properties props = new Properties();
+            props.load(new StringReader(data));
+            return props;
         } catch (Exception ignored) {
 
         }

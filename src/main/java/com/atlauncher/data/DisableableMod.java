@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -592,16 +593,32 @@ public class DisableableMod implements Serializable {
         return InternalModMetadataUtils.parseModsTomlFile(modsTomlString);
     }
 
+    private Properties getManifestMfFile(Path path) {
+        String manifestMfString;
+
+        if (internalModMetadata.containsKey("manifestMf")) {
+            manifestMfString = internalModMetadata.get("manifestMf");
+        } else {
+            manifestMfString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(),
+                    "META-INF/MANIFEST.MF");
+            internalModMetadata.put("manifestMf", manifestMfString);
+        }
+
+        return InternalModMetadataUtils.parseManifestMfFile(manifestMfString);
+    }
+
     public void scanInternalModMetadata(Path path) {
         PerformanceManager.start(String.format("scanInternalModMetadata::%s", path.getFileName().toString()));
         getMcModInfoFile(path);
         getFabricModFile(path);
         getQuiltModFile(path);
         getModsTomlFile(path);
+        getManifestMfFile(path);
         PerformanceManager.end(String.format("scanInternalModMetadata::%s", path.getFileName().toString()));
     }
 
     public String getNameFromFile(Path path) {
+        System.out.println(internalModMetadata.keySet());
         JsonObject mcMod = getMcModInfoFile(path);
         if (mcMod != null) {
             return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
@@ -616,7 +633,8 @@ public class DisableableMod implements Serializable {
                 } else {
                     Toml modsToml = getModsTomlFile(path);
                     if (modsToml != null) {
-                        return modsToml.contains("mods.displayName") ? modsToml.getString("mods.displayName") : name;
+                        return modsToml.contains("mods[0].displayName") ? modsToml.getString("mods[0].displayName")
+                                : name;
                     }
                 }
             }
@@ -640,7 +658,16 @@ public class DisableableMod implements Serializable {
                 } else {
                     Toml modsToml = getModsTomlFile(path);
                     if (modsToml != null) {
-                        return modsToml.contains("mods.version") ? modsToml.getString("mods.version") : version;
+                        String parsedVersion = modsToml.contains("mods[0].version")
+                                ? modsToml.getString("mods[0].version")
+                                : version;
+
+                        if (parsedVersion.equals("${file.jarVersion}")) {
+                            Properties manifestMf = getManifestMfFile(path);
+                            parsedVersion = manifestMf.getProperty("Implementation-Version");
+                        }
+
+                        return parsedVersion;
                     }
                 }
             }
@@ -664,7 +691,7 @@ public class DisableableMod implements Serializable {
                 } else {
                     Toml modsToml = getModsTomlFile(path);
                     if (modsToml != null) {
-                        return modsToml.contains("mods.description") ? modsToml.getString("mods.description")
+                        return modsToml.contains("mods[0].description") ? modsToml.getString("mods[0].description")
                                 : description;
                     }
                 }
