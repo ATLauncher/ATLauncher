@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Embedded relationship mods showing as required by the launcher
 - Main progress bar when installing instances not being super accurate
+- Mod files not being upper/lower cased when modpack devs set it
 
 ### Misc

@@ -618,7 +618,6 @@ public class DisableableMod implements Serializable {
     }
 
     public String getNameFromFile(Path path) {
-        System.out.println(internalModMetadata.keySet());
         JsonObject mcMod = getMcModInfoFile(path);
         if (mcMod != null) {
             return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
